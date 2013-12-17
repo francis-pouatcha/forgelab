@@ -1,13 +1,13 @@
 
 INSTRUCTIONS
 ============
-1. Install jdk1.7
+001) Install jdk1.7
 
-2. Install Jboss forge 1.4.3.Final http://forge.jboss.org/
+002) Install Jboss forge 1.4.3.Final http://forge.jboss.org/
 
-3. Install JBoss EAP6.1
+003) Install JBoss EAP6.1
 
-4. run the tsheet_as7.fsh in your forge shell (run ../forgelab/alpha/tsheet_as7.fsh)
+004) run the tsheet_as7.fsh in your forge shell (run ../forgelab/alpha/tsheet_as7.fsh)
 
 ***SUCCESS*** Created project [tsheet] in new working directory [/Users/francis/dev/timesheet/tsheet]
 
@@ -42,21 +42,21 @@ Wrote /Users/francis/dev/timesheet/tsheet/pom.xml
 [tsheet] tsheet $ 
 
 
-5. import generated project into eclipse
+005) import generated project into eclipse
 
-6. configure eclipse to see generate JPA Model Classes
+006) configure eclipse to see generate JPA Model Classes
 
     --> project --> properties --> Java Compiler --> Annotation Processesing --> Select (enable project specific settings) --> Enter this as generated source directory : target/generated-sources/annotations
 
-7. Copy  ValidationMessages.properties to src/main/resources
+007) Copy  ValidationMessages.properties to src/main/resources
 
-8. Replace /alpha/CompanyJPAEndpointTest.java to the corresponding directory in the tshet project (see package name)
+008) Replace /alpha/CompanyJPAEndpointTest.java to the corresponding directory in the tshet project (see package name)
 
-9. copy /alpha/CompanyJPARepository.java /alpha/DataSourceProducer.java to the corresponding location in the tsheet project (see package name).
+009) copy /alpha/CompanyJPARepository.java /alpha/DataSourceProducer.java to the corresponding location in the tsheet project (see package name).
 
-10. Start jboss-eap-6.1 $JBOSS_EAP_INSTALL_DIR/bin/standalone.sh
+010) Start jboss-eap-6.1 $JBOSS_EAP_INSTALL_DIR/bin/standalone.sh
 
-11. [tsheet] tsheet $ build --profile arq-jboss_as_remote_7.x
+011) [tsheet] tsheet $ build --profile arq-jboss_as_remote_7.x
 
 -------------------------------------------------------
 
@@ -113,10 +113,10 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
 
 [tsheet] tsheet $ 
 
-12. [tsheet] tsheet $ as7 deploy
+012) [tsheet] tsheet $ as7 deploy
 
 The deployment operation (FORCE_DEPLOY) was successful.
 
 [tsheet] tsheet $ 
 
-13. go to a web browser: http://localhost:8080/tsheet/ajs
+013) go to a web browser: http://localhost:8080/tsheet/ajs
