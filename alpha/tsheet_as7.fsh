@@ -4,6 +4,10 @@
 @/* forge install-plugin arquillian */;
 @/* forge install-plugin jboss-as-7 */;
 @/* forge install-plugin angularjs */;
+@/* git clone https://github.com/francis-pouatcha/forge-repository-plugin.git */;
+@/* forge source-plugin forge-repository-plugin */;
+@/* run ../tsheet_as7.fsh */;
+
 
 
 set ACCEPT_DEFAULTS true;
@@ -13,16 +17,12 @@ new-project --named tsheet --topLevelPackage org.adorsys.tsheet --finalName tshe
 project add-dependency org.hibernate:hibernate-jpamodelgen:1.3.0.Final:provided;
 project add-managed-dependency org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-bom:2.0.1:import:pom;
 project add-dependency org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-depchain:2.0.1:test:pom;
-project add-dependency org.apache.deltaspike.modules:deltaspike-data-module-api:0.5:compile;
-project add-dependency org.apache.deltaspike.modules:deltaspike-data-module-impl:0.5:runtime;
 
 as7 setup;
 persistence setup --provider HIBERNATE --container JBOSS_AS7;
-validation setup;
-rest setup --activatorType APP_CLASS;
 
-arquillian setup --containerType REMOTE --containerName JBOSS_AS_REMOTE_7.X;
-arquillian configure-container --profile arq-jboss_as_remote_7.x;
+validation setup;
+
 project add-dependency junit:junit:4.11:test;
 
 entity --named CompanyJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
@@ -70,21 +70,38 @@ constraint Size --onProperty adviserName --min 2 --message "companyJpa_company_a
 field temporal --named lastlyModified --type TIMESTAMP;
 field temporal --named created --type TIMESTAMP;
 
-rest endpoint-from-entity --contentType application/json org.adorsys.tsheet.jpa.CompanyJPA.java --strategy JPA_ENTITY;
 
 entity --named PersonJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
 field temporal --named lastlyModified --type TIMESTAMP;
 field temporal --named created --type TIMESTAMP;
 
 field string --named name;
-constraint NotNull --onProperty name --message "companyJpa_company_name_null";
-constraint Size --onProperty name --min 2 --message "companyJpa_company_name_size";
+constraint NotNull --onProperty name --message "personJpa_person_name_null";
+constraint Size --onProperty name --min 2 --message "personJpa_person_name_size";
 
 field string --named street;
-constraint NotNull --onProperty street --message "companyJpa_company_street_null";
-constraint Size --onProperty street --min 3 --message "companyJpa_company_street_size";
+constraint NotNull --onProperty street --message "personJpa_person_street_null";
+constraint Size --onProperty street --min 3 --message "personJpa_person_street_size";
 
+set ACCEPT_DEFAULTS false;
+rest setup --activatorType APP_CLASS;
+set ACCEPT_DEFAULTS true;
+
+rest endpoint-from-entity --contentType application/json org.adorsys.tsheet.jpa.CompanyJPA.java --strategy JPA_ENTITY;
 rest endpoint-from-entity --contentType application/json org.adorsys.tsheet.jpa.PersonJPA.java --strategy JPA_ENTITY;
+
+arquillian setup --containerType REMOTE --containerName JBOSS_AS_REMOTE_7.X;
+arquillian configure-container --profile arq-jboss_as_remote_7.x;
+
+@/* arquillian create-test --class org.adorsys.tsheet.rest.CompanyJPAEndpoint.java */;
+@/* arquillian create-test --class org.adorsys.tsheet.rest.PersonJPAEndpoint.java */;
+
+cd ~~;
+
+repogen setup;
+repogen new-repository --jpaPackage src/main/java/org/adorsys/tsheet/jpa;
+repotest setup;
+repotest create-test --packages src/main/java/org/adorsys/tsheet/repo;
 
 cd ~~;
 scaffold-x setup --scaffoldType angularjs --targetDir ajs;
@@ -94,8 +111,6 @@ cd ~~;
 scaffold-x from src/main/java/org/adorsys/tsheet/jpa/PersonJPA.java --targetDir ajs --overwrite;
 
 cd ~~;
-arquillian create-test --class org.adorsys.tsheet.rest.CompanyJPAEndpoint.java;
-
-cd ~~;
 mvn clean compile;
 
+@/* this is a bug. Modify the the scope of deltaspike module in the pom to compile. */;
