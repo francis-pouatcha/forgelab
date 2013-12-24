@@ -25,8 +25,20 @@ validation setup;
 
 project add-dependency junit:junit:4.11:test;
 
-entity --named CompanyJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
 
+entity --named PersonJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
+field temporal --named lastlyModified --type TIMESTAMP;
+field temporal --named created --type TIMESTAMP;
+
+field string --named name;
+constraint NotNull --onProperty name --message "personJpa_person_name_null";
+constraint Size --onProperty name --min 2 --message "personJpa_person_name_size";
+
+field string --named street;
+constraint NotNull --onProperty street --message "personJpa_person_street_null";
+constraint Size --onProperty street --min 3 --message "personJpa_person_street_size";
+
+entity --named CompanyJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
 field string --named name;
 constraint NotNull --onProperty name --message "companyJpa_company_name_null";
 constraint Size --onProperty name --min 2 --message "companyJpa_company_name_size";
@@ -63,25 +75,12 @@ field string --named companyId;
 constraint Size --onProperty companyId --min 3 --max 3 --message "companyJpa_company_id_null";
 constraint NotNull --onProperty companyId --message "companyJpa_company_id_size";
 
-field string --named adviserName;
-constraint NotNull --onProperty adviserName --message "companyJpa_company_adviderName_null";
-constraint Size --onProperty adviserName --min 2 --message "companyJpa_company_adviderName_size";
+field manyToOne --named adviserName --fieldType ~.jpa.PersonJPA.java
+@/* constraint NotNull --onProperty adviserName --message "companyJpa_company_adviderName_null" */;
+@/* constraint Size --onProperty adviserName --min 2 --message "companyJpa_company_adviderName_size" */;
 
 field temporal --named lastlyModified --type TIMESTAMP;
 field temporal --named created --type TIMESTAMP;
-
-
-entity --named PersonJPA --idStrategy AUTO --package org.adorsys.tsheet.jpa;
-field temporal --named lastlyModified --type TIMESTAMP;
-field temporal --named created --type TIMESTAMP;
-
-field string --named name;
-constraint NotNull --onProperty name --message "personJpa_person_name_null";
-constraint Size --onProperty name --min 2 --message "personJpa_person_name_size";
-
-field string --named street;
-constraint NotNull --onProperty street --message "personJpa_person_street_null";
-constraint Size --onProperty street --min 3 --message "personJpa_person_street_size";
 
 set ACCEPT_DEFAULTS false;
 rest setup --activatorType APP_CLASS;
