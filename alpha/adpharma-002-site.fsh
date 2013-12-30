@@ -66,3 +66,4 @@ field long --named barCodePerLine;
 description add-field-description --onProperty barCodePerLine --title "Bar Code" --text "The bar code";
 description add-field-description --onProperty barCodePerLine --title "Code Bar" --text "Le code bar" --locale fr;
 
+cd ~~;

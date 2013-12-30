@@ -114,3 +114,4 @@ field string --named saleKey;
 description add-field-description --onProperty saleKey --title "Sale Key" --text "The sales key for a sales session open to all users. ";
 description add-field-description --onProperty saleKey --title "Sale Key" --text "Clé de vente pour la session vente ouverte à tous les utilisateurs." --locale fr;
 
+cd ~~;
