@@ -18,16 +18,9 @@ set ACCEPT_DEFAULTS true;
 
 new-project --named adph --topLevelPackage org.adorsys.adph --finalName adph;
 
-project add-dependency org.hibernate:hibernate-jpamodelgen:1.3.0.Final:provided;
-project add-managed-dependency org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-bom:2.0.1:import:pom;
-project add-dependency org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-depchain:2.0.1:test:pom;
-
 as7 setup;
 persistence setup --provider HIBERNATE --container JBOSS_AS7;
 
 validation setup;
 
 description setup;
-
-project add-dependency junit:junit:4.11:test;
-
