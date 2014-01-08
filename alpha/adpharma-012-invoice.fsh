@@ -1,6 +1,94 @@
 
 
 @/* ======================== */;
+
+@/* Entité Caisse */;
+entity --named CashDrawer --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Cash Drawer" --text "A cash drawer.";
+description add-class-description  --locale fr --title "Caisse" --text "Une caisse.";
+
+field string --named cashDrawerNumber;
+description add-field-description --onProperty cashDrawerNumber --title "Cash Drawer Number" --text "The number of this cash drawer.";
+description add-field-description --onProperty cashDrawerNumber --title "Numéro de Caisse" --text "Le numéro de cette caisse." --locale fr;
+
+field manyToOne --named cashier --fieldType ~.jpa.PharmaUser;
+description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment on this drawer.";
+description add-field-description --onProperty cashier --title "Caissier" --text "Utilisateur percevant le paiement surcette caisse." --locale fr;
+
+field manyToOne --named closedBy --fieldType ~.jpa.PharmaUser;
+description add-field-description --onProperty closedBy --title "Closed By" --text "The user who closed this cash drawer.";
+description add-field-description --onProperty closedBy --title "Fermé Par" --text "Utilisateur ayant fermé la caisse." --locale fr;
+
+field manyToOne --named site --fieldType ~.jpa.Site ;
+constraint NotNull --onProperty site;
+description add-field-description --onProperty site --title "Site" --text "Site in which this drawer resides.";
+description add-field-description --onProperty site --title "Site" --text "Site dans lequel la caisse est gerée." --locale fr;
+
+field temporal --type TIMESTAMP --named openingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty openingDate --title "Opening Date" --text "The opening date of this drawer.";
+description add-field-description --onProperty openingDate --title "Date d'Ouverture" --text "La date d'ouverture de cette caisse." --locale fr;
+
+field temporal --type TIMESTAMP --named closingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty closingDate --title "Closing Date" --text "The closing date of this drawer.";
+description add-field-description --onProperty closingDate --title "Date de Fermeture" --text "La date de fermeture de cette caisse." --locale fr;
+
+field number --named initialAmount --type java.math.BigDecimal;
+description add-field-description --onProperty initialAmount --title "Initial Amount" --text "The initial amount.";
+description add-field-description --onProperty initialAmount --title "Fond de Caisse" --text "Le fond initial de la caisse." --locale fr;
+@/* Default=0 */;
+
+field boolean --named opened;
+description add-field-description --onProperty opened --title "Open" --text "Indicates whether the cash drawer is open.";
+description add-field-description --onProperty opened --title "Ouverte" --text "Indique si la caisse est ouverte." --locale fr;
+@/* default=true */;
+
+field number --named totalCashIn --type java.math.BigDecimal;
+description add-field-description --onProperty totalCashIn --title "Total Cash In" --text "The total cash in.";
+description add-field-description --onProperty totalCashIn --title "Total Encaissement" --text "L'encaissement totale." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCashOut --type java.math.BigDecimal;
+description add-field-description --onProperty totalCashOut --title "Total Cash Out" --text "Total withdrawal from this drawer.";
+description add-field-description --onProperty totalCashOut --title "Total Retrait" --text "Total des decaissements éffectués en caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCash --type java.math.BigDecimal;
+description add-field-description --onProperty totalCash --title "Total Cash" --text "Total cash in this drawer.";
+description add-field-description --onProperty totalCash --title "Total Cash" --text "Total cash dans cette caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCreditSales --type java.math.BigDecimal;
+description add-field-description --onProperty totalCreditSales --title "Total Credit Sales" --text "Total credit sales in this drawer.";
+description add-field-description --onProperty totalCreditSales --title "Total Credit" --text "Total credit vendu par cette caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCheck --type java.math.BigDecimal;
+description add-field-description --onProperty totalCheck --title "Total Checks" --text "Total checks in this drawer.";
+description add-field-description --onProperty totalCheck --title "Total Chèque" --text "Total chèque dans cette caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCreditCard --type java.math.BigDecimal;
+description add-field-description --onProperty totalCreditCard --title "Total Credit Card" --text "Total credit cards by this drawer.";
+description add-field-description --onProperty totalCreditCard --title "Total Carte Credit" --text "Total carte de credit par cette caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCompanyVoucher --type java.math.BigDecimal;
+description add-field-description --onProperty totalCompanyVoucher --title "Total Company Vouchera" --text "Total voucher (from company or hospital) in this drawer.";
+description add-field-description --onProperty totalCompanyVoucher --title "Total Avoir Companie" --text "Totale des bons (de sociéte ou d'hopital) qu'il ya en caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalClientVoucher --type java.math.BigDecimal;
+description add-field-description --onProperty totalClientVoucher --title "Total Client Voucher" --text "Total voucher (from client) in this drawer.";
+description add-field-description --onProperty totalClientVoucher --title "Total Avoir Client" --text "Totale des bons (client) qu'il ya en caisse." --locale fr;
+@/* Default=0 */;
+
+field number --named totalCashDebt --type java.math.BigDecimal;
+description add-field-description --onProperty totalCashDebt --title "Total Cash Debt" --text "Total cash from client debts in the drawer.";
+description add-field-description --onProperty totalCashDebt --title "Total Cash Dette" --text "Totale cash des dettes client dans cette caisse." --locale fr;
+@/* Default=0 */;
+
 @/* Invoice */;
 
 @/* Type Facture*/;
@@ -95,11 +183,6 @@ field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 description add-field-description --onProperty client --title "Sales Order" --text "The sales order generating of this invoice.";
 description add-field-description --onProperty client --title "Commande Client" --text "Commande client à l'origine de la facture" --locale fr;
 
-field manyToOne --named salesOrderType --fieldType ~.jpa.SalesOrderType;
-description add-field-description --onProperty salesOrderType --title "Type" --text "The type of the assoicated sales order.";
-description add-field-description --onProperty salesOrderType --title "Type" --text "Le type de la commande client." --locale fr;
-@/* Enumeration{VENTE_AU_PUBLIC, VENTE_A_CREDIT, VENTE_PROFORMAT} */;
-
 field number --named totalSalesPrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "The total sales price for this invoice.";
 description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Total" --text "Prix total de la facture." --locale fr;
@@ -135,23 +218,17 @@ description add-field-description --onProperty restToPay --title "Ret to Pay" --
 description add-field-description --onProperty restToPay --title "Reste a Payer" --text "Le reste a payer." --locale fr;
 @/*  Default=0 */; 
 
-cd ../InvoiceItem.java;
-
-field manyToOne --named invoice --fieldType ~.jpa.Invoice;
-description add-field-description --onProperty invoice --title "Invoice" --text "The invoice containing this line";
-description add-field-description --onProperty invoice --title "Facture" --text "la facture contenant cette ligne" --locale fr;
-
-cd ../Invoice.java;
 
 field oneToMany --named invoiceItems --fieldType ~.jpa.InvoiceItem --inverseFieldName invoice --fetchType EAGER  --cascade;
 description add-field-description --onProperty invoiceItems --title "Invoice Items" --text "The invoice items";
 description add-field-description --onProperty invoiceItems --title "Lignes Facture" --text "Les ligne facture" --locale fr;
 @/* OneToMany(cascadeType=All) */;
 
-field manyToOne --named invoiceType --fieldType ~.jpa.InvoiceType;
+field custom --named invoiceType --type ~.jpa.InvoiceType;
 description add-field-description --onProperty invoiceType --title "Type" --text "The type of this invoice.";
 description add-field-description --onProperty invoiceType --title "Type" --text "Le type de cette facture." --locale fr;
+enum enumerated-field --onProperty invoiceType ;
 @/* Enumeration{CAISSE, PROFORMAT} */;
 
-
+cd ~~ ;
  

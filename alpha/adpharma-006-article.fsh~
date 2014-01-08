@@ -41,10 +41,6 @@ field manyToOne --named family --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty family --title "Family" --text "Specifies the product family of this article.";
 description add-field-description --onProperty family --title "Famille" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
 
-field manyToOne --named subFamily --fieldType ~.jpa.ProductSubFamily;
-description add-field-description --onProperty subFamily --title "Subfamily" --text "Specifies the product sub family of this article.";
-description add-field-description --onProperty subFamily --title "Sousfamille" --text "Spécifie la sous-famille de produit à laquelle appartient le produit." --locale fr;
-
 field long --named qtyInStock;
 description add-field-description --onProperty qtyInStock --title "Quantity in Stock" --text "The quantity of this article in stock.";
 description add-field-description --onProperty qtyInStock --title "Quantité en Stock" --text "Quantité reelle de produits dans le stock." --locale fr;

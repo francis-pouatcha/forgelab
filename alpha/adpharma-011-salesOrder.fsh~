@@ -9,7 +9,7 @@ enum add-enum-class-description --title "Sales Order Type" --text "The type of t
 enum add-enum-class-description  --locale fr --title "Type de Commande Client" --text "Le type d'une commande client.";
 java new-enum-const CASH_SALE;
 java new-enum-const CREDIT_SALE;
-java new-enum-const PROFORMAT_SALE;
+ava new-enum-const PROFORMAT_SALE;
 enum generate-description-keys ;
 enum generate-description-keys  --locale fr;
 @/* Enumeration{VENTE_AU_PUBLIC, VENTE_A_CREDIT, VENTE_PROFORMAT} */;

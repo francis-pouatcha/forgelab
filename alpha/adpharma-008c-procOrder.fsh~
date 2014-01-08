@@ -10,6 +10,30 @@ java new-enum-const SPECIAL ;
 enum generate-description-keys --locale fr ;
 enum generate-description-keys ;
 
+@/* Entity ProcmtOrderConversationState */;
+java new-enum-type --named ProcmtOrderConversationState --package ~.jpa ;
+enum add-enum-class-description --title "Procurement Order Coversation State" --text "Procurement order conversation state.";
+enum add-enum-class-description  --locale fr --title "Etat d Echange de Commande Fournisseur" --text "Etat de conversation pour cette commande fournisseur.";
+java new-enum-const SUBMIT ;
+java new-enum-const VALIDATE ;
+java new-enum-const CANCELLED ;
+java new-enum-const PROCESSING ;
+java new-enum-const DRUGSTORE_PROCESSING ;
+enum generate-description-keys --locale fr ;
+enum generate-description-keys ;
+
+
+@/* Entity ProcmtOrderTrigger Mode */;
+entity --named ProcmtOrderTriggerMode --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Procurement Order Trigger Mode" --text "Procurement order trigger mode.";
+description add-class-description  --locale fr --title "Criteres de Preparation de Commande Fournisseur" --text "Criteres de preparation de commande fournisseur.";
+@/* Enumération{MANUELLE, RUPTURE_STOCK , ALERTE_STOCK,PLUS_VENDU} */;
+
+field string --named name;
+description add-field-description --onProperty name --title "Name" --text "The name of this rocurement order trigger mode.";
+description add-field-description --onProperty name --title "Nom" --text "Le nom de ce critere de preparation de commande fournisseur." --locale fr;
+
+
 
 @/* Entity ProcurementOrder */;
 entity --named ProcurementOrder --package ~.jpa --idStrategy AUTO;

@@ -1,6 +1,6 @@
 
 @/* Enum type DocumentState State */;
-java new-enum-type --named DocumentState --package ~.jpa ;
+java new-enum-type --named DocumentProcessingState --package ~.jpa ;
 enum add-enum-class-description --title "Document State" --text "The state of a documents.";
 enum add-enum-class-description --title "Document State" --text "The state of a documents." --locale fr;
 java new-enum-const SUSPENDED ;
@@ -34,7 +34,7 @@ constraint NotNull --onProperty discountRate --message "Veuillez entrer le taux 
 constraint DecimalMin --onProperty discountRate --min 1.0 --message "Le taux de solde ne doit pas etre inferieur a 1";
 constraint DecimalMax --onProperty discountRate --max 100.0 --message "Le taux de solde ne doit pas etre superieur a 100";
 
-field custom --named clearanceState --type ~.jpa.DocumentState.java ;
+field custom --named clearanceState --type ~.jpa.DocumentProcessingState.java ;
 @/* default EtatSolde.EN_COURS */;
 description add-field-description --onProperty clearanceState --title "Clearance State" --text "The clearance state";
 description add-field-description --onProperty clearanceState --title "État du Solde" --text "État du solde" --locale fr;
@@ -43,3 +43,5 @@ field boolean --named active;
 description add-field-description --onProperty active --title "Active" --text "Says if this clearance configuration is active or not";
 description add-field-description --onProperty active --title "Actif" --text "Indique si cette configuration solde est active ou non" --locale fr;
 @/* default=Boolean.TRUE */;
+
+cd ~~;

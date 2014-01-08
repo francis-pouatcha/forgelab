@@ -1,7 +1,7 @@
 @/* Entity VAT */;
 entity --named VAT --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "VAT" --text "The value added tax";
-description add-class-description  --locale fr --title "TVA" --text "Taxe sur valeure ajoutée";
+description add-class-description  --locale fr --title "TVA" --text "Taxe sur la valeure ajoutée";
 
 field string --named code;
 description add-field-description --onProperty code --title "Code" --text "The code of this VAT";
@@ -31,4 +31,4 @@ description add-field-description --onProperty rate --title "Taux" --text "Taux 
 field boolean --named valid;
 description add-field-description --onProperty valid --title "Valid" --text "Says if this margin rate is valide or not";
 description add-field-description --onProperty valid --title "Valide" --text "Indique si ce taux de marge est valide ou pas." --locale fr;
-
+cd ~~ ;

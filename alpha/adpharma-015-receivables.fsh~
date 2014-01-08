@@ -204,5 +204,5 @@ cd ../ClientDebt.java;
 field manyToOne --named debtStatement --fieldType ~.jpa.DebtStatement;
 description add-field-description --onProperty debtStatement --title "Debt Statement" --text "The debt statement containing this debt.";
 description add-field-description --onProperty debtStatement --title "Etat Credits" --text "L état crédit contenant cette dette." --locale fr;
-cd ~~;
+
  

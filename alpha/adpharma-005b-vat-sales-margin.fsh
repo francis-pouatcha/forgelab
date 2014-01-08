@@ -31,4 +31,4 @@ description add-field-description --onProperty rate --title "Taux" --text "Taux 
 field boolean --named valid;
 description add-field-description --onProperty valid --title "Valid" --text "Says if this margin rate is valide or not";
 description add-field-description --onProperty valid --title "Valide" --text "Indique si ce taux de marge est valide ou pas." --locale fr;
-
+cd ~~ ;

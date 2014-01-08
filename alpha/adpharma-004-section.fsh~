@@ -35,5 +35,3 @@ field manyToOne --named site --fieldType ~.jpa.Site;
 constraint NotNull --onProperty site;
 description add-field-description --onProperty site --title "Site" --text "Site in which the section is located";
 description add-field-description --onProperty site --title "Site" --text "Site dans lequel le rayon se trouve." --locale fr;
-
-cd ~~ ;

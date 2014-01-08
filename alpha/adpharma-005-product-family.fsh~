@@ -27,5 +27,5 @@ field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily.java
 description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
 description add-field-description --onProperty parentFamilly --title "Note" --text "La famille parent du produit " --locale fr;
 
-
+cd ~~ ;
 

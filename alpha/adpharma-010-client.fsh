@@ -5,17 +5,13 @@
 
 
 @/* Type Client*/;
-entity --named ClientType --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Client Type" --text "Type of client.";
-description add-class-description  --locale fr --title "Type of Client" --text "Type de client.";
+java new-enum-type --named ClientType --package ~.jpa ;
+enum add-enum-class-description --title "Client Type" --text "Type of client.";
+enum add-enum-class-description  --locale fr --title "Type of Client" --text "Type de client.";
+java new-enum-const PHYSIQUE;
+java new-enum-const MORAL;
+enum generate-description-keys ;
 @/* enumeration{PHYSIQUE, MORAL} */;
-
-field string --named name;
-description add-field-description --onProperty name --title "Name" --text "The name of this client type.";
-description add-field-description --onProperty name --title "Nom" --text "Le nom de ce type de client." --locale fr;
-
-
-
 
 @/* Entité CategorieClient */;
 entity --named ClientCategory --package ~.jpa --idStrategy AUTO;
@@ -131,13 +127,15 @@ description add-field-description --onProperty totalDebt --title "Total Debt" --
 description add-field-description --onProperty totalDebt --title "Dette Total" --text "Montant total des dettes du client." --locale fr;
 @/* Default=0 */;
 
-field manyToOne --named clientType --fieldType ~.jpa.ClientType;
+field custom --named clientType --type ~.jpa.ClientType;
 description add-field-description --onProperty clientType --title "Client Type" --text "The client type.";
 description add-field-description --onProperty clientType --title "Type Client" --text "Le type de client." --locale fr;
+enum enumerated-field --onProperty clientType ;
 @/* enumeration{PHYSIQUE, MORAL} */;
 
 field string --named serialNumber;
 description add-field-description --onProperty serialNumber --title "Serial Number" --text "The serial number of this client.";
 description add-field-description --onProperty serialNumber --title "Matricule Client" --text "Le numéro matricule de ce client." --locale fr;
 
+cd ~~ ;
 

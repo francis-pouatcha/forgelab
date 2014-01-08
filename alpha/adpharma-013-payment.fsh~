@@ -102,5 +102,4 @@ field boolean --named compensation;
 description add-field-description --onProperty compensation --title "Compensation" --text "Indicates whether this payment is a compensation (coupon, voucher).";
 description add-field-description --onProperty compensation --title "Compensation" --text "Indique si c est un paiement par compensation de bon avoir ou non." --locale fr;
 @/* default=false */;
-cd ~~ ;
 

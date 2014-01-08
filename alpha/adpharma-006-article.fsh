@@ -129,4 +129,5 @@ field boolean --named mixedDrug;
 @/*   produit_compose  default=false  */;
 description add-field-description --onProperty mixedDrug --title "Mixed Drug" --text "Indicates whether this product is mixed.";
 description add-field-description --onProperty mixedDrug --title "Prouit Composé" --text "Précise si un produit est décomposable ou non." --locale fr;
+cd ~~;
 

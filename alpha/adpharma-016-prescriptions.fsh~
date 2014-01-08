@@ -47,6 +47,6 @@ field temporal --type TIMESTAMP --named recordingDate;
 @/* pattern= dd-MM-yyyy HH:mm */;
 description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date.";
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie." --locale fr;
-cd ~~;
+
 
  
