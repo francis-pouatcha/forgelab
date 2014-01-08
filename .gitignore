@@ -5,3 +5,7 @@
 *.war
 *.ear
 *~
+.DS_Store
+.project
+target/
+*/target/
