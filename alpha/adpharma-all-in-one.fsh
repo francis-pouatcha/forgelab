@@ -2180,7 +2180,7 @@ cd ~~ ;
 repogen setup ;
 repogen new-repository --jpaPackage src/main/java/org/adorsys/adph/server/jpa/;
 reporest setup --activatorType APP_CLASS ;
-reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ --overrride --contentType application/json ;
+reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ --overrride --contentType application/xml ;
  
 
 
