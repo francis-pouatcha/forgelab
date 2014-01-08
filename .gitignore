@@ -9,3 +9,6 @@
 .project
 target/
 */target/
+*/.forge_settings
+*/.settings/
+
