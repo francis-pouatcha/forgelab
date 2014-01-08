@@ -24,5 +24,4 @@ persistence setup --provider HIBERNATE --container JBOSS_AS7;
 validation setup;
 
 description setup;
-
 enum setup ;
