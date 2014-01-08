@@ -11,5 +11,6 @@ target/
 */target/
 */.forge_settings
 */.settings/
+*/bin/
 
 
