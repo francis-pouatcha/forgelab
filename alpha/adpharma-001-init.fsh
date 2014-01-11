@@ -14,6 +14,7 @@
 @/* cd javaext.description | mvn clean install | cd .. */;
 @/* git clone https://github.com/francis-pouatcha/forge-description-plugin.git */;
 @/* forge source-plugin forge-description-plugin */;
+@/* forge git-plugin https://github.com/adorsys/forge.adorsystools */;
 
 set ACCEPT_DEFAULTS true;
 
