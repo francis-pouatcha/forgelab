@@ -1,13 +1,16 @@
 
 @/* Entity Gender */;
-entity --named Gender --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Gender" --text "The gender of a user.";
-description add-class-description  --locale fr --title "Genre" --text "Le genre de cet utilisateur.";
+java new-enum-type --named Gender --package ~.jpa ;
+enum add-enum-class-description --title "Gender" --text "The gender of a user.";
+enum add-enum-class-description  --locale fr --title "Genre" --text "Le genre de cet utilisateur.";
 
-field string --named name;
-description add-field-description --onProperty name --title "Name" --text "The name of this gender.";
-description add-field-description --onProperty name --title "Intitule" --text "Intitule de ce genre" --locale fr;
-@/* Enumeration{Masculin, feminin, mademoiselle, enfant, Docteur, Neutre} */;
+java new-enum-const Masculin ;
+java new-enum-const Feminin ;
+java new-enum-const Enfant ;
+java new-enum-const Docteur ;
+java new-enum-const Neutre ;
+enum generate-description-keys --locale fr ;
+enum generate-description-keys ;
 
 @/* Entity RoleName */;
 entity --named RoleName --package ~.jpa --idStrategy AUTO;
@@ -31,9 +34,10 @@ field string --named userNumber;
 description add-field-description --onProperty userNumber --title "User Number" --text "The number of this user.";
 description add-field-description --onProperty userNumber --title "Numéro de cet Utilisateur" --text "Le numéro de cet utilisateur." --locale fr;
 
-field manyToOne --named gender --fieldType ~.jpa.Gender;
+field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this user";
 description add-field-description --onProperty gender --title "Genre" --text "Le genre de cet utilisateur" --locale fr;
+enum enumerated-field --onProperty gender ;
 
 field string --named userName;
 description add-field-description --onProperty userName --title "User Name" --text "The name used by the user to login.";

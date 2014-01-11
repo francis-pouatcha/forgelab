@@ -100,9 +100,10 @@ field temporal --type TIMESTAMP --named birthDate;
 description add-field-description --onProperty birthDate --title "Birth Date" --text "The birth date of this client";
 description add-field-description --onProperty birthDate --title "Date de Naissance" --text "La date de naissance du client" --locale fr;
 
-field manyToOne --named gender --fieldType ~.jpa.Gender;
+field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this client.";
 description add-field-description --onProperty gender --title "Genre" --text "Le genre de ce client." --locale fr;
+enum enumerated-field --onProperty gender ;
 
 field number --named coverageRate --type java.math.BigDecimal;
 @/* default=100% */;
