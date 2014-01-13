@@ -31,7 +31,7 @@ description add-class-description  --locale fr --title "Adresse" --text "Une adr
 
 field string --named street;
 description add-field-description --onProperty street --title "Street" --text "The name of the street";
-description add-field-description --onProperty street --title "Street" --text "Nom de la rue" --locale fr;
+description add-field-description --onProperty street --title "Rue" --text "Nom de la rue" --locale fr;
 
 field string --named zipCode;
 description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code oif this address";
@@ -64,8 +64,8 @@ description add-class-description --title "Person" --text "A person";
 description add-class-description  --locale fr --title "Personne" --text "Une personne";
 
 field string --named name;
-description add-field-description --onProperty name --title "Name" --text "Nom de la personne" --locale fr;
-description add-field-description --onProperty name --title "Nom" --text "The name of the person";
+description add-field-description --onProperty name --title "Name" --text "The name of the person";
+description add-field-description --onProperty name --title "Nom" --text "Nom de la personne" --locale fr;
 constraint NotNull --onProperty name;
 
 field string --named notes;
@@ -116,3 +116,5 @@ repotest create-test --packages src/main/java/org/adorsys/adph/server/rest/;
 cd ~~;
 
 mvn clean install -DskipTests;
+
+cd ..;
