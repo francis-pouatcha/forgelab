@@ -40,8 +40,8 @@ description add-class-description --title "Site" --text "The site of this pharma
 description add-class-description  --locale fr --title "Site" --text "Le site de cette pharmacie";
 
 field string --named displayName;
-description add-field-description --onProperty displayName --title "Name" --text "Nom du site" --locale fr;
-description add-field-description --onProperty displayName --title "Nom" --text "The site name";
+description add-field-description --onProperty displayName --title "Name" --text "The site name";
+description add-field-description --onProperty displayName --title "Nom" --text "Nom du site" --locale fr;
 constraint NotNull --onProperty displayName;
 
 field string --named address;
@@ -54,7 +54,7 @@ description add-field-description --onProperty city --title "City" --text "The s
 description add-field-description --onProperty city --title "Ville" --text "Ville du site" --locale fr;
 
 field string --named country;
-description add-field-description --onProperty country --title "Country" --text "The cite country";
+description add-field-description --onProperty country --title "Country" --text "The country site";
 description add-field-description --onProperty country --title "Pays" --text "Pays du site" --locale fr;
 
 field string --named siteNumber;
@@ -384,8 +384,10 @@ enum add-enum-class-description --title "Document State" --text "The state of a 
 enum add-enum-class-description --title "Document State" --text "The state of a documents." --locale fr;
 java new-enum-const SUSPENDED ;
 java new-enum-const ONGOING ;
-enum add-enum-constant-description --onConstant SUSPENDED --title "SUSPENDED" --text "The ndocument is suspended.";
-enum add-enum-constant-description --onConstant ONGOING  --title "ONGOING" --text "the document is ongoing " ;
+enum add-enum-constant-description --onConstant SUSPENDED --title "SUSPENDED" --text "The document is suspended.";
+enum add-enum-constant-description --onConstant SUSPENDED --title "SUSPENDED" --text "Ce document est suspendu." --locale fr;
+enum add-enum-constant-description --onConstant ONGOING  --title "ONGOING" --text "This document is ongoing." ;
+enum add-enum-constant-description --onConstant ONGOING  --title "ONGOING" --text "Ce document est courant." --locale fr;
 
 
 @/* Entity Clearance Config */;
@@ -974,8 +976,6 @@ description add-field-description --onProperty discountApproved --title "Remise 
 
 cd ~~ ;
 
-
-
 @/* ==================================== */;
 @/* Movement Stock*/;
 
@@ -984,19 +984,26 @@ java new-enum-type --named StockMovementType --package ~.jpa ;
 enum add-enum-class-description --title "Stock Movement Type" --text "Type of movement made ​​in the stock";
 enum add-enum-class-description  --locale fr --title "Type Mouvement Stock" --text "Type de mouvement effectué dans le stock";
 java new-enum-const OUT;
+enum add-enum-constant-description --onConstant OUT --title "Outbound" --text "Stock receip.";
+enum add-enum-constant-description --locale fr --onConstant OUT --title "Sortie" --text "Stock delivery.";
 java new-enum-const IN;
-enum generate-description-keys ;
+enum add-enum-constant-description --onConstant IN --title "Inbound" --text "Sortie de stock.";
+enum add-enum-constant-description --locale fr --onConstant IN --title "Entrée" --text "Entrée de stock.";
 
 @/* Movement Stock Endpoint*/;
 java new-enum-type --named StockMovementEndpoint --package ~.jpa ;
 enum add-enum-class-description --title "Stock Movement Endpoint" --text "An origin or the destination of a stock movement.";
 enum add-enum-class-description  --locale fr --title "Origine ou Destination du Mouvement Stock" --text "Origine ou la destination du movement de stock.";
-java new-enum-const MAGASIN;
-java new-enum-const PROVIDER;
+java new-enum-const WAREHOUSE;
+enum add-enum-constant-description --onConstant WAREHOUSE --title "Wharehouse" --text "Warehouse";
+enum add-enum-constant-description --locale fr --onConstant WAREHOUSE --title "Magasin" --text "Magasin.";
+java new-enum-const SUPPLIER;
+enum add-enum-constant-description --onConstant SUPPLIER --title "Supplier" --text "Supplier";
+enum add-enum-constant-description --locale fr --onConstant SUPPLIER --title "Fournisseur" --text "Forunisseur";
 java new-enum-const CUSTOMER;
-enum generate-description-keys ;
+enum add-enum-constant-description --onConstant CUSTOMER --title "Customer" --text "Customer";
+enum add-enum-constant-description --locale fr --onConstant CUSTOMER --title "Client" --text "Client";
 @/* Enumeration{MAGASIN, FOURNISSEUR, CLIENT} */;
-
 
 @/* Mouvement de stock */;
 entity --named StockMovement --package ~.jpa --idStrategy AUTO;
@@ -1118,9 +1125,12 @@ cd ~~ ;
 java new-enum-type --named ClientType --package ~.jpa ;
 enum add-enum-class-description --title "Client Type" --text "Type of client.";
 enum add-enum-class-description  --locale fr --title "Type of Client" --text "Type de client.";
-java new-enum-const PHYSIQUE;
-java new-enum-const MORAL;
-enum generate-description-keys ;
+java new-enum-const INDIVIDUAL;
+enum add-enum-constant-description --onConstant INDIVIDUAL --title "Individual" --text "Individual person";
+enum add-enum-constant-description --locale fr --onConstant INDIVIDUAL --title "Physique" --text "Personnalié physique";
+java new-enum-const LEGAL;
+enum add-enum-constant-description --onConstant LEGAL --title "Legal" --text "Legal entity";
+enum add-enum-constant-description --locale fr --onConstant LEGAL --title "Morale" --text "Personnalité juridique";
 @/* enumeration{PHYSIQUE, MORAL} */;
 
 @/* Entité CategorieClient */;
@@ -1260,10 +1270,14 @@ java new-enum-type --named SalesOrderType --package ~.jpa ;
 enum add-enum-class-description --title "Sales Order Type" --text "The type of this sales order.";
 enum add-enum-class-description  --locale fr --title "Type de Commande Client" --text "Le type d'une commande client.";
 java new-enum-const CASH_SALE;
+enum add-enum-constant-description --onConstant CASH_SALE --title "Cash Sale" --text "Cash Sale";
+enum add-enum-constant-description --locale fr --onConstant CASH_SALE --title "Vente Cash" --text "Vente en espece";
 java new-enum-const CREDIT_SALE;
-java new-enum-const PROFORMAT_SALE;
-enum generate-description-keys ;
-enum generate-description-keys  --locale fr;
+enum add-enum-constant-description --onConstant CREDIT_SALE --title "Credit Sale" --text "Credit sale";
+enum add-enum-constant-description --locale fr --onConstant CREDIT_SALE --title "Vente à Crédit" --text "Vente à crédit";
+java new-enum-const PROFORMA_SALE;
+enum add-enum-constant-description --onConstant PROFORMA_SALE --title "Pro Forma Sale" --text "Pro forma sale";
+enum add-enum-constant-description --locale fr --onConstant PROFORMA_SALE --title "Vente Pro Forma" --text "Vente pro forma";
 @/* Enumeration{VENTE_AU_PUBLIC, VENTE_A_CREDIT, VENTE_PROFORMAT} */;
 
 
@@ -1545,10 +1559,12 @@ java new-enum-type --named InvoiceType --package ~.jpa ;
 enum add-enum-class-description --title "Invoice Type" --text "Type of invoice.";
 enum add-enum-class-description  --locale fr --title "Type Facture" --text "Type de facture.";
 @/* Enumeration{CAISSE, PROFORMAT} */;
-java new-enum-const CAISSE ;
-java new-enum-const PROFORMAT ;
-enum add-enum-constant-description --onConstant CAISSE --title "Caisse" --text "facture de caisse";
-enum add-enum-constant-description --onConstant PROFORMAT --title "Proformat" --text "facture proformat";
+java new-enum-const CASH ;
+enum add-enum-constant-description --onConstant CASH --title "Cash" --text "Cash invoice";
+enum add-enum-constant-description --locale fr --onConstant CASH --title "Cash" --text "Facture caisse";
+java new-enum-const PROFORMA ;
+enum add-enum-constant-description --onConstant PROFORMA --title "Pro Forma" --text "Pro forma invoice";
+enum add-enum-constant-description --locale fr --onConstant PROFORMA --title "Pro Forma" --text "Facture pro forma";
 
 @/* Entite Ligne Facture */;
 entity --named InvoiceItem --package ~.jpa --idStrategy AUTO;
@@ -1690,11 +1706,17 @@ java new-enum-type  --named PaymentType --package ~.jpa ;
 enum add-enum-class-description --title "Payment Type" --text "Type of payment.";
 enum add-enum-class-description  --locale fr --title "Type Paiement" --text "Type de paiement.";
 java new-enum-const CASH;
-java new-enum-const CHEQUE;
-java new-enum-const CARTE_CREDIT;
-java new-enum-const BON_AVOIR_CLIENT;
-enum generate-description-keys ;
-enum generate-description-keys --locale fr ;
+enum add-enum-constant-description --onConstant CASH --title "Cash" --text "Cash Payment";
+enum add-enum-constant-description --locale fr --onConstant CASH --title "Caisse" --text "Paiement Caisse";
+java new-enum-const CHECK;
+enum add-enum-constant-description --onConstant CHECK --title "Check" --text "Check Payement";
+enum add-enum-constant-description --locale fr --onConstant CHECK --title "Cheque" --text "Paiement Cheque";
+java new-enum-const CREDIT_CARD;
+enum add-enum-constant-description --onConstant CREDIT_CARD --title "Credit Card" --text "Credit card payment";
+enum add-enum-constant-description --locale fr --onConstant CREDIT_CARD --title "Carte de crédit" --text "Paiement par cartes de crédit.";
+java new-enum-const VOUCHER;
+enum add-enum-constant-description --onConstant VOUCHER --title "Client Voucher" --text "Client voucher";
+enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Avoir Client" --text "Avoir client";
 
 @/* Entité  paiement */;
 entity --named Payment --package ~.jpa --idStrategy AUTO;
@@ -1931,9 +1953,11 @@ java new-enum-type --named VoucherType --package ~.jpa ;
 enum add-enum-class-description --title "Voucher Type" --text "The type of a voucher.";
 enum add-enum-class-description  --locale fr --title "Type de Bon" --text "Le type d un avoir.";
 java new-enum-const CREATION;
+enum add-enum-constant-description --onConstant CREATION --title "Creation" --text "Creation";
+enum add-enum-constant-description --locale fr --onConstant CREATION --title "Création" --text "Création";
 java new-enum-const RETURN;
-enum generate-description-keys ;
-enum generate-description-keys --locale fr ;
+enum add-enum-constant-description --onConstant RETURN --title "Return" --text "Return";
+enum add-enum-constant-description --locale fr --onConstant RETURN --title "Retour" --text "Retour";
 
 @/* Entité AvoirClient */;
 entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
