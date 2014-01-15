@@ -86,6 +86,10 @@ field manyToOne --named roleNames --fieldType ~.jpa.RoleName;
 description add-field-description --onProperty roleNames --title "Roles" --text "The names of roles assigned to this user.";
 description add-field-description --onProperty roleNames --title "Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
 
+field boolean --named active --primitive false
+description add-field-description --onProperty active --title "Active" --text "The active of roles assigned";
+description add-field-description --onProperty active --title "Active" --text "Les active de role attribués a de cet utilisateur" --locale fr;
+
 cd ~~;
 
 

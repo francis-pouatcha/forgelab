@@ -17,7 +17,7 @@
 
 set ACCEPT_DEFAULTS true;
 
-new-project --named adph-server --topLevelPackage org.adorsys.adph.server --finalName adph-server;
+new-project --named adph.server --topLevelPackage org.adorsys.adph.server --finalName adph.server;
 
 as7 setup;
 persistence setup --provider HIBERNATE --container JBOSS_AS7;
@@ -94,7 +94,7 @@ field string --named messageTicker;
 description add-field-description --onProperty messageTicker --title "Slogan Message" --text "The slogan message for this site";
 description add-field-description --onProperty messageTicker --title "Message Slogan" --text "Slogan du site" --locale fr;
 
-field long --named barCodePerLine;
+field long --named barCodePerLine --primitive false;
 description add-field-description --onProperty barCodePerLine --title "Bar Code" --text "The bar code";
 description add-field-description --onProperty barCodePerLine --title "Code Bar" --text "Le code bar" --locale fr;
 
@@ -174,12 +174,12 @@ field string --named phoneNumber;
 description add-field-description --onProperty phoneNumber --title "Phone Number" --text "The phone number of this user.";
 description add-field-description --onProperty phoneNumber --title "Numéro de Telephone" --text "Numéro de téléphone de cet utilisateur." --locale fr;
 
-field boolean --named disableLogin;
+field boolean --named disableLogin --primitive false;
 @/*  default=true */;
 description add-field-description --onProperty disableLogin --title "Disable Login" --text "Indicates whether the user login is disabled.";
 description add-field-description --onProperty disableLogin --title "Login Desactivé" --text "Indique si le login de cet utilisateur est desactivé ou non." --locale fr;
 
-field boolean --named accountLocked;
+field boolean --named accountLocked --primitive false;
 @/*  default=false */;
 description add-field-description --onProperty accountLocked --title "Disable Login" --text "Indicates whether the user account is locked.";
 description add-field-description --onProperty accountLocked --title "Login Desactivé" --text "Indique si le compte(login+password) est bloqué ou pas." --locale fr;
@@ -241,7 +241,7 @@ field string --named description;
 description add-field-description --onProperty description --title "Description" --text "The description of this agency";
 description add-field-description --onProperty description --title "Description" --text "Description de la filiale" --locale fr;
 
-field boolean --named active;
+field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this agency is active or not";
 description add-field-description --onProperty active --title "Actif" --text "Indique si la filiale est active ou non" --locale fr;
 
@@ -355,7 +355,7 @@ field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "Rate" --text "The VAT rate";
 description add-field-description --onProperty rate --title "Taux" --text "Taux de la TVA" --locale fr;
 
-field boolean --named valid;
+field boolean --named valid --primitive false;
 description add-field-description --onProperty valid --title "Valid" --text "Says if this VAT is valide or not";
 description add-field-description --onProperty valid --title "Valide" --text "Indique si la TVA est valide ou pas." --locale fr;
 
@@ -372,7 +372,7 @@ field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "Rate" --text "The rate of this margin.";
 description add-field-description --onProperty rate --title "Taux" --text "Taux de la marge." --locale fr;
 
-field boolean --named valid;
+field boolean --named valid --primitive false;
 description add-field-description --onProperty valid --title "Valid" --text "Says if this margin rate is valide or not";
 description add-field-description --onProperty valid --title "Valide" --text "Indique si ce taux de marge est valide ou pas." --locale fr;
 cd ~~ ;
@@ -418,7 +418,7 @@ field custom --named clearanceState --type ~.jpa.DocumentProcessingState.java ;
 description add-field-description --onProperty clearanceState --title "Clearance State" --text "The clearance state";
 description add-field-description --onProperty clearanceState --title "État du Solde" --text "État du solde" --locale fr;
 enum enumerated-field --onProperty clearanceState ;
-field boolean --named active;
+field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this clearance configuration is active or not";
 description add-field-description --onProperty active --title "Actif" --text "Indique si cette configuration solde est active ou non" --locale fr;
 @/* default=Boolean.TRUE */;
@@ -460,7 +460,7 @@ field manyToOne --named section --fieldType ~.jpa.Section;
 description add-field-description --onProperty section --title "Section" --text "The section in which the product is stored";
 description add-field-description --onProperty section --title "Rayon" --text "Le rayon dans lequel le produit est classé." --locale fr;
 
-field boolean --named active;
+field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this article is active or not";
 description add-field-description --onProperty active --title "Actif" --text "Indique si le produit est active ou non" --locale fr;
 
@@ -468,7 +468,7 @@ field manyToOne --named family --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty family --title "Family" --text "Specifies the product family of this article.";
 description add-field-description --onProperty family --title "Famille" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
 
-field long --named qtyInStock;
+field long --named qtyInStock --primitive false;
 description add-field-description --onProperty qtyInStock --title "Quantity in Stock" --text "The quantity of this article in stock.";
 description add-field-description --onProperty qtyInStock --title "Quantité en Stock" --text "Quantité reelle de produits dans le stock." --locale fr;
 
@@ -480,7 +480,7 @@ field number --named sppu --type java.math.BigDecimal;
 description add-field-description --onProperty sppu --title "Sales Price per Unit" --text "Sales price per unit.";
 description add-field-description --onProperty sppu --title "Prix de Vente Unitaire" --text "Prix de vente unitaire du produit" --locale fr;
 
-field long --named maxQtyPerPO;
+field long --named maxQtyPerPO --primitive false;
 description add-field-description --onProperty maxQtyPerPO --title "Max Quantity per PO" --text "Maximal quantity per purchase order";
 description add-field-description --onProperty maxQtyPerPO --title "Quantite Maximale par Commande" --text "Quantite maximale de produits commandable" --locale fr;
 
@@ -526,16 +526,16 @@ field manyToOne --named packagingMode --fieldType ~.jpa.PackagingMode;
 description add-field-description --onProperty packagingMode --title "Packaging Mode" --text "THe product packaging mode";
 description add-field-description --onProperty packagingMode --title "Mode de Conditionement" --text "Le mode de conditionnement du produit" --locale fr;
 
-field boolean --named authorizedSale; 
+field boolean --named authorizedSale --primitive false; 
 @/*  vente_autorisee  default=true  */;
 description add-field-description --onProperty authorizedSale --title "Product Identification Code" --text "Allows to release a prouct for sale.";
 description add-field-description --onProperty authorizedSale --title "Code Identifiant Prouit" --text "Autorise ou non un produit à la vente" --locale fr;
 
-field boolean --named approvedOrder; 
+field boolean --named approvedOrder --primitive false; 
 description add-field-description --onProperty approvedOrder --title "Approved Order" --text "Document if the next order of this product is approved.";
 description add-field-description --onProperty approvedOrder --title "Commande Autorisée" --text "Autorise ou non le produit à la commande." --locale fr;
 
-field long --named maxStockQty;
+field long --named maxStockQty --primitive false;
 description add-field-description --onProperty maxStockQty --title "Max Stock Quantity" --text "Sets the standard max stock quantity for this product.";
 description add-field-description --onProperty maxStockQty --title "Quantité Plafond" --text "Permet de fixer le max de qté en stock de produit." --locale fr;
 
@@ -552,7 +552,7 @@ constraint Size --onProperty activeIngredients --max 256;
 description add-field-description --onProperty activeIngredients --title "Active Ingredients" --text "Describes the active ingredients of this drug.";
 description add-field-description --onProperty activeIngredients --title "Principes Actifs" --text "Decrit les principes actifs de ce médicament." --locale fr;
 
-field boolean --named mixedDrug;
+field boolean --named mixedDrug --primitive false;
 @/*   produit_compose  default=false  */;
 description add-field-description --onProperty mixedDrug --title "Mixed Drug" --text "Indicates whether this product is mixed.";
 description add-field-description --onProperty mixedDrug --title "Prouit Composé" --text "Précise si un produit est décomposable ou non." --locale fr;
@@ -675,7 +675,7 @@ field string --named designation;
 description add-field-description --onProperty designation --title "Designation" --text "The name the product in this order item.";
 description add-field-description --onProperty designation --title "Designation" --text "Le nom du produit de la ligne de commande." --locale fr;
 
-field boolean --named valid;
+field boolean --named valid --primitive false;
 description add-field-description --onProperty valid --title "Valid" --text "Determines if the order item is valid or not according to the expectations of the supplier.";
 description add-field-description --onProperty valid --title "Valide" --text "Détermine si la ligne de commande est valide ou pas selon les attentes du fournisseur." --locale fr;
 
@@ -827,17 +827,17 @@ field temporal --type TIMESTAMP --named creationDate;
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this order.";
 description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette commande." --locale fr;
 
-field boolean --named claims;
+field boolean --named claims --primitive false ;
 description add-field-description --onProperty claims --title "Claims" --text "Specifies whether the purchase contains claims or not.";
 description add-field-description --onProperty claims --title "Réclamations" --text "Précise si l approvisionement contient des réclamations ou non." --locale fr;
 @/* default=false */;
 
-field boolean --named emergency;
+field boolean --named emergency --primitive false ;
 description add-field-description --onProperty emergency --title "Emergency" --text "Emergency";
 description add-field-description --onProperty emergency --title "Urgence" --text "Urgence." --locale fr;
 @/* default=false */;
 
-field boolean --named closed;
+field boolean --named closed --primitive false ;
 description add-field-description --onProperty closed --title "Closed" --text "Specifies whether the purchase was closed or not.";
 description add-field-description --onProperty closed --title "Cloturé" --text "Précise si l approvisionement a été cloturé ou  non." --locale fr;
 
@@ -957,7 +957,7 @@ description add-field-description --onProperty grossMargin --title "Marge Brute"
 @/* Formule= prix_vente_unitaire – prix_achat_unitaire */; 
 @/* C est le benefice net pour chaque produit du lot */;
 
-field boolean --named approvedForSale; 
+field boolean --named approvedForSale --primitive false ; 
 description add-field-description --onProperty approvedForSale --title "Approved For Sale" --text "Used to approved the sale of products in this lot.";
 description add-field-description --onProperty approvedForSale --title "Vente Autorisée" --text "Permet d autoriser ou non la vente d un lot de produits." --locale fr;
 @/* default=true */;
@@ -967,7 +967,7 @@ field number --named maxDiscountRate --type java.math.BigDecimal;
 description add-field-description --onProperty maxDiscountRate --title "Max Discount Rate" --text "Maximal discount rate for product of this lot.";
 description add-field-description --onProperty maxDiscountRate --title "Taux Maximal Remise" --text "Taux de remise max pour les produits de ce lot." --locale fr;
 
-field boolean --named discountApproved; 
+field boolean --named discountApproved --primitive false ; 
 description add-field-description --onProperty discountApproved --title "Discount Approved" --text "Used to approved the discount on products in this lot.";
 description add-field-description --onProperty discountApproved --title "Remise Autorisée" --text "Permet d autoriser ou non la remise sur vent d un produit de ce lot." --locale fr;
 @/* default=true */;
@@ -1101,7 +1101,7 @@ description add-field-description --onProperty note --title "Note" --text "Descr
 description add-field-description --onProperty note --title "Note" --text "Description de ce mouvement de stock." --locale fr;
 constraint Size --onProperty note --max 256;
 
-field boolean --named canceled; 
+field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the stock movement was canceled or not.";
 description add-field-description --onProperty canceled --title "Annulé" --text "Precise si le mouvement de tock a été annulée ou non." --locale fr;
 @/* default=false */;
@@ -1187,11 +1187,11 @@ field string --named email;
 description add-field-description --onProperty email --title "Email" --text "The email address of the client";
 description add-field-description --onProperty email --title "Email" --text "Email du client" --locale fr;
 
-field boolean --named creditAuthorized;
+field boolean --named creditAuthorized --primitive false;
 description add-field-description --onProperty creditAuthorized --title "Credit Authorized" --text "Whether or not the customer can purchase on credit";
 description add-field-description --onProperty creditAuthorized --title "Crédit Autorisé" --text "Autorise ou non le crédit au client" --locale fr;
 
-field boolean --named discountAuthorized;
+field boolean --named discountAuthorized --primitive false;
 description add-field-description --onProperty discountAuthorized --title "Discount Authorized" --text "Whether or not the customer can be given discount";
 description add-field-description --onProperty discountAuthorized --title "Remise Autorisée" --text "Autorise ou non la remise globale sur les produits au client" --locale fr;
 @/* default=true */;
@@ -1304,12 +1304,12 @@ description add-field-description --onProperty salesOrderStatus --title "Status"
 description add-field-description --onProperty salesOrderStatus --title "Status" --text "L'etat de cette commande client." --locale fr;
 enum enumerated-field --onProperty salesOrderStatus ;
 
-field boolean --named cashed;
+field boolean --named cashed --primitive false ;
 description add-field-description --onProperty cashed --title "Cashed" --text "Indicates whether the order has been cashed or not.";
 description add-field-description --onProperty cashed --title "Encaissé" --text "Indique si la commande a été encaissée ou non." --locale fr;
 @/* default=false */;
 
-field boolean --named canceled; 
+field boolean --named canceled --primitive false ; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the order was canceled or not.";
 description add-field-description --onProperty canceled --title "Annulé" --text "Indique si la commande a été annulée ou pas." --locale fr;
 @/* default=false */;
@@ -1339,7 +1339,7 @@ description add-field-description --onProperty otherDiscount --title "Other Disc
 description add-field-description --onProperty otherDiscount --title "Autre Remise" --text "Autre forme de remise sur la commande." --locale fr;
 @/* Default=0, other_remise */;
 
-field long --named invoiceId;
+field long --named invoiceId --primitive false;
 description add-field-description --onProperty invoiceId --title "Invoice Identifier" --text "The identifier of the invoice associated with this sales order.";
 description add-field-description --onProperty invoiceId --title "Identifiant Facture" --text "Idenfiant de la facture liée à cette commande." --locale fr;
 
@@ -1360,7 +1360,7 @@ description add-field-description --onProperty coverageRate --title "Coverage Ra
 description add-field-description --onProperty coverageRate --title "Taux Couverture" --text "Taux de couverture TTC pour cette commande." --locale fr;
 @/* taux_couverture, Default=100% */;
 
-field boolean --named partialSales; 
+field boolean --named partialSales --primitive false ; 
 description add-field-description --onProperty canceled --title "Partial Sales" --text "Sates if the current order is a partial sales.";
 description add-field-description --onProperty canceled --title "VVente Partielle" --text "Indique si la presente commande represente un vente partielle." --locale fr;
 @/* default=false */;
@@ -1488,7 +1488,7 @@ description add-field-description --onProperty initialAmount --title "Initial Am
 description add-field-description --onProperty initialAmount --title "Fond de Caisse" --text "Le fond initial de la caisse." --locale fr;
 @/* Default=0 */;
 
-field boolean --named opened;
+field boolean --named opened --primitive false;
 description add-field-description --onProperty opened --title "Open" --text "Indicates whether the cash drawer is open.";
 description add-field-description --onProperty opened --title "Ouverte" --text "Indique si la caisse est ouverte." --locale fr;
 @/* default=true */;
@@ -1647,12 +1647,12 @@ description add-field-description --onProperty netToPay --title "Net a Payer" --
 description add-field-description --onProperty netToPay --title "Net a Payer" --text "Le montant net à payer." --locale fr;
 @/*  Default=0 */; 
 
-field boolean --named settled; 
+field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the invoice is settled.";
 description add-field-description --onProperty settled --title "Soldée" --text "Indique si la facture est soldée ou pas." --locale fr;
 @/* default=false */;
 
-field boolean --named cashed; 
+field boolean --named cashed --primitive false; 
 description add-field-description --onProperty cashed --title "Cashed" --text "Sates if the invoice is cashed.";
 description add-field-description --onProperty cashed --title "encaisseé" --text "Indique si la facture est encaissée ou pas." --locale fr;
 @/* default=false */;
@@ -1753,7 +1753,7 @@ description add-field-description --onProperty paymentType --title "Payment Type
 description add-field-description --onProperty paymentType --title "Type de Paiement" --text "La type de ce paiement." --locale fr;
 enum enumerated-field --onProperty paymentType ;
 
-field boolean --named paymentReceiptPrinted;
+field boolean --named paymentReceiptPrinted --primitive false;
 description add-field-description --onProperty paymentReceiptPrinted --title "Open" --text "Indicates whether the payment receipt is printed or not.";
 description add-field-description --onProperty paymentReceiptPrinted --title "Ouverte" --text "Indique si le reçu de paiement est imprimé ou pas." --locale fr;
 @/* default=false */;
@@ -1781,7 +1781,7 @@ field number --named voucherAmount --type java.math.BigDecimal;
 description add-field-description --onProperty voucherAmount --title "Voucher Amount" --text "The voucher amount for this payment.";
 description add-field-description --onProperty voucherAmount --title "Montant du Bon" --text "Le montant du bon pour ce paiement." --locale fr;
 
-field boolean --named compensation;
+field boolean --named compensation --primitive false;
 description add-field-description --onProperty compensation --title "Compensation" --text "Indicates whether this payment is a compensation (coupon, voucher).";
 description add-field-description --onProperty compensation --title "Compensation" --text "Indique si c est un paiement par compensation de bon avoir ou non." --locale fr;
 @/* default=false */;
@@ -1800,15 +1800,15 @@ field string --named iiNumber;
 description add-field-description --onProperty iiNumber --title "Item Number" --text "The inventory item number.";
 description add-field-description --onProperty iiNumber --title "Numéro de Ligne" --text "Le numéro de la ligne d inventaire." --locale fr;
 
-field long --named expectedQty;
+field long --named expectedQty --primitive false;
 description add-field-description --onProperty expectedQty --title "Expected Quantity in Stock" --text "The quantity of this article expected to be in stock.";
 description add-field-description --onProperty expectedQty --title "Quantité Attendue en Stock" --text "Quantité de produits supposé en le stock." --locale fr;
 
-field long --named asseccedQty;
+field long --named asseccedQty --primitive false;
 description add-field-description --onProperty asseccedQty --title "Real Quantity" --text "Actual quantity of products physically counted.";
 description add-field-description --onProperty asseccedQty --title "Real Quantité" --text "Quantité réelle de produits de la ligne comptés physiquement." --locale fr;
 
-field long --named gap;
+field long --named gap --primitive false;
 description add-field-description --onProperty gap --title "Gap" --text "Deviation of access and expected quantity.";
 description add-field-description --onProperty gap --title "Écart" --text "Écart de stock de la ligne d inventaire." --locale fr;
 @/* formule=(qte_reel - qte_en_stock) */;
@@ -1915,7 +1915,7 @@ description add-field-description --onProperty salesPrice --title "Sales Price" 
 description add-field-description --onProperty salesPrice --title "Prix de Vente" --text "Prix de vente." --locale fr;
 constraint NotNull --onProperty salesPrice;
 
-field boolean --named active;
+field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Alows activation or deactivation of this transformation.";
 description add-field-description --onProperty active --title "Actif" --text "Permet d activer ou de desactiver la transformation.." --locale fr;
 @/* Default= true */;
@@ -1962,7 +1962,7 @@ field string --named clientNumber;
 description add-field-description --onProperty clientNumber --title "Client Number" --text "The number of the client holding this voucher.";
 description add-field-description --onProperty clientNumber --title "Numéro Client" --text "Le numéro du client qui possède l avoir." --locale fr;
 
-field boolean --named canceled; 
+field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
 description add-field-description --onProperty canceled --title "Annulé" --text "Indique si l avoir  a été annulé ou non." --locale fr;
 @/* default=false */;
@@ -1988,7 +1988,7 @@ description add-field-description --onProperty amountUsed --title "Amount Used" 
 description add-field-description --onProperty amountUsed --title "Montant Utilisé" --text "Montant utilisé." --locale fr;
 @/* Default=0 */;
 
-field boolean --named settled; 
+field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the voucher is settled or not.";
 description add-field-description --onProperty settled --title "Soldé" --text "Indique si l avoir est soldé ou non." --locale fr;
 @/* default=false */;
@@ -1998,7 +1998,7 @@ description add-field-description --onProperty restAmount --title "Rest Amount" 
 description add-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
 @/* Default=0 */;
 
-field boolean --named voucherPrinted;
+field boolean --named voucherPrinted --primitive false;
 description add-field-description --onProperty voucherPrinted --title "Printed" --text "Indicates whether the voucher is printed or not.";
 description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
 @/* default=false */;
@@ -2047,7 +2047,7 @@ description add-field-description --onProperty restAmount --title "Rest Amount" 
 description add-field-description --onProperty restAmount --title "Montant Restant" --text "Le montant restant a payer pour cette dette." --locale fr;
 @/* Default=0 */;
 
-field boolean --named settled; 
+field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the debt is settled or not.";
 description add-field-description --onProperty settled --title "Soldé" --text "Indique si la dette est soldé ou non." --locale fr;
 @/* default=false */;
@@ -2057,7 +2057,7 @@ field temporal --type TIMESTAMP --named lastPaymentDate;
 description add-field-description --onProperty lastPaymentDate --title "Last Payment Date" --text "The last payment date.";
 description add-field-description --onProperty lastPaymentDate --title "Date Dernier Versement " --text "La date du dernier versement." --locale fr;
 
-field boolean --named canceled; 
+field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the debt is canceled or not.";
 description add-field-description --onProperty canceled --title "Annulée" --text "Indique si la dette est annulée ou non." --locale fr;
 @/* default=false */;
@@ -2103,7 +2103,7 @@ description add-field-description --onProperty restAmount --title "Rest Amount" 
 description add-field-description --onProperty restAmount --title "Montant Restant" --text "Le montant restant a payer pour cette dette." --locale fr;
 @/* Default=0 */;
 
-field boolean --named settled; 
+field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the statement is settled or not.";
 description add-field-description --onProperty settled --title "Soldé" --text "Indique si cet état est soldé ou non." --locale fr;
 @/* default=false */;
@@ -2113,12 +2113,12 @@ description add-field-description --onProperty amountFromVouchers --title "Rest 
 description add-field-description --onProperty amountFromVouchers --title "Montant Restant" --text "Montant de l avoir si le client en possède utilisé pour rembourser les dettes." --locale fr;
 @/* Default=0 */;
 
-field boolean --named canceled; 
+field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the statement is canceled or not.";
 description add-field-description --onProperty canceled --title "Annulée" --text "Precise si l états a été annulée ou non." --locale fr;
 @/* default=false */;
 
-field boolean --named useVoucher; 
+field boolean --named useVoucher --primitive false; 
 description add-field-description --onProperty useVoucher --title "Use Vouchers" --text "Specifies whether the client can use his voucher to pay its debts.";
 description add-field-description --onProperty useVoucher --title "Consommer Avoir" --text "Indique si le client peut consommer ou non ses avoirs pour payer ses dettes." --locale fr;
 @/* default=false */;
@@ -2188,7 +2188,9 @@ reporest setup --activatorType APP_CLASS ;
 reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ --overrride --contentType application/xml ;
  
 
+cd ~~;
 
+mvn clean install -DskipTests;
 
 
 
