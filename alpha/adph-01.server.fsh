@@ -78,7 +78,7 @@ description add-field-description --onProperty gender --title "Gender" --text "T
 description add-field-description --onProperty gender --title "Genre" --text "Le gnere de cette personne" --locale fr;
 enum enumerated-field --onProperty gender ;
 
-field oneToOne --named address --fieldType ~.jpa.Address;
+field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The address of this person";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse de cette personne" --locale fr;
 
@@ -113,9 +113,7 @@ cd ~~;
 
 repotest setup;
 
-repotest create-test --packages src/main/java/org/adorsys/adph/server/repo/;
-
-repotest create-test --packages src/main/java/org/adorsys/adph/server/rest/;
+repotest create-test --packages src/main/java/org/adorsys/adph/;
 
 cd ~~;
 

@@ -114,9 +114,7 @@ cd ~~;
 
 repotest setup;
 
-repotest create-test --packages src/main/java/org/adorsys/adspl/repo/;
-
-repotest create-test --packages src/main/java/org/adorsys/adspl/rest/;
+repotest create-test --packages src/main/java/org/adorsys/adspl;
 
 cd ~~;
 
