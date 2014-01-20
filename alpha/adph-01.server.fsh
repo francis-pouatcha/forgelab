@@ -14,6 +14,8 @@ set ACCEPT_DEFAULTS false;
 
 enum setup;
 
+association setup ;
+
 java new-enum-type --named Gender --package ~.jpa ;
 enum add-enum-class-description --title "Gender" --text "The gender of  a person";
 enum add-enum-class-description --locale fr --title "Genre" --text "Le genre d une personne";
@@ -97,11 +99,10 @@ field manyToOne --named roleNames --fieldType ~.jpa.RoleName;
 description add-field-description --onProperty roleNames --title "Roles" --text "The names of roles assigned to this user.";
 description add-field-description --onProperty roleNames --title "Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
 display add-list-field --field roleNames.name;
-association add-nested --field roleNames.name;
-association add-display --onProperty roleNames --selectionMode FORWARD;
+association set-selection-mode --onProperty roleNames --selectionMode FORWARD ;
 
 field number --named hourlyWage --type java.math.BigDecimal;
-description add-field-description --onProperty hourlyWage --title "Hourly Wage" --text "The person's hourly wage";
+description add-field-description --onProperty hourlyWage --title "Hourly Wage" --text "The person s hourly wage";
 description add-field-description --onProperty hourlyWage --title "Salaire Horaire" --text "Le salaire horaire de cette personne" --locale fr;
 format add-number-type --onProperty hourlyWage --type CURRENCY;
 
