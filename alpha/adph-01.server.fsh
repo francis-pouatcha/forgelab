@@ -55,6 +55,7 @@ description add-class-description  --locale fr --title "Roles" --text "Nom de ro
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this role.";
 description add-field-description --onProperty name --title "Intitule" --text "Intitule de ce role" --locale fr;
+display add-toString-field --field name;
 
 cd ~~;
 
@@ -67,6 +68,7 @@ field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of the person";
 description add-field-description --onProperty name --title "Nom" --text "Nom de la personne" --locale fr;
 constraint NotNull --onProperty name;
+display add-list-field --field name;
 
 field string --named notes;
 description add-field-description --onProperty notes --title "Notes" --text "The description of this person";
@@ -77,14 +79,35 @@ field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this person.";
 description add-field-description --onProperty gender --title "Genre" --text "Le gnere de cette personne" --locale fr;
 enum enumerated-field --onProperty gender ;
+display add-list-field --field gender;
 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The address of this person";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse de cette personne" --locale fr;
+display add-list-field --field address.street;
+display add-list-field --field address.city;
+display add-list-field --field address.country;
+association set-selection-mode --onProperty address --selectionMode NONE;
+association display-field --field address.zipCode;
+association display-field --field address.street;
+association display-field --field address.city;
+association display-field --field address.country;
 
 field manyToOne --named roleNames --fieldType ~.jpa.RoleName;
 description add-field-description --onProperty roleNames --title "Roles" --text "The names of roles assigned to this user.";
 description add-field-description --onProperty roleNames --title "Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
+display add-list-field --field roleNames.name;
+association add-nested --field roleNames.name;
+association add-display --onProperty roleNames --selectionMode FORWARD;
+
+field number --named hourlyWage --type java.math.BigDecimal;
+description add-field-description --onProperty hourlyWage --title "Hourly Wage" --text "The person's hourly wage";
+description add-field-description --onProperty hourlyWage --title "Salaire Horaire" --text "Le salaire horaire de cette personne" --locale fr;
+format add-number-type --onProperty hourlyWage --type CURRENCY;
+
+field temporal --type TIMESTAMP --named birthDate; 
+description add-field-description --onProperty birthDate --title "Birth Date" --text "Date of birth";
+description add-field-description --onProperty birthDate --title "Date de Naissance" --text "Date de naissance." --locale fr;
 
 field boolean --named active --primitive false
 description add-field-description --onProperty active --title "Active" --text "The active of roles assigned";
