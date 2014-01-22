@@ -67,7 +67,6 @@ constraint NotNull --onProperty displayName;
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The site address";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
-constraint Size --onProperty address --max 256;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
@@ -98,8 +97,6 @@ description add-field-description --onProperty registerNumber --title "Register 
 description add-field-description --onProperty registerNumber --title "Numéro de Registre" --text "Numéro de registre du site" --locale fr;
 
 cd ~~;
-
-
 
 @/* Entity Gender */;
 java new-enum-type --named Gender --package ~.jpa ;
@@ -842,7 +839,7 @@ constraint NotNull --onProperty creatingUser;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
-description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau de livraison en monnaie locale(FCFA)." --locale fr;
+description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau (FCFA)." --locale fr;
 
 field temporal --type TIMESTAMP --named orderDate; 
 description add-field-description --onProperty orderDate --title "Order Date" --text "Order date.";
@@ -1009,8 +1006,6 @@ description add-field-description --onProperty totalSalesPrice --title "Total Sa
 description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Totale" --text "Prix de vente total pour les mouvements de type vente." --locale fr;
 
 cd ~~ ;
-
-
 
 @/* ==================================== */;
 @/* Client */;
@@ -1343,7 +1338,7 @@ description add-field-description --onProperty agency --title "Agency" --text "S
 field temporal --type TIMESTAMP --named openingDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
 description add-field-description --onProperty openingDate --title "Opening Date" --text "The opening date of this drawer.";
-description add-field-description --onProperty openingDate --title "Date d'Ouverture" --text "La date d'ouverture de cette caisse." --locale fr;
+description add-field-description --onProperty openingDate --title "Date d Ouverture" --text "La date d ouverture de cette caisse." --locale fr;
 
 field temporal --type TIMESTAMP --named closingDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1362,7 +1357,7 @@ description add-field-description --onProperty opened --title "Ouverte" --text "
 
 field number --named totalCashIn --type java.math.BigDecimal;
 description add-field-description --onProperty totalCashIn --title "Total Cash In" --text "The total cash in.";
-description add-field-description --onProperty totalCashIn --title "Total Encaissement" --text "L'encaissement totale." --locale fr;
+description add-field-description --onProperty totalCashIn --title "Total Encaissement" --text "L encaissement totale." --locale fr;
 @/* Default=0 */;
 
 field number --named totalCashOut --type java.math.BigDecimal;
@@ -1387,12 +1382,12 @@ description add-field-description --onProperty totalCreditCard --title "Total Ca
 
 field number --named totalCompanyVoucher --type java.math.BigDecimal;
 description add-field-description --onProperty totalCompanyVoucher --title "Total Company Vouchera" --text "Total voucher (from company or hospital) in this drawer.";
-description add-field-description --onProperty totalCompanyVoucher --title "Total Avoir Compangny" --text "Totale des bons (de sociéte ou d'hopital) qu'il ya en caisse." --locale fr;
+description add-field-description --onProperty totalCompanyVoucher --title "Total Avoir Compangny" --text "Totale des bons (de sociéte ou d hopital) qu il ya en caisse." --locale fr;
 @/* Default=0 */;
 
 field number --named totalClientVoucher --type java.math.BigDecimal;
 description add-field-description --onProperty totalClientVoucher --title "Total Client Voucher" --text "Total voucher (from client) in this drawer.";
-description add-field-description --onProperty totalClientVoucher --title "Total Avoir Client" --text "Totale des bons (client) qu'il ya en caisse." --locale fr;
+description add-field-description --onProperty totalClientVoucher --title "Total Avoir Client" --text "Totale des bons (client) qu il ya en caisse." --locale fr;
 @/* Default=0 */;
 
 @/* Commande Client */;
@@ -1400,13 +1395,13 @@ description add-field-description --onProperty totalClientVoucher --title "Total
 @/* SalesOrderType */;
 java new-enum-type --named SalesOrderType --package ~.jpa ;
 enum add-enum-class-description --title "Sales Order Type" --text "The type of this sales order.";
-enum add-enum-class-description  --locale fr --title "Type de Commande Client" --text "Le type d'une commande client.";
+enum add-enum-class-description  --locale fr --title "Type de Commande Client" --text "Le type d une commande client.";
 java new-enum-const CASH_SALE;
 enum add-enum-constant-description --onConstant CASH_SALE --title "Cash Sale" --text "Cash Sale";
 enum add-enum-constant-description --locale fr --onConstant CASH_SALE --title "Vente Au comptant" --text "Vente en espece";
 java new-enum-const PARTIAL_SALE;
-enum add-enum-constant-description --onConstant CREDIT_SALE --title "Partial Sale" --text "Credit sale";
-enum add-enum-constant-description --locale fr --onConstant CREDIT_SALE --title "Vente Partiel" --text "Vente à crédit";
+enum add-enum-constant-description --onConstant PARTIAL_SALE --title "Partial Sale" --text "Credit sale";
+enum add-enum-constant-description --locale fr --onConstant PARTIAL_SALE --title "Vente Partiel" --text "Vente à crédit";
 java new-enum-const PROFORMA_SALE;
 enum add-enum-constant-description --onConstant PROFORMA_SALE --title "Pro Forma Sale" --text "Pro forma sale";
 enum add-enum-constant-description --locale fr --onConstant PROFORMA_SALE --title "Vente Pro Forma" --text "Vente pro forma";
@@ -1441,19 +1436,20 @@ description add-field-description --onProperty salesPricePU --title "Sales Price
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix de vente unitaire." --locale fr;
 @/*  Default=0 */; 
 
-field number --named totalDiscount --type java.math.BigDecimal;
-description add-field-description --onProperty totalDiscount --title "Total Discount" --text "Total discount of this line.";
-description add-field-description --onProperty totalDiscount --title "Remise Totale" --text "Remise totale pour cette ligne." --locale fr;
+field number --named totalSalePrice --type java.math.BigDecimal;
+description add-field-description --onProperty totalSalePrice --title "Total Sale Price" --text "Total Sale Price.";
+description add-field-description --onProperty totalSalePrice --title "Prix de vente Total" --text "Prix de vente Total." --locale fr;
 @/* Default=0., Formule=(remise * qté_commande) */;
 
-field string --named modifyingUser; 
-description add-field-description --onProperty modifyingUser --title "Modifying User" --text "The user editing this order item.";
-description add-field-description --onProperty modifyingUser --title "Agent de Saisie" --text "Agent de saisie de cette ligne." --locale fr;
+
+field number --named amountReturn --type java.math.BigDecimal;
+description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Return.";
+description add-field-description --onProperty amountReturn --title "Montant Retour" --text "Montant Retour." --locale fr;
 
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The purchase order item of the product to be sold.";
-description add-field-description --onProperty article --title "Article" --text "La ligne d'approvisionnement contenant le produit que l'on veut vendre." --locale fr;
-
+description add-field-description --onProperty article --title "Article" --text "La ligne d approvisionnement contenant le produit que l on veut vendre." --locale fr;
+constraint NotNull --onProperty article ;
 cd ~~;
 
 
@@ -1466,6 +1462,11 @@ field string --named soNumber;
 description add-field-description --onProperty soNumber --title "Sales Order Number" --text "The sales order number.";
 description add-field-description --onProperty soNumber --title "Numéro de Commande Client" --text "Le numéro de la commande client." --locale fr;
 
+
+field oneToMany --named salesOrderItem --fieldType ~.jpa.SalesOrderItem.java --inverseFieldName saleOrder --fetchType EAGER
+description add-field-description --onProperty salesOrderItem --title "Sale Order Items" --text "Sale Order Items";
+description add-field-description --onProperty salesOrderItem --title "Ligne de Vente" --text "Ligne de Vente" --locale fr;
+
 field temporal --type TIMESTAMP --named creationDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this order.";
@@ -1474,7 +1475,7 @@ description add-field-description --onProperty creationDate --title "Date de Cr�
 field temporal --type TIMESTAMP --named cancelationDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
 description add-field-description --onProperty cancelationDate --title "Cancelation Date" --text "The cancelation date of this order.";
-description add-field-description --onProperty cancelationDate --title "Date d'Annulation" --text "La date d'annulation de cette commande." --locale fr;
+description add-field-description --onProperty cancelationDate --title "Date d Annulation" --text "La date d annulation de cette commande." --locale fr;
 
 field temporal --type TIMESTAMP --named restorationDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1490,10 +1491,14 @@ field manyToOne --named insurance --fieldType ~.jpa.Insurrance;
 description add-field-description --onProperty insurance --title "Insurance" --text "The Insurance ordering.";
 description add-field-description --onProperty insurance --title "Assurance" --text "Le client  qui passe la commande." --locale fr;
 
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The Insurance ordering.";
+description add-field-description --onProperty vat --title "VAT" --text "Le client  qui passe la commande." --locale fr;
+
 field manyToOne --named saler --fieldType ~.jpa.Users;
 description add-field-description --onProperty saler --title "Saler" --text "The user making this sale.";
-description add-field-description --onProperty saler --title "Vendeur" --text "L'utilisateur qui effectue la vente." --locale fr;
-
+description add-field-description --onProperty saler --title "Vendeur" --text "L utilisateur qui effectue la vente." --locale fr;
+constraint NotNull --onProperty saler ;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency where sale has been made.";
@@ -1502,7 +1507,7 @@ constraint NotNull --onProperty agency ;
 
 field custom --named salesOrderStatus --type ~.jpa.DocumentProcessingState.java;
 description add-field-description --onProperty salesOrderStatus --title "Status" --text "The status of this sales order.";
-description add-field-description --onProperty salesOrderStatus --title "Status" --text "L'etat de cette commande client." --locale fr;
+description add-field-description --onProperty salesOrderStatus --title "Status" --text "L etat de cette commande client." --locale fr;
 enum enumerated-field --onProperty salesOrderStatus ;
 
 field boolean --named cashed --primitive false ;
@@ -1522,7 +1527,12 @@ description add-field-description --onProperty amountVAT --title "Montant TVA" -
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
-description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c'est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
+description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
+@/* Default=0, remise */;
+
+field number --named totalReturnAmount --type java.math.BigDecimal;
+description add-field-description --onProperty totalReturnAmount --title "Total Return Amount" --text "Total Return Amount.";
+description add-field-description --onProperty totalReturnAmount --title "Montant total retour" --text "Montant total retour." --locale fr;
 @/* Default=0, remise */;
 
 field number --named amountAfterTax --type java.math.BigDecimal;
@@ -1534,133 +1544,255 @@ field custom --named salesOrderType --type ~.jpa.SalesOrderType;
 description add-field-description --onProperty salesOrderType --title "Type" --text "The type of this sales order.";
 description add-field-description --onProperty salesOrderType --title "Type" --text "Le type de cette commande client." --locale fr;
 enum enumerated-field --onProperty salesOrderType ;
-@/* Enumeration{VENTE_AU_PUBLIC, VENTE_A_CREDIT, VENTE_PROFORMAT} */;
-
-field string --named voucherNumber;
-description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The number of the client voucher associated with this order.";
-description add-field-description --onProperty voucherNumber --title "Numéro Avoir" --text "Le numéro  de l'avoir client lié à la commande." --locale fr;
-
-field string --named couponNumber;
-description add-field-description --onProperty couponNumber --title "Coupon Number" --text "The number of the client coupon associated with this order.";
-description add-field-description --onProperty couponNumber --title "Numéro Bon" --text "Le numéro bu bon client lié à la commande." --locale fr;
 
 
+@/* Invoice */;
 
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-@/* ==================================== */;
+@/* Entite Ligne Facture */;
+entity --named InvoiceItem --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Invoice Item" --text "An invoice item.";
+description add-class-description  --locale fr --title "Ligne Facture" --text "Une ligne facture.";
 
+field long --named indexLine; 
+description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through invoice items";
+description add-field-description --onProperty indexLine --title "Index de Ligne" --text "Index permettant de rechercher la ligne de facture" --locale fr;
 
-@/* ======================== */;
-
-
-
-@/* =============================== */;
-
-@/* ====================================== */;
-@/* Accounts Receivable */;
-
-@/* Entité AvoirClient */;
-entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Client Voucher" --text "Client voucher";
-description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
-
-field string --named voucherNumber;
-description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The client voucher number.";
-description add-field-description --onProperty voucherNumber --title "Numéro de l Avoir" --text "Le numéro de l avoir du client." --locale fr;
-
-field temporal --type TIMESTAMP --named modifDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty modifDate --title "Modified" --text "Modification date.";
-description add-field-description --onProperty modifDate --title "Modifié" --text "Date d edition de l avoir." --locale fr;
-
-field number --named amount --type java.math.BigDecimal;
-description add-field-description --onProperty amount --title "Amount" --text "Voucher amount.";
-description add-field-description --onProperty amount --title "Montant" --text "Montant de l avoir" --locale fr;
-constraint NotNull --onProperty amount;
-
-field string --named clientName;
-description add-field-description --onProperty clientName --title "Client Name" --text "The name of the client holding this voucher.";
-description add-field-description --onProperty clientName --title "Nom Client" --text "Nom du client qui possède l avoir." --locale fr;
-
-field string --named clientNumber;
-description add-field-description --onProperty clientNumber --title "Client Number" --text "The number of the client holding this voucher.";
-description add-field-description --onProperty clientNumber --title "Numéro Client" --text "Le numéro du client qui possède l avoir." --locale fr;
-
-field boolean --named canceled --primitive false; 
-description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
-description add-field-description --onProperty canceled --title "Annulé" --text "Indique si l avoir  a été annulé ou non." --locale fr;
-@/* default=false */;
-
-@/* Question: why no relationshitp to pharma user */;
-field string --named recordingUser;
-description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
-description add-field-description --onProperty recordingUser --title "Agent" --text "L agent de saisie ayant édité cet avoir." --locale fr;
-@/* default=getUserName() */;
-
-field temporal --type TIMESTAMP --named modifiedDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty modifiedDate --title "Last Modified" --text "The last modification date.";
-description add-field-description --onProperty modifiedDate --title "Derniere Edition" --text "La data de derniere edition de l avoir." --locale fr;
-
-field custom --named voucherType --type ~.jpa.VoucherType;
-description add-field-description --onProperty voucherType --title "Voucher Type" --text "The type of this voucher.";
-description add-field-description --onProperty voucherType --title "Type de Bon Avoir" --text "Le type de ce bon avoir." --locale fr;
-enum enumerated-field --onProperty voucherType ;
-
-field number --named amountUsed --type java.math.BigDecimal;
-description add-field-description --onProperty amountUsed --title "Amount Used" --text "Amount used.";
-description add-field-description --onProperty amountUsed --title "Montant Utilisé" --text "Montant utilisé." --locale fr;
+field number --named purchasedQty --type java.math.BigDecimal;
+description add-field-description --onProperty purchasedQty --title "Quantity Purchased" --text "The quantity purchased in this line.";
+description add-field-description --onProperty purchasedQty --title "Quantité Achetée" --text "La quantité achetée dans cette ligne." --locale fr;
 @/* Default=0 */;
 
-field boolean --named settled --primitive false; 
-description add-field-description --onProperty settled --title "Settled" --text "Sates if the voucher is settled or not.";
-description add-field-description --onProperty settled --title "Soldé" --text "Indique si l avoir est soldé ou non." --locale fr;
-@/* default=false */;
-
-field number --named restAmount --type java.math.BigDecimal;
-description add-field-description --onProperty restAmount --title "Rest Amount" --text "The remaining credit on this voucher.";
-description add-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
+field number --named returnedQty --type java.math.BigDecimal;
+description add-field-description --onProperty returnedQty --title "Quantity Returned" --text "The quantity returned in this line.";
+description add-field-description --onProperty returnedQty --title "Quantité Retournée" --text "La quantité retournée dans cette ligne." --locale fr;
 @/* Default=0 */;
 
-field boolean --named voucherPrinted --primitive false;
-description add-field-description --onProperty voucherPrinted --title "Printed" --text "Indicates whether the voucher is printed or not.";
-description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
-@/* default=false */;
+field number --named salesPricePU --type java.math.BigDecimal;
+description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit for product of this line.";
+description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix unitaire du produit de la ligne de facture" --locale fr;
+@/*  Default=0 */; 
 
 
-@/* Entité DetteClient */;
-entity --named ClientDebt --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Client Debt" --text "Client debt";
-description add-class-description  --locale fr --title "Dette Client" --text "Dette client";
+field number --named amountReturn --type java.math.BigDecimal;
+description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Returned Product";
+description add-field-description --onProperty amountReturn --title "Prix de Vente Unitaire" --text "Montant Total Des Retour" --locale fr;
+@/*  Default=0 */; 
 
-@/* Question: why not the reference to the invoice */;
-field manyToOne --named invoice --fieldType ~.jpa.Invoice.java ;
-description add-field-description --onProperty invoice --title "Invoice " --text "the invoice associated with this debt.";
-description add-field-description --onProperty invoice --title "Facture" --text "la facture client associe avec cette dette." --locale fr;
+field number --named totalSalesPrice --type java.math.BigDecimal;
+description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "The total sales price for product of this line.";
+description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Total" --text "Prix total du produit de la ligne de facture" --locale fr;
+@/*  Default=0 */; 
 
-@/* Question: why not the reference to the client */;
-field string --named clientNumber;
-field manyToOne --named client --fieldType ~.jpa.Client.java ;
-description add-field-description --onProperty client --title "Client " --text "the client associated with this debt.";
-description add-field-description --onProperty client --title "Numéro " --text "Le client associe avec cette dette." --locale fr;
 
-field string --named clientName;
-description add-field-description --onProperty clientName --title "Client Name" --text "The name of the client associated with this debt.";
-description add-field-description --onProperty clientName --title "Nom du Client" --text "Le nom du client associe avec cette dette." --locale fr;
+
+@/* Entité Facture */;
+entity --named Invoice --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Invoice" --text "An invoice.";
+description add-class-description  --locale fr --title "Facture" --text "Une facture.";
+
+field string --named invoiceNumber;
+description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
+description add-field-description --onProperty invoiceNumber --title "Numéro Facture" --text "Le numéro de cette facture." --locale fr;
 
 field temporal --type TIMESTAMP --named creationDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this debt.";
-description add-field-description --onProperty creationDate --title "Date de Creation" --text "La date de creation de cette dette." --locale fr;
+@/* pattern= dd-MM-yyyy HH:mm*/;
+description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this invoicd.";
+description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette facture." --locale fr;
 
-field temporal --type TIMESTAMP --named endDate; 
+field manyToOne --named client --fieldType ~.jpa.Customer;
+description add-field-description --onProperty client --title "Client" --text "The client referenced by this invoice.";
+description add-field-description --onProperty client --title "Client" --text "Le client mentionné sur la facture." --locale fr;
+
+field manyToOne --named insurrance --fieldType ~.jpa.Customer;
+description add-field-description --onProperty insurrance --title "Insurrance" --text "The Insurance.";
+description add-field-description --onProperty insurrance --title "Insurrance" --text "L Assurreur." --locale fr;
+
+field manyToOne --named saler --fieldType ~.jpa.Users;
+description add-field-description --onProperty saler --title "Saler" --text "The user creating this invoice.";
+description add-field-description --onProperty saler --title "Vendeur" --text "Utilisateur vendeur ayant generé la facture" --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency
+description add-field-description --onProperty agency --title "Agency" --text "Site in which this invoice is generated.";
+description add-field-description --onProperty agency --title "Agency" --text "Site dans lequel la caisse est gerée." --locale fr;
+
+field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
+description add-field-description --onProperty client --title "Sales Order" --text "The sales order generating of this invoice.";
+description add-field-description --onProperty client --title "Commande Client" --text "Commande client à l origine de la facture" --locale fr;
+
+field boolean --named settled --primitive false; 
+description add-field-description --onProperty settled --title "Settled" --text "Sates if the invoice is settled.";
+description add-field-description --onProperty settled --title "Soldée" --text "Indique si la facture est soldée ou pas." --locale fr;
+@/* default=false */;
+
+field number --named amountBeforeTax --type java.math.BigDecimal;
+description add-field-description --onProperty amountBeforeTax --title "Amount Before Tax" --text "Total amount before tax for this sales order.";
+description add-field-description --onProperty amountBeforeTax --title "Montant hors Taxes" --text "Montant total hors Taxes pour cette commande client." --locale fr;
+@/* Default=0, montant_ht */;
+
+field number --named amountVAT --type java.math.BigDecimal;
+description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
+description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
+@/* Default=0, montant_tva */;
+
+field number --named amountDiscount --type java.math.BigDecimal;
+description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
+description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
+@/* Default=0, remise */;
+
+field number --named totalReturnAmount --type java.math.BigDecimal;
+description add-field-description --onProperty totalReturnAmount --title "Total Return Amount" --text "Total Return Amount.";
+description add-field-description --onProperty totalReturnAmount --title "Montant total retour" --text "Montant total retour." --locale fr;
+@/* Default=0, remise */;
+
+field number --named amountAfterTax --type java.math.BigDecimal;
+description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this sales order.";
+description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette commande client." --locale fr;
+@/* Default=0, Formule=(montant_HT - remise) */;
+
+field number --named netToPay --type java.math.BigDecimal;
+description add-field-description --onProperty netToPay --title "Net a Payer" --text "The net amount to pay.";
+description add-field-description --onProperty netToPay --title "Net a Payer" --text "Le montant net à payer." --locale fr;
+@/*  Default=0 */; 
+
+field number --named customerRestTopay --type java.math.BigDecimal;
+description add-field-description --onProperty customerRestTopay --title "Customer Rest To pay" --text "Customer Rest To pay.";
+description add-field-description --onProperty customerRestTopay --title "Rest A payer client" --text "Rest A payer client." --locale fr;
+@/*  Default=0 */; 
+
+field number --named insurranceRestTopay --type java.math.BigDecimal;
+description add-field-description --onProperty insurranceRestTopay --title "Insurrance Rest To pay" --text "Insurrance Rest To pay.";
+description add-field-description --onProperty insurranceRestTopay --title "Reste A payer client" --text "Reste A payer client." --locale fr;
+@/*  Default=0 */; 
+
+field boolean --named cashed --primitive false; 
+description add-field-description --onProperty cashed --title "Cashed" --text "Sates if the invoice is cashed.";
+description add-field-description --onProperty cashed --title "encaisseé" --text "Indique si la facture est encaissée ou pas." --locale fr;
+@/* default=false */;
+
+field number --named advancePayment --type java.math.BigDecimal;
+description add-field-description --onProperty advancePayment --title "Advance Payment" --text "The advance payment.";
+description add-field-description --onProperty advancePayment --title "Net a Payer" --text "L avance sur paiement." --locale fr;
+@/*  Default=0 */; 
+
+field number --named restToPay --type java.math.BigDecimal;
+description add-field-description --onProperty restToPay --title "Ret to Pay" --text "The rest to pay.";
+description add-field-description --onProperty restToPay --title "Reste a Payer" --text "Le reste a payer." --locale fr;
+@/*  Default=0 */; 
+
+field oneToMany --named invoiceItems --fieldType ~.jpa.InvoiceItem --inverseFieldName invoice --fetchType EAGER  --cascade;
+description add-field-description --onProperty invoiceItems --title "Invoice Items" --text "The invoice items";
+description add-field-description --onProperty invoiceItems --title "Lignes Facture" --text "Les ligne facture" --locale fr;
+
+
+@/* Mode Paiement*/;
+java new-enum-type  --named PaymentMode --package ~.jpa ;
+enum add-enum-class-description --title "Payment Mode" --text "Mode of payment.";
+enum add-enum-class-description  --locale fr --title "Mode Paiement" --text "Mode de paiement.";
+java new-enum-const CASH;
+enum add-enum-constant-description --onConstant CASH --title "Cash" --text "Cash Payment";
+enum add-enum-constant-description --locale fr --onConstant CASH --title "Caisse" --text "Paiement Caisse";
+java new-enum-const CHECK;
+enum add-enum-constant-description --onConstant CHECK --title "Check" --text "Check Payement";
+enum add-enum-constant-description --locale fr --onConstant CHECK --title "Cheque" --text "Paiement Cheque";
+java new-enum-const CREDIT_CARD;
+enum add-enum-constant-description --onConstant CREDIT_CARD --title "Credit Card" --text "Credit card payment";
+enum add-enum-constant-description --locale fr --onConstant CREDIT_CARD --title "Carte de crédit" --text "Paiement par cartes de crédit.";
+java new-enum-const VOUCHER;
+enum add-enum-constant-description --onConstant VOUCHER --title "Client Voucher" --text "Client voucher";
+enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Avoir Client" --text "Avoir client";
+
+@/* Entité  paiement */;
+entity --named Payment --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Payment" --text "A payment.";
+description add-class-description  --locale fr --title "Paiement" --text "Un paiement.";
+
+field string --named paymentNumber;
+description add-field-description --onProperty paymentNumber --title "Payment Number" --text "The paiment number.";
+description add-field-description --onProperty paymentNumber --title "Numéro du Paiement" --text "Le numéro du paiement." --locale fr;
+
+field temporal --type TIMESTAMP --named paymentDate; 
+@/* pattern=dd-MM-yyyy HH:mm*/;
+description add-field-description --onProperty paymentDate --title "Payment Date" --text "The payment date.";
+description add-field-description --onProperty paymentDate --title "Date de Paiement" --text "La date de paiement." --locale fr;
+
+field temporal --type TIMESTAMP --named recordDate; 
+@/* pattern=dd-MM-yyyy HH:mm*/;
+description add-field-description --onProperty recordDate --title "Record Date" --text "The record date for this paiement.";
+description add-field-description --onProperty recordDate --title "Date de Saisie" --text "La date de saisie du paiement." --locale fr;
+
+field number --named amount --type java.math.BigDecimal;
+description add-field-description --onProperty amount --title "Payment Amount" --text "The payment amount.";
+description add-field-description --onProperty amount --title "Montant du Paiement" --text "Le montant du paiement." --locale fr;
+
+field number --named receivedAmount --type java.math.BigDecimal;
+description add-field-description --onProperty receivedAmount --title "Received Amount" --text "The amount received from the payment.";
+description add-field-description --onProperty receivedAmount --title "Montant Reçue" --text "Le montant reçue du paiement." --locale fr;
+
+field number --named difference --type java.math.BigDecimal;
+description add-field-description --onProperty difference --title "Difference" --text "The difference (amount returned to payer).";
+description add-field-description --onProperty difference --title "Différence" --text "La différence (montant retourné au client)." --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency
+constraint NotNull --onProperty agency;
+description add-field-description --onProperty agency --title "Agency" --text "Agency in which the payment occurs.";
+description add-field-description --onProperty agency --title "Agency" --text "Agence dans lequel s effectue le paiement." --locale fr;
+
+field manyToOne --named cashier --fieldType ~.jpa.Users;
+description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment.";
+description add-field-description --onProperty cashier --title "Caissier" --text "L utilisateur percevant le paiement." --locale fr;
+
+field manyToOne --named cashDrawer --fieldType ~.jpa.CashDrawer;
+description add-field-description --onProperty cashDrawer --title "Cash Drawer" --text "The cash drawer in use.";
+description add-field-description --onProperty cashDrawer --title "Caisse" --text "La caisse utilisé." --locale fr;
+
+cd ../Invoice.java;
+
+field oneToMany --named payments --fieldType ~.jpa.Payment --inverseFieldName invoice --fetchType EAGER  --cascade;
+description add-field-description --onProperty payments --title "Payments" --text "Payments associated with this invoice.";
+description add-field-description --onProperty payments --title "Piements" --text "Payements associe avec cette facture. " --locale fr;
+
+cd ../Payment.java;
+
+field custom --named paymentMode --type ~.jpa.PaymentMode;
+description add-field-description --onProperty paymentMode --title "Payment Mode" --text "The Mode of this payment.";
+description add-field-description --onProperty paymentMode --title "Mode de Paiement" --text "Le Mode de paiement." --locale fr;
+enum enumerated-field --onProperty paymentMode ;
+
+field boolean --named paymentReceiptPrinted --primitive false;
+description add-field-description --onProperty paymentReceiptPrinted --title "Open" --text "Indicates whether the payment receipt is printed or not.";
+description add-field-description --onProperty paymentReceiptPrinted --title "Ouverte" --text "Indique si le reçu de paiement est imprimé ou pas." --locale fr;
+@/* default=false */;
+
+field manyToOne --named paidBy --fieldType ~.jpa.Customer;
+description add-field-description --onProperty paidBy --title "Paid By" --text "Paid By.";
+description add-field-description --onProperty paidBy --title "Payer Par" --text "Payer Par." --locale fr;
+
+
+@/* Entité EtatCredits */;
+entity --named DebtStatement --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Debt Statement" --text "The sum of all the debts of a client";
+description add-class-description  --locale fr --title "Etat Credits" --text "Le cumul de toutes les dettes d un client";
+
+field string --named statementNumber;
+description add-field-description --onProperty statementNumber --title "Statement Number" --text "The number identifying this statement.";
+description add-field-description --onProperty statementNumber --title "Numéro de l État" --text "Le numéro identifiant cet état." --locale fr;
+
+field manyToOne --named insurrance --fieldType ~.jpa.Customer;
+description add-field-description --onProperty insurrance --title "Insurrance" --text "The client carrying this debt.";
+description add-field-description --onProperty insurrance --title "Insurrance" --text "Le client portant cette dette." --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+description add-field-description --onProperty agency --title "Agency" --text "The client carrying this debt.";
+description add-field-description --onProperty agency --title "Agency" --text "Le client portant cette dette." --locale fr;
+
+field temporal --type TIMESTAMP --named paymentDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty endDate --title "End Date" --text "The end date for this debt";
-description add-field-description --onProperty endDate --title "Date de Fin" --text "La date de fin de la dette." --locale fr;
+description add-field-description --onProperty paymentDate --title "Payment Date" --text "Date these debts was paid.";
+description add-field-description --onProperty paymentDate --title "Date Paiement" --text "Date à laquelle ces dettes ont été payées." --locale fr;
 
 field number --named initialAmount --type java.math.BigDecimal;
-description add-field-description --onProperty initialAmount --title "Initial Amount" --text "Initial amount of this debt.";
-description add-field-description --onProperty initialAmount --title "Montant Initial" --text "Montant initial de la dette." --locale fr;
+description add-field-description --onProperty initialAmount --title "Initial Amount" --text "Initial amount of this statement.";
+description add-field-description --onProperty initialAmount --title "Montant Initial" --text "Montant initial de cet état." --locale fr;
 
 field number --named advancePayment --type java.math.BigDecimal;
 description add-field-description --onProperty advancePayment --title "Advance Payment" --text "Advance payment.";
@@ -1672,52 +1804,93 @@ description add-field-description --onProperty restAmount --title "Montant Resta
 @/* Default=0 */;
 
 field boolean --named settled --primitive false; 
-description add-field-description --onProperty settled --title "Settled" --text "Sates if the debt is settled or not.";
-description add-field-description --onProperty settled --title "Soldé" --text "Indique si la dette est soldé ou non." --locale fr;
+description add-field-description --onProperty settled --title "Settled" --text "Sates if the statement is settled or not.";
+description add-field-description --onProperty settled --title "Soldé" --text "Indique si cet état est soldé ou non." --locale fr;
 @/* default=false */;
 
-field temporal --type TIMESTAMP --named lastPaymentDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty lastPaymentDate --title "Last Payment Date" --text "The last payment date.";
-description add-field-description --onProperty lastPaymentDate --title "Date Dernier Versement " --text "La date du dernier versement." --locale fr;
+field number --named amountFromVouchers --type java.math.BigDecimal;
+description add-field-description --onProperty amountFromVouchers --title "Rest Amount" --text "Amount of of vouchers if the customer uses vouchers to pay these debts.";
+description add-field-description --onProperty amountFromVouchers --title "Montant Restant" --text "Montant de l avoir si le client en possède utilisé pour rembourser les dettes." --locale fr;
+@/* Default=0 */;
 
 field boolean --named canceled --primitive false; 
-description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the debt is canceled or not.";
-description add-field-description --onProperty canceled --title "Annulée" --text "Indique si la dette est annulée ou non." --locale fr;
+description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the statement is canceled or not.";
+description add-field-description --onProperty canceled --title "Annulée" --text "Precise si l états a été annulée ou non." --locale fr;
 @/* default=false */;
 
-field temporal --type TIMESTAMP --named paymentDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty paymentDate --title "Payment Date" --text "Date the debt was paid";
-description add-field-description --onProperty paymentDate --title "Date Paiement" --text "Date à laquelle la dette a été payée" --locale fr;
+field boolean --named useVoucher --primitive false; 
+description add-field-description --onProperty useVoucher --title "Use Vouchers" --text "Specifies whether the client can use his voucher to pay its debts.";
+description add-field-description --onProperty useVoucher --title "Consommer Avoir" --text "Indique si le client peut consommer ou non ses avoirs pour payer ses dettes." --locale fr;
+@/* default=false */;
+
+field oneToMany --named invoices --fieldType ~.jpa.Invoice.java --inverseFieldName debtStatement --fetchType EAGER
+description add-field-description --onProperty invoices --title "Invoices" --text "The debt statement containing this debt.";
+description add-field-description --onProperty invoices --title "Factures" --text "L état crédit contenant cette dette." --locale fr;
+
 
 
 @/* ================================== */;
 @/* Prescriptions */;
+
+@/* Entité Hospital */;
+entity --named Hospital --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Hospital" --text "Hospital";
+description add-class-description  --locale fr --title "Hopital" --text "Hopital";
+
+field string --named name;
+description add-field-description --onProperty name --title "Name" --text "The name of this Hospital.";
+description add-field-description --onProperty name --title "Nom" --text "Le nom de cet hopital." --locale fr;
+constraint NotNull --onProperty name;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The hospital Phone.";
+description add-field-description --onProperty phone --title "Telephone" --text "Telephone" --locale fr;
+
+field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
+description add-field-description --onProperty address --title "Address" --text "The site address";
+description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+
+@/* Entité Prescriber */;
+entity --named Prescriber --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Prescriber" --text "Prescriber";
+description add-class-description  --locale fr --title "Prescripteur" --text "Prescripteur";
+
+field string --named name;
+description add-field-description --onProperty name --title "Name" --text "The name of this Prescrip.";
+description add-field-description --onProperty name --title "Nom" --text "Le nom de ce Prescripteur." --locale fr;
+constraint NotNull --onProperty name;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The Prescriber Phone.";
+description add-field-description --onProperty phone --title "Telephone" --text "Telephone" --locale fr;
+
+field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
+description add-field-description --onProperty address --title "Address" --text "The site address";
+description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+
 
 @/* Entité Ordonnanciers */;
 entity --named PrescriptionBook --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Prescription Blook" --text "Prescription book";
 description add-class-description  --locale fr --title "Ordonnancier" --text "Ordonnancier";
 
-field string --named prescriber;
+field manyToOne --named prescriber --fieldType ~.jpa.Prescriber.java;
 description add-field-description --onProperty prescriber --title "Prescriber" --text "The doctor who prescribed the order.";
 description add-field-description --onProperty prescriber --title "Prescripteur" --text "Le medecin ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty prescriber;
 
-field string --named hospital;
+field manyToOne --named hospital --fieldType ~.jpa.Hospital.java;
 description add-field-description --onProperty hospital --title "Hospital" --text "The hospital subjet of this prescription.";
 description add-field-description --onProperty hospital --title "Hopital" --text "L hopital ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty hospital;
 
-field string --named patientName;
-description add-field-description --onProperty patientName --title "Patient Name" --text "The patient who received the prescription.";
-description add-field-description --onProperty patientName --title "patient Name" --text "Le patient ayant reçu l ordonnance." --locale fr;
 
-@/* Question: why don t we have a foreign key relationship to pharmaUser */;
-@/* Answer : you have raison  */;
+field manyToOne --named agency --fieldType ~.jpa.Agency.java;
+description add-field-description --onProperty agency --title "Agency" --text "The Agency.";
+description add-field-description --onProperty agency --title "Agence" --text "L Agence." --locale fr;
+constraint NotNull --onProperty agency;
 
-field manyToOne --named recordingAgent --fieldType ~.jpa.PharmaUser.java;
+field manyToOne --named recordingAgent --fieldType ~.jpa.Users.java;
 description add-field-description --onProperty recordingAgent --title "Recording Agent" --text "The user who recorded this prescription.";
 description add-field-description --onProperty recordingAgent --title "Agent Saisie" --text "L utilisateur saisiessant cet ordonnance." --locale fr;
 
@@ -1739,6 +1912,71 @@ field temporal --type TIMESTAMP --named recordingDate;
 @/* pattern= dd-MM-yyyy HH:mm */;
 description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date.";
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie." --locale fr;
+cd ~~;
+
+@/* Accounts Receivable */;
+
+@/* Entité AvoirClient */;
+entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Client Voucher" --text "Client voucher";
+description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
+
+field string --named voucherNumber;
+description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The client voucher number.";
+description add-field-description --onProperty voucherNumber --title "Numéro de l Avoir" --text "Le numéro de l avoir du client." --locale fr;
+
+field oneToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
+constraint NotNull --onProperty salesOrder;
+description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
+description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient l ordonnance." --locale fr;
+
+field number --named amount --type java.math.BigDecimal;
+description add-field-description --onProperty amount --title "Amount" --text "Voucher amount.";
+description add-field-description --onProperty amount --title "Montant" --text "Montant de l avoir" --locale fr;
+constraint NotNull --onProperty amount;
+
+field manyToOne --named customer --fieldType ~.jpa.Customer;
+description add-field-description --onProperty customer --title "Customer" --text "Customer.";
+description add-field-description --onProperty customer --title "Client" --text "Client." --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+description add-field-description --onProperty agency --title "Agency" --text "Agency.";
+description add-field-description --onProperty agency --title "Agence" --text "Agence." --locale fr;
+
+field boolean --named canceled --primitive false; 
+description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
+description add-field-description --onProperty canceled --title "Annulé" --text "Indique si l avoir  a été annulé ou non." --locale fr;
+@/* default=false */;
+
+field manyToOne --named recordingUser --fieldType ~.jpa.Users;
+description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
+description add-field-description --onProperty recordingUser --title "Agent" --text "L agent de saisie ayant édité cet avoir." --locale fr;
+@/* default=getUserName() */;
+
+field temporal --type TIMESTAMP --named modifiedDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty modifiedDate --title "Last Modified" --text "The last modification date.";
+description add-field-description --onProperty modifiedDate --title "Derniere Edition" --text "La data de derniere edition de l avoir." --locale fr;
+
+field number --named amountUsed --type java.math.BigDecimal;
+description add-field-description --onProperty amountUsed --title "Amount Used" --text "Amount used.";
+description add-field-description --onProperty amountUsed --title "Montant Utilisé" --text "Montant utilisé." --locale fr;
+@/* Default=0 */;
+
+field boolean --named settled --primitive false; 
+description add-field-description --onProperty settled --title "Settled" --text "Sates if the voucher is settled or not.";
+description add-field-description --onProperty settled --title "Soldé" --text "Indique si l avoir est soldé ou non." --locale fr;
+@/* default=false */;
+
+field number --named restAmount --type java.math.BigDecimal;
+description add-field-description --onProperty restAmount --title "Rest Amount" --text "The remaining credit on this voucher.";
+description 31-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
+@/* Default=0 */;
+
+field boolean --named voucherPrinted --primitive false;
+description add-field-description --onProperty voucherPrinted --title "Printed" --text "Indicates whether the voucher is printed or not.";
+description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
+@/* default=false */;
 cd ~~;
 
 envers audit-package --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ ;

@@ -110,7 +110,7 @@ field temporal --type TIMESTAMP --named birthDate;
 description add-field-description --onProperty birthDate --title "Birth Date" --text "Date of birth";
 description add-field-description --onProperty birthDate --title "Date de Naissance" --text "Date de naissance." --locale fr;
 
-field boolean --named active --primitive false
+field boolean --named active --primitive false ;
 description add-field-description --onProperty active --title "Active" --text "The active of roles assigned";
 description add-field-description --onProperty active --title "Active" --text "Les active de role attribués a de cet utilisateur" --locale fr;
 

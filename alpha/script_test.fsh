@@ -67,7 +67,6 @@ constraint NotNull --onProperty displayName;
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The site address";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
-constraint Size --onProperty address --max 256;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
@@ -1832,5 +1831,156 @@ field oneToMany --named invoices --fieldType ~.jpa.Invoice.java --inverseFieldNa
 description add-field-description --onProperty invoices --title "Invoices" --text "The debt statement containing this debt.";
 description add-field-description --onProperty invoices --title "Factures" --text "L état crédit contenant cette dette." --locale fr;
 
+
+
+@/* ================================== */;
+@/* Prescriptions */;
+
+@/* Entité Hospital */;
+entity --named Hospital --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Hospital" --text "Hospital";
+description add-class-description  --locale fr --title "Hopital" --text "Hopital";
+
+field string --named name;
+description add-field-description --onProperty name --title "Name" --text "The name of this Hospital.";
+description add-field-description --onProperty name --title "Nom" --text "Le nom de cet hopital." --locale fr;
+constraint NotNull --onProperty name;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The hospital Phone.";
+description add-field-description --onProperty phone --title "Telephone" --text "Telephone" --locale fr;
+
+field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
+description add-field-description --onProperty address --title "Address" --text "The site address";
+description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+
+@/* Entité Prescriber */;
+entity --named Prescriber --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Prescriber" --text "Prescriber";
+description add-class-description  --locale fr --title "Prescripteur" --text "Prescripteur";
+
+field string --named name;
+description add-field-description --onProperty name --title "Name" --text "The name of this Prescrip.";
+description add-field-description --onProperty name --title "Nom" --text "Le nom de ce Prescripteur." --locale fr;
+constraint NotNull --onProperty name;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The Prescriber Phone.";
+description add-field-description --onProperty phone --title "Telephone" --text "Telephone" --locale fr;
+
+field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
+description add-field-description --onProperty address --title "Address" --text "The site address";
+description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+
+
+@/* Entité Ordonnanciers */;
+entity --named PrescriptionBook --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Prescription Blook" --text "Prescription book";
+description add-class-description  --locale fr --title "Ordonnancier" --text "Ordonnancier";
+
+field manyToOne --named prescriber --fieldType ~.jpa.Prescriber.java;
+description add-field-description --onProperty prescriber --title "Prescriber" --text "The doctor who prescribed the order.";
+description add-field-description --onProperty prescriber --title "Prescripteur" --text "Le medecin ayant prescrit l ordonnance." --locale fr;
+constraint NotNull --onProperty prescriber;
+
+field manyToOne --named hospital --fieldType ~.jpa.Hospital.java;
+description add-field-description --onProperty hospital --title "Hospital" --text "The hospital subjet of this prescription.";
+description add-field-description --onProperty hospital --title "Hopital" --text "L hopital ayant prescrit l ordonnance." --locale fr;
+constraint NotNull --onProperty hospital;
+
+
+field manyToOne --named agency --fieldType ~.jpa.Agency.java;
+description add-field-description --onProperty agency --title "Agency" --text "The Agency.";
+description add-field-description --onProperty agency --title "Agence" --text "L Agence." --locale fr;
+constraint NotNull --onProperty agency;
+
+field manyToOne --named recordingAgent --fieldType ~.jpa.Users.java;
+description add-field-description --onProperty recordingAgent --title "Recording Agent" --text "The user who recorded this prescription.";
+description add-field-description --onProperty recordingAgent --title "Agent Saisie" --text "L utilisateur saisiessant cet ordonnance." --locale fr;
+
+field string --named prescriptionNumber;
+description add-field-description --onProperty prescriptionNumber --title "Prescription Number" --text "The prescription number.";
+description add-field-description --onProperty prescriptionNumber --title "Numéro de l Ordonnance" --text "Le numéro de l ordonnance." --locale fr;
+
+field oneToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
+constraint NotNull --onProperty salesOrder;
+description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
+description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient l ordonnance." --locale fr;
+
+field temporal --type TIMESTAMP --named prescriptionDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty prescriptionDate --title "Prescription Date" --text "The prescription date.";
+description add-field-description --onProperty prescriptionDate --title "Date de Prescription" --text "La date de prescription." --locale fr;
+
+field temporal --type TIMESTAMP --named recordingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date.";
+description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie." --locale fr;
+cd ~~;
+
+@/* Accounts Receivable */;
+
+@/* Entité AvoirClient */;
+entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Client Voucher" --text "Client voucher";
+description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
+
+field string --named voucherNumber;
+description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The client voucher number.";
+description add-field-description --onProperty voucherNumber --title "Numéro de l Avoir" --text "Le numéro de l avoir du client." --locale fr;
+
+field oneToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
+constraint NotNull --onProperty salesOrder;
+description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
+description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient l ordonnance." --locale fr;
+
+field number --named amount --type java.math.BigDecimal;
+description add-field-description --onProperty amount --title "Amount" --text "Voucher amount.";
+description add-field-description --onProperty amount --title "Montant" --text "Montant de l avoir" --locale fr;
+constraint NotNull --onProperty amount;
+
+field manyToOne --named customer --fieldType ~.jpa.Customer;
+description add-field-description --onProperty customer --title "Customer" --text "Customer.";
+description add-field-description --onProperty customer --title "Client" --text "Client." --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+description add-field-description --onProperty agency --title "Agency" --text "Agency.";
+description add-field-description --onProperty agency --title "Agence" --text "Agence." --locale fr;
+
+field boolean --named canceled --primitive false; 
+description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
+description add-field-description --onProperty canceled --title "Annulé" --text "Indique si l avoir  a été annulé ou non." --locale fr;
+@/* default=false */;
+
+field manyToOne --named recordingUser --fieldType ~.jpa.Users;
+description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
+description add-field-description --onProperty recordingUser --title "Agent" --text "L agent de saisie ayant édité cet avoir." --locale fr;
+@/* default=getUserName() */;
+
+field temporal --type TIMESTAMP --named modifiedDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty modifiedDate --title "Last Modified" --text "The last modification date.";
+description add-field-description --onProperty modifiedDate --title "Derniere Edition" --text "La data de derniere edition de l avoir." --locale fr;
+
+field number --named amountUsed --type java.math.BigDecimal;
+description add-field-description --onProperty amountUsed --title "Amount Used" --text "Amount used.";
+description add-field-description --onProperty amountUsed --title "Montant Utilisé" --text "Montant utilisé." --locale fr;
+@/* Default=0 */;
+
+field boolean --named settled --primitive false; 
+description add-field-description --onProperty settled --title "Settled" --text "Sates if the voucher is settled or not.";
+description add-field-description --onProperty settled --title "Soldé" --text "Indique si l avoir est soldé ou non." --locale fr;
+@/* default=false */;
+
+field number --named restAmount --type java.math.BigDecimal;
+description add-field-description --onProperty restAmount --title "Rest Amount" --text "The remaining credit on this voucher.";
+description add-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
+@/* Default=0 */;
+
+field boolean --named voucherPrinted --primitive false;
+description add-field-description --onProperty voucherPrinted --title "Printed" --text "Indicates whether the voucher is printed or not.";
+description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
+@/* default=false */;
+cd ~~;
 
 mvn clean install -DskipTests;
