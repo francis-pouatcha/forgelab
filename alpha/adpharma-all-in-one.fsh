@@ -530,11 +530,6 @@ field temporal --type TIMESTAMP --named lastOutOfStock;
 description add-field-description --onProperty lastOutOfStock --title "Last Out of Stock Date" --text "Date of last out of stock for this article";
 description add-field-description --onProperty lastOutOfStock --title "Date Derniere Rupture de stock" --text "Date de la derniere rupture de stock pour ce produit" --locale fr;
 
-field manyToOne --named saleVat --fieldType ~.jpa.VAT;
-description add-field-description --onProperty saleVat --title "VAT" --text "The value added tax during sale";
-description add-field-description --onProperty saleVat --title "TVA" --text "La taxe sur la valeur ajoute a la vente" --locale fr;
-association set-selection-mode --onProperty saleVat --selectionMode FORWARD;
-
 field manyToOne --named defaultSalesMargin --fieldType ~.jpa.SalesMargin; 
 description add-field-description --onProperty defaultSalesMargin --title "Sales Margin" --text "The sales margin on this product.";
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
