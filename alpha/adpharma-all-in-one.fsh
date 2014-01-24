@@ -16,8 +16,10 @@
 @/* forge source-plugin forge-description-plugin */;
 
 set ACCEPT_DEFAULTS true;
+set VERBOSE true;
 
-new-project --named adph.server --topLevelPackage org.adorsys.adph.server --finalName adph.server;
+
+new-project --named adph.server --topLevelPackage org.adorsys.adph.server --finalName adph.server --projectFolder adph.server;
 
 as7 setup;
 persistence setup --provider HIBERNATE --container JBOSS_AS7;
@@ -26,10 +28,11 @@ validation setup;
 
 description setup;
 
-enum setup ;
+set ACCEPT_DEFAULTS false;
 
-envers setup ;
+enum setup;
 
+association setup ;
 
 @/* ============================= */;
 @/* Entity Address */;
@@ -224,7 +227,7 @@ field string --named fullName;
 description add-field-description --onProperty fullName --title "Full Name" --text "The full name of the user.";
 description add-field-description --onProperty fullName --title "Nom Complet" --text "Le nom complet dede cet ilisateur." --locale fr;
 constraint NotNull --onProperty fullName;
-@/* Nom complet de lutilisateur(nom+prenom) */;
+@/* Nom complet de l utilisateur(nom+prenom) */;
 
 field string --named password;
 description add-field-description --onProperty password --title "Password" --text "The password of the user.";
@@ -298,6 +301,7 @@ description add-class-description  --locale fr --title "Rayon" --text "Un rayon 
 field string --named sectionCode;
 description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
 description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
+display add-toString-field --field sectionCode;
 
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this section";
@@ -343,6 +347,7 @@ description add-field-description --onProperty code --title "Code" --text "Le co
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this product family";
 description add-field-description --onProperty name --title "Libelle" --text "Le nom de la famille produit" --locale fr;
+display add-toString-field --field name;
 
 field string --named description;
 constraint Size --onProperty description --max 256;
@@ -352,7 +357,7 @@ description add-field-description --onProperty description --title "Description"
 field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily.java 
 description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
 description add-field-description --onProperty parentFamilly --title "Note" --text "La famille parent du produit " --locale fr;
-
+association set-selection-mode --onProperty parentFamilly --selectionMode FORWARD;
 cd ~~ ;
 
 @/* Entity VAT */;
@@ -363,10 +368,12 @@ description add-class-description  --locale fr --title "TVA" --text "Taxe sur la
 field string --named code;
 description add-field-description --onProperty code --title "Code" --text "The code of this VAT";
 description add-field-description --onProperty code --title "Code" --text "Le code de la TVA" --locale fr;
+display add-toString-field --field code;
 
 field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "Rate" --text "The VAT rate";
 description add-field-description --onProperty rate --title "Taux" --text "Taux de la TVA" --locale fr;
+format add-number-type --onProperty rate --type  PERCENTAGE;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this VAT is active or not";
@@ -380,10 +387,12 @@ description add-class-description  --locale fr --title "Taux de Marge" --text "L
 field string --named code;
 description add-field-description --onProperty code --title "Code" --text "The code of this margin";
 description add-field-description --onProperty code --title "Code" --text "Numéro de la marge" --locale fr;
+display add-toString-field --field code;
 
 field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "Rate" --text "The rate of this margin.";
 description add-field-description --onProperty rate --title "Taux" --text "Taux de la marge." --locale fr;
+format add-number-type --onProperty rate --type  PERCENTAGE;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this margin rate is Active or not";
@@ -424,6 +433,7 @@ description add-field-description --onProperty discountRate --title "Taux Remise
 constraint NotNull --onProperty discountRate --message "Veuillez entrer le taux de solde de ce produit";
 constraint DecimalMin --onProperty discountRate --min 1.0 --message "Le taux de solde ne doit pas etre inferieur a 1";
 constraint DecimalMax --onProperty discountRate --max 100.0 --message "Le taux de solde ne doit pas etre superieur a 100";
+format add-number-type --onProperty discountRate --type  CURRENCY;
 
 field custom --named clearanceState --type ~.jpa.DocumentProcessingState.java ;
 @/* default DocumentProcessingState.ONGOING */;
@@ -437,7 +447,6 @@ description add-field-description --onProperty active --title "Actif" --text "In
 
 cd ~~;
 
-
 @/* Entity PackagingMode, ModeConditionnement */;
 entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "THe product packaging mode";
@@ -446,6 +455,7 @@ description add-class-description --locale fr --title "Mode de Conditionement" -
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this packaging mode";
 description add-field-description --onProperty name --title "Libelle" --text "Nom du mode de conditionnement" --locale fr;
+display add-toString-field --field name;
 
 @/* Entity Article */;
 entity --named Article --package ~.jpa --idStrategy AUTO;
@@ -455,6 +465,7 @@ description add-class-description  --locale fr --title "Produit" --text "Un prod
 field string --named articleName;
 description add-field-description --onProperty articleName --title "Name" --text "The name of this article";
 description add-field-description --onProperty articleName --title "Nom" --text "Le nom du produit" --locale fr;
+display add-toString-field --field articleName;
 
 field string --named manufacturer;
 description add-field-description --onProperty manufacturer --title "Manufacturer name" --text "The name of this article";
@@ -463,6 +474,7 @@ description add-field-description --onProperty manufacturer --title "Fabricant" 
 field manyToOne --named section --fieldType ~.jpa.Section;
 description add-field-description --onProperty section --title "Section" --text "The section in which the product is stored";
 description add-field-description --onProperty section --title "Rayon" --text "Le rayon dans lequel le produit est classé." --locale fr;
+association set-selection-mode --onProperty section --selectionMode FORWARD;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this article is active or not";
@@ -500,11 +512,13 @@ field number --named maxDiscountRate --type java.math.BigDecimal;
 @/* Default=5 */;
 description add-field-description --onProperty maxDiscountRate --title "Max Discount Rate" --text "Maximal discount rate given to buyers of this product.";
 description add-field-description --onProperty maxDiscountRate --title "Taux Maximal Remise" --text "Taux de remise max en % accordes aux utilisateurs sur le produit" --locale fr;
+format add-number-type --onProperty maxDiscountRate --type PERCENTAGE;
 
 field number --named totalStockPrice --type java.math.BigDecimal; 
 @/* Default=0, calcul=  Somme(prix vente  des lignes approvisionnement du produit*qte de chaque ligne)*/;
 description add-field-description --onProperty totalStockPrice --title "Total Stock Price" --text "Total value of products in stock";
 description add-field-description --onProperty totalStockPrice --title "Valeure Total du Stock" --text "Valeure totale des produits en stocks" --locale fr;
+format add-number-type --onProperty totalStockPrice --type CURRENCY;
 
 field temporal --type TIMESTAMP --named lastStockEntry; 
 @/* Pattern= dd-MM-yyy */;
@@ -519,10 +533,12 @@ description add-field-description --onProperty lastOutOfStock --title "Date Dern
 field manyToOne --named saleVat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty saleVat --title "VAT" --text "The value added tax during sale";
 description add-field-description --onProperty saleVat --title "TVA" --text "La taxe sur la valeur ajoute a la vente" --locale fr;
+association set-selection-mode --onProperty saleVat --selectionMode FORWARD;
 
 field manyToOne --named defaultSalesMargin --fieldType ~.jpa.SalesMargin; 
 description add-field-description --onProperty defaultSalesMargin --title "Sales Margin" --text "The sales margin on this product.";
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
+association set-selection-mode --onProperty defaultSalesMargin --selectionMode FORWARD;
 
 field string --named pic; 
 @/* Unique */;
@@ -532,6 +548,7 @@ description add-field-description --onProperty pic --title "Code Identifiant Pro
 field manyToOne --named packagingMode --fieldType ~.jpa.PackagingMode; 
 description add-field-description --onProperty packagingMode --title "Packaging Mode" --text "THe product packaging mode";
 description add-field-description --onProperty packagingMode --title "Mode de Conditionement" --text "Le mode de conditionnement du produit" --locale fr;
+association set-selection-mode --onProperty packagingMode --selectionMode FORWARD;
 
 field boolean --named authorizedSale --primitive false; 
 @/*  vente_autorisee  default=true  */;
@@ -549,10 +566,12 @@ description add-field-description --onProperty maxStockQty --title "Quantité Pl
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency hosting this product.";
 description add-field-description --onProperty agency --title "Filiale" --text "La filiale à laquelle le produit appartient." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field manyToOne --named clearanceConfig --fieldType ~.jpa.ClearanceConfig;
 description add-field-description --onProperty clearanceConfig --title "Clearance Configuration" --text "Configuration for the clearance of this product.";
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
+association set-selection-mode --onProperty clearanceConfig --selectionMode FORWARD;
 
 field manyToMany --named equivalentArticles --fieldType ~.jpa.Article;
 description add-field-description --onProperty equivalentArticles --title "Equivalent Articles" --text "equivalent products";
@@ -571,6 +590,7 @@ description add-class-description  --locale fr --title "Fournisseur" --text "Le 
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of the supplier.";
 description add-field-description --onProperty name --title "Nom" --text "Le nom du fournisseur." --locale fr;
+display add-toString-field --field name;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The phone number of the supplier";
@@ -591,6 +611,7 @@ description add-field-description --onProperty email --title "Email" --text "Le 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The addresse of the supplier";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du fournisseur" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE;
 
 field string --named internetSite;
 description add-field-description --onProperty internetSite --title "Web Site" --text "The web site of the supplier";
@@ -651,6 +672,7 @@ field manyToOne --named article --fieldType ~.jpa.Article;
 constraint NotNull --onProperty article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this lot";
 description add-field-description --onProperty article --title "Produit" --text "Le produit du lot." --locale fr;
+display add-toString-field --field article;
 
 field temporal --type TIMESTAMP --named recCreated; 
 @/* Pattern=dd-MM-yyy  */;
@@ -670,6 +692,7 @@ description add-field-description --onProperty availableQty --title "Quantité D
 field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this procurement order item.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur ayant crée cet ligne de commande." --locale fr;
+association set-selection-mode --onProperty creatingUser --selectionMode NONE;
 
 field boolean --named valid --primitive false;
 description add-field-description --onProperty valid --title "Valid" --text "Determines if the order item is valid or not according to the expectations of the supplier.";
@@ -678,6 +701,7 @@ description add-field-description --onProperty valid --title "Valide" --text "D�
 field number --named purchasePrice --type java.math.BigDecimal;
 description add-field-description --onProperty purchasePrice --title "Minimum Purchase Price Suggested" --text "Minimum suggested purchase price suggested for this purchase order item.";
 description add-field-description --onProperty purchasePrice --title "Prix d Achat " --text "Prix d achat minimum proposé d un produit de la ligne de commande Fournisseur." --locale fr;
+format add-number-type --onProperty purchasePrice --type CURRENCY;
 @/* Default=0 */;
 
 field number --named salesPrice --type java.math.BigDecimal;
@@ -688,6 +712,7 @@ description add-field-description --onProperty salesPrice --title "Prix de Vente
 field number --named totalPurchasePrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalPurchasePrice --title "Total Purchase Price" --text "Total purchase price for this procurement order item.";
 description add-field-description --onProperty totalPurchasePrice --title "Prix d Achat Totale" --text "Prix achat totale pour cette ligne de commande fournisseur." --locale fr;
+format add-number-type --onProperty totalPurchasePrice --type CURRENCY;
 @/* Default=0, Formule=prix_achat_min*quantité_commandée */;
 
 
@@ -704,6 +729,7 @@ field string --named procurementOrderNumber;
 constraint NotNull --onProperty procurementOrderNumber;
 description add-field-description --onProperty procurementOrderNumber --title "Procurement Order Number" --text "The Procurement order number ";
 description add-field-description --onProperty procurementOrderNumber --title "Numéro Commande Fournisseur" --text "Numéro de la commande fournisseur" --locale fr;
+display add-toString-field --field procurementOrderNumber;
 
 field temporal --type TIMESTAMP --named submissionDate; 
 @/* pattern=dd-MM-yyyy HH:mm */;
@@ -718,6 +744,7 @@ description add-field-description --onProperty createdDate --title "Date de Crea
 field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this procurement order item.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur ayant crée cet ligne de commande." --locale fr;
+association set-selection-mode --onProperty creatingUser --selectionMode  FORWARD;
 
 field custom --named procmtOrderTriggerMode --type ~.jpa.ProcmtOrderTriggerMode.java;
 description add-field-description --onProperty procmtOrderTriggerMode --title "Procurement Order Trigger Mode" --text "Procurement Order Trigger Mode.";
@@ -732,10 +759,12 @@ enum enumerated-field --onProperty procurementOrderType ;
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
+association set-selection-mode --onProperty supplier --selectionMode  FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty agency --title "Agency" --text "L agence mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode  FORWARD;
 
 field number --named amountBeforeTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountBeforeTax --title "Amount Before Tax" --text "Total amount before tax for this purchase order.";
@@ -745,18 +774,22 @@ constraint NotNull --onProperty amountBeforeTax;
 field number --named amountAfterTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this purchase order.";
 description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette approvisionement." --locale fr;
+format add-number-type --onProperty amountAfterTax --type CURRENCY;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this purchase order.";
 description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Montant de la remise de l approvisionement." --locale fr;
+format add-number-type --onProperty amountDiscount --type CURRENCY;
 
 field number --named netAmountToPay --type java.math.BigDecimal;
 description add-field-description --onProperty netAmountToPay --title "Net Amount to Pay" --text "Teh net amount to pay.";
 description add-field-description --onProperty netAmountToPay --title "Montant net a payer" --text "Montant de la remise de l approvisionement." --locale fr;
+format add-number-type --onProperty netAmountToPay --type CURRENCY;
 
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
 description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  FORWARD;
 
 field oneToMany --named procurementOrderItems --fieldType ~.jpa.ProcurementOrderItem.java --inverseFieldName procurementOrder --fetchType EAGER
 description add-field-description --onProperty procurementOrderItems --title "Procurement Order Items" --text "Procurement Order Items";
@@ -765,6 +798,7 @@ description add-field-description --onProperty procurementOrderItems --title "Li
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
 description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau de livraison en monnaie locale(FCFA)." --locale fr;
+association set-selection-mode --onProperty currency --selectionMode  FORWARD;
 
 cd ~~;
 
@@ -772,7 +806,6 @@ cd ~~;
 entity --named DeliveryOrderItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Delivery Order Item" --text "Delivery order item";
 description add-class-description  --locale fr --title "Ligne de livraison" --text "la ligne de livraison";
-
 field string --named lineIndex;
 description add-field-description --onProperty lineIndex --title "Line Index" --text "The index of a line of this item in the PO";
 description add-field-description --onProperty lineIndex --title "Index de ligne" --text "L index de la ligne de cette LAP" --locale fr;
@@ -786,6 +819,7 @@ field manyToOne --named article --fieldType ~.jpa.Article
 constraint NotNull --onProperty article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this lot";
 description add-field-description --onProperty article --title "Produit" --text "Le produit du lot." --locale fr;
+display add-toString-field --field article;
 
 field temporal --type TIMESTAMP --named expirationDate; 
 @/* Pattern=dd-MM-yyy  */;
@@ -814,16 +848,19 @@ description add-field-description --onProperty stockQuantity --title "Quantité 
 field number --named salesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit.";
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix de vente unitaire." --locale fr;
+format add-number-type --onProperty salesPricePU --type CURRENCY;
 @/*  Default=0 */; 
 
 field number --named purchasePricePU --type java.math.BigDecimal;
 description add-field-description --onProperty purchasePricePU --title "Purchase Price per Unit" --text "The purchase price per unit.";
 description add-field-description --onProperty purchasePricePU --title "Prix d Achat Unitaire" --text "Prix d achat unitaire." --locale fr;
+format add-number-type --onProperty purchasePricePU --type CURRENCY;
 @/*  Default=0 */; 
 
 field number --named totalPurchasePrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalPurchasePrice --title "Total Purchase Price" --text "The total purchase price.";
 description add-field-description --onProperty totalPurchasePrice --title "Prix d Achat Total" --text "Prix d achat totale." --locale fr;
+format add-number-type --onProperty totalPurchasePrice --type CURRENCY;
 @/*  Default=0 */; 
 @/*Formule= (prix_achat_unitaire*[qte_aprovisionée-qte_unité_gratuite]) */;
 
@@ -840,6 +877,7 @@ field string --named deliveryNumber;
 constraint NotNull --onProperty deliveryNumber;
 description add-field-description --onProperty deliveryNumber --title "Delivery  Number" --text "The Delivery order number ";
 description add-field-description --onProperty deliveryNumber --title "Numéro de la Livraison" --text "Numéro de la livraison" --locale fr;
+display add-toString-field --field deliveryNumber;
 
 field string --named deliverySlipNumber;
 constraint NotNull --onProperty deliverySlipNumber;
@@ -854,10 +892,12 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this purchase order.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "L utilisateur ayant crée l approvisionement." --locale fr;
 constraint NotNull --onProperty creatingUser;
+association set-selection-mode --onProperty creatingUser --selectionMode FORWARD;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
 description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau (FCFA)." --locale fr;
+association set-selection-mode --onProperty currency --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named orderDate; 
 description add-field-description --onProperty orderDate --title "Order Date" --text "Order date.";
@@ -870,6 +910,7 @@ description add-field-description --onProperty deliveryDate --title "Date de Liv
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
+association set-selection-mode --onProperty supplier --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named paymentDate; 
 description add-field-description --onProperty paymentDate --title "Payment Date" --text "Date of settlement of this order.";
@@ -883,18 +924,22 @@ constraint NotNull --onProperty amountBeforeTax;
 field number --named amountAfterTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this purchase order.";
 description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette approvisionement." --locale fr;
+format add-number-type --onProperty amountAfterTax --type CURRENCY;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this purchase order.";
 description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Montant de la remise de l approvisionement." --locale fr;
+format add-number-type --onProperty amountDiscount --type CURRENCY;
 
 field number --named netAmountToPay --type java.math.BigDecimal;
 description add-field-description --onProperty netAmountToPay --title "Net Amount to Pay" --text "Teh net amount to pay.";
 description add-field-description --onProperty netAmountToPay --title "Montant net a payer" --text "Montant de la remise de l approvisionement." --locale fr;
+format add-number-type --onProperty netAmountToPay --type CURRENCY;
 
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
 description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named creationDate; 
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this order.";
@@ -913,7 +958,7 @@ enum enumerated-field --onProperty deliveryProcessingState ;
 field manyToOne --named receivingAgency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty receivingAgency --title "Agency" --text "Name of the agency in which the product was delivered.";
 description add-field-description --onProperty receivingAgency --title "Filiale" --text "Nom de la filiale dans laquelle l entree en stock s effectue" --locale fr;
-
+association set-selection-mode --onProperty receivingAgency --selectionMode FORWARD;
 
 field oneToMany --named deliveryItems --fieldType ~.jpa.DeliveryOrderItem.java --inverseFieldName delivery --fetchType EAGER
 description add-field-description --onProperty deliveryItems --title "Delivery  Items" --text "Delivery Items";
@@ -963,6 +1008,7 @@ field manyToOne --named creatingUser --fieldType  ~.jpa.Users.java ;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this stock movement.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur originaire du mouvement." --locale fr;
 constraint NotNull --onProperty creatingUser;
+association set-selection-mode --onProperty creatingUser --selectionMode FORWARD;
 
 field number --named movedQty --type java.math.BigDecimal;
 description add-field-description --onProperty movedQty --title "Quantity Moved" --text "The quantity moved during this stockage operation.";
@@ -991,6 +1037,7 @@ field manyToOne --named article --fieldType  ~.jpa.Article.java ;
 description add-field-description --onProperty article --title "Article" --text "The Article generation this mouvement.";
 description add-field-description --onProperty article --title "Article" --text "L article ayont genere ce mouvement." --locale fr;
 constraint NotNull --onProperty article;
+association set-selection-mode --onProperty article --selectionMode FORWARD;
 
 field string --named originatedDocNumber; 
 description add-field-description --onProperty originatedDocNumber --title "Originated Doc" --text "The standard product identification code for a product in stock.";
@@ -999,6 +1046,7 @@ description add-field-description --onProperty originatedDocNumber --title "Docu
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Name of the agency in which the movement takes place.";
 description add-field-description --onProperty agency --title "Filiale" --text "Nom de la filiale dans laquelle le mouvement a lieu." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field number --named initialQty --type java.math.BigDecimal;
 description add-field-description --onProperty initialQty --title "Initial Quantity" --text "The quantity in stock before the movement.";
@@ -1014,15 +1062,17 @@ field number --named totalPurchasingPrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalPurchasingPrice --title "Total Purchasing Price" --text "Total purchasing price for movement of type purchase.";
 description add-field-description --onProperty totalPurchasingPrice --title "Prix Achat Total" --text "Prix total achat pour les mouvements de type approvisionement." --locale fr;
 constraint NotNull --onProperty totalPurchasingPrice;
+format add-number-type --onProperty totalPurchasingPrice --type CURRENCY;
 
 field number --named totalDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty totalDiscount --title "Total Discount" --text "Total discount of the purchase.";
 description add-field-description --onProperty totalDiscount --title "Remise Totale" --text "Remise totale sur cet approvisionement." --locale fr;
+format add-number-type --onProperty totalDiscount --type CURRENCY;
 
 field number --named totalSalesPrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "Total sale price for the movement type sales";
 description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Totale" --text "Prix de vente total pour les mouvements de type vente." --locale fr;
-
+format add-number-type --onProperty totalSalesPrice --type CURRENCY;
 cd ~~ ;
 
 @/* ==================================== */;
@@ -1036,7 +1086,7 @@ description add-class-description  --locale fr --title "Employeur" --text "l emp
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The employer name .";
 description add-field-description --onProperty name --title "Nom" --text "Le nom de l employeur." --locale fr;
-
+display add-toString-field --field name;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The employer Phone .";
@@ -1045,6 +1095,7 @@ description add-field-description --onProperty phone --title "Telephone" --text 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The addresse of the Employer";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse de l employeur" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE ;
 
 @/* Type Client*/;
 java new-enum-type --named CustomerType --package ~.jpa ;
@@ -1066,10 +1117,12 @@ description add-class-description  --locale fr --title "Categorie Client" --text
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this client category.";
 description add-field-description --onProperty name --title "Libelle" --text "Le nom de cette categorie client." --locale fr;
+display add-toString-field --field name;
 
 field number --named discountRate --type java.math.BigDecimal;
 description add-field-description --onProperty discountRate --title "Discount Rate" --text "Discount rate for this client category.";
 description add-field-description --onProperty discountRate --title "Taux Remise" --text "Taux de remise pour cette categorie client." --locale fr;
+format add-number-type --onProperty discountRate --type PERCENTAGE;
 
 field string --named description;
 description add-field-description --onProperty description --title "Description" --text "Description of this client category.";
@@ -1093,6 +1146,7 @@ description add-field-description --onProperty lastName --title "Prénom" --text
 field string --named fullName;
 description add-field-description --onProperty fullName --title "Full Name" --text "The full name of this client.";
 description add-field-description --onProperty fullName --title "Nom Complet" --text "Le nom complet de ce client." --locale fr;
+display add-toString-field --field fullName;
 @/* Le nom complet du client(nom+prenom) */;
 
 field string --named landLinePhone;
@@ -1128,6 +1182,7 @@ description add-field-description --onProperty totalCreditLine --title "Prix d A
 field manyToOne --named employer --fieldType ~.jpa.Employer;
 description add-field-description --onProperty employer --title "Employer" --text "The employer of this client.";
 description add-field-description --onProperty employer --title "Employeur" --text "L employeur de ce client." --locale fr;
+association set-selection-mode --onProperty employer --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named birthDate; 
 @/* pattern= dd-MM-yyyy */;
@@ -1142,10 +1197,12 @@ enum enumerated-field --onProperty gender ;
 field manyToOne --named customerCategory --fieldType ~.jpa.CustomerCategory;
 description add-field-description --onProperty customerCategory --title "Customer Category" --text "The category this client belongs to.";
 description add-field-description --onProperty customerCategory --title "Category Client" --text "La categorie de client à laquelle appartient le client." --locale fr;
+association set-selection-mode --onProperty customerCategory --selectionMode FORWARD;
 
 field number --named totalDebt --type java.math.BigDecimal;
 description add-field-description --onProperty totalDebt --title "Total Debt" --text "Total debts of this customer.";
 description add-field-description --onProperty totalDebt --title "Dette Total" --text "Montant total des dettes du client." --locale fr;
+format add-number-type --onProperty totalDebt --type CURRENCY;
 @/* Default=0 */;
 
 field custom --named customerType --type ~.jpa.CustomerType;
@@ -1181,17 +1238,19 @@ description add-field-description --onProperty endDate --title "date de fin" --t
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The Customer.";
 description add-field-description --onProperty customer --title "Client" --text "Le client." --locale fr;
+association set-selection-mode --onProperty customer --selectionMode FORWARD;
 
 field manyToOne --named insurrance --fieldType ~.jpa.Customer;
 description add-field-description --onProperty insurrance --title "Insurrance" --text "The insurrance.";
 description add-field-description --onProperty insurrance --title "Assurreur" --text "L assurreur." --locale fr;
-
+association set-selection-mode --onProperty insurrance --selectionMode FORWARD;
+display add-toString-field --field insurrance;
 
 field number --named coverageRate --type java.math.BigDecimal;
 @/* default=100% */;
 description add-field-description --onProperty coverageRate --title "Coverage Rate" --text "The coverage rate for this client.";
 description add-field-description --onProperty coverageRate --title "Taux Couverture" --text "Taux de couverture pour ce client." --locale fr;
-
+format add-number-type --onProperty coverageRate --type  PERCENTAGE;
 cd ~~
 
 @/* ================================ */;
@@ -1218,28 +1277,33 @@ description add-field-description --onProperty gap --title "Écart" --text "Éca
 field number --named gapSalesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty gapSalesPricePU --title "Sales Price per Unit" --text "The last sales price per unit.";
 description add-field-description --onProperty gapSalesPricePU --title "Prix de Vente Unitaire" --text "Le dernier prix de vente unitaire." --locale fr;
+format add-number-type --onProperty gapSalesPricePU --type CURRENCY;
 @/*  Default=0 */; 
 
 
 field number --named gapPurchasePricePU --type java.math.BigDecimal;
 description add-field-description --onProperty gapPurchasePricePU --title "Gap Purchase Price per Unit" --text "The last Purchase price per unit.";
 description add-field-description --onProperty gapPurchasePricePU --title "Prix d Achat Unitaire Écart" --text "Le dernier prix de Achatte unitaire." --locale fr;
+format add-number-type --onProperty gapPurchasePricePU --type CURRENCY;
 @/*  Default=0 */; 
 
 field number --named gapTotalSalePrice --type java.math.BigDecimal;
 description add-field-description --onProperty gapTotalSalePrice --title "Total Sale Price" --text "The total price.";
 description add-field-description --onProperty gapTotalSalePrice --title "Prix de Vente Total" --text "Le prix total." --locale fr;
+format add-number-type --onProperty gapTotalSalePrice --type CURRENCY;
 @/*  Default=0, formule=(prix_unitaire*ecart) */;
 
 
 field number --named gapTotalPurchasePrice --type java.math.BigDecimal;
 description add-field-description --onProperty gapTotalPurchasePrice --title "Total Purchase Price" --text "The total price.";
 description add-field-description --onProperty gapTotalPurchasePrice --title "Prix d Achat Total" --text "Le prix total." --locale fr;
+format add-number-type --onProperty gapTotalPurchasePrice --type CURRENCY;
 @/*  Default=0, formule=(prix_unitaire*ecart) */;
 
 field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory item.";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "Responsable de la saisie de la ligne d inventaire" --locale fr;
+association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named recordingDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1250,7 +1314,7 @@ field manyToOne --named article --fieldType ~.jpa.Article
 constraint NotNull --onProperty article
 description add-field-description --onProperty article --title "Article" --text "The product associated with this inventory line.";
 description add-field-description --onProperty article --title "Produit" --text "Le produit attaché à la ligne d inventaire." --locale fr;
-
+association set-selection-mode --onProperty article --selectionMode FORWARD;
 
 @/* Entite Inventaire */;
 entity --named Inventory --package ~.jpa --idStrategy AUTO;
@@ -1260,18 +1324,22 @@ description add-class-description  --locale fr --title "Inventaire" --text "Un i
 field string --named inventoryNumber;
 description add-field-description --onProperty inventoryNumber --title "Inventory Number" --text "The inventory number.";
 description add-field-description --onProperty inventoryNumber --title "Numéro d Inventaire" --text "Le numéro d inventaire." --locale fr;
+display add-toString-field --field inventoryNumber;
 
 field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory.";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "L utilisateur saisissant cet inventaire." --locale fr;
+association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
 
 field number --named gapSaleAmount --type java.math.BigDecimal;
 description add-field-description --onProperty gapSaleAmount --title "Gap Sale Amount" --text "The amount of this inventory.";
 description add-field-description --onProperty gapSaleAmount --title "Montant Des Ecart en Vente" --text "Le montant de cet inventaire." --locale fr;
+format add-number-type --onProperty gapSaleAmount --type CURRENCY;
 
 field number --named gapPurchaseAmount --type java.math.BigDecimal;
 description add-field-description --onProperty gapPurchaseAmount --title "Gap Purchase Amount" --text "The amount of this inventory.";
 description add-field-description --onProperty gapPurchaseAmount --title "Montant Des Ecart en Achat" --text "Le montant de cet inventaire." --locale fr;
+format add-number-type --onProperty gapPurchaseAmount --type CURRENCY;
 
 field custom --named inventoryStatus --type ~.jpa.DocumentProcessingState.java;
 description add-field-description --onProperty inventoryStatus --title "Inventory Status" --text "The status of this inventory.";
@@ -1292,6 +1360,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "The site of this inventory.";
 description add-field-description --onProperty agency --title "Agence" --text "Le site de cet inventaire." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field oneToMany --named inventoryItems --fieldType ~.jpa.InventoryItem --inverseFieldName inventory --fetchType EAGER  --cascade;
 description add-field-description --onProperty inventoryItems --title "Inventory Items" --text "The inventory items";
@@ -1307,11 +1376,13 @@ field oneToOne --named source --fieldType ~.jpa.Article;
 constraint NotNull --onProperty source;
 description add-field-description --onProperty source --title "Source Product" --text "The compound product to be decompose.";
 description add-field-description --onProperty source --title "Produit Origine" --text "Le produit Composant que l on veut decomposer." --locale fr;
+association set-selection-mode --onProperty source --selectionMode FORWARD;
 
 field oneToOne --named target --fieldType ~.jpa.Article;
 constraint NotNull --onProperty target;
 description add-field-description --onProperty target --title "Target Product" --text "The compound product generated from the decomposition.";
 description add-field-description --onProperty target --title "Produit Cible" --text "Le produit composé generé à partir de la décomposition." --locale fr;
+association set-selection-mode --onProperty target --selectionMode FORWARD;
 
 field number --named targetQuantity --type java.math.BigDecimal;
 description add-field-description --onProperty targetQuantity --title "Target Quantity" --text "Quantity of the target product";
@@ -1322,6 +1393,7 @@ field number --named salesPrice --type java.math.BigDecimal;
 description add-field-description --onProperty salesPrice --title "Sales Price" --text "Sales price of target Article.";
 description add-field-description --onProperty salesPrice --title "Prix de Vente" --text "Prix de vente du produit cible." --locale fr;
 constraint NotNull --onProperty salesPrice;
+format add-number-type --onProperty salesPrice --type CURRENCY;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Alows activation or deactivation of this transformation.";
@@ -1339,19 +1411,23 @@ description add-class-description  --locale fr --title "Caisse" --text "Une cais
 field string --named cashDrawerNumber;
 description add-field-description --onProperty cashDrawerNumber --title "Cash Drawer Number" --text "The number of this cash drawer.";
 description add-field-description --onProperty cashDrawerNumber --title "Numéro de Caisse" --text "Le numéro de cette caisse." --locale fr;
+display add-toString-field --field cashDrawerNumber;
 
 field manyToOne --named cashier --fieldType ~.jpa.Users;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment on this drawer.";
 description add-field-description --onProperty cashier --title "Caissier" --text "Utilisateur percevant le paiement surcette caisse." --locale fr;
+association set-selection-mode --onProperty cashier --selectionMode FORWARD;
 
 field manyToOne --named closedBy --fieldType ~.jpa.Users;
 description add-field-description --onProperty closedBy --title "Closed By" --text "The user who closed this cash drawer.";
 description add-field-description --onProperty closedBy --title "Fermé Par" --text "Utilisateur ayant fermé la caisse." --locale fr;
+association set-selection-mode --onProperty closedBy --selectionMode FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency ;
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "Site in which this drawer resides.";
 description add-field-description --onProperty agency --title "Agency" --text "Site dans lequel la caisse est gerée." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named openingDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1376,36 +1452,43 @@ description add-field-description --onProperty opened --title "Ouverte" --text "
 field number --named totalCashIn --type java.math.BigDecimal;
 description add-field-description --onProperty totalCashIn --title "Total Cash In" --text "The total cash in.";
 description add-field-description --onProperty totalCashIn --title "Total Encaissement" --text "L encaissement totale." --locale fr;
+format add-number-type --onProperty totalCashIn --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalCashOut --type java.math.BigDecimal;
 description add-field-description --onProperty totalCashOut --title "Total Cash Out" --text "Total withdrawal from this drawer.";
 description add-field-description --onProperty totalCashOut --title "Total Retrait" --text "Total des decaissements éffectués en caisse." --locale fr;
+format add-number-type --onProperty totalCashOut --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalCash --type java.math.BigDecimal;
 description add-field-description --onProperty totalCash --title "Total Cash" --text "Total cash in this drawer.";
 description add-field-description --onProperty totalCash --title "Total Cash" --text "Total cash dans cette caisse." --locale fr;
+format add-number-type --onProperty totalCash --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalCheck --type java.math.BigDecimal;
 description add-field-description --onProperty totalCheck --title "Total Checks" --text "Total checks in this drawer.";
 description add-field-description --onProperty totalCheck --title "Total Chèque" --text "Total chèque dans cette caisse." --locale fr;
+format add-number-type --onProperty totalCheck --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalCreditCard --type java.math.BigDecimal;
 description add-field-description --onProperty totalCreditCard --title "Total Credit Card" --text "Total credit cards by this drawer.";
 description add-field-description --onProperty totalCreditCard --title "Total Carte Credit" --text "Total carte de credit par cette caisse." --locale fr;
+format add-number-type --onProperty totalCreditCard --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalCompanyVoucher --type java.math.BigDecimal;
 description add-field-description --onProperty totalCompanyVoucher --title "Total Company Vouchera" --text "Total voucher (from company or hospital) in this drawer.";
 description add-field-description --onProperty totalCompanyVoucher --title "Total Avoir Compangny" --text "Totale des bons (de sociéte ou d hopital) qu il ya en caisse." --locale fr;
+format add-number-type --onProperty totalCompanyVoucher --type CURRENCY ;
 @/* Default=0 */;
 
 field number --named totalClientVoucher --type java.math.BigDecimal;
 description add-field-description --onProperty totalClientVoucher --title "Total Client Voucher" --text "Total voucher (from client) in this drawer.";
 description add-field-description --onProperty totalClientVoucher --title "Total Avoir Client" --text "Totale des bons (client) qu il ya en caisse." --locale fr;
+format add-number-type --onProperty totalClientVoucher --type CURRENCY ;
 @/* Default=0 */;
 
 @/* Commande Client */;
@@ -1452,21 +1535,24 @@ description add-field-description --onProperty recordDate --title "Date de Saisi
 field number --named salesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit.";
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix de vente unitaire." --locale fr;
+format add-number-type --onProperty salesPricePU --type CURRENCY;
 @/*  Default=0 */; 
 
 field number --named totalSalePrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalSalePrice --title "Total Sale Price" --text "Total Sale Price.";
 description add-field-description --onProperty totalSalePrice --title "Prix de vente Total" --text "Prix de vente Total." --locale fr;
+format add-number-type --onProperty totalSalePrice --type CURRENCY;
 @/* Default=0., Formule=(remise * qté_commande) */;
-
 
 field number --named amountReturn --type java.math.BigDecimal;
 description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Return.";
 description add-field-description --onProperty amountReturn --title "Montant Retour" --text "Montant Retour." --locale fr;
+format add-number-type --onProperty amountReturn --type CURRENCY;
 
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The purchase order item of the product to be sold.";
 description add-field-description --onProperty article --title "Article" --text "La ligne d approvisionnement contenant le produit que l on veut vendre." --locale fr;
+association set-selection-mode --onProperty article --selectionMode  FORWARD;
 constraint NotNull --onProperty article ;
 cd ~~;
 
@@ -1479,7 +1565,7 @@ description add-class-description  --locale fr --title "Commande Client" --text 
 field string --named soNumber;
 description add-field-description --onProperty soNumber --title "Sales Order Number" --text "The sales order number.";
 description add-field-description --onProperty soNumber --title "Numéro de Commande Client" --text "Le numéro de la commande client." --locale fr;
-
+display add-toString-field --field soNumber;
 
 field oneToMany --named salesOrderItem --fieldType ~.jpa.SalesOrderItem.java --inverseFieldName saleOrder --fetchType EAGER
 description add-field-description --onProperty salesOrderItem --title "Sale Order Items" --text "Sale Order Items";
@@ -1503,25 +1589,30 @@ description add-field-description --onProperty restorationDate --title "Date de 
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The client ordering.";
 description add-field-description --onProperty customer --title "Client" --text "Le client  qui passe la commande." --locale fr;
+association set-selection-mode --onProperty customer --selectionMode FORWARD;
 constraint NotNull --onProperty customer ;
 
 field manyToOne --named insurance --fieldType ~.jpa.Insurrance;
 description add-field-description --onProperty insurance --title "Insurance" --text "The Insurance ordering.";
 description add-field-description --onProperty insurance --title "Assurance" --text "Le client  qui passe la commande." --locale fr;
+association set-selection-mode --onProperty insurance --selectionMode FORWARD;
 
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The Insurance ordering.";
 description add-field-description --onProperty vat --title "VAT" --text "Le client  qui passe la commande." --locale fr;
+association set-selection-mode --onProperty vat --selectionMode FORWARD;
 
 field manyToOne --named saler --fieldType ~.jpa.Users;
 description add-field-description --onProperty saler --title "Saler" --text "The user making this sale.";
 description add-field-description --onProperty saler --title "Vendeur" --text "L utilisateur qui effectue la vente." --locale fr;
 constraint NotNull --onProperty saler ;
+association set-selection-mode --onProperty saler --selectionMode FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency where sale has been made.";
 description add-field-description --onProperty agency --title "Agency" --text "L Agence ou la vente a ete effectuee." --locale fr;
 constraint NotNull --onProperty agency ;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field custom --named salesOrderStatus --type ~.jpa.DocumentProcessingState.java;
 description add-field-description --onProperty salesOrderStatus --title "Status" --text "The status of this sales order.";
@@ -1536,27 +1627,29 @@ description add-field-description --onProperty cashed --title "Encaissé" --text
 field number --named amountBeforeTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountBeforeTax --title "Amount Before Tax" --text "Total amount before tax for this sales order.";
 description add-field-description --onProperty amountBeforeTax --title "Montant hors Taxes" --text "Montant total hors Taxes pour cette commande client." --locale fr;
+format add-number-type --onProperty amountBeforeTax --type CURRENCY ;
 @/* Default=0, montant_ht */;
 
 field number --named amountVAT --type java.math.BigDecimal;
 description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
 description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
+format add-number-type --onProperty amountVAT --type CURRENCY ;
 @/* Default=0, montant_tva */;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
 description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
-@/* Default=0, remise */;
+format add-number-type --onProperty amountDiscount --type CURRENCY ;
 
 field number --named totalReturnAmount --type java.math.BigDecimal;
 description add-field-description --onProperty totalReturnAmount --title "Total Return Amount" --text "Total Return Amount.";
 description add-field-description --onProperty totalReturnAmount --title "Montant total retour" --text "Montant total retour." --locale fr;
-@/* Default=0, remise */;
+format add-number-type --onProperty totalReturnAmount --type CURRENCY ;
 
 field number --named amountAfterTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this sales order.";
 description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette commande client." --locale fr;
-@/* Default=0, Formule=(montant_HT - remise) */;
+format add-number-type --onProperty amountAfterTax --type CURRENCY ;
 
 field custom --named salesOrderType --type ~.jpa.SalesOrderType;
 description add-field-description --onProperty salesOrderType --title "Type" --text "The type of this sales order.";
@@ -1588,18 +1681,18 @@ description add-field-description --onProperty returnedQty --title "Quantité Re
 field number --named salesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit for product of this line.";
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix unitaire du produit de la ligne de facture" --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty salesPricePU --type CURRENCY ;
 
 
 field number --named amountReturn --type java.math.BigDecimal;
 description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Returned Product";
 description add-field-description --onProperty amountReturn --title "Prix de Vente Unitaire" --text "Montant Total Des Retour" --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty amountReturn --type CURRENCY ;
 
 field number --named totalSalesPrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "The total sales price for product of this line.";
 description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Total" --text "Prix total du produit de la ligne de facture" --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty totalSalesPrice --type CURRENCY ;
 
 
 
@@ -1611,6 +1704,7 @@ description add-class-description  --locale fr --title "Facture" --text "Une fac
 field string --named invoiceNumber;
 description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
 description add-field-description --onProperty invoiceNumber --title "Numéro Facture" --text "Le numéro de cette facture." --locale fr;
+display add-toString-field --field invoiceNumber;
 
 field temporal --type TIMESTAMP --named creationDate; 
 @/* pattern= dd-MM-yyyy HH:mm*/;
@@ -1620,22 +1714,27 @@ description add-field-description --onProperty creationDate --title "Date de Cr�
 field manyToOne --named client --fieldType ~.jpa.Customer;
 description add-field-description --onProperty client --title "Client" --text "The client referenced by this invoice.";
 description add-field-description --onProperty client --title "Client" --text "Le client mentionné sur la facture." --locale fr;
+association set-selection-mode --onProperty client --selectionMode  FORWARD;
 
 field manyToOne --named insurrance --fieldType ~.jpa.Customer;
 description add-field-description --onProperty insurrance --title "Insurrance" --text "The Insurance.";
 description add-field-description --onProperty insurrance --title "Insurrance" --text "L Assurreur." --locale fr;
+association set-selection-mode --onProperty insurrance --selectionMode  FORWARD;
 
 field manyToOne --named saler --fieldType ~.jpa.Users;
 description add-field-description --onProperty saler --title "Saler" --text "The user creating this invoice.";
 description add-field-description --onProperty saler --title "Vendeur" --text "Utilisateur vendeur ayant generé la facture" --locale fr;
+association set-selection-mode --onProperty saler --selectionMode  FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency
 description add-field-description --onProperty agency --title "Agency" --text "Site in which this invoice is generated.";
 description add-field-description --onProperty agency --title "Agency" --text "Site dans lequel la caisse est gerée." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode  FORWARD;
 
 field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 description add-field-description --onProperty client --title "Sales Order" --text "The sales order generating of this invoice.";
 description add-field-description --onProperty client --title "Commande Client" --text "Commande client à l origine de la facture" --locale fr;
+association set-selection-mode --onProperty salesOrder --selectionMode  FORWARD;
 
 field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the invoice is settled.";
@@ -1650,37 +1749,37 @@ description add-field-description --onProperty amountBeforeTax --title "Montant 
 field number --named amountVAT --type java.math.BigDecimal;
 description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
 description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
-@/* Default=0, montant_tva */;
+format add-number-type --onProperty amountVAT --type CURRENCY ;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
 description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
-@/* Default=0, remise */;
+format add-number-type --onProperty amountDiscount --type CURRENCY ;
 
 field number --named totalReturnAmount --type java.math.BigDecimal;
 description add-field-description --onProperty totalReturnAmount --title "Total Return Amount" --text "Total Return Amount.";
 description add-field-description --onProperty totalReturnAmount --title "Montant total retour" --text "Montant total retour." --locale fr;
-@/* Default=0, remise */;
+format add-number-type --onProperty totalReturnAmount --type CURRENCY ;
 
 field number --named amountAfterTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this sales order.";
 description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette commande client." --locale fr;
-@/* Default=0, Formule=(montant_HT - remise) */;
+format add-number-type --onProperty amountAfterTax --type CURRENCY ;
 
 field number --named netToPay --type java.math.BigDecimal;
 description add-field-description --onProperty netToPay --title "Net a Payer" --text "The net amount to pay.";
 description add-field-description --onProperty netToPay --title "Net a Payer" --text "Le montant net à payer." --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty netToPay --type CURRENCY ;
 
 field number --named customerRestTopay --type java.math.BigDecimal;
 description add-field-description --onProperty customerRestTopay --title "Customer Rest To pay" --text "Customer Rest To pay.";
 description add-field-description --onProperty customerRestTopay --title "Rest A payer client" --text "Rest A payer client." --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty customerRestTopay --type CURRENCY ;
 
 field number --named insurranceRestTopay --type java.math.BigDecimal;
 description add-field-description --onProperty insurranceRestTopay --title "Insurrance Rest To pay" --text "Insurrance Rest To pay.";
 description add-field-description --onProperty insurranceRestTopay --title "Reste A payer client" --text "Reste A payer client." --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty insurranceRestTopay --type CURRENCY ;
 
 field boolean --named cashed --primitive false; 
 description add-field-description --onProperty cashed --title "Cashed" --text "Sates if the invoice is cashed.";
@@ -1690,12 +1789,12 @@ description add-field-description --onProperty cashed --title "encaisseé" --tex
 field number --named advancePayment --type java.math.BigDecimal;
 description add-field-description --onProperty advancePayment --title "Advance Payment" --text "The advance payment.";
 description add-field-description --onProperty advancePayment --title "Net a Payer" --text "L avance sur paiement." --locale fr;
-@/*  Default=0 */; 
+format add-number-type --onProperty advancePayment --type CURRENCY ;
 
-field number --named restToPay --type java.math.BigDecimal;
-description add-field-description --onProperty restToPay --title "Ret to Pay" --text "The rest to pay.";
-description add-field-description --onProperty restToPay --title "Reste a Payer" --text "Le reste a payer." --locale fr;
-@/*  Default=0 */; 
+field number --named totalRestToPay --type java.math.BigDecimal;
+description add-field-description --onProperty totalRestToPay --title "Ret to Pay" --text "The rest to pay.";
+description add-field-description --onProperty totalRestToPay --title "Reste a Payer" --text "Le reste a payer." --locale fr;
+format add-number-type --onProperty totalRestToPay --type CURRENCY ;
 
 field oneToMany --named invoiceItems --fieldType ~.jpa.InvoiceItem --inverseFieldName invoice --fetchType EAGER  --cascade;
 description add-field-description --onProperty invoiceItems --title "Invoice Items" --text "The invoice items";
@@ -1727,6 +1826,7 @@ description add-class-description  --locale fr --title "Paiement" --text "Un pai
 field string --named paymentNumber;
 description add-field-description --onProperty paymentNumber --title "Payment Number" --text "The paiment number.";
 description add-field-description --onProperty paymentNumber --title "Numéro du Paiement" --text "Le numéro du paiement." --locale fr;
+display add-toString-field --field paymentNumber;
 
 field temporal --type TIMESTAMP --named paymentDate; 
 @/* pattern=dd-MM-yyyy HH:mm*/;
@@ -1741,28 +1841,33 @@ description add-field-description --onProperty recordDate --title "Date de Saisi
 field number --named amount --type java.math.BigDecimal;
 description add-field-description --onProperty amount --title "Payment Amount" --text "The payment amount.";
 description add-field-description --onProperty amount --title "Montant du Paiement" --text "Le montant du paiement." --locale fr;
+format add-number-type --onProperty amount --type CURRENCY;
 
 field number --named receivedAmount --type java.math.BigDecimal;
 description add-field-description --onProperty receivedAmount --title "Received Amount" --text "The amount received from the payment.";
 description add-field-description --onProperty receivedAmount --title "Montant Reçue" --text "Le montant reçue du paiement." --locale fr;
+format add-number-type --onProperty receivedAmount --type CURRENCY;
 
 field number --named difference --type java.math.BigDecimal;
 description add-field-description --onProperty difference --title "Difference" --text "The difference (amount returned to payer).";
 description add-field-description --onProperty difference --title "Différence" --text "La différence (montant retourné au client)." --locale fr;
+format add-number-type --onProperty difference --type CURRENCY;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the payment occurs.";
 description add-field-description --onProperty agency --title "Agency" --text "Agence dans lequel s effectue le paiement." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field manyToOne --named cashier --fieldType ~.jpa.Users;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment.";
 description add-field-description --onProperty cashier --title "Caissier" --text "L utilisateur percevant le paiement." --locale fr;
+association set-selection-mode --onProperty cashier --selectionMode FORWARD;
 
 field manyToOne --named cashDrawer --fieldType ~.jpa.CashDrawer;
 description add-field-description --onProperty cashDrawer --title "Cash Drawer" --text "The cash drawer in use.";
 description add-field-description --onProperty cashDrawer --title "Caisse" --text "La caisse utilisé." --locale fr;
-
+association set-selection-mode --onProperty cashDrawer --selectionMode FORWARD;
 cd ../Invoice.java;
 
 field oneToMany --named payments --fieldType ~.jpa.Payment --inverseFieldName invoice --fetchType EAGER  --cascade;
@@ -1784,7 +1889,7 @@ description add-field-description --onProperty paymentReceiptPrinted --title "Ou
 field manyToOne --named paidBy --fieldType ~.jpa.Customer;
 description add-field-description --onProperty paidBy --title "Paid By" --text "Paid By.";
 description add-field-description --onProperty paidBy --title "Payer Par" --text "Payer Par." --locale fr;
-
+association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
 
 @/* Entité EtatCredits */;
 entity --named DebtStatement --package ~.jpa --idStrategy AUTO;
@@ -1794,14 +1899,17 @@ description add-class-description  --locale fr --title "Etat Credits" --text "Le
 field string --named statementNumber;
 description add-field-description --onProperty statementNumber --title "Statement Number" --text "The number identifying this statement.";
 description add-field-description --onProperty statementNumber --title "Numéro de l État" --text "Le numéro identifiant cet état." --locale fr;
+display add-toString-field --field statementNumber;
 
 field manyToOne --named insurrance --fieldType ~.jpa.Customer;
 description add-field-description --onProperty insurrance --title "Insurrance" --text "The client carrying this debt.";
 description add-field-description --onProperty insurrance --title "Insurrance" --text "Le client portant cette dette." --locale fr;
+association set-selection-mode --onProperty insurrance --selectionMode FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The client carrying this debt.";
 description add-field-description --onProperty agency --title "Agency" --text "Le client portant cette dette." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named paymentDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1811,15 +1919,17 @@ description add-field-description --onProperty paymentDate --title "Date Paiemen
 field number --named initialAmount --type java.math.BigDecimal;
 description add-field-description --onProperty initialAmount --title "Initial Amount" --text "Initial amount of this statement.";
 description add-field-description --onProperty initialAmount --title "Montant Initial" --text "Montant initial de cet état." --locale fr;
+format add-number-type --onProperty initialAmount --type CURRENCY;
 
 field number --named advancePayment --type java.math.BigDecimal;
 description add-field-description --onProperty advancePayment --title "Advance Payment" --text "Advance payment.";
 description add-field-description --onProperty advancePayment --title "Montant Avancé" --text "Montant avancé." --locale fr;
+format add-number-type --onProperty advancePayment --type CURRENCY;
 
 field number --named restAmount --type java.math.BigDecimal;
 description add-field-description --onProperty restAmount --title "Rest Amount" --text "The remaining amount of this debt.";
 description add-field-description --onProperty restAmount --title "Montant Restant" --text "Le montant restant a payer pour cette dette." --locale fr;
-@/* Default=0 */;
+format add-number-type --onProperty restAmount --type CURRENCY;
 
 field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the statement is settled or not.";
@@ -1829,7 +1939,7 @@ description add-field-description --onProperty settled --title "Soldé" --text "
 field number --named amountFromVouchers --type java.math.BigDecimal;
 description add-field-description --onProperty amountFromVouchers --title "Rest Amount" --text "Amount of of vouchers if the customer uses vouchers to pay these debts.";
 description add-field-description --onProperty amountFromVouchers --title "Montant Restant" --text "Montant de l avoir si le client en possède utilisé pour rembourser les dettes." --locale fr;
-@/* Default=0 */;
+format add-number-type --onProperty amountFromVouchers --type CURRENCY;
 
 field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the statement is canceled or not.";
@@ -1859,6 +1969,7 @@ field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this Hospital.";
 description add-field-description --onProperty name --title "Nom" --text "Le nom de cet hopital." --locale fr;
 constraint NotNull --onProperty name;
+display add-toString-field --field name;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The hospital Phone.";
@@ -1867,6 +1978,7 @@ description add-field-description --onProperty phone --title "Telephone" --text 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The site address";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE;
 
 @/* Entité Prescriber */;
 entity --named Prescriber --package ~.jpa --idStrategy AUTO;
@@ -1877,6 +1989,7 @@ field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this Prescrip.";
 description add-field-description --onProperty name --title "Nom" --text "Le nom de ce Prescripteur." --locale fr;
 constraint NotNull --onProperty name;
+display add-toString-field --field name;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The Prescriber Phone.";
@@ -1885,7 +1998,7 @@ description add-field-description --onProperty phone --title "Telephone" --text 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The site address";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
-
+association set-selection-mode --onProperty address --selectionMode NONE;
 
 @/* Entité Ordonnanciers */;
 entity --named PrescriptionBook --package ~.jpa --idStrategy AUTO;
@@ -1896,30 +2009,35 @@ field manyToOne --named prescriber --fieldType ~.jpa.Prescriber.java;
 description add-field-description --onProperty prescriber --title "Prescriber" --text "The doctor who prescribed the order.";
 description add-field-description --onProperty prescriber --title "Prescripteur" --text "Le medecin ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty prescriber;
+association set-selection-mode --onProperty prescriber --selectionMode FORWARD;
 
 field manyToOne --named hospital --fieldType ~.jpa.Hospital.java;
 description add-field-description --onProperty hospital --title "Hospital" --text "The hospital subjet of this prescription.";
 description add-field-description --onProperty hospital --title "Hopital" --text "L hopital ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty hospital;
-
+association set-selection-mode --onProperty hospital --selectionMode FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency.java;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency.";
 description add-field-description --onProperty agency --title "Agence" --text "L Agence." --locale fr;
 constraint NotNull --onProperty agency;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field manyToOne --named recordingAgent --fieldType ~.jpa.Users.java;
 description add-field-description --onProperty recordingAgent --title "Recording Agent" --text "The user who recorded this prescription.";
 description add-field-description --onProperty recordingAgent --title "Agent Saisie" --text "L utilisateur saisiessant cet ordonnance." --locale fr;
+association set-selection-mode --onProperty recordingAgent --selectionMode FORWARD;
 
 field string --named prescriptionNumber;
 description add-field-description --onProperty prescriptionNumber --title "Prescription Number" --text "The prescription number.";
 description add-field-description --onProperty prescriptionNumber --title "Numéro de l Ordonnance" --text "Le numéro de l ordonnance." --locale fr;
+display add-toString-field --field prescriptionNumber;
 
 field oneToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 constraint NotNull --onProperty salesOrder;
 description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
 description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient l ordonnance." --locale fr;
+association set-selection-mode --onProperty salesOrder --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named prescriptionDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1942,24 +2060,29 @@ description add-class-description  --locale fr --title "Avoir Client" --text "Av
 field string --named voucherNumber;
 description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The client voucher number.";
 description add-field-description --onProperty voucherNumber --title "Numéro de l Avoir" --text "Le numéro de l avoir du client." --locale fr;
+display add-toString-field --field voucherNumber;
 
 field oneToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 constraint NotNull --onProperty salesOrder;
 description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
 description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient l ordonnance." --locale fr;
+association set-selection-mode --onProperty salesOrder --selectionMode FORWARD;
 
 field number --named amount --type java.math.BigDecimal;
 description add-field-description --onProperty amount --title "Amount" --text "Voucher amount.";
 description add-field-description --onProperty amount --title "Montant" --text "Montant de l avoir" --locale fr;
 constraint NotNull --onProperty amount;
+format add-number-type --onProperty amount --type CURRENCY;
 
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "Customer.";
 description add-field-description --onProperty customer --title "Client" --text "Client." --locale fr;
+association set-selection-mode --onProperty customer --selectionMode FORWARD;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency.";
 description add-field-description --onProperty agency --title "Agence" --text "Agence." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode FORWARD;
 
 field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
@@ -1969,7 +2092,7 @@ description add-field-description --onProperty canceled --title "Annulé" --text
 field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
 description add-field-description --onProperty recordingUser --title "Agent" --text "L agent de saisie ayant édité cet avoir." --locale fr;
-@/* default=getUserName() */;
+association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
 
 field temporal --type TIMESTAMP --named modifiedDate; 
 @/* pattern= dd-MM-yyyy HH:mm */;
@@ -1979,7 +2102,7 @@ description add-field-description --onProperty modifiedDate --title "Derniere Ed
 field number --named amountUsed --type java.math.BigDecimal;
 description add-field-description --onProperty amountUsed --title "Amount Used" --text "Amount used.";
 description add-field-description --onProperty amountUsed --title "Montant Utilisé" --text "Montant utilisé." --locale fr;
-@/* Default=0 */;
+format add-number-type --onProperty amountUsed --type CURRENCY;
 
 field boolean --named settled --primitive false; 
 description add-field-description --onProperty settled --title "Settled" --text "Sates if the voucher is settled or not.";
@@ -1997,33 +2120,26 @@ description add-field-description --onProperty voucherPrinted --title "Imprimé"
 @/* default=false */;
 cd ~~;
 
-envers audit-package --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ ;
-cd ~~ ;
-repogen setup ;
-repogen new-repository --jpaPackage src/main/java/org/adorsys/adph/server/jpa/;
-reporest setup --activatorType APP_CLASS ;
-reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys/adph/server/jpa/ --overrride --contentType application/xml ;
- 
+
+envers setup;
+
+envers audit-package --jpaPackage src/main/java/org/adorsys/;
+
+cd ~~;
+
+repogen setup;
+
+repogen new-repository --jpaPackage src/main/java/org/adorsys;
+
+cd ~~;
+
+reporest setup --activatorType APP_CLASS;
+
+reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys;
 
 cd ~~;
 
 mvn clean install -DskipTests;
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
 
 
 
