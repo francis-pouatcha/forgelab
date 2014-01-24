@@ -568,13 +568,24 @@ description add-field-description --onProperty clearanceConfig --title "Clearanc
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
 association set-selection-mode --onProperty clearanceConfig --selectionMode FORWARD;
 
-field manyToMany --named equivalentArticles --fieldType ~.jpa.Article;
-description add-field-description --onProperty equivalentArticles --title "Equivalent Articles" --text "equivalent products";
-description add-field-description --onProperty equivalentArticles --title "Articles Equivalent" --text "article equivalents." --locale fr;
-
 
 cd ~~;
 
+@/* Entity Article */;
+entity --named ArticleEquivalence --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Article Equivalence" --text "An article equivalent to this article";
+description add-class-description  --locale fr --title "Equivalence Produit" --text "Un produit ou medicament en vente dans cette pharmacie";
+
+field manyToOne --named mainArticle --fieldType ~.jpa.Article;
+description add-field-description --onProperty mainArticle --title "main Article" --text "The main Article";
+description add-field-description --onProperty mainArticle --title "Article principal" --text "L article principale." --locale fr;
+association set-selection-mode --onProperty mainArticle --selectionMode FORWARD;
+
+field manyToOne --named equivalentArticle --fieldType ~.jpa.Article;
+description add-field-description --onProperty equivalentArticle --title "equivalent Article" --text "The Equivalent Article";
+description add-field-description --onProperty equivalentArticle --title "Article Equivalent" --text "L article equivalent." --locale fr;
+association set-selection-mode --onProperty equivalentArticle --selectionMode FORWARD;
+cd ~~;
 
 @/* Entity Supplier */;
 entity --named Supplier --package ~.jpa --idStrategy AUTO;
