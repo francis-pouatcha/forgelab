@@ -143,4 +143,3 @@ cd ~~;
 
 mvn clean install -DskipTests;
 
-cd ..;

@@ -40,6 +40,7 @@ description add-class-description  --locale fr --title "Adresse" --text "Une adr
 field string --named street;
 description add-field-description --onProperty street --title "Street" --text "The name of the street";
 description add-field-description --onProperty street --title "Rue" --text "Nom de la rue" --locale fr;
+display add-toString-field --field street;
 
 field string --named zipCode;
 description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code oif this address";
@@ -63,10 +64,16 @@ field string --named displayName;
 description add-field-description --onProperty displayName --title "Name" --text "The site name";
 description add-field-description --onProperty displayName --title "Nom" --text "Nom du site" --locale fr;
 constraint NotNull --onProperty displayName;
+display add-toString-field --field displayName;
 
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The site address";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse du site" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE;
+association display-field --field address.zipCode;
+association display-field --field address.street;
+association display-field --field address.city;
+association display-field --field address.country;
 
 field string --named phone;
 description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
@@ -111,7 +118,7 @@ enum generate-description-keys ;
 
 
 
-@/* Entity Filiale */;
+@/* Entity Agence */;
 entity --named Agency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Agency" --text "An agency of this pharmacie";
 description add-class-description  --locale fr --title "Agence" --text "une agence de cette pharmacie";
@@ -119,6 +126,7 @@ description add-class-description  --locale fr --title "Agence" --text "une agen
 field string --named agencyNumber;
 description add-field-description --onProperty agencyNumber --title "Agency Number" --text "The number of this agency";
 description add-field-description --onProperty agencyNumber --title "Numéro Agence" --text "Numéro de la filiale" --locale fr;
+display add-toString-field --field agencyNumber;
 @/* add unique constraint generator here */;
 
 field string --named name;
@@ -136,19 +144,22 @@ description add-field-description --onProperty active --title "Actif" --text "In
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The address of this Agency.";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse de cette agence" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE;
 
 field manyToOne --named company --fieldType ~.jpa.Company;
 description add-field-description --onProperty company --title "Company" --text "The company to which this Agency depend.";
 description add-field-description --onProperty company --title "Compagnie" --text "la company a laquelle cette agence depend" --locale fr;
+association set-selection-mode --onProperty company --selectionMode FORWARD ;
 
 field string --named ticketMessage;
 description add-field-description --onProperty ticketMessage --title "Ticket Message" --text "The  message for ticker";
 description add-field-description --onProperty ticketMessage --title "Message Ticket" --text "le message du ticket" --locale fr;
-
+constraint Size --onProperty ticketMessage --max 256;
 
 field string --named invoiceMessage;
 description add-field-description --onProperty invoiceMessage --title "Message Facture" --text "The message for invoice";
 description add-field-description --onProperty invoiceMessage --title "Invoice Message" --text "Le message Pour la facture" --locale fr;
+constraint Size --onProperty invoiceMessage --max 256;
 
 
 @/* Entity Currency */;
@@ -160,6 +171,7 @@ field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this currency.";
 description add-field-description --onProperty name --title "Libelle" --text "Le nom de cette devise." --locale fr;
 constraint NotNull --onProperty name;
+display add-toString-field --field name;
 
 field string --named shortName;
 description add-field-description --onProperty shortName --title "Short Name" --text "The short name of this currency.";
@@ -169,7 +181,7 @@ constraint NotNull --onProperty shortName;
 field number --named cfaEquivalent --type java.math.BigDecimal;
 description add-field-description --onProperty cfaEquivalent --title "CFA Equivalent" --text "Corresponding CFA value for conversions.";
 description add-field-description --onProperty cfaEquivalent --title "Equivalent CFA" --text "Valeur equivalant cfa pour faire les conversions." --locale fr;
-
+format add-number-type --onProperty cfaEquivalent --type CURRENCY;
 cd ~~ ;
 
 @/* Entity RoleName */;
@@ -180,6 +192,7 @@ description add-class-description  --locale fr --title "Roles" --text "Nom de ro
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The name of this role.";
 description add-field-description --onProperty name --title "Intitule" --text "Intitule de ce role" --locale fr;
+display add-toString-field --field name;
 
 @/* Entity Users */;
 entity --named Users --package ~.jpa --idStrategy AUTO;
@@ -195,6 +208,7 @@ field string --named userName;
 description add-field-description --onProperty userName --title "User Name" --text "The name used by the user to login.";
 description add-field-description --onProperty userName --title "Nom de Connection" --text "Le nom de connexion de cet utilisateur." --locale fr;
 constraint NotNull --onProperty userName;
+display add-toString-field --field name;
 @/* Unique=true */;
 
 field string --named firstName;
@@ -219,6 +233,7 @@ description add-field-description --onProperty password --title "Mot de Passe" -
 field manyToMany --named roleNames --fieldType ~.jpa.RoleName;
 description add-field-description --onProperty roleNames --title "Role Names" --text "The names of roles assigned to this user.";
 description add-field-description --onProperty roleNames --title "Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
+association set-selection-mode --onProperty roleNames --selectionMode FORWARD ;
 
 field string --named phoneNumber;
 description add-field-description --onProperty phoneNumber --title "Phone Number" --text "The phone number of this user.";
@@ -252,6 +267,7 @@ description add-field-description --onProperty passwordSalt --title "Clé de hac
 field oneToOne --named address --fieldType ~.jpa.Address --cascade ALL;
 description add-field-description --onProperty address --title "Address" --text "The address of this user.";
 description add-field-description --onProperty address --title "Adresse" --text "Adresse de cet utilisateur" --locale fr;
+association set-selection-mode --onProperty address --selectionMode NONE ;
 
 field string --named email;
 description add-field-description --onProperty email --title "Email" --text "The email address of this user..";
@@ -260,10 +276,12 @@ description add-field-description --onProperty email --title "Email" --text "Adr
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency in which the user is registered.";
 description add-field-description --onProperty agency --title "Agence" --text "l Agence dans lequel cet utilisateur est enregistré." --locale fr;
+association set-selection-mode --onProperty address --selectionMode FORWARD ;
 
 field number --named discountRate --type java.math.BigDecimal;
 description add-field-description --onProperty discountRate --title "Discount Rate" --text "The discount rate this user can give to clients.";
 description add-field-description --onProperty discountRate --title "Taux Remise" --text "Taux de remise que cet utilisateur peut accorder aux clients." --locale fr;
+format add-number-type --onProperty discountRate --type CURRENCY;
 @/* Default= 15% */;
 
 field string --named saleKey;
@@ -1970,7 +1988,7 @@ description add-field-description --onProperty settled --title "Soldé" --text "
 
 field number --named restAmount --type java.math.BigDecimal;
 description add-field-description --onProperty restAmount --title "Rest Amount" --text "The remaining credit on this voucher.";
-description 31-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
+description add-field-description --onProperty restAmount --title "Montant Restant" --text "Rest de l avoir client" --locale fr;
 @/* Default=0 */;
 
 field boolean --named voucherPrinted --primitive false;
