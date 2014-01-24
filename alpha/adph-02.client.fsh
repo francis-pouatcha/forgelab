@@ -5,4 +5,8 @@ jfx setup;
 
 cd ~~;
 
-jfx ui-create --jpaBasePackage org.adorsys.adph.server --jpaPackage ../adph.server/src/main/java/org/adorsys/adph/server/jpa/
+jfx ui-create --jpaBasePackage org.adorsys.adph.server --jpaPackage ../adph.server/src/main/java/org/adorsys/adph/server/jpa/;
+
+cd ~~;
+
+mvn clean install;
