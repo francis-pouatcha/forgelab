@@ -530,11 +530,6 @@ field temporal --type TIMESTAMP --named lastOutOfStock;
 description add-field-description --onProperty lastOutOfStock --title "Last Out of Stock Date" --text "Date of last out of stock for this article";
 description add-field-description --onProperty lastOutOfStock --title "Date Derniere Rupture de stock" --text "Date de la derniere rupture de stock pour ce produit" --locale fr;
 
-field manyToOne --named saleVat --fieldType ~.jpa.VAT;
-description add-field-description --onProperty saleVat --title "VAT" --text "The value added tax during sale";
-description add-field-description --onProperty saleVat --title "TVA" --text "La taxe sur la valeur ajoute a la vente" --locale fr;
-association set-selection-mode --onProperty saleVat --selectionMode FORWARD;
-
 field manyToOne --named defaultSalesMargin --fieldType ~.jpa.SalesMargin; 
 description add-field-description --onProperty defaultSalesMargin --title "Sales Margin" --text "The sales margin on this product.";
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
@@ -573,13 +568,24 @@ description add-field-description --onProperty clearanceConfig --title "Clearanc
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
 association set-selection-mode --onProperty clearanceConfig --selectionMode FORWARD;
 
-field manyToMany --named equivalentArticles --fieldType ~.jpa.Article;
-description add-field-description --onProperty equivalentArticles --title "Equivalent Articles" --text "equivalent products";
-description add-field-description --onProperty equivalentArticles --title "Articles Equivalent" --text "article equivalents." --locale fr;
-
 
 cd ~~;
 
+@/* Entity Article */;
+entity --named ArticleEquivalence --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Article Equivalence" --text "An article equivalent to this article";
+description add-class-description  --locale fr --title "Equivalence Produit" --text "Un produit ou medicament en vente dans cette pharmacie";
+
+field manyToOne --named mainArticle --fieldType ~.jpa.Article;
+description add-field-description --onProperty mainArticle --title "main Article" --text "The main Article";
+description add-field-description --onProperty mainArticle --title "Article principal" --text "L article principale." --locale fr;
+association set-selection-mode --onProperty mainArticle --selectionMode FORWARD;
+
+field manyToOne --named equivalentArticle --fieldType ~.jpa.Article;
+description add-field-description --onProperty equivalentArticle --title "equivalent Article" --text "The Equivalent Article";
+description add-field-description --onProperty equivalentArticle --title "Article Equivalent" --text "L article equivalent." --locale fr;
+association set-selection-mode --onProperty equivalentArticle --selectionMode FORWARD;
+cd ~~;
 
 @/* Entity Supplier */;
 entity --named Supplier --package ~.jpa --idStrategy AUTO;
