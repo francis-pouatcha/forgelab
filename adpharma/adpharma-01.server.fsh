@@ -2328,7 +2328,7 @@ entity --named InvoiceItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Invoice Item" --text "An invoice item.";
 description add-class-description  --locale fr --title "Ligne Facture" --text "Une ligne facture.";
 
-field long --named indexLine; 
+field long --named indexLine --primitive false; 
 description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through invoice items";
 description add-field-description --onProperty indexLine --title "Index de Ligne" --text "Index permettant de rechercher la ligne de facture" --locale fr;
 display add-toString-field --field indexLine;
@@ -2880,7 +2880,7 @@ description add-field-description --onProperty agency --title "Agency" --text "A
 description add-field-description --onProperty agency --title "Agence" --text "Agence." --locale fr;
 association set-selection-mode --onProperty agency --selectionMode FORWARD;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
-display add-list-field --field agency.agencyName;
+display add-list-field --field agency.name;
 
 field boolean --named canceled --primitive false; 
 description add-field-description --onProperty canceled --title "Canceled" --text "Sates if the voucher was canceled or not.";
