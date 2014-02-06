@@ -1290,8 +1290,8 @@ association set-type --onProperty procurementOrder --type COMPOSITION --targetEn
 
 cd ~~;
 
-@/* Entity DeliveryOrderItem */;
-entity --named DeliveryOrderItem --package ~.jpa --idStrategy AUTO;
+@/* Entity DeliveryItem */;
+entity --named DeliveryItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Delivery Order Item" --text "Delivery order item";
 description add-class-description  --locale fr --title "Ligne de livraison" --text "la ligne de livraison";
 
@@ -1476,13 +1476,13 @@ association set-selection-mode --onProperty receivingAgency --selectionMode  FOR
 association set-type --onProperty receivingAgency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field receivingAgency.name;
 
-field oneToMany --named deliveryItems --fieldType ~.jpa.DeliveryOrderItem --inverseFieldName delivery;
+field oneToMany --named deliveryItems --fieldType ~.jpa.DeliveryItem --inverseFieldName delivery;
 description add-field-description --onProperty deliveryItems --title "Delivery  Items" --text "Delivery Items";
 description add-field-description --onProperty deliveryItems --title "Ligne de livraison" --text "ligne de livraison" --locale fr;
-association set-type --onProperty deliveryItems --type COMPOSITION --targetEntity ~.jpa.DeliveryOrderItem;
+association set-type --onProperty deliveryItems --type COMPOSITION --targetEntity ~.jpa.DeliveryItem;
 association set-selection-mode --onProperty deliveryItems --selectionMode TABLE;
 
-cd ../DeliveryOrderItem.java;
+cd ../DeliveryItem.java;
 description add-field-description --onProperty delivery --title "Delivery" --text "The delivery containing this item";
 description add-field-description --onProperty delivery --title "Livraison" --text "La livraison contenant cette ligne" --locale fr;
 association set-type --onProperty delivery --type COMPOSITION --targetEntity ~.jpa.Delivery;
@@ -2701,7 +2701,7 @@ relationship add --sourceEntity ~.jpa.DebtStatement --sourceQualifier invoices -
 cd ../DebtStatement.java;
 description add-field-description --onProperty invoices --title "Invoices" --text "Invoices referenced by this debt statement";
 description add-field-description --onProperty invoices --title "Factures" --text "Factures contenant cette dette" --locale fr;
-association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.RoleName;
+association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.Invoice;
 
 
 @/* ================================== */;
