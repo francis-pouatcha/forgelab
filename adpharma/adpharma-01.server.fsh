@@ -290,8 +290,8 @@ description add-field-description --onProperty credentialExpiration --title "Exp
 
 field temporal --type TIMESTAMP --named accountExpiration; 
 @/* pattern=dd-MM-yyyy HH:mm  Default = +50 ans */;
-description add-field-description --onProperty accountExpiration --title "Last Out of Stock Date" --text "Date of last out of stock event";
-description add-field-description --onProperty accountExpiration --title "Date Derniere Rupture de stock" --text "Date da la deniere rupture de stock" --locale fr;
+description add-field-description --onProperty accountExpiration --title "Account Expiration Date" --text "Account expiration date";
+description add-field-description --onProperty accountExpiration --title "Date pour Expiration du Compte" --text "Date pour expiration du compte" --locale fr;
 
 field string --named passwordSalt;
 description add-field-description --onProperty passwordSalt --title "Password Salt" --text "The salt used to encrypt the user password.";
