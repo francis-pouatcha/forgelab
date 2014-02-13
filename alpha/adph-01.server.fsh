@@ -196,7 +196,7 @@ cd ~~;
 
 repotest setup;
 
-repotest create-test --packages src/main/java/org/adorsys/adph/;
+repotest create-test --packages src/main/java/org/adorsys/bouncer/;
 
 cd ~~;
 

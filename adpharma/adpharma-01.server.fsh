@@ -2946,6 +2946,12 @@ reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys;
 
 cd ~~;
 
+repotest setup;
+
+repotest create-test --packages src/main/java/org/adorsys/adpharma/;
+
+cd ~~;
+
 mvn clean install -DskipTests;
 
 
