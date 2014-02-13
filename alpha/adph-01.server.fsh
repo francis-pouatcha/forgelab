@@ -196,9 +196,8 @@ cd ~~;
 
 repotest setup;
 
-repotest create-test --packages src/main/java/org/adorsys/bouncer/;
+repotest create-test --packages src/main/java/org/adorsys/;
 
 cd ~~;
 
-mvn clean install -DskipTests;
 
