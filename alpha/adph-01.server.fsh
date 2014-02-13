@@ -142,19 +142,11 @@ field  oneToMany --named superviseds --fieldType ~.jpa.Users --inverseFieldName 
 description add-field-description --onProperty superviseds --title "Supervisor" --text "The supervisor of this person";
 description add-field-description --onProperty superviseds --title "Superviseur" --text "Le superviseur de cette personne" --locale fr;
 association set-type --onProperty superviseds --type AGGREGATION --targetEntity ~.jpa.Users.java;
-association display-field --field superviseds.name;
-association display-field --field superviseds.gender;
-association display-field --field superviseds.birthDate;
-association display-field --field superviseds.hourlyWage;
 
 description add-field-description --onProperty supervisor --title "Supervisor" --text "The supervisor of this person";
 description add-field-description --onProperty supervisor --title "Superviseur" --text "Le superviseur de cette personne" --locale fr;
 association set-type --onProperty supervisor --type AGGREGATION --targetEntity ~.jpa.Users.java;
 association set-selection-mode --onProperty supervisor --selectionMode TABLE;
-association display-field --field supervisor.name;
-association display-field --field supervisor.gender;
-association display-field --field supervisor.birthDate;
-association display-field --field supervisor.hourlyWage;
 
 field oneToMany --named addresses --fieldType ~.jpa.Address --inverseFieldName person --cascade ALL;
 description add-field-description --onProperty addresses --title "Addresses" --text "The addresses of this person";
@@ -170,10 +162,6 @@ cd ../Address.java;
 description add-field-description --onProperty person --title "Users" --text "The person owning this address";
 description add-field-description --onProperty person --title "Usersne" --text "La personne proprietaire de cette addresse" --locale fr;
 association set-type --onProperty person --type COMPOSITION --targetEntity ~.jpa.Users.java;
-association display-field --field person.name;
-association display-field --field person.gender;
-association display-field --field person.birthDate;
-association display-field --field person.hourlyWage;
 
 
 relationship add --sourceEntity ~.jpa.Users --sourceQualifier roleNames --targetEntity ~.jpa.RoleName;
@@ -188,20 +176,12 @@ cd ../Users.java;
 description add-field-description --onProperty staffMembers --title "Staff Members" --text "The staff members of this person";
 description add-field-description --onProperty staffMembers --title "Equipage" --text "Equipage de cette persone" --locale fr;
 association set-type --onProperty staffMembers --type AGGREGATION --targetEntity ~.jpa.Users;
-association display-field --field staffMembers.name;
-association display-field --field staffMembers.gender;
-association display-field --field staffMembers.birthDate;
-association display-field --field staffMembers.hourlyWage;
 
 cd ../Users.java;
 description add-field-description --onProperty managers --title "Managers" --text "The managers of this person";
 description add-field-description --onProperty managers --title "Manageurs" --text "Les manageurs de cette persone" --locale fr;
 association set-type --onProperty managers --type AGGREGATION --targetEntity ~.jpa.Users;
 association set-selection-mode --onProperty managers --selectionMode TABLE;
-association display-field --field managers.name;
-association display-field --field managers.gender;
-association display-field --field managers.birthDate;
-association display-field --field managers.hourlyWage;
 
 cd ~~;
 
