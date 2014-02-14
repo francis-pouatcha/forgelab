@@ -203,7 +203,7 @@ display add-list-field --field fax;
 field manyToOne --named company --fieldType ~.jpa.Company;
 description add-field-description --onProperty company --title "Company" --text "The company owner of this agency";
 description add-field-description --onProperty company --title "Compagnie" --text "la company pocedant cette agence" --locale fr;
-association set-selection-mode --onProperty company --selectionMode FORWARD;
+association set-selection-mode --onProperty company --selectionMode COMBOBOX;
 association set-type --onProperty company --type AGGREGATION --targetEntity ~.jpa.Company;
 
 field string --named ticketMessage;
@@ -361,7 +361,7 @@ display add-list-field --field userName;
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency in which the user is registered.";
 description add-field-description --onProperty agency --title "Agence" --text "Agence dans laquel cet utilisateur est enregistré." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -539,7 +539,7 @@ display add-list-field --field manufacturer;
 field manyToOne --named section --fieldType ~.jpa.Section;
 description add-field-description --onProperty section --title "Section" --text "The section in which the product is stored";
 description add-field-description --onProperty section --title "Rayon" --text "Le rayon dans lequel le produit est classé." --locale fr;
-association set-selection-mode --onProperty section --selectionMode FORWARD;
+association set-selection-mode --onProperty section --selectionMode COMBOBOX;
 association set-type --onProperty section --type AGGREGATION --targetEntity ~.jpa.Section;
 
 field boolean --named active --primitive false;
@@ -550,7 +550,7 @@ display add-list-field --field active;
 field manyToOne --named family --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty family --title "Product Family" --text "Specifies the product family of this article.";
 description add-field-description --onProperty family --title "Famille Produit" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
-association set-selection-mode --onProperty family --selectionMode FORWARD;
+association set-selection-mode --onProperty family --selectionMode COMBOBOX;
 association set-type --onProperty family --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
 
 field number --named qtyInStock --type java.math.BigDecimal;
@@ -604,13 +604,13 @@ description add-field-description --onProperty lastOutOfStock --title "Date Dern
 field manyToOne --named defaultSalesMargin --fieldType ~.jpa.SalesMargin; 
 description add-field-description --onProperty defaultSalesMargin --title "Sales Margin" --text "The sales margin on this product.";
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
-association set-selection-mode --onProperty defaultSalesMargin --selectionMode FORWARD;
+association set-selection-mode --onProperty defaultSalesMargin --selectionMode COMBOBOX;
 association set-type --onProperty defaultSalesMargin --type AGGREGATION --targetEntity ~.jpa.SalesMargin;
 
 field manyToOne --named packagingMode --fieldType ~.jpa.PackagingMode; 
 description add-field-description --onProperty packagingMode --title "Packaging Mode" --text "THe product packaging mode";
 description add-field-description --onProperty packagingMode --title "Mode de Conditionement" --text "Le mode de conditionnement du produit" --locale fr;
-association set-selection-mode --onProperty packagingMode --selectionMode FORWARD;
+association set-selection-mode --onProperty packagingMode --selectionMode COMBOBOX;
 association set-type --onProperty packagingMode --type AGGREGATION --targetEntity ~.jpa.PackagingMode;
 
 field boolean --named authorizedSale --primitive false; 
@@ -630,14 +630,14 @@ description add-field-description --onProperty maxStockQty --title "Quantité Pl
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency hosting this product.";
 description add-field-description --onProperty agency --title "Filiale" --text "La filiale à laquelle le produit appartient." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
 field manyToOne --named clearanceConfig --fieldType ~.jpa.ClearanceConfig;
 description add-field-description --onProperty clearanceConfig --title "Clearance Configuration" --text "Configuration for the clearance of this product.";
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
-association set-selection-mode --onProperty clearanceConfig --selectionMode FORWARD;
+association set-selection-mode --onProperty clearanceConfig --selectionMode COMBOBOX;
 association set-type --onProperty clearanceConfig --type AGGREGATION --targetEntity ~.jpa.ClearanceConfig;
 
 cd ~~;
@@ -683,7 +683,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
 description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD ;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -717,7 +717,7 @@ constraint Size --onProperty description --max 256;
 field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
 description add-field-description --onProperty parentFamilly --title "Famille Parent" --text "La famille parent du produit " --locale fr;
-association set-selection-mode --onProperty parentFamilly --selectionMode FORWARD;
+association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
 association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
 
 cd ~~ ;
@@ -867,7 +867,7 @@ display add-list-field --field manufacturer;
 field manyToOne --named section --fieldType ~.jpa.Section;
 description add-field-description --onProperty section --title "Section" --text "The section in which the product is stored";
 description add-field-description --onProperty section --title "Rayon" --text "Le rayon dans lequel le produit est classé." --locale fr;
-association set-selection-mode --onProperty section --selectionMode FORWARD;
+association set-selection-mode --onProperty section --selectionMode COMBOBOX;
 association set-type --onProperty section --type AGGREGATION --targetEntity ~.jpa.Section;
 
 field boolean --named active --primitive false;
@@ -878,7 +878,7 @@ display add-list-field --field active;
 field manyToOne --named family --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty family --title "Product Family" --text "Specifies the product family of this article.";
 description add-field-description --onProperty family --title "Famille Produit" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
-association set-selection-mode --onProperty family --selectionMode FORWARD;
+association set-selection-mode --onProperty family --selectionMode COMBOBOX;
 association set-type --onProperty family --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
 
 field number --named qtyInStock --type java.math.BigDecimal;
@@ -932,7 +932,7 @@ description add-field-description --onProperty lastOutOfStock --title "Date Dern
 field manyToOne --named defaultSalesMargin --fieldType ~.jpa.SalesMargin; 
 description add-field-description --onProperty defaultSalesMargin --title "Sales Margin" --text "The sales margin on this product.";
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
-association set-selection-mode --onProperty defaultSalesMargin --selectionMode FORWARD;
+association set-selection-mode --onProperty defaultSalesMargin --selectionMode COMBOBOX;
 association set-type --onProperty defaultSalesMargin --type AGGREGATION --targetEntity ~.jpa.SalesMargin;
 
 field manyToOne --named packagingMode --fieldType ~.jpa.PackagingMode; 
@@ -958,14 +958,14 @@ description add-field-description --onProperty maxStockQty --title "Quantité Pl
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency hosting this product.";
 description add-field-description --onProperty agency --title "Filiale" --text "La filiale à laquelle le produit appartient." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
 field manyToOne --named clearanceConfig --fieldType ~.jpa.ClearanceConfig;
 description add-field-description --onProperty clearanceConfig --title "Clearance Configuration" --text "Configuration for the clearance of this product.";
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
-association set-selection-mode --onProperty clearanceConfig --selectionMode FORWARD;
+association set-selection-mode --onProperty clearanceConfig --selectionMode COMBOBOX;
 association set-type --onProperty clearanceConfig --type AGGREGATION --targetEntity ~.jpa.ClearanceConfig;
 
 cd ~~;
@@ -979,7 +979,7 @@ description add-class-description  --locale fr --title "Equivalence Produit" --t
 field manyToOne --named mainArticle --fieldType ~.jpa.Article;
 description add-field-description --onProperty mainArticle --title "Main Article" --text "The main Article";
 description add-field-description --onProperty mainArticle --title "Article Principal" --text "Article principale." --locale fr;
-association set-selection-mode --onProperty mainArticle --selectionMode FORWARD;
+association set-selection-mode --onProperty mainArticle --selectionMode COMBOBOX;
 association set-type --onProperty mainArticle --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field mainArticle.articleName;
 display add-list-field --field mainArticle.articleName;
@@ -987,7 +987,7 @@ display add-list-field --field mainArticle.articleName;
 field manyToOne --named equivalentArticle --fieldType ~.jpa.Article;
 description add-field-description --onProperty equivalentArticle --title "Equivalent Article" --text "The Equivalent Article";
 description add-field-description --onProperty equivalentArticle --title "Article Equivalent" --text "Article equivalent." --locale fr;
-association set-selection-mode --onProperty equivalentArticle --selectionMode FORWARD;
+association set-selection-mode --onProperty equivalentArticle --selectionMode COMBOBOX;
 association set-type --onProperty equivalentArticle --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field equivalentArticle.articleName;
 display add-list-field --field equivalentArticle.articleName;
@@ -1108,7 +1108,7 @@ field manyToOne --named article --fieldType ~.jpa.Article;
 constraint NotNull --onProperty article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this lot";
 description add-field-description --onProperty article --title "Produit" --text "Le produit du lot." --locale fr;
-association set-selection-mode --onProperty article --selectionMode FORWARD;
+association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
 display add-list-field --field article.articleName;
@@ -1134,7 +1134,7 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this procurement order item";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur ayant crée cet ligne de commande" --locale fr;
 constraint NotNull --onProperty creatingUser;
-association set-selection-mode --onProperty creatingUser --selectionMode NONE;
+association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field boolean --named valid --primitive false;
@@ -1191,7 +1191,7 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this procurement order item";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur ayant crée cet ligne de commande" --locale fr;
 constraint NotNull --onProperty creatingUser;
-association set-selection-mode --onProperty creatingUser --selectionMode NONE;
+association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field custom --named procmtOrderTriggerMode --type ~.jpa.ProcmtOrderTriggerMode;
@@ -1207,13 +1207,13 @@ enum enumerated-field --onProperty procurementOrderType ;
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
-association set-selection-mode --onProperty supplier --selectionMode  FORWARD;
+association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty agency --title "Agency" --text "L agence mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode  FORWARD;
+association set-selection-mode --onProperty agency --selectionMode  COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -1244,14 +1244,14 @@ display add-list-field --field netAmountToPay;
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
 description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
-association set-selection-mode --onProperty vat --selectionMode  FORWARD;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
 description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau de livraison en monnaie locale(FCFA)." --locale fr;
-association set-selection-mode --onProperty currency --selectionMode  FORWARD;
+association set-selection-mode --onProperty currency --selectionMode  COMBOBOX;
 association set-type --onProperty currency --type AGGREGATION --targetEntity ~.jpa.Currency;
 
 field oneToMany --named procurementOrderItems --fieldType ~.jpa.ProcurementOrderItem --inverseFieldName procurementOrder;
@@ -1287,7 +1287,7 @@ field manyToOne --named article --fieldType ~.jpa.Article;
 constraint NotNull --onProperty article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this lot";
 description add-field-description --onProperty article --title "Produit" --text "Le produit du lot." --locale fr;
-association set-selection-mode --onProperty article --selectionMode FORWARD;
+association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
 display add-list-field --field article.articleName;
@@ -1372,13 +1372,13 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this purchase order.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur ayant crée cet approvisionement." --locale fr;
 constraint NotNull --onProperty creatingUser;
-association set-selection-mode --onProperty creatingUser --selectionMode NONE;
+association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
 description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau (FCFA)." --locale fr;
-association set-selection-mode --onProperty currency --selectionMode  FORWARD;
+association set-selection-mode --onProperty currency --selectionMode  COMBOBOX;
 association set-type --onProperty currency --type AGGREGATION --targetEntity ~.jpa.Currency;
 
 field temporal --type TIMESTAMP --named orderDate; 
@@ -1392,7 +1392,7 @@ description add-field-description --onProperty deliveryDate --title "Date de Liv
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
-association set-selection-mode --onProperty supplier --selectionMode  FORWARD;
+association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
 
 field temporal --type TIMESTAMP --named paymentDate; 
@@ -1427,7 +1427,7 @@ display add-list-field --field netAmountToPay;
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
 description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
-association set-selection-mode --onProperty vat --selectionMode  FORWARD;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
 
@@ -1449,7 +1449,7 @@ enum enumerated-field --onProperty deliveryProcessingState ;
 field manyToOne --named receivingAgency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty receivingAgency --title "Agency" --text "Name of the agency in which the product was delivered.";
 description add-field-description --onProperty receivingAgency --title "Filiale" --text "Nom de la filiale dans laquelle l entree en stock s effectue" --locale fr;
-association set-selection-mode --onProperty receivingAgency --selectionMode  FORWARD;
+association set-selection-mode --onProperty receivingAgency --selectionMode  COMBOBOX;
 association set-type --onProperty receivingAgency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field receivingAgency.name;
 
@@ -1506,7 +1506,7 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this stock movement.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur originaire du mouvement." --locale fr;
 constraint NotNull --onProperty creatingUser;
-association set-selection-mode --onProperty creatingUser --selectionMode NONE;
+association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field number --named movedQty --type java.math.BigDecimal;
@@ -1544,7 +1544,7 @@ field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The Article generation this mouvement.";
 description add-field-description --onProperty article --title "Article" --text "L article ayont genere ce mouvement." --locale fr;
 constraint NotNull --onProperty article;
-association set-selection-mode --onProperty article --selectionMode FORWARD;
+association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
 display add-list-field --field article.articleName;
@@ -1556,7 +1556,7 @@ description add-field-description --onProperty originatedDocNumber --title "Docu
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Name of the agency in which the movement takes place.";
 description add-field-description --onProperty agency --title "Filiale" --text "Nom de la filiale dans laquelle le mouvement a lieu." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode  FORWARD;
+association set-selection-mode --onProperty agency --selectionMode  COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -1737,13 +1737,13 @@ description add-field-description --onProperty totalCreditLine --title "Prix d A
 field manyToOne --named employer --fieldType ~.jpa.Employer;
 description add-field-description --onProperty employer --title "Employer" --text "The employer of this client.";
 description add-field-description --onProperty employer --title "Employeur" --text "L employeur de ce client." --locale fr;
-association set-selection-mode --onProperty employer --selectionMode FORWARD;
+association set-selection-mode --onProperty employer --selectionMode COMBOBOX;
 association set-type --onProperty employer --type AGGREGATION --targetEntity ~.jpa.Employer;
 
 field manyToOne --named customerCategory --fieldType ~.jpa.CustomerCategory;
 description add-field-description --onProperty customerCategory --title "Customer Category" --text "The category this client belongs to.";
 description add-field-description --onProperty customerCategory --title "Category Client" --text "La categorie de client à laquelle appartient le client." --locale fr;
-association set-selection-mode --onProperty customerCategory --selectionMode FORWARD;
+association set-selection-mode --onProperty customerCategory --selectionMode COMBOBOX;
 association set-type --onProperty customerCategory --type AGGREGATION --targetEntity ~.jpa.CustomerCategory;
 
 field number --named totalDebt --type java.math.BigDecimal;
@@ -1784,7 +1784,7 @@ display add-list-field --field endDate;
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The Customer.";
 description add-field-description --onProperty customer --title "Client" --text "Le client." --locale fr;
-association set-selection-mode --onProperty customer --selectionMode FORWARD;
+association set-selection-mode --onProperty customer --selectionMode COMBOBOX;
 association set-type --onProperty customer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field customer.fullName;
 display add-toString-field --field customer.fullName;
@@ -1792,7 +1792,7 @@ display add-toString-field --field customer.fullName;
 field manyToOne --named insurer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty insurer --title "Insurer" --text "The insurer";
 description add-field-description --onProperty insurer --title "Assureur" --text "Assureur" --locale fr;
-association set-selection-mode --onProperty insurer --selectionMode FORWARD;
+association set-selection-mode --onProperty insurer --selectionMode COMBOBOX;
 association set-type --onProperty insurer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field insurer.fullName;
 display add-toString-field --field insurer.fullName;
@@ -1866,7 +1866,7 @@ field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory item.";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "Responsable de la saisie de la ligne d inventaire" --locale fr;
 constraint NotNull --onProperty recordingUser;
-association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
+association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
 association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field temporal --type TIMESTAMP --named recordingDate; 
@@ -1878,7 +1878,7 @@ field manyToOne --named article --fieldType ~.jpa.Article
 constraint NotNull --onProperty article;
 description add-field-description --onProperty article --title "Article" --text "The product associated with this inventory line.";
 description add-field-description --onProperty article --title "Produit" --text "Le produit attaché à la ligne d inventaire." --locale fr;
-association set-selection-mode --onProperty article --selectionMode FORWARD;
+association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
 display add-list-field --field article.articleName;
@@ -1898,7 +1898,7 @@ field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory item.";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "Responsable de la saisie de la ligne d inventaire" --locale fr;
 constraint NotNull --onProperty recordingUser;
-association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
+association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
 association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field number --named gapSaleAmount --type java.math.BigDecimal;
@@ -1933,7 +1933,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "The site of this inventory.";
 description add-field-description --onProperty agency --title "Agence" --text "Le site de cet inventaire." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2006,20 +2006,20 @@ display add-list-field --field cashDrawerNumber;
 field manyToOne --named cashier --fieldType ~.jpa.Users;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment on this drawer.";
 description add-field-description --onProperty cashier --title "Caissier" --text "Utilisateur percevant le paiement surcette caisse." --locale fr;
-association set-selection-mode --onProperty cashier --selectionMode FORWARD;
+association set-selection-mode --onProperty cashier --selectionMode COMBOBOX;
 association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field manyToOne --named closedBy --fieldType ~.jpa.Users;
 description add-field-description --onProperty closedBy --title "Closed By" --text "The user who closed this cash drawer.";
 description add-field-description --onProperty closedBy --title "Fermé Par" --text "Utilisateur ayant fermé la caisse." --locale fr;
-association set-selection-mode --onProperty closedBy --selectionMode FORWARD;
+association set-selection-mode --onProperty closedBy --selectionMode COMBOBOX;
 association set-type --onProperty closedBy --type AGGREGATION --targetEntity ~.jpa.Users;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 constraint NotNull --onProperty agency;
 description add-field-description --onProperty agency --title "Agency" --text "Site in which this drawer resides.";
 description add-field-description --onProperty agency --title "Agency" --text "Site dans lequel la caisse est gerée." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2164,7 +2164,7 @@ display add-list-field --field amountReturn;
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The purchase order item of the product to be sold.";
 description add-field-description --onProperty article --title "Article" --text "La ligne d approvisionnement contenant le produit que l on veut vendre." --locale fr;
-association set-selection-mode --onProperty article --selectionMode FORWARD;
+association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
 display add-list-field --field article.articleName;
@@ -2201,7 +2201,7 @@ field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The client ordering.";
 description add-field-description --onProperty customer --title "Client" --text "Le client qui passe la commande." --locale fr;
 constraint NotNull --onProperty customer;
-association set-selection-mode --onProperty customer --selectionMode FORWARD;
+association set-selection-mode --onProperty customer --selectionMode COMBOBOX;
 association set-type --onProperty customer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field customer.fullName;
 
@@ -2216,7 +2216,7 @@ display add-list-field --field insurance.insurer.fullName;
 field manyToOne --named vat --fieldType ~.jpa.VAT;
 description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
 description add-field-description --onProperty vat --title "TVA" --text "La taxe sur valeur ajouté" --locale fr;
-association set-selection-mode --onProperty vat --selectionMode FORWARD;
+association set-selection-mode --onProperty vat --selectionMode COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
 
@@ -2232,7 +2232,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency where sale has been made.";
 description add-field-description --onProperty agency --title "Agence" --text "Agence dans la quelle la vente a été éffectuée." --locale fr;
 constraint NotNull --onProperty agency ;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2364,14 +2364,14 @@ field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The client referenced by this invoice";
 description add-field-description --onProperty customer --title "Client" --text "Le client mentionné sur la facture" --locale fr;
 constraint NotNull --onProperty customer ;
-association set-selection-mode --onProperty customer --selectionMode FORWARD;
+association set-selection-mode --onProperty customer --selectionMode COMBOBOX;
 association set-type --onProperty customer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field customer.fullName;
 
 field manyToOne --named insurance --fieldType ~.jpa.Insurrance;
 description add-field-description --onProperty insurance --title "Insurance" --text "The Insurance in charge";
 description add-field-description --onProperty insurance --title "Assurance" --text "Assurance prenant la facture en charge" --locale fr;
-association set-selection-mode --onProperty insurance --selectionMode FORWARD;
+association set-selection-mode --onProperty insurance --selectionMode COMBOBOX;
 association set-type --onProperty insurance --type AGGREGATION --targetEntity ~.jpa.Insurrance;
 display add-list-field --field insurance.customer.fullName;
 display add-list-field --field insurance.insurer.fullName;
@@ -2380,7 +2380,7 @@ field manyToOne --named creatingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty creatingUser --title "Sales Agent" --text "The user creating this invoice";
 description add-field-description --onProperty creatingUser --title "Vendeur" --text "Éditeur de cette facture" --locale fr;
 constraint NotNull --onProperty creatingUser;
-association set-selection-mode --onProperty creatingUser --selectionMode FORWARD;
+association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 display add-list-field --field creatingUser.fullName;
 
@@ -2388,14 +2388,14 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The agency where sale has been made.";
 description add-field-description --onProperty agency --title "Agence" --text "Agence dans la quelle la vente a été éffectuée." --locale fr;
 constraint NotNull --onProperty agency;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
 field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order generating of this invoice.";
 description add-field-description --onProperty salesOrder --title "Commande Client" --text "Commande client originaire de la facture" --locale fr;
-association set-selection-mode --onProperty salesOrder --selectionMode  FORWARD;
+association set-selection-mode --onProperty salesOrder --selectionMode  COMBOBOX;
 association set-type --onProperty salesOrder --type AGGREGATION --targetEntity ~.jpa.SalesOrder;
 display add-list-field --field salesOrder.soNumber;
 
@@ -2544,7 +2544,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the payment occurs.";
 description add-field-description --onProperty agency --title "Agency" --text "Agence dans lequel s effectue le paiement." --locale fr;
 constraint NotNull --onProperty agency ;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2552,14 +2552,14 @@ field manyToOne --named cashier --fieldType ~.jpa.Users;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment.";
 description add-field-description --onProperty cashier --title "Caissier" --text "L utilisateur percevant le paiement." --locale fr;
 constraint NotNull --onProperty cashier;
-association set-selection-mode --onProperty cashier --selectionMode FORWARD;
+association set-selection-mode --onProperty cashier --selectionMode COMBOBOX;
 association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Users;
 display add-list-field --field cashier.fullName;
 
 field manyToOne --named cashDrawer --fieldType ~.jpa.CashDrawer;
 description add-field-description --onProperty cashDrawer --title "Cash Drawer" --text "The cash drawer in use.";
 description add-field-description --onProperty cashDrawer --title "Caisse" --text "La caisse utilisé." --locale fr;
-association set-selection-mode --onProperty cashDrawer --selectionMode FORWARD;
+association set-selection-mode --onProperty cashDrawer --selectionMode COMBOBOX;
 association set-type --onProperty cashDrawer --type AGGREGATION --targetEntity ~.jpa.CashDrawer;
 display add-list-field --field cashDrawer.cashDrawerNumber;
 
@@ -2593,7 +2593,7 @@ display add-list-field --field paymentReceiptPrinted;
 field manyToOne --named paidBy --fieldType ~.jpa.Customer;
 description add-field-description --onProperty paidBy --title "Paid By" --text "Paid By.";
 description add-field-description --onProperty paidBy --title "Payer Par" --text "Payer Par." --locale fr;
-association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
+association set-selection-mode --onProperty paidBy --selectionMode COMBOBOX;
 association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field paidBy.fullName;
 
@@ -2613,7 +2613,7 @@ display add-list-field --field statementNumber;
 field manyToOne --named insurrance --fieldType ~.jpa.Customer;
 description add-field-description --onProperty insurrance --title "Insurrance" --text "The client carrying this debt.";
 description add-field-description --onProperty insurrance --title "Insurrance" --text "Le client portant cette dette." --locale fr;
-association set-selection-mode --onProperty insurrance --selectionMode FORWARD;
+association set-selection-mode --onProperty insurrance --selectionMode COMBOBOX;
 association set-type --onProperty insurrance --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field insurrance.fullName;
 
@@ -2621,7 +2621,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the debt originated";
 description add-field-description --onProperty agency --title "Agency" --text "Agence dans lequel la dette a été réalisée" --locale fr;
 constraint NotNull --onProperty agency ;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2763,7 +2763,7 @@ field manyToOne --named prescriber --fieldType ~.jpa.Prescriber;
 description add-field-description --onProperty prescriber --title "Prescriber" --text "The doctor who prescribed the order.";
 description add-field-description --onProperty prescriber --title "Prescripteur" --text "Le medecin ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty prescriber;
-association set-selection-mode --onProperty prescriber --selectionMode FORWARD;
+association set-selection-mode --onProperty prescriber --selectionMode COMBOBOX;
 association set-type --onProperty prescriber --type AGGREGATION --targetEntity ~.jpa.Prescriber;
 display add-list-field --field prescriber.name;
 
@@ -2771,7 +2771,7 @@ field manyToOne --named hospital --fieldType ~.jpa.Hospital;
 description add-field-description --onProperty hospital --title "Hospital" --text "The hospital subjet of this prescription.";
 description add-field-description --onProperty hospital --title "Hopital" --text "L hopital ayant prescrit l ordonnance." --locale fr;
 constraint NotNull --onProperty hospital;
-association set-selection-mode --onProperty hospital --selectionMode FORWARD;
+association set-selection-mode --onProperty hospital --selectionMode COMBOBOX;
 association set-type --onProperty hospital --type AGGREGATION --targetEntity ~.jpa.Hospital;
 display add-list-field --field hospital.name;
 
@@ -2779,7 +2779,7 @@ field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Originating agency";
 description add-field-description --onProperty agency --title "Agency" --text "Agence originaire" --locale fr;
 constraint NotNull --onProperty agency ;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2787,7 +2787,7 @@ field manyToOne --named recordingAgent --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingAgent --title "Recording Agent" --text "The user who recorded this prescription.";
 description add-field-description --onProperty recordingAgent --title "Agent Saisie" --text "Utilisateur saisiessant cet ordonnance." --locale fr;
 constraint NotNull --onProperty recordingAgent;
-association set-selection-mode --onProperty recordingAgent --selectionMode FORWARD;
+association set-selection-mode --onProperty recordingAgent --selectionMode COMBOBOX;
 association set-type --onProperty recordingAgent --type AGGREGATION --targetEntity ~.jpa.Users;
 display add-list-field --field recordingAgent.fullName;
 
@@ -2800,7 +2800,7 @@ display add-list-field --field prescriptionNumber;
 field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order containing this prescription.";
 description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient qui contient cet ordonnance." --locale fr;
-association set-selection-mode --onProperty salesOrder --selectionMode FORWARD;
+association set-selection-mode --onProperty salesOrder --selectionMode COMBOBOX;
 association set-type --onProperty salesOrder --type AGGREGATION --targetEntity ~.jpa.SalesOrder;
 display add-list-field --field salesOrder.soNumber;
 
@@ -2834,7 +2834,7 @@ display add-list-field --field voucherNumber;
 field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
 description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order associated with this voucher.";
 description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient associe avec cet avoir." --locale fr;
-association set-selection-mode --onProperty salesOrder --selectionMode FORWARD;
+association set-selection-mode --onProperty salesOrder --selectionMode COMBOBOX;
 association set-type --onProperty salesOrder --type AGGREGATION --targetEntity ~.jpa.SalesOrder;
 display add-list-field --field salesOrder.soNumber;
 
@@ -2848,14 +2848,14 @@ display add-list-field --field amount;
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "Customer.";
 description add-field-description --onProperty customer --title "Client" --text "Client." --locale fr;
-association set-selection-mode --onProperty customer --selectionMode FORWARD;
+association set-selection-mode --onProperty customer --selectionMode COMBOBOX;
 association set-type --onProperty customer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field customer.fullName;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency.";
 description add-field-description --onProperty agency --title "Agence" --text "Agence." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 
@@ -2868,7 +2868,7 @@ display add-list-field --field canceled;
 field manyToOne --named recordingUser --fieldType ~.jpa.Users;
 description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
 description add-field-description --onProperty recordingUser --title "Agent" --text "Agent de saisie ayant édité cet avoir." --locale fr;
-association set-selection-mode --onProperty recordingUser --selectionMode FORWARD;
+association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
 association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
 display add-list-field --field recordingUser;
 

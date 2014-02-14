@@ -146,7 +146,7 @@ association set-type --onProperty superviseds --type AGGREGATION --targetEntity 
 description add-field-description --onProperty supervisor --title "Supervisor" --text "The supervisor of this person";
 description add-field-description --onProperty supervisor --title "Superviseur" --text "Le superviseur de cette personne" --locale fr;
 association set-type --onProperty supervisor --type AGGREGATION --targetEntity ~.jpa.Users.java;
-association set-selection-mode --onProperty supervisor --selectionMode TABLE;
+association set-selection-mode --onProperty supervisor --selectionMode COMBOBOX;
 
 field oneToMany --named addresses --fieldType ~.jpa.Address --inverseFieldName person --cascade ALL;
 description add-field-description --onProperty addresses --title "Addresses" --text "The addresses of this person";
