@@ -35,11 +35,36 @@ repogen setup;
 
 association setup;
 
+@/* Enum Group: can be used for roles or display of components. */;
+java new-enum-type --named WorkGroup --package ~.jpa;
+enum add-enum-class-description --title "Work Group" --text "A work group";
+enum add-enum-class-description --title "Groupe de Travail" --text "Un groupe de travail" --locale fr;
+java new-enum-const ADMIN;
+enum add-enum-constant-description --onConstant ADMIN --title "Administrator" --text "Adminitrator of this platform";
+enum add-enum-constant-description --onConstant ADMIN --title "Administrateur" --text "Administrateur de ce progiciel" --locale fr;
+java new-enum-const USER;
+enum add-enum-constant-description --onConstant USER  --title "User" --text "User of this application" ;
+enum add-enum-constant-description --onConstant USER  --title "Utilisateur" --text "Utilisateur de ce progiciel" --locale fr ;
+java new-enum-const CASHIER;
+enum add-enum-constant-description --onConstant CASHIER  --title "Cachier" --text "Cashier" ;
+enum add-enum-constant-description --onConstant CASHIER  --title "Caissier" --text "Caissier" --locale fr;
+java new-enum-const WAREHOUSEMAN;
+enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Warehouseman" --text "Warehouseman" ;
+enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Magasinier" --text "Magasinier" --locale fr;
+java new-enum-const MANAGER;
+enum add-enum-constant-description --onConstant MANAGER  --title "Manager" --text "Manager" ;
+enum add-enum-constant-description --onConstant MANAGER  --title "Manageur" --text "Manageur" --locale fr;
+
+
+cd ~~;
+
+
 
 @/* Entity Company */;
 entity --named Company --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Company" --text "The Company";
 description add-class-description  --locale fr --title "Compagnie" --text "La compagnie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field string --named displayName;
 description add-field-description --onProperty displayName --title "Display Name" --text "The display name";
@@ -96,7 +121,9 @@ field string --named registerNumber;
 description add-field-description --onProperty registerNumber --title "Register Number" --text "The register number of this company";
 description add-field-description --onProperty registerNumber --title "Numéro de Registre" --text "Numéro de registre du commerce de cette société" --locale fr;
 
+
 cd ~~;
+
 
 @/* Entity Gender */;
 java new-enum-type --named Gender --package ~.jpa;
@@ -112,12 +139,15 @@ java new-enum-const NEUTRAL;
 enum add-enum-constant-description --onConstant NEUTRAL  --title "Neutral" --text "Gender type neutral" ;
 enum add-enum-constant-description --locale fr --onConstant NEUTRAL  --title "Neutre" --text "Le genre neutre" ;
 
+
 cd ~~;
+
 
 @/* Entity Agence */;
 entity --named Agency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Agency" --text "An agency of this pharmacie";
 description add-class-description  --locale fr --title "Agence" --text "Une agence de cette pharmacie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field string --named agencyNumber;
 description add-field-description --onProperty agencyNumber --title "Agency Number" --text "The number of this agency";
@@ -186,10 +216,16 @@ description add-field-description --onProperty invoiceMessage --title "Message F
 description add-field-description --onProperty invoiceMessage --title "Invoice Message" --text "Le message Pour la facture" --locale fr;
 constraint Size --onProperty invoiceMessage --max 256;
 
+
+cd ~~;
+
+
+
 @/* Entity Currency */;
 entity --named Currency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Currency" --text "A currency";
 description add-class-description  --locale fr --title "Devise" --text "Une devise";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field string --named name;
 description add-field-description --onProperty name --title "Currency Name" --text "The name of this currency.";
@@ -208,12 +244,15 @@ description add-field-description --onProperty cfaEquivalent --title "CFA Equiva
 description add-field-description --onProperty cfaEquivalent --title "Equivalent CFA" --text "Valeur equivalant cfa pour faire les conversions." --locale fr;
 format add-number-type --onProperty cfaEquivalent --type CURRENCY;
 
+
 cd ~~ ;
+
 
 @/* Entity RoleName */;
 entity --named RoleName --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Roles" --text "Names of roles assignable to users";
 description add-class-description  --locale fr --title "Roles" --text "Nom de role attribuable aux utilisateurs.";
+group add --grouper ~.jpa.WorkGroup --named ADMIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Role Name" --text "The name of this role.";
@@ -221,10 +260,15 @@ description add-field-description --onProperty name --title "Intitule du Role" -
 display add-toString-field --field name;
 display add-list-field --field name;
 
+
+cd ~~;
+
+
 @/* Entity Users */;
 entity --named Users --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "User" --text "A user of this application";
 description add-class-description  --locale fr --title "Utilisateur" --text "Un utilisateur de cette application.";
+group add --grouper ~.jpa.WorkGroup --named ADMIN;
 
 field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this user";
@@ -293,11 +337,6 @@ field temporal --type TIMESTAMP --named accountExpiration;
 description add-field-description --onProperty accountExpiration --title "Account Expiration Date" --text "Account expiration date";
 description add-field-description --onProperty accountExpiration --title "Date pour Expiration du Compte" --text "Date pour expiration du compte" --locale fr;
 
-field string --named passwordSalt;
-description add-field-description --onProperty passwordSalt --title "Password Salt" --text "The salt used to encrypt the user password.";
-description add-field-description --onProperty passwordSalt --title "Clé de hachage du Mot de Passe" --text "La clé de hachage pour encryptage des mots de passe en MD5" --locale fr;
-@/* Default= ace6b4f53 */;
-
 field string --named street;
 description add-field-description --onProperty street --title "Street" --text "The name of the street of this user";
 description add-field-description --onProperty street --title "Rue" --text "Nom de la rue de cet utilisateur" --locale fr;
@@ -338,89 +377,12 @@ description add-field-description --onProperty saleKey --title "Sale Key" --text
 
 cd ~~;
 
-@/* Entity Section */;
-entity --named Section --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
-description add-class-description  --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
-
-field string --named sectionCode;
-description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
-description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
-display add-toString-field --field sectionCode;
-display add-list-field --field sectionCode;
-
-field string --named name;
-description add-field-description --onProperty name --title "Section Name" --text "The name of this section";
-description add-field-description --onProperty name --title "Nom de Section" --text "Le nom du rayon" --locale fr;
-constraint NotNull --onProperty name;
-display add-list-field --field name;
-
-field string --named displayName;
-description add-field-description --onProperty displayName --title "Display Name" --text "Field to display the name of this section";
-description add-field-description --onProperty displayName --title "Nom Affiche" --text "Champ affichant le nom du rayon du nom du rayon" --locale fr;
-display add-list-field --field displayName;
-
-field string --named position;
-description add-field-description --onProperty position --title "Position" --text "Code to identify the position of his section";
-description add-field-description --onProperty position --title "Position" --text "Code identifiant la position du rayon." --locale fr;
-display add-list-field --field position;
-
-field string --named geoCode;
-description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
-description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "Description of the section";
-description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
-constraint Size --onProperty description --max 256;
-
-field manyToOne --named agency --fieldType ~.jpa.Agency;
-constraint NotNull --onProperty agency;
-description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
-description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode FORWARD;
-association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
-display add-list-field --field agency.name;
-
-cd ~~ ;
-
-@/* ================================== */;
-@/* Product */;
-
-@/* Entity ProductFamily */;
-entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Product Family" --text "The product family";
-description add-class-description  --locale fr --title "Famille Produit" --text "La famille produit";
-
-field string --named code;
-description add-field-description --onProperty code --title "Product Family Code" --text "The code of this product family";
-description add-field-description --onProperty code --title "Code de la Famille Produit" --text "Le code de la famille produit" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field code;
-
-field string --named name;
-description add-field-description --onProperty name --title "Product Name" --text "The name of this product family";
-description add-field-description --onProperty name --title "Libelle du produit" --text "Le nom de la famille produit" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this product family";
-description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
-constraint Size --onProperty description --max 256;
-
-field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
-description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
-description add-field-description --onProperty parentFamilly --title "Famille Parent" --text "La famille parent du produit " --locale fr;
-association set-selection-mode --onProperty parentFamilly --selectionMode FORWARD;
-association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
-
-cd ~~ ;
 
 @/* Entity VAT */;
 entity --named VAT --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "VAT" --text "The value added tax";
 description add-class-description  --locale fr --title "TVA" --text "Taxe sur la valeure ajoutée";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field string --named code;
 description add-field-description --onProperty code --title "VAT Code" --text "The code of this VAT";
@@ -461,7 +423,9 @@ description add-field-description --onProperty active --title "Active" --text "S
 description add-field-description --onProperty active --title "Actif" --text "Indique si ce taux de marge est actif ou pas." --locale fr;
 display add-list-field --field active;
 
+
 cd ~~ ;
+
 
 @/* Enum type DocumentState State */;
 java new-enum-type --named DocumentProcessingState --package ~.jpa ;
@@ -477,10 +441,15 @@ java new-enum-const RESTORED ;
 enum add-enum-constant-description --onConstant RESTORED --title "Restored" --text "Restored document";
 enum add-enum-constant-description --onConstant RESTORED --title "Restauré" --text "Document restauré" --locale fr ;
 
+
+cd ~~;
+
+
 @/* Entity Clearance Config */;
 entity --named ClearanceConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Clearance Configuration" --text "Configuration for the clearance of a product.";
 description add-class-description --title "Configuration Solde" --text "Permet de créer une configuration du solde pour un produit." --locale fr;
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field temporal --type TIMESTAMP --named startDate; 
 @/*  pattern=dd-MM-yyyy Date */;
@@ -523,12 +492,15 @@ description add-field-description --onProperty active --title "Actif" --text "In
 @/* default=Boolean.TRUE */;
 display add-list-field --field active;
 
+
 cd ~~;
+
 
 @/* Entity PackagingMode, ModeConditionnement */;
 entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "The product packaging mode";
 description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
 
 field string --named name;
 description add-field-description --onProperty name --title "Packaging Mode Name" --text "The name of this packaging mode";
@@ -536,10 +508,15 @@ description add-field-description --onProperty name --title "Libelle du Mode de 
 display add-toString-field --field name;
 display add-list-field --field name;
 
+cd ~~;
+
+
 @/* Entity Article */;
 entity --named Article --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article" --text "An article or any oder drug sold in the pharmacy";
 description add-class-description  --locale fr --title "Article" --text "Un produit ou medicament en vente dans cette pharmacie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
 
 field string --named articleName;
 description add-field-description --onProperty articleName --title "Article Name" --text "The name of this article";
@@ -1502,7 +1479,7 @@ enum add-enum-constant-description --onConstant IN --title "Inbound" --text "Sor
 enum add-enum-constant-description --locale fr --onConstant IN --title "Entrée" --text "Entrée de stock.";
 
 @/* Movement Stock Endpoint*/;
-java new-enum-type --named StockMovementEndpoint --package ~.jpa ;
+java new-enum-type --named StockMovementTerminal --package ~.jpa ;
 enum add-enum-class-description --title "Stock Movement Endpoint" --text "An origin or the destination of a stock movement.";
 enum add-enum-class-description  --locale fr --title "Origine ou Destination du Mouvement Stock" --text "Origine ou la destination du movement de stock.";
 java new-enum-const WAREHOUSE;
@@ -1547,7 +1524,7 @@ enum enumerated-field --onProperty movementType;
 display add-toString-field --field movementType;
 display add-list-field --field movementType;
 
-field custom --named movementOrigin --type ~.jpa.StockMovementEndpoint;
+field custom --named movementOrigin --type ~.jpa.StockMovementTerminal;
 description add-field-description --onProperty movementOrigin --title "Movement Origin" --text "The starting point of the movement.";
 description add-field-description --onProperty movementOrigin --title "Origine du Mouvement" --text "Le point de depart du mouvement." --locale fr;
 enum enumerated-field --onProperty movementOrigin ;
@@ -1555,7 +1532,7 @@ display add-toString-field --field movementOrigin;
 display add-list-field --field movementOrigin;
 @/* Enumeration{MAGASIN, FOURNISSEUR, CLIENT} */;
 
-field custom --named movementDestination --type ~.jpa.StockMovementEndpoint;
+field custom --named movementDestination --type ~.jpa.StockMovementTerminal;
 description add-field-description --onProperty movementDestination --title "Movement Destination" --text "Point of arrival of the movement.";
 description add-field-description --onProperty movementDestination --title "Destination du Mouvement" --text "Point arrivée du mouvement." --locale fr;
 enum enumerated-field --onProperty movementDestination;
