@@ -511,6 +511,86 @@ display add-list-field --field name;
 cd ~~;
 
 
+@/* Entity Section */;
+entity --named Section --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
+description add-class-description  --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
+
+field string --named sectionCode;
+description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
+description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
+display add-toString-field --field sectionCode;
+display add-list-field --field sectionCode;
+
+field string --named name;
+description add-field-description --onProperty name --title "Section Name" --text "The name of this section";
+description add-field-description --onProperty name --title "Nom de Section" --text "Le nom du rayon" --locale fr;
+constraint NotNull --onProperty name;
+display add-list-field --field name;
+
+field string --named displayName;
+description add-field-description --onProperty displayName --title "Display Name" --text "Field to display the name of this section";
+description add-field-description --onProperty displayName --title "Nom Affiche" --text "Champ affichant le nom du rayon du nom du rayon" --locale fr;
+display add-list-field --field displayName;
+
+field string --named position;
+description add-field-description --onProperty position --title "Position" --text "Code to identify the position of his section";
+description add-field-description --onProperty position --title "Position" --text "Code identifiant la position du rayon." --locale fr;
+display add-list-field --field position;
+
+field string --named geoCode;
+description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
+description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
+
+field string --named description;
+description add-field-description --onProperty description --title "Description" --text "Description of the section";
+description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
+constraint Size --onProperty description --max 256;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+constraint NotNull --onProperty agency;
+description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
+description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
+association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
+display add-list-field --field agency.name;
+
+cd ~~ ;
+
+@/* ================================== */;
+@/* Product */;
+
+@/* Entity ProductFamily */;
+entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Product Family" --text "The product family";
+description add-class-description  --locale fr --title "Famille Produit" --text "La famille produit";
+
+field string --named code;
+description add-field-description --onProperty code --title "Product Family Code" --text "The code of this product family";
+description add-field-description --onProperty code --title "Code de la Famille Produit" --text "Le code de la famille produit" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field code;
+
+field string --named name;
+description add-field-description --onProperty name --title "Product Name" --text "The name of this product family";
+description add-field-description --onProperty name --title "Libelle du produit" --text "Le nom de la famille produit" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field name;
+
+field string --named description;
+description add-field-description --onProperty description --title "Description" --text "The description of this product family";
+description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
+constraint Size --onProperty description --max 256;
+
+field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
+description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
+description add-field-description --onProperty parentFamilly --title "Famille Parent" --text "La famille parent du produit " --locale fr;
+association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
+association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
+
+cd ~~ ;
+
+
 @/* Entity Article */;
 entity --named Article --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article" --text "An article or any oder drug sold in the pharmacy";
@@ -642,85 +722,6 @@ association set-type --onProperty clearanceConfig --type AGGREGATION --targetEnt
 
 cd ~~;
 
-
-@/* Entity Section */;
-entity --named Section --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
-description add-class-description  --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
-
-field string --named sectionCode;
-description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
-description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
-display add-toString-field --field sectionCode;
-display add-list-field --field sectionCode;
-
-field string --named name;
-description add-field-description --onProperty name --title "Section Name" --text "The name of this section";
-description add-field-description --onProperty name --title "Nom de Section" --text "Le nom du rayon" --locale fr;
-constraint NotNull --onProperty name;
-display add-list-field --field name;
-
-field string --named displayName;
-description add-field-description --onProperty displayName --title "Display Name" --text "Field to display the name of this section";
-description add-field-description --onProperty displayName --title "Nom Affiche" --text "Champ affichant le nom du rayon du nom du rayon" --locale fr;
-display add-list-field --field displayName;
-
-field string --named position;
-description add-field-description --onProperty position --title "Position" --text "Code to identify the position of his section";
-description add-field-description --onProperty position --title "Position" --text "Code identifiant la position du rayon." --locale fr;
-display add-list-field --field position;
-
-field string --named geoCode;
-description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
-description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "Description of the section";
-description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
-constraint Size --onProperty description --max 256;
-
-field manyToOne --named agency --fieldType ~.jpa.Agency;
-constraint NotNull --onProperty agency;
-description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
-description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
-association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
-display add-list-field --field agency.name;
-
-cd ~~ ;
-
-@/* ================================== */;
-@/* Product */;
-
-@/* Entity ProductFamily */;
-entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Product Family" --text "The product family";
-description add-class-description  --locale fr --title "Famille Produit" --text "La famille produit";
-
-field string --named code;
-description add-field-description --onProperty code --title "Product Family Code" --text "The code of this product family";
-description add-field-description --onProperty code --title "Code de la Famille Produit" --text "Le code de la famille produit" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field code;
-
-field string --named name;
-description add-field-description --onProperty name --title "Product Name" --text "The name of this product family";
-description add-field-description --onProperty name --title "Libelle du produit" --text "Le nom de la famille produit" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this product family";
-description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
-constraint Size --onProperty description --max 256;
-
-field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
-description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
-description add-field-description --onProperty parentFamilly --title "Famille Parent" --text "La famille parent du produit " --locale fr;
-association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
-association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
-
-cd ~~ ;
 
 @/* Entity VAT */;
 entity --named VAT --package ~.jpa --idStrategy AUTO;
