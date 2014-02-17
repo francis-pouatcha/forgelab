@@ -4,6 +4,7 @@ set ACCEPT_DEFAULTS true;
 new-project --named adph.server --topLevelPackage org.adorsys.adph.server --finalName adph.server --projectFolder adph.server;
 
 as7 setup;
+
 persistence setup --provider HIBERNATE --container JBOSS_AS7;
 
 validation setup;
@@ -31,6 +32,8 @@ enum add-enum-constant-description --locale fr --onConstant FEMALE  --title "Fem
 java new-enum-const NEUTRAL;
 enum add-enum-constant-description --onConstant NEUTRAL  --title "Neutral" --text "Gender type neutral" ;
 enum add-enum-constant-description --locale fr --onConstant NEUTRAL  --title "Neutre" --text "Le genre neutre" ;
+
+cd ~~;
 
 @/* Entity Address */;
 entity --named Address --package ~.jpa --idStrategy AUTO;
@@ -93,6 +96,8 @@ field string --named userName;
 description add-field-description --onProperty userName --title "User Name" --text "The name used by the user to login.";
 description add-field-description --onProperty userName --title "Nom de Connection" --text "Le nom de connexion de cet utilisateur." --locale fr;
 constraint NotNull --onProperty userName;
+description add-notNull-message --onProperty userName --title "User name is required" --text "User name is required";
+description add-notNull-message --onProperty userName --title "Nom de connection est réquis" --text "Nom de connection est réquis" --locale fr;
 display add-toString-field --field userName;
 display add-list-field --field userName;
 @/* Unique=true */;
