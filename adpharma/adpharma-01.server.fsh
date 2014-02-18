@@ -506,7 +506,7 @@ description add-decimalMin-message --onProperty discountRate --title "Le taux de
 constraint DecimalMax --onProperty discountRate --max 100.0;
 description add-decimalMax-message --onProperty discountRate --title "The clearance maximum discount rate is 100%" --text "The clearance maximum discount rate is 100%";
 description add-decimalMax-message --onProperty discountRate --title "Le taux de remise maximum du solde est de 100%" --text "Le taux de remise maximum du solde est de 100%" --locale fr;
-format add-number-type --onProperty discountRate --type CURRENCY;
+format add-number-type --onProperty discountRate --type PERCENTAGE;
 display add-toString-field --field discountRate;
 display add-list-field --field discountRate;
 
@@ -1936,9 +1936,9 @@ description add-field-description --onProperty recordingDate --title "Recording 
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie de cette ligne inventaire." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
-field manyToOne --named article --fieldType ~.jpa.Article
-description add-field-description --onProperty article --title "Article" --text "The product associated with this inventory line.";
-description add-field-description --onProperty article --title "Produit" --text "Le produit attaché à la ligne d inventaire." --locale fr;
+field manyToOne --named article --fieldType ~.jpa.Article;
+description add-field-description --onProperty article --title "Article" --text "The product associated with this inventory line";
+description add-field-description --onProperty article --title "Produit" --text "Le produit attaché à la ligne d inventaire" --locale fr;
 association set-selection-mode --onProperty article --selectionMode COMBOBOX;
 association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field article.articleName;
