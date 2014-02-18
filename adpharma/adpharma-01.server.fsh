@@ -388,7 +388,7 @@ display add-list-field --field agency.name;
 field number --named discountRate --type java.math.BigDecimal;
 description add-field-description --onProperty discountRate --title "Discount Rate" --text "The discount rate this user can give to clients.";
 description add-field-description --onProperty discountRate --title "Taux Remise" --text "Taux de remise que cet utilisateur peut accorder aux clients." --locale fr;
-format add-number-type --onProperty discountRate --type CURRENCY;
+format add-number-type --onProperty discountRate --type PERCENTAGE;
 @/* Default= 15% */;
 
 field string --named saleKey;
