@@ -1,2 +1,2 @@
 
-new-project --named adph --type pom;
+new-project --named adph --type pom --finalName adph --projectFolder adph;
