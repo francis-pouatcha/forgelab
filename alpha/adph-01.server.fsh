@@ -234,7 +234,6 @@ reporest endpoint-from-entity --jpaPackage src/main/java/org/adorsys;
 cd ~~;
 
 reporest access-control --roleTable ~.jpa.RoleName.java --permissionTable ~.jpa.PermissionName.java --loginTable ~.jpa.Login.java;
- 
 
 cd ~~;
 

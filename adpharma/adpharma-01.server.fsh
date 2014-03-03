@@ -55,7 +55,9 @@ enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Magasinie
 java new-enum-const MANAGER;
 enum add-enum-constant-description --onConstant MANAGER  --title "Manager" --text "Manager" ;
 enum add-enum-constant-description --onConstant MANAGER  --title "Manageur" --text "Manageur" --locale fr;
-
+java new-enum-const SALES;
+enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "Sales" ;
+enum add-enum-constant-description --onConstant SALES  --title "Vente" --text "Vente" --locale fr;
 
 cd ~~;
 
@@ -444,8 +446,8 @@ format add-number-type --onProperty cfaEquivalent --type CURRENCY;
 cd ~~ ;
 
 
-@/* Entity Users */;
-entity --named Users --package ~.jpa --idStrategy AUTO;
+@/* Entity Person */;
+entity --named Person --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "User" --text "A user of this application";
 description add-class-description  --locale fr --title "Utilisateur" --text "Un utilisateur de cette application.";
 group add --grouper ~.jpa.WorkGroup --named ADMIN;
@@ -1711,14 +1713,14 @@ description add-field-description --onProperty creationDate --title "Creation Da
 description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette movement de stock." --locale fr;
 format add-date-pattern --onProperty creationDate --pattern "dd-MM-yyyy HH:mm"; 
 
-field manyToOne --named creatingUser --fieldType ~.jpa.Users;
+field manyToOne --named creatingUser --fieldType ~.jpa.Login;
 description add-field-description --onProperty creatingUser --title "Creating User" --text "The user creating this stock movement.";
 description add-field-description --onProperty creatingUser --title "Agent Créateur" --text "Utilisateur originaire du mouvement." --locale fr;
 constraint NotNull --onProperty creatingUser;
 description add-notNull-message --onProperty creatingUser --title "The creating user must be selected" --text "The creating user must be selected";
 description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
 association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
-association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
 
 field number --named movedQty --type java.math.BigDecimal;
 description add-field-description --onProperty movedQty --title "Quantity Moved" --text "The quantity moved during this stockage operation.";
@@ -2092,11 +2094,11 @@ format add-number-type --onProperty gapTotalPurchasePrice --type CURRENCY;
 @/*  Default=0, formule=(prix_unitaire*ecart) */;
 display add-list-field --field gapTotalPurchasePrice;
 
-field manyToOne --named recordingUser --fieldType ~.jpa.Users;
+field manyToOne --named recordingUser --fieldType ~.jpa.Login;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory item";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "Responsable de la saisie de la ligne d inventaire" --locale fr;
 association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
-association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Login;
 constraint NotNull --onProperty recordingUser;
 description add-notNull-message --onProperty recordingUser --title "The user recording this inventory item must be selected" --text "The user recording this inventory item must be selected";
 description add-notNull-message --onProperty recordingUser --title "La personne saisissant cette ligne d inventaire doit être sélectionné" --text "La personne saisissant cette ligne d inventaire doit être sélectionné" --locale fr;
@@ -2129,11 +2131,11 @@ description add-field-description --onProperty inventoryNumber --title "Numéro 
 display add-toString-field --field inventoryNumber;
 display add-list-field --field inventoryNumber;
 
-field manyToOne --named recordingUser --fieldType ~.jpa.Users;
+field manyToOne --named recordingUser --fieldType ~.jpa.Login;
 description add-field-description --onProperty recordingUser --title "Recording User" --text "The user recording this inventory item.";
 description add-field-description --onProperty recordingUser --title "Agent Saisie" --text "Responsable de la saisie de la ligne d inventaire" --locale fr;
 association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
-association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Login;
 constraint NotNull --onProperty recordingUser;
 description add-notNull-message --onProperty recordingUser --title "The user recording this inventory must be selected" --text "The user recording this inventory must be selected";
 description add-notNull-message --onProperty recordingUser --title "La personne saisissant cet inventaire doit être sélectionné" --text "La personne saisissant cet inventaire doit être sélectionné" --locale fr;
@@ -2253,17 +2255,17 @@ description add-field-description --onProperty cashDrawerNumber --title "Numéro
 display add-toString-field --field cashDrawerNumber;
 display add-list-field --field cashDrawerNumber;
 
-field manyToOne --named cashier --fieldType ~.jpa.Users;
+field manyToOne --named cashier --fieldType ~.jpa.Login;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment on this drawer.";
 description add-field-description --onProperty cashier --title "Caissier" --text "Utilisateur percevant le paiement surcette caisse." --locale fr;
 association set-selection-mode --onProperty cashier --selectionMode COMBOBOX;
-association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Login;
 
-field manyToOne --named closedBy --fieldType ~.jpa.Users;
+field manyToOne --named closedBy --fieldType ~.jpa.Login;
 description add-field-description --onProperty closedBy --title "Closed By" --text "The user who closed this cash drawer.";
 description add-field-description --onProperty closedBy --title "Fermé Par" --text "Utilisateur ayant fermé la caisse." --locale fr;
 association set-selection-mode --onProperty closedBy --selectionMode COMBOBOX;
-association set-type --onProperty closedBy --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty closedBy --type AGGREGATION --targetEntity ~.jpa.Login;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Site in which this drawer resides.";
@@ -2486,11 +2488,11 @@ association set-selection-mode --onProperty vat --selectionMode COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
 
-field manyToOne --named salesAgent --fieldType ~.jpa.Users;
+field manyToOne --named salesAgent --fieldType ~.jpa.Login;
 description add-field-description --onProperty salesAgent --title "Sales Agent" --text "The user making this sale";
 description add-field-description --onProperty salesAgent --title "Vendeur" --text "Utilisateur éffectuant cette vente" --locale fr;
 association set-selection-mode --onProperty salesAgent --selectionMode FORWARD;
-association set-type --onProperty salesAgent --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty salesAgent --type AGGREGATION --targetEntity ~.jpa.Login;
 display add-list-field --field salesAgent.fullName;
 constraint NotNull --onProperty salesAgent;
 description add-notNull-message --onProperty salesAgent --title "The user making this sale must be selected" --text "The user making this sale must be selected";
@@ -2649,14 +2651,14 @@ association set-type --onProperty insurance --type AGGREGATION --targetEntity ~.
 display add-list-field --field insurance.customer.fullName;
 display add-list-field --field insurance.insurer.fullName;
 
-field manyToOne --named creatingUser --fieldType ~.jpa.Users;
+field manyToOne --named creatingUser --fieldType ~.jpa.Login;
 description add-field-description --onProperty creatingUser --title "Sales Agent" --text "The user creating this invoice";
 description add-field-description --onProperty creatingUser --title "Vendeur" --text "Éditeur de cette facture" --locale fr;
 constraint NotNull --onProperty creatingUser;
 description add-notNull-message --onProperty creatingUser --title "The creating user must be selected" --text "The creating user must be selected";
 description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
 association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
-association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
 display add-list-field --field creatingUser.fullName;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
@@ -2829,11 +2831,11 @@ constraint NotNull --onProperty agency;
 description add-notNull-message --onProperty agency --title "The agency of this payment must be selected" --text "The agency of this payment must be selected";
 description add-notNull-message --onProperty agency --title "Le site de cet paiement doit être sélectionné" --text "Le site de cet paiement doit être sélectionné" --locale fr;
 
-field manyToOne --named cashier --fieldType ~.jpa.Users;
+field manyToOne --named cashier --fieldType ~.jpa.Login;
 description add-field-description --onProperty cashier --title "Cashier" --text "The user collecting the payment.";
 description add-field-description --onProperty cashier --title "Caissier" --text "L utilisateur percevant le paiement." --locale fr;
 association set-selection-mode --onProperty cashier --selectionMode COMBOBOX;
-association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty cashier --type AGGREGATION --targetEntity ~.jpa.Login;
 display add-list-field --field cashier.fullName;
 constraint NotNull --onProperty cashier;
 description add-notNull-message --onProperty cashier --title "The cashier must be selected" --text "The cashier must be selected";
@@ -3079,11 +3081,11 @@ constraint NotNull --onProperty agency;
 description add-notNull-message --onProperty agency --title "The originating agency of this prescription book must be selected" --text "The originating agency of this prescription book must be selected";
 description add-notNull-message --onProperty agency --title "Le site de cet ordonnancier doit être sélectionné" --text "Le site de cet ordonnancier doit être sélectionné" --locale fr;
 
-field manyToOne --named recordingAgent --fieldType ~.jpa.Users;
+field manyToOne --named recordingAgent --fieldType ~.jpa.Login;
 description add-field-description --onProperty recordingAgent --title "Recording Agent" --text "The user who recorded this prescription.";
 description add-field-description --onProperty recordingAgent --title "Agent Saisie" --text "Utilisateur saisiessant cet ordonnance." --locale fr;
 association set-selection-mode --onProperty recordingAgent --selectionMode COMBOBOX;
-association set-type --onProperty recordingAgent --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty recordingAgent --type AGGREGATION --targetEntity ~.jpa.Login;
 display add-list-field --field recordingAgent.fullName;
 constraint NotNull --onProperty recordingAgent;
 description add-notNull-message --onProperty recordingAgent --title "The recording user must be selected" --text "The recording user must be selected";
@@ -3167,11 +3169,11 @@ description add-field-description --onProperty canceled --title "Annulé" --text
 @/* default=false */;
 display add-list-field --field canceled;
 
-field manyToOne --named recordingUser --fieldType ~.jpa.Users;
+field manyToOne --named recordingUser --fieldType ~.jpa.Login;
 description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this voucher.";
 description add-field-description --onProperty recordingUser --title "Agent" --text "Agent de saisie ayant édité cet avoir." --locale fr;
 association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
-association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Users;
+association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Login;
 display add-list-field --field recordingUser;
 
 field temporal --type TIMESTAMP --named modifiedDate; 
