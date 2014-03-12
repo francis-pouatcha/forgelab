@@ -125,6 +125,13 @@ description add-notNull-message --onProperty action --title "Select an action fo
 description add-notNull-message --onProperty action --title "Selectioner une action à associer avec cette autorisation" --text "Selectioner une action à associer avec cette autorisation" --locale fr;
 access permission-action-field --onProperty action;
 
+field string --named scope;
+description add-field-description --onProperty scope --title "Permission Scope" --text "The name of this permission";
+description add-field-description --onProperty scope --title "Étendu de la Permission" --text "Étendu de cete permission" --locale fr;
+display add-toString-field --field scope;
+display add-list-field --field scope;
+access permission-scope-field --onProperty scope;
+
 cd ~~;
 
 

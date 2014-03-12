@@ -40,21 +40,27 @@ association setup;
 java new-enum-type --named WorkGroup --package ~.jpa;
 enum add-enum-class-description --title "Work Group" --text "A work group";
 enum add-enum-class-description --title "Groupe de Travail" --text "Un groupe de travail" --locale fr;
+
 java new-enum-const ADMIN;
-enum add-enum-constant-description --onConstant ADMIN --title "Administrator" --text "Adminitrator of this platform";
-enum add-enum-constant-description --onConstant ADMIN --title "Administrateur" --text "Administrateur de ce progiciel" --locale fr;
-java new-enum-const USER;
-enum add-enum-constant-description --onConstant USER  --title "User" --text "User of this application" ;
-enum add-enum-constant-description --onConstant USER  --title "Utilisateur" --text "Utilisateur de ce progiciel" --locale fr ;
+enum add-enum-constant-description --onConstant ADMIN --title "Administration" --text "Adminitrator of this platform";
+enum add-enum-constant-description --onConstant ADMIN --title "Administration" --text "Administrateur de ce progiciel" --locale fr;
+
+java new-enum-const LOGIN;
+enum add-enum-constant-description --onConstant LOGIN  --title "Login" --text "User of this application" ;
+enum add-enum-constant-description --onConstant LOGIN  --title "Login" --text "Utilisateur de ce progiciel" --locale fr ;
+
 java new-enum-const CASHIER;
 enum add-enum-constant-description --onConstant CASHIER  --title "Cachier" --text "Cashier" ;
-enum add-enum-constant-description --onConstant CASHIER  --title "Caissier" --text "Caissier" --locale fr;
-java new-enum-const WAREHOUSEMAN;
-enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Warehouseman" --text "Warehouseman" ;
-enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Magasinier" --text "Magasinier" --locale fr;
+enum add-enum-constant-description --onConstant CASHIER  --title "Caisses" --text "Caissier" --locale fr;
+
+java new-enum-const STOCKS;
+enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "Stocks" ;
+enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "Magasinier" --locale fr;
+
 java new-enum-const MANAGER;
 enum add-enum-constant-description --onConstant MANAGER  --title "Manager" --text "Manager" ;
 enum add-enum-constant-description --onConstant MANAGER  --title "Manageur" --text "Manageur" --locale fr;
+
 java new-enum-const SALES;
 enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "Sales" ;
 enum add-enum-constant-description --onConstant SALES  --title "Vente" --text "Vente" --locale fr;
@@ -84,15 +90,13 @@ java new-enum-const CASHIER;
 enum add-enum-constant-description --onConstant CASHIER  --title "Cashier" --text "The cashier has access to the modules CashDrawer, Payment and Invoice";
 enum add-enum-constant-description --onConstant CASHIER  --title "Caissier" --text "Le caissier a accès aux modules Caisse, Paiement et facturation" --locale fr;
 
-java new-enum-const WAREHOUSEMAN;
-enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Warehousemann" --text "The warehousemann has access to the modules Article, Delivery, Procurement Order, Packaging Mode, Supplier, Inventory, Purchase Order";
-enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Magasinier" --text "Le magasinier a accès aux modules Produit, Livraison, Approvisionement, Mode de Conditionement, Inventaire, Commande Fournisseur" --locale fr;
+java new-enum-const STOCKS;
+enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "The warehousemann has access to the modules Article, Delivery, Procurement Order, Packaging Mode, Supplier, Inventory, Purchase Order";
+enum add-enum-constant-description --onConstant STOCKS  --title "Magasinier" --text "Le magasinier a accès aux modules Produit, Livraison, Approvisionement, Mode de Conditionement, Inventaire, Commande Fournisseur" --locale fr;
 
 java new-enum-const SALES;
 enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "The sales has access to the modules Sales Order, Customer, Insurance, Employer, Hospital, Prescriber, Prescription Book";
 enum add-enum-constant-description --onConstant SALES  --title "Vendeur" --text "Le vendeur a accès aux modules Command Client, Client, Assurance, Employeur, Hopital, Prescripteur, Ordonnancier" --locale fr;
-
-
 
 
 cd ~~;
@@ -128,6 +132,7 @@ entity --named PermissionName --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Permission" --text "A permission protecting an entity";
 description add-class-description --title "Permission" --text "Une permission protegeant une entité" --locale fr;
 access permission-table --actionEnumClass ~.jpa.PermissionActionEnum;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Permission Name" --text "The name of this permission";
@@ -150,6 +155,12 @@ description add-notNull-message --onProperty action --title "Select an action fo
 description add-notNull-message --onProperty action --title "Selectioner une action à associer avec cette autorisation" --text "Selectioner une action à associer avec cette autorisation" --locale fr;
 access permission-action-field --onProperty action;
 
+field string --named scope;
+description add-field-description --onProperty scope --title "Permission Scope" --text "The name of this permission";
+description add-field-description --onProperty scope --title "Étendu de la Permission" --text "Étendu de cete permission" --locale fr;
+display add-toString-field --field scope;
+display add-list-field --field scope;
+access permission-scope-field --onProperty scope;
 
 cd ~~;
 
@@ -159,6 +170,9 @@ entity --named RoleName --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Roles" --text "Entity used to map roles";
 description add-class-description --title "Roles" --text "Entité écoutant mes roles" --locale fr;
 access role-table --enumClass ~.jpa.AccessRoleEnum;
+group add --grouper ~.jpa.WorkGroup --named ADMIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Role Name" --text "The name of this role";
@@ -183,6 +197,10 @@ entity --named Login --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Login" --text "A login record";
 description add-class-description --title "Connection" --text "Une connection" --locale fr;
 access login-table;
+group add --grouper ~.jpa.WorkGroup --named LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN --expression SELF;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN --expression SELF;
 
 access login-entry --userName "admin" --password "admin";
 access role-entry --userName "admin" --role "LOGIN";
@@ -198,6 +216,12 @@ display add-toString-field --field loginName;
 display add-list-field --field loginName;
 @/* Unique=true */;
 access login-name-field --onProperty loginName;
+
+field string --named email;
+description add-field-description --onProperty email --title "Email" --text "The email address of the site";
+description add-field-description --onProperty email --title "Email" --text "Email du site" --locale fr;
+constraint NotNull --onProperty email;
+display add-list-field --field email;
 
 field string --named fullName;
 description add-field-description --onProperty fullName --title "Full Name" --text "The full name of the user.";
@@ -251,6 +275,7 @@ entity --named Company --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Company" --text "The Company";
 description add-class-description  --locale fr --title "Compagnie" --text "La compagnie";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named displayName;
 description add-field-description --onProperty displayName --title "Display Name" --text "The display name";
@@ -331,11 +356,12 @@ enum add-enum-constant-description --locale fr --onConstant NEUTRAL  --title "Ne
 cd ~~;
 
 
-@/* Entity Agence */;
+@/* Entity Agency */;
 entity --named Agency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Agency" --text "An agency of this pharmacie";
 description add-class-description  --locale fr --title "Agence" --text "Une agence de cette pharmacie";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named agencyNumber;
 description add-field-description --onProperty agencyNumber --title "Agency Number" --text "The number of this agency";
@@ -420,6 +446,7 @@ entity --named Currency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Currency" --text "A currency";
 description add-class-description  --locale fr --title "Devise" --text "Une devise";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Currency Name" --text "The name of this currency.";
@@ -449,9 +476,18 @@ cd ~~ ;
 @/* Entity Person */;
 entity --named Person --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "User" --text "A user of this application";
-description add-class-description  --locale fr --title "Utilisateur" --text "Un utilisateur de cette application.";
+description add-class-description --locale fr --title "Utilisateur" --text "Un utilisateur de cette application.";
 group add --grouper ~.jpa.WorkGroup --named ADMIN;
-@/* TODO access add-permission  --action ALL --toRole ADMIN*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this user";
@@ -522,7 +558,8 @@ entity --named VAT --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "VAT" --text "The value added tax";
 description add-class-description  --locale fr --title "TVA" --text "Taxe sur la valeure ajoutée";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named code;
 description add-field-description --onProperty code --title "VAT Code" --text "The code of this VAT";
@@ -544,7 +581,7 @@ display add-list-field --field active;
 @/* Entity SalesMargin */;
 entity --named SalesMargin --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Margin" --text "The sales margin on this product.";
-description add-class-description  --locale fr --title "Taux de Marge" --text "Le taux de marge du produit.";
+description add-class-description --locale fr --title "Taux de Marge" --text "Le taux de marge du produit.";
 
 field string --named code;
 description add-field-description --onProperty code --title "Margin Code" --text "The code of this margin";
@@ -590,7 +627,8 @@ entity --named ClearanceConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Clearance Configuration" --text "Configuration for the clearance of a product.";
 description add-class-description --title "Configuration Solde" --text "Permet de créer une configuration du solde pour un produit." --locale fr;
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field temporal --type TIMESTAMP --named startDate; 
 @/*  pattern=dd-MM-yyyy Date */;
@@ -654,7 +692,8 @@ entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "The product packaging mode";
 description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Packaging Mode Name" --text "The name of this packaging mode";
@@ -668,9 +707,10 @@ cd ~~;
 @/* Entity Section */;
 entity --named Section --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
-description add-class-description  --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
+description add-class-description --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named sectionCode;
 description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
@@ -729,9 +769,10 @@ cd ~~ ;
 @/* Entity ProductFamily */;
 entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Product Family" --text "The product family";
-description add-class-description  --locale fr --title "Famille Produit" --text "La famille produit";
+description add-class-description --locale fr --title "Famille Produit" --text "La famille produit";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named code;
 description add-field-description --onProperty code --title "Product Family Code" --text "The code of this product family";
@@ -769,7 +810,8 @@ entity --named VAT --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "VAT" --text "The value added tax";
 description add-class-description  --locale fr --title "TVA" --text "Taxe sur la valeure ajoutée";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named code;
 description add-field-description --onProperty code --title "VAT Code" --text "The code of this VAT";
@@ -793,7 +835,8 @@ entity --named SalesMargin --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Margin" --text "The sales margin on this product.";
 description add-class-description  --locale fr --title "Taux de Marge" --text "Le taux de marge du produit.";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named code;
 description add-field-description --onProperty code --title "Margin Code" --text "The code of this margin";
@@ -829,25 +872,6 @@ enum add-enum-constant-description --onConstant RESTORED --title "Restored" --te
 enum add-enum-constant-description --onConstant RESTORED --title "Restauré" --text "Document restauré" --locale fr ;
 
 
-
-cd ~~;
-
-
-@/* Entity PackagingMode, ModeConditionnement */;
-entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Packaging Mode" --text "The product packaging mode";
-description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-
-field string --named name;
-description add-field-description --onProperty name --title "Packaging Mode Name" --text "The name of this packaging mode";
-description add-field-description --onProperty name --title "Libelle du Mode de Conditionement" --text "Nom du mode de conditionnement" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-
-
-
 cd ~~ ;
 
 
@@ -856,14 +880,12 @@ entity --named Article --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article" --text "An article or any oder drug sold in the pharmacy";
 description add-class-description  --locale fr --title "Article" --text "Un produit ou medicament en vente dans cette pharmacie";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission  --action CREATE --toRole WAREHOUSEMAN*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
 group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
 
 field string --named articleName;
 description add-field-description --onProperty articleName --title "Article Name" --text "The name of this article";
@@ -888,9 +910,6 @@ description add-field-description --onProperty section --title "Section" --text 
 description add-field-description --onProperty section --title "Rayon" --text "Le rayon dans lequel le produit est classé." --locale fr;
 association set-selection-mode --onProperty section --selectionMode COMBOBOX;
 association set-type --onProperty section --type AGGREGATION --targetEntity ~.jpa.Section;
-@/* TODO access add-permission --entity ~.jpa.Section --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Section --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Section --action READ --toRole SALES*/;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this article is active or not";
@@ -902,9 +921,6 @@ description add-field-description --onProperty family --title "Product Family" -
 description add-field-description --onProperty family --title "Famille Produit" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
 association set-selection-mode --onProperty family --selectionMode COMBOBOX;
 association set-type --onProperty family --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
-@/* TODO access add-permission --entity ~.jpa.ProductFamily --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.ProductFamily --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.ProductFamily --action READ --toRole SALES*/;
 
 field number --named qtyInStock --type java.math.BigDecimal;
 description add-field-description --onProperty qtyInStock --title "Quantity in Stock" --text "The quantity of this article in stock.";
@@ -961,18 +977,12 @@ description add-field-description --onProperty defaultSalesMargin --title "Sales
 description add-field-description --onProperty defaultSalesMargin --title "Taux de Marge" --text "Le taux de marge du produit." --locale fr;
 association set-selection-mode --onProperty defaultSalesMargin --selectionMode COMBOBOX;
 association set-type --onProperty defaultSalesMargin --type AGGREGATION --targetEntity ~.jpa.SalesMargin;
-@/* TODO access add-permission --entity ~.jpa.SalesMargin --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.SalesMargin --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.SalesMargin --action READ --toRole SALES*/;
 
 field manyToOne --named packagingMode --fieldType ~.jpa.PackagingMode; 
 description add-field-description --onProperty packagingMode --title "Packaging Mode" --text "THe product packaging mode";
 description add-field-description --onProperty packagingMode --title "Mode de Conditionement" --text "Le mode de conditionnement du produit" --locale fr;
 association set-selection-mode --onProperty packagingMode --selectionMode COMBOBOX;
 association set-type --onProperty packagingMode --type AGGREGATION --targetEntity ~.jpa.PackagingMode;
-@/* TODO access add-permission --entity ~.jpa.PackagingMode --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.PackagingMode --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.PackagingMode --action READ --toRole SALES*/;
 
 field boolean --named authorizedSale --primitive false; 
 @/*  vente_autorisee  default=true  */;
@@ -994,9 +1004,6 @@ description add-field-description --onProperty agency --title "Filiale" --text "
 association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole SALES*/;
 
 
 field manyToOne --named clearanceConfig --fieldType ~.jpa.ClearanceConfig;
@@ -1004,14 +1011,9 @@ description add-field-description --onProperty clearanceConfig --title "Clearanc
 description add-field-description --onProperty clearanceConfig --title "Configuration Solde" --text "Permet de créer une configuration du solde pour ce produit." --locale fr;
 association set-selection-mode --onProperty clearanceConfig --selectionMode COMBOBOX;
 association set-type --onProperty clearanceConfig --type AGGREGATION --targetEntity ~.jpa.ClearanceConfig;
-@/* TODO access add-permission --entity ~.jpa.ClearanceConfig --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.ClearanceConfig --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.ClearanceConfig --action READ --toRole SALES*/;
-
 
 
 cd ~~;
-
 
 
 @/* Entity ArticleEquivalence */;
@@ -1019,14 +1021,12 @@ entity --named ArticleEquivalence --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article Equivalence" --text "An article equivalent to this article";
 description add-class-description  --locale fr --title "Equivalence Produit" --text "Un article équivalent à cet article";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission  --action CREATE --toRole WAREHOUSEMAN*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
 group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
 
 
 field manyToOne --named mainArticle --fieldType ~.jpa.Article;
@@ -1036,9 +1036,6 @@ association set-selection-mode --onProperty mainArticle --selectionMode COMBOBOX
 association set-type --onProperty mainArticle --type AGGREGATION --targetEntity ~.jpa.Article;
 display add-toString-field --field mainArticle.articleName;
 display add-list-field --field mainArticle.articleName;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole SALES*/;
 
 field manyToOne --named equivalentArticle --fieldType ~.jpa.Article;
 description add-field-description --onProperty equivalentArticle --title "Equivalent Article" --text "The Equivalent Article";
@@ -1059,14 +1056,12 @@ entity --named Supplier --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Supplier" --text "The supplier";
 description add-class-description  --locale fr --title "Fournisseur" --text "Le fournisseur";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission  --action CREATE --toRole WAREHOUSEMAN*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
 group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
 
 field string --named name;
 description add-field-description --onProperty name --title "Supplier Name" --text "The name of the supplier.";
@@ -1183,14 +1178,11 @@ cd ~~;
 entity --named ProcurementOrderItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Procurement Order Item" --text "Procurement order item";
 description add-class-description  --locale fr --title "Ligne Commande Fournisseur" --text "Ligne de commande fournisseur";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
 group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
 
 field string --named indexLine; 
 description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through purchase order items";
@@ -1207,9 +1199,6 @@ display add-list-field --field article.articleName;
 constraint NotNull --onProperty article;
 description add-notNull-message --onProperty article --title "The article for this lot must be selected" --text "The article for this lot must be selected";
 description add-notNull-message --onProperty article --title "Le produit de ce lot doit être sélectionné" --text "Le produit de ce lot doit être sélectionné" --locale fr;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole SALES*/;
 
 field temporal --type TIMESTAMP --named recCreated; 
 @/* Pattern=dd-MM-yyy  */;
@@ -1237,9 +1226,6 @@ description add-notNull-message --onProperty creatingUser --title "The creating 
 description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
 association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole SALES*/;
 
 field boolean --named valid --primitive false;
 description add-field-description --onProperty valid --title "Valid" --text "Determines if the order item is valid or not according to the expectations of the supplier.";
@@ -1276,13 +1262,10 @@ entity --named ProcurementOrder --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Procurement Order" --text "Procurement order";
 description add-class-description  --locale fr --title "Commande Fournisseur" --text "Commande fournisseur";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
-group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named procurementOrderNumber;
 description add-field-description --onProperty procurementOrderNumber --title "Procurement Order Number" --text "The procurement order number";
@@ -1313,9 +1296,6 @@ description add-notNull-message --onProperty creatingUser --title "The creating 
 description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
 association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Login --action READ --toRole SALES*/;
 
 field custom --named procmtOrderTriggerMode --type ~.jpa.ProcmtOrderTriggerMode;
 description add-field-description --onProperty procmtOrderTriggerMode --title "Procurement Order Trigger Mode" --text "Procurement Order Trigger Mode.";
@@ -1332,9 +1312,6 @@ description add-field-description --onProperty supplier --title "Supplier" --tex
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
 association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole SALES*/;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
@@ -1342,9 +1319,6 @@ description add-field-description --onProperty agency --title "Agency" --text "L
 association set-selection-mode --onProperty agency --selectionMode  COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole SALES*/;
 
 field number --named amountBeforeTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountBeforeTax --title "Amount Before Tax" --text "Total amount before tax for this purchase order.";
@@ -1378,27 +1352,18 @@ description add-field-description --onProperty vat --title "TVA" --text "La taxe
 association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole SALES*/;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
 description add-field-description --onProperty currency --title "Devise" --text "La devise utilisée pour la conversion de la monnaie mentionnée sur le bordereau de livraison en monnaie locale(FCFA)." --locale fr;
 association set-selection-mode --onProperty currency --selectionMode  COMBOBOX;
 association set-type --onProperty currency --type AGGREGATION --targetEntity ~.jpa.Currency;
-@/* TODO access add-permission --entity ~.jpa.Currency --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Currency --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Currency --action READ --toRole SALES*/;
 
 field oneToMany --named procurementOrderItems --fieldType ~.jpa.ProcurementOrderItem --inverseFieldName procurementOrder;
 description add-field-description --onProperty procurementOrderItems --title "Procurement Order Items" --text "Procurement Order Items";
 description add-field-description --onProperty procurementOrderItems --title "Ligne de commande" --text "ligne de commande fournisseur" --locale fr;
 association set-type --onProperty procurementOrderItems --type COMPOSITION --targetEntity ~.jpa.ProcurementOrderItem;
 association set-selection-mode --onProperty procurementOrderItems --selectionMode TABLE;
-@/* TODO access add-permission --entity ~.jpa.ProcurementOrderItem --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.ProcurementOrderItem --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.ProcurementOrderItem --action READ --toRole SALES*/;
 
 cd ../ProcurementOrderItem.java;
 description add-field-description --onProperty procurementOrder --title "Procurement Order" --text "The procurement order containing this item";
@@ -1406,36 +1371,45 @@ description add-field-description --onProperty procurementOrder --title "Command
 association set-type --onProperty procurementOrder --type COMPOSITION --targetEntity ~.jpa.ProcurementOrder;
 
 
-
 cd ~~;
-
 
 
 @/* Entity DeliveryItem */;
 entity --named DeliveryItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Delivery Order Item" --text "Delivery order item";
 description add-class-description  --locale fr --title "Ligne de livraison" --text "la ligne de livraison";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
-group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named lineIndex;
 description add-field-description --onProperty lineIndex --title "Line Index" --text "The index of a line of this item in the PO";
 description add-field-description --onProperty lineIndex --title "Index de ligne" --text "L index de la ligne de cette LAP" --locale fr;
 display add-list-field --field lineIndex;
 
-field string --named localPic; 
-description add-field-description --onProperty localPic --title "Local PIC" --text "The internal product identification code used to identify lots during sales.";
-description add-field-description --onProperty localPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
-constraint Size --onProperty localPic --min 7;
-description add-size-message --onProperty localPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
-description add-size-message --onProperty localPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
-display add-list-field --field localPic;
+field string --named internalPic; 
+description add-field-description --onProperty internalPic --title "Internal PIC" --text "The internal product identification code used to identify lots during sales.";
+description add-field-description --onProperty internalPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
+constraint Size --onProperty internalPic --min 7;
+description add-size-message --onProperty internalPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
+description add-size-message --onProperty internalPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
+display add-list-field --field internalPic;
+
+field string --named secondaryPic; 
+description add-field-description --onProperty secondaryPic --title "Secondary PIC" --text "The product identification code originaly present on the product packaging box.";
+description add-field-description --onProperty secondaryPic --title "CIP Secondaire" --text "Le code identifiant produit maison figuran sur la boite du medicament." --locale fr;
+constraint Size --onProperty secondaryPic --min 7;
+description add-size-message --onProperty secondaryPic --title "The secondary product identification code must have more than 7 characters" --text "The secondary product identification code must have more than 7 characters";
+description add-size-message --onProperty secondaryPic --title "Le code pour identification de produit secondaire doit avoir plus de 7 caractères" --text "Le code pour identification de produit secondaire doit avoir plus de 7 caractères" --locale fr;
+display add-list-field --field secondaryPic;
+
+field string --named mainPic; 
+description add-field-description --onProperty mainPic --title "Main PIC" --text "The main product identification code.";
+description add-field-description --onProperty mainPic --title "CIP Principal" --text "Le code identifiant produit principal." --locale fr;
+constraint Size --onProperty mainPic --min 7;
+description add-size-message --onProperty mainPic --title "The main product identification code must have more than 7 characters" --text "The main product identification code must have more than 7 characters";
+description add-size-message --onProperty mainPic --title "Le code pour identification de produit principal doit avoir plus de 7 caractères" --text "Le code pour identification de produit principal doit avoir plus de 7 caractères" --locale fr;
+display add-list-field --field mainPic;
 
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this delivery order item";
@@ -1447,9 +1421,12 @@ display add-list-field --field article.articleName;
 constraint NotNull --onProperty article;
 description add-notNull-message --onProperty article --title "The article fo this delivery order item must be selected" --text "The article fo this delivery order item must be selected";
 description add-notNull-message --onProperty article --title "Le produit de cette ligne de livraison doit être sélectionné" --text "Le produit de cette ligne de livraison doit être sélectionné" --locale fr;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole SALES*/;
+
+field string --named articleName;
+description add-field-description --onProperty articleName --title "Article Name" --text "The name of this article";
+description add-field-description --onProperty articleName --title "Nom de cet Article" --text "Le nom du produit" --locale fr;
+display add-toString-field --field articleName;
+display add-list-field --field articleName;
 
 field temporal --type TIMESTAMP --named expirationDate; 
 @/* Pattern=dd-MM-yyy  */;
@@ -1461,7 +1438,7 @@ format add-date-pattern --onProperty expirationDate --pattern "dd-MM-yyyy";
 field temporal --type TIMESTAMP --named productRecCreated; 
 @/* Pattern= dd-MM-yyy  */;
 description add-field-description --onProperty productRecCreated --title "Product Record Created" --text "Product record creation date";
-description add-field-description --onProperty productRecCreated --title "Date de Saisie du Produit" --text "Date à laquelle le produit a été saisi(crée)" --locale fr;
+description add-field-description --onProperty productRecCreated --title "Date de Saisie du Produit" --text "Date à laquelle le produit a été saisie" --locale fr;
 format add-date-pattern --onProperty productRecCreated --pattern "dd-MM-yyyy"; 
 
 field number --named freeQuantity --type java.math.BigDecimal;
@@ -1514,14 +1491,10 @@ entity --named Delivery --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Delivery" --text "The Delivery";
 description add-class-description  --locale fr --title "Livraison" --text "Une Livraison";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action CREATE --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission  --action READ --toRole WAREHOUSEMAN*/;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action READ --toRole CASHIER*/;
-group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action READ --toRole SALES*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named deliveryNumber;
 description add-field-description --onProperty deliveryNumber --title "Delivery  Number" --text "The Delivery order number";
@@ -1554,9 +1527,6 @@ description add-notNull-message --onProperty creatingUser --title "The creating 
 description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
 association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
 association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Article --action READ --toRole SALES*/;
 
 field manyToOne --named currency --fieldType ~.jpa.Currency;
 description add-field-description --onProperty currency --title "Currency" --text "The currency used for the conversion of the currency stated on the delivery note in local currency (FCFA).";
@@ -1579,9 +1549,6 @@ description add-field-description --onProperty supplier --title "Supplier" --tex
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
 association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Supplier --action READ --toRole SALES*/;
 
 field temporal --type TIMESTAMP --named paymentDate; 
 description add-field-description --onProperty paymentDate --title "Payment Date" --text "Date of settlement of this order.";
@@ -1621,9 +1588,6 @@ description add-field-description --onProperty vat --title "TVA" --text "La taxe
 association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
 association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
 display add-list-field --field vat.rate;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.VAT --action READ --toRole SALES*/;
 
 field temporal --type TIMESTAMP --named creationDate; 
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this order.";
@@ -1647,19 +1611,12 @@ description add-field-description --onProperty receivingAgency --title "Filiale"
 association set-selection-mode --onProperty receivingAgency --selectionMode  COMBOBOX;
 association set-type --onProperty receivingAgency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field receivingAgency.name;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.Agency --action READ --toRole SALES*/;
 
 field oneToMany --named deliveryItems --fieldType ~.jpa.DeliveryItem --inverseFieldName delivery;
 description add-field-description --onProperty deliveryItems --title "Delivery  Items" --text "Delivery Items";
 description add-field-description --onProperty deliveryItems --title "Ligne de livraison" --text "ligne de livraison" --locale fr;
 association set-type --onProperty deliveryItems --type COMPOSITION --targetEntity ~.jpa.DeliveryItem;
 association set-selection-mode --onProperty deliveryItems --selectionMode TABLE;
-@/* TODO access add-permission --entity ~.jpa.DeliveryItem --action READ --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.DeliveryItem --action CREATE --toRole WAREHOUSEMAN*/;
-@/* TODO access add-permission --entity ~.jpa.DeliveryItem --action READ --toRole CASHIER*/;
-@/* TODO access add-permission --entity ~.jpa.DeliveryItem --action READ --toRole SALES*/;
 
 cd ../DeliveryItem.java;
 description add-field-description --onProperty delivery --title "Delivery" --text "The delivery containing this item";
@@ -1700,13 +1657,12 @@ entity --named StockMovement --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Stock Mouvement" --text "It saves the traces of all the movements that take place in the stock (inputs, outputs, inventory, returns processing, etc ...)";
 description add-class-description --title "Mouvement de Stock" --text "Elle permet de sauvegarder les traces de  tous les mouvements qui prennen place dans le stock(entrees, sorties, inventaires, retours, transformation, etc...)" --locale fr ;
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
-@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
-group add --grouper ~.jpa.WorkGroup --named WAREHOUSEMAN;
-@/* TODO access add-permission  --action ALL --toRole WAREHOUSEMAN*/;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-@/* TODO access add-permission  --action ALL --toRole CASHIER*/;
-group add --grouper ~.jpa.WorkGroup --named SALES;
-@/* TODO access add-permission  --action ALL --toRole SALES*/;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field temporal --type TIMESTAMP --named creationDate; 
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this stock movement.";
@@ -1819,6 +1775,13 @@ cd ~~ ;
 entity --named Employer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Employer" --text "The client Employer.";
 description add-class-description  --locale fr --title "Employeur" --text "Employeur du client.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named name;
 description add-field-description --onProperty name --title "Name" --text "The employer name";
@@ -1862,10 +1825,17 @@ enum add-enum-constant-description --onConstant LEGAL --title "Legal" --text "Le
 enum add-enum-constant-description --locale fr --onConstant LEGAL --title "Morale" --text "Personnalité juridique";
 @/* enumeration{PHYSIQUE, MORAL} */;
 
+
+cd ~~;
+
+
 @/* Entité CategorieClient */;
 entity --named CustomerCategory --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Customer Category" --text "The client categories.";
 description add-class-description  --locale fr --title "Categorie Client" --text "Les categorie de client.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Category Name" --text "The name of this client category";
@@ -1890,10 +1860,21 @@ description add-size-message --onProperty description --title "The description m
 description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
 
 
+cd ~~;
+
+
+
 @/* Client */;
 entity --named Customer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Customer" --text "The client.";
 description add-class-description  --locale fr --title "Client" --text "Un client.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field custom --named gender --type ~.jpa.Gender;
 description add-field-description --onProperty gender --title "Gender" --text "The gender of this client.";
@@ -1992,12 +1973,21 @@ field string --named serialNumber;
 description add-field-description --onProperty serialNumber --title "Serial Number" --text "The serial number of this client.";
 description add-field-description --onProperty serialNumber --title "Matricule Client" --text "Le numéro matricule de ce client." --locale fr;
 
+
 cd ~~ ;
+
 
 @/* Insurrance */;
 entity --named Insurrance --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Insurrance" --text "The Insurrance .";
 description add-class-description --locale fr --title "Assurance" --text "Assurance";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field temporal --type TIMESTAMP --named beginDate; 
 @/* pattern= dd-MM-yyyy */;
@@ -2037,7 +2027,9 @@ format add-number-type --onProperty coverageRate --type  PERCENTAGE;
 display add-list-field --field coverageRate;
 display add-toString-field --field coverageRate;
 
+
 cd ~~
+
 
 @/* ================================ */;
 @/* Inventories */;
@@ -2046,6 +2038,9 @@ cd ~~
 entity --named InventoryItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Inventory Item" --text "An inventory item";
 description add-class-description  --locale fr --title "Ligne Inventaire" --text "Une ligne inventaire.";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field number --named expectedQty --type java.math.BigDecimal;
 description add-field-description --onProperty expectedQty --title "Expected Quantity in Stock" --text "The quantity of this article expected to be in stock.";
@@ -2124,6 +2119,11 @@ description add-notNull-message --onProperty article --title "Le produit sujet d
 entity --named Inventory --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Inventory" --text "An inventory";
 description add-class-description  --locale fr --title "Inventaire" --text "Un inventaire.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named inventoryNumber;
 description add-field-description --onProperty inventoryNumber --title "Inventory Number" --text "The inventory number.";
@@ -2242,12 +2242,21 @@ description add-field-description --onProperty active --title "Actif" --text "Pe
 @/* Default= true */;
 display add-list-field --field active;
 
+
 cd ~~ ;
+
 
 @/* Entité Caisse */;
 entity --named CashDrawer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Cash Drawer" --text "A cash drawer.";
 description add-class-description  --locale fr --title "Caisse" --text "Une caisse.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named cashDrawerNumber;
 description add-field-description --onProperty cashDrawerNumber --title "Cash Drawer Number" --text "The number of this cash drawer.";
@@ -2353,6 +2362,10 @@ description add-field-description --onProperty opened --title "Ouverte" --text "
 display add-list-field --field opened;
 @/* default=true */;
 
+
+cd ~~;
+
+
 @/* Commande Client */;
 
 @/* SalesOrderType */;
@@ -2373,18 +2386,16 @@ enum add-enum-constant-description --locale fr --onConstant PROFORMA_SALE --titl
 entity --named SalesOrderItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Order Item" --text "The sales order item.";
 description add-class-description  --locale fr --title "Ligne Commande Client" --text "La ligne de command client.";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field number --named orderedQty --type java.math.BigDecimal;
 description add-field-description --onProperty orderedQty --title "Quantity Ordered" --text "The quantity ordered in this line.";
 description add-field-description --onProperty orderedQty --title "Quantité Commandés" --text "La quantité commandée dans cette ligne." --locale fr;
 @/* Default=0 */;
 display add-list-field --field orderedQty;
-
-field number --named returnedQty --type java.math.BigDecimal;
-description add-field-description --onProperty returnedQty --title "Quantity Returned" --text "The quantity returned in this line.";
-description add-field-description --onProperty returnedQty --title "Quantité Retournée" --text "La quantité retournée dans cette ligne." --locale fr;
-@/* Default=0 */;
-display add-list-field --field returnedQty;
 
 field number --named deliveredQty --type java.math.BigDecimal;
 description add-field-description --onProperty deliveredQty --title "Quantity Returned" --text "The quantity returned in this line.";
@@ -2438,6 +2449,13 @@ cd ~~;
 entity --named SalesOrder --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Order" --text "A sales order.";
 description add-class-description  --locale fr --title "Commande Client" --text "Une commande client.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named soNumber;
 description add-field-description --onProperty soNumber --title "Sales Order Number" --text "The sales order number.";
@@ -2570,12 +2588,19 @@ description add-field-description --onProperty salesOrder --title "Commande clie
 association set-type --onProperty salesOrder --type COMPOSITION --targetEntity ~.jpa.SalesOrder;
 
 
+cd ~~;
+
+
 @/* Invoice */;
 
 @/* Entite Ligne Facture */;
 entity --named InvoiceItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Invoice Item" --text "An invoice item.";
 description add-class-description  --locale fr --title "Ligne Facture" --text "Une ligne facture.";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field long --named indexLine --primitive false; 
 description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through invoice items";
@@ -2599,7 +2624,7 @@ display add-list-field --field returnedQty;
 field number --named salesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit for product of this line.";
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix unitaire du produit de la ligne de facture" --locale fr;
-format add-number-type --onProperty salesPricePU --type CURRENCY ;
+format add-number-type --onProperty salesPricePU --type CURRENCY;
 display add-list-field --field salesPricePU;
 
 field number --named amountReturn --type java.math.BigDecimal;
@@ -2615,10 +2640,20 @@ format add-number-type --onProperty totalSalesPrice --type CURRENCY ;
 display add-list-field --field totalSalesPrice;
 
 
+cd ~~;
+
+
 @/* Entité Facture */;
 entity --named Invoice --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Invoice" --text "An invoice.";
 description add-class-description  --locale fr --title "Facture" --text "Une facture.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named invoiceNumber;
 description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
@@ -2761,6 +2796,11 @@ description add-field-description --onProperty invoice --title "Invoice" --text 
 description add-field-description --onProperty invoice --title "Facture" --text "Facture contenant cette ligne" --locale fr;
 association set-type --onProperty invoice --type COMPOSITION --targetEntity ~.jpa.Invoice;
 
+
+cd ~~;
+
+
+
 @/* Mode Paiement*/;
 java new-enum-type  --named PaymentMode --package ~.jpa;
 enum add-enum-class-description --title "Payment Mode" --text "Mode of payment.";
@@ -2778,10 +2818,21 @@ java new-enum-const VOUCHER;
 enum add-enum-constant-description --onConstant VOUCHER --title "Client Voucher" --text "Client voucher";
 enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Avoir Client" --text "Avoir client";
 
+
+cd ~~;
+
+
 @/* Entité  paiement */;
 entity --named Payment --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Payment" --text "A payment.";
 description add-class-description  --locale fr --title "Paiement" --text "Un paiement.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named paymentNumber;
 description add-field-description --onProperty paymentNumber --title "Payment Number" --text "The paiment number.";
@@ -2883,10 +2934,20 @@ association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa
 display add-list-field --field paidBy.fullName;
 
 
+cd ~~;
+
+
 @/* Entité EtatCredits */;
 entity --named DebtStatement --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Debt Statement" --text "The sum of all the debts of a client";
 description add-class-description  --locale fr --title "Etat Credits" --text "Le cumul de toutes les dettes d un client";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named statementNumber;
 description add-field-description --onProperty statementNumber --title "Statement Number" --text "The number identifying this statement.";
@@ -2969,6 +3030,9 @@ description add-field-description --onProperty invoices --title "Factures" --tex
 association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.Invoice;
 
 
+cd ~~;
+
+
 @/* ================================== */;
 @/* Prescriptions */;
 
@@ -2976,6 +3040,13 @@ association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.j
 entity --named Hospital --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Hospital" --text "Hospital";
 description add-class-description  --locale fr --title "Hopital" --text "Hopital";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named name;
 description add-field-description --onProperty name --title "Hospital Name" --text "The name of this Hospital.";
@@ -3118,7 +3189,9 @@ description add-field-description --onProperty recordingDate --title "Date de Sa
 display add-list-field --field recordingDate;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
+
 cd ~~;
+
 
 @/* Accounts Receivable */;
 
@@ -3126,6 +3199,13 @@ cd ~~;
 entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Client Voucher" --text "Client voucher";
 description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named voucherNumber;
 description add-field-description --onProperty voucherNumber --title "Voucher Number" --text "The client voucher number.";
@@ -3206,6 +3286,7 @@ description add-field-description --onProperty voucherPrinted --title "Printed" 
 description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
 @/* default=false */;
 display add-list-field --field voucherPrinted;
+
 
 cd ~~;
 
