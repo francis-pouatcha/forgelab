@@ -1,4 +1,9 @@
 
+
+
+
+
+
 @/* Download and install jboss-eap-6.1 */;
 @/* Install these plugins if not done yet. */;
 @/* forge install-plugin arquillian */;
@@ -91,6 +96,8 @@ enum add-enum-constant-description --onConstant WAREHOUSEMAN  --title "Magasinie
 java new-enum-const SALES;
 enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "The sales has access to the modules Sales Order, Customer, Insurance, Employer, Hospital, Prescriber, Prescription Book";
 enum add-enum-constant-description --onConstant SALES  --title "Vendeur" --text "Le vendeur a accès aux modules Command Client, Client, Assurance, Employeur, Hopital, Prescripteur, Ordonnancier" --locale fr;
+
+
 
 
 cd ~~;
@@ -239,11 +246,6 @@ description add-field-description --onProperty roleNames --title "Nom des Roles"
 association set-type --onProperty roleNames --type AGGREGATION --targetEntity ~.jpa.RoleName;
 association set-selection-mode --onProperty roleNames --selectionMode FORWARD;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
 cd ~~;
 
@@ -312,11 +314,6 @@ field string --named registerNumber;
 description add-field-description --onProperty registerNumber --title "Register Number" --text "The register number of this company";
 description add-field-description --onProperty registerNumber --title "Numéro de Registre" --text "Numéro de registre du commerce de cette société" --locale fr;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
 cd ~~;
 
@@ -418,11 +415,7 @@ constraint Size --onProperty invoiceMessage --max 256;
 description add-size-message --onProperty invoiceMessage --title "The invoice message must have less than 256 characters" --text "The invoice message must have less than 256 characters";
 description add-size-message --onProperty invoiceMessage --title "Le message sur la facture doit avoir moins de 256 caractères" --text "Le message sur la facture doit avoir moins de 256 caractères" --locale fr;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
 cd ~~;
 
 
@@ -526,11 +519,6 @@ field string --named saleKey;
 description add-field-description --onProperty saleKey --title "Sale Key" --text "The sales key of saller for a sales session open to all users. ";
 description add-field-description --onProperty saleKey --title "Sale Key" --text "Clé de vente du vendeur pour la session vente ouverte à tous les utilisateurs." --locale fr;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 cd ~~;
 
 
@@ -597,9 +585,6 @@ enum add-enum-constant-description --onConstant ONGOING --title "En Cours" --tex
 java new-enum-const RESTORED ;
 enum add-enum-constant-description --onConstant RESTORED --title "Restored" --text "Restored document";
 enum add-enum-constant-description --onConstant RESTORED --title "Restauré" --text "Document restauré" --locale fr ;
-java new-enum-const CLOSED ;
-enum add-enum-constant-description --onConstant CLOSED --title "Closed" --text "Closed document";
-enum add-enum-constant-description --onConstant CLOSED --title "Cloturé" --text "Document cloturé" --locale fr ;
 
 
 cd ~~;
@@ -778,7 +763,97 @@ description add-field-description --onProperty parentFamilly --title "Famille Pa
 association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
 association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
 
+
+
 cd ~~;
+
+
+
+@/* Entity VAT */;
+entity --named VAT --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "VAT" --text "The value added tax";
+description add-class-description  --locale fr --title "TVA" --text "Taxe sur la valeure ajoutée";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+
+field string --named code;
+description add-field-description --onProperty code --title "VAT Code" --text "The code of this VAT";
+description add-field-description --onProperty code --title "Code TVA" --text "Le code de la TVA" --locale fr;
+display add-toString-field --field code;
+display add-list-field --field code;
+
+field number --named rate --type java.math.BigDecimal;
+description add-field-description --onProperty rate --title "VAT Rate" --text "The VAT rate";
+description add-field-description --onProperty rate --title "Taux TVA" --text "Taux de la TVA" --locale fr;
+display add-list-field --field rate;
+format add-number-type --onProperty rate --type  PERCENTAGE;
+
+field boolean --named active --primitive false;
+description add-field-description --onProperty active --title "Active" --text "Says if this VAT is active or not";
+description add-field-description --onProperty active --title "Actif" --text "Indique si la TVA est Actif ou pas." --locale fr;
+display add-list-field --field active;
+
+@/* Entity SalesMargin */;
+entity --named SalesMargin --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Sales Margin" --text "The sales margin on this product.";
+description add-class-description  --locale fr --title "Taux de Marge" --text "Le taux de marge du produit.";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+
+field string --named code;
+description add-field-description --onProperty code --title "Margin Code" --text "The code of this margin";
+description add-field-description --onProperty code --title "Code Marge" --text "Numéro de la marge" --locale fr;
+display add-toString-field --field code;
+display add-list-field --field code;
+
+field number --named rate --type java.math.BigDecimal;
+description add-field-description --onProperty rate --title "Marging Rate" --text "The rate of this margin.";
+description add-field-description --onProperty rate --title "Taux de Marge" --text "Taux de la marge." --locale fr;
+format add-number-type --onProperty rate --type  PERCENTAGE;
+display add-list-field --field rate;
+
+field boolean --named active --primitive false;
+description add-field-description --onProperty active --title "Active" --text "Says if this margin rate is Active or not";
+description add-field-description --onProperty active --title "Actif" --text "Indique si ce taux de marge est actif ou pas." --locale fr;
+display add-list-field --field active;
+
+cd ~~ ;
+
+@/* Enum type DocumentState State */;
+java new-enum-type --named DocumentProcessingState --package ~.jpa ;
+enum add-enum-class-description --title "State" --text "The state of the document";
+enum add-enum-class-description --title "Status" --text "État du document" --locale fr;
+java new-enum-const SUSPENDED ;
+enum add-enum-constant-description --onConstant SUSPENDED --title "Suspended" --text "Suspended document";
+enum add-enum-constant-description --onConstant SUSPENDED --title "Suspendu" --text "Document suspendu" --locale fr ;
+java new-enum-const ONGOING ;
+enum add-enum-constant-description --onConstant ONGOING --title "Ongoing" --text "Ongoing document";
+enum add-enum-constant-description --onConstant ONGOING --title "En Cours" --text "Document en cours" --locale fr ;
+java new-enum-const RESTORED ;
+enum add-enum-constant-description --onConstant RESTORED --title "Restored" --text "Restored document";
+enum add-enum-constant-description --onConstant RESTORED --title "Restauré" --text "Document restauré" --locale fr ;
+
+
+
+cd ~~;
+
+
+@/* Entity PackagingMode, ModeConditionnement */;
+entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Packaging Mode" --text "The product packaging mode";
+description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+@/* TODO access add-permission  --action ALL --toRole MANAGER*/;
+
+field string --named name;
+description add-field-description --onProperty name --title "Packaging Mode Name" --text "The name of this packaging mode";
+description add-field-description --onProperty name --title "Libelle du Mode de Conditionement" --text "Nom du mode de conditionnement" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field name;
+
+
+
+cd ~~ ;
 
 
 @/* Entity Article */;
@@ -840,6 +915,14 @@ field number --named qtyInStock --type java.math.BigDecimal;
 description add-field-description --onProperty qtyInStock --title "Quantity in Stock" --text "The quantity of this article in stock.";
 description add-field-description --onProperty qtyInStock --title "Quantité en Stock" --text "Quantité reelle de produits dans le stock." --locale fr;
 display add-list-field --field qtyInStock;
+
+field number --named salableQty --type java.math.BigDecimal;
+description add-field-description --onProperty salableQty --title "Salable Quantity" --text "The salable quantity of this article.";
+description add-field-description --onProperty salableQty --title "Quantité vadable" --text "Quantité vadable  du produits dans le stock." --locale fr;
+
+field number --named qtyInStore --type java.math.BigDecimal;
+description add-field-description --onProperty qtyInStore --title "Quantity in Store" --text "The quantity of this article in store.";
+description add-field-description --onProperty qtyInStore --title "Quantité en Magasin" --text "Quantité du produit en magasin." --locale fr;
 
 field number --named pppu --type java.math.BigDecimal;
 description add-field-description --onProperty pppu --title "Purchase Price per Unit" --text "Purchase price per unit.";
@@ -931,11 +1014,7 @@ association set-type --onProperty clearanceConfig --type AGGREGATION --targetEnt
 @/* TODO access add-permission --entity ~.jpa.ClearanceConfig --action READ --toRole SALES*/;
 
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
 cd ~~;
 
 
@@ -1062,11 +1141,7 @@ constraint Size --onProperty description --max 256;
 description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
 description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
 
 cd ~~;
 
@@ -1145,7 +1220,7 @@ field temporal --type TIMESTAMP --named recCreated;
 @/* Pattern=dd-MM-yyy  */;
 description add-field-description --onProperty recCreated --title "Record Created" --text "Order item record creation date";
 description add-field-description --onProperty recCreated --title "Date de Saisie" --text "Date à laquelle la ligne de commande a été saisi(crée)" --locale fr;
-format add-date-pattern --onProperty recCreated --pattern "dd-MM-yyyy HH:mm"; 
+format add-date-pattern --onProperty recCreated --pattern "dd-MM-yyyy"; 
 
 field number --named qtyOrdered --type java.math.BigDecimal;
 description add-field-description --onProperty qtyOrdered --title "Quantity Ordered" --text "The quantity ordered in this lot.";
@@ -1321,12 +1396,6 @@ association set-type --onProperty currency --type AGGREGATION --targetEntity ~.j
 @/* TODO access add-permission --entity ~.jpa.Currency --action READ --toRole CASHIER*/;
 @/* TODO access add-permission --entity ~.jpa.Currency --action READ --toRole SALES*/;
 
-
-field custom --named procurementProcessingState --type ~.jpa.DocumentProcessingState.java;
-description add-field-description --onProperty procurementProcessingState --title "Procurement State" --text "The delivery processing state.";
-description add-field-description --onProperty procurementProcessingState --title "Status Commande" --text "L etat de traitement de cette Commande." --locale fr;
-enum enumerated-field --onProperty procurementProcessingState ;
-
 field oneToMany --named procurementOrderItems --fieldType ~.jpa.ProcurementOrderItem --inverseFieldName procurementOrder;
 description add-field-description --onProperty procurementOrderItems --title "Procurement Order Items" --text "Procurement Order Items";
 description add-field-description --onProperty procurementOrderItems --title "Ligne de commande" --text "ligne de commande fournisseur" --locale fr;
@@ -1365,38 +1434,13 @@ description add-field-description --onProperty lineIndex --title "Line Index" --
 description add-field-description --onProperty lineIndex --title "Index de ligne" --text "L index de la ligne de cette LAP" --locale fr;
 display add-list-field --field lineIndex;
 
-field string --named internalPic; 
-description add-field-description --onProperty internalPic --title "Local PIC" --text "The internal product identification code used to identify lots during sales.";
-description add-field-description --onProperty internalPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
-constraint Size --onProperty internalPic --min 7;
-description add-size-message --onProperty internalPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
-description add-size-message --onProperty internalPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
-display add-list-field --field internalPic;
-
-
-field string --named mainPic; 
-description add-field-description --onProperty mainPic --title "Main PIC" --text "The main product identification code used to identify lots during sales.";
-description add-field-description --onProperty mainPic --title "CIP Principal" --text "Le code identifiant produit principal, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
-constraint Size --onProperty mainPic --min 7;
-description add-size-message --onProperty mainPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
-description add-size-message --onProperty mainPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
-display add-list-field --field mainPic;
-
-field string --named secondaryPic; 
-description add-field-description --onProperty secondaryPic --title "Secondary PIC" --text "The main product identification code used to identify lots during sales.";
-description add-field-description --onProperty secondaryPic --title "CIP Secondaire" --text "Le code identifiant produit principal, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
-constraint Size --onProperty secondaryPic --min 7;
-description add-size-message --onProperty secondaryPic --title "The secondary product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
-description add-size-message --onProperty secondaryPic --title "Le code pour identification de produit secondaire doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
-display add-list-field --field secondaryPic;
-
-
-field string --named articleName;
-description add-field-description --onProperty articleName --title "Article Name" --text "The number of the invoice.";
-description add-field-description --onProperty articleName --title "Nom de l article" --text "Le numéro de cette facture." --locale fr;
-display add-toString-field --field articleName;
-display add-list-field --field articleName;
-
+field string --named localPic; 
+description add-field-description --onProperty localPic --title "Local PIC" --text "The internal product identification code used to identify lots during sales.";
+description add-field-description --onProperty localPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
+constraint Size --onProperty localPic --min 7;
+description add-size-message --onProperty localPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
+description add-size-message --onProperty localPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
+display add-list-field --field localPic;
 
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The article fo this delivery order item";
@@ -1423,7 +1467,7 @@ field temporal --type TIMESTAMP --named productRecCreated;
 @/* Pattern= dd-MM-yyy  */;
 description add-field-description --onProperty productRecCreated --title "Product Record Created" --text "Product record creation date";
 description add-field-description --onProperty productRecCreated --title "Date de Saisie du Produit" --text "Date à laquelle le produit a été saisi(crée)" --locale fr;
-format add-date-pattern --onProperty productRecCreated --pattern "dd-MM-yyyy HH:mm "; 
+format add-date-pattern --onProperty productRecCreated --pattern "dd-MM-yyyy"; 
 
 field number --named freeQuantity --type java.math.BigDecimal;
 description add-field-description --onProperty freeQuantity --title "Free Quantity" --text "The auntity of products given by the supplier free of charge during purchasing. These articles are a value aded for the products in stock.";
@@ -1464,7 +1508,11 @@ display add-list-field --field totalPurchasePrice;
 @/*  Default=0 */; 
 @/*Formule= (prix_achat_unitaire*[qte_aprovisionée-qte_unité_gratuite]) */;
 
+
+
 cd ~~ ;
+
+
 
 @/* Entity Delivery */;
 entity --named Delivery --package ~.jpa --idStrategy AUTO;
@@ -1593,15 +1641,9 @@ description add-field-description --onProperty claims --title "Réclamations" --
 @/* default=false */;
 display add-list-field --field claims;
 
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
-
 field custom --named deliveryProcessingState --type ~.jpa.DocumentProcessingState.java;
-description add-field-description --onProperty deliveryProcessingState --title "Delivery  State" --text "The delivery processing state.";
-description add-field-description --onProperty deliveryProcessingState --title "Etat  Livraison" --text "L etat de traitement de cette Livraison." --locale fr;
+description add-field-description --onProperty deliveryProcessingState --title "Delivery Processing State" --text "The delivery processing state.";
+description add-field-description --onProperty deliveryProcessingState --title "Etat de traitement Livraison" --text "L etat de traitement de cette Livraison." --locale fr;
 enum enumerated-field --onProperty deliveryProcessingState ;
 
 field manyToOne --named receivingAgency --fieldType ~.jpa.Agency;
@@ -1656,9 +1698,6 @@ enum add-enum-constant-description --locale fr --onConstant SUPPLIER --title "Fo
 java new-enum-const CUSTOMER;
 enum add-enum-constant-description --onConstant CUSTOMER --title "Customer" --text "Customer";
 enum add-enum-constant-description --locale fr --onConstant CUSTOMER --title "Client" --text "Client";
-java new-enum-const TRASH;
-enum add-enum-constant-description --onConstant TRASH --title "Trash" --text "Trash";
-enum add-enum-constant-description --locale fr --onConstant TRASH --title "Poubelle" --text "Poubelle";
 @/* Enumeration{MAGASIN, FOURNISSEUR, CLIENT} */;
 
 @/* Mouvement de stock */;
@@ -1735,10 +1774,6 @@ description add-notNull-message --onProperty article --title "Le produit de ce m
 field string --named originatedDocNumber; 
 description add-field-description --onProperty originatedDocNumber --title "Originated Doc" --text "The standard product identification code for a product in stock.";
 description add-field-description --onProperty originatedDocNumber --title "Document" --text "Le document ratache a ce mouvement de stock." --locale fr;
-
-field string --named internalPic; 
-description add-field-description --onProperty internalPic --title "Article Local Pic" --text "The product local pic.";
-description add-field-description --onProperty internalPic --title "PIC Maison" --text "Le code interne de l article ." --locale fr;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Name of the agency in which the movement takes place";
@@ -1819,12 +1854,6 @@ description add-field-description --onProperty city --title "Ville" --text "La l
 field string --named country;
 description add-field-description --onProperty country --title "Country" --text "The zip code oif this address";
 description add-field-description --onProperty country --title "Pays" --text "Le pays de cette adresse" --locale fr;
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
 @/* Type Client*/;
 java new-enum-type --named CustomerType --package ~.jpa;
@@ -1935,9 +1964,9 @@ description add-field-description --onProperty discountAuthorized --title "Remis
 @/* default=true */;
 display add-list-field --field discountAuthorized;
 
-field number --named maxAccordedCredit --type java.math.BigDecimal;
-description add-field-description --onProperty maxAccordedCredit --title "Max Credit " --text "Total credit line for this customer..";
-description add-field-description --onProperty maxAccordedCredit --title "Credit Maximum" --text "Le montant max de credit qu on peut accorder au client." --locale fr;
+field number --named totalCreditLine --type java.math.BigDecimal;
+description add-field-description --onProperty totalCreditLine --title "Total Purchasing Price" --text "Total credit line for this customer..";
+description add-field-description --onProperty totalCreditLine --title "Prix d Achat Total" --text "Le montant max de credit qu on peut accorder au client." --locale fr;
 @/* Default=0 */;
 
 field manyToOne --named employer --fieldType ~.jpa.Employer;
@@ -1967,12 +1996,6 @@ enum enumerated-field --onProperty customerType ;
 field string --named serialNumber;
 description add-field-description --onProperty serialNumber --title "Serial Number" --text "The serial number of this client.";
 description add-field-description --onProperty serialNumber --title "Matricule Client" --text "Le numéro matricule de ce client." --locale fr;
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
 cd ~~ ;
 
@@ -2091,13 +2114,6 @@ description add-field-description --onProperty recordingDate --title "Recording 
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie de cette ligne inventaire." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
-ield string --named internalPic;
-description add-field-description --onProperty internalPic --title "Product Internal Pic" --text "The product internal pic .";
-description add-field-description --onProperty internalPic --title "CIP Maison" --text "Lecip maison." --locale fr;
-display add-toString-field --field internalPic;
-display add-list-field --field internalPic;
-
-
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The product associated with this inventory line";
 description add-field-description --onProperty article --title "Produit" --text "Le produit attaché à la ligne d inventaire" --locale fr;
@@ -2185,12 +2201,6 @@ association set-type --onProperty inventory --type COMPOSITION --targetEntity ~.
 entity --named ProductDetailConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Product Details Config" --text "Product transformation";
 description add-class-description  --locale fr --title "Transformation Produit" --text "Transformation produit";
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
 field oneToOne --named source --fieldType ~.jpa.Article;
 description add-field-description --onProperty source --title "Source Product" --text "The compound product to be decomposed";
@@ -2350,7 +2360,7 @@ display add-list-field --field opened;
 
 @/* Commande Client */;
 
- @/* SalesOrderType */;
+@/* SalesOrderType */;
 java new-enum-type --named SalesOrderType --package ~.jpa ;
 enum add-enum-class-description --title "Sales Order Type" --text "The type of this sales order.";
 enum add-enum-class-description  --locale fr --title "Type de Commande Client" --text "Le type d une commande client.";
@@ -2407,13 +2417,11 @@ format add-number-type --onProperty totalSalePrice --type CURRENCY;
 @/* Default=0., Formule=(remise * qté_commande) */;
 display add-list-field --field totalSalePrice;
 
-field string --named internalPic; 
-description add-field-description --onProperty internalPic --title "Local PIC" --text "The internal product identification code used to identify lots during sales.";
-description add-field-description --onProperty internalPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
-constraint Size --onProperty internalPic --min 7;
-description add-size-message --onProperty internalPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
-description add-size-message --onProperty internalPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
-display add-list-field --field internalPic;
+field number --named amountReturn --type java.math.BigDecimal;
+description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Return.";
+description add-field-description --onProperty amountReturn --title "Montant Retour" --text "Montant Retour." --locale fr;
+format add-number-type --onProperty amountReturn --type CURRENCY;
+display add-list-field --field amountReturn;
 
 field manyToOne --named article --fieldType ~.jpa.Article;
 description add-field-description --onProperty article --title "Article" --text "The article of this sales order item";
@@ -2435,13 +2443,6 @@ cd ~~;
 entity --named SalesOrder --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Order" --text "A sales order.";
 description add-class-description  --locale fr --title "Commande Client" --text "Une commande client.";
-
-field manyToOne --named cashDrawer --fieldType ~.jpa.CashDrawer;
-description add-field-description --onProperty cashDrawer --title "Cash Drawer" --text "The cash drawer in use.";
-description add-field-description --onProperty cashDrawer --title "Caisse" --text "La caisse utilisé." --locale fr;
-association set-selection-mode --onProperty cashDrawer --selectionMode COMBOBOX;
-association set-type --onProperty cashDrawer --type AGGREGATION --targetEntity ~.jpa.CashDrawer;
-display add-list-field --field cashDrawer.cashDrawerNumber;
 
 field string --named soNumber;
 description add-field-description --onProperty soNumber --title "Sales Order Number" --text "The sales order number.";
@@ -2576,40 +2577,10 @@ association set-type --onProperty salesOrder --type COMPOSITION --targetEntity ~
 
 @/* Invoice */;
 
-@/* InvoiceType */;
-java new-enum-type --named InvoiceType --package ~.jpa ;
-enum add-enum-class-description --title "Invoice Type" --text "The type of this invoice.";
-enum add-enum-class-description  --locale fr --title "Type de Facture" --text "Le type d une facture.";
-java new-enum-const CASHDRAWER;
-enum add-enum-constant-description --onConstant CASHDRAWER --title "Cashdrawer invoice" --text "Cashdrawer invoice";
-enum add-enum-constant-description --locale fr --onConstant CASHDRAWER --title "Facture de caisse" --text "Facture de caisse";
-java new-enum-const PROFORMA;
-enum add-enum-constant-description --onConstant PROFORMA --title "Proforma Invoice" --text "Proforma Invoice";
-enum add-enum-constant-description --locale fr --onConstant PROFORMA --title "Facture Proforma" --text "Facture proforma";
-java new-enum-const VOUCHER;
-enum add-enum-constant-description --onConstant VOUCHER --title "Vouche invoice" --text "Voucher invoice";
-enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Facture d avoir" --text "Facture d avoir";
-
 @/* Entite Ligne Facture */;
-entity --named CustomerInvoiceItem --package ~.jpa --idStrategy AUTO;
+entity --named InvoiceItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Invoice Item" --text "An invoice item.";
 description add-class-description  --locale fr --title "Ligne Facture" --text "Une ligne facture.";
-
-
-field string --named internalPic;
-description add-field-description --onProperty internalPic --title "Local PIC" --text "The Local pic of referenced product.";
-description add-field-description --onProperty internalPic --title "Cip MAison" --text "Le cip Maison du produit reference." --locale fr;
-display add-toString-field --field internalPic;
-display add-list-field --field internalPic;
-
-field manyToOne --named article --fieldType ~.jpa.Article;
-description add-field-description --onProperty article --title "Article" --text "The  Article";
-description add-field-description --onProperty article --title "Article" --text "Article ." --locale fr;
-association set-selection-mode --onProperty article --selectionMode COMBOBOX;
-association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
-display add-toString-field --field article.articleName;
-display add-list-field --field article.articleName;
-
 
 field long --named indexLine --primitive false; 
 description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through invoice items";
@@ -2621,14 +2592,26 @@ field number --named purchasedQty --type java.math.BigDecimal;
 description add-field-description --onProperty purchasedQty --title "Quantity Purchased" --text "The quantity purchased in this line.";
 description add-field-description --onProperty purchasedQty --title "Quantité Achetée" --text "La quantité achetée dans cette ligne." --locale fr;
 @/* Default=0 */;
-display add-toString-field --field purchasedQty;
-display add-list-field --field purchasedQty;
+display add-toString-field --field indexLine;
+display add-list-field --field indexLine;
+
+field number --named returnedQty --type java.math.BigDecimal;
+description add-field-description --onProperty returnedQty --title "Quantity Returned" --text "The quantity returned in this line.";
+description add-field-description --onProperty returnedQty --title "Quantité Retournée" --text "La quantité retournée dans cette ligne." --locale fr;
+@/* Default=0 */;
+display add-list-field --field returnedQty;
 
 field number --named salesPricePU --type java.math.BigDecimal;
 description add-field-description --onProperty salesPricePU --title "Sales Price per Unit" --text "The sales price per unit for product of this line.";
 description add-field-description --onProperty salesPricePU --title "Prix de Vente Unitaire" --text "Prix unitaire du produit de la ligne de facture" --locale fr;
 format add-number-type --onProperty salesPricePU --type CURRENCY ;
 display add-list-field --field salesPricePU;
+
+field number --named amountReturn --type java.math.BigDecimal;
+description add-field-description --onProperty amountReturn --title "Amount Return" --text "Amount Returned Product";
+description add-field-description --onProperty amountReturn --title "Prix de Vente Unitaire" --text "Montant Total Des Retour" --locale fr;
+format add-number-type --onProperty amountReturn --type CURRENCY ;
+display add-list-field --field amountReturn;
 
 field number --named totalSalesPrice --type java.math.BigDecimal;
 description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "The total sales price for product of this line.";
@@ -2638,16 +2621,9 @@ display add-list-field --field totalSalesPrice;
 
 
 @/* Entité Facture */;
-entity --named CustomerInvoice --package ~.jpa --idStrategy AUTO;
+entity --named Invoice --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Invoice" --text "An invoice.";
 description add-class-description  --locale fr --title "Facture" --text "Une facture.";
-
-
-field custom --named invoiceType --type ~.jpa.InvoiceType;
-description add-field-description --onProperty invoiceType --title "Invoice Type" --text "The type of this invoice.";
-description add-field-description --onProperty invoiceType --title "Type de Facture" --text "Le type de cette facture." --locale fr;
-enum enumerated-field --onProperty invoiceType ;
-display add-list-field --field invoiceType;
 
 field string --named invoiceNumber;
 description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
@@ -2731,6 +2707,12 @@ description add-field-description --onProperty amountDiscount --title "Montant R
 format add-number-type --onProperty amountDiscount --type CURRENCY;
 display add-list-field --field amountDiscount;
 
+field number --named totalReturnAmount --type java.math.BigDecimal;
+description add-field-description --onProperty totalReturnAmount --title "Total Return Amount" --text "Total Return Amount.";
+description add-field-description --onProperty totalReturnAmount --title "Montant total retour" --text "Montant total retour." --locale fr;
+format add-number-type --onProperty totalReturnAmount --type CURRENCY;
+display add-list-field --field totalReturnAmount;
+
 field number --named amountAfterTax --type java.math.BigDecimal;
 description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this sales order.";
 description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette commande client." --locale fr;
@@ -2773,189 +2755,16 @@ description add-field-description --onProperty totalRestToPay --title "Reste a P
 format add-number-type --onProperty totalRestToPay --type CURRENCY;
 display add-list-field --field totalRestToPay;
 
-field oneToMany --named invoiceItems --fieldType ~.jpa.CustomerInvoiceItem --inverseFieldName invoice;
+field oneToMany --named invoiceItems --fieldType ~.jpa.InvoiceItem --inverseFieldName invoice;
 description add-field-description --onProperty invoiceItems --title "Invoice Items" --text "The invoice items";
 description add-field-description --onProperty invoiceItems --title "Lignes Facture" --text "Les ligne facture" --locale fr;
-association set-type --onProperty invoiceItems --type COMPOSITION --targetEntity ~.jpa.CustomerInvoiceItem;
+association set-type --onProperty invoiceItems --type COMPOSITION --targetEntity ~.jpa.InvoiceItem;
 association set-selection-mode --onProperty invoiceItems --selectionMode TABLE;
 
-cd ../CustomerInvoiceItem.java;
+cd ../InvoiceItem.java;
 description add-field-description --onProperty invoice --title "Invoice" --text "The invoice containing this item";
 description add-field-description --onProperty invoice --title "Facture" --text "Facture contenant cette ligne" --locale fr;
-association set-type --onProperty invoice --type COMPOSITION --targetEntity ~.jpa.CustomerInvoice;
-
-cd ~~
-
-
-@/* Entite Ligne Facture Fournisseur */;
-entity --named SupplierInvoiceItem --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Supplier Invoice Item" --text "An supplier invoice item.";
-description add-class-description  --locale fr --title "Ligne Facture Fournisseur" --text "Une ligne facture fournisseur.";
-
-
-field string --named internalPic;
-description add-field-description --onProperty internalPic --title "Local PIC" --text "The Local pic of referenced product.";
-description add-field-description --onProperty internalPic --title "Cip MAison" --text "Le cip Maison du produit reference." --locale fr;
-display add-toString-field --field internalPic;
-display add-list-field --field internalPic;
-
-field manyToOne --named article --fieldType ~.jpa.Article;
-description add-field-description --onProperty article --title "Article" --text "The  Article";
-description add-field-description --onProperty article --title "Article" --text "Article ." --locale fr;
-association set-selection-mode --onProperty article --selectionMode COMBOBOX;
-association set-type --onProperty article --type AGGREGATION --targetEntity ~.jpa.Article;
-display add-toString-field --field article.articleName;
-display add-list-field --field article.articleName;
-
-
-field long --named indexLine --primitive false; 
-description add-field-description --onProperty indexLine --title "Line Index" --text "Index for searching through invoice items";
-description add-field-description --onProperty indexLine --title "Index de Ligne" --text "Index permettant de rechercher la ligne de facture" --locale fr;
-display add-toString-field --field indexLine;
-display add-list-field --field indexLine;
-
-field number --named deliveryQty --type java.math.BigDecimal;
-description add-field-description --onProperty deliveryQty --title "Quantity delivery" --text "The quantity delivered in this line.";
-description add-field-description --onProperty deliveryQty --title "Quantité Livrée" --text "La quantité livrée dans cette ligne." --locale fr;
-@/* Default=0 */;
-display add-toString-field --field deliveryQty;
-display add-list-field --field deliveryQty;
-
-field number --named purchasePricePU --type java.math.BigDecimal;
-description add-field-description --onProperty purchasePricePU --title "Purchase Price per Unit" --text "The order price per unit for product of this line.";
-description add-field-description --onProperty purchasePricePU --title "Prix d achat Unitaire" --text "Prix unitaire du produit de la ligne de facture" --locale fr;
-format add-number-type --onProperty purchasePricePU --type CURRENCY ;
-display add-list-field --field purchasePricePU;
-
-field number --named totalPurchasePrice --type java.math.BigDecimal;
-description add-field-description --onProperty totalPurchasePrice --title "Total Order Price" --text "The total sales price for product of this line.";
-description add-field-description --onProperty totalPurchasePrice --title "Prix de Order Total" --text "Prix total du produit de la ligne de facture" --locale fr;
-format add-number-type --onProperty totalPurchasePrice --type CURRENCY ;
-display add-list-field --field totalPurchasePrice;
-
-
-@/* Entité Facture */;
-entity --named SupplierInvoice --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Invoice" --text "An invoice.";
-description add-class-description  --locale fr --title "Facture" --text "Une facture.";
-
-
-field custom --named invoiceType --type ~.jpa.InvoiceType;
-description add-field-description --onProperty invoiceType --title "Invoice Type" --text "The type of this invoice.";
-description add-field-description --onProperty invoiceType --title "Type de Facture" --text "Le type de cette facture." --locale fr;
-enum enumerated-field --onProperty invoiceType ;
-display add-list-field --field invoiceType;
-
-field string --named invoiceNumber;
-description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
-description add-field-description --onProperty invoiceNumber --title "Numéro Facture" --text "Le numéro de cette facture." --locale fr;
-display add-toString-field --field invoiceNumber;
-display add-list-field --field invoiceNumber;
-
-field temporal --type TIMESTAMP --named creationDate; 
-@/* pattern= dd-MM-yyyy HH:mm*/;
-description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this invoicd.";
-description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette facture." --locale fr;
-display add-list-field --field creationDate;
-format add-date-pattern --onProperty creationDate --pattern "dd-MM-yyyy HH:mm"; 
-
-field manyToOne --named supplier --fieldType ~.jpa.Supplier;
-description add-field-description --onProperty supplier --title "Supplier" --text "The Supplier referenced by this invoice";
-description add-field-description --onProperty supplier --title "Fournisseur" --text "Le Fournisseur mentionné sur la facture" --locale fr;
-association set-selection-mode --onProperty supplier --selectionMode COMBOBOX;
-association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
-display add-list-field --field supplier.name;
-constraint NotNull --onProperty  supplier ;
-description add-notNull-message --onProperty supplier --title "The supplier must be selected" --text "The customer must be selected";
-description add-notNull-message --onProperty supplier --title "Le Founisseur doit être sélectionné" --text "Le client doit être sélectionné" --locale fr;
-
-field manyToOne --named creatingUser --fieldType ~.jpa.Login;
-description add-field-description --onProperty creatingUser --title "Sales Agent" --text "The user creating this invoice";
-description add-field-description --onProperty creatingUser --title "Vendeur" --text "Éditeur de cette facture" --locale fr;
-constraint NotNull --onProperty creatingUser;
-description add-notNull-message --onProperty creatingUser --title "The creating user must be selected" --text "The creating user must be selected";
-description add-notNull-message --onProperty creatingUser --title "Utilisateur créant doit être sélectionné" --text "Utilisateur créant doit être sélectionné" --locale fr;
-association set-selection-mode --onProperty creatingUser --selectionMode COMBOBOX;
-association set-type --onProperty creatingUser --type AGGREGATION --targetEntity ~.jpa.Login;
-display add-list-field --field creatingUser.fullName;
-
-field manyToOne --named agency --fieldType ~.jpa.Agency;
-description add-field-description --onProperty agency --title "Agency" --text "The agency where sale has been made.";
-description add-field-description --onProperty agency --title "Agence" --text "Agence dans la quelle la vente a été éffectuée." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
-association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
-display add-list-field --field agency.name;
-constraint NotNull --onProperty agency;
-description add-notNull-message --onProperty agency --title "The agency of this sale must be selected" --text "The agency of this sale must be selected";
-description add-notNull-message --onProperty agency --title "Le site de cette vente doit être sélectionné" --text "Le site de cette vente doit être sélectionné" --locale fr;
-
-field manyToOne --named delivery --fieldType ~.jpa.Delivery;
-description add-field-description --onProperty delivery --title "Delivery" --text "The Delivery  generating of this invoice.";
-description add-field-description --onProperty delivery --title "Livraison Fournisseur" --text "La livraison  originaire de la facture" --locale fr;
-association set-selection-mode --onProperty delivery --selectionMode  COMBOBOX;
-association set-type --onProperty delivery --type AGGREGATION --targetEntity ~.jpa.Delivery;
-display add-list-field --field delivery.deliveryNumber;
-
-field boolean --named settled --primitive false; 
-description add-field-description --onProperty settled --title "Settled" --text "Sates if the invoice is settled.";
-description add-field-description --onProperty settled --title "Soldée" --text "Indique si la facture est soldée ou pas." --locale fr;
-@/* default=false */;
-display add-list-field --field settled;
-
-field number --named amountBeforeTax --type java.math.BigDecimal;
-description add-field-description --onProperty amountBeforeTax --title "Amount Before Tax" --text "Total amount before tax for this sales order.";
-description add-field-description --onProperty amountBeforeTax --title "Montant hors Taxes" --text "Montant total hors Taxes pour cette commande client." --locale fr;
-@/* Default=0, montant_ht */;
-display add-list-field --field amountBeforeTax;
-
-field number --named amountVAT --type java.math.BigDecimal;
-description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
-description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
-format add-number-type --onProperty amountVAT --type CURRENCY ;
-display add-list-field --field amountVAT;
-
-field number --named amountDiscount --type java.math.BigDecimal;
-description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
-description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Remise totale de la commande, c est-à-dire la somme des remise totales des  lignes de commande." --locale fr;
-format add-number-type --onProperty amountDiscount --type CURRENCY;
-display add-list-field --field amountDiscount;
-
-field number --named amountAfterTax --type java.math.BigDecimal;
-description add-field-description --onProperty amountAfterTax --title "Amount after Tax" --text "Total amount after tax for this sales order.";
-description add-field-description --onProperty amountAfterTax --title "Montant TTC" --text "Montant total TTC pour cette commande client." --locale fr;
-format add-number-type --onProperty amountAfterTax --type CURRENCY;
-display add-list-field --field amountAfterTax;
-
-field number --named netToPay --type java.math.BigDecimal;
-description add-field-description --onProperty netToPay --title "Net a Payer" --text "The net amount to pay.";
-description add-field-description --onProperty netToPay --title "Net a Payer" --text "Le montant net à payer." --locale fr;
-format add-number-type --onProperty netToPay --type CURRENCY ;
-display add-list-field --field netToPay;
-
-field number --named advancePayment --type java.math.BigDecimal;
-description add-field-description --onProperty advancePayment --title "Advance Payment" --text "The advance payment.";
-description add-field-description --onProperty advancePayment --title "Net a Payer" --text "L avance sur paiement." --locale fr;
-format add-number-type --onProperty advancePayment --type CURRENCY;
-display add-list-field --field advancePayment;
-
-field number --named totalRestToPay --type java.math.BigDecimal;
-description add-field-description --onProperty totalRestToPay --title "Ret to Pay" --text "The rest to pay.";
-description add-field-description --onProperty totalRestToPay --title "Reste a Payer" --text "Le reste a payer." --locale fr;
-format add-number-type --onProperty totalRestToPay --type CURRENCY;
-display add-list-field --field totalRestToPay;
-
-field oneToMany --named invoiceItems --fieldType ~.jpa.SupplierInvoiceItem --inverseFieldName invoice;
-description add-field-description --onProperty invoiceItems --title "Invoice Items" --text "The invoice items";
-description add-field-description --onProperty invoiceItems --title "Lignes Facture" --text "Les ligne facture" --locale fr;
-association set-type --onProperty invoiceItems --type COMPOSITION --targetEntity ~.jpa.SupplierInvoiceItem;
-association set-selection-mode --onProperty invoiceItems --selectionMode TABLE;
-
-cd ../SupplierInvoiceItem.java;
-description add-field-description --onProperty invoice --title "Invoice" --text "The invoice containing this item";
-description add-field-description --onProperty invoice --title "Facture" --text "Facture contenant cette ligne" --locale fr;
-association set-type --onProperty invoice --type COMPOSITION --targetEntity ~.jpa.SupplierInvoice;
-
-
+association set-type --onProperty invoice --type COMPOSITION --targetEntity ~.jpa.Invoice;
 
 @/* Mode Paiement*/;
 java new-enum-type  --named PaymentMode --package ~.jpa;
@@ -3044,15 +2853,15 @@ association set-selection-mode --onProperty cashDrawer --selectionMode COMBOBOX;
 association set-type --onProperty cashDrawer --type AGGREGATION --targetEntity ~.jpa.CashDrawer;
 display add-list-field --field cashDrawer.cashDrawerNumber;
 
-relationship add --sourceEntity ~.jpa.Payment --sourceQualifier invoices --targetEntity ~.jpa.CustomerInvoice --targetQualifier payments;
+relationship add --sourceEntity ~.jpa.Payment --sourceQualifier invoices --targetEntity ~.jpa.Invoice --targetQualifier payments;
 
 cd ../Payment.java;
 description add-field-description --onProperty invoices --title "Invoices" --text "Invoices associated with this payment";
 description add-field-description --onProperty invoices --title "Facture" --text "Facture associe avec ce payement" --locale fr;
-association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.CustomerInvoice;
+association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.Invoice;
 association set-selection-mode --onProperty invoices --selectionMode TABLE;
 
-cd ../CustomerInvoice.java;
+cd ../Invoice.java;
 description add-field-description --onProperty payments --title "Payments" --text "payments associated with this invoice";
 description add-field-description --onProperty payments --title "Paiements" --text "Payement associe avec cette facture" --locale fr;
 association set-type --onProperty payments --type AGGREGATION --targetEntity ~.jpa.Payment;
@@ -3158,11 +2967,11 @@ description add-field-description --onProperty useVoucher --title "Consommer Avo
 display add-list-field --field useVoucher;
 
 
-relationship add --sourceEntity ~.jpa.DebtStatement --sourceQualifier invoices --targetEntity ~.jpa.CustomerInvoice;
+relationship add --sourceEntity ~.jpa.DebtStatement --sourceQualifier invoices --targetEntity ~.jpa.Invoice;
 cd ../DebtStatement.java;
 description add-field-description --onProperty invoices --title "Invoices" --text "Invoices referenced by this debt statement";
 description add-field-description --onProperty invoices --title "Factures" --text "Factures contenant cette dette" --locale fr;
-association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.CustomerInvoice;
+association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.Invoice;
 
 
 @/* ================================== */;
@@ -3319,7 +3128,7 @@ cd ~~;
 @/* Accounts Receivable */;
 
 @/* Entité AvoirClient */;
-entity --named CustomerVoucher --package ~.jpa --idStrategy AUTO;
+entity --named ClientVoucher --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Client Voucher" --text "Client voucher";
 description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
 
@@ -3329,11 +3138,11 @@ description add-field-description --onProperty voucherNumber --title "Numéro de
 display add-toString-field --field voucherNumber;
 display add-list-field --field voucherNumber;
 
-field manyToOne --named customerInvoice --fieldType ~.jpa.CustomerInvoice;
-description add-field-description --onProperty customerInvoice --title "Customer Invoice" --text "The customer invoice associated with this voucher.";
-description add-field-description --onProperty customerInvoice --title "Facure client" --text "La la facture client associe avec cet avoir." --locale fr;
-association set-selection-mode --onProperty customerInvoice --selectionMode COMBOBOX;
-association set-type --onProperty customerInvoice --type AGGREGATION --targetEntity ~.jpa.CustomerInvoice;
+field manyToOne --named salesOrder --fieldType ~.jpa.SalesOrder;
+description add-field-description --onProperty salesOrder --title "Sales Order" --text "The sales order associated with this voucher.";
+description add-field-description --onProperty salesOrder --title "Commande Client" --text "La commandeclient associe avec cet avoir." --locale fr;
+association set-selection-mode --onProperty salesOrder --selectionMode COMBOBOX;
+association set-type --onProperty salesOrder --type AGGREGATION --targetEntity ~.jpa.SalesOrder;
 display add-list-field --field salesOrder.soNumber;
 
 field number --named amount --type java.math.BigDecimal;
@@ -3402,6 +3211,13 @@ description add-field-description --onProperty voucherPrinted --title "Printed" 
 description add-field-description --onProperty voucherPrinted --title "Imprimé" --text "Indique si l avoir est imprimé ou pas." --locale fr;
 @/* default=false */;
 display add-list-field --field voucherPrinted;
+
+cd ~~;
+
+
+envers setup;
+
+envers audit-package --jpaPackage src/main/java/org/adorsys/;
 
 cd ~~;
 
