@@ -535,7 +535,7 @@ format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm";
 field manyToOne --named login --fieldType ~.jpa.Login;
 description add-field-description --onProperty login --title "Login" --text "The Login of this person ";
 description add-field-description --onProperty login --title "Compte Utilisateur" --text "le compte de cette utilisateur." --locale fr;
-association set-selection-mode --onProperty login --selectionMode FORWARD;
+association set-selection-mode --onProperty login --selectionMode COMBOBOX;
 association set-type --onProperty login --type COMPOSITION --targetEntity ~.jpa.Login;
 display add-toString-field --field login.loginName;
 display add-list-field --field login.loginName;
