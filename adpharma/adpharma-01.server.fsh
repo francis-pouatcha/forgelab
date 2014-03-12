@@ -531,6 +531,15 @@ field temporal --type TIMESTAMP --named recordingDate;
 description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field manyToOne --named login --fieldType ~.jpa.Login;
+description add-field-description --onProperty login --title "Login" --text "The Login of this person ";
+description add-field-description --onProperty login --title "Compte Utilisateur" --text "le compte de cette utilisateur." --locale fr;
+association set-selection-mode --onProperty login --selectionMode FORWARD;
+association set-type --onProperty login --type COMPOSITION --targetEntity ~.jpa.Login;
+display add-toString-field --field login.loginName;
+display add-list-field --field login.loginName;
+
 cd ~~;
 
 
@@ -2091,7 +2100,7 @@ description add-field-description --onProperty recordingDate --title "Recording 
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie de cette ligne inventaire." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
-ield string --named internalPic;
+field string --named internalPic;
 description add-field-description --onProperty internalPic --title "Product Internal Pic" --text "The product internal pic .";
 description add-field-description --onProperty internalPic --title "CIP Maison" --text "Lecip maison." --locale fr;
 display add-toString-field --field internalPic;
