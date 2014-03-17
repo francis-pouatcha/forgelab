@@ -10,7 +10,7 @@
 target/
 */target/
 */.forge_settings
-*/.settings/
+*/.settings
 */bin/
 
 
