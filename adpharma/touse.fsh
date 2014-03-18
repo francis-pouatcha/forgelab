@@ -35,3 +35,7 @@ description add-field-description --onProperty paymentMode --title "Payment Mode
 description add-field-description --onProperty paymentMode --title "Mode de Paiement" --text "Le Mode de paiement." --locale fr;
 enum enumerated-field --onProperty paymentMode ;
 display add-list-field --field paymentMode;
+
+constraint NotNull --onProperty agency;
+description add-notNull-message --onProperty agency --title "The agency  is required" --text "The agency  is required";
+description add-notNull-message --onProperty agency --title "Le Agence est réquis" --text "l agence est requis" --locale fr;

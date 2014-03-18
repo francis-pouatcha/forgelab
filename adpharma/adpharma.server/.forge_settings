@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+<jboss-as>
+<as7>
+<configured>PROJECT</configured>
+<jboss-home>/work/tranning/forge-test/r</jboss-home>
+</as7>
+</jboss-as>
+<repo>
+<class>
+<package>org.adorsys.adpharma.server.repo</package>
+<suffix>Repository</suffix>
+</class>
+</repo>
+<activatorChoice>APP_CLASS</activatorChoice>
+<rootpath>/rest</rootpath>
+<rest>
+<applicationclass>
+<package>org.adorsys.adpharma.server.rest</package>
+<name>RestApplication</name>
+</applicationclass>
+</rest>
+</configuration>
