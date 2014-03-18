@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -51,7 +52,7 @@ public class DeliveryEndpoint
    @Inject
    private SupplierMerger supplierMerger;
    
-   @Inject
+   @EJB
    SecurityUtil securityUtil;
    
    @Inject
@@ -73,7 +74,6 @@ public class DeliveryEndpoint
    {
 	   Login login = securityUtil.getConnectedUser();
 	   entity.setCreatingUser(login);
-//	   entity.setReceivingAgency(login.get);
       return detach(ejb.create(entity));
    }
 
