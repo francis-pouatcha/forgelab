@@ -69,6 +69,10 @@ public class DeliveryEJB
    {
       return repository.count();
    }
+   
+   public List<Delivery> findByDeliveryDateBetween(){
+	   re
+   }
 
    public List<Delivery> findBy(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)
    {

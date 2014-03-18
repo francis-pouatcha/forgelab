@@ -110,7 +110,7 @@ public class DeliveryController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(searchController);
+//      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
