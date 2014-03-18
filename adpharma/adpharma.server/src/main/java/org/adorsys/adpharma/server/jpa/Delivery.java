@@ -1,377 +1,378 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
-import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-import java.lang.Override;
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PostPersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.adorsys.javaext.format.DateFormatPattern;
-import org.adorsys.adpharma.server.jpa.Login;
-import javax.persistence.ManyToOne;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.adpharma.server.jpa.Supplier;
-import java.math.BigDecimal;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.adpharma.server.jpa.VAT;
-import org.adorsys.adpharma.server.jpa.Currency;
-import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-import javax.persistence.Enumerated;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import java.util.Set;
-import java.util.HashSet;
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("Delivery_description")
 @ToStringField("deliveryNumber")
 @ListField({ "deliveryNumber", "deliverySlipNumber", "dateOnDeliverySlip",
-      "amountBeforeTax", "amountAfterTax", "amountDiscount",
-      "netAmountToPay", "vat.rate", "receivingAgency.name" })
+	"amountBeforeTax", "amountAfterTax", "amountDiscount",
+	"netAmountToPay", "vat.rate", "receivingAgency.name" })
 public class Delivery implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("Delivery_deliveryNumber_description")
-   @NotNull(message = "Delivery_deliveryNumber_NotNull_validation")
-   private String deliveryNumber;
+	@Column
+	@Description("Delivery_deliveryNumber_description")
+	private String deliveryNumber;
 
-   @Column
-   @Description("Delivery_deliverySlipNumber_description")
-   @NotNull(message = "Delivery_deliverySlipNumber_NotNull_validation")
-   private String deliverySlipNumber;
+	@Column
+	@Description("Delivery_deliverySlipNumber_description")
+	@NotNull(message = "Delivery_deliverySlipNumber_NotNull_validation")
+	private String deliverySlipNumber;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Delivery_dateOnDeliverySlip_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy")
-   private Date dateOnDeliverySlip;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Delivery_dateOnDeliverySlip_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy")
+	private Date dateOnDeliverySlip;
 
-   @ManyToOne
-   @Description("Delivery_creatingUser_description")
-   @NotNull(message = "Delivery_creatingUser_NotNull_validation")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
-   private Login creatingUser;
+	@ManyToOne
+	@Description("Delivery_creatingUser_description")
+	@NotNull(message = "Delivery_creatingUser_NotNull_validation")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
+	private Login creatingUser;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Delivery_orderDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date orderDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Delivery_orderDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date orderDate;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Delivery_deliveryDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date deliveryDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Delivery_deliveryDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date deliveryDate;
 
-   @ManyToOne
-   @Description("Delivery_supplier_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
-   @NotNull(message = "Delivery_supplier_NotNull_validation")
-   private Supplier supplier;
+	@ManyToOne
+	@Description("Delivery_supplier_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
+	@NotNull(message = "Delivery_supplier_NotNull_validation")
+	private Supplier supplier;
 
-   @Column
-   @Description("Delivery_amountBeforeTax_description")
-   @NotNull(message = "Delivery_amountBeforeTax_NotNull_validation")
-   private BigDecimal amountBeforeTax;
+	@Column
+	@Description("Delivery_amountBeforeTax_description")
+	@NotNull(message = "Delivery_amountBeforeTax_NotNull_validation")
+	private BigDecimal amountBeforeTax;
 
-   @Column
-   @Description("Delivery_amountAfterTax_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax;
+	@Column
+	@Description("Delivery_amountAfterTax_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountAfterTax;
 
-   @Column
-   @Description("Delivery_amountDiscount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount;
+	@Column
+	@Description("Delivery_amountDiscount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountDiscount;
 
-   @Column
-   @Description("Delivery_netAmountToPay_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal netAmountToPay;
+	@Column
+	@Description("Delivery_netAmountToPay_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal netAmountToPay;
 
-   @ManyToOne
-   @Description("Delivery_vat_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
-   private VAT vat;
+	@ManyToOne
+	@Description("Delivery_vat_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+	private VAT vat;
 
-   @ManyToOne
-   @Description("Delivery_currency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Currency.class)
-   private Currency currency;
+	@ManyToOne
+	@Description("Delivery_currency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Currency.class)
+	private Currency currency;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Delivery_recordingDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date recordingDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Delivery_recordingDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date recordingDate;
 
-   @Column
-   @Description("Delivery_deliveryProcessingState_description")
-   @Enumerated
-   private DocumentProcessingState deliveryProcessingState;
+	@Column
+	@Description("Delivery_deliveryProcessingState_description")
+	@Enumerated
+	private DocumentProcessingState deliveryProcessingState;
 
-   @ManyToOne
-   @Description("Delivery_receivingAgency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   @NotNull(message = "Delivery_receivingAgency_NotNull_validation")
-   private Agency receivingAgency;
+	@ManyToOne
+	@Description("Delivery_receivingAgency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	@NotNull(message = "Delivery_receivingAgency_NotNull_validation")
+	private Agency receivingAgency;
 
-   @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
-   @Description("Delivery_deliveryItems_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
-   private Set<DeliveryItem> deliveryItems = new HashSet<DeliveryItem>();
+	@OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+	@Description("Delivery_deliveryItems_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
+	private Set<DeliveryItem> deliveryItems = new HashSet<DeliveryItem>();
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@PostPersist
+	public void onPostPersist(){
+		recordingDate = new Date();
+		deliveryNumber = SequenceGenerator.getSequence(getId(), SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE);
+	}
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((Delivery) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((Delivery) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public String getDeliveryNumber()
-   {
-      return this.deliveryNumber;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setDeliveryNumber(final String deliveryNumber)
-   {
-      this.deliveryNumber = deliveryNumber;
-   }
+	public String getDeliveryNumber()
+	{
+		return this.deliveryNumber;
+	}
 
-   public String getDeliverySlipNumber()
-   {
-      return this.deliverySlipNumber;
-   }
+	public void setDeliveryNumber(final String deliveryNumber)
+	{
+		this.deliveryNumber = deliveryNumber;
+	}
 
-   public void setDeliverySlipNumber(final String deliverySlipNumber)
-   {
-      this.deliverySlipNumber = deliverySlipNumber;
-   }
+	public String getDeliverySlipNumber()
+	{
+		return this.deliverySlipNumber;
+	}
 
-   public Date getDateOnDeliverySlip()
-   {
-      return this.dateOnDeliverySlip;
-   }
+	public void setDeliverySlipNumber(final String deliverySlipNumber)
+	{
+		this.deliverySlipNumber = deliverySlipNumber;
+	}
 
-   public void setDateOnDeliverySlip(final Date dateOnDeliverySlip)
-   {
-      this.dateOnDeliverySlip = dateOnDeliverySlip;
-   }
+	public Date getDateOnDeliverySlip()
+	{
+		return this.dateOnDeliverySlip;
+	}
 
-   public Login getCreatingUser()
-   {
-      return this.creatingUser;
-   }
+	public void setDateOnDeliverySlip(final Date dateOnDeliverySlip)
+	{
+		this.dateOnDeliverySlip = dateOnDeliverySlip;
+	}
 
-   public void setCreatingUser(final Login creatingUser)
-   {
-      this.creatingUser = creatingUser;
-   }
+	public Login getCreatingUser()
+	{
+		return this.creatingUser;
+	}
 
-   public Date getOrderDate()
-   {
-      return this.orderDate;
-   }
+	public void setCreatingUser(final Login creatingUser)
+	{
+		this.creatingUser = creatingUser;
+	}
 
-   public void setOrderDate(final Date orderDate)
-   {
-      this.orderDate = orderDate;
-   }
+	public Date getOrderDate()
+	{
+		return this.orderDate;
+	}
 
-   public Date getDeliveryDate()
-   {
-      return this.deliveryDate;
-   }
+	public void setOrderDate(final Date orderDate)
+	{
+		this.orderDate = orderDate;
+	}
 
-   public void setDeliveryDate(final Date deliveryDate)
-   {
-      this.deliveryDate = deliveryDate;
-   }
+	public Date getDeliveryDate()
+	{
+		return this.deliveryDate;
+	}
 
-   public Supplier getSupplier()
-   {
-      return this.supplier;
-   }
+	public void setDeliveryDate(final Date deliveryDate)
+	{
+		this.deliveryDate = deliveryDate;
+	}
 
-   public void setSupplier(final Supplier supplier)
-   {
-      this.supplier = supplier;
-   }
+	public Supplier getSupplier()
+	{
+		return this.supplier;
+	}
 
-   public BigDecimal getAmountBeforeTax()
-   {
-      return this.amountBeforeTax;
-   }
+	public void setSupplier(final Supplier supplier)
+	{
+		this.supplier = supplier;
+	}
 
-   public void setAmountBeforeTax(final BigDecimal amountBeforeTax)
-   {
-      this.amountBeforeTax = amountBeforeTax;
-   }
+	public BigDecimal getAmountBeforeTax()
+	{
+		return this.amountBeforeTax;
+	}
 
-   public BigDecimal getAmountAfterTax()
-   {
-      return this.amountAfterTax;
-   }
+	public void setAmountBeforeTax(final BigDecimal amountBeforeTax)
+	{
+		this.amountBeforeTax = amountBeforeTax;
+	}
 
-   public void setAmountAfterTax(final BigDecimal amountAfterTax)
-   {
-      this.amountAfterTax = amountAfterTax;
-   }
+	public BigDecimal getAmountAfterTax()
+	{
+		return this.amountAfterTax;
+	}
 
-   public BigDecimal getAmountDiscount()
-   {
-      return this.amountDiscount;
-   }
+	public void setAmountAfterTax(final BigDecimal amountAfterTax)
+	{
+		this.amountAfterTax = amountAfterTax;
+	}
 
-   public void setAmountDiscount(final BigDecimal amountDiscount)
-   {
-      this.amountDiscount = amountDiscount;
-   }
+	public BigDecimal getAmountDiscount()
+	{
+		return this.amountDiscount;
+	}
 
-   public BigDecimal getNetAmountToPay()
-   {
-      return this.netAmountToPay;
-   }
+	public void setAmountDiscount(final BigDecimal amountDiscount)
+	{
+		this.amountDiscount = amountDiscount;
+	}
 
-   public void setNetAmountToPay(final BigDecimal netAmountToPay)
-   {
-      this.netAmountToPay = netAmountToPay;
-   }
+	public BigDecimal getNetAmountToPay()
+	{
+		return this.netAmountToPay;
+	}
 
-   public VAT getVat()
-   {
-      return this.vat;
-   }
+	public void setNetAmountToPay(final BigDecimal netAmountToPay)
+	{
+		this.netAmountToPay = netAmountToPay;
+	}
 
-   public void setVat(final VAT vat)
-   {
-      this.vat = vat;
-   }
+	public VAT getVat()
+	{
+		return this.vat;
+	}
 
-   public Currency getCurrency()
-   {
-      return this.currency;
-   }
+	public void setVat(final VAT vat)
+	{
+		this.vat = vat;
+	}
 
-   public void setCurrency(final Currency currency)
-   {
-      this.currency = currency;
-   }
+	public Currency getCurrency()
+	{
+		return this.currency;
+	}
 
-   public Date getRecordingDate()
-   {
-      return this.recordingDate;
-   }
+	public void setCurrency(final Currency currency)
+	{
+		this.currency = currency;
+	}
 
-   public void setRecordingDate(final Date recordingDate)
-   {
-      this.recordingDate = recordingDate;
-   }
+	public Date getRecordingDate()
+	{
+		return this.recordingDate;
+	}
 
-   public DocumentProcessingState getDeliveryProcessingState()
-   {
-      return this.deliveryProcessingState;
-   }
+	public void setRecordingDate(final Date recordingDate)
+	{
+		this.recordingDate = recordingDate;
+	}
 
-   public void setDeliveryProcessingState(
-         final DocumentProcessingState deliveryProcessingState)
-   {
-      this.deliveryProcessingState = deliveryProcessingState;
-   }
+	public DocumentProcessingState getDeliveryProcessingState()
+	{
+		return this.deliveryProcessingState;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (deliveryNumber != null && !deliveryNumber.trim().isEmpty())
-         result += "deliveryNumber: " + deliveryNumber;
-      if (deliverySlipNumber != null && !deliverySlipNumber.trim().isEmpty())
-         result += ", deliverySlipNumber: " + deliverySlipNumber;
-      return result;
-   }
+	public void setDeliveryProcessingState(
+			final DocumentProcessingState deliveryProcessingState)
+	{
+		this.deliveryProcessingState = deliveryProcessingState;
+	}
 
-   public Agency getReceivingAgency()
-   {
-      return this.receivingAgency;
-   }
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (deliveryNumber != null && !deliveryNumber.trim().isEmpty())
+			result += "deliveryNumber: " + deliveryNumber;
+		if (deliverySlipNumber != null && !deliverySlipNumber.trim().isEmpty())
+			result += ", deliverySlipNumber: " + deliverySlipNumber;
+		return result;
+	}
 
-   public void setReceivingAgency(final Agency receivingAgency)
-   {
-      this.receivingAgency = receivingAgency;
-   }
+	public Agency getReceivingAgency()
+	{
+		return this.receivingAgency;
+	}
 
-   public Set<DeliveryItem> getDeliveryItems()
-   {
-      return this.deliveryItems;
-   }
+	public void setReceivingAgency(final Agency receivingAgency)
+	{
+		this.receivingAgency = receivingAgency;
+	}
 
-   public void setDeliveryItems(final Set<DeliveryItem> deliveryItems)
-   {
-      this.deliveryItems = deliveryItems;
-   }
+	public Set<DeliveryItem> getDeliveryItems()
+	{
+		return this.deliveryItems;
+	}
+
+	public void setDeliveryItems(final Set<DeliveryItem> deliveryItems)
+	{
+		this.deliveryItems = deliveryItems;
+	}
 }

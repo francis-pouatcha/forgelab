@@ -12,6 +12,4 @@ import org.apache.deltaspike.data.api.Repository;
 @Repository(forEntity = Delivery.class)
 public interface DeliveryRepository extends EntityRepository<Delivery, Long>
 {
-	List<Delivery> findByDeliveryNumberOrDeliveryDateBetweenAndSupplierAndDeliveryProcessingState(
-			String deliveryNumber,Date dateFrom ,Date dateTo, Supplier supplier,DocumentProcessingState state );
 }

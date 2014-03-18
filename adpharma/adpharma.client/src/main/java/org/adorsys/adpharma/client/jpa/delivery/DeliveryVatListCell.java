@@ -15,7 +15,7 @@ public class DeliveryVatListCell extends AbstractToStringListCell<VAT>
       {
          return "";
       }
-      return PropertyReader.buildToString(item, "name");
+      return PropertyReader.buildToString(item, "name","rate");
    }
 
 }

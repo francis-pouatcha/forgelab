@@ -1,3 +1,4 @@
+
 package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
@@ -136,6 +137,9 @@ public class DeliveryListController implements EntityController
 				});
 	}
 
+	public void onDisplayed(){
+		
+	}
 	@Override
 	public void display(Pane parent)
 	{

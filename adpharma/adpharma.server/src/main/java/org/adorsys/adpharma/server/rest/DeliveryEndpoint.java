@@ -1,11 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -22,10 +25,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
+import org.adorsys.adpharma.server.jpa.Delivery_;
+import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -44,7 +50,10 @@ public class DeliveryEndpoint
 
    @Inject
    private SupplierMerger supplierMerger;
-
+   
+   @Inject
+   SecurityUtil securityUtil;
+   
    @Inject
    private VATMerger vATMerger;
 
@@ -62,6 +71,9 @@ public class DeliveryEndpoint
    @Produces({ "application/json", "application/xml" })
    public Delivery create(Delivery entity)
    {
+	   Login login = securityUtil.getConnectedUser();
+	   entity.setCreatingUser(login);
+//	   entity.setReceivingAgency(login.get);
       return detach(ejb.create(entity));
    }
 

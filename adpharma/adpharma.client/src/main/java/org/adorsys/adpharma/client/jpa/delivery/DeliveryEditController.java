@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -194,7 +195,7 @@ public class DeliveryEditController implements EntityController
    {
       editView.getView().validate(displayedEntity);
 
-      AnchorPane rootPane = editView.getRootPane();
+      BorderPane rootPane = editView.getRootPane();
       ObservableList<Node> children = parent.getChildren();
       if (!children.contains(rootPane))
       {

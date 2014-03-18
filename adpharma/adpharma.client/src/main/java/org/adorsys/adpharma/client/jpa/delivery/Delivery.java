@@ -124,7 +124,6 @@ public class Delivery
       return deliveryNumber;
    }
 
-   @NotNull(message = "Delivery_deliveryNumber_NotNull_validation")
    public String getDeliveryNumber()
    {
       return deliveryNumberProperty().get();

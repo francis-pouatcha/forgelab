@@ -145,6 +145,6 @@ public class VAT
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name");
+      return PropertyReader.buildToString(this, "name","rate");
    }
 }

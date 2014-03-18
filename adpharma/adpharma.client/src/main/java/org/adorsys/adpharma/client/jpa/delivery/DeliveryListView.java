@@ -108,7 +108,7 @@ public class DeliveryListView
 	})
 	private ResourceBundle resourceBundle;
 
-	
+
 
 	@Inject
 	FXMLLoader fxmlLoader ;
@@ -152,24 +152,24 @@ public class DeliveryListView
 	public void buildsearchBar(){
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
 		deliveryNumber.setPromptText("delivery Number");
-		
+
 		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
 		deliveryDateFrom.setPromptText("date From");
 		deliveryDateFrom.setPrefWidth(160d);
 		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
-		
+
 		deliveryDateTo =ViewBuilderUtils.newCalendarTextField("deliveryDateTo", "dd-MM-yyyy HH:mm", locale, false);
 		deliveryDateTo.setPromptText("Date To");
 		deliveryDateTo.setPrefWidth(160d);
 		HBox.setMargin(deliveryDateTo, new Insets(15, 0, 0, 0));
-		
+
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("Supplier");
 		supplier.setPrefWidth(200d);
-		
+
 		deliveryState =ViewBuilderUtils.newComboBox(null, "deliveryState", false);
 		deliveryState.setPromptText("state");
-		
+
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,deliveryDateTo,supplier,deliveryState,searchButton);
 	}
