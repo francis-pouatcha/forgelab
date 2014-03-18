@@ -56,6 +56,7 @@ public class VATListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
+      viewBuilder.addStringColumn(dataList, "name", "VAT_name_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
       // Field not displayed in table
       pagination = viewBuilder.addPagination();

@@ -26,6 +26,8 @@ import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 public class ArticleDefaultSalesMarginForm extends AbstractToOneAssociation<Article, SalesMargin>
 {
 
+   private TextField name;
+
    private CheckBox active;
 
    private BigDecimalField rate;
@@ -41,6 +43,7 @@ public class ArticleDefaultSalesMarginForm extends AbstractToOneAssociation<Arti
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
+      name = viewBuilder.addTextField("SalesMargin_name_description.title", "name", resourceBundle);
       active = viewBuilder.addCheckBox("SalesMargin_active_description.title", "active", resourceBundle);
       rate = viewBuilder.addBigDecimalField("SalesMargin_rate_description.title", "rate", resourceBundle, NumberType.PERCENTAGE, locale);
 
@@ -49,8 +52,14 @@ public class ArticleDefaultSalesMarginForm extends AbstractToOneAssociation<Arti
 
    public void bind(Article model)
    {
+      name.textProperty().bindBidirectional(model.getDefaultSalesMargin().nameProperty());
       active.textProperty().bindBidirectional(model.getDefaultSalesMargin().activeProperty(), new BooleanStringConverter());
       rate.numberProperty().bindBidirectional(model.getDefaultSalesMargin().rateProperty());
+   }
+
+   public TextField getName()
+   {
+      return name;
    }
 
    public CheckBox getActive()

@@ -199,7 +199,7 @@ public class ArticleEndpoint
 
    private static final List<String> familyFields = Arrays.asList("name");
 
-   private static final List<String> defaultSalesMarginFields = Arrays.asList("code", "rate", "active");
+   private static final List<String> defaultSalesMarginFields = Arrays.asList("name", "rate", "active");
 
    private static final List<String> packagingModeFields = Arrays.asList("name");
 

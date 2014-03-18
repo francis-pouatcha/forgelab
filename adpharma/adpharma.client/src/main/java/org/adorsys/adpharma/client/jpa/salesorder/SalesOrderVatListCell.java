@@ -9,10 +9,13 @@ public class SalesOrderVatListCell extends AbstractToStringListCell<VAT>
 {
 
    @Override
-	protected String getToString(VAT item) {
-		if(item==null) {
-			return "";
-		}
-		return PropertyReader.buildToString(item,); 
-	}
+   protected String getToString(VAT item)
+   {
+      if (item == null)
+      {
+         return "";
+      }
+      return PropertyReader.buildToString(item, "name");
+   }
+
 }

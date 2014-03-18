@@ -506,8 +506,8 @@ access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --ro
 field string --named name;
 description add-field-description --onProperty name --title "VAT Code" --text "The code of this VAT";
 description add-field-description --onProperty name --title "Code TVA" --text "Le code de la TVA" --locale fr;
-display add-toString-field --field code;
-display add-list-field --field code;
+display add-toString-field --field name;
+display add-list-field --field name;
 
 field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "VAT Rate" --text "The VAT rate";
@@ -534,8 +534,8 @@ access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --ro
 field string --named name;
 description add-field-description --onProperty name --title "Margin Name" --text "The code of this margin";
 description add-field-description --onProperty name --title "Nom Marge" --text "Numéro de la marge" --locale fr;
-display add-toString-field --field code;
-display add-list-field --field code;
+display add-toString-field --field name;
+display add-list-field --field name;
 
 field number --named rate --type java.math.BigDecimal;
 description add-field-description --onProperty rate --title "Marging Rate" --text "The rate of this margin.";

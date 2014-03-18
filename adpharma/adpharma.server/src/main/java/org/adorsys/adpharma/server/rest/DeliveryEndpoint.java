@@ -199,7 +199,7 @@ public class DeliveryEndpoint
 
    private static final List<String> supplierFields = Arrays.asList("name", "fax", "email");
 
-   private static final List<String> vatFields = Arrays.asList("code", "rate", "active");
+   private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 
    private static final List<String> currencyFields = Arrays.asList("name");
 

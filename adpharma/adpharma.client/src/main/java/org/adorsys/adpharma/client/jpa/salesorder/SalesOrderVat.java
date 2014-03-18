@@ -26,6 +26,7 @@ public class SalesOrderVat implements Association<SalesOrder, VAT>
    private Long id;
    private int version;
 
+   private SimpleStringProperty name;
    private SimpleBooleanProperty active;
    private SimpleObjectProperty<BigDecimal> rate;
 
@@ -56,6 +57,25 @@ public class SalesOrderVat implements Association<SalesOrder, VAT>
    public final void setVersion(int version)
    {
       this.version = version;
+   }
+
+   public SimpleStringProperty nameProperty()
+   {
+      if (name == null)
+      {
+         name = new SimpleStringProperty();
+      }
+      return name;
+   }
+
+   public String getName()
+   {
+      return nameProperty().get();
+   }
+
+   public final void setName(String name)
+   {
+      this.nameProperty().set(name);
    }
 
    public SimpleBooleanProperty activeProperty()
@@ -125,7 +145,8 @@ public class SalesOrderVat implements Association<SalesOrder, VAT>
       return id.equals(other.id);
    }
 
-   public String toString(){
-		return PropertyReader.buildToString(this,); 
-	}
+   public String toString()
+   {
+      return PropertyReader.buildToString(this, "name");
+   }
 }

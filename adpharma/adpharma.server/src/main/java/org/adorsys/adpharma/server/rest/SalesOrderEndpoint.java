@@ -204,7 +204,7 @@ public class SalesOrderEndpoint
 
    private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.fullName", "insurer.fullName", "coverageRate");
 
-   private static final List<String> vatFields = Arrays.asList("code", "rate", "active");
+   private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 
    private static final List<String> salesAgentFields = Arrays.asList("loginName", "email", "gender");
 

@@ -9,10 +9,13 @@ public class ArticleDefaultSalesMarginListCell extends AbstractToStringListCell<
 {
 
    @Override
-	protected String getToString(SalesMargin item) {
-		if(item==null) {
-			return "";
-		}
-		return PropertyReader.buildToString(item,); 
-	}
+   protected String getToString(SalesMargin item)
+   {
+      if (item == null)
+      {
+         return "";
+      }
+      return PropertyReader.buildToString(item, "name");
+   }
+
 }

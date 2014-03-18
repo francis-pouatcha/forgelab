@@ -21,8 +21,8 @@ import org.adorsys.javaext.list.ListField;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("SalesMargin_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ToStringField("code")
-@ListField({ "code", "rate", "active" })
+@ToStringField("name")
+@ListField({ "name", "rate", "active" })
 public class SalesMargin
 {
 
@@ -143,7 +143,8 @@ public class SalesMargin
       return id.equals(other.id);
    }
 
-   public String toString(){
-		return PropertyReader.buildToString(this,); 
-	}
+   public String toString()
+   {
+      return PropertyReader.buildToString(this, "name");
+   }
 }

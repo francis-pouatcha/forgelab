@@ -17,8 +17,8 @@ import org.adorsys.javaext.format.NumberType;
 
 @Entity
 @Description("VAT_description")
-@ToStringField("code")
-@ListField({ "code", "rate", "active" })
+@ToStringField("name")
+@ListField({ "name", "rate", "active" })
 public class VAT implements Serializable
 {
 

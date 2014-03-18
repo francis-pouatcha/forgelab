@@ -56,6 +56,7 @@ public class SalesMarginListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
+      viewBuilder.addStringColumn(dataList, "name", "SalesMargin_name_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "rate", "SalesMargin_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
       // Field not displayed in table
       pagination = viewBuilder.addPagination();

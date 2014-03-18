@@ -26,6 +26,8 @@ import org.adorsys.adpharma.client.jpa.vat.VAT;
 public class SalesOrderVatForm extends AbstractToOneAssociation<SalesOrder, VAT>
 {
 
+   private TextField name;
+
    private CheckBox active;
 
    private BigDecimalField rate;
@@ -41,6 +43,7 @@ public class SalesOrderVatForm extends AbstractToOneAssociation<SalesOrder, VAT>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
+      name = viewBuilder.addTextField("VAT_name_description.title", "name", resourceBundle);
       active = viewBuilder.addCheckBox("VAT_active_description.title", "active", resourceBundle);
       rate = viewBuilder.addBigDecimalField("VAT_rate_description.title", "rate", resourceBundle, NumberType.PERCENTAGE, locale);
 
@@ -49,8 +52,14 @@ public class SalesOrderVatForm extends AbstractToOneAssociation<SalesOrder, VAT>
 
    public void bind(SalesOrder model)
    {
+      name.textProperty().bindBidirectional(model.getVat().nameProperty());
       active.textProperty().bindBidirectional(model.getVat().activeProperty(), new BooleanStringConverter());
       rate.numberProperty().bindBidirectional(model.getVat().rateProperty());
+   }
+
+   public TextField getName()
+   {
+      return name;
    }
 
    public CheckBox getActive()
