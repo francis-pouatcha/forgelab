@@ -70,7 +70,7 @@ public class DeliveryListView
 
 	private CalendarTextField deliveryDateFrom;
 
-	private CalendarTextField deliveryDateTo;
+//	private CalendarTextField deliveryDateTo;
 
 	private ComboBox<Supplier> supplier;
 
@@ -80,6 +80,9 @@ public class DeliveryListView
 
 	@FXML
 	private Button createButton;
+	
+	@FXML
+	private Button processButton;
 
 	@FXML
 	private TableView<Delivery> dataList;
@@ -119,10 +122,10 @@ public class DeliveryListView
 	{
 		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
-		dataList = viewBuilder.addTable("dataList");
+		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
-		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		//		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "Delivery_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -140,13 +143,12 @@ public class DeliveryListView
 
 	}
 
-	public void bind(DeliveryListSearchInput searchInput)
+	public void bind(DeliverySearchInput searchInput)
 	{
-		deliveryNumber.textProperty().bindBidirectional(searchInput.deliveryNumberProperty());
-		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.deliveryDateFromProperty());
-		deliveryDateTo.calendarProperty().bindBidirectional(searchInput.deliveryDateToProperty());
-		supplier.valueProperty().bindBidirectional(searchInput.supplierProperty());
-		deliveryState.valueProperty().bindBidirectional(searchInput.deliveryProcessingStateProperty());
+		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
+		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
+//		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
+		deliveryState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
 	}
 
 	public void buildsearchBar(){
@@ -158,20 +160,20 @@ public class DeliveryListView
 		deliveryDateFrom.setPrefWidth(160d);
 		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
 
-		deliveryDateTo =ViewBuilderUtils.newCalendarTextField("deliveryDateTo", "dd-MM-yyyy HH:mm", locale, false);
-		deliveryDateTo.setPromptText("Date To");
-		deliveryDateTo.setPrefWidth(160d);
-		HBox.setMargin(deliveryDateTo, new Insets(15, 0, 0, 0));
+//		deliveryDateTo =ViewBuilderUtils.newCalendarTextField("deliveryDateTo", "dd-MM-yyyy HH:mm", locale, false);
+//		deliveryDateTo.setPromptText("Date To");
+//		deliveryDateTo.setPrefWidth(160d);
+//		HBox.setMargin(deliveryDateTo, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("Supplier");
 		supplier.setPrefWidth(200d);
 
-		deliveryState =ViewBuilderUtils.newComboBox(null, "deliveryState", false);
+		deliveryState =ViewBuilderUtils.newComboBox(null, "deliveryState", resourceBundle, DocumentProcessingState.values(), false);
 		deliveryState.setPromptText("state");
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,deliveryDateTo,supplier,deliveryState,searchButton);
+		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryState,searchButton);
 	}
 	public Button getCreateButton()
 	{
@@ -206,10 +208,6 @@ public class DeliveryListView
 		return deliveryDateFrom;
 	}
 
-	public CalendarTextField getDeliveryDateTo() {
-		return deliveryDateTo;
-	}
-
 	public ComboBox<Supplier> getSupplier() {
 		return supplier;
 	}
@@ -219,13 +217,11 @@ public class DeliveryListView
 	}
 
 
-	public Locale getLocale() {
-		return locale;
+	public Button getProcessButton() {
+		return processButton;
 	}
 
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
+	
 
 
 }

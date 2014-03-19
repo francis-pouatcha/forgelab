@@ -8,6 +8,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -21,7 +22,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
+import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierLoadService;
+import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
+import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -29,6 +35,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
@@ -56,18 +63,27 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<Delivery> createRequestedEvent;
-	
+
 	@Inject
 	SupplierSearchService supplierSearchService;
+
+	@Inject
+	DeliverySearchService searchService;
+
+
 
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<DeliverySearchResult> entityListPageIndexChangedEvent;
 
+	@Inject
+	@EntityEditRequestedEvent
+	private Event<Delivery> deliveryEditEvent;
+
 	private DeliverySearchResult searchResult;
 
 	@Inject 
-	DeliveryListSearchInput searchInput;
+	DeliverySearchInput searchInput;
 
 	@PostConstruct
 	public void postConstruct()
@@ -82,10 +98,19 @@ public class DeliveryListController implements EntityController
 					ObservableValue<? extends Delivery> property,
 					Delivery oldValue, Delivery newValue)
 			{
-				if (newValue != null)
-					selectionEvent.fire(newValue);
+				if (newValue != null){}
+				//	selectionEvent.fire(newValue);
 			}
 				});
+		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem== null) return ;
+                 deliveryEditEvent.fire(selectedItem);
+			}
+		});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -95,13 +120,56 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{										
-				//				 Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				//				 if (selectedItem == null)
-				//					 selectedItem = new Delivery();
-				//				 searchRequestedEvent.fire(selectedItem);
-				Dialogs.create().message(searchInput.toString()).showInformation();
+				searchService.setSearchInputs(searchInput).start();
+
 			}
+
+
 				});
+		supplierSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SupplierSearchService s = (SupplierSearchService) event.getSource();
+				SupplierSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<Supplier> resultList = result.getResultList();
+				listView.getSupplier().getItems().setAll(resultList);
+				listView.getSupplier().getSelectionModel().clearSelection();
+
+			}
+		});
+		supplierSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SupplierSearchService s = (SupplierSearchService) event.getSource();
+				s.reset();				
+			}
+		});
+		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliverySearchService s = (DeliverySearchService) event.getSource();
+				DeliverySearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<Delivery> resultList = result.getResultList();
+				listView.getDataList().getItems().setAll(resultList);
+
+			}
+		});
+
+		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliverySearchService s = (DeliverySearchService) event.getSource();
+				s.reset();				
+			}
+		});
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -138,11 +206,13 @@ public class DeliveryListController implements EntityController
 	}
 
 	public void onDisplayed(){
-		
+		supplierSearchService.setSearchInputs(new SupplierSearchInput()).start();
+
 	}
 	@Override
 	public void display(Pane parent)
 	{
+		onDisplayed();
 		BorderPane rootPane = listView.getRootPane();
 		ObservableList<Node> children = parent.getChildren();
 		if (!children.contains(rootPane))

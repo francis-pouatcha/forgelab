@@ -18,7 +18,7 @@ public class ApharmaDateUtil {
 
 	public static final String DATE_PATTERN_LONG_LIT = "EEE, dd MMM yyyy";
 	public static final String DAY_MONTH_PATTERN = "dd-yy";
-	public static final String MONTH_YEAR_PATTERN = "MM-yy";
+	public static final String MONTH_YEAR_PATTERN = "MMyy";
 	public static final String DAY_MONTH_PATTERN_LIT = "EEE, dd MMM";
 
 	public static final String DATE_TIME_PATTERN_LONG = "dd-MM-yyyy HH:mm";

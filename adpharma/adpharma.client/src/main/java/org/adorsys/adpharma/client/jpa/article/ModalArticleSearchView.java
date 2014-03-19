@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
@@ -8,14 +9,18 @@ import javax.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ApplicationModal;
+import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 
 public class ModalArticleSearchView extends ApplicationModal{
 
@@ -25,9 +30,13 @@ public class ModalArticleSearchView extends ApplicationModal{
 	@FXML
 	private TextField articleName;
 
-	@FXML Button searchButton;
+	@FXML Button cancelButton;
+	
+	@FXML
+	Pagination pagination;
 
-	@FXML Button cancelutton;
+	@FXML
+	TableView<Article> dataList;
 
 	@Inject
 	FXMLLoader fxmlLoader;
@@ -35,6 +44,9 @@ public class ModalArticleSearchView extends ApplicationModal{
 	@Inject
 	@Bundle({ CrudKeys.class, Article.class })
 	private ResourceBundle resourceBundle;
+
+	@Inject
+	private Locale locale;
 
 
 	@Override
@@ -45,6 +57,14 @@ public class ModalArticleSearchView extends ApplicationModal{
 	@PostConstruct
 	public void onPostConstruct(){
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
+		ViewBuilder viewBuilder = new ViewBuilder();
+//		dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,350d);
+		viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataList, "manufacturer", "Article_manufacturer_description.title", resourceBundle,150d);
+		// Field not displayed in table
+		viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.INTEGER, locale);
 
 	}
 
@@ -52,21 +72,16 @@ public class ModalArticleSearchView extends ApplicationModal{
 		return articleName;
 	}
 
-	public Button getSearchButton() {
-		return searchButton;
+	public Button getCancelButton() {
+		return cancelButton;
 	}
 
-	public Button getCancelutton() {
-		return cancelutton;
+	public TableView<Article> getDataList() {
+		return dataList;
 	}
 
-	public FXMLLoader getFxmlLoader() {
-		return fxmlLoader;
+	public Pagination getPagination() {
+		return pagination;
 	}
-
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
-
 
 }

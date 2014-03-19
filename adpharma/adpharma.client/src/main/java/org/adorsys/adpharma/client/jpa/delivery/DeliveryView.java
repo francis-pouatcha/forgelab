@@ -52,15 +52,17 @@ import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessin
 public class DeliveryView extends AbstractForm<Delivery>
 {
 
-//	private TextField deliveryNumber;
+	//	private TextField deliveryNumber;
 
 	private TextField deliverySlipNumber;
 
-//	private ComboBox<DocumentProcessingState> deliveryProcessingState;
+	//	private ComboBox<DocumentProcessingState> deliveryProcessingState;
 
 	private BigDecimalField amountBeforeTax;
 
 	private BigDecimalField amountAfterTax;
+
+
 
 	private BigDecimalField amountDiscount;
 
@@ -132,9 +134,9 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-//		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
+		//		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
-//		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
+		//		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
 		amountAfterTax = viewBuilder.addBigDecimalField("Delivery_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
 		amountDiscount = viewBuilder.addBigDecimalField("Delivery_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
@@ -162,14 +164,14 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//      viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencyForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencySelection, ViewModel.READ_WRITE);
 
-//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
+		//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 		gridRows = viewBuilder.toRows();
 	}
 
 	public void addValidators()
 	{
-//		deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
+		//		deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
 		deliverySlipNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliverySlipNumber, Delivery.class, "deliverySlipNumber", resourceBundle));
 		amountBeforeTax.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<Delivery>(bigDecimalFieldValidator, amountBeforeTax, Delivery.class, "amountBeforeTax", resourceBundle));
 	}
@@ -177,20 +179,20 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public Set<ConstraintViolation<Delivery>> validate(Delivery model)
 	{
 		Set<ConstraintViolation<Delivery>> violations = new HashSet<ConstraintViolation<Delivery>>();
-//		violations.addAll(textInputControlValidator.validate(deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
+		//		violations.addAll(textInputControlValidator.validate(deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
 		violations.addAll(textInputControlValidator.validate(deliverySlipNumber, Delivery.class, "deliverySlipNumber", resourceBundle));
 		violations.addAll(bigDecimalFieldValidator.validate(amountBeforeTax, Delivery.class, "amountBeforeTax", resourceBundle));
-//		violations.addAll(toOneAggreggationFieldValidator.validate(deliveryCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), Delivery.class, "creatingUser", resourceBundle));
+		//		violations.addAll(toOneAggreggationFieldValidator.validate(deliveryCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), Delivery.class, "creatingUser", resourceBundle));
 		violations.addAll(toOneAggreggationFieldValidator.validate(deliverySupplierSelection.getSupplier(), model.getSupplier(), Delivery.class, "supplier", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(deliveryReceivingAgencySelection.getReceivingAgency(), model.getReceivingAgency(), Delivery.class, "receivingAgency", resourceBundle));
+		//		violations.addAll(toOneAggreggationFieldValidator.validate(deliveryReceivingAgencySelection.getReceivingAgency(), model.getReceivingAgency(), Delivery.class, "receivingAgency", resourceBundle));
 		return violations;
 	}
 
 	public void bind(Delivery model)
 	{
-//		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
+		//		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
 		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
-//		deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
+		//		deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
@@ -199,34 +201,34 @@ public class DeliveryView extends AbstractForm<Delivery>
 		orderDate.calendarProperty().bindBidirectional(model.orderDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
-		deliveryDeliveryItemsForm.bind(model);
-		deliveryDeliveryItemsSelection.bind(model);
-		deliveryCreatingUserForm.bind(model);
-		deliveryCreatingUserSelection.bind(model);
+		//		deliveryDeliveryItemsForm.bind(model);
+		//		deliveryDeliveryItemsSelection.bind(model);
+		//		deliveryCreatingUserForm.bind(model);
+		//		deliveryCreatingUserSelection.bind(model);
 		deliverySupplierForm.bind(model);
 		deliverySupplierSelection.bind(model);
 		deliveryVatForm.bind(model);
 		deliveryVatSelection.bind(model);
-		deliveryCurrencyForm.bind(model);
+		//		deliveryCurrencyForm.bind(model);
 		deliveryCurrencySelection.bind(model);
-		deliveryReceivingAgencyForm.bind(model);
-		deliveryReceivingAgencySelection.bind(model);
+		//		deliveryReceivingAgencyForm.bind(model);
+		//		deliveryReceivingAgencySelection.bind(model);
 	}
 
-//	public TextField getDeliveryNumber()
-//	{
-//		return deliveryNumber;
-//	}
+	//	public TextField getDeliveryNumber()
+	//	{
+	//		return deliveryNumber;
+	//	}
 
 	public TextField getDeliverySlipNumber()
 	{
 		return deliverySlipNumber;
 	}
 
-//	public ComboBox<DocumentProcessingState> getDeliveryProcessingState()
-//	{
-//		return deliveryProcessingState;
-//	}
+	//	public ComboBox<DocumentProcessingState> getDeliveryProcessingState()
+	//	{
+	//		return deliveryProcessingState;
+	//	}
 
 	public BigDecimalField getAmountBeforeTax()
 	{

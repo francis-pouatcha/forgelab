@@ -132,7 +132,7 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
-      <plugin>
+      <!-- <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>webstart-maven-plugin</artifactId>
         <version>1.0-beta-3</version>
@@ -161,7 +161,7 @@
           <install>false</install>
           <verbose>true</verbose>
         </configuration>
-      </plugin>
+      </plugin> -->
     </plugins>
   </build>
 </project>

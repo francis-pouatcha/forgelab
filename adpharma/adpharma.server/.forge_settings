@@ -3,7 +3,7 @@
 <jboss-as>
 <as7>
 <configured>PROJECT</configured>
-<jboss-home>/tools/jboss-eap-6.1</jboss-home>
+<jboss-home>/jboss-eap-6.1</jboss-home>
 </as7>
 </jboss-as>
 <repo>

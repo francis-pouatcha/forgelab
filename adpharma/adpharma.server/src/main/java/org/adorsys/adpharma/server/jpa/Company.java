@@ -96,6 +96,17 @@ public class Company implements Serializable
 	@Description("Company_recordingDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private Date recordingDate;
+	
+	public Company() {
+		// TODO Auto-generated constructor stub
+	}
+	
+
+	public Company(String displayName) {
+		super();
+		this.displayName = displayName;
+	}
+
 
 	@PostPersist
 	public void onPostPersist(){

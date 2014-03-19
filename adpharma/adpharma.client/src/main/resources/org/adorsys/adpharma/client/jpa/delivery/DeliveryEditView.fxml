@@ -4,7 +4,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="661.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
@@ -15,7 +14,7 @@
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</BorderPane.margin>
 					<children>
-						<VBox prefHeight="312.0" prefWidth="267.0" VBox.vgrow="NEVER">
+						<VBox prefHeight="220.0" prefWidth="267.0" VBox.vgrow="NEVER">
 							<children>
 								<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="Information Montant" textFill="#3711dd">
 									<content>
@@ -43,11 +42,11 @@
 										<Label layoutX="10.0" layoutY="47.0" text="Remises :" GridPane.rowIndex="2" />
 										<Label layoutX="10.0" layoutY="77.0" text="Montant TTC :" GridPane.rowIndex="3" />
 										<Label layoutX="10.0" layoutY="107.0" text="Montant Saisie :" GridPane.rowIndex="4" />
-										<TextField GridPane.columnIndex="1" />
-										<TextField layoutX="125.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-										<TextField layoutX="125.0" layoutY="42.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-										<TextField layoutX="125.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-										<TextField layoutX="125.0" layoutY="102.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+										<TextField fx:id="amountBeforeTax" GridPane.columnIndex="1" />
+										<TextField fx:id="taxAmount" layoutX="125.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+										<TextField fx:id="amountDiscount" layoutX="125.0" layoutY="42.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+										<TextField fx:id="amountAfterTax" layoutX="125.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+										<TextField fx:id="processAmont" layoutX="125.0" layoutY="102.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 									</children>
 								</GridPane>
 							</children>
@@ -109,7 +108,7 @@
 			<center>
 				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
 					<children>
-						<VBox maxWidth="900.0" prefHeight="248.0" prefWidth="724.0" VBox.vgrow="NEVER">
+						<VBox maxWidth="900.0" prefHeight="160.0" prefWidth="724.0" VBox.vgrow="NEVER">
 							<children>
 								<GridPane hgap="10.0" prefHeight="545.0" prefWidth="690.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 									<columnConstraints>
@@ -120,32 +119,29 @@
 										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 									</rowConstraints>
 									<children>
-										<GridPane prefHeight="254.0" prefWidth="352.0">
+										<GridPane prefHeight="170.0" prefWidth="357.0" vgap="5.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
 											<columnConstraints>
-												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="158.0" />
+												<ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="158.0" />
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="194.0" />
 											</columnConstraints>
 											<rowConstraints>
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
 											</rowConstraints>
 											<children>
-												<Label text="Num Livraison:">
+												<Label text="deliveryNumber">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Num Bordereau :" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="deliverySlipNumber" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="71.0" text="Date bordereau :" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="71.0" text="deliveryDate" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -155,161 +151,71 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="163.0" text="Date reglement :" GridPane.rowIndex="4">
+												<TextField fx:id="deliveryNumber" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+												<TextField fx:id="deliverySlipNumber" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+												<Label layoutX="15.0" layoutY="62.0" text="recordingDate" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="209.0" text="Date Commande :" GridPane.rowIndex="5">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<TextField GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-												<TextField layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-												<Label layoutX="15.0" layoutY="62.0" text="Date Livraison :" GridPane.rowIndex="2">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<Label layoutX="10.0" layoutY="102.0" text="Label" GridPane.rowIndex="6">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<ComboBox prefHeight="26.0" prefWidth="199.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
-												<DatePicker prefHeight="26.0" prefWidth="205.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-												<DatePicker layoutX="151.0" layoutY="77.0" prefHeight="26.0" prefWidth="204.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-												<DatePicker layoutX="151.0" layoutY="110.0" prefHeight="26.0" prefWidth="207.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-												<DatePicker layoutX="151.0" layoutY="142.0" prefHeight="26.0" prefWidth="204.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+<TextField fx:id="recordingDate" layoutX="168.0" layoutY="70.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+<TextField fx:id="deliveryDate" layoutX="168.0" layoutY="106.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 											</children>
+											<padding>
+												<Insets top="10.0" />
+											</padding>
 										</GridPane>
-										<GridPane layoutX="10.0" layoutY="10.0" prefHeight="220.0" prefWidth="392.0" GridPane.columnIndex="1">
+										<GridPane layoutX="10.0" layoutY="10.0" prefHeight="220.0" prefWidth="392.0" vgap="5.0" GridPane.columnIndex="1">
 											<children>
-												<Label text="Devise :">
+												<Label text="Supplier">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Taxes :" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="Currency" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="71.0" text="Label" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="71.0" text="Login" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="117.0" text="Label" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="117.0" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="163.0" text="Label" GridPane.rowIndex="4">
+												<TextField fx:id="login" layoutX="163.0" layoutY="57.0" text="login" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+												<Label layoutX="15.0" layoutY="62.0" text="agency" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="209.0" text="Label" GridPane.rowIndex="5">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<TextField layoutX="163.0" layoutY="57.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-												<TextField layoutX="163.0" layoutY="137.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
-												<TextField layoutX="163.0" layoutY="177.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
-												<Label layoutX="15.0" layoutY="62.0" text="agence de livraison :" GridPane.rowIndex="2">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<Label layoutX="10.0" layoutY="102.0" text="Label" GridPane.rowIndex="6">
-													<GridPane.margin>
-														<Insets left="5.0" />
-													</GridPane.margin>
-												</Label>
-												<TextField layoutX="163.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
-												<ComboBox prefHeight="26.0" prefWidth="217.0" GridPane.columnIndex="1" />
-												<ComboBox layoutX="146.0" layoutY="13.0" prefHeight="26.0" prefWidth="210.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-												<ComboBox layoutX="146.0" layoutY="45.0" prefHeight="26.0" prefWidth="217.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+<TextField fx:id="supplier" layoutX="168.0" layoutY="141.0" GridPane.columnIndex="1" />
+<TextField fx:id="vat" layoutX="168.0" layoutY="24.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+<TextField fx:id="agency" layoutX="168.0" layoutY="63.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 											</children>
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="199.0" />
 											</columnConstraints>
 											<rowConstraints>
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" percentHeight="14.29" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
 											</rowConstraints>
+											<padding>
+												<Insets top="10.0" />
+											</padding>
 										</GridPane>
 									</children>
 								</GridPane>
 							</children>
 						</VBox>
-						<Separator prefHeight="0.0" prefWidth="167.0" />
-						<HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="724.0" VBox.vgrow="NEVER">
-							<children>
-								<TextField prefHeight="28.0" prefWidth="108.0" promptText="cip">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="10.0" layoutY="21.0" prefHeight="28.0" prefWidth="287.0" promptText="designation">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="118.0" layoutY="21.0" prefHeight="28.0" prefWidth="58.0" promptText="Qte">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="410.0" layoutY="21.0" prefHeight="28.0" prefWidth="58.0" promptText="UG">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="473.0" layoutY="21.0" prefHeight="28.0" prefWidth="87.0" promptText="Prix U">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="536.0" layoutY="21.0" prefHeight="28.0" prefWidth="79.0" promptText="Prix V">
-									<font>
-										<Font size="14.0" />
-									</font>
-									<HBox.margin>
-										<Insets right="5.0" />
-									</HBox.margin>
-								</TextField>
-								<TextField layoutX="628.0" layoutY="21.0" prefHeight="28.0" prefWidth="79.0" promptText="MMYY">
-									<font>
-										<Font size="14.0" />
-									</font>
-								</TextField>
-							</children>
-						</HBox>
+						<HBox fx:id="deliveryItemBar" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="724.0" spacing="4.0" VBox.vgrow="NEVER" />
 						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0" prefWidth="167.0" />
 						<TableView prefHeight="246.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
 							<columns>
@@ -317,11 +223,6 @@
 								<TableColumn prefWidth="75.0" text="C2" />
 							</columns>
 						</TableView>
-						<HBox alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="724.0" VBox.vgrow="NEVER">
-							<children>
-								<Pagination maxPageIndicatorCount="5" pageCount="100" prefHeight="61.0" prefWidth="168.0" />
-							</children>
-						</HBox>
 					</children>
 					<BorderPane.margin>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

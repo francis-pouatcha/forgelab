@@ -7,15 +7,9 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.security.auth.Subject;
 
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.LoginSearchInput;
-import org.adorsys.adpharma.server.jpa.LoginSearchResult;
-import org.adorsys.adpharma.server.repo.LoginRepository;
-import org.adorsys.adpharma.server.rest.LoginEJB;
 import org.adorsys.adpharma.server.rest.LoginEndpoint;
 @Stateless
 public class SecurityUtil {

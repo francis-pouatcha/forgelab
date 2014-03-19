@@ -19,6 +19,7 @@ public class DeliveryService
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
+   private static final String FIND_BY_DELIVERYDATE_PATH = "findByDeliveryDateBetween";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
@@ -124,6 +125,13 @@ public class DeliveryService
             searchInput, media);
       return target.path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, DeliverySearchResult.class);
+   }
+   
+   public List<Delivery> findByDeliveryDateBetween(DeliveryListSearchInput searchInput)
+   {
+      Entity<DeliveryListSearchInput> searchInputEntity = Entity.entity( searchInput, media);
+      return target.path(FIND_BY_DELIVERYDATE_PATH).request(media).post(
+            searchInputEntity, List.class);
    }
 
    // @POST

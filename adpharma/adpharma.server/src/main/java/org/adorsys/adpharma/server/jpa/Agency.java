@@ -112,6 +112,20 @@ public class Agency implements Serializable
 	@Description("Agency_recordingDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private Date recordingDate;
+	
+	public Agency() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	public Agency(String name, Company company) {
+		super();
+		this.name = name;
+		this.company = company;
+	}
+
+
 
 	@PostPersist
 	public void onPostPersist(){

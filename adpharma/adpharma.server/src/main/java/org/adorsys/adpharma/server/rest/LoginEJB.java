@@ -12,75 +12,81 @@ import org.adorsys.adpharma.server.repo.LoginRepository;
 public class LoginEJB
 {
 
-   @Inject
-   private LoginRepository repository;
+	@Inject
+	private LoginRepository repository;
 
-   @Inject
-   private LoginRoleNameAssocMerger loginRoleNameAssocMerger;
+	@Inject
+	AgencyMerger agencyMerger;
 
-   public Login create(Login entity)
-   {
-      return repository.save(attach(entity));
-   }
+	@Inject
+	private LoginRoleNameAssocMerger loginRoleNameAssocMerger;
 
-   public Login deleteById(Long id)
-   {
-      Login entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public Login create(Login entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public Login update(Login entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public Login deleteById(Long id)
+	{
+		Login entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public Login findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public Login update(Login entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public List<Login> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public Login findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<Login> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public List<Login> findBy(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public Long countBy(Login entity, SingularAttribute<Login, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public List<Login> findBy(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public List<Login> findByLike(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public Long countBy(Login entity, SingularAttribute<Login, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   public Long countByLike(Login entity, SingularAttribute<Login, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public List<Login> findByLike(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   private Login attach(Login entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(Login entity, SingularAttribute<Login, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated collection
-      loginRoleNameAssocMerger.bindAggregated(entity.getRoleNames());
+	private Login attach(Login entity)
+	{
+		if (entity == null)
+			return null;
 
-      return entity;
-   }
+		// aggregated collection
+		loginRoleNameAssocMerger.bindAggregated(entity.getRoleNames());
+
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+
+		return entity;
+	}
 }

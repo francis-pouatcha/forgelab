@@ -7,31 +7,45 @@ import java.util.Set;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import java.math.BigDecimal;
+
+import org.adorsys.adpharma.client.jpa.agency.AgencyCompanyForm;
+import org.adorsys.adpharma.client.jpa.agency.AgencyCompanySelection;
 import org.adorsys.adpharma.client.jpa.gender.Gender;
 import org.adorsys.adpharma.client.jpa.rolename.RoleName;
+
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
+
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
+
 import java.util.Locale;
+
 import jfxtras.scene.control.CalendarTextField;
+
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+
 import javafx.scene.control.ComboBox;
+
 import org.adorsys.javafx.crud.extensions.ViewModel;
 
 import javafx.beans.property.ObjectProperty;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -71,6 +85,11 @@ public class LoginView extends AbstractForm<Login>
    private CalendarTextField accountExpiration;
 
    private CalendarTextField recordingDate;
+   
+   @Inject
+   private LoginAgencyForm loginAgencyForm;
+   @Inject
+   private LoginAgencySelection loginAgencySelection;
 
    @Inject
    private LoginRoleNamesForm loginRoleNamesForm;
@@ -113,6 +132,9 @@ public class LoginView extends AbstractForm<Login>
       credentialExpiration = viewBuilder.addCalendarTextField("Login_credentialExpiration_description.title", "credentialExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       accountExpiration = viewBuilder.addCalendarTextField("Login_accountExpiration_description.title", "accountExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       recordingDate = viewBuilder.addCalendarTextField("Login_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      viewBuilder.addTitlePane("Login_agency_description.title", resourceBundle);
+      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencyForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencySelection, ViewModel.READ_WRITE);
       viewBuilder.addTitlePane("Login_roleNames_description.title", resourceBundle);
       viewBuilder.addSubForm("Login_roleNames_description.title", "roleNames", resourceBundle, loginRoleNamesForm, ViewModel.READ_WRITE);
       viewBuilder.addSubForm("Login_roleNames_description.title", "roleNames", resourceBundle, loginRoleNamesSelection, ViewModel.READ_WRITE);
@@ -223,4 +245,38 @@ public class LoginView extends AbstractForm<Login>
    {
       return loginRoleNamesSelection;
    }
+
+public LoginAgencyForm getLoginAgencyForm() {
+	return loginAgencyForm;
+}
+
+public LoginAgencySelection getLoginAgencySelection() {
+	return loginAgencySelection;
+}
+
+public ResourceBundle getResourceBundle() {
+	return resourceBundle;
+}
+
+public ResourceBundle getGenderBundle() {
+	return genderBundle;
+}
+
+public GenderConverter getGenderConverter() {
+	return genderConverter;
+}
+
+public GenderListCellFatory getGenderListCellFatory() {
+	return genderListCellFatory;
+}
+
+public Locale getLocale() {
+	return locale;
+}
+
+public TextInputControlValidator getTextInputControlValidator() {
+	return textInputControlValidator;
+}
+   
+   
 }
