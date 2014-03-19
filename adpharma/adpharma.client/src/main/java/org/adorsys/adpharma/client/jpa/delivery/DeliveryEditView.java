@@ -3,12 +3,16 @@ package org.adorsys.adpharma.client.jpa.delivery;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
@@ -57,49 +61,51 @@ public class DeliveryEditView
 
 	@FXML
 	private Button saveButton;
-	
-	@Inject
+
+	@FXML
 	private TextField deliveryNumber;
-	
-	@Inject
+
+	@FXML
 	private TextField deliverySlipNumber;
-	
-	@Inject
+
 	private TextField recordingDate;
-	
-	@Inject
+
 	private TextField deliveryDate;
-	
-	@Inject
+
 	private TextField supplier;
-	
-	@Inject
+
 	private TextField vat;
-	
-	@Inject
+
 	private TextField agency;
-	
-	@Inject
+
 	private TextField login;
+
+	private BigDecimalField amountBeforeTax;
+
+	private BigDecimalField taxAmount;
+
+	private BigDecimalField amountDiscount;
+
+	private BigDecimalField amountAfterTax;
+
+	private BigDecimalField processAmont;
+
+	@FXML
+	private GridPane amountPane ;
 	
-	@Inject
-	private TextField amountBeforeTax;
+	@FXML
+	private MenuItem deleteDeliveryMenu;
 	
-	@Inject
-	private TextField taxAmount;
+	@FXML
+	private MenuItem editDeliveryMenu;
 	
-	@Inject
-	private TextField amountDiscount;
-	
-	@Inject
-	private TextField amountAfterTax;
-	
-	@Inject
-	private TextField processAmont;
-	
+
 
 	@FXML
 	private Button cancelButton;
+	
+	@FXML
+	private Button addArticleButton ;
 
 	private TextField articleName;
 
@@ -116,9 +122,10 @@ public class DeliveryEditView
 	private TextField expirationDate;
 
 	@FXML
-	private HBox deliveryItemBar;
+	TableView<DeliveryItem> dataList;
 
 	@FXML
+	private HBox deliveryItemBar;
 
 	@Inject
 	private DeliveryView view;
@@ -137,14 +144,26 @@ public class DeliveryEditView
 	public void postConstruct()
 	{
 		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
-		ViewBuilder viewBuilder = new ViewBuilder();
-		viewBuilder.addMainForm(view, ViewType.EDIT, false);
+		//		ViewBuilder viewBuilder = new ViewBuilder();
+		//		viewBuilder.addMainForm(view, ViewType.EDIT, false);
 		//      viewBuilder.addSeparator();
 		//      HBox buttonBar = viewBuilder.addButtonBar();
 		//      saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		//      cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
 		//      rootPane = viewBuilder.toAnchorPane();
+
+		ViewBuilder viewBuilder = new ViewBuilder();
+		viewBuilder.addStringColumn(dataList, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "articleName", "DeliveryItem_articleName_description.title", resourceBundle,300d);
+		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+//		viewBuilder.addDateColumn(dataList, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+
 		buildDeliveryItemBar();
+		buildAmountPane();
 	}
 
 	public void buildDeliveryItemBar(){
@@ -176,14 +195,31 @@ public class DeliveryEditView
 
 	}
 
+	public void buildAmountPane(){
+		amountBeforeTax = ViewBuilderUtils.newBigDecimalField( "amountBeforeTax", NumberType.CURRENCY,locale,true);
+		amountDiscount = ViewBuilderUtils.newBigDecimalField( "amountDiscount", NumberType.CURRENCY,locale,false);
+		amountAfterTax = ViewBuilderUtils.newBigDecimalField( "amountAfterTax", NumberType.CURRENCY,locale,false);
+		taxAmount = ViewBuilderUtils.newBigDecimalField( "taxAmount", NumberType.CURRENCY,locale,false);
+		processAmont = ViewBuilderUtils.newBigDecimalField( "processAmont", NumberType.CURRENCY,locale,false);
+
+		amountPane.add(amountBeforeTax, 1, 0);
+		amountPane.add(taxAmount, 1, 1);
+		amountPane.add(amountDiscount, 1, 2);
+		amountPane.add(amountAfterTax, 1, 3);
+		amountPane.add(processAmont, 1, 4);
+
+	}
+
 	public void bind(Delivery model)
 	{
 		//		view.bind(model);
 		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
 		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
-//		recordingDate.textProperty().bindBidirectional(model.recordingDateProperty(), new StringConverter<Calendar>() {
-//		});
-		
+		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
+		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+		amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
+
+
 	}
 
 	public void bind(DeliveryItem deliveryItem) {
@@ -252,23 +288,23 @@ public class DeliveryEditView
 		return login;
 	}
 
-	public TextField getAmountBeforeTax() {
+	public BigDecimalField getAmountBeforeTax() {
 		return amountBeforeTax;
 	}
 
-	public TextField getTaxAmount() {
+	public BigDecimalField getTaxAmount() {
 		return taxAmount;
 	}
 
-	public TextField getAmountDiscount() {
+	public BigDecimalField getAmountDiscount() {
 		return amountDiscount;
 	}
 
-	public TextField getAmountAfterTax() {
+	public BigDecimalField getAmountAfterTax() {
 		return amountAfterTax;
 	}
 
-	public TextField getProcessAmont() {
+	public BigDecimalField getProcessAmont() {
 		return processAmont;
 	}
 
@@ -296,6 +332,24 @@ public class DeliveryEditView
 		return expirationDate;
 	}
 
+	public GridPane getAmountPane() {
+		return amountPane;
+	}
 
+	public TableView<DeliveryItem> getDataList() {
+		return dataList;
+	}
+
+	public MenuItem getDeleteDeliveryMenu() {
+		return deleteDeliveryMenu;
+	}
+
+	public MenuItem getEditDeliveryMenu() {
+		return editDeliveryMenu;
+	}
+
+	public Button getAddArticleButton() {
+		return addArticleButton;
+	}
 
 }

@@ -177,7 +177,7 @@ public class Delivery
    {
       if (amountBeforeTax == null)
       {
-         amountBeforeTax = new SimpleObjectProperty<BigDecimal>();
+         amountBeforeTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return amountBeforeTax;
    }
@@ -197,7 +197,7 @@ public class Delivery
    {
       if (amountAfterTax == null)
       {
-         amountAfterTax = new SimpleObjectProperty<BigDecimal>();
+         amountAfterTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return amountAfterTax;
    }
@@ -216,7 +216,7 @@ public class Delivery
    {
       if (amountDiscount == null)
       {
-         amountDiscount = new SimpleObjectProperty<BigDecimal>();
+         amountDiscount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return amountDiscount;
    }
@@ -235,7 +235,7 @@ public class Delivery
    {
       if (netAmountToPay == null)
       {
-         netAmountToPay = new SimpleObjectProperty<BigDecimal>();
+         netAmountToPay = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return netAmountToPay;
    }

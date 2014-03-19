@@ -1,11 +1,14 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -24,6 +27,7 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateView;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleSearchControler;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
@@ -77,38 +81,112 @@ public class DeliveryEditController implements EntityController
 	@Inject
 	@Bundle(CrudKeys.class)
 	private ResourceBundle resourceBundle;
-	
-	
+
+
 	@Inject
 	ModalArticleSearchControler modalArticleSearchControler;
-	
+
 	@Inject
 	DeliveryItem deliveryItem;
 	
 	@Inject
+	ModalArticleCreateView modalArticleCreateView;
+
+	@Inject
 	Delivery model;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
 		editView.bind(deliveryItem);
-//		editView.bind(model);
-		
-		
-		modalArticleSearchControler.getView().getDataList().getSelectionModel().selectedItemProperty()
-        .addListener(new ChangeListener<Article>()
-        {
-           @Override
-           public void changed(
-                 ObservableValue<? extends Article> property,
-                 Article oldValue, Article newValue)
-           {
-              if (newValue != null)
-            	  handleSelectedArticle(newValue);
-                  modalArticleSearchControler.getView().closeDialog();
-           }
+		editView.bind(model);
 
-        });
+		editView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				modalArticleCreateView.showDiaLog();
+				
+			}
+		});
+		editView.getDataList().getItems().addListener(new ListChangeListener<DeliveryItem>() {
+
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends DeliveryItem> c) {
+				BigDecimal processingAmount = editView.getProcessAmont().getNumber();
+				c.next();
+				if(c.getAddedSize()!=0){
+					List<? extends DeliveryItem> addedSubList = c.getAddedSubList();
+					for (DeliveryItem deliveryItem : addedSubList) {
+						processingAmount = processingAmount.add(deliveryItem.getTotalPurchasePrice());
+					}
+				}
+
+				if(c.getRemovedSize()!=0){
+					List<? extends DeliveryItem> removed = c.getRemoved();
+					for (DeliveryItem deliveryItem : removed) {
+						processingAmount =processingAmount.subtract(deliveryItem.getTotalPurchasePrice());
+
+					}
+				}
+				editView.getProcessAmont().setNumber(processingAmount);
+
+			}
+		});
+
+		modalArticleSearchControler.getView().getDataList().getSelectionModel().selectedItemProperty()
+		.addListener(new ChangeListener<Article>()
+				{
+			@Override
+			public void changed(
+					ObservableValue<? extends Article> property,
+					Article oldValue, Article newValue)
+			{
+				if (newValue != null)
+					handleSelectedArticle(newValue);
+				modalArticleSearchControler.getView().closeDialog();
+			}
+
+				});
+		editView.getPurchasePricePU().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					deliveryItem.calculateTotalAmout();
+					DeliveryItem deliveryItem2 = new DeliveryItem();
+					PropertyReader.copy(deliveryItem, deliveryItem2);
+					editView.getDataList().getItems().add(deliveryItem2);
+					PropertyReader.copy(new DeliveryItem(), deliveryItem);
+				}
+			}
+		});
+
+		editView.getDeleteDeliveryMenu().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				DeliveryItem selectedItem = editView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null) editView.getDataList().getItems().remove(selectedItem);
+
+			}
+		});
+		editView.getEditDeliveryMenu().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				DeliveryItem selectedItem = editView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null) {
+					PropertyReader.copy(selectedItem, deliveryItem);
+					editView.getDataList().getItems().remove(selectedItem);
+					editView.getStockQuantity().setFocusTraversable(true);
+				}
+
+			}
+		});
+
 		editView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -120,7 +198,7 @@ public class DeliveryEditController implements EntityController
 				}
 			}
 		});
-		
+
 		// Reset
 		editView.getCancelButton().setOnAction(
 				new EventHandler<ActionEvent>()
@@ -270,19 +348,12 @@ public class DeliveryEditController implements EntityController
 	{
 		this.displayedEntity = model;
 		editView.bind(this.displayedEntity);
-		
+
 	}
-	
+
 	private void handleSelectedArticle(Article article) {
-		deliveryItem.setArticleName(article.getArticleName());
-		deliveryItem.setMainPic(article.getPic());
-		deliveryItem.setSecondaryPic(article.getPic());
-		deliveryItem.setPurchasePricePU(article.getPppu());
-		deliveryItem.setSalesPricePU(article.getSppu());
-		deliveryItem.setArticle(new DeliveryItemArticle(article));
-		deliveryItem.setStockQuantity(BigDecimal.ONE);
-		deliveryItem.setFreeQuantity(BigDecimal.ZERO);
-		
+		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
+		PropertyReader.copy(fromArticle, deliveryItem);
 	}
 
 }
