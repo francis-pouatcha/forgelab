@@ -104,18 +104,6 @@ public class ModalArticleCreateView extends ApplicationModal{
 		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.TRASH_ALT);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(600d);
-
-		articleView.getArticleSectionSelection().getSection().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Section>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Section> observable,
-					Section oldValue, Section newValue) {
-				if(newValue!=null){
-					article.setSection(new ArticleSection(newValue));
-				}
-
-			}
-		});
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -138,6 +126,7 @@ public class ModalArticleCreateView extends ApplicationModal{
 	{
 		this.article = model;
 		view.bind(this.article);
+		
 	}
 	public ArticleView getArticleView() {
 		return articleView;

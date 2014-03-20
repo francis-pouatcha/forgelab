@@ -35,6 +35,8 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
+import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
@@ -73,6 +75,15 @@ public class DeliveryEditController implements EntityController
 	@EntityEditDoneEvent
 	private Event<Delivery> editedDoneEvent;
 
+	
+
+	@Inject
+	ArticleCreateService articleCreateService ;
+
+	@Inject
+	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
+
+
 	private Delivery displayedEntity;
 
 	@Inject
@@ -104,19 +115,17 @@ public class DeliveryEditController implements EntityController
 	{
 		editView.bind(deliveryItem);
 		editView.bind(model);
-		
-		modalArticleCreateController.getArticleCreateService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
-			public void handle(WorkerStateEvent event) {
-				ArticleCreateService s = (ArticleCreateService) event.getSource();
-				Article articleCreateResult = s.getValue();
-				event.consume();
-				s.reset();
-				handleSelectedArticle(articleCreateResult);
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().title(resourceBundle.getString("Entity_create_error.title")).showException(exception);
 
 			}
 		});
+		articleCreateService.setOnFailed(createServiceCallFailedEventHandler);
+
 		editView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -335,8 +344,6 @@ public class DeliveryEditController implements EntityController
 	@Override
 	public void display(Pane parent)
 	{
-		editView.getView().validate(displayedEntity);
-
 		BorderPane rootPane = editView.getRootPane();
 		ObservableList<Node> children = parent.getChildren();
 		if (!children.contains(rootPane))
@@ -371,6 +378,11 @@ public class DeliveryEditController implements EntityController
 	private void handleSelectedArticle(Article article) {
 		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
 		PropertyReader.copy(fromArticle, deliveryItem);
+	}
+
+	private void handleModalArticleCreateDone(@Observes @EntityCreateDoneEvent Article article) {
+		handleSelectedArticle(article);
+
 	}
 
 }

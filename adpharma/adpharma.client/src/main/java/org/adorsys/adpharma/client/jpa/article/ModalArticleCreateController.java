@@ -11,7 +11,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
@@ -32,13 +35,15 @@ import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchService;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
+import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
-
+@Singleton
 public class ModalArticleCreateController {
 
 	@Inject
@@ -54,28 +59,109 @@ public class ModalArticleCreateController {
 
 	@Inject
 	Article model ;
+	
+	@Inject
+	@EntityCreateDoneEvent
+	private Event<Article> articleCreateDoneEvent;
 
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
 	@PostConstruct
 	public void postConstruct(){          
-		//		bind models to views
+
+		bindOnSucceedService();
+		bindViewButtonAction();
 		modalArticleCreateView.bind(model);
 
-		modalArticleCreateView.getArticleView().getArticleAgencySelection().getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+		modalArticleCreateView.getView().getArticleAgencySelection().getAgency().valueProperty().addListener(new ChangeListener<Agency>()
 				{
 			@Override
 			public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
 					Agency newValue)
 			{
 				if(newValue!=null){
-					Dialogs.create().message(newValue.toString()).showInformation();
-//					article.setAgency(new ArticleAgency(newValue));
+					model.setAgency(new ArticleAgency(newValue));
 				}
 			}
 				});
-		//		bind view action
+
+		modalArticleCreateView.getView().getArticleSectionSelection().getSection().valueProperty().addListener(new ChangeListener<Section>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Section> ov, Section oldValue,
+					Section newValue)
+			{
+				if(newValue!=null){
+					model.setSection(new ArticleSection(newValue));
+				}
+			}
+				});
+
+		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().title(resourceBundle.getString("Entity_create_error.title")).showException(exception);
+
+			}
+		});
+		articleCreateService.setOnFailed(createServiceCallFailedEventHandler);
+
+
+	}
+
+
+	public void bindViewButtonAction(){
+		modalArticleCreateView.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				modalArticleCreateView.closeDialog();
+
+			}
+		});
+
+		modalArticleCreateView.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				PropertyReader.copy(new Article(), model);
+			}
+		});
+
+		modalArticleCreateView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Set<ConstraintViolation<Article>> violations = modalArticleCreateView.getView().validate(model);
+				if (violations.isEmpty())
+				{
+					articleCreateService.setModel(model).start();
+				}
+				else
+				{
+					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
+					.nativeTitleBar().message(model.getArticleName()).showError();
+				}
+			}
+
+		});
+	}
+
+	public void bindOnSucceedService(){
+		articleCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ArticleCreateService s = (ArticleCreateService) event.getSource();
+				Article articleCreateResult = s.getValue();
+				event.consume();
+				s.reset();
+				modalArticleCreateView.closeDialog();
+				articleCreateDoneEvent.fire(articleCreateResult);
+
+			}
+		});
 		modalArticleCreateView.getSectionSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -149,59 +235,9 @@ public class ModalArticleCreateController {
 				modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().setAll(resultList);
 			}
 		});
-
-		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
-			@Override
-			protected void showError(Throwable exception) {
-				Dialogs.create().nativeTitleBar().title(resourceBundle.getString("Entity_create_error.title")).showException(exception);
-
-			}
-		});
-
-		modalArticleCreateView.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				modalArticleCreateView.closeDialog();
-
-			}
-		});
-
-		modalArticleCreateView.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				PropertyReader.copy(new Article(), model);
-			}
-		});
-
-		modalArticleCreateView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				Set<ConstraintViolation<Article>> violations = modalArticleCreateView.getView().validate(model);
-				if (violations.isEmpty())
-				{
-					articleCreateService.setModel(model).start();
-				}
-				else
-				{
-					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
-					.nativeTitleBar().message(resourceBundle.getString("Entity_click_to_see_error")).showError();
-				}
-			}
-
-		});
-
-		articleCreateService.setOnFailed(createServiceCallFailedEventHandler);
-
-
 	}
 
-	private void handleArticleCreateResult(Article articleCreateResult) {
-
-
-	}
+	
 
 	public ModalArticleCreateView getModalArticleCreateView() {
 		return modalArticleCreateView;
