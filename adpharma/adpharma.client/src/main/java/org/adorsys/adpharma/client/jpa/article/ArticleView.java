@@ -202,17 +202,17 @@ public class ArticleView extends AbstractForm<Article>
       lastStockEntry.calendarProperty().bindBidirectional(model.lastStockEntryProperty());
       lastOutOfStock.calendarProperty().bindBidirectional(model.lastOutOfStockProperty());
       recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
-      articleSectionForm.bind(model);
+//      articleSectionForm.bind(model);
       articleSectionSelection.bind(model);
-      articleFamilyForm.bind(model);
+//      articleFamilyForm.bind(model);
       articleFamilySelection.bind(model);
-      articleDefaultSalesMarginForm.bind(model);
+//      articleDefaultSalesMarginForm.bind(model);
       articleDefaultSalesMarginSelection.bind(model);
-      articlePackagingModeForm.bind(model);
+//      articlePackagingModeForm.bind(model);
       articlePackagingModeSelection.bind(model);
-      articleAgencyForm.bind(model);
+//      articleAgencyForm.bind(model);
       articleAgencySelection.bind(model);
-      articleClearanceConfigForm.bind(model);
+//      articleClearanceConfigForm.bind(model);
       articleClearanceConfigSelection.bind(model);
    }
 

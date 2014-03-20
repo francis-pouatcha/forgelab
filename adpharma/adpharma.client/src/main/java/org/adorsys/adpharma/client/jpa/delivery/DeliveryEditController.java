@@ -27,6 +27,8 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleCreateService;
+import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateController;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateView;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleSearchControler;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -44,6 +46,7 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class DeliveryEditController implements EntityController
@@ -88,9 +91,10 @@ public class DeliveryEditController implements EntityController
 
 	@Inject
 	DeliveryItem deliveryItem;
-	
+
 	@Inject
-	ModalArticleCreateView modalArticleCreateView;
+	ModalArticleCreateController modalArticleCreateController;
+
 
 	@Inject
 	Delivery model;
@@ -100,15 +104,28 @@ public class DeliveryEditController implements EntityController
 	{
 		editView.bind(deliveryItem);
 		editView.bind(model);
+		
+		modalArticleCreateController.getArticleCreateService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-		editView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
-			
 			@Override
-			public void handle(ActionEvent event) {
-				modalArticleCreateView.showDiaLog();
-				
+			public void handle(WorkerStateEvent event) {
+				ArticleCreateService s = (ArticleCreateService) event.getSource();
+				Article articleCreateResult = s.getValue();
+				event.consume();
+				s.reset();
+				handleSelectedArticle(articleCreateResult);
+
 			}
 		});
+		editView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				modalArticleCreateController.getModalArticleCreateView().showDiaLog();
+
+			}
+		});
+
 		editView.getDataList().getItems().addListener(new ListChangeListener<DeliveryItem>() {
 
 			@Override

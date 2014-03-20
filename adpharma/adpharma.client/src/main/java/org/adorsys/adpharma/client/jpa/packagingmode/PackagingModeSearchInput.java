@@ -23,7 +23,7 @@ public class PackagingModeSearchInput
    /**
     * The entity holding search inputs.
     */
-   private PackagingMode entity;
+   private PackagingMode entity = new PackagingMode();
 
    /**
     * The start cursor

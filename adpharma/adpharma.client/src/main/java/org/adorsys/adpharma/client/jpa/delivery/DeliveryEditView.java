@@ -169,25 +169,27 @@ public class DeliveryEditView
 	public void buildDeliveryItemBar(){
 		mainPic = ViewBuilderUtils.newTextField( "mainPic", false);
 		mainPic.setPromptText("cip");
+		mainPic.setTooltip(new Tooltip("cip"));
 
 		articleName = ViewBuilderUtils.newTextField("articleName", false);
 		articleName.setPromptText("Designation");
 		articleName.setPrefWidth(350d);
+		articleName.setTooltip(new Tooltip("Designation article"));
 
 		freeQuantity = ViewBuilderUtils.newBigDecimalField( "freeQuantity", NumberType.INTEGER,locale,false);
-		freeQuantity.setTooltip(new Tooltip("UG"));
+		freeQuantity.setTooltip(new Tooltip("Unite gratuite"));
 		freeQuantity.setPrefWidth(75d);
 
 		stockQuantity = ViewBuilderUtils.newBigDecimalField( "stockQuantity", NumberType.INTEGER, locale,false);
-		stockQuantity.setTooltip(new Tooltip("Qte"));
+		stockQuantity.setTooltip(new Tooltip("Quantite livree"));
 		stockQuantity.setPrefWidth(75d);
 
 		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
-		salesPricePU.setTooltip(new Tooltip("PV"));
+		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
 		salesPricePU.setPrefWidth(130d);
 
 		purchasePricePU = ViewBuilderUtils.newBigDecimalField( "purchasePricePU", NumberType.CURRENCY, locale,false);
-		purchasePricePU.setTooltip(new Tooltip("PA"));
+		purchasePricePU.setTooltip(new Tooltip("Prix d achat unitaire"));
 		purchasePricePU.setPrefWidth(130d);
 
 		deliveryItemBar.getChildren().addAll(

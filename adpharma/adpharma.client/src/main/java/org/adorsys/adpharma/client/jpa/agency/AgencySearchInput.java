@@ -23,7 +23,7 @@ public class AgencySearchInput
    /**
     * The entity holding search inputs.
     */
-   private Agency entity;
+   private Agency entity = new Agency();
 
    /**
     * The start cursor

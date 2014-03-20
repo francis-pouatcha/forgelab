@@ -23,7 +23,7 @@ public class ClearanceConfigSearchInput
    /**
     * The entity holding search inputs.
     */
-   private ClearanceConfig entity;
+   private ClearanceConfig entity = new ClearanceConfig();
 
    /**
     * The start cursor

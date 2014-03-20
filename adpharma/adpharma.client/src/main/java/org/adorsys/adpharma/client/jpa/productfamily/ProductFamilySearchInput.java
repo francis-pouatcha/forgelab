@@ -23,7 +23,7 @@ public class ProductFamilySearchInput
    /**
     * The entity holding search inputs.
     */
-   private ProductFamily entity;
+   private ProductFamily entity = new ProductFamily();
 
    /**
     * The start cursor

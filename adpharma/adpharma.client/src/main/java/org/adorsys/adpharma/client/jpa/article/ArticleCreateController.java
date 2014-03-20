@@ -43,6 +43,7 @@ public class ArticleCreateController implements EntityController
 
 	@Inject
 	private ArticleCreateService createService;
+	
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
