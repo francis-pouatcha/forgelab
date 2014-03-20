@@ -68,17 +68,23 @@ public class DeliveryEditView
 	@FXML
 	private TextField deliverySlipNumber;
 
-	private TextField recordingDate;
+	private CalendarTextField recordingDate;
 
-	private TextField deliveryDate;
+	private CalendarTextField deliveryDate;
 
-	private TextField supplier;
+	@FXML
+	private ComboBox<DeliverySupplier> supplier;
 
-	private TextField vat;
 
-	private TextField agency;
+	@FXML
+	private ComboBox<DeliveryReceivingAgency> agency;
 
-	private TextField login;
+	@FXML
+	private ComboBox<DeliveryCreatingUser> login;
+	
+
+	@FXML
+	private ComboBox<DeliveryCurrency> currency;
 
 	private BigDecimalField amountBeforeTax;
 
@@ -120,6 +126,9 @@ public class DeliveryEditView
 	private BigDecimalField salesPricePU;
 
 	private TextField expirationDate;
+	
+	@FXML
+	private GridPane leftGride;
 
 	@FXML
 	TableView<DeliveryItem> dataList;
@@ -164,8 +173,21 @@ public class DeliveryEditView
 
 		buildDeliveryItemBar();
 		buildAmountPane();
+		buildLeftGrid();
 	}
-
+public void buildLeftGrid(){
+	recordingDate =ViewBuilderUtils.newCalendarTextField("recordingDate", "dd-MM-yyyy HH:mm", locale, false);
+	recordingDate.setPrefWidth(180d);
+	recordingDate.setDisable(true);
+	leftGride.add(recordingDate, 1, 2);
+	
+	deliveryDate =ViewBuilderUtils.newCalendarTextField("deliveryDate", "dd-MM-yyyy HH:mm", locale, false);
+	deliveryDate.setPrefWidth(180d);
+	deliveryDate.setDisable(true);
+	leftGride.add(deliveryDate, 1, 3);
+	
+	
+}
 	public void buildDeliveryItemBar(){
 		mainPic = ViewBuilderUtils.newTextField( "mainPic", false);
 		mainPic.setPromptText("cip");
@@ -198,11 +220,20 @@ public class DeliveryEditView
 	}
 
 	public void buildAmountPane(){
-		amountBeforeTax = ViewBuilderUtils.newBigDecimalField( "amountBeforeTax", NumberType.CURRENCY,locale,true);
+		amountBeforeTax = ViewBuilderUtils.newBigDecimalField( "amountBeforeTax", NumberType.CURRENCY,locale,false);
+		amountBeforeTax.setEditable(false);
+		
 		amountDiscount = ViewBuilderUtils.newBigDecimalField( "amountDiscount", NumberType.CURRENCY,locale,false);
+		amountDiscount.setEditable(false);
+		
 		amountAfterTax = ViewBuilderUtils.newBigDecimalField( "amountAfterTax", NumberType.CURRENCY,locale,false);
+		amountAfterTax.setEditable(false);
+		
 		taxAmount = ViewBuilderUtils.newBigDecimalField( "taxAmount", NumberType.CURRENCY,locale,false);
+		taxAmount.setEditable(false);
+		
 		processAmont = ViewBuilderUtils.newBigDecimalField( "processAmont", NumberType.CURRENCY,locale,false);
+		processAmont.setEditable(false);
 
 		amountPane.add(amountBeforeTax, 1, 0);
 		amountPane.add(taxAmount, 1, 1);
@@ -220,8 +251,12 @@ public class DeliveryEditView
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
-
-
+		supplier.valueProperty().bindBidirectional(model.supplierProperty());
+		currency.valueProperty().bindBidirectional(model.currencyProperty());
+		login.valueProperty().bindBidirectional(model.creatingUserProperty());
+        agency.valueProperty().bindBidirectional(model.receivingAgencyProperty());
+        recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
+        deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 	}
 
 	public void bind(DeliveryItem deliveryItem) {
@@ -266,27 +301,23 @@ public class DeliveryEditView
 		return deliverySlipNumber;
 	}
 
-	public TextField getRecordingDate() {
+	public CalendarTextField getRecordingDate() {
 		return recordingDate;
 	}
 
-	public TextField getDeliveryDate() {
+	public CalendarTextField getDeliveryDate() {
 		return deliveryDate;
 	}
 
-	public TextField getSupplier() {
+	public ComboBox<DeliverySupplier> getSupplier() {
 		return supplier;
 	}
 
-	public TextField getVat() {
-		return vat;
-	}
-
-	public TextField getAgency() {
+	public ComboBox<DeliveryReceivingAgency> getAgency() {
 		return agency;
 	}
 
-	public TextField getLogin() {
+	public ComboBox<DeliveryCreatingUser> getLogin() {
 		return login;
 	}
 

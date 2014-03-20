@@ -14,27 +14,17 @@
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="updateButton" layoutX="58.0" layoutY="40.0" mnemonicParsing="false" prefWidth="140.0" text="Modifier Entete">
+				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Nouvelle Livraison">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="Detail selection">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Recep. Livraison">
+				<Button fx:id="updateButton" layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="Modifier la Liv.">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
 				<Button layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Exporter en PDF">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button layoutX="23.0" layoutY="281.0" mnemonicParsing="false" prefWidth="140.0" text="Exporter en XLS">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
@@ -56,12 +46,13 @@
 	</right>
 	<center>
 		<VBox>
-			<children>
+			<children><Separator prefWidth="200.0" />
 				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 					<padding>
 						<Insets left="10.0" />
 					</padding>
 				</HBox>
+<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
 				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>

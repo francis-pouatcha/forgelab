@@ -184,7 +184,7 @@ public class Article
    {
       if (active == null)
       {
-         active = new SimpleBooleanProperty();
+         active = new SimpleBooleanProperty(Boolean.TRUE);
       }
       return active;
    }
@@ -205,7 +205,7 @@ public class Article
    {
       if (maxQtyPerPO == null)
       {
-         maxQtyPerPO = new SimpleLongProperty();
+         maxQtyPerPO = new SimpleLongProperty(1L);
       }
       return maxQtyPerPO;
    }
@@ -224,7 +224,7 @@ public class Article
    {
       if (authorizedSale == null)
       {
-         authorizedSale = new SimpleBooleanProperty();
+         authorizedSale = new SimpleBooleanProperty(Boolean.TRUE);
       }
       return authorizedSale;
    }
@@ -245,7 +245,7 @@ public class Article
    {
       if (approvedOrder == null)
       {
-         approvedOrder = new SimpleBooleanProperty();
+         approvedOrder = new SimpleBooleanProperty(Boolean.TRUE);
       }
       return approvedOrder;
    }
@@ -285,7 +285,7 @@ public class Article
    {
       if (qtyInStock == null)
       {
-         qtyInStock = new SimpleObjectProperty<BigDecimal>();
+         qtyInStock = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return qtyInStock;
    }
@@ -304,7 +304,7 @@ public class Article
    {
       if (salableQty == null)
       {
-         salableQty = new SimpleObjectProperty<BigDecimal>();
+         salableQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return salableQty;
    }
@@ -323,7 +323,7 @@ public class Article
    {
       if (qtyInStore == null)
       {
-         qtyInStore = new SimpleObjectProperty<BigDecimal>();
+         qtyInStore = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return qtyInStore;
    }
@@ -342,7 +342,7 @@ public class Article
    {
       if (pppu == null)
       {
-         pppu = new SimpleObjectProperty<BigDecimal>();
+         pppu = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return pppu;
    }
@@ -361,7 +361,7 @@ public class Article
    {
       if (sppu == null)
       {
-         sppu = new SimpleObjectProperty<BigDecimal>();
+         sppu = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return sppu;
    }
@@ -380,7 +380,7 @@ public class Article
    {
       if (maxDiscountRate == null)
       {
-         maxDiscountRate = new SimpleObjectProperty<BigDecimal>();
+         maxDiscountRate = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return maxDiscountRate;
    }
@@ -399,7 +399,7 @@ public class Article
    {
       if (totalStockPrice == null)
       {
-         totalStockPrice = new SimpleObjectProperty<BigDecimal>();
+         totalStockPrice = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return totalStockPrice;
    }

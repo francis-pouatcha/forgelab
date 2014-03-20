@@ -65,6 +65,10 @@ public class DeliveryListController implements EntityController
 	private Event<Delivery> createRequestedEvent;
 
 	@Inject
+	@EntityEditRequestedEvent
+	private Event<Delivery> editRequestedEvent;
+
+	@Inject
 	SupplierSearchService supplierSearchService;
 
 	@Inject
@@ -108,7 +112,7 @@ public class DeliveryListController implements EntityController
 			public void handle(ActionEvent event) {
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem== null) return ;
-                 deliveryEditEvent.fire(selectedItem);
+				deliveryEditEvent.fire(selectedItem);
 			}
 		});
 
@@ -176,10 +180,18 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
+				createRequestedEvent.fire(new Delivery());
+			}
+				});
+
+		listView.getUpdateButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if (selectedItem == null)
-					selectedItem = new Delivery();
-				createRequestedEvent.fire(selectedItem);
+				if (selectedItem != null)
+					editRequestedEvent.fire(selectedItem);
 			}
 				});
 

@@ -82,6 +82,9 @@ public class DeliveryListView
 	private Button createButton;
 	
 	@FXML
+	private Button updateButton;
+	
+	@FXML
 	private Button processButton;
 
 	@FXML
@@ -125,13 +128,14 @@ public class DeliveryListView
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle);
 		//		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addStringColumn(dataList, "currency", "Delivery_currency_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "Delivery_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "Delivery_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
-		viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
 		//      pagination = viewBuilder.addPagination();
 		//      viewBuilder.addSeparator();
 		//      HBox buttonBar = viewBuilder.addButtonBar();
@@ -221,7 +225,13 @@ public class DeliveryListView
 		return processButton;
 	}
 
-	
+	public HBox getSearchBar() {
+		return searchBar;
+	}
+
+	public Button getUpdateButton() {
+		return updateButton;
+	}
 
 
 }
