@@ -158,7 +158,7 @@ public class Delivery
    {
       if (deliveryProcessingState == null)
       {
-         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>();
+         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>(DocumentProcessingState.ONGOING);
       }
       return deliveryProcessingState;
    }

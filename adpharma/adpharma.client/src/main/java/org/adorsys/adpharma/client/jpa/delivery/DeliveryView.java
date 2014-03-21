@@ -52,7 +52,7 @@ import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessin
 public class DeliveryView extends AbstractForm<Delivery>
 {
 
-	//	private TextField deliveryNumber;
+	private TextField deliveryNumber;
 
 	private TextField deliverySlipNumber;
 
@@ -134,7 +134,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		//		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
+		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
 		//		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
@@ -171,7 +171,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 
 	public void addValidators()
 	{
-		//		deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
+		deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
 		deliverySlipNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliverySlipNumber, Delivery.class, "deliverySlipNumber", resourceBundle));
 		amountBeforeTax.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<Delivery>(bigDecimalFieldValidator, amountBeforeTax, Delivery.class, "amountBeforeTax", resourceBundle));
 	}
@@ -179,7 +179,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public Set<ConstraintViolation<Delivery>> validate(Delivery model)
 	{
 		Set<ConstraintViolation<Delivery>> violations = new HashSet<ConstraintViolation<Delivery>>();
-		//		violations.addAll(textInputControlValidator.validate(deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
+		violations.addAll(textInputControlValidator.validate(deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
 		violations.addAll(textInputControlValidator.validate(deliverySlipNumber, Delivery.class, "deliverySlipNumber", resourceBundle));
 		violations.addAll(bigDecimalFieldValidator.validate(amountBeforeTax, Delivery.class, "amountBeforeTax", resourceBundle));
 		//		violations.addAll(toOneAggreggationFieldValidator.validate(deliveryCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), Delivery.class, "creatingUser", resourceBundle));
@@ -190,7 +190,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 
 	public void bind(Delivery model)
 	{
-		//		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
+		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
 		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
 		//		deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
@@ -205,9 +205,9 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//		deliveryDeliveryItemsSelection.bind(model);
 		//		deliveryCreatingUserForm.bind(model);
 		//		deliveryCreatingUserSelection.bind(model);
-		deliverySupplierForm.bind(model);
+		//		deliverySupplierForm.bind(model);
 		deliverySupplierSelection.bind(model);
-		deliveryVatForm.bind(model);
+		//		deliveryVatForm.bind(model);
 		deliveryVatSelection.bind(model);
 		//		deliveryCurrencyForm.bind(model);
 		deliveryCurrencySelection.bind(model);
@@ -215,10 +215,10 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//		deliveryReceivingAgencySelection.bind(model);
 	}
 
-	//	public TextField getDeliveryNumber()
-	//	{
-	//		return deliveryNumber;
-	//	}
+	public TextField getDeliveryNumber()
+	{
+		return deliveryNumber;
+	}
 
 	public TextField getDeliverySlipNumber()
 	{

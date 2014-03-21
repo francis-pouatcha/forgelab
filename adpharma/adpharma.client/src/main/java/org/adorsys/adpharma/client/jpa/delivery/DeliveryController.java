@@ -96,7 +96,7 @@ public class DeliveryController extends DomainComponentController
       // else display list of deliverys.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();

@@ -12,7 +12,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -22,10 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import org.adorsys.adpharma.client.jpa.supplier.SupplierLoadService;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
@@ -43,7 +39,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
-import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class DeliveryListController implements EntityController
@@ -51,10 +46,6 @@ public class DeliveryListController implements EntityController
 
 	@Inject
 	private DeliveryListView listView;
-
-	@Inject
-	@EntitySelectionEvent
-	private Event<Delivery> selectionEvent;
 
 	@Inject
 	@EntitySearchRequestedEvent
@@ -65,8 +56,12 @@ public class DeliveryListController implements EntityController
 	private Event<Delivery> createRequestedEvent;
 
 	@Inject
+	@EntitySelectionEvent
+	private Event<Delivery> precessDeliveryRequestedEvent;
+	
+	@Inject
 	@EntityEditRequestedEvent
-	private Event<Delivery> editRequestedEvent;
+	private Event<Delivery> deliveryEditEvent;
 
 	@Inject
 	SupplierSearchService supplierSearchService;
@@ -79,10 +74,6 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<DeliverySearchResult> entityListPageIndexChangedEvent;
-
-	@Inject
-	@EntityEditRequestedEvent
-	private Event<Delivery> deliveryEditEvent;
 
 	private DeliverySearchResult searchResult;
 
@@ -112,7 +103,7 @@ public class DeliveryListController implements EntityController
 			public void handle(ActionEvent event) {
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem== null) return ;
-				deliveryEditEvent.fire(selectedItem);
+				precessDeliveryRequestedEvent.fire(selectedItem);
 			}
 		});
 
@@ -191,7 +182,7 @@ public class DeliveryListController implements EntityController
 			{
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if (selectedItem != null)
-					editRequestedEvent.fire(selectedItem);
+					deliveryEditEvent.fire(selectedItem);
 			}
 				});
 

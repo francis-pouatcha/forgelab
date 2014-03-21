@@ -73,7 +73,12 @@
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie" />
+								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
+									<VBox.margin>
+										<Insets bottom="10.0" />
+									</VBox.margin>
+								</Button>
+								<Button fx:id="deleteButton" layoutX="69.0" layoutY="164.0" mnemonicParsing="false" prefWidth="150.0" text="Suprimer la Liv." />
 							</children>
 							<VBox.margin>
 								<Insets />
@@ -155,7 +160,7 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="%Delivery_currency_description.title" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="%Delivery_deliveryProcessingState_description.title" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -176,7 +181,7 @@
 													</GridPane.margin>
 												</Label>
 												<ComboBox fx:id="supplier" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" />
-												<ComboBox fx:id="currency" layoutX="168.0" layoutY="24.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+												<ComboBox fx:id="state" layoutX="168.0" layoutY="24.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 												<ComboBox fx:id="agency" layoutX="168.0" layoutY="63.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 												<ComboBox fx:id="login" layoutX="168.0" layoutY="102.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 											</children>

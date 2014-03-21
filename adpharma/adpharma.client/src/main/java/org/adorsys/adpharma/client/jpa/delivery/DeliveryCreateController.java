@@ -26,6 +26,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -57,7 +58,7 @@ public class DeliveryCreateController implements EntityController
 	private Event<Delivery> searchRequestedEvent;
 
 	@Inject
-	@EntityEditRequestedEvent
+	@EntitySelectionEvent
 	private Event<Delivery> editRequestedEvent;
 
 	/**
