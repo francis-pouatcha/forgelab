@@ -64,6 +64,9 @@ public class DeliveryDisplayView
 	@FXML
 	private Button deleteButton;
 	
+	@FXML
+	private Button editButton;
+	
 	private Button okButton ;
 
 	@FXML
@@ -398,6 +401,10 @@ public class DeliveryDisplayView
 	
 	public Button getDeleteButton() {
 		return deleteButton;
+	}
+	
+	public Button getEditButton() {
+		return editButton;
 	}
 	
 	

@@ -59,7 +59,10 @@ public class DeliveryDisplayController implements EntityController
 
 	@Inject
 	private DeliveryEditService editService;
-	
+
+	@Inject
+	private DeliveryCloseService closeService;
+
 	@Inject
 	private ServiceCallFailedEventHandler editServiceCallFailedEventHandler;
 
@@ -71,9 +74,11 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@EntityEditCanceledEvent
 	private Event<Delivery> editCanceledEvent;
-	
-	
-	
+
+	@Inject
+	@EntityEditRequestedEvent
+	private Event<Delivery> deliveryEditEvent;
+
 	@Inject
 	@EntityEditDoneEvent
 	private Event<Delivery> editedDoneEvent;
@@ -260,6 +265,23 @@ public class DeliveryDisplayController implements EntityController
 					}
 				});
 
+		// Edit
+		displayView.getEditButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
+						//								if(!displayedEntity.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
+						//									removeRequestEvent.fire(displayedEntity);
+						//								}else {
+						//									Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
+						//								}
+						System.out.println("edit");
+						deliveryEditEvent.fire(displayedEntity);
+					}
+				});
+
 
 
 		// Save
@@ -270,18 +292,7 @@ public class DeliveryDisplayController implements EntityController
 					public void handle(ActionEvent e)
 					{
 
-						Set<ConstraintViolation<Delivery>> violations = displayView.getView().validate(displayedEntity);
-						if (violations.isEmpty())
-						{
-							editService.setDelivery(displayedEntity).start();
-						}
-						else
-						{
-							editErrorMessageDialog.getTitleText().setText(
-									resourceBundle.getString("Entity_edit_error.title"));
-							editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
-							editErrorMessageDialog.display();
-						}
+						handleDeliveryClosedEvent(displayedEntity);
 					}
 				});
 
@@ -300,18 +311,34 @@ public class DeliveryDisplayController implements EntityController
 			}
 				});
 
+		closeService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryCloseService s = (DeliveryCloseService) event.getSource();
+				Delivery entity = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(entity, displayedEntity);
+				editedDoneEvent.fire(entity);
+
+			}
+		});
+
 		editServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
 		{
 			@Override
 			protected void showError(Throwable exception)
 			{
-				String message = exception.getMessage();
-				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
-				if (!StringUtils.isBlank(message))
-					editErrorMessageDialog.getDetailText().setText(message);
-				editErrorMessageDialog.display();
+//				String message = exception.getMessage();
+//				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
+//				if (!StringUtils.isBlank(message))
+//					editErrorMessageDialog.getDetailText().setText(message);
+//				editErrorMessageDialog.display();
+				Dialogs.create().nativeTitleBar().showException(exception);
 			}
 		});
+		closeService.setOnFailed(editServiceCallFailedEventHandler);
 		editService.setOnFailed(editServiceCallFailedEventHandler);
 		editErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -417,6 +444,12 @@ public class DeliveryDisplayController implements EntityController
 		PropertyReader.copy(deliveryItem, deliveryItem2);
 		displayView.getDataList().getItems().add(deliveryItem2);
 		PropertyReader.copy(new DeliveryItem(), deliveryItem);
+
+	}
+
+	private void handleDeliveryClosedEvent(
+			Delivery displayedEntity) {
+		closeService.setDelivery(displayedEntity).start();
 
 	}
 
