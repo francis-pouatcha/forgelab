@@ -29,8 +29,13 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleCreateService;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateController;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleSearchControler;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
+import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
+import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -87,8 +92,10 @@ public class DeliveryDisplayController implements EntityController
 	@EntityRemoveRequestEvent
 	private Event<Delivery> removeRequestEvent;
 
+//	services
 	@Inject
 	ArticleCreateService articleCreateService ;
+
 
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
@@ -115,7 +122,8 @@ public class DeliveryDisplayController implements EntityController
 
 	@Inject
 	ModalArticleCreateController modalArticleCreateController;
-
+	
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -150,17 +158,19 @@ public class DeliveryDisplayController implements EntityController
 				c.next();
 				if(c.getAddedSize()!=0){
 					List<? extends DeliveryItem> addedSubList = c.getAddedSubList();
-					for (DeliveryItem deliveryItem : addedSubList) {
-						processingAmount = processingAmount.add(deliveryItem.getTotalPurchasePrice());
-						displayedEntity.getDeliveryItems().add(deliveryItem);
+					for (DeliveryItem item : addedSubList) {
+						processingAmount = processingAmount.add(item.getTotalPurchasePrice());
+						item.setDelivery(new DeliveryItemDelivery(displayedEntity));
+						displayedEntity.deliveryItemsProperty().getValue().add(item);
+						System.out.println(displayedEntity.getDeliveryItems().size());
 					}
 				}
 
 				if(c.getRemovedSize()!=0){
 					List<? extends DeliveryItem> removed = c.getRemoved();
-					for (DeliveryItem deliveryItem : removed) {
-						processingAmount =processingAmount.subtract(deliveryItem.getTotalPurchasePrice());
-						displayedEntity.getDeliveryItems().remove(deliveryItem);
+					for (DeliveryItem item : removed) {
+						processingAmount =processingAmount.subtract(item.getTotalPurchasePrice());
+						displayedEntity.deliveryItemsProperty().getValue().remove(item);
 					}
 				}
 				displayView.getProcessAmont().setNumber(processingAmount);
@@ -291,6 +301,8 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
+						List<DeliveryItem> deliveryItems = displayedEntity.getDeliveryItems();
+						Dialogs.create().message(deliveryItems.toString()).showInformation();
 
 						handleDeliveryClosedEvent(displayedEntity);
 					}

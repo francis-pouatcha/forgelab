@@ -22,10 +22,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.adorsys.adpharma.server.jpa.Customer;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
-import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
+import org.adorsys.adpharma.server.jpa.SalesOrderType;
+import org.adorsys.adpharma.server.jpa.SalesOrder_;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -41,6 +46,12 @@ public class SalesOrderEndpoint
 
    @Inject
    private CustomerMerger customerMerger;
+   
+   @Inject
+   CustomerEJB customerEJB ;
+   
+   @Inject
+   SecurityUtil securityUtil;
 
    @Inject
    private LoginMerger loginMerger;
@@ -65,6 +76,13 @@ public class SalesOrderEndpoint
    @Produces({ "application/json", "application/xml" })
    public SalesOrder create(SalesOrder entity)
    {
+	   List<Customer> listAll = customerEJB.listAll(0, 1) ;
+	   if(!listAll.isEmpty())
+		   entity.setCustomer(listAll.iterator().next());
+	  Login user = securityUtil.getConnectedUser();
+	  entity.setAgency(user.getAgency());
+	  entity.setSalesOrderType(SalesOrderType.CASH_SALE);
+	  entity.setSalesAgent(user);
       return detach(ejb.create(entity));
    }
 

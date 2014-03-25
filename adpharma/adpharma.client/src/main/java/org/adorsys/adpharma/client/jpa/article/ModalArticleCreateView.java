@@ -40,9 +40,6 @@ import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class ModalArticleCreateView extends ApplicationModal{
 
-	@Inject
-	private ArticleView articleView;
-
 
 	private AnchorPane rootPane;
 
@@ -129,7 +126,7 @@ public class ModalArticleCreateView extends ApplicationModal{
 		
 	}
 	public ArticleView getArticleView() {
-		return articleView;
+		return view;
 	}
 	public Button getSaveButton() {
 		return saveButton;

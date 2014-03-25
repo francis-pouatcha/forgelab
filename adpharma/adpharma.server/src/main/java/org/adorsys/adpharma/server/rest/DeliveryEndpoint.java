@@ -37,6 +37,7 @@ import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
@@ -137,10 +138,12 @@ public class DeliveryEndpoint
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Agency agency = creatingUser.getAgency();
+		si.setDelivery(delivery);
 		si.setAgency(agency);
 		si.setSupplier(delivery.getSupplier());
 		si.setCreatingUser(creatingUser);
 		si.setCreationDate(creationDate);
+		si.setInvoiceType(InvoiceType.CASHDRAWER);
 		si = supplierInvoiceEJB.create(si);
 		// Generate the supplier invoice
 		BigDecimal amountBeforeTax = BigDecimal.ZERO;
@@ -151,6 +154,7 @@ public class DeliveryEndpoint
 			// Last model: MMYY-UniqueNumber(4+)
 			String internalPic = new SimpleDateFormat("DDMMYYHH").format(new Date()) + RandomStringUtils.randomNumeric(3);
 			deliveryItem.setInternalPic(internalPic);
+			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.create(deliveryItem);
 			amountBeforeTax = amountBeforeTax.add(deliveryItem.getTotalPurchasePrice());
 			

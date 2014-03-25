@@ -35,6 +35,7 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -195,6 +196,7 @@ public class DeliveryCreateController implements EntityController
 	public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Delivery templateEntity)
 	{
 		PropertyReader.copy(templateEntity, model);
+//		PropertyReader.copy(new Delivery(), model);
 		PropertyReader.cleanIds(model, new HashSet<Object>());
 	}
 

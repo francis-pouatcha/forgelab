@@ -96,7 +96,7 @@ public class SalesOrderController extends DomainComponentController
       // else display list of salesOrders.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();
@@ -110,7 +110,7 @@ public class SalesOrderController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(searchController);
+//      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -123,7 +123,7 @@ public class SalesOrderController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -132,7 +132,7 @@ public class SalesOrderController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }
@@ -142,7 +142,7 @@ public class SalesOrderController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -152,7 +152,7 @@ public class SalesOrderController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//       displayedViews.add(displayController);
 
       displayComponent();
    }

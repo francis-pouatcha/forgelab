@@ -3,105 +3,524 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
+import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
+import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.ViewModel;
+
 import javafx.scene.control.TextField;
+
 import java.util.Locale;
+
 import jfxtras.scene.control.CalendarTextField;
+
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
+
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.util.converter.BooleanStringConverter;
+
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.ViewType;
+
 import de.jensd.fx.fontawesome.AwesomeIcon;
 
 import javax.inject.Singleton;
+
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 
 @Singleton
 public class SalesOrderDisplayView
 {
 
-   private AnchorPane rootPane;
+	@FXML
+	private BorderPane rootPane;
 
-   private Button editButton;
+	@FXML
+	private Button closeButton;
+	
+	@FXML
+	private Button clientButton;
+	
+	@FXML
+	private Button insurreurButton;
 
-   private Button removeButton;
+	@FXML
+	private Button removeButton;
 
-   private Button searchButton;
+	@FXML
+	private Button ordonnancierButton;
 
-   private HBox buttonBarLeft;
+	private HBox buttonBarLeft;
 
-   private Button confirmSelectionButton;
+	@FXML
+	private HBox saleOrderItemBar;
 
-   @Inject
-   private SalesOrderView view;
+	//	sale order items bar components
+	private TextField articleName;
 
-   @Inject
-   @Bundle({ CrudKeys.class, SalesOrder.class })
-   private ResourceBundle resourceBundle;
+	private TextField internalPic;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      ViewBuilder viewBuilder = new ViewBuilder();
-      viewBuilder.addMainForm(view, ViewType.DISPLAY, true);
-      viewBuilder.addSeparator();
-      List<HBox> doubleButtonBar = viewBuilder.addDoubleButtonBar();
-      buttonBarLeft = doubleButtonBar.get(0);
-      confirmSelectionButton = viewBuilder.addButton(buttonBarLeft, "Entity_select.title", "confirmSelectionButton", resourceBundle);
-      HBox buttonBarRight = doubleButtonBar.get(1);
-      editButton = viewBuilder.addButton(buttonBarRight, "Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
-      removeButton = viewBuilder.addButton(buttonBarRight, "Entity_remove.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
-      searchButton = viewBuilder.addButton(buttonBarRight, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-      rootPane = viewBuilder.toAnchorPane();
-   }
+	private BigDecimalField orderedQty;
 
-   public void bind(SalesOrder model)
-   {
-      view.bind(model);
-   }
+	private BigDecimalField totalSalePrice;
 
-   public AnchorPane getRootPane()
-   {
-      return rootPane;
-   }
+	private BigDecimalField salesPricePU;
 
-   public Button getEditButton()
-   {
-      return editButton;
-   }
+	private Button okButton;
 
-   public Button getRemoveButton()
-   {
-      return removeButton;
-   }
+	//	private Button confirmSelectionButton;
 
-   public Button getSearchButton()
-   {
-      return searchButton;
-   }
+	//	left grid pane components
+	@FXML
+	private ComboBox<SalesOrderCustomer> client;
+	
+	@FXML
+	private ComboBox<SalesOrderCashDrawer> cashDrawer;
 
-   public SalesOrderView getView()
-   {
-      return view;
-   }
+	@FXML
+	private TextField clientPhone;
 
-   public Button getConfirmSelectionButton()
-   {
-      return confirmSelectionButton;
-   }
+	@FXML
+	private TextField clientAdresse;
+
+	@FXML
+	private TextField clientcategorie;
+	
+//	Rigth grid pane components
+	@FXML
+	private ComboBox<SalesOrderInsurance> insurrer;
+
+	@FXML
+	private TextField coverageRate;
+
+	@FXML
+	private TextField numBon;
+
+	@FXML
+	private TextField numcmd;
+	
+//	amounts grid pane components
+	
+	@FXML
+	private GridPane amountPane;
+	
+	private BigDecimalField amountHT;
+
+	private BigDecimalField taxAmount;
+
+	private BigDecimalField discount;
+	
+	private BigDecimalField amountTTC;
+	
+	private BigDecimalField discountRate;
+
+	@FXML
+	private ComboBox<SalesOrderVat> tax;
+	
+
+	
+	@Inject
+	private SalesOrderView view;
+
+	@Inject
+	@Bundle({ CrudKeys.class, SalesOrder.class ,SalesOrderItem.class,Article.class})
+	private ResourceBundle resourceBundle;
+
+	@Inject
+	private FXMLLoader fxmlLoader;
+
+	@FXML
+	private Pagination pagination;
+
+	@FXML
+	private TableView<SalesOrderItem> dataList;
+
+	@Inject
+	private Locale locale;
+
+
+
+
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
+		ViewBuilder viewBuilder = new ViewBuilder();
+		//      viewBuilder.addMainForm(view, ViewType.DISPLAY, true);
+		//      viewBuilder.addSeparator();
+		//      List<HBox> doubleButtonBar = viewBuilder.addDoubleButtonBar();
+		//      buttonBarLeft = doubleButtonBar.get(0);
+		//      confirmSelectionButton = viewBuilder.addButton(buttonBarLeft, "Entity_select.title", "confirmSelectionButton", resourceBundle);
+		//      HBox buttonBarRight = doubleButtonBar.get(1);
+		//      editButton = viewBuilder.addButton(buttonBarRight, "Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
+		//      removeButton = viewBuilder.addButton(buttonBarRight, "Entity_remove.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+		//      searchButton = viewBuilder.addButton(buttonBarRight, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//      rootPane = viewBuilder.toAnchorPane();
+
+		//	   defined datalist columns
+		dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
+		
+		buildOrderItemBar();
+		buildAmountPane();
+	}
+
+	public void buildAmountPane(){
+		amountHT = ViewBuilderUtils.newBigDecimalField( "amountHT", NumberType.CURRENCY,locale,false);
+		amountHT.setEditable(false);
+
+		discount = ViewBuilderUtils.newBigDecimalField( "discount", NumberType.CURRENCY,locale,false);
+		discount.setEditable(false);
+
+		amountTTC = ViewBuilderUtils.newBigDecimalField( "amountTTC", NumberType.CURRENCY,locale,false);
+		amountTTC.setEditable(false);
+
+		taxAmount = ViewBuilderUtils.newBigDecimalField( "taxAmount", NumberType.CURRENCY,locale,false);
+		taxAmount.setEditable(false);
+		
+		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
+
+		amountPane.add(amountHT, 1, 0);
+		amountPane.add(taxAmount, 1, 1);
+		amountPane.add(discount, 1, 2);
+		amountPane.add(amountTTC, 1, 3);
+		amountPane.add(discountRate, 1, 5);
+
+	}
+	public void buildOrderItemBar(){
+		internalPic = ViewBuilderUtils.newTextField( "internalPic", false);
+		internalPic.setPromptText("cip");
+		internalPic.setTooltip(new Tooltip("cip"));
+
+		articleName = ViewBuilderUtils.newTextField("articleName", false);
+		articleName.setPromptText("Designation");
+		articleName.setPrefWidth(400d);
+		articleName.setTooltip(new Tooltip("Designation article"));
+
+		orderedQty = ViewBuilderUtils.newBigDecimalField( "orderedQty", NumberType.INTEGER,locale,false);
+		orderedQty.setTooltip(new Tooltip("Quantite"));
+		orderedQty.setPrefWidth(75d);
+
+		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
+		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
+		salesPricePU.setPrefWidth(130d);
+		salesPricePU.setEditable(false);
+
+		totalSalePrice = ViewBuilderUtils.newBigDecimalField( "totalSalePrice", NumberType.CURRENCY, locale,false);
+		totalSalePrice.setTooltip(new Tooltip("Total prix de vente "));
+		totalSalePrice.setPrefWidth(130d);
+		totalSalePrice.setEditable(false);
+
+		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
+
+		saleOrderItemBar.getChildren().addAll(
+				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
+
+	}
+
+	public void bind(SalesOrder model)
+	{
+		amountHT.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
+		taxAmount.numberProperty().bindBidirectional(model.amountVATProperty());
+		discount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
+		tax.valueProperty().bindBidirectional(model.vatProperty());
+		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
+		client.valueProperty().bindBidirectional(model.customerProperty());
+		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
+//		view.bind(model);
+	}
+
+	public void bind(SalesOrderItem soi){
+		internalPic.textProperty().bindBidirectional(soi.internalPicProperty());
+		articleName.textProperty().bindBidirectional(soi.getArticle().articleNameProperty());
+		orderedQty.numberProperty().bindBidirectional(soi.orderedQtyProperty());
+		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
+	}
+
+	public BorderPane getRootPane()
+	{
+		return rootPane;
+	}
+
+	public Button getCloseButton()
+	{
+		return closeButton;
+	}
+
+	public Button getRemoveButton()
+	{
+		return removeButton;
+	}
+
+	public Button getOrdonnancierButton()
+	{
+		return ordonnancierButton;
+	}
+
+	public SalesOrderView getView()
+	{
+		return view;
+	}
+
+	//	public Button getConfirmSelectionButton()
+	//	{
+	//		return confirmSelectionButton;
+	//	}
+
+	public ComboBox<SalesOrderVat> getTax() {
+		return tax;
+	}
+
+	public TableView<SalesOrderItem> getDataList() {
+		return dataList;
+	}
+
+	public Button getClientButton() {
+		return clientButton;
+	}
+
+	public void setClientButton(Button clientButton) {
+		this.clientButton = clientButton;
+	}
+
+	public Button getInsurreurButton() {
+		return insurreurButton;
+	}
+
+	public void setInsurreurButton(Button insurreurButton) {
+		this.insurreurButton = insurreurButton;
+	}
+
+	public HBox getButtonBarLeft() {
+		return buttonBarLeft;
+	}
+
+	public void setButtonBarLeft(HBox buttonBarLeft) {
+		this.buttonBarLeft = buttonBarLeft;
+	}
+
+	public HBox getSaleOrderItemBar() {
+		return saleOrderItemBar;
+	}
+
+	public void setSaleOrderItemBar(HBox saleOrderItemBar) {
+		this.saleOrderItemBar = saleOrderItemBar;
+	}
+
+	public TextField getArticleName() {
+		return articleName;
+	}
+
+	public void setArticleName(TextField articleName) {
+		this.articleName = articleName;
+	}
+
+	public TextField getInternalPic() {
+		return internalPic;
+	}
+
+	public void setInternalPic(TextField internalPic) {
+		this.internalPic = internalPic;
+	}
+
+	public BigDecimalField getOrderedQty() {
+		return orderedQty;
+	}
+
+	public void setOrderedQty(BigDecimalField orderedQty) {
+		this.orderedQty = orderedQty;
+	}
+
+	public BigDecimalField getTotalSalePrice() {
+		return totalSalePrice;
+	}
+
+	public void setTotalSalePrice(BigDecimalField totalSalePrice) {
+		this.totalSalePrice = totalSalePrice;
+	}
+
+	public BigDecimalField getSalesPricePU() {
+		return salesPricePU;
+	}
+
+	public void setSalesPricePU(BigDecimalField salesPricePU) {
+		this.salesPricePU = salesPricePU;
+	}
+
+	public Button getOkButton() {
+		return okButton;
+	}
+
+	public void setOkButton(Button okButton) {
+		this.okButton = okButton;
+	}
+
+	public ComboBox<SalesOrderCustomer> getClient() {
+		return client;
+	}
+
+	public void setClient(ComboBox<SalesOrderCustomer> client) {
+		this.client = client;
+	}
+
+	public ComboBox<SalesOrderCashDrawer> getCashDrawer() {
+		return cashDrawer;
+	}
+
+	public void setCashDrawer(ComboBox<SalesOrderCashDrawer> cashDrawer) {
+		this.cashDrawer = cashDrawer;
+	}
+
+	public TextField getClientPhone() {
+		return clientPhone;
+	}
+
+	public void setClientPhone(TextField clientPhone) {
+		this.clientPhone = clientPhone;
+	}
+
+	public TextField getClientAdresse() {
+		return clientAdresse;
+	}
+
+	public void setClientAdresse(TextField clientAdresse) {
+		this.clientAdresse = clientAdresse;
+	}
+
+	public TextField getClientcategorie() {
+		return clientcategorie;
+	}
+
+	public void setClientcategorie(TextField clientcategorie) {
+		this.clientcategorie = clientcategorie;
+	}
+
+	public ComboBox<SalesOrderInsurance> getInsurrer() {
+		return insurrer;
+	}
+
+	public void setInsurrer(ComboBox<SalesOrderInsurance> insurrer) {
+		this.insurrer = insurrer;
+	}
+
+	public TextField getCoverageRate() {
+		return coverageRate;
+	}
+
+	public void setCoverageRate(TextField coverageRate) {
+		this.coverageRate = coverageRate;
+	}
+
+	public TextField getNumBon() {
+		return numBon;
+	}
+
+	public void setNumBon(TextField numBon) {
+		this.numBon = numBon;
+	}
+
+	public TextField getNumcmd() {
+		return numcmd;
+	}
+
+	public void setNumcmd(TextField numcmd) {
+		this.numcmd = numcmd;
+	}
+
+	public GridPane getAmountPane() {
+		return amountPane;
+	}
+
+	public void setAmountPane(GridPane amountPane) {
+		this.amountPane = amountPane;
+	}
+
+	public BigDecimalField getAmountHT() {
+		return amountHT;
+	}
+
+	public void setAmountHT(BigDecimalField amountHT) {
+		this.amountHT = amountHT;
+	}
+
+	public BigDecimalField getTaxAmount() {
+		return taxAmount;
+	}
+
+	public void setTaxAmount(BigDecimalField taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+
+	public BigDecimalField getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimalField discount) {
+		this.discount = discount;
+	}
+
+	public BigDecimalField getAmountTTC() {
+		return amountTTC;
+	}
+
+	public void setAmountTTC(BigDecimalField amountTTC) {
+		this.amountTTC = amountTTC;
+	}
+
+	public BigDecimalField getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(BigDecimalField discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+
+	public void setFxmlLoader(FXMLLoader fxmlLoader) {
+		this.fxmlLoader = fxmlLoader;
+	}
+
+	public Pagination getPagination() {
+		return pagination;
+	}
+
+	
+	
+	
 }

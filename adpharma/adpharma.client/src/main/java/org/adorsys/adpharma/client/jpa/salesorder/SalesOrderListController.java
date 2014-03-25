@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -49,7 +50,7 @@ public class SalesOrderListController implements EntityController
    private Event<SalesOrder> searchRequestedEvent;
 
    @Inject
-   @EntityCreateRequestedEvent
+   @EntitySelectionEvent
    private Event<SalesOrder> createRequestedEvent;
 
    @Inject
@@ -126,7 +127,7 @@ public class SalesOrderListController implements EntityController
    @Override
    public void display(Pane parent)
    {
-      AnchorPane rootPane = listView.getRootPane();
+      BorderPane rootPane = listView.getRootPane();
       ObservableList<Node> children = parent.getChildren();
       if (!children.contains(rootPane))
       {
