@@ -13,7 +13,7 @@ public class CustomerCustomerCategoryCreateController extends CustomerCustomerCa
 
    @Inject
    CustomerCreateView createView;
-
+   
    @PostConstruct
    public void postConstruct()
    {

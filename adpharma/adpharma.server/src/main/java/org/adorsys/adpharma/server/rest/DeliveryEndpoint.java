@@ -37,9 +37,11 @@ import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -89,6 +91,7 @@ public class DeliveryEndpoint
 		Login login = securityUtil.getConnectedUser();
 		entity.setCreatingUser(login);
 		entity.setReceivingAgency(login.getAgency());
+		entity.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		return detach(ejb.create(entity));
 	}
 
@@ -137,10 +140,12 @@ public class DeliveryEndpoint
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Agency agency = creatingUser.getAgency();
+		si.setDelivery(delivery);
 		si.setAgency(agency);
 		si.setSupplier(delivery.getSupplier());
 		si.setCreatingUser(creatingUser);
 		si.setCreationDate(creationDate);
+		si.setInvoiceType(InvoiceType.CASHDRAWER);
 		si = supplierInvoiceEJB.create(si);
 		// Generate the supplier invoice
 		BigDecimal amountBeforeTax = BigDecimal.ZERO;
@@ -151,6 +156,7 @@ public class DeliveryEndpoint
 			// Last model: MMYY-UniqueNumber(4+)
 			String internalPic = new SimpleDateFormat("DDMMYYHH").format(new Date()) + RandomStringUtils.randomNumeric(3);
 			deliveryItem.setInternalPic(internalPic);
+			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.create(deliveryItem);
 			amountBeforeTax = amountBeforeTax.add(deliveryItem.getTotalPurchasePrice());
 			
@@ -168,6 +174,7 @@ public class DeliveryEndpoint
 			// Generate Stock Movement for each delivery item
 			StockMovement sm = new StockMovement();
 			sm.setAgency(agency);
+			sm.setMovementType(StockMovementType.IN);
 			sm.setArticle(deliveryItem.getArticle());
 			sm.setCreatingUser(creatingUser);
 			sm.setCreationDate(creationDate);

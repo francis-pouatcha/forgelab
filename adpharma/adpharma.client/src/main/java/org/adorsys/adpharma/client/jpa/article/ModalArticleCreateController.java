@@ -37,6 +37,9 @@ import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -61,8 +64,8 @@ public class ModalArticleCreateController {
 	Article model ;
 	
 	@Inject
-	@EntityCreateDoneEvent
-	private Event<Article> articleCreateDoneEvent;
+	@ModalEntityCreateDoneEvent
+	private Event<Article> modalArticleCreateDoneEvent;
 
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
@@ -158,7 +161,7 @@ public class ModalArticleCreateController {
 				event.consume();
 				s.reset();
 				modalArticleCreateView.closeDialog();
-				articleCreateDoneEvent.fire(articleCreateResult);
+				modalArticleCreateDoneEvent.fire(articleCreateResult);
 
 			}
 		});
@@ -237,20 +240,12 @@ public class ModalArticleCreateController {
 		});
 	}
 
-	
-
-	public ModalArticleCreateView getModalArticleCreateView() {
-		return modalArticleCreateView;
-	}
-
-	public ArticleCreateService getArticleCreateService() {
-		return articleCreateService;
-	}
-
-
 	public Article getModel() {
 		return model;
 	}
-
+public void handleModalArticleCreateEvent(@Observes @ModalEntityCreateRequestedEvent Article article){
+	PropertyReader.copy(article, model);
+	modalArticleCreateView.showDiaLog();
+}
 
 }

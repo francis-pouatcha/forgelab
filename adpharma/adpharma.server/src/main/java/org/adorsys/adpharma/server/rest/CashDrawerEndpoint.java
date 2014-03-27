@@ -22,10 +22,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchInput;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchResult;
+import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -44,12 +47,18 @@ public class CashDrawerEndpoint
 
    @Inject
    private AgencyMerger agencyMerger;
+   
+   @Inject
+   private SecurityUtil securityUtil ;
 
    @POST
    @Consumes({ "application/json", "application/xml" })
    @Produces({ "application/json", "application/xml" })
    public CashDrawer create(CashDrawer entity)
    {
+	  Login login = securityUtil.getConnectedUser();
+	   entity.setCashier(login);
+	   entity.setAgency(login.getAgency());
       return detach(ejb.create(entity));
    }
 

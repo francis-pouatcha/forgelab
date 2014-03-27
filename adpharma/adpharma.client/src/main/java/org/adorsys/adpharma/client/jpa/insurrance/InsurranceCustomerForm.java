@@ -65,27 +65,27 @@ public class InsurranceCustomerForm extends AbstractToOneAssociation<Insurrance,
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
-      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
-      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
-      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
-      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
-      creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
-      discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
-      birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
-
+//      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
+//      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
+//      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
+//      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
+//      creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
+//      discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
+//      birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
+//
       gridRows = viewBuilder.toRows();
    }
 
    public void bind(Insurrance model)
    {
       fullName.textProperty().bindBidirectional(model.getCustomer().fullNameProperty());
-      landLinePhone.textProperty().bindBidirectional(model.getCustomer().landLinePhoneProperty());
-      mobile.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
-      fax.textProperty().bindBidirectional(model.getCustomer().faxProperty());
-      email.textProperty().bindBidirectional(model.getCustomer().emailProperty());
-      creditAuthorized.textProperty().bindBidirectional(model.getCustomer().creditAuthorizedProperty(), new BooleanStringConverter());
-      discountAuthorized.textProperty().bindBidirectional(model.getCustomer().discountAuthorizedProperty(), new BooleanStringConverter());
-      birthDate.calendarProperty().bindBidirectional(model.getCustomer().birthDateProperty());
+//      landLinePhone.textProperty().bindBidirectional(model.getCustomer().landLinePhoneProperty());
+//      mobile.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
+//      fax.textProperty().bindBidirectional(model.getCustomer().faxProperty());
+//      email.textProperty().bindBidirectional(model.getCustomer().emailProperty());
+//      creditAuthorized.textProperty().bindBidirectional(model.getCustomer().creditAuthorizedProperty(), new BooleanStringConverter());
+//      discountAuthorized.textProperty().bindBidirectional(model.getCustomer().discountAuthorizedProperty(), new BooleanStringConverter());
+//      birthDate.calendarProperty().bindBidirectional(model.getCustomer().birthDateProperty());
    }
 
    public TextField getFullName()

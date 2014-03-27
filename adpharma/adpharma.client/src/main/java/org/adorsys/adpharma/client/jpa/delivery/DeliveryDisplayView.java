@@ -50,6 +50,7 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 
 @Singleton
 public class DeliveryDisplayView
@@ -133,6 +134,9 @@ public class DeliveryDisplayView
 	private BigDecimalField salesPricePU;
 
 	private TextField expirationDate;
+	
+	@FXML
+	private ComboBox<VAT> tax;
 
 	@FXML
 	private GridPane leftGride;
@@ -266,6 +270,7 @@ public class DeliveryDisplayView
 		agency.valueProperty().bindBidirectional(model.receivingAgencyProperty());
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
+		dataList.getItems().setAll(model.getDeliveryItems());
 //		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
 	}
 
@@ -405,6 +410,10 @@ public class DeliveryDisplayView
 	
 	public Button getEditButton() {
 		return editButton;
+	}
+	
+	public ComboBox<VAT> getTax() {
+		return tax;
 	}
 	
 	

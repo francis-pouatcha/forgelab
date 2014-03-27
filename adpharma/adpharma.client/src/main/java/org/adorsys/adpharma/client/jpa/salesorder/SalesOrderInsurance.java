@@ -1,21 +1,26 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
+
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 
 @XmlRootElement
@@ -31,6 +36,7 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>
    private SimpleObjectProperty<BigDecimal> coverageRate;
    private SimpleObjectProperty<Calendar> beginDate;
    private SimpleObjectProperty<Calendar> endDate;
+   private SimpleObjectProperty<InsurranceInsurer> insurer;
 
    public SalesOrderInsurance()
    {
@@ -117,7 +123,29 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>
    {
       this.endDateProperty().set(endDate);
    }
+   
+   public SimpleObjectProperty<InsurranceInsurer> insurerProperty()
+   {
+      if (insurer == null)
+      {
+         insurer = new SimpleObjectProperty<InsurranceInsurer>(new InsurranceInsurer());
+      }
+      return insurer;
+   }
 
+   public InsurranceInsurer getInsurer()
+   {
+      return insurerProperty().get();
+   }
+
+   public final void setInsurer(InsurranceInsurer insurer)
+   {
+      if (insurer == null)
+      {
+         insurer = new InsurranceInsurer();
+      }
+      PropertyReader.copy(insurer, getInsurer());
+   }
    @Override
    public int hashCode()
    {
@@ -147,6 +175,6 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "fullName", "fullName", "coverageRate");
+      return PropertyReader.buildToString(this,  "insurer", "coverageRate");
    }
 }
