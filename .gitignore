@@ -12,5 +12,5 @@ target/
 */.forge_settings
 */.settings
 */bin/
-
+*.prefs
 
