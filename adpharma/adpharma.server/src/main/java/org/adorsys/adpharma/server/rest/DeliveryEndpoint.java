@@ -41,6 +41,7 @@ import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -90,6 +91,7 @@ public class DeliveryEndpoint
 		Login login = securityUtil.getConnectedUser();
 		entity.setCreatingUser(login);
 		entity.setReceivingAgency(login.getAgency());
+		entity.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		return detach(ejb.create(entity));
 	}
 
@@ -172,6 +174,7 @@ public class DeliveryEndpoint
 			// Generate Stock Movement for each delivery item
 			StockMovement sm = new StockMovement();
 			sm.setAgency(agency);
+			sm.setMovementType(StockMovementType.IN);
 			sm.setArticle(deliveryItem.getArticle());
 			sm.setCreatingUser(creatingUser);
 			sm.setCreationDate(creationDate);

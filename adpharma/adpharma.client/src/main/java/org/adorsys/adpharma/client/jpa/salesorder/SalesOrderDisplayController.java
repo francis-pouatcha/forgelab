@@ -15,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -37,10 +38,16 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ModalArticleLotSearchController;
 import org.adorsys.adpharma.client.jpa.articlelot.ModalArticleLotSearchView;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
@@ -63,11 +70,13 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.insurrance.ModalInsurranceCreateView;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.dialog.Dialogs;
 import org.omg.PortableInterceptor.INACTIVE;
 
@@ -82,7 +91,8 @@ public class SalesOrderDisplayController implements EntityController
 	private ModalInsurranceCreateView moInsurranceCreateView;
 
 	@Inject
-	private ModalCustomerCreateView modalCustomerCreateView ;
+	@ModalEntityCreateRequestedEvent
+	private Event<Customer> modalCustomerCreateREquestEvent ;
 
 	@Inject
 	@EntitySearchRequestedEvent
@@ -105,6 +115,11 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@ComponentSelectionRequestEvent
 	private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+
+	@Inject 
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent;
+
 	//  services
 	@Inject
 	private VATSearchService vatSearchService;
@@ -121,8 +136,6 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler;
 
-	@Inject
-	ModalArticleLotSearchController modalArticleLotSearchController;
 
 	@Inject
 	private SalesOrder displayedEntity;
@@ -154,19 +167,18 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				modalCustomerCreateView.showDiaLog();
+				modalCustomerCreateREquestEvent.fire(new Customer());
 			}
 		});
-		//  armed view dependencies combobox
-		displayView.getClient().armedProperty().addListener(new ChangeListener<Boolean>() {
+
+		displayView.getClient().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if(newValue)
-					customerSearchService.setSearchInputs(new CustomerSearchInput()).start();
-
+			public void handle(MouseEvent event) {
+				customerSearchService.setSearchInputs(new CustomerSearchInput()).start();
 			}
+
+
 		});
 		customerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -184,22 +196,19 @@ public class SalesOrderDisplayController implements EntityController
 					displayView.getClientAdresse().setText(showChoices.getEmail());
 					displayView.getClientPhone().setText(showChoices.getMobile()+"/"+showChoices.getLandLinePhone());
 					displayView.getClientcategorie().setText(showChoices.getCustomerCategory().getName()+"-"+showChoices.getCustomerCategory().getDiscountRate());
-
 				}
-
-
 			}
 		});
 		customerSearchService.setOnFailed(callFailedEventHandler);
-		displayView.getInsurrer().armedProperty().addListener(new ChangeListener<Boolean>() {
+
+		displayView.getInsurrer().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if(newValue)
-					insurranceSearchService.setSearchInputs(new InsurranceSearchInput()).start(); // TODO : provider et service which return insurreur for specifique clien
-
+			public void handle(MouseEvent event) {
+				insurranceSearchService.setSearchInputs(new InsurranceSearchInput()).start(); // TODO : provider et service which return insurreur for specifique clien
 			}
+
+
 		});
 		insurranceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -221,16 +230,13 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 		insurranceSearchService.setOnFailed(callFailedEventHandler);
-		displayView.getCashDrawer().armedProperty().addListener(new ChangeListener<Boolean>() {
+		displayView.getCashDrawer().setOnMouseClicked(new EventHandler<MouseEvent>()  {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if(newValue){
-					cashDrawerSearchService.setSearchInputs(new CashDrawerSearchInput()).start();
-				}
-
+			public void handle(MouseEvent event) {
+				cashDrawerSearchService.setSearchInputs(new CashDrawerSearchInput()).start();
 			}
+
 		});
 
 		cashDrawerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -250,20 +256,16 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
-		displayView.getTax().armedProperty().addListener(new ChangeListener<Boolean>()
-				{
+
+		displayView.getTax().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observableValue,
-					Boolean oldValue, Boolean newValue)
-			{
-				if (newValue){
-					vatSearchService.setSearchInputs(new VATSearchInput()).start();
-				}
-
+			public void handle(MouseEvent event) {
+				vatSearchService.setSearchInputs(new VATSearchInput()).start();
 			}
 
-				});
+
+		});
 		vatSearchService.setOnFailed(callFailedEventHandler);
 
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
@@ -330,7 +332,32 @@ public class SalesOrderDisplayController implements EntityController
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
 					String articleName = displayView.getArticleName().getText();
-					modalArticleLotSearchController.handleArticleSearchInput(articleName);
+					if(StringUtils.isBlank(articleName)) return;
+					ArticleLot entity = new ArticleLot();
+					entity.setArticleName(articleName);
+					ArticleLotSearchInput asi = new ArticleLotSearchInput();
+					asi.setEntity(entity);
+					asi.getFieldNames().add("articleName");
+					modalArticleLotSearchEvent.fire(asi);
+				}
+			}
+		});
+
+		//		
+		displayView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					String internalPic = displayView.getInternalPic().getText();
+					if(StringUtils.isBlank(internalPic)) return;
+					ArticleLot entity = new ArticleLot();
+					entity.setArticleName(internalPic);
+					ArticleLotSearchInput asi = new ArticleLotSearchInput();
+					asi.setEntity(entity);
+					asi.getFieldNames().add("internalPic");
+					modalArticleLotSearchEvent.fire(asi);
 				}
 			}
 		});
@@ -415,14 +442,45 @@ public class SalesOrderDisplayController implements EntityController
 		searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new SalesOrder());
 	}
 
+	public void handleArticleLotSerachDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
+	{
+		PropertyReader.copy(SalesOrderItemfromArticle(model), salesOrderItem);
+	}
+
+	public void handleCustomerCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Customer model)
+	{
+		displayView.getClient().setValue(new SalesOrderCustomer(model));
+		//		displayedEntity.setCustomer(new SalesOrderCustomer(model));
+	}
+
+
+	public void handleInsurranceCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Insurrance model)
+	{
+		displayView.getInsurrer().setValue(new SalesOrderInsurance(model));
+	}
+
 	/**
 	 * This is the only time where the bind method is called on this object.
 	 * @param model
 	 */
+
 	public void handleNewModelEvent(@Observes @SelectedModelEvent SalesOrder model)
 	{
 		this.displayedEntity = model;
 		displayView.bind(this.displayedEntity);
 	}
-
+  SalesOrderItem SalesOrderItemfromArticle(ArticleLot al){
+		SalesOrderItem soItem = new SalesOrderItem();
+		SalesOrderItemArticle soia = new SalesOrderItemArticle();
+		soia.setId(al.getArticle().getId());
+		soia.setArticleName(al.getArticle().getArticleName());
+		soia.setVersion(al.getArticle().getVersion());
+		soia.setPic(al.getArticle().getPic());
+		soItem.setInternalPic((al.getInternalPic()));
+		soItem.setArticle(soia);
+		soItem.setOrderedQty(BigDecimal.ONE);
+		soItem.setSalesPricePU((al.getSalesPricePU()));
+		soItem.setTotalSalePrice(al.getTotalPurchasePrice());
+		return soItem;
+	}
 }

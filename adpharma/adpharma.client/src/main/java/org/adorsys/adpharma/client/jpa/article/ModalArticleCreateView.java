@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
@@ -37,7 +38,7 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.controlsfx.dialog.Dialogs;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
+@Singleton
 public class ModalArticleCreateView extends ApplicationModal{
 
 

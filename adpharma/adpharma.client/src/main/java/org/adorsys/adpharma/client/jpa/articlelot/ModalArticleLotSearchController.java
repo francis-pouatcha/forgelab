@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -7,16 +10,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
 
+@Singleton
 public class ModalArticleLotSearchController  {
 
 	@Inject
@@ -27,6 +32,14 @@ public class ModalArticleLotSearchController  {
 
 	@Inject
 	private ServiceCallFailedEventHandler articleSearchServiceCallFailedEventHandler;
+
+	@Inject 
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent;
+
+	@Inject 
+	@ModalEntitySearchDoneEvent
+	private Event<ArticleLot> modalArticleLotSearchDoneEvent;
 
 	@Inject
 	ArticleLot articleLot;
@@ -41,6 +54,22 @@ public class ModalArticleLotSearchController  {
 				view.closeDialog();
 			}
 		});
+		
+		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ArticleLot>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends ArticleLot> observable,
+					ArticleLot oldValue, ArticleLot newValue) {
+				if(newValue!=null){
+					modalArticleLotSearchDoneEvent.fire(newValue);
+					view.closeDialog();
+					
+				}
+					
+				
+			}
+		});
 		view.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -48,7 +77,13 @@ public class ModalArticleLotSearchController  {
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
 					String articleName = view.getArticleName().getText();
-					handleArticleSearchInput(articleName);
+					if(StringUtils.isBlank(articleName)) return;
+					ArticleLot entity = new ArticleLot();
+					entity.setArticleName(articleName);
+					ArticleLotSearchInput asi = new ArticleLotSearchInput();
+					asi.setEntity(entity);
+					asi.getFieldNames().add("articleName");
+					modalArticleLotSearchEvent.fire(asi);
 				}
 			}
 		});
@@ -72,39 +107,25 @@ public class ModalArticleLotSearchController  {
 
 	public void handleArticleSearchResult(
 			ArticleLotSearchResult articleLotSearchResult) {
+		if(articleLotSearchResult.getResultList().isEmpty()) return;
 		if(articleLotSearchResult.getResultList().size()==1){
 			ArticleLot articleLot2 = articleLotSearchResult.getResultList().iterator().next();
-			PropertyReader.copy(articleLot2, articleLot);
+			PropertyReader.copy(new ArticleLot(), articleLot);
+			view.closeDialog();
+			modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
 			view.getDataList().getItems().setAll(articleLotSearchResult.getResultList());
 			view.showDiaLog();
 		}
 	}
 
-	public void handleArticleSearchInput(
-			String articleName) {
-		if(StringUtils.isBlank(articleName)) return;
-		ArticleLot entity = new ArticleLot();
-		entity.setArticleName(articleName);
-		ArticleLotSearchInput asi = new ArticleLotSearchInput();
-		asi.setEntity(entity);
-		asi.getFieldNames().add("articleName");
-		articleSearchService.setSearchInputs(asi).start();
-	}
-
-	public void handleArticleSearchBycip(
-			String cip) {
-		if(StringUtils.isBlank(cip)) return;
-		ArticleLot entity = new ArticleLot();
-		entity.setArticleName(cip);
-		ArticleLotSearchInput asi = new ArticleLotSearchInput();
-		asi.setEntity(entity);
-		asi.getFieldNames().add("internalPic");
-		articleSearchService.setSearchInputs(asi).start();
-	}
 
 	public ModalArticleLotSearchView getView() {
 		return view;
+	}
+
+	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
+		articleSearchService.setSearchInputs(lotSearchInput).start();
 	}
 
 

@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCreateService;
@@ -22,11 +23,10 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 
+@Singleton
 public class ModalCustomerCreateView  extends ApplicationModal{
 
 	
-	private Customer customer ;
-
 	@Inject
 	private CustomerView view;
 
@@ -76,9 +76,24 @@ public class ModalCustomerCreateView  extends ApplicationModal{
 	
 	public void bind(Customer model)
 	{
-		this.customer = model;
-		view.bind(this.customer);
+		view.bind(model);
 		
+	}
+
+	public CustomerView getView() {
+		return view;
+	}
+
+	public Button getSaveButton() {
+		return saveButton;
+	}
+
+	public Button getResetButton() {
+		return resetButton;
+	}
+
+	public Button getCancelButton() {
+		return cancelButton;
 	}
 
 	

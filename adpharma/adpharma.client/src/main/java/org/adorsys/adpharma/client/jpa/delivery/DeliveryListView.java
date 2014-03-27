@@ -72,9 +72,9 @@ public class DeliveryListView
 
 //	private CalendarTextField deliveryDateTo;
 
-	private ComboBox<Supplier> supplier;
+	private ComboBox<DeliverySupplier> supplier;
 
-	private ComboBox<DocumentProcessingState> deliveryState;
+	private ComboBox<DocumentProcessingState> deliveryProcessingState;
 
 	private Button searchButton;
 
@@ -136,6 +136,7 @@ public class DeliveryListView
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "Delivery_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "Delivery_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addEnumColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle,deliveryProcessingStateConverter);
 		//      pagination = viewBuilder.addPagination();
 		//      viewBuilder.addSeparator();
 		//      HBox buttonBar = viewBuilder.addButtonBar();
@@ -143,7 +144,7 @@ public class DeliveryListView
 		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//      rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
-		ComboBoxInitializer.initialize(deliveryState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
+		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 	}
 
@@ -151,8 +152,8 @@ public class DeliveryListView
 	{
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
 		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
-//		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
-		deliveryState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
+		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
+		deliveryProcessingState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
 	}
 
 	public void buildsearchBar(){
@@ -173,11 +174,11 @@ public class DeliveryListView
 		supplier.setPromptText("Supplier");
 		supplier.setPrefWidth(200d);
 
-		deliveryState =ViewBuilderUtils.newComboBox(null, "deliveryState", resourceBundle, DocumentProcessingState.values(), false);
-		deliveryState.setPromptText("state");
+		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(), false);
+		deliveryProcessingState.setPromptText("state");
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryState,searchButton);
+		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryProcessingState,searchButton);
 	}
 	public Button getCreateButton()
 	{
@@ -212,12 +213,12 @@ public class DeliveryListView
 		return deliveryDateFrom;
 	}
 
-	public ComboBox<Supplier> getSupplier() {
+	public ComboBox<DeliverySupplier> getSupplier() {
 		return supplier;
 	}
 
-	public ComboBox<DocumentProcessingState> getDeliveryState() {
-		return deliveryState;
+	public ComboBox<DocumentProcessingState> getDeliveryProcessingState() {
+		return deliveryProcessingState;
 	}
 
 

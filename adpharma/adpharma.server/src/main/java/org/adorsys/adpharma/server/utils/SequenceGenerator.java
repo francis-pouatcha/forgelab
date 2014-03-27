@@ -8,6 +8,7 @@ public class SequenceGenerator {
 	public static String INVENTORY_SEQUENCE_PREFIXE = "IN";
 	public static String SALE_SEQUENCE_PREFIXE = "SO";
 	public static String AGENCY_SEQUENCE_PREFIXE = "AG";
+	public static String CASHDRAWER_SEQUENCE_PREFIXE = "CD";
 
 
 	public static String getSequence(Long index ,String prefixe){

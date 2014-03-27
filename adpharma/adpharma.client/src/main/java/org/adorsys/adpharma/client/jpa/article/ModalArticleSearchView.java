@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import javafx.fxml.FXML;
@@ -15,8 +16,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ApplicationModal;
@@ -47,8 +52,7 @@ public class ModalArticleSearchView extends ApplicationModal{
 
 	@Inject
 	private Locale locale;
-
-
+	
 	@Override
 	public VBox getRootPane() {
 		return rootPane;

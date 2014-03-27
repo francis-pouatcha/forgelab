@@ -3,6 +3,8 @@ package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -114,7 +116,8 @@ public class DeliveryListController implements EntityController
 				{
 			@Override
 			public void handle(ActionEvent e)
-			{										
+			{							
+				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
 				searchService.setSearchInputs(searchInput).start();
 
 			}
@@ -129,8 +132,12 @@ public class DeliveryListController implements EntityController
 				SupplierSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
+				ArrayList<DeliverySupplier> ds = new ArrayList<DeliverySupplier>();
 				List<Supplier> resultList = result.getResultList();
-				listView.getSupplier().getItems().setAll(resultList);
+				for (Supplier supplier : resultList) {
+					ds.add(new DeliverySupplier(supplier));
+				}
+				listView.getSupplier().getItems().setAll(ds);
 				listView.getSupplier().getSelectionModel().clearSelection();
 
 			}

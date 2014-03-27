@@ -115,14 +115,16 @@ public class SalesOrderDisplayView
 	@FXML
 	private ComboBox<SalesOrderInsurance> insurrer;
 
-	@FXML
-	private TextField coverageRate;
+	private BigDecimalField coverageRate;
 
 	@FXML
 	private TextField numBon;
 
 	@FXML
 	private TextField numcmd;
+	
+	@FXML
+	private GridPane rigthGrid ;
 	
 //	amounts grid pane components
 	
@@ -195,6 +197,7 @@ public class SalesOrderDisplayView
 		
 		buildOrderItemBar();
 		buildAmountPane();
+		buildInsurranceGrid();
 	}
 
 	public void buildAmountPane(){
@@ -217,6 +220,13 @@ public class SalesOrderDisplayView
 		amountPane.add(discount, 1, 2);
 		amountPane.add(amountTTC, 1, 3);
 		amountPane.add(discountRate, 1, 5);
+
+	}
+	
+	public void buildInsurranceGrid(){
+		coverageRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
+		coverageRate.setEditable(false);
+		rigthGrid.add(coverageRate, 1, 1);
 
 	}
 	public void buildOrderItemBar(){
@@ -260,6 +270,12 @@ public class SalesOrderDisplayView
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
+		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
+		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
+		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
+		coverageRate.numberProperty().bindBidirectional(model.getInsurance().coverageRateProperty());
+		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
+		
 //		view.bind(model);
 	}
 
@@ -267,6 +283,7 @@ public class SalesOrderDisplayView
 		internalPic.textProperty().bindBidirectional(soi.internalPicProperty());
 		articleName.textProperty().bindBidirectional(soi.getArticle().articleNameProperty());
 		orderedQty.numberProperty().bindBidirectional(soi.orderedQtyProperty());
+		salesPricePU.numberProperty().bindBidirectional(soi.salesPricePUProperty());
 		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
 	}
 
@@ -436,13 +453,11 @@ public class SalesOrderDisplayView
 		this.insurrer = insurrer;
 	}
 
-	public TextField getCoverageRate() {
+	public BigDecimalField getCoverageRate() {
 		return coverageRate;
 	}
 
-	public void setCoverageRate(TextField coverageRate) {
-		this.coverageRate = coverageRate;
-	}
+
 
 	public TextField getNumBon() {
 		return numBon;

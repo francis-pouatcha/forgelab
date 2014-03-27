@@ -412,8 +412,8 @@ public class Customer
       }
       PropertyReader.copy(employer, getEmployer());
    }
-
-   public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
+ 
+  public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
    {
       if (customerCategory == null)
       {

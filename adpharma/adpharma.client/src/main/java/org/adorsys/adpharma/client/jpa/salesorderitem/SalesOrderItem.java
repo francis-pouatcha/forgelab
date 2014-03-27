@@ -73,21 +73,6 @@ public class SalesOrderItem
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
 	private SimpleObjectProperty<SalesOrderItemArticle> article;
 
-	public static SalesOrderItem fromArticle(ArticleLot al){
-		SalesOrderItem soItem = new SalesOrderItem();
-		SalesOrderItemArticle soia = new SalesOrderItemArticle();
-		soia.setId(al.getArticle().getId());
-		soia.setArticleName(al.getArticle().getArticleName());
-		soia.setVersion(al.getArticle().getVersion());
-		soia.setPic(al.getArticle().getPic());
-		soItem.setInternalPic((al.getInternalPic()));
-		soItem.setArticle(soia);
-		soItem.setSalesPricePU((al.getSalesPricePU()));
-		soItem.setTotalSalePrice(BigDecimal.ZERO);
-		return soItem;
-	}
-
-
 	public Long getId()
 	{
 		return id;

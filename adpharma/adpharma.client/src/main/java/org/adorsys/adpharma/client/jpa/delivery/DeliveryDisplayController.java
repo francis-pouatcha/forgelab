@@ -3,10 +3,7 @@ package org.adorsys.adpharma.client.jpa.delivery;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -23,19 +20,15 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleCreateService;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateController;
-import org.adorsys.adpharma.client.jpa.article.ModalArticleSearchControler;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -43,8 +36,11 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -91,12 +87,16 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@EntityRemoveRequestEvent
 	private Event<Delivery> removeRequestEvent;
+	
+	@Inject 
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> modalArticleSearchEvent;
+	
+	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<Article> modalArticleCreateRequestEvent;
 
 //	services
-	@Inject
-	ArticleCreateService articleCreateService ;
-
-
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
@@ -113,17 +113,9 @@ public class DeliveryDisplayController implements EntityController
 	@Bundle(CrudKeys.class)
 	private ResourceBundle resourceBundle;
 
-
-	@Inject
-	ModalArticleSearchControler modalArticleSearchControler;
-
 	@Inject
 	DeliveryItem deliveryItem;
 
-	@Inject
-	ModalArticleCreateController modalArticleCreateController;
-	
-	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -138,13 +130,11 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
-		articleCreateService.setOnFailed(createServiceCallFailedEventHandler);
-
 		displayView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				modalArticleCreateController.getModalArticleCreateView().showDiaLog();
+				modalArticleCreateRequestEvent.fire(new Article());
 
 			}
 		});
@@ -162,7 +152,6 @@ public class DeliveryDisplayController implements EntityController
 						processingAmount = processingAmount.add(item.getTotalPurchasePrice());
 						item.setDelivery(new DeliveryItemDelivery(displayedEntity));
 						displayedEntity.deliveryItemsProperty().getValue().add(item);
-						System.out.println(displayedEntity.getDeliveryItems().size());
 					}
 				}
 
@@ -178,20 +167,6 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		modalArticleSearchControler.getView().getDataList().getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<Article>()
-				{
-			@Override
-			public void changed(
-					ObservableValue<? extends Article> property,
-					Article oldValue, Article newValue)
-			{
-				if (newValue != null)
-					handleSelectedArticle(newValue);
-				modalArticleSearchControler.getView().closeDialog();
-			}
-
-				});
 		displayView.getOkButton().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -236,7 +211,6 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
-
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -244,10 +218,18 @@ public class DeliveryDisplayController implements EntityController
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
 					String articleName = displayView.getArticleName().getText();
-					modalArticleSearchControler.handleArticleSearchInput(articleName);
+					if(StringUtils.isBlank(articleName)) return;
+					Article entity = new Article();
+					entity.setArticleName(articleName);
+					ArticleSearchInput asi = new ArticleSearchInput();
+					asi.setEntity(entity);
+					asi.getFieldNames().add("articleName");
+					modalArticleSearchEvent.fire(asi);
 				}
 			}
 		});
+		
+	
 
 		// Reset
 		displayView.getCancelButton().setOnAction(
@@ -287,7 +269,6 @@ public class DeliveryDisplayController implements EntityController
 						//								}else {
 						//									Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
 						//								}
-						System.out.println("edit");
 						deliveryEditEvent.fire(displayedEntity);
 					}
 				});
@@ -302,8 +283,6 @@ public class DeliveryDisplayController implements EntityController
 					public void handle(ActionEvent e)
 					{
 						List<DeliveryItem> deliveryItems = displayedEntity.getDeliveryItems();
-						Dialogs.create().message(deliveryItems.toString()).showInformation();
-
 						handleDeliveryClosedEvent(displayedEntity);
 					}
 				});
@@ -331,7 +310,7 @@ public class DeliveryDisplayController implements EntityController
 				Delivery entity = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(entity, displayedEntity);
+				PropertyReader.copy(new Delivery(), displayedEntity);
 				editedDoneEvent.fire(entity);
 
 			}
@@ -445,9 +424,14 @@ public class DeliveryDisplayController implements EntityController
 		PropertyReader.copy(fromArticle, deliveryItem);
 	}
 
-	private void handleModalArticleCreateDone(@Observes @EntityCreateDoneEvent Article article) {
+	private void handleModalArticleCreateDone(@Observes @ModalEntityCreateDoneEvent Article article) {
 		handleSelectedArticle(article);
 
+	}
+	
+	public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article)
+	{
+		handleSelectedArticle(article);
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
