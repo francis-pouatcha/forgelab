@@ -65,6 +65,7 @@ public class InitUserAccountService
 	@PostConstruct
 	protected void postConstruct()
 	{
+		if(loginEJB.count()< 1){
 		
 		if(companyEJB.count()<1){
 			Company company = companyEJB.create(new Company("Adorsys SA"));
@@ -177,6 +178,7 @@ public class InitUserAccountService
 		}
 
 		Set<Entry<Object, Object>> loginSet = logins.entrySet();
+		
 		for (Entry<Object, Object> entry : loginSet)
 		{
 			String loginName = (String) entry.getKey();
@@ -208,6 +210,7 @@ public class InitUserAccountService
 				roleAssoc.setTargetQualifier("source");
 				roleAssoc = assocEJB.create(roleAssoc);
 			}
+		}
 		}
 	}
 

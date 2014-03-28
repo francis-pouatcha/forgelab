@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -23,6 +24,7 @@ import javafx.scene.control.TextField;
 
 import java.util.Locale;
 
+import jfxtras.labs.scene.control.BeanPathAdapter;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
@@ -271,7 +273,8 @@ public class DeliveryDisplayView
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 		dataList.getItems().setAll(model.getDeliveryItems());
-//		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
+		dataList.getItems().setAll(model.getDeliveryItems());
+		
 	}
 
 	public void bind(DeliveryItem deliveryItem) {

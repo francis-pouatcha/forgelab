@@ -185,178 +185,6 @@ association set-selection-mode --onProperty permissions --selectionMode TABLE;
 
 cd ~~;
 
-
-@/* Entity Login */;
-entity --named Login --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Login" --text "A login record";
-description add-class-description --title "Connection" --text "Une connection" --locale fr;
-access login-table;
-group add --grouper ~.jpa.WorkGroup --named LOGIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-access login-entry --userName "admin" --password "admin";
-access role-entry --userName "admin" --role "LOGIN";
-access role-entry --userName "admin" --role "ADMIN"; 
-
-field string --named loginName;
-description add-field-description --onProperty loginName --title "User Name" --text "The name used by the user to login.";
-description add-field-description --onProperty loginName --title "Nom de Connection" --text "Le nom de connetion de cet utilisateur." --locale fr;
-constraint NotNull --onProperty loginName;
-description add-notNull-message --onProperty loginName --title "User name is required" --text "User name is required";
-description add-notNull-message --onProperty loginName --title "Nom de connection est réquis" --text "Nom de connection est réquis" --locale fr;
-display add-toString-field --field loginName;
-display add-list-field --field loginName;
-@/* Unique=true */;
-access login-name-field --onProperty loginName;
-
-field string --named email;
-description add-field-description --onProperty email --title "Email" --text "The email address of the site";
-description add-field-description --onProperty email --title "Email" --text "Email du site" --locale fr;
-display add-list-field --field email;
-
-field string --named fullName;
-description add-field-description --onProperty fullName --title "Full Name" --text "The full name of the user.";
-description add-field-description --onProperty fullName --title "Nom Complet" --text "Le nom complet dede cet ilisateur." --locale fr;
-constraint NotNull --onProperty fullName;
-description add-notNull-message --onProperty fullName --title "The full name is required" --text "The full name is required";
-description add-notNull-message --onProperty fullName --title "Le nom complet est réquis" --text "Le nom complet est réquis" --locale fr;
-access full-name-field --onProperty fullName;
-
-field string --named password;
-description add-field-description --onProperty password --title "Password" --text "The password of the user.";
-description add-field-description --onProperty password --title "Mot de Passe" --text "Mot de passe de cet utilisateur." --locale fr;
-access password-field --onProperty password;
-
-field boolean --named disableLogin --primitive false;
-@/*  default=false */;
-description add-field-description --onProperty disableLogin --title "Disable Login" --text "Indicates whether the user login is disabled.";
-description add-field-description --onProperty disableLogin --title "Login Desactivé" --text "Indique si le login de cet utilisateur est desactivé ou non." --locale fr;
-
-field boolean --named accountLocked --primitive false;
-@/*  default=false */;
-description add-field-description --onProperty accountLocked --title "Account Locked" --text "Indicates whether the user account is locked.";
-description add-field-description --onProperty accountLocked --title "Compte Bloqué" --text "Indique si le compte(login+password) est bloqué ou pas." --locale fr;
-
-field temporal --type TIMESTAMP --named credentialExpiration; 
-@/* Default = +50 ans   */;
-description add-field-description --onProperty credentialExpiration --title "Password Expiration" --text "Date of expiration of the user password.";
-description add-field-description --onProperty credentialExpiration --title "Expiration Mot de Passe" --text "Date expiration du certificat utilisateur." --locale fr;
-format add-date-pattern --onProperty credentialExpiration --pattern "dd-MM-yyyy HH:mm"; 
-
-field temporal --type TIMESTAMP --named accountExpiration; 
-@/* pattern=dd-MM-yyyy HH:mm  Default = +50 ans */;
-description add-field-description --onProperty accountExpiration --title "Account Expiration Date" --text "Account expiration date";
-description add-field-description --onProperty accountExpiration --title "Date pour Expiration du Compte" --text "Date pour expiration du compte" --locale fr;
-format add-date-pattern --onProperty accountExpiration --pattern "dd-MM-yyyy HH:mm"; 
-
-field string --named saleKey;
-description add-field-description --onProperty saleKey --title "Sale Key" --text "The sales key of saller for a sales session open to all users. ";
-description add-field-description --onProperty saleKey --title "Sale Key" --text "Clé de vente du vendeur pour la session vente ouverte à tous les utilisateurs." --locale fr;
-
-field number --named discountRate --type java.math.BigDecimal;
-description add-field-description --onProperty discountRate --title "Discount Rate" --text "The discount rate this user can give to clients.";
-description add-field-description --onProperty discountRate --title "Taux Remise" --text "Taux de remise que cet utilisateur peut accorder aux clients." --locale fr;
-format add-number-type --onProperty discountRate --type PERCENTAGE;
-@/* Default= 15% */;
-
-field custom --named gender --type ~.jpa.Gender;
-description add-field-description --onProperty gender --title "Gender" --text "The gender of this user";
-description add-field-description --onProperty gender --title "Genre" --text "Le genre de cet utilisateur" --locale fr;
-enum enumerated-field --onProperty gender ;
-display add-list-field --field gender;
-display add-toString-field --field gender;
-
-relationship add --sourceEntity ~.jpa.Login --sourceQualifier roleNames --targetEntity ~.jpa.RoleName;
-cd ../Login.java;
-description add-field-description --onProperty roleNames --title "Role Names" --text "The names of roles assigned to this login";
-description add-field-description --onProperty roleNames --title "Nom des Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
-association set-type --onProperty roleNames --type AGGREGATION --targetEntity ~.jpa.RoleName;
-association set-selection-mode --onProperty roleNames --selectionMode FORWARD;
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
-
-cd ~~;
-
-
-@/* Entity Company */;
-entity --named Company --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Company" --text "The Company";
-description add-class-description  --locale fr --title "Compagnie" --text "La compagnie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-field string --named displayName;
-description add-field-description --onProperty displayName --title "Display Name" --text "The display name";
-description add-field-description --onProperty displayName --title "Nom affiché" --text "Nom affiché" --locale fr;
-constraint NotNull --onProperty displayName;
-description add-notNull-message --onProperty displayName --title "Display name is required" --text "Display name is required";
-description add-notNull-message --onProperty displayName --title "Nom affiché est réquis" --text "Nom affiché est réquis" --locale fr;
-display add-toString-field --field displayName;
-display add-list-field --field displayName;
-
-field string --named phone;
-description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
-description add-field-description --onProperty phone --title "Téléphone" --text "Téléphone du site" --locale fr;
-display add-list-field --field phone;
-
-field string --named fax;
-description add-field-description --onProperty fax --title "Fax" --text "The fax number of the site";
-description add-field-description --onProperty fax --title "Fax" --text "Fax du site" --locale fr;
-display add-list-field --field fax;
-
-field string --named siteManager;
-description add-field-description --onProperty siteManager --title "Site Manager" --text "The name of the site manager";
-description add-field-description --onProperty siteManager --title "Manager du Site" --text "Le nom du manager du site" --locale fr;
-display add-list-field --field siteManager;
-
-field string --named email;
-description add-field-description --onProperty email --title "Email" --text "The email address of the site";
-description add-field-description --onProperty email --title "Email" --text "Email du site" --locale fr;
-display add-list-field --field email;
-
-field string --named street;
-description add-field-description --onProperty street --title "Street" --text "The name of the street of this company";
-description add-field-description --onProperty street --title "Rue" --text "Nom de la rue de cette company" --locale fr;
-
-field string --named zipCode;
-description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code of this company";
-description add-field-description --onProperty zipCode --title "Code Postale" --text "Le code poastale de cette companie" --locale fr;
-
-field string --named city;
-description add-field-description --onProperty city --title "City" --text "The city in which this company is lacated";
-description add-field-description --onProperty city --title "Ville" --text "La ville ou cette companie est isntallé" --locale fr;
-
-field string --named country;
-description add-field-description --onProperty country --title "Country" --text "The country in which this comapny is located";
-description add-field-description --onProperty country --title "Pays" --text "Le pays ou cette companie est installée" --locale fr;
-
-field string --named siteInternet;
-description add-field-description --onProperty siteInternet --title "Web Site" --text "The web site of this company";
-description add-field-description --onProperty siteInternet --title "Site Internet" --text "Site internet du cette companie" --locale fr;
-
-field string --named mobile;
-description add-field-description --onProperty mobile --title "Mobile Phone" --text "The mobile phone of this company";
-description add-field-description --onProperty mobile --title "Téléphone Mobile" --text "Téléphone mobile de cette companie" --locale fr;
-
-field string --named registerNumber;
-description add-field-description --onProperty registerNumber --title "Register Number" --text "The register number of this company";
-description add-field-description --onProperty registerNumber --title "Numéro de Registre" --text "Numéro de registre du commerce de cette société" --locale fr;
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
-
-cd ~~;
-
-
 @/* Entity Gender */;
 java new-enum-type --named Gender --package ~.jpa;
 enum add-enum-class-description --title "Gender" --text "The gender of a user.";
@@ -373,103 +201,6 @@ enum add-enum-constant-description --locale fr --onConstant NEUTRAL  --title "Ne
 
 
 cd ~~;
-
-
-@/* Entity Agency */;
-entity --named Agency --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Agency" --text "An agency of this pharmacie";
-description add-class-description  --locale fr --title "Agence" --text "Une agence de cette pharmacie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-field string --named agencyNumber;
-description add-field-description --onProperty agencyNumber --title "Agency Number" --text "The number of this agency";
-description add-field-description --onProperty agencyNumber --title "Numéro Agence" --text "Numéro de la filiale" --locale fr;
-display add-toString-field --field agencyNumber;
-display add-list-field --field agencyNumber;
-@/* add unique constraint generator here */;
-
-field string --named name;
-description add-field-description --onProperty name --title "Agency Name" --text "The name of this agency";
-description add-field-description --onProperty name --title "Nom Agence" --text "Le nom de cette agence" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-constraint NotNull --onProperty name;
-description add-notNull-message --onProperty name --title "The  name of this Agency is required" --text "The  name of this Agency is required";
-description add-notNull-message --onProperty name --title "Le libellé  de cette agence est réquis" --text "Le libellé  de cette AGENCE est réquis" --locale fr;
-
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this agency";
-description add-field-description --onProperty description --title "Description" --text "Description de la filiale" --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The agency description must have less than 256 characters" --text "The agency description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description de cette agence doit avoir moins de 256 caractères" --text "La description de cette agence doit avoir moins de 256 caractères" --locale fr;
-
-field boolean --named active --primitive false;
-description add-field-description --onProperty active --title "Active" --text "Says if this agency is active or not";
-description add-field-description --onProperty active --title "Actif" --text "Indique si la filiale est active ou non" --locale fr;
-display add-list-field --field active;
-
-field string --named street;
-description add-field-description --onProperty street --title "Street" --text "The name of the street of this agency";
-description add-field-description --onProperty street --title "Rue" --text "Nom de la rue de cette agence" --locale fr;
-display add-list-field --field name;
-
-field string --named zipCode;
-description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code of this agency";
-description add-field-description --onProperty zipCode --title "Code Postale" --text "Le code poastale de cette agence" --locale fr;
-
-field string --named city;
-description add-field-description --onProperty city --title "City" --text "The city of this agency";
-description add-field-description --onProperty city --title "Ville" --text "La localite de cette agence" --locale fr;
-display add-list-field --field name;
-
-field string --named country;
-description add-field-description --onProperty country --title "Country" --text "The country of this agency";
-description add-field-description --onProperty country --title "Pays" --text "Le pays de cette agence" --locale fr;
-
-field string --named phone;
-description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
-description add-field-description --onProperty phone --title "Téléphone" --text "Téléphone du site" --locale fr;
-display add-list-field --field phone;
-
-field string --named fax;
-description add-field-description --onProperty fax --title "Fax" --text "The fax number of the site";
-description add-field-description --onProperty fax --title "Fax" --text "Fax du site" --locale fr;
-display add-list-field --field fax;
-
-field manyToOne --named company --fieldType ~.jpa.Company;
-description add-field-description --onProperty company --title "Company" --text "The company owner of this agency";
-description add-field-description --onProperty company --title "Compagnie" --text "la company pocedant cette agence" --locale fr;
-association set-selection-mode --onProperty company --selectionMode COMBOBOX;
-association set-type --onProperty company --type AGGREGATION --targetEntity ~.jpa.Company;
-
-field string --named ticketMessage;
-description add-field-description --onProperty ticketMessage --title "Ticket Message" --text "The  message for ticker";
-description add-field-description --onProperty ticketMessage --title "Message Ticket" --text "le message du ticket" --locale fr;
-constraint Size --onProperty ticketMessage --max 256;
-description add-size-message --onProperty ticketMessage --title "The ticket message must have less than 256 characters" --text "The ticket message must have less than 256 characters";
-description add-size-message --onProperty ticketMessage --title "Le message ticket doit avoir moins de 256 caractères" --text "Le message ticket doit avoir moins de 256 caractères" --locale fr;
-
-field string --named invoiceMessage;
-description add-field-description --onProperty invoiceMessage --title "Invoice Message" --text "The message for invoice";
-description add-field-description --onProperty invoiceMessage --title "Message Facture" --text "Le message Pour la facture" --locale fr;
-constraint Size --onProperty invoiceMessage --max 256;
-description add-size-message --onProperty invoiceMessage --title "The invoice message must have less than 256 characters" --text "The invoice message must have less than 256 characters";
-description add-size-message --onProperty invoiceMessage --title "Le message sur la facture doit avoir moins de 256 caractères" --text "Le message sur la facture doit avoir moins de 256 caractères" --locale fr;
-
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
-
-
-
-cd ~~;
-
-
 
 @/* Entity Currency */;
 entity --named Currency --package ~.jpa --idStrategy AUTO;
@@ -573,6 +304,385 @@ enum add-enum-constant-description --onConstant CLOSED --title "Cloturé" --text
 cd ~~;
 
 
+@/* Entity Company */;
+entity --named Company --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Company" --text "The Company";
+description add-class-description  --locale fr --title "Compagnie" --text "La compagnie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named displayName;
+description add-field-description --onProperty displayName --title "Display Name" --text "The display name";
+description add-field-description --onProperty displayName --title "Nom affiché" --text "Nom affiché" --locale fr;
+constraint NotNull --onProperty displayName;
+description add-notNull-message --onProperty displayName --title "Display name is required" --text "Display name is required";
+description add-notNull-message --onProperty displayName --title "Nom affiché est réquis" --text "Nom affiché est réquis" --locale fr;
+display add-toString-field --field displayName;
+display add-list-field --field displayName;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
+description add-field-description --onProperty phone --title "Téléphone" --text "Téléphone du site" --locale fr;
+display add-list-field --field phone;
+
+field string --named fax;
+description add-field-description --onProperty fax --title "Fax" --text "The fax number of the site";
+description add-field-description --onProperty fax --title "Fax" --text "Fax du site" --locale fr;
+display add-list-field --field fax;
+
+field string --named siteManager;
+description add-field-description --onProperty siteManager --title "Site Manager" --text "The name of the site manager";
+description add-field-description --onProperty siteManager --title "Manager du Site" --text "Le nom du manager du site" --locale fr;
+display add-list-field --field siteManager;
+
+field string --named email;
+description add-field-description --onProperty email --title "Email" --text "The email address of the site";
+description add-field-description --onProperty email --title "Email" --text "Email du site" --locale fr;
+display add-list-field --field email;
+
+field string --named street;
+description add-field-description --onProperty street --title "Street" --text "The name of the street of this company";
+description add-field-description --onProperty street --title "Rue" --text "Nom de la rue de cette company" --locale fr;
+
+field string --named zipCode;
+description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code of this company";
+description add-field-description --onProperty zipCode --title "Code Postale" --text "Le code poastale de cette companie" --locale fr;
+
+field string --named city;
+description add-field-description --onProperty city --title "City" --text "The city in which this company is lacated";
+description add-field-description --onProperty city --title "Ville" --text "La ville ou cette companie est isntallé" --locale fr;
+
+field string --named country;
+description add-field-description --onProperty country --title "Country" --text "The country in which this comapny is located";
+description add-field-description --onProperty country --title "Pays" --text "Le pays ou cette companie est installée" --locale fr;
+
+field string --named siteInternet;
+description add-field-description --onProperty siteInternet --title "Web Site" --text "The web site of this company";
+description add-field-description --onProperty siteInternet --title "Site Internet" --text "Site internet du cette companie" --locale fr;
+
+field string --named mobile;
+description add-field-description --onProperty mobile --title "Mobile Phone" --text "The mobile phone of this company";
+description add-field-description --onProperty mobile --title "Téléphone Mobile" --text "Téléphone mobile de cette companie" --locale fr;
+
+field string --named registerNumber;
+description add-field-description --onProperty registerNumber --title "Register Number" --text "The register number of this company";
+description add-field-description --onProperty registerNumber --title "Numéro de Registre" --text "Numéro de registre du commerce de cette société" --locale fr;
+
+field temporal --type TIMESTAMP --named recordingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
+description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
+format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
+cd ~~;
+
+
+
+@/* Entity Agency */;
+entity --named Agency --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Agency" --text "An agency of this pharmacie";
+description add-class-description  --locale fr --title "Agence" --text "Une agence de cette pharmacie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named agencyNumber;
+description add-field-description --onProperty agencyNumber --title "Agency Number" --text "The number of this agency";
+description add-field-description --onProperty agencyNumber --title "Numéro Agence" --text "Numéro de la filiale" --locale fr;
+display add-toString-field --field agencyNumber;
+display add-list-field --field agencyNumber;
+@/* add unique constraint generator here */;
+
+field string --named name;
+description add-field-description --onProperty name --title "Agency Name" --text "The name of this agency";
+description add-field-description --onProperty name --title "Nom Agence" --text "Le nom de cette agence" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field name;
+constraint NotNull --onProperty name;
+description add-notNull-message --onProperty name --title "The  name of this Agency is required" --text "The  name of this Agency is required";
+description add-notNull-message --onProperty name --title "Le libellé  de cette agence est réquis" --text "Le libellé  de cette AGENCE est réquis" --locale fr;
+
+
+field string --named description;
+description add-field-description --onProperty description --title "Description" --text "The description of this agency";
+description add-field-description --onProperty description --title "Description" --text "Description de la filiale" --locale fr;
+constraint Size --onProperty description --max 256;
+description add-size-message --onProperty description --title "The agency description must have less than 256 characters" --text "The agency description must have less than 256 characters";
+description add-size-message --onProperty description --title "La description de cette agence doit avoir moins de 256 caractères" --text "La description de cette agence doit avoir moins de 256 caractères" --locale fr;
+
+field boolean --named active --primitive false;
+description add-field-description --onProperty active --title "Active" --text "Says if this agency is active or not";
+description add-field-description --onProperty active --title "Actif" --text "Indique si la filiale est active ou non" --locale fr;
+display add-list-field --field active;
+
+field string --named street;
+description add-field-description --onProperty street --title "Street" --text "The name of the street of this agency";
+description add-field-description --onProperty street --title "Rue" --text "Nom de la rue de cette agence" --locale fr;
+display add-list-field --field name;
+
+field string --named zipCode;
+description add-field-description --onProperty zipCode --title "Zip Code" --text "The zip code of this agency";
+description add-field-description --onProperty zipCode --title "Code Postale" --text "Le code poastale de cette agence" --locale fr;
+
+field string --named city;
+description add-field-description --onProperty city --title "City" --text "The city of this agency";
+description add-field-description --onProperty city --title "Ville" --text "La localite de cette agence" --locale fr;
+display add-list-field --field name;
+
+field string --named country;
+description add-field-description --onProperty country --title "Country" --text "The country of this agency";
+description add-field-description --onProperty country --title "Pays" --text "Le pays de cette agence" --locale fr;
+
+field string --named phone;
+description add-field-description --onProperty phone --title "Phone" --text "The site phone number";
+description add-field-description --onProperty phone --title "Téléphone" --text "Téléphone du site" --locale fr;
+display add-list-field --field phone;
+
+field string --named fax;
+description add-field-description --onProperty fax --title "Fax" --text "The fax number of the site";
+description add-field-description --onProperty fax --title "Fax" --text "Fax du site" --locale fr;
+display add-list-field --field fax;
+
+field manyToOne --named company --fieldType ~.jpa.Company;
+description add-field-description --onProperty company --title "Company" --text "The company owner of this agency";
+description add-field-description --onProperty company --title "Compagnie" --text "la company pocedant cette agence" --locale fr;
+association set-selection-mode --onProperty company --selectionMode COMBOBOX;
+association set-type --onProperty company --type AGGREGATION --targetEntity ~.jpa.Company;
+@/* max=1 */;
+
+field string --named ticketMessage;
+description add-field-description --onProperty ticketMessage --title "Ticket Message" --text "The  message for ticker";
+description add-field-description --onProperty ticketMessage --title "Message Ticket" --text "le message du ticket" --locale fr;
+constraint Size --onProperty ticketMessage --max 256;
+description add-size-message --onProperty ticketMessage --title "The ticket message must have less than 256 characters" --text "The ticket message must have less than 256 characters";
+description add-size-message --onProperty ticketMessage --title "Le message ticket doit avoir moins de 256 caractères" --text "Le message ticket doit avoir moins de 256 caractères" --locale fr;
+
+field string --named invoiceMessage;
+description add-field-description --onProperty invoiceMessage --title "Invoice Message" --text "The message for invoice";
+description add-field-description --onProperty invoiceMessage --title "Message Facture" --text "Le message Pour la facture" --locale fr;
+constraint Size --onProperty invoiceMessage --max 256;
+description add-size-message --onProperty invoiceMessage --title "The invoice message must have less than 256 characters" --text "The invoice message must have less than 256 characters";
+description add-size-message --onProperty invoiceMessage --title "Le message sur la facture doit avoir moins de 256 caractères" --text "Le message sur la facture doit avoir moins de 256 caractères" --locale fr;
+
+field temporal --type TIMESTAMP --named recordingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
+description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
+format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
+cd ~~;
+
+
+@/* Entity Login */;
+entity --named Login --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Login" --text "A login record";
+description add-class-description --title "Connection" --text "Une connection" --locale fr;
+access login-table;
+group add --grouper ~.jpa.WorkGroup --named LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+access login-entry --userName "admin" --password "admin";
+access role-entry --userName "admin" --role "LOGIN";
+access role-entry --userName "admin" --role "ADMIN"; 
+
+field string --named loginName;
+description add-field-description --onProperty loginName --title "User Name" --text "The name used by the user to login.";
+description add-field-description --onProperty loginName --title "Nom de Connection" --text "Le nom de connetion de cet utilisateur." --locale fr;
+constraint NotNull --onProperty loginName;
+description add-notNull-message --onProperty loginName --title "User name is required" --text "User name is required";
+description add-notNull-message --onProperty loginName --title "Nom de connection est réquis" --text "Nom de connection est réquis" --locale fr;
+display add-toString-field --field loginName;
+display add-list-field --field loginName;
+@/* Unique=true */;
+access login-name-field --onProperty loginName;
+
+field string --named email;
+description add-field-description --onProperty email --title "Email" --text "The email address of the site";
+description add-field-description --onProperty email --title "Email" --text "Email du site" --locale fr;
+display add-list-field --field email;
+
+field string --named fullName;
+description add-field-description --onProperty fullName --title "Full Name" --text "The full name of the user.";
+description add-field-description --onProperty fullName --title "Nom Complet" --text "Le nom complet dede cet ilisateur." --locale fr;
+constraint NotNull --onProperty fullName;
+description add-notNull-message --onProperty fullName --title "The full name is required" --text "The full name is required";
+description add-notNull-message --onProperty fullName --title "Le nom complet est réquis" --text "Le nom complet est réquis" --locale fr;
+access full-name-field --onProperty fullName;
+
+field string --named password;
+description add-field-description --onProperty password --title "Password" --text "The password of the user.";
+description add-field-description --onProperty password --title "Mot de Passe" --text "Mot de passe de cet utilisateur." --locale fr;
+access password-field --onProperty password;
+
+field boolean --named disableLogin --primitive false;
+@/*  default=false */;
+description add-field-description --onProperty disableLogin --title "Disable Login" --text "Indicates whether the user login is disabled.";
+description add-field-description --onProperty disableLogin --title "Login Desactivé" --text "Indique si le login de cet utilisateur est desactivé ou non." --locale fr;
+
+field boolean --named accountLocked --primitive false;
+@/*  default=false */;
+description add-field-description --onProperty accountLocked --title "Account Locked" --text "Indicates whether the user account is locked.";
+description add-field-description --onProperty accountLocked --title "Compte Bloqué" --text "Indique si le compte(login+password) est bloqué ou pas." --locale fr;
+
+field temporal --type TIMESTAMP --named credentialExpiration; 
+@/* Default = +50 ans   */;
+description add-field-description --onProperty credentialExpiration --title "Password Expiration" --text "Date of expiration of the user password.";
+description add-field-description --onProperty credentialExpiration --title "Expiration Mot de Passe" --text "Date expiration du certificat utilisateur." --locale fr;
+format add-date-pattern --onProperty credentialExpiration --pattern "dd-MM-yyyy HH:mm"; 
+
+field temporal --type TIMESTAMP --named accountExpiration; 
+@/* pattern=dd-MM-yyyy HH:mm  Default = +50 ans */;
+description add-field-description --onProperty accountExpiration --title "Account Expiration Date" --text "Account expiration date";
+description add-field-description --onProperty accountExpiration --title "Date pour Expiration du Compte" --text "Date pour expiration du compte" --locale fr;
+format add-date-pattern --onProperty accountExpiration --pattern "dd-MM-yyyy HH:mm"; 
+
+field string --named saleKey;
+description add-field-description --onProperty saleKey --title "Sale Key" --text "The sales key of saller for a sales session open to all users. ";
+description add-field-description --onProperty saleKey --title "Sale Key" --text "Clé de vente du vendeur pour la session vente ouverte à tous les utilisateurs." --locale fr;
+
+field number --named discountRate --type java.math.BigDecimal;
+description add-field-description --onProperty discountRate --title "Discount Rate" --text "The discount rate this user can give to clients.";
+description add-field-description --onProperty discountRate --title "Taux Remise" --text "Taux de remise que cet utilisateur peut accorder aux clients." --locale fr;
+format add-number-type --onProperty discountRate --type PERCENTAGE;
+@/* Default= 15% */;
+
+field custom --named gender --type ~.jpa.Gender;
+description add-field-description --onProperty gender --title "Gender" --text "The gender of this user";
+description add-field-description --onProperty gender --title "Genre" --text "Le genre de cet utilisateur" --locale fr;
+enum enumerated-field --onProperty gender ;
+display add-list-field --field gender;
+display add-toString-field --field gender;
+
+relationship add --sourceEntity ~.jpa.Login --sourceQualifier roleNames --targetEntity ~.jpa.RoleName;
+cd ../Login.java;
+description add-field-description --onProperty roleNames --title "Role Names" --text "The names of roles assigned to this login";
+description add-field-description --onProperty roleNames --title "Nom des Roles" --text "Les nom de role attribués a de cet utilisateur" --locale fr;
+association set-type --onProperty roleNames --type AGGREGATION --targetEntity ~.jpa.RoleName;
+association set-selection-mode --onProperty roleNames --selectionMode FORWARD;
+
+field temporal --type TIMESTAMP --named recordingDate; 
+@/* pattern= dd-MM-yyyy HH:mm */;
+description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
+description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
+format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+description add-field-description --onProperty agency --title "Agency" --text "The agency of this login";
+description add-field-description --onProperty agency --title "Agency" --text "l agency de cette connection" --locale fr;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
+association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
+@/* max=50 */;
+cd ~~;
+
+
+
+@/* Entity PackagingMode, ModeConditionnement */;
+entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Packaging Mode" --text "The product packaging mode";
+description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named name;
+description add-field-description --onProperty name --title "Packaging Mode" --text "The name of this packaging mode";
+description add-field-description --onProperty name --title "Mode de Conditionement" --text "Nom du mode de conditionnement" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field name;
+constraint NotNull --onProperty name;
+description add-notNull-message --onProperty name --title "The  name of this Packaging is required" --text "The  name of this Packaging is required";
+description add-notNull-message --onProperty name --title "Le libellé  de ce Mode de conditionnment est réquis" --text "Le libellé  de ce Mode de conditionnment est réquis" --locale fr;
+
+cd ~~;
+
+
+@/* Entity Section */;
+entity --named Section --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
+description add-class-description --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named sectionCode;
+description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
+description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
+display add-toString-field --field sectionCode;
+display add-list-field --field sectionCode;
+
+field string --named name;
+description add-field-description --onProperty name --title "Section Name" --text "The name of this section";
+description add-field-description --onProperty name --title "Nom du Rayon" --text "Le nom du rayon" --locale fr;
+constraint NotNull --onProperty name;
+description add-notNull-message --onProperty name --title "The section name is required" --text "The section name is required";
+description add-notNull-message --onProperty name --title "Le nom du rayon est réquis" --text "Le nom du rayon est réquis" --locale fr;
+display add-list-field --field name;
+
+field string --named position;
+description add-field-description --onProperty position --title "Position" --text "Code to identify the position of his section";
+description add-field-description --onProperty position --title "Position" --text "Code identifiant la position du rayon." --locale fr;
+display add-list-field --field position;
+
+field string --named geoCode;
+description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
+description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
+
+field string --named description;
+description add-field-description --onProperty description --title "Description" --text "Description of the section";
+description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
+constraint Size --onProperty description --max 256;
+description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
+description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
+
+field manyToOne --named agency --fieldType ~.jpa.Agency;
+description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
+description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
+association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
+display add-list-field --field agency.name;
+constraint NotNull --onProperty agency;
+description add-notNull-message --onProperty agency --title "An agency must be selected" --text "An agency must be selected";
+description add-notNull-message --onProperty agency --title "Une agence doit être sélectionné" --text "Une agence doit être sélectionné" --locale fr;
+
+cd ~~ ;
+
+@/* ================================== */;
+@/* Product */;
+
+@/* Entity ProductFamily */;
+entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Product Family" --text "The product family";
+description add-class-description --locale fr --title "Famille Produit" --text "La famille produit";
+group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named name;
+description add-field-description --onProperty name --title "Product Name" --text "The name of this product family";
+description add-field-description --onProperty name --title "Libelle " --text "Le nom de la famille produit" --locale fr;
+display add-toString-field --field name;
+display add-list-field --field name;
+constraint NotNull --onProperty name;
+description add-notNull-message --onProperty name --title "The  name of this familly is required" --text "The  name of this familly is required";
+description add-notNull-message --onProperty name --title "Le libellé  de cette famille est réquis" --text "Le libellé court de cette famille est réquis" --locale fr;
+
+field string --named description;
+description add-field-description --onProperty description --title "Description" --text "The description of this product family";
+description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
+constraint Size --onProperty description --max 256;
+description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
+description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
+
+field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
+description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
+description add-field-description --onProperty parentFamilly --title "Famille Parente" --text "La famille parent du produit " --locale fr;
+association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
+association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
+@/* Max=200 */;
+cd ~~ ;
+
+
 @/* Entity Clearance Config */;
 entity --named ClearanceConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Clearance Configuration" --text "Configuration for the clearance of a product.";
@@ -637,118 +747,6 @@ display add-list-field --field active;
 
 cd ~~;
 
-
-@/* Entity PackagingMode, ModeConditionnement */;
-entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Packaging Mode" --text "The product packaging mode";
-description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-field string --named name;
-description add-field-description --onProperty name --title "Packaging Mode Name" --text "The name of this packaging mode";
-description add-field-description --onProperty name --title "Libelle du Mode de Conditionement" --text "Nom du mode de conditionnement" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-constraint NotNull --onProperty name;
-description add-notNull-message --onProperty name --title "The  name of this Packaging is required" --text "The  name of this Packaging is required";
-description add-notNull-message --onProperty name --title "Le libellé  de ce Mode de conditionnment est réquis" --text "Le libellé  de ce Mode de conditionnment est réquis" --locale fr;
-
-cd ~~;
-
-
-@/* Entity Section */;
-entity --named Section --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
-description add-class-description --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-field string --named sectionCode;
-description add-field-description --onProperty sectionCode --title "Section Code" --text "The code of this section";
-description add-field-description --onProperty sectionCode --title "Code Rayon" --text "Le code du rayon" --locale fr;
-display add-toString-field --field sectionCode;
-display add-list-field --field sectionCode;
-
-field string --named name;
-description add-field-description --onProperty name --title "Section Name" --text "The name of this section";
-description add-field-description --onProperty name --title "Nom du Rayon" --text "Le nom du rayon" --locale fr;
-constraint NotNull --onProperty name;
-description add-notNull-message --onProperty name --title "The section name is required" --text "The section name is required";
-description add-notNull-message --onProperty name --title "Le nom du rayon est réquis" --text "Le nom du rayon est réquis" --locale fr;
-display add-list-field --field name;
-
-field string --named position;
-description add-field-description --onProperty position --title "Position" --text "Code to identify the position of his section";
-description add-field-description --onProperty position --title "Position" --text "Code identifiant la position du rayon." --locale fr;
-display add-list-field --field position;
-
-field string --named geoCode;
-description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
-description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "Description of the section";
-description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
-
-field manyToOne --named agency --fieldType ~.jpa.Agency;
-description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
-description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
-association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
-display add-list-field --field agency.name;
-constraint NotNull --onProperty agency;
-description add-notNull-message --onProperty agency --title "An agency must be selected" --text "An agency must be selected";
-description add-notNull-message --onProperty agency --title "Une agence doit être sélectionné" --text "Une agence doit être sélectionné" --locale fr;
-
-
-
-cd ~~ ;
-
-
-
-@/* ================================== */;
-@/* Product */;
-
-@/* Entity ProductFamily */;
-entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Product Family" --text "The product family";
-description add-class-description --locale fr --title "Famille Produit" --text "La famille produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-field string --named name;
-description add-field-description --onProperty name --title "Product Name" --text "The name of this product family";
-description add-field-description --onProperty name --title "Libelle du produit" --text "Le nom de la famille produit" --locale fr;
-display add-toString-field --field name;
-display add-list-field --field name;
-constraint NotNull --onProperty name;
-description add-notNull-message --onProperty name --title "The  name of this familly is required" --text "The  name of this familly is required";
-description add-notNull-message --onProperty name --title "Le libellé  de cette famille est réquis" --text "Le libellé court de cette famille est réquis" --locale fr;
-
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this product family";
-description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
-
-field manyToOne --named parentFamilly --fieldType ~.jpa.ProductFamily;
-description add-field-description --onProperty parentFamilly --title "Parent Familly" --text "The parent familly";
-description add-field-description --onProperty parentFamilly --title "Famille Parent" --text "La famille parent du produit " --locale fr;
-association set-selection-mode --onProperty parentFamilly --selectionMode COMBOBOX;
-association set-type --onProperty parentFamilly --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
-
-cd ~~ ;
-
-
 @/* Entity Article */;
 entity --named Article --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article" --text "An article or any oder drug sold in the pharmacy";
@@ -763,7 +761,7 @@ group add --grouper ~.jpa.WorkGroup --named SALES;
 
 field string --named articleName;
 description add-field-description --onProperty articleName --title "Article Name" --text "The name of this article";
-description add-field-description --onProperty articleName --title "Nom de cet Article" --text "Le nom du produit" --locale fr;
+description add-field-description --onProperty articleName --title "Designation" --text "Le nom du produit" --locale fr;
 display add-toString-field --field articleName;
 display add-list-field --field articleName;
 constraint NotNull --onProperty articleName;
@@ -773,8 +771,8 @@ description add-notNull-message --onProperty articleName --title "Le libellé  d
 
 field string --named pic; 
 @/* Unique */;
-description add-field-description --onProperty pic --title "Product Identification Code" --text "The standard product identification code of this product.";
-description add-field-description --onProperty pic --title "Code Identifiant Prouit" --text "Le Code identifiant standard du produit." --locale fr;
+description add-field-description --onProperty pic --title "PIC" --text "The standard product identification code of this product.";
+description add-field-description --onProperty pic --title "CIP" --text "Le Code identifiant standard du produit." --locale fr;
 display add-toString-field --field pic;
 display add-list-field --field pic;
 
@@ -791,6 +789,7 @@ association set-type --onProperty section --type AGGREGATION --targetEntity ~.jp
 constraint NotNull --onProperty section;
 description add-notNull-message --onProperty section --title "The section  is required" --text "The section  is required";
 description add-notNull-message --onProperty section --title "Le rayon est réquis" --text "The section  is required" --locale fr;
+@/* max=200 */;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this article is active or not";
@@ -808,14 +807,6 @@ description add-field-description --onProperty qtyInStock --title "Quantity in S
 description add-field-description --onProperty qtyInStock --title "Quantité en Stock" --text "Quantité reelle de produits dans le stock." --locale fr;
 display add-list-field --field qtyInStock;
 
-field number --named salableQty --type java.math.BigDecimal;
-description add-field-description --onProperty salableQty --title "Salable Quantity" --text "The salable quantity of this article.";
-description add-field-description --onProperty salableQty --title "Quantité vadable" --text "Quantité vadable  du produits dans le stock." --locale fr;
-
-field number --named qtyInStore --type java.math.BigDecimal;
-description add-field-description --onProperty qtyInStore --title "Quantity in Store" --text "The quantity of this article in store.";
-description add-field-description --onProperty qtyInStore --title "Quantité en Magasin" --text "Quantité du produit en magasin." --locale fr;
-
 field number --named pppu --type java.math.BigDecimal;
 description add-field-description --onProperty pppu --title "Purchase Price per Unit" --text "Purchase price per unit.";
 description add-field-description --onProperty pppu --title "Prix Unitaire Achat" --text "Prix achat unitaire du produit." --locale fr;
@@ -824,10 +815,6 @@ field number --named sppu --type java.math.BigDecimal;
 description add-field-description --onProperty sppu --title "Sales Price per Unit" --text "Sales price per unit.";
 description add-field-description --onProperty sppu --title "Prix de Vente Unitaire" --text "Prix de vente unitaire du produit" --locale fr;
 display add-list-field --field sppu;
-
-field long --named maxQtyPerPO --primitive false;
-description add-field-description --onProperty maxQtyPerPO --title "Max Quantity per PO" --text "Maximal quantity per purchase order";
-description add-field-description --onProperty maxQtyPerPO --title "Quantite Maximale par Commande" --text "Quantite maximale de produits commandable" --locale fr;
 
 field number --named maxDiscountRate --type java.math.BigDecimal;
 @/* Default=5 */;
@@ -870,10 +857,6 @@ field boolean --named authorizedSale --primitive false;
 description add-field-description --onProperty authorizedSale --title "Product Identification Code" --text "Allows to release a prouct for sale.";
 description add-field-description --onProperty authorizedSale --title "Code Identifiant Prouit" --text "Autorise ou non un produit à la vente" --locale fr;
 display add-list-field --field authorizedSale;
-
-field boolean --named approvedOrder --primitive false; 
-description add-field-description --onProperty approvedOrder --title "Approved Order" --text "Document if the next order of this product is approved.";
-description add-field-description --onProperty approvedOrder --title "Commande Autorisée" --text "Autorise ou non le produit à la commande." --locale fr;
 
 field long --named maxStockQty --primitive false;
 description add-field-description --onProperty maxStockQty --title "Max Stock Quantity" --text "Sets the standard max stock quantity for this product.";
@@ -1264,6 +1247,12 @@ description add-field-description --onProperty amountDiscount --title "Discount 
 description add-field-description --onProperty amountDiscount --title "Montant Remise" --text "Montant de la remise de l approvisionement." --locale fr;
 format add-number-type --onProperty amountDiscount --type CURRENCY;
 display add-list-field --field amountDiscount;
+
+field number --named taxAmount --type java.math.BigDecimal;
+description add-field-description --onProperty taxAmount --title "Tax Amount" --text "Tax amount for this purchase order.";
+description add-field-description --onProperty taxAmount --title "Montant Taxe" --text "Montant de la taxe de l approvisionement." --locale fr;
+format add-number-type --onProperty taxAmount --type CURRENCY;
+display add-list-field --field taxAmount;
 
 field number --named netAmountToPay --type java.math.BigDecimal;
 description add-field-description --onProperty netAmountToPay --title "Net Amount to Pay" --text "Teh net amount to pay.";
@@ -2032,6 +2021,17 @@ description add-field-description --onProperty totalSalesPrice --title "Total Sa
 description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Totale" --text "Prix de vente total pour les mouvements de type vente." --locale fr;
 format add-number-type --onProperty totalSalesPrice --type CURRENCY;
 display add-list-field --field totalSalesPrice;
+
+field string --named internalPic; 
+description add-field-description --onProperty internalPic --title "Internal PIC" --text "The internal product identification code used to identify lots during sales.";
+description add-field-description --onProperty internalPic --title "CIP Maison" --text "Le code identifiant produit maison, utilisé pour identifier les lots de produits lors de la vente." --locale fr;
+constraint Size --onProperty internalPic --min 7;
+description add-size-message --onProperty internalPic --title "The internal product identification code must have more than 7 characters" --text "The internal product identification code must have more than 7 characters";
+description add-size-message --onProperty internalPic --title "Le code pour identification de produit interne doit avoir plus de 7 caractères" --text "Le code pour identification de produit interne doit avoir plus de 7 caractères" --locale fr;
+display add-list-field --field internalPic;
+constraint NotNull --onProperty internalPic;
+description add-notNull-message --onProperty internalPic --title "The internalPic  is required" --text "The internalPic  is required";
+description add-notNull-message --onProperty internalPic --title "Le internalPic est réquis" --text "lE Cip local est requis" --locale fr;
 
 
 cd ~~ ;
@@ -2864,11 +2864,11 @@ description add-field-description --onProperty amountBeforeTax --title "Montant 
 @/* Default=0, montant_ht */;
 display add-list-field --field amountBeforeTax;
 
-field number --named amountVAT --type java.math.BigDecimal;
-description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
-description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
-format add-number-type --onProperty amountVAT --type CURRENCY ;
-display add-list-field --field amountVAT;
+field number --named taxAmount --type java.math.BigDecimal;
+description add-field-description --onProperty taxAmount --title "Amount VAT" --text "Total amount VAT for this sales order.";
+description add-field-description --onProperty taxAmount --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
+format add-number-type --onProperty taxAmount --type CURRENCY ;
+display add-list-field --field taxAmount;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
@@ -2981,11 +2981,11 @@ description add-field-description --onProperty amountReturn --title "Prix de Ven
 format add-number-type --onProperty amountReturn --type CURRENCY ;
 display add-list-field --field amountReturn;
 
-field number --named totalSalesPrice --type java.math.BigDecimal;
-description add-field-description --onProperty totalSalesPrice --title "Total Sales Price" --text "The total sales price for product of this line.";
-description add-field-description --onProperty totalSalesPrice --title "Prix de Vente Total" --text "Prix total du produit de la ligne de facture" --locale fr;
-format add-number-type --onProperty totalSalesPrice --type CURRENCY ;
-display add-list-field --field totalSalesPrice;
+field number --named totalPurchasePrice --type java.math.BigDecimal;
+description add-field-description --onProperty totalPurchasePrice --title "Total purchase Price" --text "The total sales price for product of this line.";
+description add-field-description --onProperty totalPurchasePrice --title "Prix d achat Total" --text "Prix total du produit de la ligne de facture" --locale fr;
+format add-number-type --onProperty totalPurchasePrice --type CURRENCY ;
+display add-list-field --field totalPurchasePrice;
 
 
 cd ~~;
@@ -3070,11 +3070,11 @@ description add-field-description --onProperty amountBeforeTax --title "Montant 
 @/* Default=0, montant_ht */;
 display add-list-field --field amountBeforeTax;
 
-field number --named amountVAT --type java.math.BigDecimal;
-description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
-description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
-format add-number-type --onProperty amountVAT --type CURRENCY ;
-display add-list-field --field amountVAT;
+field number --named taxAmount --type java.math.BigDecimal;
+description add-field-description --onProperty taxAmount --title "Amount VAT" --text "Total amount VAT for this sales order.";
+description add-field-description --onProperty taxAmount --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
+format add-number-type --onProperty taxAmount --type CURRENCY ;
+display add-list-field --field taxAmount;
 
 field number --named amountDiscount --type java.math.BigDecimal;
 description add-field-description --onProperty amountDiscount --title "Discount Amount" --text "Discount amount for this sales order. The sum of all discounts.";
