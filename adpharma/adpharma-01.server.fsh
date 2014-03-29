@@ -638,7 +638,7 @@ description add-size-message --onProperty description --title "La description do
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
 description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
-association set-selection-mode --onProperty agency --selectionMode COMBOBOX ;
+association set-selection-mode --onProperty agency --selectionMode COMBOBOX;
 association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa.Agency;
 display add-list-field --field agency.name;
 constraint NotNull --onProperty agency;
