@@ -70,8 +70,6 @@ public class DeliveryListView
 
 	private CalendarTextField deliveryDateFrom;
 
-//	private CalendarTextField deliveryDateTo;
-
 	private ComboBox<DeliverySupplier> supplier;
 
 	private ComboBox<DocumentProcessingState> deliveryProcessingState;
@@ -164,11 +162,6 @@ public class DeliveryListView
 		deliveryDateFrom.setPromptText("date From");
 		deliveryDateFrom.setPrefWidth(160d);
 		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
-
-//		deliveryDateTo =ViewBuilderUtils.newCalendarTextField("deliveryDateTo", "dd-MM-yyyy HH:mm", locale, false);
-//		deliveryDateTo.setPromptText("Date To");
-//		deliveryDateTo.setPrefWidth(160d);
-//		HBox.setMargin(deliveryDateTo, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("Supplier");

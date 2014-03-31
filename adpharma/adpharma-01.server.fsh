@@ -67,7 +67,6 @@ enum add-enum-constant-description --onConstant SALES  --title "Vente" --text "V
 
 cd ~~;
 
-
 @/* Enum AccessRoleEnum */;
 java new-enum-type --named AccessRoleEnum --package ~.jpa;
 enum add-enum-class-description --title "Access Role Names" --text "The name of access roles defined in this application";
@@ -300,9 +299,7 @@ java new-enum-const CLOSED ;
 enum add-enum-constant-description --onConstant CLOSED --title "Closed" --text "Closed document";
 enum add-enum-constant-description --onConstant CLOSED --title "Cloturé" --text "Document cloturé" --locale fr ;
 
-
 cd ~~;
-
 
 @/* Entity Company */;
 entity --named Company --package ~.jpa --idStrategy AUTO;
@@ -400,14 +397,6 @@ display add-list-field --field name;
 constraint NotNull --onProperty name;
 description add-notNull-message --onProperty name --title "The  name of this Agency is required" --text "The  name of this Agency is required";
 description add-notNull-message --onProperty name --title "Le libellé  de cette agence est réquis" --text "Le libellé  de cette AGENCE est réquis" --locale fr;
-
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this agency";
-description add-field-description --onProperty description --title "Description" --text "Description de la filiale" --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The agency description must have less than 256 characters" --text "The agency description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description de cette agence doit avoir moins de 256 caractères" --text "La description de cette agence doit avoir moins de 256 caractères" --locale fr;
 
 field boolean --named active --primitive false;
 description add-field-description --onProperty active --title "Active" --text "Says if this agency is active or not";
@@ -575,8 +564,6 @@ association set-type --onProperty agency --type AGGREGATION --targetEntity ~.jpa
 @/* max=50 */;
 cd ~~;
 
-
-
 @/* Entity PackagingMode, ModeConditionnement */;
 entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "The product packaging mode";
@@ -628,13 +615,6 @@ field string --named geoCode;
 description add-field-description --onProperty geoCode --title "Geographic Code" --text "Geographic code for the identification of the position of this article in the pharmacie";
 description add-field-description --onProperty geoCode --title "Code Géographique" --text "Code géographique identifiant physiquement un produit dans la pharmacie" --locale fr;
 
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "Description of the section";
-description add-field-description --onProperty description --title "Description" --text "Description du rayon" --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
-
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "Agency in which the section is located";
 description add-field-description --onProperty agency --title "Agency" --text "Agency dans lequel le rayon se trouve." --locale fr;
@@ -666,13 +646,6 @@ display add-list-field --field name;
 constraint NotNull --onProperty name;
 description add-notNull-message --onProperty name --title "The  name of this family is required" --text "The  name of this family is required";
 description add-notNull-message --onProperty name --title "Le libellé  de cette famille est réquis" --text "Le libellé court de cette famille est réquis" --locale fr;
-
-field string --named description;
-description add-field-description --onProperty description --title "Description" --text "The description of this product family";
-description add-field-description --onProperty description --title "Description" --text "La description de la famille produit." --locale fr;
-constraint Size --onProperty description --max 256;
-description add-size-message --onProperty description --title "The description must have less than 256 characters" --text "The description must have less than 256 characters";
-description add-size-message --onProperty description --title "La description doit avoir moins de 256 caractères" --text "La description doit avoir moins de 256 caractères" --locale fr;
 
 field manyToOne --named parentFamily --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty parentFamily --title "Parent Family" --text "The parent family";
@@ -1027,10 +1000,7 @@ java new-enum-const MOST_SOLD;
 enum add-enum-constant-description --onConstant MOST_SOLD --title "Most product sold" --text "Procurement order trigerred for most sold product";
 enum add-enum-constant-description --onConstant MOST_SOLD --title "Produits les Plus Vendu" --text "Commande initialisé pour les produits les plus vendus" --locale fr ;
 
-
-
 cd ~~;
-
 
 @/* Entity ProcurementOrderItem */;
 entity --named ProcurementOrderItem --package ~.jpa --idStrategy AUTO;
@@ -2778,8 +2748,8 @@ display add-list-field --field totalSalesPrice;
 
 @/* Entité Facture */;
 entity --named CustomerInvoice --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Invoice" --text "An invoice.";
-description add-class-description  --locale fr --title "Facture" --text "Une facture.";
+description add-class-description --title "Customer Invoice" --text "An invoice.";
+description add-class-description  --locale fr --title "Facture Client" --text "Une facture.";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
@@ -2993,8 +2963,8 @@ cd ~~;
 
 @/* Entité Facture */;
 entity --named SupplierInvoice --package ~.jpa --idStrategy AUTO;
-description add-class-description --title "Invoice" --text "An invoice.";
-description add-class-description  --locale fr --title "Facture" --text "Une facture.";
+description add-class-description --title "Supplier Invoice" --text "An invoice.";
+description add-class-description  --locale fr --title "Facture Fournisseur" --text "Une facture.";
 group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
@@ -3350,9 +3320,7 @@ description add-field-description --onProperty invoices --title "Invoices" --tex
 description add-field-description --onProperty invoices --title "Factures" --text "Factures contenant cette dette" --locale fr;
 association set-type --onProperty invoices --type AGGREGATION --targetEntity ~.jpa.CustomerInvoice;
 
-
-cd ~~;
-
+cd ~~ ;
 
 @/* ================================== */;
 @/* Prescriptions */;
