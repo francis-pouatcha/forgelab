@@ -35,38 +35,6 @@ repogen setup;
 
 association setup;
 
-@/* Enum Group: can be used to group components and limit the amount of components displayed to a user. */;
-@/* These are not one to one identical to roles. */;
-java new-enum-type --named WorkGroup --package ~.jpa;
-enum add-enum-class-description --title "Work Group" --text "A work group";
-enum add-enum-class-description --title "Groupe de Travail" --text "Un groupe de travail" --locale fr;
-
-java new-enum-const ADMIN;
-enum add-enum-constant-description --onConstant ADMIN --title "Administration" --text "Adminitrator of this platform";
-enum add-enum-constant-description --onConstant ADMIN --title "Administration" --text "Administrateur de ce progiciel" --locale fr;
-
-java new-enum-const LOGIN;
-enum add-enum-constant-description --onConstant LOGIN  --title "Login" --text "User of this application" ;
-enum add-enum-constant-description --onConstant LOGIN  --title "Connexion" --text "Utilisateur de ce progiciel" --locale fr ;
-
-java new-enum-const CASHIER;
-enum add-enum-constant-description --onConstant CASHIER  --title "Cachier" --text "Cashier" ;
-enum add-enum-constant-description --onConstant CASHIER  --title "Caisses" --text "Caissier" --locale fr;
-
-java new-enum-const STOCKS;
-enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "Stocks" ;
-enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "Magasinier" --locale fr;
-
-java new-enum-const MANAGER;
-enum add-enum-constant-description --onConstant MANAGER  --title "Manager" --text "Manager" ;
-enum add-enum-constant-description --onConstant MANAGER  --title "Manageur" --text "Manageur" --locale fr;
-
-java new-enum-const SALES;
-enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "Sales" ;
-enum add-enum-constant-description --onConstant SALES  --title "Vente" --text "Vente" --locale fr;
-
-cd ~~;
-
 @/* Enum AccessRoleEnum */;
 java new-enum-type --named AccessRoleEnum --package ~.jpa;
 enum add-enum-class-description --title "Access Role Names" --text "The name of access roles defined in this application";
@@ -100,6 +68,29 @@ enum add-enum-constant-description --onConstant SALES  --title "Vendeur" --text 
 
 cd ~~;
 
+access login-entry --userName "admin" --password "admin";
+access role-entry --userName "admin" --role "LOGIN";
+access role-entry --userName "admin" --role "ADMIN"; 
+
+access login-entry --userName "manager" --password "manager";
+access role-entry --userName "manager" --role "LOGIN";
+access role-entry --userName "manager" --role "MANAGER"; 
+
+access login-entry --userName "cashier" --password "cashier";
+access role-entry --userName "cashier" --role "LOGIN";
+access role-entry --userName "cashier" --role "CASHIER"; 
+
+access login-entry --userName "stocks" --password "stocks";
+access role-entry --userName "stocks" --role "LOGIN";
+access role-entry --userName "stocks" --role "STOCKS"; 
+
+access login-entry --userName "sales" --password "sales";
+access role-entry --userName "sales" --role "LOGIN";
+access role-entry --userName "sales" --role "SALES"; 
+
+
+cd ~~;
+
 
 @/* Enum PermissionActionEnum */;
 java new-enum-type --named PermissionActionEnum --package ~.jpa;
@@ -121,6 +112,10 @@ enum add-enum-constant-description --onConstant CREATE  --title "Créer" --text 
 java new-enum-const EDIT;
 enum add-enum-constant-description --onConstant EDIT  --title "Modify" --text "Allows the bearer to modify an instance of the component protected by the associated permission";
 enum add-enum-constant-description --onConstant EDIT  --title "Modifier" --text "Permet au porteur de modifier une instance du genre protégé par la permission associée" --locale fr;
+
+java new-enum-const NAV;
+enum add-enum-constant-description --onConstant NAV  --title "Navigate" --text "Allows the bearer to see the component in the component menu";
+enum add-enum-constant-description --onConstant NAV  --title "Maviger" --text "Permet au porteur de voir cette componente dans la liste des componentes" --locale fr;
 
 
 cd ~~;
@@ -163,9 +158,8 @@ entity --named RoleName --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Roles" --text "Entity used to map roles";
 description add-class-description --title "Roles" --text "Entité écoutant mes roles" --locale fr;
 access role-table --enumClass ~.jpa.AccessRoleEnum;
-group add --grouper ~.jpa.WorkGroup --named ADMIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
 description add-field-description --onProperty name --title "Role Name" --text "The name of this role";
@@ -183,6 +177,7 @@ association set-selection-mode --onProperty permissions --selectionMode TABLE;
 
 
 cd ~~;
+
 
 @/* Entity Gender */;
 java new-enum-type --named Gender --package ~.jpa;
@@ -205,8 +200,8 @@ cd ~~;
 entity --named Currency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Currency" --text "A currency";
 description add-class-description  --locale fr --title "Devise" --text "Une devise";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 
 field string --named name;
 description add-field-description --onProperty name --title "Currency Name" --text "The name of this currency.";
@@ -229,7 +224,6 @@ cd ~~;
 entity --named VAT --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Tax" --text "The value added tax";
 description add-class-description  --locale fr --title "Taxe" --text "Taxe sur la valeure ajoutée";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -257,7 +251,6 @@ cd ~~;
 entity --named SalesMargin --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Margin" --text "The sales margin on this product.";
 description add-class-description  --locale fr --title "Taux de Marge" --text "Le taux de marge du produit.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -305,7 +298,7 @@ cd ~~;
 entity --named Company --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Company" --text "The Company";
 description add-class-description  --locale fr --title "Compagnie" --text "La compagnie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named displayName;
@@ -379,7 +372,7 @@ cd ~~;
 entity --named Agency --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Agency" --text "An agency of this pharmacie";
 description add-class-description  --locale fr --title "Agence" --text "Une agence de cette pharmacie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named agencyNumber;
@@ -466,14 +459,10 @@ entity --named Login --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Login" --text "A login record";
 description add-class-description --title "Connection" --text "Une connection" --locale fr;
 access login-table;
-group add --grouper ~.jpa.WorkGroup --named LOGIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole ADMIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-
-access login-entry --userName "admin" --password "admin";
-access role-entry --userName "admin" --role "LOGIN";
-access role-entry --userName "admin" --role "ADMIN"; 
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named loginName;
 description add-field-description --onProperty loginName --title "User Name" --text "The name used by the user to login.";
@@ -568,7 +557,6 @@ cd ~~;
 entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "The product packaging mode";
 description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -588,7 +576,6 @@ cd ~~;
 entity --named Section --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
 description add-class-description --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -634,7 +621,6 @@ cd ~~ ;
 entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Product Family" --text "The product family";
 description add-class-description --locale fr --title "Famille Produit" --text "La famille produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -660,7 +646,6 @@ cd ~~ ;
 entity --named ClearanceConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Clearance Configuration" --text "Configuration for the clearance of a product.";
 description add-class-description --title "Configuration Solde" --text "Permet de créer une configuration du solde pour un produit." --locale fr;
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -724,13 +709,12 @@ cd ~~;
 entity --named Article --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article" --text "An article or any oder drug sold in the pharmacy";
 description add-class-description  --locale fr --title "Article" --text "Un produit ou medicament en vente dans cette pharmacie";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named articleName;
 description add-field-description --onProperty articleName --title "Article Name" --text "The name of this article";
@@ -864,13 +848,12 @@ cd ~~;
 entity --named ArticleEquivalence --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article Equivalence" --text "An article equivalent to this article";
 description add-class-description  --locale fr --title "Equivalence Produit" --text "Un article équivalent à cet article";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field manyToOne --named mainArticle --fieldType ~.jpa.Article;
 description add-field-description --onProperty mainArticle --title "Main Article" --text "The main Article";
@@ -907,14 +890,10 @@ cd ~~;
 entity --named Supplier --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Supplier" --text "The supplier";
 description add-class-description  --locale fr --title "Fournisseur" --text "Le fournisseur";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named name;
@@ -1009,8 +988,8 @@ description add-class-description  --locale fr --title "Ligne Commande Fournisse
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named mainPic; 
 description add-field-description --onProperty mainPic --title "Main PIC" --text "The main product identification code used to identify lots during sales.";
@@ -1130,13 +1109,12 @@ cd ~~
 entity --named ProcurementOrder --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Procurement Order" --text "Procurement order";
 description add-class-description  --locale fr --title "Commande Fournisseur" --text "Commande fournisseur";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named procurementOrderNumber;
@@ -1378,10 +1356,8 @@ cd ~~ ;
 entity --named Delivery --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Delivery" --text "The Delivery";
 description add-class-description  --locale fr --title "Livraison" --text "Une Livraison";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named deliveryNumber;
@@ -1512,12 +1488,10 @@ cd ~~ ;
 entity --named ArticleLot --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Article Lot" --text "The article Lot.";
 description add-class-description  --locale fr --title "Lot Article" --text "Lot article.";
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The article referenced by this lot.";
@@ -1629,12 +1603,9 @@ cd ~~;
 entity --named Employer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Employer" --text "The client Employer.";
 description add-class-description  --locale fr --title "Employeur" --text "Employeur du client.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
 
 field string --named name;
@@ -1696,7 +1667,6 @@ cd ~~;
 entity --named CustomerCategory --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Customer Category" --text "The client categories.";
 description add-class-description  --locale fr --title "Categorie Client" --text "Les categorie de client.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
@@ -1731,12 +1701,9 @@ cd ~~;
 entity --named Customer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Customer" --text "The client.";
 description add-class-description  --locale fr --title "Client" --text "Un client.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field custom --named gender --type ~.jpa.Gender;
@@ -1878,13 +1845,11 @@ cd ~~;
 entity --named StockMovement --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Stock Mouvement" --text "It saves the traces of all the movements that take place in the stock (inputs, outputs, inventory, returns processing, etc ...)";
 description add-class-description --title "Mouvement de Stock" --text "Elle permet de sauvegarder les traces de  tous les mouvements qui prennen place dans le stock(entrees, sorties, inventaires, retours, transformation, etc...)" --locale fr ;
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field temporal --type TIMESTAMP --named creationDate; 
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this stock movement.";
@@ -2010,12 +1975,9 @@ cd ~~ ;
 entity --named Insurrance --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Insurrance" --text "The Insurrance .";
 description add-class-description --locale fr --title "Assurance" --text "Assurance";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field temporal --type TIMESTAMP --named beginDate; 
@@ -2170,10 +2132,8 @@ cd ~~;
 entity --named Inventory --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Inventory" --text "An inventory";
 description add-class-description  --locale fr --title "Inventaire" --text "Un inventaire.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field string --named inventoryNumber;
@@ -2251,10 +2211,8 @@ cd ~~;
 entity --named ProductDetailConfig --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Product Details Config" --text "Product transformation";
 description add-class-description  --locale fr --title "Transformation Produit" --text "Transformation produit";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 field temporal --type TIMESTAMP --named recordingDate; 
@@ -2316,12 +2274,9 @@ cd ~~ ;
 entity --named CashDrawer --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Cash Drawer" --text "A cash drawer.";
 description add-class-description  --locale fr --title "Caisse" --text "Une caisse.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named cashDrawerNumber;
@@ -2457,12 +2412,9 @@ cd ~~;
 entity --named SalesOrderItem --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Order Item" --text "The sales order item.";
 description add-class-description  --locale fr --title "Ligne Commande Client" --text "La ligne de command client.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
 
 field number --named orderedQty --type java.math.BigDecimal;
@@ -2531,12 +2483,9 @@ cd ~~;
 entity --named SalesOrder --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Sales Order" --text "A sales order.";
 description add-class-description  --locale fr --title "Commande Client" --text "Une commande client.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field manyToOne --named cashDrawer --fieldType ~.jpa.CashDrawer;
@@ -2750,12 +2699,9 @@ display add-list-field --field totalSalesPrice;
 entity --named CustomerInvoice --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Customer Invoice" --text "An invoice.";
 description add-class-description  --locale fr --title "Facture Client" --text "Une facture.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field custom --named invoiceType --type ~.jpa.InvoiceType;
@@ -2909,7 +2855,7 @@ description add-class-description --title "Supplier Invoice Item" --text "An sup
 description add-class-description  --locale fr --title "Ligne Facture Fournisseur" --text "Une ligne facture fournisseur.";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCK;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 
 field string --named internalPic;
@@ -2965,10 +2911,8 @@ cd ~~;
 entity --named SupplierInvoice --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Supplier Invoice" --text "An invoice.";
 description add-class-description  --locale fr --title "Facture Fournisseur" --text "Une facture.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 
 
@@ -3117,12 +3061,9 @@ cd ~~;
 entity --named Payment --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Payment" --text "A payment.";
 description add-class-description  --locale fr --title "Paiement" --text "Un paiement.";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named paymentNumber;
@@ -3232,12 +3173,9 @@ cd ~~;
 entity --named DebtStatement --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Debt Statement" --text "The sum of all the debts of a client";
 description add-class-description  --locale fr --title "Etat Credits" --text "Le cumul de toutes les dettes d un client";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named statementNumber;
@@ -3329,12 +3267,9 @@ cd ~~ ;
 entity --named Hospital --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Hospital" --text "Hospital";
 description add-class-description  --locale fr --title "Hopital" --text "Hopital";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named name;
@@ -3488,12 +3423,9 @@ cd ~~;
 entity --named CustomerVoucher --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Client Voucher" --text "Client voucher";
 description add-class-description  --locale fr --title "Avoir Client" --text "Avoir client";
-group add --grouper ~.jpa.WorkGroup --named MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-group add --grouper ~.jpa.WorkGroup --named CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
-group add --grouper ~.jpa.WorkGroup --named SALES;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
 field string --named voucherNumber;
