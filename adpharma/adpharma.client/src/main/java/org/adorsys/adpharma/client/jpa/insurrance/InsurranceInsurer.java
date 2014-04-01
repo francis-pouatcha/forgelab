@@ -27,7 +27,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Customer_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InsurranceInsurer implements Association<Insurrance, Customer>
+public class InsurranceInsurer implements Association<Insurrance, Customer>, Cloneable
 {
 
    private Long id;
@@ -237,25 +237,41 @@ public class InsurranceInsurer implements Association<Insurrance, Customer>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      InsurranceInsurer other = (InsurranceInsurer) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		InsurranceInsurer other = (InsurranceInsurer) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "fullName");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      InsurranceInsurer a = new InsurranceInsurer();
+      a.id = id;
+      a.version = version;
+
+      a.fullName = fullName;
+      a.landLinePhone = landLinePhone;
+      a.mobile = mobile;
+      a.fax = fax;
+      a.email = email;
+      a.creditAuthorized = creditAuthorized;
+      a.discountAuthorized = discountAuthorized;
+      a.birthDate = birthDate;
+      return a;
+   }
+
 }

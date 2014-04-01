@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -14,15 +15,17 @@ public class InventoryItemArticleEditController extends InventoryItemArticleCont
    @Inject
    InventoryItemEditView editView;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-   }
-
    public void handleNewModelEvent(@Observes @SelectedModelEvent InventoryItem model)
    {
       this.sourceEntity = model;
-      activateButton(editView.getView().getInventoryItemArticleSelection());
-      bind(editView.getView().getInventoryItemArticleSelection());
+      activateButton(editView.getView().getInventoryItemArticleSelection(), editView.getView().getInventoryItemArticleForm());
+      bind(editView.getView().getInventoryItemArticleSelection(), editView.getView().getInventoryItemArticleForm());
    }
+
+   public void handleEditRequestEvent(
+         @Observes @EntityEditRequestedEvent InventoryItem p)
+   {
+      loadAssociation();
+   }
+
 }

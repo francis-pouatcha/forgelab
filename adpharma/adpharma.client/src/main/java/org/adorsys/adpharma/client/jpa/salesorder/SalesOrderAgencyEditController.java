@@ -23,6 +23,6 @@ public class SalesOrderAgencyEditController extends SalesOrderAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSalesOrderAgencySelection());
-      bind(editView.getView().getSalesOrderAgencySelection());
+      bind(editView.getView().getSalesOrderAgencySelection(), editView.getView().getSalesOrderAgencyForm());
    }
 }

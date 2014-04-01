@@ -51,8 +51,10 @@ public abstract class ArticleFamilyController
    {
    }
 
-   protected void bind(final ArticleFamilySelection selection)
+   protected void bind(final ArticleFamilySelection selection, final ArticleFamilyForm form)
    {
+
+      //	    selection.getFamily().valueProperty().bindBidirectional(sourceEntity.familyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleFamilyController
             s.reset();
             List<ProductFamily> entities = targetSearchResult.getResultList();
             selection.getFamily().getItems().clear();
-            selection.getFamily().getItems().addAll(entities);
+            selection.getFamily().getItems().add(new ArticleFamily());
+            for (ProductFamily entity : entities)
+            {
+               selection.getFamily().getItems().add(new ArticleFamily(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleFamilyController
                }
             });
 
-      selection.getFamily().valueProperty().addListener(new ChangeListener<ProductFamily>()
+      selection.getFamily().valueProperty().addListener(new ChangeListener<ArticleFamily>()
       {
          @Override
-         public void changed(ObservableValue<? extends ProductFamily> ov, ProductFamily oldValue,
-               ProductFamily newValue)
+         public void changed(ObservableValue<? extends ArticleFamily> ov, ArticleFamily oldValue,
+               ArticleFamily newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setFamily(new ArticleFamily(newValue));
+               form.update(newValue);
+            //                sourceEntity.setFamily(newValue);
          }
       });
 

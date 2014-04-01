@@ -27,5 +27,6 @@ public class SalesOrderVatDisplayController extends SalesOrderVatController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSalesOrderVatSelection());
+      bind(displayView.getView().getSalesOrderVatSelection(), displayView.getView().getSalesOrderVatForm());
    }
 }

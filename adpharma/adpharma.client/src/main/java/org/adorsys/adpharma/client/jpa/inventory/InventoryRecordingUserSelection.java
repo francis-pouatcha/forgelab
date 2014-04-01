@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 public class InventoryRecordingUserSelection extends AbstractSelection<Inventory, Login>
 {
 
-   private ComboBox<Login> recordingUser;
+   private ComboBox<InventoryRecordingUser> recordingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, Inventory.class })
@@ -39,10 +39,10 @@ public class InventoryRecordingUserSelection extends AbstractSelection<Inventory
 
       recordingUser = viewBuilder.addComboBox("Inventory_recordingUser_description.title", "recordingUser", resourceBundle, false);
 
-      recordingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      recordingUser.setCellFactory(new Callback<ListView<InventoryRecordingUser>, ListCell<InventoryRecordingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<InventoryRecordingUser> call(ListView<InventoryRecordingUser> listView)
          {
             return new InventoryRecordingUserListCell();
          }
@@ -54,9 +54,10 @@ public class InventoryRecordingUserSelection extends AbstractSelection<Inventory
 
    public void bind(Inventory model)
    {
+      recordingUser.valueProperty().bindBidirectional(model.recordingUserProperty());
    }
 
-   public ComboBox<Login> getRecordingUser()
+   public ComboBox<InventoryRecordingUser> getRecordingUser()
    {
       return recordingUser;
    }

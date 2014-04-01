@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
@@ -34,7 +36,7 @@ import org.adorsys.javaext.list.ListField;
 @ToStringField("fullName")
 @ListField({ "fullName", "birthDate", "landLinePhone", "mobile", "fax",
       "email", "creditAuthorized", "discountAuthorized" })
-public class Customer
+public class Customer implements Cloneable
 {
 
    private Long id;
@@ -411,9 +413,10 @@ public class Customer
          employer = new CustomerEmployer();
       }
       PropertyReader.copy(employer, getEmployer());
+      employerProperty().setValue(ObjectUtils.clone(getEmployer()));
    }
- 
-  public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
+
+   public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
    {
       if (customerCategory == null)
       {
@@ -434,6 +437,7 @@ public class Customer
          customerCategory = new CustomerCustomerCategory();
       }
       PropertyReader.copy(customerCategory, getCustomerCategory());
+      customerCategoryProperty().setValue(ObjectUtils.clone(getCustomerCategory()));
    }
 
    @Override
@@ -466,5 +470,38 @@ public class Customer
    public String toString()
    {
       return PropertyReader.buildToString(this, "fullName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Customer e = new Customer();
+      e.id = id;
+      e.version = version;
+
+      e.firstName = firstName;
+      e.lastName = lastName;
+      e.fullName = fullName;
+      e.landLinePhone = landLinePhone;
+      e.mobile = mobile;
+      e.fax = fax;
+      e.email = email;
+      e.creditAuthorized = creditAuthorized;
+      e.discountAuthorized = discountAuthorized;
+      e.serialNumber = serialNumber;
+      e.gender = gender;
+      e.customerType = customerType;
+      e.totalCreditLine = totalCreditLine;
+      e.totalDebt = totalDebt;
+      e.birthDate = birthDate;
+      e.employer = employer;
+      e.customerCategory = customerCategory;
+      return e;
    }
 }

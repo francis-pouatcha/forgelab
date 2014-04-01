@@ -27,5 +27,6 @@ public class ArticlePackagingModeDisplayController extends ArticlePackagingModeC
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticlePackagingModeSelection());
+      bind(displayView.getView().getArticlePackagingModeSelection(), displayView.getView().getArticlePackagingModeForm());
    }
 }

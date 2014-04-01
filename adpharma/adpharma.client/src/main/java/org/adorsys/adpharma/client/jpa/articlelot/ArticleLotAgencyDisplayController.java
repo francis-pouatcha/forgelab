@@ -27,5 +27,6 @@ public class ArticleLotAgencyDisplayController extends ArticleLotAgencyControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleLotAgencySelection());
+      bind(displayView.getView().getArticleLotAgencySelection(), displayView.getView().getArticleLotAgencyForm());
    }
 }

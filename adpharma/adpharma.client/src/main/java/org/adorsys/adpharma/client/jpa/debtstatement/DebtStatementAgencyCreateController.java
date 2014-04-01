@@ -22,7 +22,7 @@ public class DebtStatementAgencyCreateController extends DebtStatementAgencyCont
    public void handleNewModelEvent(@Observes @CreateModelEvent DebtStatement model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDebtStatementAgencySelection());
+      bind(createView.getView().getDebtStatementAgencySelection(), createView.getView().getDebtStatementAgencyForm());
       activateButton(createView.getView().getDebtStatementAgencySelection());
    }
 }

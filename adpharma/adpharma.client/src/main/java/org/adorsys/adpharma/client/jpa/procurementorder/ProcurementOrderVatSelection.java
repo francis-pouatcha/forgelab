@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 public class ProcurementOrderVatSelection extends AbstractSelection<ProcurementOrder, VAT>
 {
 
-   private ComboBox<VAT> vat;
+   private ComboBox<ProcurementOrderVat> vat;
 
    @Inject
    @Bundle({ CrudKeys.class, VAT.class, ProcurementOrder.class })
@@ -39,10 +39,10 @@ public class ProcurementOrderVatSelection extends AbstractSelection<ProcurementO
 
       vat = viewBuilder.addComboBox("ProcurementOrder_vat_description.title", "vat", resourceBundle, false);
 
-      vat.setCellFactory(new Callback<ListView<VAT>, ListCell<VAT>>()
+      vat.setCellFactory(new Callback<ListView<ProcurementOrderVat>, ListCell<ProcurementOrderVat>>()
       {
          @Override
-         public ListCell<VAT> call(ListView<VAT> listView)
+         public ListCell<ProcurementOrderVat> call(ListView<ProcurementOrderVat> listView)
          {
             return new ProcurementOrderVatListCell();
          }
@@ -54,9 +54,10 @@ public class ProcurementOrderVatSelection extends AbstractSelection<ProcurementO
 
    public void bind(ProcurementOrder model)
    {
+      vat.valueProperty().bindBidirectional(model.vatProperty());
    }
 
-   public ComboBox<VAT> getVat()
+   public ComboBox<ProcurementOrderVat> getVat()
    {
       return vat;
    }

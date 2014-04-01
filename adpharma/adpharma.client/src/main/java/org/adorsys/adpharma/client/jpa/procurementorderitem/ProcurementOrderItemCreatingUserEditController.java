@@ -23,6 +23,6 @@ public class ProcurementOrderItemCreatingUserEditController extends ProcurementO
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getProcurementOrderItemCreatingUserSelection());
-      bind(editView.getView().getProcurementOrderItemCreatingUserSelection());
+      bind(editView.getView().getProcurementOrderItemCreatingUserSelection(), editView.getView().getProcurementOrderItemCreatingUserForm());
    }
 }

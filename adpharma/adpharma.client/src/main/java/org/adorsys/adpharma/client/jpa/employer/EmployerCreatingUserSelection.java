@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.employer.Employer;
 public class EmployerCreatingUserSelection extends AbstractSelection<Employer, Login>
 {
 
-   private ComboBox<Login> creatingUser;
+   private ComboBox<EmployerCreatingUser> creatingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, Employer.class })
@@ -39,10 +39,10 @@ public class EmployerCreatingUserSelection extends AbstractSelection<Employer, L
 
       creatingUser = viewBuilder.addComboBox("Employer_creatingUser_description.title", "creatingUser", resourceBundle, false);
 
-      creatingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      creatingUser.setCellFactory(new Callback<ListView<EmployerCreatingUser>, ListCell<EmployerCreatingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<EmployerCreatingUser> call(ListView<EmployerCreatingUser> listView)
          {
             return new EmployerCreatingUserListCell();
          }
@@ -54,9 +54,10 @@ public class EmployerCreatingUserSelection extends AbstractSelection<Employer, L
 
    public void bind(Employer model)
    {
+      creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
    }
 
-   public ComboBox<Login> getCreatingUser()
+   public ComboBox<EmployerCreatingUser> getCreatingUser()
    {
       return creatingUser;
    }

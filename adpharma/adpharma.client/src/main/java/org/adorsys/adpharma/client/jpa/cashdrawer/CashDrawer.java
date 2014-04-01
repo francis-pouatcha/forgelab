@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -34,7 +36,7 @@ import org.adorsys.javaext.list.ListField;
       "initialAmount", "totalCashIn", "totalCashOut", "totalCash",
       "totalCheck", "totalCreditCard", "totalCompanyVoucher",
       "totalClientVoucher", "opened" })
-public class CashDrawer
+public class CashDrawer implements Cloneable
 {
 
    private Long id;
@@ -356,6 +358,7 @@ public class CashDrawer
          cashier = new CashDrawerCashier();
       }
       PropertyReader.copy(cashier, getCashier());
+      cashierProperty().setValue(ObjectUtils.clone(getCashier()));
    }
 
    public SimpleObjectProperty<CashDrawerClosedBy> closedByProperty()
@@ -379,6 +382,7 @@ public class CashDrawer
          closedBy = new CashDrawerClosedBy();
       }
       PropertyReader.copy(closedBy, getClosedBy());
+      closedByProperty().setValue(ObjectUtils.clone(getClosedBy()));
    }
 
    public SimpleObjectProperty<CashDrawerAgency> agencyProperty()
@@ -403,6 +407,7 @@ public class CashDrawer
          agency = new CashDrawerAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    @Override
@@ -435,5 +440,36 @@ public class CashDrawer
    public String toString()
    {
       return PropertyReader.buildToString(this, "cashDrawerNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CashDrawer e = new CashDrawer();
+      e.id = id;
+      e.version = version;
+
+      e.cashDrawerNumber = cashDrawerNumber;
+      e.opened = opened;
+      e.initialAmount = initialAmount;
+      e.totalCashIn = totalCashIn;
+      e.totalCashOut = totalCashOut;
+      e.totalCash = totalCash;
+      e.totalCheck = totalCheck;
+      e.totalCreditCard = totalCreditCard;
+      e.totalCompanyVoucher = totalCompanyVoucher;
+      e.totalClientVoucher = totalClientVoucher;
+      e.openingDate = openingDate;
+      e.closingDate = closingDate;
+      e.cashier = cashier;
+      e.closedBy = closedBy;
+      e.agency = agency;
+      return e;
    }
 }

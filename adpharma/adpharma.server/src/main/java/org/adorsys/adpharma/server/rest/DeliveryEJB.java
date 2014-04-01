@@ -1,19 +1,13 @@
 package org.adorsys.adpharma.server.rest;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
-
 import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-import org.adorsys.adpharma.server.jpa.Supplier;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
-
 import java.util.Set;
-
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 
 @Stateless
@@ -74,10 +68,6 @@ public class DeliveryEJB
    public Long count()
    {
       return repository.count();
-   }
-   
-   public List<Delivery> findByDelibveryDateBetween(Date dateFrom,Date dateTo,Supplier supplier, DocumentProcessingState status){
-	 return  repository.findByDeliveryDateBetween(dateFrom, dateTo, supplier, status);
    }
 
    public List<Delivery> findBy(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)

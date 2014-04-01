@@ -23,6 +23,6 @@ public class SupplierInvoiceItemArticleEditController extends SupplierInvoiceIte
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSupplierInvoiceItemArticleSelection());
-      bind(editView.getView().getSupplierInvoiceItemArticleSelection());
+      bind(editView.getView().getSupplierInvoiceItemArticleSelection(), editView.getView().getSupplierInvoiceItemArticleForm());
    }
 }

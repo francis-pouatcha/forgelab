@@ -27,5 +27,6 @@ public class SalesOrderCashDrawerDisplayController extends SalesOrderCashDrawerC
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSalesOrderCashDrawerSelection());
+      bind(displayView.getView().getSalesOrderCashDrawerSelection(), displayView.getView().getSalesOrderCashDrawerForm());
    }
 }

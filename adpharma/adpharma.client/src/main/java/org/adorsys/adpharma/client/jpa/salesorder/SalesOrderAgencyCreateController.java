@@ -22,7 +22,7 @@ public class SalesOrderAgencyCreateController extends SalesOrderAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent SalesOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSalesOrderAgencySelection());
+      bind(createView.getView().getSalesOrderAgencySelection(), createView.getView().getSalesOrderAgencyForm());
       activateButton(createView.getView().getSalesOrderAgencySelection());
    }
 }

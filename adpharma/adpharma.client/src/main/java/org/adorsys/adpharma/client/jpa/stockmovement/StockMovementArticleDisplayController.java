@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class StockMovementArticleDisplayController extends StockMovementArticleC
    public void handleNewModelEvent(@Observes @SelectedModelEvent StockMovement model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getStockMovementArticleSelection());
+      disableButton(displayView.getView().getStockMovementArticleSelection(), displayView.getView().getStockMovementArticleForm());
+      bind(displayView.getView().getStockMovementArticleSelection(), displayView.getView().getStockMovementArticleForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent StockMovement selectedEntity)
+   {
+      loadAssociation();
    }
 }

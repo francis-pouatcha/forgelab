@@ -135,6 +135,19 @@ public class SalesOrderItemSalesOrderForm extends AbstractToOneAssociation<Sales
       amountAfterTax.numberProperty().bindBidirectional(model.getSalesOrder().amountAfterTaxProperty());
    }
 
+   public void update(SalesOrderItemSalesOrder data)
+   {
+      soNumber.textProperty().set(data.soNumberProperty().get());
+      cashed.textProperty().set(new BooleanStringConverter().toString(data.cashedProperty().get()));
+      salesOrderStatus.valueProperty().set(data.salesOrderStatusProperty().get());
+      salesOrderType.valueProperty().set(data.salesOrderTypeProperty().get());
+      amountBeforeTax.numberProperty().set(data.amountBeforeTaxProperty().get());
+      amountVAT.numberProperty().set(data.amountVATProperty().get());
+      amountDiscount.numberProperty().set(data.amountDiscountProperty().get());
+      totalReturnAmount.numberProperty().set(data.totalReturnAmountProperty().get());
+      amountAfterTax.numberProperty().set(data.amountAfterTaxProperty().get());
+   }
+
    public TextField getSoNumber()
    {
       return soNumber;

@@ -58,9 +58,14 @@ public class AgencyListController implements EntityController
 
    private AgencySearchResult searchResult;
 
+   @Inject
+   private AgencyRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Agency>()
             {

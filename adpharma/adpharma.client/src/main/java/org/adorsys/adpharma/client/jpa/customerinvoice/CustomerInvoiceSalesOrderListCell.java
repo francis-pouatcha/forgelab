@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
-public class CustomerInvoiceSalesOrderListCell extends AbstractToStringListCell<SalesOrder>
+public class CustomerInvoiceSalesOrderListCell extends AbstractToStringListCell<CustomerInvoiceSalesOrder>
 {
 
    @Override
-   protected String getToString(SalesOrder item)
+   protected String getToString(CustomerInvoiceSalesOrder item)
    {
       if (item == null)
       {

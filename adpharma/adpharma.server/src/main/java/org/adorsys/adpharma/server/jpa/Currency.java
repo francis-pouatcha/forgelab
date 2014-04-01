@@ -18,8 +18,8 @@ import org.adorsys.javaext.format.NumberType;
 
 @Entity
 @Description("Currency_description")
-@ToStringField("name")
-@ListField("name")
+@ToStringField({ "name", "cfaEquivalent" })
+@ListField({ "name", "cfaEquivalent" })
 public class Currency implements Serializable
 {
 
@@ -39,6 +39,7 @@ public class Currency implements Serializable
    @Column
    @Description("Currency_cfaEquivalent_description")
    @NumberFormatType(NumberType.CURRENCY)
+   @NotNull(message = "Currency_cfaEquivalent_NotNull_validation")
    private BigDecimal cfaEquivalent;
 
    public Long getId()

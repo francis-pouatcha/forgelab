@@ -51,8 +51,10 @@ public abstract class InventoryAgencyController
    {
    }
 
-   protected void bind(final InventoryAgencySelection selection)
+   protected void bind(final InventoryAgencySelection selection, final InventoryAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class InventoryAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new InventoryAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new InventoryAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class InventoryAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<InventoryAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends InventoryAgency> ov, InventoryAgency oldValue,
+               InventoryAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new InventoryAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 
 import javafx.beans.property.ObjectProperty;
@@ -27,8 +26,6 @@ public class ProductFamilyViewSearchFields extends AbstractForm<ProductFamily>
 
    private TextField name;
 
-   private TextArea description;
-
    @Inject
    @Bundle({ CrudKeys.class, ProductFamily.class })
    private ResourceBundle resourceBundle;
@@ -38,7 +35,6 @@ public class ProductFamilyViewSearchFields extends AbstractForm<ProductFamily>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       name = viewBuilder.addTextField("ProductFamily_name_description.title", "name", resourceBundle);
-      description = viewBuilder.addTextArea("ProductFamily_description_description.title", "description", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -46,17 +42,11 @@ public class ProductFamilyViewSearchFields extends AbstractForm<ProductFamily>
    public void bind(ProductFamily model)
    {
       name.textProperty().bindBidirectional(model.nameProperty());
-      description.textProperty().bindBidirectional(model.descriptionProperty());
 
    }
 
    public TextField getName()
    {
       return name;
-   }
-
-   public TextArea getDescription()
-   {
-      return description;
    }
 }

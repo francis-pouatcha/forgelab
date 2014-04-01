@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -35,7 +37,7 @@ import org.adorsys.javaext.list.ListField;
 @ListField({ "voucherNumber", "salesOrder.soNumber", "amount",
       "customer.fullName", "agency.name", "canceled", "recordingUser",
       "modifiedDate", "amountUsed", "settled", "restAmount", "voucherPrinted" })
-public class CustomerVoucher
+public class CustomerVoucher implements Cloneable
 {
 
    private Long id;
@@ -61,10 +63,10 @@ public class CustomerVoucher
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> modifiedDate;
    @Description("CustomerVoucher_customerInvoice_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
    private SimpleObjectProperty<CustomerVoucherCustomerInvoice> customerInvoice;
    @Description("CustomerVoucher_customer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<CustomerVoucherCustomer> customer;
    @Description("CustomerVoucher_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
@@ -273,6 +275,7 @@ public class CustomerVoucher
          customerInvoice = new CustomerVoucherCustomerInvoice();
       }
       PropertyReader.copy(customerInvoice, getCustomerInvoice());
+      customerInvoiceProperty().setValue(ObjectUtils.clone(getCustomerInvoice()));
    }
 
    public SimpleObjectProperty<CustomerVoucherCustomer> customerProperty()
@@ -296,6 +299,7 @@ public class CustomerVoucher
          customer = new CustomerVoucherCustomer();
       }
       PropertyReader.copy(customer, getCustomer());
+      customerProperty().setValue(ObjectUtils.clone(getCustomer()));
    }
 
    public SimpleObjectProperty<CustomerVoucherAgency> agencyProperty()
@@ -319,6 +323,7 @@ public class CustomerVoucher
          agency = new CustomerVoucherAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<CustomerVoucherRecordingUser> recordingUserProperty()
@@ -342,6 +347,7 @@ public class CustomerVoucher
          recordingUser = new CustomerVoucherRecordingUser();
       }
       PropertyReader.copy(recordingUser, getRecordingUser());
+      recordingUserProperty().setValue(ObjectUtils.clone(getRecordingUser()));
    }
 
    @Override
@@ -374,5 +380,33 @@ public class CustomerVoucher
    public String toString()
    {
       return PropertyReader.buildToString(this, "voucherNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerVoucher e = new CustomerVoucher();
+      e.id = id;
+      e.version = version;
+
+      e.voucherNumber = voucherNumber;
+      e.canceled = canceled;
+      e.settled = settled;
+      e.voucherPrinted = voucherPrinted;
+      e.amount = amount;
+      e.amountUsed = amountUsed;
+      e.restAmount = restAmount;
+      e.modifiedDate = modifiedDate;
+      e.customerInvoice = customerInvoice;
+      e.customer = customer;
+      e.agency = agency;
+      e.recordingUser = recordingUser;
+      return e;
    }
 }

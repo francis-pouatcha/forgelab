@@ -51,8 +51,10 @@ public abstract class CashDrawerCashierController
    {
    }
 
-   protected void bind(final CashDrawerCashierSelection selection)
+   protected void bind(final CashDrawerCashierSelection selection, final CashDrawerCashierForm form)
    {
+
+      //	    selection.getCashier().valueProperty().bindBidirectional(sourceEntity.cashierProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CashDrawerCashierController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getCashier().getItems().clear();
-            selection.getCashier().getItems().addAll(entities);
+            selection.getCashier().getItems().add(new CashDrawerCashier());
+            for (Login entity : entities)
+            {
+               selection.getCashier().getItems().add(new CashDrawerCashier(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CashDrawerCashierController
                }
             });
 
-      selection.getCashier().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getCashier().valueProperty().addListener(new ChangeListener<CashDrawerCashier>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends CashDrawerCashier> ov, CashDrawerCashier oldValue,
+               CashDrawerCashier newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCashier(new CashDrawerCashier(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCashier(newValue);
          }
       });
 

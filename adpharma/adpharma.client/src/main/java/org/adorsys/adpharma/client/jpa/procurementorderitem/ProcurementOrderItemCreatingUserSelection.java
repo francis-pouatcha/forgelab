@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 public class ProcurementOrderItemCreatingUserSelection extends AbstractSelection<ProcurementOrderItem, Login>
 {
 
-   private ComboBox<Login> creatingUser;
+   private ComboBox<ProcurementOrderItemCreatingUser> creatingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, ProcurementOrderItem.class })
@@ -39,10 +39,10 @@ public class ProcurementOrderItemCreatingUserSelection extends AbstractSelection
 
       creatingUser = viewBuilder.addComboBox("ProcurementOrderItem_creatingUser_description.title", "creatingUser", resourceBundle, false);
 
-      creatingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      creatingUser.setCellFactory(new Callback<ListView<ProcurementOrderItemCreatingUser>, ListCell<ProcurementOrderItemCreatingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<ProcurementOrderItemCreatingUser> call(ListView<ProcurementOrderItemCreatingUser> listView)
          {
             return new ProcurementOrderItemCreatingUserListCell();
          }
@@ -54,9 +54,10 @@ public class ProcurementOrderItemCreatingUserSelection extends AbstractSelection
 
    public void bind(ProcurementOrderItem model)
    {
+      creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
    }
 
-   public ComboBox<Login> getCreatingUser()
+   public ComboBox<ProcurementOrderItemCreatingUser> getCreatingUser()
    {
       return creatingUser;
    }

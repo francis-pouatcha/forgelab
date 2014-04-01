@@ -59,6 +59,9 @@ public class PackagingModeController extends DomainComponentController
    private PackagingMode searchModel = new PackagingMode();
    private PackagingMode selectedModel = new PackagingMode();
 
+   @Inject
+   private PackagingModeRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class PackagingModeController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<PackagingMode> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class PackagingModeController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent PackagingMode selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of packagingModes.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class PackagingModeController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent PackagingMode selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class PackagingModeController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent PackagingMode templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class PackagingModeController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent PackagingMode selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.ToStringField;
@@ -22,7 +24,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("displayName")
 @ListField({ "displayName", "phone", "fax", "siteManager", "email" })
-public class Company
+public class Company implements Cloneable
 {
 
    private Long id;
@@ -354,5 +356,34 @@ public class Company
    public String toString()
    {
       return PropertyReader.buildToString(this, "displayName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Company e = new Company();
+      e.id = id;
+      e.version = version;
+
+      e.displayName = displayName;
+      e.phone = phone;
+      e.fax = fax;
+      e.siteManager = siteManager;
+      e.email = email;
+      e.street = street;
+      e.zipCode = zipCode;
+      e.city = city;
+      e.country = country;
+      e.siteInternet = siteInternet;
+      e.mobile = mobile;
+      e.registerNumber = registerNumber;
+      e.recordingDate = recordingDate;
+      return e;
    }
 }

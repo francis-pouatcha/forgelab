@@ -23,6 +23,6 @@ public class PaymentCashierEditController extends PaymentCashierController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getPaymentCashierSelection());
-      bind(editView.getView().getPaymentCashierSelection());
+      bind(editView.getView().getPaymentCashierSelection(), editView.getView().getPaymentCashierForm());
    }
 }

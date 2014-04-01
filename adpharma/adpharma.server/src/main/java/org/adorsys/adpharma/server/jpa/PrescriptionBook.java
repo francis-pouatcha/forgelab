@@ -73,7 +73,7 @@ public class PrescriptionBook implements Serializable
 
    @ManyToOne
    @Description("PrescriptionBook_salesOrder_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
    private SalesOrder salesOrder;
 
    @Temporal(TemporalType.TIMESTAMP)

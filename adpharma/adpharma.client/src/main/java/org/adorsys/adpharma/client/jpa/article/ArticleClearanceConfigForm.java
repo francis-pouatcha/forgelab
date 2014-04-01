@@ -87,6 +87,15 @@ public class ArticleClearanceConfigForm extends AbstractToOneAssociation<Article
       endDate.calendarProperty().bindBidirectional(model.getClearanceConfig().endDateProperty());
    }
 
+   public void update(ArticleClearanceConfig data)
+   {
+      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+      clearanceState.valueProperty().set(data.clearanceStateProperty().get());
+      discountRate.numberProperty().set(data.discountRateProperty().get());
+      startDate.calendarProperty().set(data.startDateProperty().get());
+      endDate.calendarProperty().set(data.endDateProperty().get());
+   }
+
    public CheckBox getActive()
    {
       return active;

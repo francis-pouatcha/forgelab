@@ -22,7 +22,7 @@ public class AgencyCompanyCreateController extends AgencyCompanyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Agency model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getAgencyCompanySelection());
+      bind(createView.getView().getAgencyCompanySelection(), createView.getView().getAgencyCompanyForm());
       activateButton(createView.getView().getAgencyCompanySelection());
    }
 }

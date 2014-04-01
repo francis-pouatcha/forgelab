@@ -51,8 +51,10 @@ public abstract class CashDrawerClosedByController
    {
    }
 
-   protected void bind(final CashDrawerClosedBySelection selection)
+   protected void bind(final CashDrawerClosedBySelection selection, final CashDrawerClosedByForm form)
    {
+
+      //	    selection.getClosedBy().valueProperty().bindBidirectional(sourceEntity.closedByProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CashDrawerClosedByController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getClosedBy().getItems().clear();
-            selection.getClosedBy().getItems().addAll(entities);
+            selection.getClosedBy().getItems().add(new CashDrawerClosedBy());
+            for (Login entity : entities)
+            {
+               selection.getClosedBy().getItems().add(new CashDrawerClosedBy(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CashDrawerClosedByController
                }
             });
 
-      selection.getClosedBy().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getClosedBy().valueProperty().addListener(new ChangeListener<CashDrawerClosedBy>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends CashDrawerClosedBy> ov, CashDrawerClosedBy oldValue,
+               CashDrawerClosedBy newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setClosedBy(new CashDrawerClosedBy(newValue));
+               form.update(newValue);
+            //                sourceEntity.setClosedBy(newValue);
          }
       });
 

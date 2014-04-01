@@ -51,8 +51,10 @@ public abstract class DebtStatementAgencyController
    {
    }
 
-   protected void bind(final DebtStatementAgencySelection selection)
+   protected void bind(final DebtStatementAgencySelection selection, final DebtStatementAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DebtStatementAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new DebtStatementAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new DebtStatementAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DebtStatementAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<DebtStatementAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends DebtStatementAgency> ov, DebtStatementAgency oldValue,
+               DebtStatementAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new DebtStatementAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

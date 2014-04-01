@@ -27,5 +27,6 @@ public class ArticleSectionDisplayController extends ArticleSectionController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleSectionSelection());
+      bind(displayView.getView().getArticleSectionSelection(), displayView.getView().getArticleSectionForm());
    }
 }

@@ -58,9 +58,14 @@ public class CurrencyListController implements EntityController
 
    private CurrencySearchResult searchResult;
 
+   @Inject
+   private CurrencyRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Currency>()
             {

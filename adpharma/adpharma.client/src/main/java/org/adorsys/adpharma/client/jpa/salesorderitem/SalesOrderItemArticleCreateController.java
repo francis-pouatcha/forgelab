@@ -22,7 +22,7 @@ public class SalesOrderItemArticleCreateController extends SalesOrderItemArticle
    public void handleNewModelEvent(@Observes @CreateModelEvent SalesOrderItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSalesOrderItemArticleSelection());
-      activateButton(createView.getView().getSalesOrderItemArticleSelection());
+      activateButton(createView.getView().getSalesOrderItemArticleSelection(), createView.getView().getSalesOrderItemArticleForm());
+      bind(createView.getView().getSalesOrderItemArticleSelection(), createView.getView().getSalesOrderItemArticleForm());
    }
 }

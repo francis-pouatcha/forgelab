@@ -34,7 +34,7 @@ import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("ProcurementOrder_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProcurementOrderItemProcurementOrder implements Association<ProcurementOrderItem, ProcurementOrder>
+public class ProcurementOrderItemProcurementOrder implements Association<ProcurementOrderItem, ProcurementOrder>, Cloneable
 {
 
    private Long id;
@@ -44,6 +44,7 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
    private SimpleObjectProperty<BigDecimal> amountDiscount;
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
 
    public ProcurementOrderItemProcurementOrder()
@@ -151,6 +152,25 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
       this.amountDiscountProperty().set(amountDiscount);
    }
 
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
+   {
+      if (taxAmount == null)
+      {
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
+      }
+      return taxAmount;
+   }
+
+   public BigDecimal getTaxAmount()
+   {
+      return taxAmountProperty().get();
+   }
+
+   public final void setTaxAmount(BigDecimal taxAmount)
+   {
+      this.taxAmountProperty().set(taxAmount);
+   }
+
    public SimpleObjectProperty<BigDecimal> netAmountToPayProperty()
    {
       if (netAmountToPay == null)
@@ -180,25 +200,39 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProcurementOrderItemProcurementOrder other = (ProcurementOrderItemProcurementOrder) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ProcurementOrderItemProcurementOrder other = (ProcurementOrderItemProcurementOrder) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "procurementOrderNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProcurementOrderItemProcurementOrder a = new ProcurementOrderItemProcurementOrder();
+      a.id = id;
+      a.version = version;
+
+      a.procurementOrderNumber = procurementOrderNumber;
+      a.amountBeforeTax = amountBeforeTax;
+      a.amountAfterTax = amountAfterTax;
+      a.amountDiscount = amountDiscount;
+      a.taxAmount = taxAmount;
+      a.netAmountToPay = netAmountToPay;
+      return a;
+   }
+
 }

@@ -11,17 +11,18 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
+import org.adorsys.adpharma.client.jpa.login.Login;
 
 public abstract class LoginAgencyController
 {
@@ -33,7 +34,7 @@ public abstract class LoginAgencyController
    private AgencySearchResult targetSearchResult;
 
    @Inject
-   @Bundle({ CrudKeys.class, Company.class, Agency.class })
+   @Bundle({ CrudKeys.class, Agency.class, Login.class })
    private ResourceBundle resourceBundle;
 
    @Inject
@@ -50,8 +51,10 @@ public abstract class LoginAgencyController
    {
    }
 
-   protected void bind(final LoginAgencySelection selection)
+   protected void bind(final LoginAgencySelection selection, final LoginAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -59,14 +62,18 @@ public abstract class LoginAgencyController
          @Override
          public void handle(WorkerStateEvent event)
          {
-        	 AgencySearchService s = (AgencySearchService) event
+            AgencySearchService s = (AgencySearchService) event
                   .getSource();
             targetSearchResult = s.getValue();
             event.consume();
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new LoginAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new LoginAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -94,14 +101,15 @@ public abstract class LoginAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<LoginAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends LoginAgency> ov, LoginAgency oldValue,
+               LoginAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new LoginAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

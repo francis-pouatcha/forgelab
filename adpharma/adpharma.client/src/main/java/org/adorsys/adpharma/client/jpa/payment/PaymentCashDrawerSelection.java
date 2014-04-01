@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.payment.Payment;
 public class PaymentCashDrawerSelection extends AbstractSelection<Payment, CashDrawer>
 {
 
-   private ComboBox<CashDrawer> cashDrawer;
+   private ComboBox<PaymentCashDrawer> cashDrawer;
 
    @Inject
    @Bundle({ CrudKeys.class, CashDrawer.class, Payment.class })
@@ -39,10 +39,10 @@ public class PaymentCashDrawerSelection extends AbstractSelection<Payment, CashD
 
       cashDrawer = viewBuilder.addComboBox("Payment_cashDrawer_description.title", "cashDrawer", resourceBundle, false);
 
-      cashDrawer.setCellFactory(new Callback<ListView<CashDrawer>, ListCell<CashDrawer>>()
+      cashDrawer.setCellFactory(new Callback<ListView<PaymentCashDrawer>, ListCell<PaymentCashDrawer>>()
       {
          @Override
-         public ListCell<CashDrawer> call(ListView<CashDrawer> listView)
+         public ListCell<PaymentCashDrawer> call(ListView<PaymentCashDrawer> listView)
          {
             return new PaymentCashDrawerListCell();
          }
@@ -54,9 +54,10 @@ public class PaymentCashDrawerSelection extends AbstractSelection<Payment, CashD
 
    public void bind(Payment model)
    {
+      cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
    }
 
-   public ComboBox<CashDrawer> getCashDrawer()
+   public ComboBox<PaymentCashDrawer> getCashDrawer()
    {
       return cashDrawer;
    }

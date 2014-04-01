@@ -27,5 +27,6 @@ public class SupplierInvoiceItemArticleDisplayController extends SupplierInvoice
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSupplierInvoiceItemArticleSelection());
+      bind(displayView.getView().getSupplierInvoiceItemArticleSelection(), displayView.getView().getSupplierInvoiceItemArticleForm());
    }
 }

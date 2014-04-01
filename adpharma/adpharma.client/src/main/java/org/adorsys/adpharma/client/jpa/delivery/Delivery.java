@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
@@ -41,7 +43,7 @@ import org.adorsys.javaext.list.ListField;
 @ListField({ "deliveryNumber", "deliverySlipNumber", "dateOnDeliverySlip",
       "amountBeforeTax", "amountAfterTax", "amountDiscount",
       "netAmountToPay", "vat.rate", "receivingAgency.name" })
-public class Delivery
+public class Delivery implements Cloneable
 {
 
    private Long id;
@@ -124,6 +126,7 @@ public class Delivery
       return deliveryNumber;
    }
 
+   @NotNull(message = "Delivery_deliveryNumber_NotNull_validation")
    public String getDeliveryNumber()
    {
       return deliveryNumberProperty().get();
@@ -158,7 +161,7 @@ public class Delivery
    {
       if (deliveryProcessingState == null)
       {
-         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>(DocumentProcessingState.ONGOING);
+         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>();
       }
       return deliveryProcessingState;
    }
@@ -254,7 +257,7 @@ public class Delivery
    {
       if (dateOnDeliverySlip == null)
       {
-         dateOnDeliverySlip = new SimpleObjectProperty<Calendar>();
+         dateOnDeliverySlip = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return dateOnDeliverySlip;
    }
@@ -273,7 +276,7 @@ public class Delivery
    {
       if (orderDate == null)
       {
-         orderDate = new SimpleObjectProperty<Calendar>();
+         orderDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return orderDate;
    }
@@ -292,7 +295,7 @@ public class Delivery
    {
       if (deliveryDate == null)
       {
-         deliveryDate = new SimpleObjectProperty<Calendar>();
+         deliveryDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return deliveryDate;
    }
@@ -311,7 +314,7 @@ public class Delivery
    {
       if (recordingDate == null)
       {
-         recordingDate = new SimpleObjectProperty<Calendar>();
+         recordingDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return recordingDate;
    }
@@ -375,6 +378,7 @@ public class Delivery
          creatingUser = new DeliveryCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    public SimpleObjectProperty<DeliverySupplier> supplierProperty()
@@ -399,6 +403,7 @@ public class Delivery
          supplier = new DeliverySupplier();
       }
       PropertyReader.copy(supplier, getSupplier());
+      supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
    }
 
    public SimpleObjectProperty<DeliveryVat> vatProperty()
@@ -422,6 +427,7 @@ public class Delivery
          vat = new DeliveryVat();
       }
       PropertyReader.copy(vat, getVat());
+      vatProperty().setValue(ObjectUtils.clone(getVat()));
    }
 
    public SimpleObjectProperty<DeliveryCurrency> currencyProperty()
@@ -445,6 +451,7 @@ public class Delivery
          currency = new DeliveryCurrency();
       }
       PropertyReader.copy(currency, getCurrency());
+      currencyProperty().setValue(ObjectUtils.clone(getCurrency()));
    }
 
    public SimpleObjectProperty<DeliveryReceivingAgency> receivingAgencyProperty()
@@ -469,6 +476,7 @@ public class Delivery
          receivingAgency = new DeliveryReceivingAgency();
       }
       PropertyReader.copy(receivingAgency, getReceivingAgency());
+      receivingAgencyProperty().setValue(ObjectUtils.clone(getReceivingAgency()));
    }
 
    @Override
@@ -501,5 +509,44 @@ public class Delivery
    public String toString()
    {
       return PropertyReader.buildToString(this, "deliveryNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ObservableList<DeliveryItem> f = deliveryItems.get();
+      for (DeliveryItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Delivery e = new Delivery();
+      e.id = id;
+      e.version = version;
+
+      e.deliveryNumber = deliveryNumber;
+      e.deliverySlipNumber = deliverySlipNumber;
+      e.deliveryProcessingState = deliveryProcessingState;
+      e.amountBeforeTax = amountBeforeTax;
+      e.amountAfterTax = amountAfterTax;
+      e.amountDiscount = amountDiscount;
+      e.netAmountToPay = netAmountToPay;
+      e.dateOnDeliverySlip = dateOnDeliverySlip;
+      e.orderDate = orderDate;
+      e.deliveryDate = deliveryDate;
+      e.recordingDate = recordingDate;
+      e.deliveryItems = deliveryItems;
+      e.creatingUser = creatingUser;
+      e.supplier = supplier;
+      e.vat = vat;
+      e.currency = currency;
+      e.receivingAgency = receivingAgency;
+      return e;
    }
 }

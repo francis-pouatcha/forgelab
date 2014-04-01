@@ -14,7 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
@@ -28,7 +28,6 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.ComboBox;
 import org.adorsys.javafx.crud.extensions.ViewModel;
-
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;

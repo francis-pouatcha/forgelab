@@ -22,7 +22,7 @@ public class InventoryItemArticleCreateController extends InventoryItemArticleCo
    public void handleNewModelEvent(@Observes @CreateModelEvent InventoryItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getInventoryItemArticleSelection());
-      activateButton(createView.getView().getInventoryItemArticleSelection());
+      activateButton(createView.getView().getInventoryItemArticleSelection(), createView.getView().getInventoryItemArticleForm());
+      bind(createView.getView().getInventoryItemArticleSelection(), createView.getView().getInventoryItemArticleForm());
    }
 }

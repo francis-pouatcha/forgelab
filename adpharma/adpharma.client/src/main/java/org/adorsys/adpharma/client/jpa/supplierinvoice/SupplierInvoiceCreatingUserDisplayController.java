@@ -27,5 +27,6 @@ public class SupplierInvoiceCreatingUserDisplayController extends SupplierInvoic
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSupplierInvoiceCreatingUserSelection());
+      bind(displayView.getView().getSupplierInvoiceCreatingUserSelection(), displayView.getView().getSupplierInvoiceCreatingUserForm());
    }
 }

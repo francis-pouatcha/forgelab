@@ -72,7 +72,7 @@ public class SupplierInvoiceInvoiceItemsForm extends AbstractToManyAssociation<S
       viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "SupplierInvoiceItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SupplierInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "amountReturn", "SupplierInvoiceItem_amountReturn_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "SupplierInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "SupplierInvoiceItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
       pagination = viewBuilder.addPagination();
 
       gridRows = viewBuilder.toRows();

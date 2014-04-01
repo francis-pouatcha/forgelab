@@ -51,8 +51,10 @@ public abstract class StockMovementAgencyController
    {
    }
 
-   protected void bind(final StockMovementAgencySelection selection)
+   protected void bind(final StockMovementAgencySelection selection, final StockMovementAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class StockMovementAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new StockMovementAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new StockMovementAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class StockMovementAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<StockMovementAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends StockMovementAgency> ov, StockMovementAgency oldValue,
+               StockMovementAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new StockMovementAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

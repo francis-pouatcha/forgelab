@@ -79,7 +79,7 @@ public class ProductFamilyEJB
          return null;
 
       // aggregated
-      entity.setParentFamilly(productFamilyMerger.bindAggregated(entity.getParentFamilly()));
+      entity.setParentFamily(productFamilyMerger.bindAggregated(entity.getParentFamily()));
 
       return entity;
    }

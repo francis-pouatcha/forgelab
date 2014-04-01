@@ -20,7 +20,7 @@ import org.adorsys.adpharma.client.jpa.section.Section;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Section_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArticleSection implements Association<Article, Section>
+public class ArticleSection implements Association<Article, Section>, Cloneable
 {
 
    private Long id;
@@ -126,25 +126,36 @@ public class ArticleSection implements Association<Article, Section>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ArticleSection other = (ArticleSection) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ArticleSection other = (ArticleSection) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "sectionCode");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleSection a = new ArticleSection();
+      a.id = id;
+      a.version = version;
+
+      a.sectionCode = sectionCode;
+      a.name = name;
+      a.position = position;
+      return a;
+   }
+
 }

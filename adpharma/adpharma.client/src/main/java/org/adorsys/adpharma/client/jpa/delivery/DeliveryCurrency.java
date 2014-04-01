@@ -19,13 +19,14 @@ import org.adorsys.adpharma.client.jpa.currency.Currency;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Currency_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeliveryCurrency implements Association<Delivery, Currency>
+public class DeliveryCurrency implements Association<Delivery, Currency>, Cloneable
 {
 
    private Long id;
    private int version;
 
    private SimpleStringProperty name;
+   private SimpleObjectProperty<BigDecimal> cfaEquivalent;
 
    public DeliveryCurrency()
    {
@@ -75,6 +76,25 @@ public class DeliveryCurrency implements Association<Delivery, Currency>
       this.nameProperty().set(name);
    }
 
+   public SimpleObjectProperty<BigDecimal> cfaEquivalentProperty()
+   {
+      if (cfaEquivalent == null)
+      {
+         cfaEquivalent = new SimpleObjectProperty<BigDecimal>();
+      }
+      return cfaEquivalent;
+   }
+
+   public BigDecimal getCfaEquivalent()
+   {
+      return cfaEquivalentProperty().get();
+   }
+
+   public final void setCfaEquivalent(BigDecimal cfaEquivalent)
+   {
+      this.cfaEquivalentProperty().set(cfaEquivalent);
+   }
+
    @Override
    public int hashCode()
    {
@@ -85,25 +105,35 @@ public class DeliveryCurrency implements Association<Delivery, Currency>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DeliveryCurrency other = (DeliveryCurrency) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		DeliveryCurrency other = (DeliveryCurrency) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name");
+      return PropertyReader.buildToString(this, "name", "cfaEquivalent");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      DeliveryCurrency a = new DeliveryCurrency();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.cfaEquivalent = cfaEquivalent;
+      return a;
+   }
+
 }

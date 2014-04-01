@@ -183,7 +183,7 @@ public class SupplierInvoiceItemEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> invoiceFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "supplier.name", "creatingUser.fullName", "agency.name", "delivery.deliveryNumber", "settled", "amountBeforeTax", "amountVAT", "amountDiscount", "amountAfterTax", "netToPay", "advancePayment", "totalRestToPay");
+   private static final List<String> invoiceFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "supplier.name", "creatingUser.fullName", "agency.name", "delivery.deliveryNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "advancePayment", "totalRestToPay");
 
    private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 

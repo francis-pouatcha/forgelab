@@ -23,6 +23,6 @@ public class InventoryRecordingUserEditController extends InventoryRecordingUser
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getInventoryRecordingUserSelection());
-      bind(editView.getView().getInventoryRecordingUserSelection());
+      bind(editView.getView().getInventoryRecordingUserSelection(), editView.getView().getInventoryRecordingUserForm());
    }
 }

@@ -1,58 +1,40 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
-
 import java.io.Serializable;
-
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
-import javax.persistence.PostPersist;
 import javax.persistence.Version;
-
 import java.lang.Override;
-
 import org.adorsys.javaext.description.Description;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
-
 import javax.persistence.ManyToOne;
-
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.display.ToStringField;
-
 import java.util.Date;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.adpharma.server.jpa.Customer;
-
 import javax.validation.constraints.NotNull;
-
 import org.adorsys.adpharma.server.jpa.Insurrance;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-
 import javax.persistence.Enumerated;
-
 import java.math.BigDecimal;
-
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.adpharma.server.jpa.SalesOrderType;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
-
 import java.util.Set;
 import java.util.HashSet;
-
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 
@@ -101,7 +83,7 @@ public class SalesOrder implements Serializable
 
    @ManyToOne
    @Description("SalesOrder_customer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    @NotNull(message = "SalesOrder_customer_NotNull_validation")
    private Customer customer;
 
@@ -170,14 +152,6 @@ public class SalesOrder implements Serializable
    @Description("SalesOrder_salesOrderItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
    private Set<SalesOrderItem> salesOrderItems = new HashSet<SalesOrderItem>();
-   
-   
-   @PostPersist
-	public void onPostPersist(){
-		creationDate = new Date();
-		soNumber = SequenceGenerator.getSequence(getId(), SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE);
-	}
-   
 
    public Long getId()
    {

@@ -18,6 +18,8 @@ import javafx.scene.control.ComboBox;
 import org.adorsys.adpharma.client.jpa.login.LoginRoleNamesForm;
 import org.adorsys.adpharma.client.jpa.login.LoginRoleNamesSelection;
 import org.adorsys.javafx.crud.extensions.ViewModel;
+import org.adorsys.adpharma.client.jpa.login.LoginAgencyForm;
+import org.adorsys.adpharma.client.jpa.login.LoginAgencySelection;
 
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
@@ -76,6 +78,13 @@ public class PrescriptionBookRecordingAgentForm extends AbstractToOneAssociation
       loginName.textProperty().bindBidirectional(model.getRecordingAgent().loginNameProperty());
       email.textProperty().bindBidirectional(model.getRecordingAgent().emailProperty());
       gender.valueProperty().bindBidirectional(model.getRecordingAgent().genderProperty());
+   }
+
+   public void update(PrescriptionBookRecordingAgent data)
+   {
+      loginName.textProperty().set(data.loginNameProperty().get());
+      email.textProperty().set(data.emailProperty().get());
+      gender.valueProperty().set(data.genderProperty().get());
    }
 
    public TextField getLoginName()

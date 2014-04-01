@@ -9,5 +9,6 @@ public enum PermissionActionEnum
    ALL, @Description("PermissionActionEnum_READ_description")
    READ, @Description("PermissionActionEnum_CREATE_description")
    CREATE, @Description("PermissionActionEnum_EDIT_description")
-   EDIT
+   EDIT, @Description("PermissionActionEnum_NAV_description")
+   NAV
 }

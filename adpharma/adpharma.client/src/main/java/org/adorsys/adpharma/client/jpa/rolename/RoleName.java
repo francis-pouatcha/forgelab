@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.relation.Relationship;
 import org.adorsys.javaext.relation.RelationshipEnd;
 import org.adorsys.javaext.display.Association;
@@ -29,7 +31,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("name")
 @ListField("name")
-public class RoleName
+public class RoleName implements Cloneable
 {
 
    private Long id;
@@ -138,5 +140,23 @@ public class RoleName
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      RoleName e = new RoleName();
+      e.id = id;
+      e.version = version;
+
+      e.name = name;
+      e.permissions = permissions;
+      return e;
    }
 }

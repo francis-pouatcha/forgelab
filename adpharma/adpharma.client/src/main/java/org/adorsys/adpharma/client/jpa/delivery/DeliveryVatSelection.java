@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 public class DeliveryVatSelection extends AbstractSelection<Delivery, VAT>
 {
 
-   private ComboBox<VAT> vat;
+   private ComboBox<DeliveryVat> vat;
 
    @Inject
    @Bundle({ CrudKeys.class, VAT.class, Delivery.class })
@@ -39,10 +39,10 @@ public class DeliveryVatSelection extends AbstractSelection<Delivery, VAT>
 
       vat = viewBuilder.addComboBox("Delivery_vat_description.title", "vat", resourceBundle, false);
 
-      vat.setCellFactory(new Callback<ListView<VAT>, ListCell<VAT>>()
+      vat.setCellFactory(new Callback<ListView<DeliveryVat>, ListCell<DeliveryVat>>()
       {
          @Override
-         public ListCell<VAT> call(ListView<VAT> listView)
+         public ListCell<DeliveryVat> call(ListView<DeliveryVat> listView)
          {
             return new DeliveryVatListCell();
          }
@@ -54,9 +54,10 @@ public class DeliveryVatSelection extends AbstractSelection<Delivery, VAT>
 
    public void bind(Delivery model)
    {
+      vat.valueProperty().bindBidirectional(model.vatProperty());
    }
 
-   public ComboBox<VAT> getVat()
+   public ComboBox<DeliveryVat> getVat()
    {
       return vat;
    }

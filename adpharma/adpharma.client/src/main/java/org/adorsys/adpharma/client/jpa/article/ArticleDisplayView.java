@@ -17,8 +17,8 @@ import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import java.text.NumberFormat;
 import jfxtras.scene.control.CalendarTextField;
+import java.text.NumberFormat;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 

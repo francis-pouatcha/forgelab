@@ -26,6 +26,8 @@ public class ProcurementOrderTypeConverter extends StringConverter<ProcurementOr
    @Override
    public String toString(ProcurementOrderType object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("ProcurementOrderType_" + object.name()
             + "_description.title");
    }

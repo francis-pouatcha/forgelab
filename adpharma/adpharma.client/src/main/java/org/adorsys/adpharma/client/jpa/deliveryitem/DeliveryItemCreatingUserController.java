@@ -51,8 +51,10 @@ public abstract class DeliveryItemCreatingUserController
    {
    }
 
-   protected void bind(final DeliveryItemCreatingUserSelection selection)
+   protected void bind(final DeliveryItemCreatingUserSelection selection, final DeliveryItemCreatingUserForm form)
    {
+
+      //	    selection.getCreatingUser().valueProperty().bindBidirectional(sourceEntity.creatingUserProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DeliveryItemCreatingUserController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getCreatingUser().getItems().clear();
-            selection.getCreatingUser().getItems().addAll(entities);
+            selection.getCreatingUser().getItems().add(new DeliveryItemCreatingUser());
+            for (Login entity : entities)
+            {
+               selection.getCreatingUser().getItems().add(new DeliveryItemCreatingUser(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DeliveryItemCreatingUserController
                }
             });
 
-      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<DeliveryItemCreatingUser>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends DeliveryItemCreatingUser> ov, DeliveryItemCreatingUser oldValue,
+               DeliveryItemCreatingUser newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCreatingUser(new DeliveryItemCreatingUser(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCreatingUser(newValue);
          }
       });
 

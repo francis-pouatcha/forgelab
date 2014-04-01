@@ -27,5 +27,6 @@ public class SectionAgencyDisplayController extends SectionAgencyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSectionAgencySelection());
+      bind(displayView.getView().getSectionAgencySelection(), displayView.getView().getSectionAgencyForm());
    }
 }

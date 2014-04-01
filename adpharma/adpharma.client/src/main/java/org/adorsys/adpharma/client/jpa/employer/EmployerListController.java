@@ -58,9 +58,14 @@ public class EmployerListController implements EntityController
 
    private EmployerSearchResult searchResult;
 
+   @Inject
+   private EmployerRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Employer>()
             {

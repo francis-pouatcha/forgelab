@@ -1,16 +1,21 @@
 package org.adorsys.adpharma.client.jpa.customervoucher;
 
-import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -19,110 +24,115 @@ import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
 import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.jpa.customer.CustomerLoadService;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 
 public abstract class CustomerVoucherCustomerController
 {
-   @Inject
-   private CustomerSearchService searchService;
-   @Inject
-   private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
-
-   private CustomerSearchResult targetSearchResult;
-
-   @Inject
-   @Bundle({ CrudKeys.class, Customer.class, CustomerVoucher.class })
-   private ResourceBundle resourceBundle;
-
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
 
    protected CustomerVoucher sourceEntity;
 
-   protected void disableButton(final CustomerVoucherCustomerSelection selection)
+   @Inject
+   private CustomerLoadService loadService;
+   @Inject
+   private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
+
+   @Inject
+   private ErrorMessageDialog loadErrorMessageDialog;
+
+   @Inject
+   @AssocSelectionRequestEvent
+   private Event<CustomerVoucherCustomerSelectionEventData> selectionRequestEvent;
+
+   private CustomerVoucherCustomerSelectionEventData pendingSelectionRequest;
+
+   @Inject
+   @ComponentSelectionRequestEvent
+   private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+
+   @Inject
+   @Bundle(CrudKeys.class)
+   private ResourceBundle resourceBundle;
+
+   protected void disableButton(final CustomerVoucherCustomerSelection selection, final CustomerVoucherCustomerForm form)
    {
-      selection.getCustomer().setDisable(true);
+      selection.getSelectButton().setDisable(true);
    }
 
-   protected void activateButton(final CustomerVoucherCustomerSelection selection)
+   protected void activateButton(final CustomerVoucherCustomerSelection selection, final CustomerVoucherCustomerForm form)
    {
    }
 
-   protected void bind(final CustomerVoucherCustomerSelection selection)
+   protected void bind(final CustomerVoucherCustomerSelection selection, final CustomerVoucherCustomerForm form)
    {
-
-      // send search result event.
-      searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            CustomerSearchService s = (CustomerSearchService) event
-                  .getSource();
-            targetSearchResult = s.getValue();
-            event.consume();
-            s.reset();
-            List<Customer> entities = targetSearchResult.getResultList();
-            selection.getCustomer().getItems().clear();
-            selection.getCustomer().getItems().addAll(entities);
-         }
-      });
-      searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_search_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      searchService.setOnFailed(searchServiceCallFailedEventHandler);
-
-      errorMessageDialog.getOkButton().setOnAction(
+      selection.getSelectButton().setOnAction(
             new EventHandler<ActionEvent>()
             {
                @Override
                public void handle(ActionEvent event)
                {
-                  errorMessageDialog.closeDialog();
+                  pendingSelectionRequest = new CustomerVoucherCustomerSelectionEventData(
+                        UUID.randomUUID().toString(), sourceEntity, null);
+                  selectionRequestEvent.fire(pendingSelectionRequest);
                }
             });
 
-      selection.getCustomer().valueProperty().addListener(new ChangeListener<Customer>()
+      // Handle edit canceld, reloading entity
+      loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
       {
          @Override
-         public void changed(ObservableValue<? extends Customer> ov, Customer oldValue,
-               Customer newValue)
+         public void handle(WorkerStateEvent event)
          {
-            if (sourceEntity != null)
-               sourceEntity.setCustomer(new CustomerVoucherCustomer(newValue));
+            CustomerLoadService s = (CustomerLoadService) event.getSource();
+            Customer entity = s.getValue();
+            event.consume();
+            s.reset();
+            sourceEntity.setCustomer(new CustomerVoucherCustomer(entity));
          }
       });
-
-      selection.getCustomer().armedProperty().addListener(new ChangeListener<Boolean>()
+      loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
       {
-
          @Override
-         public void changed(ObservableValue<? extends Boolean> observableValue,
-               Boolean oldValue, Boolean newValue)
+         protected void showError(Throwable exception)
          {
-            if (newValue)
-               load();
+            String message = exception.getMessage();
+            loadErrorMessageDialog.getTitleText().setText(
+                  resourceBundle.getString("Entity_load_error.title"));
+            if (!StringUtils.isBlank(message))
+               loadErrorMessageDialog.getDetailText().setText(message);
+            loadErrorMessageDialog.display();
          }
-
       });
+      loadService.setOnFailed(loadServiceCallFailedEventHandler);
+      loadErrorMessageDialog.getOkButton().setOnAction(
+            new EventHandler<ActionEvent>()
+            {
+               @Override
+               public void handle(ActionEvent event)
+               {
+                  loadErrorMessageDialog.closeDialog();
+               }
+            });
+
    }
 
-   public void load()
+   public void handleAssocSelectionResponseEvent(@Observes @AssocSelectionResponseEvent CustomerVoucherCustomerSelectionEventData eventData)
    {
-      searchService.setSearchInputs(new CustomerSearchInput()).start();
+      if (eventData != null && pendingSelectionRequest != null && eventData.getId().equals(pendingSelectionRequest.getId())
+            && eventData.getSourceEntity() == sourceEntity && eventData.getTargetEntity() != null)
+      {
+         if (sourceEntity != null)
+            sourceEntity.setCustomer(new CustomerVoucherCustomer(eventData.getTargetEntity()));
+      }
+      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(CustomerVoucher.class.getName()));
+   }
+
+   /*
+    * Only load if you need more fields than the one specified in the
+    * association
+    */
+   protected void loadAssociation()
+   {
    }
 
 }

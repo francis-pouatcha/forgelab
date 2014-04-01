@@ -19,7 +19,7 @@ import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("CustomerCategory_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerCustomerCategory implements Association<Customer, CustomerCategory>
+public class CustomerCustomerCategory implements Association<Customer, CustomerCategory>, Cloneable
 {
 
    private Long id;
@@ -105,25 +105,35 @@ public class CustomerCustomerCategory implements Association<Customer, CustomerC
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerCustomerCategory other = (CustomerCustomerCategory) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerCustomerCategory other = (CustomerCustomerCategory) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerCustomerCategory a = new CustomerCustomerCategory();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.discountRate = discountRate;
+      return a;
+   }
+
 }

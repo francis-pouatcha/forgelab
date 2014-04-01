@@ -63,7 +63,7 @@ public class CustomerInvoiceItemInvoiceForm extends AbstractToOneAssociation<Cus
 
    private BigDecimalField amountBeforeTax;
 
-   private BigDecimalField amountVAT;
+   private BigDecimalField taxAmount;
 
    private BigDecimalField amountDiscount;
 
@@ -107,7 +107,7 @@ public class CustomerInvoiceItemInvoiceForm extends AbstractToOneAssociation<Cus
       cashed = viewBuilder.addCheckBox("CustomerInvoice_cashed_description.title", "cashed", resourceBundle);
       invoiceType = viewBuilder.addComboBox("CustomerInvoice_invoiceType_description.title", "invoiceType", resourceBundle, InvoiceType.values());
       amountBeforeTax = viewBuilder.addBigDecimalField("CustomerInvoice_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
-      amountVAT = viewBuilder.addBigDecimalField("CustomerInvoice_amountVAT_description.title", "amountVAT", resourceBundle, NumberType.CURRENCY, locale);
+      taxAmount = viewBuilder.addBigDecimalField("CustomerInvoice_taxAmount_description.title", "taxAmount", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("CustomerInvoice_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("CustomerInvoice_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       netToPay = viewBuilder.addBigDecimalField("CustomerInvoice_netToPay_description.title", "netToPay", resourceBundle, NumberType.CURRENCY, locale);
@@ -129,7 +129,7 @@ public class CustomerInvoiceItemInvoiceForm extends AbstractToOneAssociation<Cus
       cashed.textProperty().bindBidirectional(model.getInvoice().cashedProperty(), new BooleanStringConverter());
       invoiceType.valueProperty().bindBidirectional(model.getInvoice().invoiceTypeProperty());
       amountBeforeTax.numberProperty().bindBidirectional(model.getInvoice().amountBeforeTaxProperty());
-      amountVAT.numberProperty().bindBidirectional(model.getInvoice().amountVATProperty());
+      taxAmount.numberProperty().bindBidirectional(model.getInvoice().taxAmountProperty());
       amountDiscount.numberProperty().bindBidirectional(model.getInvoice().amountDiscountProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.getInvoice().amountAfterTaxProperty());
       netToPay.numberProperty().bindBidirectional(model.getInvoice().netToPayProperty());
@@ -138,6 +138,24 @@ public class CustomerInvoiceItemInvoiceForm extends AbstractToOneAssociation<Cus
       advancePayment.numberProperty().bindBidirectional(model.getInvoice().advancePaymentProperty());
       totalRestToPay.numberProperty().bindBidirectional(model.getInvoice().totalRestToPayProperty());
       creationDate.calendarProperty().bindBidirectional(model.getInvoice().creationDateProperty());
+   }
+
+   public void update(CustomerInvoiceItemInvoice data)
+   {
+      invoiceNumber.textProperty().set(data.invoiceNumberProperty().get());
+      settled.textProperty().set(new BooleanStringConverter().toString(data.settledProperty().get()));
+      cashed.textProperty().set(new BooleanStringConverter().toString(data.cashedProperty().get()));
+      invoiceType.valueProperty().set(data.invoiceTypeProperty().get());
+      amountBeforeTax.numberProperty().set(data.amountBeforeTaxProperty().get());
+      taxAmount.numberProperty().set(data.taxAmountProperty().get());
+      amountDiscount.numberProperty().set(data.amountDiscountProperty().get());
+      amountAfterTax.numberProperty().set(data.amountAfterTaxProperty().get());
+      netToPay.numberProperty().set(data.netToPayProperty().get());
+      customerRestTopay.numberProperty().set(data.customerRestTopayProperty().get());
+      insurranceRestTopay.numberProperty().set(data.insurranceRestTopayProperty().get());
+      advancePayment.numberProperty().set(data.advancePaymentProperty().get());
+      totalRestToPay.numberProperty().set(data.totalRestToPayProperty().get());
+      creationDate.calendarProperty().set(data.creationDateProperty().get());
    }
 
    public TextField getInvoiceNumber()
@@ -165,9 +183,9 @@ public class CustomerInvoiceItemInvoiceForm extends AbstractToOneAssociation<Cus
       return amountBeforeTax;
    }
 
-   public BigDecimalField getAmountVAT()
+   public BigDecimalField getTaxAmount()
    {
-      return amountVAT;
+      return taxAmount;
    }
 
    public BigDecimalField getAmountDiscount()

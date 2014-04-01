@@ -27,5 +27,6 @@ public class PrescriptionBookHospitalDisplayController extends PrescriptionBookH
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPrescriptionBookHospitalSelection());
+      bind(displayView.getView().getPrescriptionBookHospitalSelection(), displayView.getView().getPrescriptionBookHospitalForm());
    }
 }

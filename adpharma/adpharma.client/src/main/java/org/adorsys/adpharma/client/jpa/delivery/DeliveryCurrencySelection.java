@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 public class DeliveryCurrencySelection extends AbstractSelection<Delivery, Currency>
 {
 
-   private ComboBox<Currency> currency;
+   private ComboBox<DeliveryCurrency> currency;
 
    @Inject
    @Bundle({ CrudKeys.class, Currency.class, Delivery.class })
@@ -39,10 +39,10 @@ public class DeliveryCurrencySelection extends AbstractSelection<Delivery, Curre
 
       currency = viewBuilder.addComboBox("Delivery_currency_description.title", "currency", resourceBundle, false);
 
-      currency.setCellFactory(new Callback<ListView<Currency>, ListCell<Currency>>()
+      currency.setCellFactory(new Callback<ListView<DeliveryCurrency>, ListCell<DeliveryCurrency>>()
       {
          @Override
-         public ListCell<Currency> call(ListView<Currency> listView)
+         public ListCell<DeliveryCurrency> call(ListView<DeliveryCurrency> listView)
          {
             return new DeliveryCurrencyListCell();
          }
@@ -54,9 +54,10 @@ public class DeliveryCurrencySelection extends AbstractSelection<Delivery, Curre
 
    public void bind(Delivery model)
    {
+      currency.valueProperty().bindBidirectional(model.currencyProperty());
    }
 
-   public ComboBox<Currency> getCurrency()
+   public ComboBox<DeliveryCurrency> getCurrency()
    {
       return currency;
    }

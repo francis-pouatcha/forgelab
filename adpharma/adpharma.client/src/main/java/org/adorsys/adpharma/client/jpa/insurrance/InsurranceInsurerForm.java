@@ -65,13 +65,13 @@ public class InsurranceInsurerForm extends AbstractToOneAssociation<Insurrance, 
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
-//      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
-//      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
-//      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
-//      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
-//      creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
-//      discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
-//      birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
+      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
+      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
+      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
+      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
+      creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
+      discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
+      birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
 
       gridRows = viewBuilder.toRows();
    }
@@ -79,13 +79,25 @@ public class InsurranceInsurerForm extends AbstractToOneAssociation<Insurrance, 
    public void bind(Insurrance model)
    {
       fullName.textProperty().bindBidirectional(model.getInsurer().fullNameProperty());
-//      landLinePhone.textProperty().bindBidirectional(model.getInsurer().landLinePhoneProperty());
-//      mobile.textProperty().bindBidirectional(model.getInsurer().mobileProperty());
-//      fax.textProperty().bindBidirectional(model.getInsurer().faxProperty());
-//      email.textProperty().bindBidirectional(model.getInsurer().emailProperty());
-//      creditAuthorized.textProperty().bindBidirectional(model.getInsurer().creditAuthorizedProperty(), new BooleanStringConverter());
-//      discountAuthorized.textProperty().bindBidirectional(model.getInsurer().discountAuthorizedProperty(), new BooleanStringConverter());
-//      birthDate.calendarProperty().bindBidirectional(model.getInsurer().birthDateProperty());
+      landLinePhone.textProperty().bindBidirectional(model.getInsurer().landLinePhoneProperty());
+      mobile.textProperty().bindBidirectional(model.getInsurer().mobileProperty());
+      fax.textProperty().bindBidirectional(model.getInsurer().faxProperty());
+      email.textProperty().bindBidirectional(model.getInsurer().emailProperty());
+      creditAuthorized.textProperty().bindBidirectional(model.getInsurer().creditAuthorizedProperty(), new BooleanStringConverter());
+      discountAuthorized.textProperty().bindBidirectional(model.getInsurer().discountAuthorizedProperty(), new BooleanStringConverter());
+      birthDate.calendarProperty().bindBidirectional(model.getInsurer().birthDateProperty());
+   }
+
+   public void update(InsurranceInsurer data)
+   {
+      fullName.textProperty().set(data.fullNameProperty().get());
+      landLinePhone.textProperty().set(data.landLinePhoneProperty().get());
+      mobile.textProperty().set(data.mobileProperty().get());
+      fax.textProperty().set(data.faxProperty().get());
+      email.textProperty().set(data.emailProperty().get());
+      creditAuthorized.textProperty().set(new BooleanStringConverter().toString(data.creditAuthorizedProperty().get()));
+      discountAuthorized.textProperty().set(new BooleanStringConverter().toString(data.discountAuthorizedProperty().get()));
+      birthDate.calendarProperty().set(data.birthDateProperty().get());
    }
 
    public TextField getFullName()

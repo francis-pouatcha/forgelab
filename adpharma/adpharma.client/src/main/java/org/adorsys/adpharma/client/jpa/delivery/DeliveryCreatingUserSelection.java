@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 public class DeliveryCreatingUserSelection extends AbstractSelection<Delivery, Login>
 {
 
-   private ComboBox<Login> creatingUser;
+   private ComboBox<DeliveryCreatingUser> creatingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, Delivery.class })
@@ -39,10 +39,10 @@ public class DeliveryCreatingUserSelection extends AbstractSelection<Delivery, L
 
       creatingUser = viewBuilder.addComboBox("Delivery_creatingUser_description.title", "creatingUser", resourceBundle, false);
 
-      creatingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      creatingUser.setCellFactory(new Callback<ListView<DeliveryCreatingUser>, ListCell<DeliveryCreatingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<DeliveryCreatingUser> call(ListView<DeliveryCreatingUser> listView)
          {
             return new DeliveryCreatingUserListCell();
          }
@@ -54,9 +54,10 @@ public class DeliveryCreatingUserSelection extends AbstractSelection<Delivery, L
 
    public void bind(Delivery model)
    {
+      creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
    }
 
-   public ComboBox<Login> getCreatingUser()
+   public ComboBox<DeliveryCreatingUser> getCreatingUser()
    {
       return creatingUser;
    }

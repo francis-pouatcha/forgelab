@@ -23,6 +23,6 @@ public class CustomerVoucherRecordingUserEditController extends CustomerVoucherR
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerVoucherRecordingUserSelection());
-      bind(editView.getView().getCustomerVoucherRecordingUserSelection());
+      bind(editView.getView().getCustomerVoucherRecordingUserSelection(), editView.getView().getCustomerVoucherRecordingUserForm());
    }
 }

@@ -22,7 +22,7 @@ public class SupplierInvoiceCreatingUserCreateController extends SupplierInvoice
    public void handleNewModelEvent(@Observes @CreateModelEvent SupplierInvoice model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSupplierInvoiceCreatingUserSelection());
+      bind(createView.getView().getSupplierInvoiceCreatingUserSelection(), createView.getView().getSupplierInvoiceCreatingUserForm());
       activateButton(createView.getView().getSupplierInvoiceCreatingUserSelection());
    }
 }

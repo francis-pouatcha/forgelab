@@ -22,7 +22,7 @@ public class CustomerInvoiceItemArticleCreateController extends CustomerInvoiceI
    public void handleNewModelEvent(@Observes @CreateModelEvent CustomerInvoiceItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerInvoiceItemArticleSelection());
-      activateButton(createView.getView().getCustomerInvoiceItemArticleSelection());
+      activateButton(createView.getView().getCustomerInvoiceItemArticleSelection(), createView.getView().getCustomerInvoiceItemArticleForm());
+      bind(createView.getView().getCustomerInvoiceItemArticleSelection(), createView.getView().getCustomerInvoiceItemArticleForm());
    }
 }

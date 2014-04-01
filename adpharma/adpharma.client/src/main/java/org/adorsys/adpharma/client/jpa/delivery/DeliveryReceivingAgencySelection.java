@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 public class DeliveryReceivingAgencySelection extends AbstractSelection<Delivery, Agency>
 {
 
-   private ComboBox<Agency> receivingAgency;
+   private ComboBox<DeliveryReceivingAgency> receivingAgency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, Delivery.class })
@@ -39,10 +39,10 @@ public class DeliveryReceivingAgencySelection extends AbstractSelection<Delivery
 
       receivingAgency = viewBuilder.addComboBox("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, false);
 
-      receivingAgency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      receivingAgency.setCellFactory(new Callback<ListView<DeliveryReceivingAgency>, ListCell<DeliveryReceivingAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<DeliveryReceivingAgency> call(ListView<DeliveryReceivingAgency> listView)
          {
             return new DeliveryReceivingAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class DeliveryReceivingAgencySelection extends AbstractSelection<Delivery
 
    public void bind(Delivery model)
    {
+      receivingAgency.valueProperty().bindBidirectional(model.receivingAgencyProperty());
    }
 
-   public ComboBox<Agency> getReceivingAgency()
+   public ComboBox<DeliveryReceivingAgency> getReceivingAgency()
    {
       return receivingAgency;
    }

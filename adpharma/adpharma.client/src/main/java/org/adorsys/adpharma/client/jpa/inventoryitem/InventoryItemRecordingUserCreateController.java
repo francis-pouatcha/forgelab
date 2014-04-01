@@ -22,7 +22,7 @@ public class InventoryItemRecordingUserCreateController extends InventoryItemRec
    public void handleNewModelEvent(@Observes @CreateModelEvent InventoryItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getInventoryItemRecordingUserSelection());
+      bind(createView.getView().getInventoryItemRecordingUserSelection(), createView.getView().getInventoryItemRecordingUserForm());
       activateButton(createView.getView().getInventoryItemRecordingUserSelection());
    }
 }

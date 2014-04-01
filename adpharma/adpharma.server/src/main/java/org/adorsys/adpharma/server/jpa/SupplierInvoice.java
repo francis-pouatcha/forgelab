@@ -39,7 +39,7 @@ import javax.persistence.CascadeType;
 @Description("SupplierInvoice_description")
 @ListField({ "invoiceType", "invoiceNumber", "creationDate", "supplier.name",
       "creatingUser.fullName", "agency.name", "delivery.deliveryNumber",
-      "settled", "amountBeforeTax", "amountVAT", "amountDiscount",
+      "settled", "amountBeforeTax", "taxAmount", "amountDiscount",
       "amountAfterTax", "netToPay", "advancePayment", "totalRestToPay" })
 @ToStringField("invoiceNumber")
 public class SupplierInvoice implements Serializable
@@ -69,7 +69,7 @@ public class SupplierInvoice implements Serializable
 
    @ManyToOne
    @Description("SupplierInvoice_supplier_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    @NotNull(message = "SupplierInvoice_supplier_NotNull_validation")
    private Supplier supplier;
 
@@ -87,7 +87,7 @@ public class SupplierInvoice implements Serializable
 
    @ManyToOne
    @Description("SupplierInvoice_delivery_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Delivery.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Delivery.class)
    private Delivery delivery;
 
    @Column
@@ -99,9 +99,9 @@ public class SupplierInvoice implements Serializable
    private BigDecimal amountBeforeTax;
 
    @Column
-   @Description("SupplierInvoice_amountVAT_description")
+   @Description("SupplierInvoice_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountVAT;
+   private BigDecimal taxAmount;
 
    @Column
    @Description("SupplierInvoice_amountDiscount_description")
@@ -275,14 +275,14 @@ public class SupplierInvoice implements Serializable
       this.amountBeforeTax = amountBeforeTax;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return this.amountVAT;
+      return this.taxAmount;
    }
 
-   public void setAmountVAT(final BigDecimal amountVAT)
+   public void setTaxAmount(final BigDecimal taxAmount)
    {
-      this.amountVAT = amountVAT;
+      this.taxAmount = taxAmount;
    }
 
    public BigDecimal getAmountDiscount()

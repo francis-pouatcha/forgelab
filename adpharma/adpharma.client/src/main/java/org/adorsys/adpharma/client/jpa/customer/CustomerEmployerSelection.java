@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 public class CustomerEmployerSelection extends AbstractSelection<Customer, Employer>
 {
 
-   private ComboBox<Employer> employer;
+   private ComboBox<CustomerEmployer> employer;
 
    @Inject
    @Bundle({ CrudKeys.class, Employer.class, Customer.class })
@@ -39,10 +39,10 @@ public class CustomerEmployerSelection extends AbstractSelection<Customer, Emplo
 
       employer = viewBuilder.addComboBox("Customer_employer_description.title", "employer", resourceBundle, false);
 
-      employer.setCellFactory(new Callback<ListView<Employer>, ListCell<Employer>>()
+      employer.setCellFactory(new Callback<ListView<CustomerEmployer>, ListCell<CustomerEmployer>>()
       {
          @Override
-         public ListCell<Employer> call(ListView<Employer> listView)
+         public ListCell<CustomerEmployer> call(ListView<CustomerEmployer> listView)
          {
             return new CustomerEmployerListCell();
          }
@@ -54,9 +54,10 @@ public class CustomerEmployerSelection extends AbstractSelection<Customer, Emplo
 
    public void bind(Customer model)
    {
+      employer.valueProperty().bindBidirectional(model.employerProperty());
    }
 
-   public ComboBox<Employer> getEmployer()
+   public ComboBox<CustomerEmployer> getEmployer()
    {
       return employer;
    }

@@ -51,8 +51,10 @@ public abstract class CustomerInvoiceCreatingUserController
    {
    }
 
-   protected void bind(final CustomerInvoiceCreatingUserSelection selection)
+   protected void bind(final CustomerInvoiceCreatingUserSelection selection, final CustomerInvoiceCreatingUserForm form)
    {
+
+      //	    selection.getCreatingUser().valueProperty().bindBidirectional(sourceEntity.creatingUserProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CustomerInvoiceCreatingUserController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getCreatingUser().getItems().clear();
-            selection.getCreatingUser().getItems().addAll(entities);
+            selection.getCreatingUser().getItems().add(new CustomerInvoiceCreatingUser());
+            for (Login entity : entities)
+            {
+               selection.getCreatingUser().getItems().add(new CustomerInvoiceCreatingUser(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CustomerInvoiceCreatingUserController
                }
             });
 
-      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<CustomerInvoiceCreatingUser>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends CustomerInvoiceCreatingUser> ov, CustomerInvoiceCreatingUser oldValue,
+               CustomerInvoiceCreatingUser newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCreatingUser(new CustomerInvoiceCreatingUser(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCreatingUser(newValue);
          }
       });
 

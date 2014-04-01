@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -38,7 +40,7 @@ import org.adorsys.javaext.list.ListField;
 @ToStringField("inventoryNumber")
 @ListField({ "inventoryNumber", "gapSaleAmount", "gapPurchaseAmount",
       "inventoryStatus", "agency.name" })
-public class Inventory
+public class Inventory implements Cloneable
 {
 
    private Long id;
@@ -253,6 +255,7 @@ public class Inventory
          recordingUser = new InventoryRecordingUser();
       }
       PropertyReader.copy(recordingUser, getRecordingUser());
+      recordingUserProperty().setValue(ObjectUtils.clone(getRecordingUser()));
    }
 
    public SimpleObjectProperty<InventoryAgency> agencyProperty()
@@ -277,6 +280,7 @@ public class Inventory
          agency = new InventoryAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    @Override
@@ -309,5 +313,36 @@ public class Inventory
    public String toString()
    {
       return PropertyReader.buildToString(this, "inventoryNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ObservableList<InventoryItem> f = inventoryItems.get();
+      for (InventoryItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Inventory e = new Inventory();
+      e.id = id;
+      e.version = version;
+
+      e.inventoryNumber = inventoryNumber;
+      e.description = description;
+      e.inventoryStatus = inventoryStatus;
+      e.gapSaleAmount = gapSaleAmount;
+      e.gapPurchaseAmount = gapPurchaseAmount;
+      e.inventoryDate = inventoryDate;
+      e.inventoryItems = inventoryItems;
+      e.recordingUser = recordingUser;
+      e.agency = agency;
+      return e;
    }
 }

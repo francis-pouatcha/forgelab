@@ -59,6 +59,9 @@ public class InsurranceController extends DomainComponentController
    private Insurrance searchModel = new Insurrance();
    private Insurrance selectedModel = new Insurrance();
 
+   @Inject
+   private InsurranceRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class InsurranceController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<Insurrance> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class InsurranceController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent Insurrance selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of insurrances.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class InsurranceController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent Insurrance selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class InsurranceController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Insurrance templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class InsurranceController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent Insurrance selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

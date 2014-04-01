@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.login.Login;
 
-public class ProcurementOrderCreatingUserListCell extends AbstractToStringListCell<Login>
+public class ProcurementOrderCreatingUserListCell extends AbstractToStringListCell<ProcurementOrderCreatingUser>
 {
 
    @Override
-   protected String getToString(Login item)
+   protected String getToString(ProcurementOrderCreatingUser item)
    {
       if (item == null)
       {

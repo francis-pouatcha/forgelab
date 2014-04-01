@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 public class CustomerVoucherCustomerInvoiceSelection extends AbstractSelection<CustomerVoucher, CustomerInvoice>
 {
 
-   private ComboBox<CustomerInvoice> customerInvoice;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, CustomerInvoice.class, CustomerVoucher.class })
@@ -36,19 +32,9 @@ public class CustomerVoucherCustomerInvoiceSelection extends AbstractSelection<C
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      customerInvoice = viewBuilder.addComboBox("CustomerVoucher_customerInvoice_description.title", "customerInvoice", resourceBundle, false);
-
-      customerInvoice.setCellFactory(new Callback<ListView<CustomerInvoice>, ListCell<CustomerInvoice>>()
-      {
-         @Override
-         public ListCell<CustomerInvoice> call(ListView<CustomerInvoice> listView)
-         {
-            return new CustomerVoucherCustomerInvoiceListCell();
-         }
-      });
-      customerInvoice.setButtonCell(new CustomerVoucherCustomerInvoiceListCell());
-
+      selectButton = viewBuilder.addButton(
+            "CustomerVoucher_customerInvoice_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class CustomerVoucherCustomerInvoiceSelection extends AbstractSelection<C
    {
    }
 
-   public ComboBox<CustomerInvoice> getCustomerInvoice()
+   public Button getSelectButton()
    {
-      return customerInvoice;
+      return selectButton;
+   }
+
+   public Button getCustomerInvoice()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

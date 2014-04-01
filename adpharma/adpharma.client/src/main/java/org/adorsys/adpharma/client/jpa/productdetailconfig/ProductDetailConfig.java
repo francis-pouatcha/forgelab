@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -30,7 +32,7 @@ import org.adorsys.javaext.list.ListField;
 @ToStringField({ "source.articleName", "target.articleName" })
 @ListField({ "source.articleName", "target.articleName", "targetQuantity",
       "salesPrice", "active" })
-public class ProductDetailConfig
+public class ProductDetailConfig implements Cloneable
 {
 
    private Long id;
@@ -175,6 +177,7 @@ public class ProductDetailConfig
          source = new ProductDetailConfigSource();
       }
       PropertyReader.copy(source, getSource());
+      sourceProperty().setValue(ObjectUtils.clone(getSource()));
    }
 
    public SimpleObjectProperty<ProductDetailConfigTarget> targetProperty()
@@ -199,6 +202,7 @@ public class ProductDetailConfig
          target = new ProductDetailConfigTarget();
       }
       PropertyReader.copy(target, getTarget());
+      targetProperty().setValue(ObjectUtils.clone(getTarget()));
    }
 
    @Override
@@ -231,5 +235,27 @@ public class ProductDetailConfig
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "articleName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProductDetailConfig e = new ProductDetailConfig();
+      e.id = id;
+      e.version = version;
+
+      e.active = active;
+      e.targetQuantity = targetQuantity;
+      e.salesPrice = salesPrice;
+      e.recordingDate = recordingDate;
+      e.source = source;
+      e.target = target;
+      return e;
    }
 }

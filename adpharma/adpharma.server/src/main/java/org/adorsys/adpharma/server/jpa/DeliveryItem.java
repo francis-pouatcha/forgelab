@@ -74,7 +74,7 @@ public class DeliveryItem implements Serializable
 
    @ManyToOne
    @Description("DeliveryItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "DeliveryItem_article_NotNull_validation")
    private Article article;
 

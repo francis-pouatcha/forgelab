@@ -23,6 +23,6 @@ public class DeliverySupplierEditController extends DeliverySupplierController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDeliverySupplierSelection());
-      bind(editView.getView().getDeliverySupplierSelection());
+      bind(editView.getView().getDeliverySupplierSelection(), editView.getView().getDeliverySupplierForm());
    }
 }

@@ -27,5 +27,6 @@ public class InsurranceCustomerDisplayController extends InsurranceCustomerContr
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getInsurranceCustomerSelection());
+      bind(displayView.getView().getInsurranceCustomerSelection(), displayView.getView().getInsurranceCustomerForm());
    }
 }

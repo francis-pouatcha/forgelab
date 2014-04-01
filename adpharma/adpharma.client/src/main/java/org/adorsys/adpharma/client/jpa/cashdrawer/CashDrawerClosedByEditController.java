@@ -23,6 +23,6 @@ public class CashDrawerClosedByEditController extends CashDrawerClosedByControll
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCashDrawerClosedBySelection());
-      bind(editView.getView().getCashDrawerClosedBySelection());
+      bind(editView.getView().getCashDrawerClosedBySelection(), editView.getView().getCashDrawerClosedByForm());
    }
 }

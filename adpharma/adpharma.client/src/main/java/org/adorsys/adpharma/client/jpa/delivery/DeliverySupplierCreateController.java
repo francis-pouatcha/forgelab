@@ -5,7 +5,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 
 @Singleton
@@ -23,8 +22,7 @@ public class DeliverySupplierCreateController extends DeliverySupplierController
    public void handleNewModelEvent(@Observes @CreateModelEvent Delivery model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliverySupplierSelection());
+      bind(createView.getView().getDeliverySupplierSelection(), createView.getView().getDeliverySupplierForm());
       activateButton(createView.getView().getDeliverySupplierSelection());
-   
-}
+   }
 }

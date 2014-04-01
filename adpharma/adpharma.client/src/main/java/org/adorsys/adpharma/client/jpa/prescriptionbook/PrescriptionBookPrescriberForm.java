@@ -55,6 +55,14 @@ public class PrescriptionBookPrescriberForm extends AbstractToOneAssociation<Pre
       city.textProperty().bindBidirectional(model.getPrescriber().cityProperty());
    }
 
+   public void update(PrescriptionBookPrescriber data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      phone.textProperty().set(data.phoneProperty().get());
+      street.textProperty().set(data.streetProperty().get());
+      city.textProperty().set(data.cityProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

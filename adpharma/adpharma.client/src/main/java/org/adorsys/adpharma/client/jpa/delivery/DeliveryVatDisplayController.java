@@ -27,5 +27,6 @@ public class DeliveryVatDisplayController extends DeliveryVatController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDeliveryVatSelection());
+      bind(displayView.getView().getDeliveryVatSelection(), displayView.getView().getDeliveryVatForm());
    }
 }

@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 public class PrescriptionBookSalesOrderSelection extends AbstractSelection<PrescriptionBook, SalesOrder>
 {
 
-   private ComboBox<SalesOrder> salesOrder;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, SalesOrder.class, PrescriptionBook.class })
@@ -36,19 +32,9 @@ public class PrescriptionBookSalesOrderSelection extends AbstractSelection<Presc
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      salesOrder = viewBuilder.addComboBox("PrescriptionBook_salesOrder_description.title", "salesOrder", resourceBundle, false);
-
-      salesOrder.setCellFactory(new Callback<ListView<SalesOrder>, ListCell<SalesOrder>>()
-      {
-         @Override
-         public ListCell<SalesOrder> call(ListView<SalesOrder> listView)
-         {
-            return new PrescriptionBookSalesOrderListCell();
-         }
-      });
-      salesOrder.setButtonCell(new PrescriptionBookSalesOrderListCell());
-
+      selectButton = viewBuilder.addButton(
+            "PrescriptionBook_salesOrder_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class PrescriptionBookSalesOrderSelection extends AbstractSelection<Presc
    {
    }
 
-   public ComboBox<SalesOrder> getSalesOrder()
+   public Button getSelectButton()
    {
-      return salesOrder;
+      return selectButton;
+   }
+
+   public Button getSalesOrder()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

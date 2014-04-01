@@ -62,7 +62,7 @@ public class ProcurementOrderItem implements Serializable
 
    @ManyToOne
    @Description("ProcurementOrderItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "ProcurementOrderItem_article_NotNull_validation")
    private Article article;
 

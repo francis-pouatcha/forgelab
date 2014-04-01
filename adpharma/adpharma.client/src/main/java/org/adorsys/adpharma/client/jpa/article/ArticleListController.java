@@ -58,9 +58,14 @@ public class ArticleListController implements EntityController
 
    private ArticleSearchResult searchResult;
 
+   @Inject
+   private ArticleRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Article>()
             {

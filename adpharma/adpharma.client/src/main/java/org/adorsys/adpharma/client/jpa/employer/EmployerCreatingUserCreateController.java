@@ -22,7 +22,7 @@ public class EmployerCreatingUserCreateController extends EmployerCreatingUserCo
    public void handleNewModelEvent(@Observes @CreateModelEvent Employer model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getEmployerCreatingUserSelection());
+      bind(createView.getView().getEmployerCreatingUserSelection(), createView.getView().getEmployerCreatingUserForm());
       activateButton(createView.getView().getEmployerCreatingUserSelection());
    }
 }

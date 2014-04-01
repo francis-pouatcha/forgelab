@@ -11,10 +11,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import java.math.BigDecimal;
-import javafx.beans.property.SimpleLongProperty;
 import java.util.Calendar;
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
+import javafx.beans.property.SimpleLongProperty;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
@@ -27,8 +27,8 @@ import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import java.text.NumberFormat;
 import jfxtras.scene.control.CalendarTextField;
+import java.text.NumberFormat;
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -44,325 +44,289 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 public class ArticleView extends AbstractForm<Article>
 {
 
-	private TextField articleName;
+   private TextField articleName;
 
-	private TextField pic;
+   private TextField pic;
 
-	private TextField manufacturer;
+   private TextField manufacturer;
 
-	private CheckBox active;
+   private CheckBox active;
 
-	private TextField maxQtyPerPO;
+   private CheckBox authorizedSale;
 
-	private CheckBox authorizedSale;
+   private TextField maxStockQty;
 
-	private CheckBox approvedOrder;
+   private BigDecimalField qtyInStock;
 
-	private TextField maxStockQty;
+   private BigDecimalField pppu;
 
-	private BigDecimalField qtyInStock;
+   private BigDecimalField sppu;
 
-	private BigDecimalField salableQty;
+   private BigDecimalField maxDiscountRate;
 
-	private BigDecimalField qtyInStore;
+   private BigDecimalField totalStockPrice;
 
-	private BigDecimalField pppu;
+   private CalendarTextField lastStockEntry;
 
-	private BigDecimalField sppu;
+   private CalendarTextField lastOutOfStock;
 
-	private BigDecimalField maxDiscountRate;
+   private CalendarTextField recordingDate;
 
-	private BigDecimalField totalStockPrice;
+   @Inject
+   private ArticleSectionForm articleSectionForm;
+   @Inject
+   private ArticleSectionSelection articleSectionSelection;
 
-	private CalendarTextField lastStockEntry;
+   @Inject
+   private ArticleFamilyForm articleFamilyForm;
+   @Inject
+   private ArticleFamilySelection articleFamilySelection;
 
-	private CalendarTextField lastOutOfStock;
+   @Inject
+   private ArticleDefaultSalesMarginForm articleDefaultSalesMarginForm;
+   @Inject
+   private ArticleDefaultSalesMarginSelection articleDefaultSalesMarginSelection;
 
-	private CalendarTextField recordingDate;
+   @Inject
+   private ArticlePackagingModeForm articlePackagingModeForm;
+   @Inject
+   private ArticlePackagingModeSelection articlePackagingModeSelection;
 
-	@Inject
-	private ArticleSectionForm articleSectionForm;
-	@Inject
-	private ArticleSectionSelection articleSectionSelection;
+   @Inject
+   private ArticleAgencyForm articleAgencyForm;
+   @Inject
+   private ArticleAgencySelection articleAgencySelection;
 
-	@Inject
-	private ArticleFamilyForm articleFamilyForm;
-	@Inject
-	private ArticleFamilySelection articleFamilySelection;
+   @Inject
+   private ArticleClearanceConfigForm articleClearanceConfigForm;
+   @Inject
+   private ArticleClearanceConfigSelection articleClearanceConfigSelection;
 
-	@Inject
-	private ArticleDefaultSalesMarginForm articleDefaultSalesMarginForm;
-	@Inject
-	private ArticleDefaultSalesMarginSelection articleDefaultSalesMarginSelection;
+   @Inject
+   @Bundle({ CrudKeys.class, Article.class })
+   private ResourceBundle resourceBundle;
 
-	@Inject
-	private ArticlePackagingModeForm articlePackagingModeForm;
-	@Inject
-	private ArticlePackagingModeSelection articlePackagingModeSelection;
+   @Inject
+   private Locale locale;
 
-	@Inject
-	private ArticleAgencyForm articleAgencyForm;
-	@Inject
-	private ArticleAgencySelection articleAgencySelection;
+   @Inject
+   private TextInputControlValidator textInputControlValidator;
+   @Inject
+   private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
-	@Inject
-	private ArticleClearanceConfigForm articleClearanceConfigForm;
-	@Inject
-	private ArticleClearanceConfigSelection articleClearanceConfigSelection;
+   @PostConstruct
+   public void postConstruct()
+   {
+      LazyViewBuilder viewBuilder = new LazyViewBuilder();
+      articleName = viewBuilder.addTextField("Article_articleName_description.title", "articleName", resourceBundle);
+      pic = viewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle);
+      manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
+      active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
+      authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
+      maxStockQty = viewBuilder.addTextField("Article_maxStockQty_description.title", "maxStockQty", resourceBundle);
+      qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
+      pppu = viewBuilder.addBigDecimalField("Article_pppu_description.title", "pppu", resourceBundle, NumberType.INTEGER, locale);
+      sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
+      maxDiscountRate = viewBuilder.addBigDecimalField("Article_maxDiscountRate_description.title", "maxDiscountRate", resourceBundle, NumberType.PERCENTAGE, locale);
+      totalStockPrice = viewBuilder.addBigDecimalField("Article_totalStockPrice_description.title", "totalStockPrice", resourceBundle, NumberType.CURRENCY, locale);
+      lastStockEntry = viewBuilder.addCalendarTextField("Article_lastStockEntry_description.title", "lastStockEntry", resourceBundle, "dd-MM-yyyy", locale);
+      lastOutOfStock = viewBuilder.addCalendarTextField("Article_lastOutOfStock_description.title", "lastOutOfStock", resourceBundle, "dd-MM-yyyy", locale);
+      recordingDate = viewBuilder.addCalendarTextField("Article_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      viewBuilder.addTitlePane("Article_section_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_family_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_family_description.title", "family", resourceBundle, articleFamilyForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_family_description.title", "family", resourceBundle, articleFamilySelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_defaultSalesMargin_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_defaultSalesMargin_description.title", "defaultSalesMargin", resourceBundle, articleDefaultSalesMarginForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_defaultSalesMargin_description.title", "defaultSalesMargin", resourceBundle, articleDefaultSalesMarginSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_packagingMode_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_packagingMode_description.title", "packagingMode", resourceBundle, articlePackagingModeForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_packagingMode_description.title", "packagingMode", resourceBundle, articlePackagingModeSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_agency_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_agency_description.title", "agency", resourceBundle, articleAgencyForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_agency_description.title", "agency", resourceBundle, articleAgencySelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_clearanceConfig_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigSelection, ViewModel.READ_WRITE);
 
-	@Inject
-	@Bundle({ CrudKeys.class, Article.class })
-	private ResourceBundle resourceBundle;
+      gridRows = viewBuilder.toRows();
+   }
 
-	@Inject
-	private Locale locale;
+   public void addValidators()
+   {
+      articleName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Article>(textInputControlValidator, articleName, Article.class, "articleName", resourceBundle));
+      // no active validator
+      // no active validator
+   }
 
-	@Inject
-	private TextInputControlValidator textInputControlValidator;
-	@Inject
-	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
+   public Set<ConstraintViolation<Article>> validate(Article model)
+   {
+      Set<ConstraintViolation<Article>> violations = new HashSet<ConstraintViolation<Article>>();
+      violations.addAll(textInputControlValidator.validate(articleName, Article.class, "articleName", resourceBundle));
+      violations.addAll(toOneAggreggationFieldValidator.validate(articleSectionSelection.getSection(), model.getSection(), Article.class, "section", resourceBundle));
+      violations.addAll(toOneAggreggationFieldValidator.validate(articleAgencySelection.getAgency(), model.getAgency(), Article.class, "agency", resourceBundle));
+      return violations;
+   }
 
-	@PostConstruct
-	public void postConstruct()
-	{
-		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		pic = viewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle);
-		articleName = viewBuilder.addTextField("Article_articleName_description.title", "articleName", resourceBundle);
-		manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
-		active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
-//		maxQtyPerPO = viewBuilder.addTextField("Article_maxQtyPerPO_description.title", "maxQtyPerPO", resourceBundle);
-		authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
-//		approvedOrder = viewBuilder.addCheckBox("Article_approvedOrder_description.title", "approvedOrder", resourceBundle);
-		maxStockQty = viewBuilder.addTextField("Article_maxStockQty_description.title", "maxStockQty", resourceBundle);
-//		qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
-//		salableQty = viewBuilder.addBigDecimalField("Article_salableQty_description.title", "salableQty", resourceBundle, NumberType.INTEGER, locale);
-		//      qtyInStore = viewBuilder.addBigDecimalField("Article_qtyInStore_description.title", "qtyInStore", resourceBundle, NumberType.INTEGER, locale);
-		pppu = viewBuilder.addBigDecimalField("Article_pppu_description.title", "pppu", resourceBundle, NumberType.INTEGER, locale);
-		sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
-		maxDiscountRate = viewBuilder.addBigDecimalField("Article_maxDiscountRate_description.title", "maxDiscountRate", resourceBundle, NumberType.PERCENTAGE, locale);
-//		totalStockPrice = viewBuilder.addBigDecimalField("Article_totalStockPrice_description.title", "totalStockPrice", resourceBundle, NumberType.CURRENCY, locale);
-//		lastStockEntry = viewBuilder.addCalendarTextField("Article_lastStockEntry_description.title", "lastStockEntry", resourceBundle, "dd-MM-yyyy", locale);
-//		lastOutOfStock = viewBuilder.addCalendarTextField("Article_lastOutOfStock_description.title", "lastOutOfStock", resourceBundle, "dd-MM-yyyy", locale);
-//		recordingDate = viewBuilder.addCalendarTextField("Article_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		//      viewBuilder.addTitlePane("Article_section_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionSelection, ViewModel.READ_WRITE);
-		//      viewBuilder.addTitlePane("Article_family_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_family_description.title", "family", resourceBundle, articleFamilyForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_family_description.title", "family", resourceBundle, articleFamilySelection, ViewModel.READ_WRITE);
-		//      viewBuilder.addTitlePane("Article_defaultSalesMargin_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_defaultSalesMargin_description.title", "defaultSalesMargin", resourceBundle, articleDefaultSalesMarginForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_defaultSalesMargin_description.title", "defaultSalesMargin", resourceBundle, articleDefaultSalesMarginSelection, ViewModel.READ_WRITE);
-		//      viewBuilder.addTitlePane("Article_packagingMode_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_packagingMode_description.title", "packagingMode", resourceBundle, articlePackagingModeForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_packagingMode_description.title", "packagingMode", resourceBundle, articlePackagingModeSelection, ViewModel.READ_WRITE);
-		//      viewBuilder.addTitlePane("Article_agency_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_agency_description.title", "agency", resourceBundle, articleAgencyForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_agency_description.title", "agency", resourceBundle, articleAgencySelection, ViewModel.READ_WRITE);
-		//      viewBuilder.addTitlePane("Article_clearanceConfig_description.title", resourceBundle);
-		//      viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigSelection, ViewModel.READ_WRITE);
+   public void bind(Article model)
+   {
+      articleName.textProperty().bindBidirectional(model.articleNameProperty());
+      pic.textProperty().bindBidirectional(model.picProperty());
+      manufacturer.textProperty().bindBidirectional(model.manufacturerProperty());
+      active.textProperty().bindBidirectional(model.activeProperty(), new BooleanStringConverter());
+      authorizedSale.textProperty().bindBidirectional(model.authorizedSaleProperty(), new BooleanStringConverter());
+      maxStockQty.textProperty().bindBidirectional(model.maxStockQtyProperty(), NumberFormat.getInstance(locale));
+      qtyInStock.numberProperty().bindBidirectional(model.qtyInStockProperty());
+      pppu.numberProperty().bindBidirectional(model.pppuProperty());
+      sppu.numberProperty().bindBidirectional(model.sppuProperty());
+      maxDiscountRate.numberProperty().bindBidirectional(model.maxDiscountRateProperty());
+      totalStockPrice.numberProperty().bindBidirectional(model.totalStockPriceProperty());
+      lastStockEntry.calendarProperty().bindBidirectional(model.lastStockEntryProperty());
+      lastOutOfStock.calendarProperty().bindBidirectional(model.lastOutOfStockProperty());
+      recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
+      articleSectionForm.bind(model);
+      articleSectionSelection.bind(model);
+      articleFamilyForm.bind(model);
+      articleFamilySelection.bind(model);
+      articleDefaultSalesMarginForm.bind(model);
+      articleDefaultSalesMarginSelection.bind(model);
+      articlePackagingModeForm.bind(model);
+      articlePackagingModeSelection.bind(model);
+      articleAgencyForm.bind(model);
+      articleAgencySelection.bind(model);
+      articleClearanceConfigForm.bind(model);
+      articleClearanceConfigSelection.bind(model);
+   }
 
-		gridRows = viewBuilder.toRows();
-	}
+   public TextField getArticleName()
+   {
+      return articleName;
+   }
 
-	public void addValidators()
-	{
-		articleName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Article>(textInputControlValidator, articleName, Article.class, "articleName", resourceBundle));
-		// no active validator
-		// no active validator
-	}
+   public TextField getPic()
+   {
+      return pic;
+   }
 
-	public Set<ConstraintViolation<Article>> validate(Article model)
-	{
-		Set<ConstraintViolation<Article>> violations = new HashSet<ConstraintViolation<Article>>();
-		violations.addAll(textInputControlValidator.validate(articleName, Article.class, "articleName", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(articleSectionSelection.getSection(), model.getSection(), Article.class, "section", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(articleAgencySelection.getAgency(), model.getAgency(), Article.class, "agency", resourceBundle));
-		return violations;
-	}
+   public TextField getManufacturer()
+   {
+      return manufacturer;
+   }
 
-	public void bind(Article model)
-	{
-		articleName.textProperty().bindBidirectional(model.articleNameProperty());
-		pic.textProperty().bindBidirectional(model.picProperty());
-		manufacturer.textProperty().bindBidirectional(model.manufacturerProperty());
-		active.textProperty().bindBidirectional(model.activeProperty(), new BooleanStringConverter());
-//		maxQtyPerPO.textProperty().bindBidirectional(model.maxQtyPerPOProperty(), NumberFormat.getInstance(locale));
-		authorizedSale.textProperty().bindBidirectional(model.authorizedSaleProperty(), new BooleanStringConverter());
-//		approvedOrder.textProperty().bindBidirectional(model.approvedOrderProperty(), new BooleanStringConverter());
-//		maxStockQty.textProperty().bindBidirectional(model.maxStockQtyProperty(), NumberFormat.getInstance(locale));
-//		qtyInStock.numberProperty().bindBidirectional(model.qtyInStockProperty());
-//		salableQty.numberProperty().bindBidirectional(model.salableQtyProperty());
-//		qtyInStore.numberProperty().bindBidirectional(model.qtyInStoreProperty());
-		pppu.numberProperty().bindBidirectional(model.pppuProperty());
-		sppu.numberProperty().bindBidirectional(model.sppuProperty());
-		maxDiscountRate.numberProperty().bindBidirectional(model.maxDiscountRateProperty());
-//		totalStockPrice.numberProperty().bindBidirectional(model.totalStockPriceProperty());
-//		lastStockEntry.calendarProperty().bindBidirectional(model.lastStockEntryProperty());
-//		lastOutOfStock.calendarProperty().bindBidirectional(model.lastOutOfStockProperty());
-//		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
-		//      articleSectionForm.bind(model);
-		articleSectionSelection.bind(model);
-		//      articleFamilyForm.bind(model);
-		articleFamilySelection.bind(model);
-		//      articleDefaultSalesMarginForm.bind(model);
-		articleDefaultSalesMarginSelection.bind(model);
-		//      articlePackagingModeForm.bind(model);
-		articlePackagingModeSelection.bind(model);
-		//      articleAgencyForm.bind(model);
-		articleAgencySelection.bind(model);
-		//      articleClearanceConfigForm.bind(model);
-		articleClearanceConfigSelection.bind(model);
-	}
+   public CheckBox getActive()
+   {
+      return active;
+   }
 
-	public TextField getArticleName()
-	{
-		return articleName;
-	}
+   public CheckBox getAuthorizedSale()
+   {
+      return authorizedSale;
+   }
 
-	public TextField getPic()
-	{
-		return pic;
-	}
+   public TextField getMaxStockQty()
+   {
+      return maxStockQty;
+   }
 
-	public TextField getManufacturer()
-	{
-		return manufacturer;
-	}
+   public BigDecimalField getQtyInStock()
+   {
+      return qtyInStock;
+   }
 
-	public CheckBox getActive()
-	{
-		return active;
-	}
+   public BigDecimalField getPppu()
+   {
+      return pppu;
+   }
 
-	public TextField getMaxQtyPerPO()
-	{
-		return maxQtyPerPO;
-	}
+   public BigDecimalField getSppu()
+   {
+      return sppu;
+   }
 
-	public CheckBox getAuthorizedSale()
-	{
-		return authorizedSale;
-	}
+   public BigDecimalField getMaxDiscountRate()
+   {
+      return maxDiscountRate;
+   }
 
-	public CheckBox getApprovedOrder()
-	{
-		return approvedOrder;
-	}
+   public BigDecimalField getTotalStockPrice()
+   {
+      return totalStockPrice;
+   }
 
-	public TextField getMaxStockQty()
-	{
-		return maxStockQty;
-	}
+   public CalendarTextField getLastStockEntry()
+   {
+      return lastStockEntry;
+   }
 
-	public BigDecimalField getQtyInStock()
-	{
-		return qtyInStock;
-	}
+   public CalendarTextField getLastOutOfStock()
+   {
+      return lastOutOfStock;
+   }
 
-	public BigDecimalField getSalableQty()
-	{
-		return salableQty;
-	}
+   public CalendarTextField getRecordingDate()
+   {
+      return recordingDate;
+   }
 
-	public BigDecimalField getQtyInStore()
-	{
-		return qtyInStore;
-	}
+   public ArticleSectionForm getArticleSectionForm()
+   {
+      return articleSectionForm;
+   }
 
-	public BigDecimalField getPppu()
-	{
-		return pppu;
-	}
+   public ArticleSectionSelection getArticleSectionSelection()
+   {
+      return articleSectionSelection;
+   }
 
-	public BigDecimalField getSppu()
-	{
-		return sppu;
-	}
+   public ArticleFamilyForm getArticleFamilyForm()
+   {
+      return articleFamilyForm;
+   }
 
-	public BigDecimalField getMaxDiscountRate()
-	{
-		return maxDiscountRate;
-	}
+   public ArticleFamilySelection getArticleFamilySelection()
+   {
+      return articleFamilySelection;
+   }
 
-	public BigDecimalField getTotalStockPrice()
-	{
-		return totalStockPrice;
-	}
+   public ArticleDefaultSalesMarginForm getArticleDefaultSalesMarginForm()
+   {
+      return articleDefaultSalesMarginForm;
+   }
 
-	public CalendarTextField getLastStockEntry()
-	{
-		return lastStockEntry;
-	}
+   public ArticleDefaultSalesMarginSelection getArticleDefaultSalesMarginSelection()
+   {
+      return articleDefaultSalesMarginSelection;
+   }
 
-	public CalendarTextField getLastOutOfStock()
-	{
-		return lastOutOfStock;
-	}
+   public ArticlePackagingModeForm getArticlePackagingModeForm()
+   {
+      return articlePackagingModeForm;
+   }
 
-	public CalendarTextField getRecordingDate()
-	{
-		return recordingDate;
-	}
+   public ArticlePackagingModeSelection getArticlePackagingModeSelection()
+   {
+      return articlePackagingModeSelection;
+   }
 
-	public ArticleSectionForm getArticleSectionForm()
-	{
-		return articleSectionForm;
-	}
+   public ArticleAgencyForm getArticleAgencyForm()
+   {
+      return articleAgencyForm;
+   }
 
-	public ArticleSectionSelection getArticleSectionSelection()
-	{
-		return articleSectionSelection;
-	}
+   public ArticleAgencySelection getArticleAgencySelection()
+   {
+      return articleAgencySelection;
+   }
 
-	public ArticleFamilyForm getArticleFamilyForm()
-	{
-		return articleFamilyForm;
-	}
+   public ArticleClearanceConfigForm getArticleClearanceConfigForm()
+   {
+      return articleClearanceConfigForm;
+   }
 
-	public ArticleFamilySelection getArticleFamilySelection()
-	{
-		return articleFamilySelection;
-	}
-
-	public ArticleDefaultSalesMarginForm getArticleDefaultSalesMarginForm()
-	{
-		return articleDefaultSalesMarginForm;
-	}
-
-	public ArticleDefaultSalesMarginSelection getArticleDefaultSalesMarginSelection()
-	{
-		return articleDefaultSalesMarginSelection;
-	}
-
-	public ArticlePackagingModeForm getArticlePackagingModeForm()
-	{
-		return articlePackagingModeForm;
-	}
-
-	public ArticlePackagingModeSelection getArticlePackagingModeSelection()
-	{
-		return articlePackagingModeSelection;
-	}
-
-	public ArticleAgencyForm getArticleAgencyForm()
-	{
-		return articleAgencyForm;
-	}
-
-	public ArticleAgencySelection getArticleAgencySelection()
-	{
-		return articleAgencySelection;
-	}
-
-	public ArticleClearanceConfigForm getArticleClearanceConfigForm()
-	{
-		return articleClearanceConfigForm;
-	}
-
-	public ArticleClearanceConfigSelection getArticleClearanceConfigSelection()
-	{
-		return articleClearanceConfigSelection;
-	}
+   public ArticleClearanceConfigSelection getArticleClearanceConfigSelection()
+   {
+      return articleClearanceConfigSelection;
+   }
 }

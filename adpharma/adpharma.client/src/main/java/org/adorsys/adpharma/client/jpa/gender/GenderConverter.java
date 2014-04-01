@@ -26,6 +26,8 @@ public class GenderConverter extends StringConverter<Gender>
    @Override
    public String toString(Gender object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("Gender_" + object.name()
             + "_description.title");
    }

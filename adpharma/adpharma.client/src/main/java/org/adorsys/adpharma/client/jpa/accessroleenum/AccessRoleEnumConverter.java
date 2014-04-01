@@ -26,6 +26,8 @@ public class AccessRoleEnumConverter extends StringConverter<AccessRoleEnum>
    @Override
    public String toString(AccessRoleEnum object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("AccessRoleEnum_" + object.name()
             + "_description.title");
    }

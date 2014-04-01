@@ -185,7 +185,7 @@ public class DebtStatementCustomerInvoiceAssocEndpoint
 
    private static final List<String> s_invoices_t_source_sourceFields = Arrays.asList("statementNumber", "insurrance.fullName", "agency.name", "paymentDate", "initialAmount", "advancePayment", "restAmount", "settled", "amountFromVouchers", "canceled", "useVoucher");
 
-   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "amountVAT", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
+   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
 
    private DebtStatementCustomerInvoiceAssoc detach(DebtStatementCustomerInvoiceAssoc entity)
    {

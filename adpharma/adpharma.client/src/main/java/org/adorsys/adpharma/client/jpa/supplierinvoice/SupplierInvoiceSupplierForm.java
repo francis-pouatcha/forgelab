@@ -51,6 +51,13 @@ public class SupplierInvoiceSupplierForm extends AbstractToOneAssociation<Suppli
       email.textProperty().bindBidirectional(model.getSupplier().emailProperty());
    }
 
+   public void update(SupplierInvoiceSupplier data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      fax.textProperty().set(data.faxProperty().get());
+      email.textProperty().set(data.emailProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

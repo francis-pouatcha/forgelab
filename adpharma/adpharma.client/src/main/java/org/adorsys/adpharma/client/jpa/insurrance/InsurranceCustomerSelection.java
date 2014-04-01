@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 public class InsurranceCustomerSelection extends AbstractSelection<Insurrance, Customer>
 {
 
-   private ComboBox<Customer> customer;
+   private ComboBox<InsurranceCustomer> customer;
 
    @Inject
    @Bundle({ CrudKeys.class, Customer.class, Insurrance.class })
@@ -39,10 +39,10 @@ public class InsurranceCustomerSelection extends AbstractSelection<Insurrance, C
 
       customer = viewBuilder.addComboBox("Insurrance_customer_description.title", "customer", resourceBundle, false);
 
-      customer.setCellFactory(new Callback<ListView<Customer>, ListCell<Customer>>()
+      customer.setCellFactory(new Callback<ListView<InsurranceCustomer>, ListCell<InsurranceCustomer>>()
       {
          @Override
-         public ListCell<Customer> call(ListView<Customer> listView)
+         public ListCell<InsurranceCustomer> call(ListView<InsurranceCustomer> listView)
          {
             return new InsurranceCustomerListCell();
          }
@@ -54,9 +54,10 @@ public class InsurranceCustomerSelection extends AbstractSelection<Insurrance, C
 
    public void bind(Insurrance model)
    {
+      customer.valueProperty().bindBidirectional(model.customerProperty());
    }
 
-   public ComboBox<Customer> getCustomer()
+   public ComboBox<InsurranceCustomer> getCustomer()
    {
       return customer;
    }

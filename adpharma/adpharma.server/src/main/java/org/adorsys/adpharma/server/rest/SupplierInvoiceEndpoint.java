@@ -200,7 +200,7 @@ public class SupplierInvoiceEndpoint
 
    private static final List<String> deliveryFields = Arrays.asList("deliveryNumber", "deliverySlipNumber", "dateOnDeliverySlip", "amountBeforeTax", "amountAfterTax", "amountDiscount", "netAmountToPay", "vat.rate", "receivingAgency.name");
 
-   private static final List<String> invoiceItemsFields = Arrays.asList("internalPic", "article.articleName", "deliveryQty", "purchasePricePU", "salesPricePU", "amountReturn", "totalSalesPrice");
+   private static final List<String> invoiceItemsFields = Arrays.asList("internalPic", "article.articleName", "deliveryQty", "purchasePricePU", "salesPricePU", "amountReturn", "totalPurchasePrice");
 
    private SupplierInvoice detach(SupplierInvoice entity)
    {

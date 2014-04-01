@@ -23,6 +23,6 @@ public class InsurranceInsurerEditController extends InsurranceInsurerController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getInsurranceInsurerSelection());
-      bind(editView.getView().getInsurranceInsurerSelection());
+      bind(editView.getView().getInsurranceInsurerSelection(), editView.getView().getInsurranceInsurerForm());
    }
 }

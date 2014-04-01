@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -27,7 +29,7 @@ import org.adorsys.javaext.list.ListField;
 @ToStringField({ "internalPic", "article.articleName", "purchasedQty" })
 @ListField({ "internalPic", "article.articleName", "purchasedQty",
       "salesPricePU", "totalSalesPrice" })
-public class CustomerInvoiceItem
+public class CustomerInvoiceItem implements Cloneable
 {
 
    private Long id;
@@ -47,7 +49,7 @@ public class CustomerInvoiceItem
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
    private SimpleObjectProperty<CustomerInvoiceItemInvoice> invoice;
    @Description("CustomerInvoiceItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<CustomerInvoiceItemArticle> article;
 
    public Long getId()
@@ -167,6 +169,7 @@ public class CustomerInvoiceItem
          invoice = new CustomerInvoiceItemInvoice();
       }
       PropertyReader.copy(invoice, getInvoice());
+      invoiceProperty().setValue(ObjectUtils.clone(getInvoice()));
    }
 
    public SimpleObjectProperty<CustomerInvoiceItemArticle> articleProperty()
@@ -190,6 +193,7 @@ public class CustomerInvoiceItem
          article = new CustomerInvoiceItemArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    @Override
@@ -222,5 +226,30 @@ public class CustomerInvoiceItem
    public String toString()
    {
       return PropertyReader.buildToString(this, "internalPic", "articleName", "purchasedQty");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      CustomerInvoiceItemInvoice f = invoice.get();
+      f.setId(null);
+      f.setVersion(0);
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerInvoiceItem e = new CustomerInvoiceItem();
+      e.id = id;
+      e.version = version;
+
+      e.internalPic = internalPic;
+      e.purchasedQty = purchasedQty;
+      e.salesPricePU = salesPricePU;
+      e.totalSalesPrice = totalSalesPrice;
+      e.invoice = invoice;
+      e.article = article;
+      return e;
    }
 }

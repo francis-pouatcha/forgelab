@@ -27,5 +27,6 @@ public class DeliverySupplierDisplayController extends DeliverySupplierControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDeliverySupplierSelection());
+      bind(displayView.getView().getDeliverySupplierSelection(), displayView.getView().getDeliverySupplierForm());
    }
 }

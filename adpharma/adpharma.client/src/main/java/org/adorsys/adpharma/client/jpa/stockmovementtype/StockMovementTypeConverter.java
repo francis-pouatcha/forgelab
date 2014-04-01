@@ -26,6 +26,8 @@ public class StockMovementTypeConverter extends StringConverter<StockMovementTyp
    @Override
    public String toString(StockMovementType object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("StockMovementType_" + object.name()
             + "_description.title");
    }

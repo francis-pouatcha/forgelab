@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 public class CashDrawerAgencySelection extends AbstractSelection<CashDrawer, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<CashDrawerAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, CashDrawer.class })
@@ -39,10 +39,10 @@ public class CashDrawerAgencySelection extends AbstractSelection<CashDrawer, Age
 
       agency = viewBuilder.addComboBox("CashDrawer_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<CashDrawerAgency>, ListCell<CashDrawerAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<CashDrawerAgency> call(ListView<CashDrawerAgency> listView)
          {
             return new CashDrawerAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class CashDrawerAgencySelection extends AbstractSelection<CashDrawer, Age
 
    public void bind(CashDrawer model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<CashDrawerAgency> getAgency()
    {
       return agency;
    }

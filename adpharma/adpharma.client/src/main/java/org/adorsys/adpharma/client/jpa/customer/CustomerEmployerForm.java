@@ -51,6 +51,12 @@ public class CustomerEmployerForm extends AbstractToOneAssociation<Customer, Emp
       phone.textProperty().bindBidirectional(model.getEmployer().phoneProperty());
    }
 
+   public void update(CustomerEmployer data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      phone.textProperty().set(data.phoneProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

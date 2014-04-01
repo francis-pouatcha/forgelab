@@ -58,9 +58,14 @@ public class SalesOrderItemListController implements EntityController
 
    private SalesOrderItemSearchResult searchResult;
 
+   @Inject
+   private SalesOrderItemRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<SalesOrderItem>()
             {

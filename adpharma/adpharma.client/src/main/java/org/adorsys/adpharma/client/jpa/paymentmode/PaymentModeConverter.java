@@ -26,6 +26,8 @@ public class PaymentModeConverter extends StringConverter<PaymentMode>
    @Override
    public String toString(PaymentMode object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("PaymentMode_" + object.name()
             + "_description.title");
    }

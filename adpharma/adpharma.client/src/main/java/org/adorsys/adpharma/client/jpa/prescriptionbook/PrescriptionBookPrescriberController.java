@@ -51,8 +51,10 @@ public abstract class PrescriptionBookPrescriberController
    {
    }
 
-   protected void bind(final PrescriptionBookPrescriberSelection selection)
+   protected void bind(final PrescriptionBookPrescriberSelection selection, final PrescriptionBookPrescriberForm form)
    {
+
+      //	    selection.getPrescriber().valueProperty().bindBidirectional(sourceEntity.prescriberProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PrescriptionBookPrescriberController
             s.reset();
             List<Prescriber> entities = targetSearchResult.getResultList();
             selection.getPrescriber().getItems().clear();
-            selection.getPrescriber().getItems().addAll(entities);
+            selection.getPrescriber().getItems().add(new PrescriptionBookPrescriber());
+            for (Prescriber entity : entities)
+            {
+               selection.getPrescriber().getItems().add(new PrescriptionBookPrescriber(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PrescriptionBookPrescriberController
                }
             });
 
-      selection.getPrescriber().valueProperty().addListener(new ChangeListener<Prescriber>()
+      selection.getPrescriber().valueProperty().addListener(new ChangeListener<PrescriptionBookPrescriber>()
       {
          @Override
-         public void changed(ObservableValue<? extends Prescriber> ov, Prescriber oldValue,
-               Prescriber newValue)
+         public void changed(ObservableValue<? extends PrescriptionBookPrescriber> ov, PrescriptionBookPrescriber oldValue,
+               PrescriptionBookPrescriber newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setPrescriber(new PrescriptionBookPrescriber(newValue));
+               form.update(newValue);
+            //                sourceEntity.setPrescriber(newValue);
          }
       });
 

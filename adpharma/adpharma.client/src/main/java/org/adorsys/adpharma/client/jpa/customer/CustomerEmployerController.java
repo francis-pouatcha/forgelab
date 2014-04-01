@@ -51,8 +51,10 @@ public abstract class CustomerEmployerController
    {
    }
 
-   protected void bind(final CustomerEmployerSelection selection)
+   protected void bind(final CustomerEmployerSelection selection, final CustomerEmployerForm form)
    {
+
+      //	    selection.getEmployer().valueProperty().bindBidirectional(sourceEntity.employerProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CustomerEmployerController
             s.reset();
             List<Employer> entities = targetSearchResult.getResultList();
             selection.getEmployer().getItems().clear();
-            selection.getEmployer().getItems().addAll(entities);
+            selection.getEmployer().getItems().add(new CustomerEmployer());
+            for (Employer entity : entities)
+            {
+               selection.getEmployer().getItems().add(new CustomerEmployer(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CustomerEmployerController
                }
             });
 
-      selection.getEmployer().valueProperty().addListener(new ChangeListener<Employer>()
+      selection.getEmployer().valueProperty().addListener(new ChangeListener<CustomerEmployer>()
       {
          @Override
-         public void changed(ObservableValue<? extends Employer> ov, Employer oldValue,
-               Employer newValue)
+         public void changed(ObservableValue<? extends CustomerEmployer> ov, CustomerEmployer oldValue,
+               CustomerEmployer newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setEmployer(new CustomerEmployer(newValue));
+               form.update(newValue);
+            //                sourceEntity.setEmployer(newValue);
          }
       });
 

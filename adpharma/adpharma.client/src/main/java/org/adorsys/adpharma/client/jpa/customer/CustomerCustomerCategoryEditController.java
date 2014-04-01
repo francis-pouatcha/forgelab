@@ -23,6 +23,6 @@ public class CustomerCustomerCategoryEditController extends CustomerCustomerCate
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerCustomerCategorySelection());
-      bind(editView.getView().getCustomerCustomerCategorySelection());
+      bind(editView.getView().getCustomerCustomerCategorySelection(), editView.getView().getCustomerCustomerCategoryForm());
    }
 }

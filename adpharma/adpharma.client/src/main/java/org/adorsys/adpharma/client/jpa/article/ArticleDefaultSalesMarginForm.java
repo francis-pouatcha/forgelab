@@ -57,6 +57,13 @@ public class ArticleDefaultSalesMarginForm extends AbstractToOneAssociation<Arti
       rate.numberProperty().bindBidirectional(model.getDefaultSalesMargin().rateProperty());
    }
 
+   public void update(ArticleDefaultSalesMargin data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+      rate.numberProperty().set(data.rateProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

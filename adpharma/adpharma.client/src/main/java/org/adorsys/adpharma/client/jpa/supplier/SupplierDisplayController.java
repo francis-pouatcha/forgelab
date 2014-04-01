@@ -62,9 +62,15 @@ public class SupplierDisplayController implements EntityController
 
    private Supplier displayedEntity;
 
+   @Inject
+   private SupplierRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

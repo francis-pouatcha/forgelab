@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -14,15 +15,17 @@ public class CustomerVoucherCustomerInvoiceEditController extends CustomerVouche
    @Inject
    CustomerVoucherEditView editView;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-   }
-
    public void handleNewModelEvent(@Observes @SelectedModelEvent CustomerVoucher model)
    {
       this.sourceEntity = model;
-      activateButton(editView.getView().getCustomerVoucherCustomerInvoiceSelection());
-      bind(editView.getView().getCustomerVoucherCustomerInvoiceSelection());
+      activateButton(editView.getView().getCustomerVoucherCustomerInvoiceSelection(), editView.getView().getCustomerVoucherCustomerInvoiceForm());
+      bind(editView.getView().getCustomerVoucherCustomerInvoiceSelection(), editView.getView().getCustomerVoucherCustomerInvoiceForm());
    }
+
+   public void handleEditRequestEvent(
+         @Observes @EntityEditRequestedEvent CustomerVoucher p)
+   {
+      loadAssociation();
+   }
+
 }

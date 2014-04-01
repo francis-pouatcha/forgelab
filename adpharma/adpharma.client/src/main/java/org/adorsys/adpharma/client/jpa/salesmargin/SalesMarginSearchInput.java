@@ -23,7 +23,7 @@ public class SalesMarginSearchInput
    /**
     * The entity holding search inputs.
     */
-   private SalesMargin entity = new SalesMargin();
+   private SalesMargin entity;
 
    /**
     * The start cursor

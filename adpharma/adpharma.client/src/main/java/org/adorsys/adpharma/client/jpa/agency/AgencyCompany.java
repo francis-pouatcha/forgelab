@@ -19,7 +19,7 @@ import org.adorsys.adpharma.client.jpa.company.Company;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Company_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AgencyCompany implements Association<Agency, Company>
+public class AgencyCompany implements Association<Agency, Company>, Cloneable
 {
 
    private Long id;
@@ -165,25 +165,38 @@ public class AgencyCompany implements Association<Agency, Company>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      AgencyCompany other = (AgencyCompany) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		AgencyCompany other = (AgencyCompany) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "displayName");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      AgencyCompany a = new AgencyCompany();
+      a.id = id;
+      a.version = version;
+
+      a.displayName = displayName;
+      a.phone = phone;
+      a.fax = fax;
+      a.siteManager = siteManager;
+      a.email = email;
+      return a;
+   }
+
 }

@@ -51,8 +51,10 @@ public abstract class ArticlePackagingModeController
    {
    }
 
-   protected void bind(final ArticlePackagingModeSelection selection)
+   protected void bind(final ArticlePackagingModeSelection selection, final ArticlePackagingModeForm form)
    {
+
+      //	    selection.getPackagingMode().valueProperty().bindBidirectional(sourceEntity.packagingModeProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticlePackagingModeController
             s.reset();
             List<PackagingMode> entities = targetSearchResult.getResultList();
             selection.getPackagingMode().getItems().clear();
-            selection.getPackagingMode().getItems().addAll(entities);
+            selection.getPackagingMode().getItems().add(new ArticlePackagingMode());
+            for (PackagingMode entity : entities)
+            {
+               selection.getPackagingMode().getItems().add(new ArticlePackagingMode(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticlePackagingModeController
                }
             });
 
-      selection.getPackagingMode().valueProperty().addListener(new ChangeListener<PackagingMode>()
+      selection.getPackagingMode().valueProperty().addListener(new ChangeListener<ArticlePackagingMode>()
       {
          @Override
-         public void changed(ObservableValue<? extends PackagingMode> ov, PackagingMode oldValue,
-               PackagingMode newValue)
+         public void changed(ObservableValue<? extends ArticlePackagingMode> ov, ArticlePackagingMode oldValue,
+               ArticlePackagingMode newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setPackagingMode(new ArticlePackagingMode(newValue));
+               form.update(newValue);
+            //                sourceEntity.setPackagingMode(newValue);
          }
       });
 

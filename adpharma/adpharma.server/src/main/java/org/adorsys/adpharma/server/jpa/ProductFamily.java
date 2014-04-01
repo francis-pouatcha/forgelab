@@ -12,7 +12,6 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.persistence.ManyToOne;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
@@ -38,15 +37,10 @@ public class ProductFamily implements Serializable
    @NotNull(message = "ProductFamily_name_NotNull_validation")
    private String name;
 
-   @Column
-   @Description("ProductFamily_description_description")
-   @Size(max = 256, message = "ProductFamily_description_Size_validation")
-   private String description;
-
    @ManyToOne
-   @Description("ProductFamily_parentFamilly_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = ProductFamily.class)
-   private ProductFamily parentFamilly;
+   @Description("ProductFamily_parentFamily_description")
+   @Association(selectionMode = SelectionMode.TABLE, associationType = AssociationType.AGGREGATION, targetEntity = ProductFamily.class)
+   private ProductFamily parentFamily;
 
    public Long getId()
    {
@@ -110,34 +104,22 @@ public class ProductFamily implements Serializable
       this.name = name;
    }
 
-   public String getDescription()
-   {
-      return this.description;
-   }
-
-   public void setDescription(final String description)
-   {
-      this.description = description;
-   }
-
    @Override
    public String toString()
    {
       String result = getClass().getSimpleName() + " ";
       if (name != null && !name.trim().isEmpty())
          result += "name: " + name;
-      if (description != null && !description.trim().isEmpty())
-         result += ", description: " + description;
       return result;
    }
 
-   public ProductFamily getParentFamilly()
+   public ProductFamily getParentFamily()
    {
-      return this.parentFamilly;
+      return this.parentFamily;
    }
 
-   public void setParentFamilly(final ProductFamily parentFamilly)
+   public void setParentFamily(final ProductFamily parentFamily)
    {
-      this.parentFamilly = parentFamilly;
+      this.parentFamily = parentFamily;
    }
 }

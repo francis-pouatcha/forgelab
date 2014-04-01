@@ -22,13 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.adorsys.adpharma.server.jpa.Employer;
 import org.adorsys.adpharma.server.jpa.Employer_;
 import org.adorsys.adpharma.server.jpa.EmployerSearchInput;
 import org.adorsys.adpharma.server.jpa.EmployerSearchResult;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -44,17 +41,12 @@ public class EmployerEndpoint
 
    @Inject
    private LoginMerger loginMerger;
-   
-   @Inject
-   private SecurityUtil securityUtil;
 
    @POST
    @Consumes({ "application/json", "application/xml" })
    @Produces({ "application/json", "application/xml" })
    public Employer create(Employer entity)
    {
-	   Login login = securityUtil.getConnectedUser();
-	   entity.setCreatingUser(login);
       return detach(ejb.create(entity));
    }
 

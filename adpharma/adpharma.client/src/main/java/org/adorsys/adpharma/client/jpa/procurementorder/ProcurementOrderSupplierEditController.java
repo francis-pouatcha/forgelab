@@ -23,6 +23,6 @@ public class ProcurementOrderSupplierEditController extends ProcurementOrderSupp
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getProcurementOrderSupplierSelection());
-      bind(editView.getView().getProcurementOrderSupplierSelection());
+      bind(editView.getView().getProcurementOrderSupplierSelection(), editView.getView().getProcurementOrderSupplierForm());
    }
 }

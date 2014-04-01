@@ -27,5 +27,6 @@ public class PrescriptionBookAgencyDisplayController extends PrescriptionBookAge
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPrescriptionBookAgencySelection());
+      bind(displayView.getView().getPrescriptionBookAgencySelection(), displayView.getView().getPrescriptionBookAgencyForm());
    }
 }

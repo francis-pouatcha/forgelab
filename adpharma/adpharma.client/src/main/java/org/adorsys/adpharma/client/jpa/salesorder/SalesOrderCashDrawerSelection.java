@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 public class SalesOrderCashDrawerSelection extends AbstractSelection<SalesOrder, CashDrawer>
 {
 
-   private ComboBox<CashDrawer> cashDrawer;
+   private ComboBox<SalesOrderCashDrawer> cashDrawer;
 
    @Inject
    @Bundle({ CrudKeys.class, CashDrawer.class, SalesOrder.class })
@@ -39,10 +39,10 @@ public class SalesOrderCashDrawerSelection extends AbstractSelection<SalesOrder,
 
       cashDrawer = viewBuilder.addComboBox("SalesOrder_cashDrawer_description.title", "cashDrawer", resourceBundle, false);
 
-      cashDrawer.setCellFactory(new Callback<ListView<CashDrawer>, ListCell<CashDrawer>>()
+      cashDrawer.setCellFactory(new Callback<ListView<SalesOrderCashDrawer>, ListCell<SalesOrderCashDrawer>>()
       {
          @Override
-         public ListCell<CashDrawer> call(ListView<CashDrawer> listView)
+         public ListCell<SalesOrderCashDrawer> call(ListView<SalesOrderCashDrawer> listView)
          {
             return new SalesOrderCashDrawerListCell();
          }
@@ -54,9 +54,10 @@ public class SalesOrderCashDrawerSelection extends AbstractSelection<SalesOrder,
 
    public void bind(SalesOrder model)
    {
+      cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
    }
 
-   public ComboBox<CashDrawer> getCashDrawer()
+   public ComboBox<SalesOrderCashDrawer> getCashDrawer()
    {
       return cashDrawer;
    }

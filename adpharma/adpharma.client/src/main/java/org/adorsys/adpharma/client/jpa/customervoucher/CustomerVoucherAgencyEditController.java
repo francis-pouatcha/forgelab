@@ -23,6 +23,6 @@ public class CustomerVoucherAgencyEditController extends CustomerVoucherAgencyCo
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerVoucherAgencySelection());
-      bind(editView.getView().getCustomerVoucherAgencySelection());
+      bind(editView.getView().getCustomerVoucherAgencySelection(), editView.getView().getCustomerVoucherAgencyForm());
    }
 }

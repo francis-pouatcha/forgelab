@@ -27,5 +27,6 @@ public class PrescriptionBookRecordingAgentDisplayController extends Prescriptio
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPrescriptionBookRecordingAgentSelection());
+      bind(displayView.getView().getPrescriptionBookRecordingAgentSelection(), displayView.getView().getPrescriptionBookRecordingAgentForm());
    }
 }

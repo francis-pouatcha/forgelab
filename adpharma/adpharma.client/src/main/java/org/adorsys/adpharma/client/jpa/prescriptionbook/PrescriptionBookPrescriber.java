@@ -17,7 +17,7 @@ import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Prescriber_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PrescriptionBookPrescriber implements Association<PrescriptionBook, Prescriber>
+public class PrescriptionBookPrescriber implements Association<PrescriptionBook, Prescriber>, Cloneable
 {
 
    private Long id;
@@ -143,25 +143,37 @@ public class PrescriptionBookPrescriber implements Association<PrescriptionBook,
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      PrescriptionBookPrescriber other = (PrescriptionBookPrescriber) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		PrescriptionBookPrescriber other = (PrescriptionBookPrescriber) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      PrescriptionBookPrescriber a = new PrescriptionBookPrescriber();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.phone = phone;
+      a.street = street;
+      a.city = city;
+      return a;
+   }
+
 }

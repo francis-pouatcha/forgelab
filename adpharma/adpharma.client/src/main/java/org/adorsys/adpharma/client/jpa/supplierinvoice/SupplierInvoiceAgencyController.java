@@ -51,8 +51,10 @@ public abstract class SupplierInvoiceAgencyController
    {
    }
 
-   protected void bind(final SupplierInvoiceAgencySelection selection)
+   protected void bind(final SupplierInvoiceAgencySelection selection, final SupplierInvoiceAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class SupplierInvoiceAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new SupplierInvoiceAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new SupplierInvoiceAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class SupplierInvoiceAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<SupplierInvoiceAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends SupplierInvoiceAgency> ov, SupplierInvoiceAgency oldValue,
+               SupplierInvoiceAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new SupplierInvoiceAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

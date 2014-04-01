@@ -59,6 +59,9 @@ public class ClearanceConfigController extends DomainComponentController
    private ClearanceConfig searchModel = new ClearanceConfig();
    private ClearanceConfig selectedModel = new ClearanceConfig();
 
+   @Inject
+   private ClearanceConfigRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class ClearanceConfigController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<ClearanceConfig> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class ClearanceConfigController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent ClearanceConfig selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of clearanceConfigs.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class ClearanceConfigController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent ClearanceConfig selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class ClearanceConfigController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent ClearanceConfig templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class ClearanceConfigController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent ClearanceConfig selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

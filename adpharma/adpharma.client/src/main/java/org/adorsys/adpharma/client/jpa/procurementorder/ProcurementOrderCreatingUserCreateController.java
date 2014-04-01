@@ -22,7 +22,7 @@ public class ProcurementOrderCreatingUserCreateController extends ProcurementOrd
    public void handleNewModelEvent(@Observes @CreateModelEvent ProcurementOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getProcurementOrderCreatingUserSelection());
+      bind(createView.getView().getProcurementOrderCreatingUserSelection(), createView.getView().getProcurementOrderCreatingUserForm());
       activateButton(createView.getView().getProcurementOrderCreatingUserSelection());
    }
 }

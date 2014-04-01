@@ -16,8 +16,8 @@ import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import java.text.NumberFormat;
 import jfxtras.scene.control.CalendarTextField;
+import java.text.NumberFormat;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -59,7 +59,6 @@ public class ArticleCreateView
       resetButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
       searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
       rootPane = viewBuilder.toAnchorPane();
-      rootPane.setPrefWidth(650d);
    }
 
    public void bind(Article model)

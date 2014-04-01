@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 public class ArticleClearanceConfigSelection extends AbstractSelection<Article, ClearanceConfig>
 {
 
-   private ComboBox<ClearanceConfig> clearanceConfig;
+   private ComboBox<ArticleClearanceConfig> clearanceConfig;
 
    @Inject
    @Bundle({ CrudKeys.class, ClearanceConfig.class, Article.class })
@@ -39,10 +39,10 @@ public class ArticleClearanceConfigSelection extends AbstractSelection<Article, 
 
       clearanceConfig = viewBuilder.addComboBox("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, false);
 
-      clearanceConfig.setCellFactory(new Callback<ListView<ClearanceConfig>, ListCell<ClearanceConfig>>()
+      clearanceConfig.setCellFactory(new Callback<ListView<ArticleClearanceConfig>, ListCell<ArticleClearanceConfig>>()
       {
          @Override
-         public ListCell<ClearanceConfig> call(ListView<ClearanceConfig> listView)
+         public ListCell<ArticleClearanceConfig> call(ListView<ArticleClearanceConfig> listView)
          {
             return new ArticleClearanceConfigListCell();
          }
@@ -54,9 +54,10 @@ public class ArticleClearanceConfigSelection extends AbstractSelection<Article, 
 
    public void bind(Article model)
    {
+      clearanceConfig.valueProperty().bindBidirectional(model.clearanceConfigProperty());
    }
 
-   public ComboBox<ClearanceConfig> getClearanceConfig()
+   public ComboBox<ArticleClearanceConfig> getClearanceConfig()
    {
       return clearanceConfig;
    }

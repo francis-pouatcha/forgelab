@@ -27,5 +27,6 @@ public class AgencyCompanyDisplayController extends AgencyCompanyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getAgencyCompanySelection());
+      bind(displayView.getView().getAgencyCompanySelection(), displayView.getView().getAgencyCompanyForm());
    }
 }

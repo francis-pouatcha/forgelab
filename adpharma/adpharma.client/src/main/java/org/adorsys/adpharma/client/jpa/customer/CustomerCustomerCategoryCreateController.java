@@ -13,7 +13,7 @@ public class CustomerCustomerCategoryCreateController extends CustomerCustomerCa
 
    @Inject
    CustomerCreateView createView;
-   
+
    @PostConstruct
    public void postConstruct()
    {
@@ -22,7 +22,7 @@ public class CustomerCustomerCategoryCreateController extends CustomerCustomerCa
    public void handleNewModelEvent(@Observes @CreateModelEvent Customer model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerCustomerCategorySelection());
+      bind(createView.getView().getCustomerCustomerCategorySelection(), createView.getView().getCustomerCustomerCategoryForm());
       activateButton(createView.getView().getCustomerCustomerCategorySelection());
    }
 }

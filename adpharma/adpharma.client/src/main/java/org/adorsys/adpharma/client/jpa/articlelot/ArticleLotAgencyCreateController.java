@@ -22,7 +22,7 @@ public class ArticleLotAgencyCreateController extends ArticleLotAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent ArticleLot model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleLotAgencySelection());
+      bind(createView.getView().getArticleLotAgencySelection(), createView.getView().getArticleLotAgencyForm());
       activateButton(createView.getView().getArticleLotAgencySelection());
    }
 }

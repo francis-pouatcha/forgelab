@@ -20,6 +20,8 @@ import org.adorsys.javafx.crud.extensions.validation.ComboBoxFoccusChangedListen
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 

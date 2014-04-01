@@ -58,9 +58,14 @@ public class CompanyListController implements EntityController
 
    private CompanySearchResult searchResult;
 
+   @Inject
+   private CompanyRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Company>()
             {

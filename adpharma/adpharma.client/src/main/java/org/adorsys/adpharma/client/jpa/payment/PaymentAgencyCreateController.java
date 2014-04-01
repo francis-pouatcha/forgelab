@@ -22,7 +22,7 @@ public class PaymentAgencyCreateController extends PaymentAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Payment model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getPaymentAgencySelection());
+      bind(createView.getView().getPaymentAgencySelection(), createView.getView().getPaymentAgencyForm());
       activateButton(createView.getView().getPaymentAgencySelection());
    }
 }

@@ -59,6 +59,9 @@ public class DeliveryItemController extends DomainComponentController
    private DeliveryItem searchModel = new DeliveryItem();
    private DeliveryItem selectedModel = new DeliveryItem();
 
+   @Inject
+   private DeliveryItemRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class DeliveryItemController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<DeliveryItem> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class DeliveryItemController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent DeliveryItem selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of deliveryItems.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class DeliveryItemController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent DeliveryItem selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class DeliveryItemController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent DeliveryItem templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class DeliveryItemController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent DeliveryItem selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

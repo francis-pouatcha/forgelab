@@ -58,9 +58,14 @@ public class SalesMarginListController implements EntityController
 
    private SalesMarginSearchResult searchResult;
 
+   @Inject
+   private SalesMarginRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<SalesMargin>()
             {

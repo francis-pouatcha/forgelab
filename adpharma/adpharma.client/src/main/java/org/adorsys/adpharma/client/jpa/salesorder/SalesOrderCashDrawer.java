@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("CashDrawer_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
+public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>, Cloneable
 {
 
    private Long id;
@@ -314,25 +314,45 @@ public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SalesOrderCashDrawer other = (SalesOrderCashDrawer) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		SalesOrderCashDrawer other = (SalesOrderCashDrawer) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "cashDrawerNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SalesOrderCashDrawer a = new SalesOrderCashDrawer();
+      a.id = id;
+      a.version = version;
+
+      a.cashDrawerNumber = cashDrawerNumber;
+      a.opened = opened;
+      a.initialAmount = initialAmount;
+      a.totalCashIn = totalCashIn;
+      a.totalCashOut = totalCashOut;
+      a.totalCash = totalCash;
+      a.totalCheck = totalCheck;
+      a.totalCreditCard = totalCreditCard;
+      a.totalCompanyVoucher = totalCompanyVoucher;
+      a.totalClientVoucher = totalClientVoucher;
+      a.openingDate = openingDate;
+      a.closingDate = closingDate;
+      return a;
+   }
+
 }

@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 public class InventoryAgencySelection extends AbstractSelection<Inventory, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<InventoryAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, Inventory.class })
@@ -39,10 +39,10 @@ public class InventoryAgencySelection extends AbstractSelection<Inventory, Agenc
 
       agency = viewBuilder.addComboBox("Inventory_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<InventoryAgency>, ListCell<InventoryAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<InventoryAgency> call(ListView<InventoryAgency> listView)
          {
             return new InventoryAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class InventoryAgencySelection extends AbstractSelection<Inventory, Agenc
 
    public void bind(Inventory model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<InventoryAgency> getAgency()
    {
       return agency;
    }

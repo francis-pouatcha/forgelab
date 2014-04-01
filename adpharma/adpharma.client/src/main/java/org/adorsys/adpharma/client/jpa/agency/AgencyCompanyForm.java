@@ -61,6 +61,15 @@ public class AgencyCompanyForm extends AbstractToOneAssociation<Agency, Company>
       email.textProperty().bindBidirectional(model.getCompany().emailProperty());
    }
 
+   public void update(AgencyCompany data)
+   {
+      displayName.textProperty().set(data.displayNameProperty().get());
+      phone.textProperty().set(data.phoneProperty().get());
+      fax.textProperty().set(data.faxProperty().get());
+      siteManager.textProperty().set(data.siteManagerProperty().get());
+      email.textProperty().set(data.emailProperty().get());
+   }
+
    public TextField getDisplayName()
    {
       return displayName;

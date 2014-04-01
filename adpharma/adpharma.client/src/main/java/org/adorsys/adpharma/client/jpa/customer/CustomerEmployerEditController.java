@@ -23,6 +23,6 @@ public class CustomerEmployerEditController extends CustomerEmployerController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerEmployerSelection());
-      bind(editView.getView().getCustomerEmployerSelection());
+      bind(editView.getView().getCustomerEmployerSelection(), editView.getView().getCustomerEmployerForm());
    }
 }

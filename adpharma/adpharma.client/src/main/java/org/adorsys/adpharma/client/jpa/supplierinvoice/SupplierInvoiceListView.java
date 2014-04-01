@@ -84,7 +84,7 @@ public class SupplierInvoiceListView
       viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
       // Field not displayed in table
       viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "SupplierInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SupplierInvoice_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "SupplierInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SupplierInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SupplierInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "netToPay", "SupplierInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);

@@ -40,7 +40,7 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("SalesOrder_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerInvoiceSalesOrder implements Association<CustomerInvoice, SalesOrder>
+public class CustomerInvoiceSalesOrder implements Association<CustomerInvoice, SalesOrder>, Cloneable
 {
 
    private Long id;
@@ -268,25 +268,42 @@ public class CustomerInvoiceSalesOrder implements Association<CustomerInvoice, S
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerInvoiceSalesOrder other = (CustomerInvoiceSalesOrder) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerInvoiceSalesOrder other = (CustomerInvoiceSalesOrder) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "soNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerInvoiceSalesOrder a = new CustomerInvoiceSalesOrder();
+      a.id = id;
+      a.version = version;
+
+      a.soNumber = soNumber;
+      a.cashed = cashed;
+      a.salesOrderStatus = salesOrderStatus;
+      a.salesOrderType = salesOrderType;
+      a.amountBeforeTax = amountBeforeTax;
+      a.amountVAT = amountVAT;
+      a.amountDiscount = amountDiscount;
+      a.totalReturnAmount = totalReturnAmount;
+      a.amountAfterTax = amountAfterTax;
+      return a;
+   }
+
 }

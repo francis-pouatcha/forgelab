@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
@@ -39,8 +41,9 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("procurementOrderNumber")
 @ListField({ "procurementOrderNumber", "agency.name", "amountBeforeTax",
-      "amountAfterTax", "amountDiscount", "netAmountToPay", "vat.rate" })
-public class ProcurementOrder
+      "amountAfterTax", "amountDiscount", "taxAmount", "netAmountToPay",
+      "vat.rate" })
+public class ProcurementOrder implements Cloneable
 {
 
    private Long id;
@@ -60,6 +63,9 @@ public class ProcurementOrder
    @Description("ProcurementOrder_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountDiscount;
+   @Description("ProcurementOrder_taxAmount_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    @Description("ProcurementOrder_netAmountToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
@@ -221,6 +227,25 @@ public class ProcurementOrder
       this.amountDiscountProperty().set(amountDiscount);
    }
 
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
+   {
+      if (taxAmount == null)
+      {
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
+      }
+      return taxAmount;
+   }
+
+   public BigDecimal getTaxAmount()
+   {
+      return taxAmountProperty().get();
+   }
+
+   public final void setTaxAmount(BigDecimal taxAmount)
+   {
+      this.taxAmountProperty().set(taxAmount);
+   }
+
    public SimpleObjectProperty<BigDecimal> netAmountToPayProperty()
    {
       if (netAmountToPay == null)
@@ -327,6 +352,7 @@ public class ProcurementOrder
          creatingUser = new ProcurementOrderCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    public SimpleObjectProperty<ProcurementOrderSupplier> supplierProperty()
@@ -351,6 +377,7 @@ public class ProcurementOrder
          supplier = new ProcurementOrderSupplier();
       }
       PropertyReader.copy(supplier, getSupplier());
+      supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
    }
 
    public SimpleObjectProperty<ProcurementOrderAgency> agencyProperty()
@@ -375,6 +402,7 @@ public class ProcurementOrder
          agency = new ProcurementOrderAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<ProcurementOrderVat> vatProperty()
@@ -398,6 +426,7 @@ public class ProcurementOrder
          vat = new ProcurementOrderVat();
       }
       PropertyReader.copy(vat, getVat());
+      vatProperty().setValue(ObjectUtils.clone(getVat()));
    }
 
    @Override
@@ -430,5 +459,42 @@ public class ProcurementOrder
    public String toString()
    {
       return PropertyReader.buildToString(this, "procurementOrderNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ObservableList<ProcurementOrderItem> f = procurementOrderItems.get();
+      for (ProcurementOrderItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProcurementOrder e = new ProcurementOrder();
+      e.id = id;
+      e.version = version;
+
+      e.procurementOrderNumber = procurementOrderNumber;
+      e.procmtOrderTriggerMode = procmtOrderTriggerMode;
+      e.procurementOrderType = procurementOrderType;
+      e.amountBeforeTax = amountBeforeTax;
+      e.amountAfterTax = amountAfterTax;
+      e.amountDiscount = amountDiscount;
+      e.taxAmount = taxAmount;
+      e.netAmountToPay = netAmountToPay;
+      e.submissionDate = submissionDate;
+      e.createdDate = createdDate;
+      e.procurementOrderItems = procurementOrderItems;
+      e.creatingUser = creatingUser;
+      e.supplier = supplier;
+      e.agency = agency;
+      e.vat = vat;
+      return e;
    }
 }

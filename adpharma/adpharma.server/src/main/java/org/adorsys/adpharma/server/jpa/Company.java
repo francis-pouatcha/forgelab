@@ -1,31 +1,20 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
-
 import java.io.Serializable;
-
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
-import javax.persistence.PostPersist;
 import javax.persistence.Version;
-
 import java.lang.Override;
-
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.adorsys.javaext.description.Description;
-
 import javax.validation.constraints.NotNull;
-
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
-
 import java.util.Date;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.adorsys.javaext.format.DateFormatPattern;
 
 @Entity
@@ -96,22 +85,17 @@ public class Company implements Serializable
 	@Description("Company_recordingDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private Date recordingDate;
-	
+
 	public Company() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 
 	public Company(String displayName) {
 		super();
 		this.displayName = displayName;
 	}
 
-
-	@PostPersist
-	public void onPostPersist(){
-		recordingDate = new Date();
-	}
 
 	public Long getId()
 	{

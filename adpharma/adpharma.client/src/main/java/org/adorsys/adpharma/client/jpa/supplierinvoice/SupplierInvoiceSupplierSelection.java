@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 public class SupplierInvoiceSupplierSelection extends AbstractSelection<SupplierInvoice, Supplier>
 {
 
-   private ComboBox<Supplier> supplier;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, Supplier.class, SupplierInvoice.class })
@@ -36,19 +32,9 @@ public class SupplierInvoiceSupplierSelection extends AbstractSelection<Supplier
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      supplier = viewBuilder.addComboBox("SupplierInvoice_supplier_description.title", "supplier", resourceBundle, false);
-
-      supplier.setCellFactory(new Callback<ListView<Supplier>, ListCell<Supplier>>()
-      {
-         @Override
-         public ListCell<Supplier> call(ListView<Supplier> listView)
-         {
-            return new SupplierInvoiceSupplierListCell();
-         }
-      });
-      supplier.setButtonCell(new SupplierInvoiceSupplierListCell());
-
+      selectButton = viewBuilder.addButton(
+            "SupplierInvoice_supplier_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class SupplierInvoiceSupplierSelection extends AbstractSelection<Supplier
    {
    }
 
-   public ComboBox<Supplier> getSupplier()
+   public Button getSelectButton()
    {
-      return supplier;
+      return selectButton;
+   }
+
+   public Button getSupplier()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

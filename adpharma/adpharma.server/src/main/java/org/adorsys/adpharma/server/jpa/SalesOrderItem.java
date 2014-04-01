@@ -77,7 +77,7 @@ public class SalesOrderItem implements Serializable
 
    @ManyToOne
    @Description("SalesOrderItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "SalesOrderItem_article_NotNull_validation")
    private Article article;
 

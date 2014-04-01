@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
@@ -34,7 +36,7 @@ import org.adorsys.javaext.display.ToStringField;
       "expirationDate", "qtyOrdered", "freeQuantity", "stockQuantity",
       "salesPricePU", "purchasePricePU", "totalPurchasePrice", "valid" })
 @ToStringField({ "articleName", "article.articleName", "qtyOrdered" })
-public class ProcurementOrderItem
+public class ProcurementOrderItem implements Cloneable
 {
 
    private Long id;
@@ -75,7 +77,7 @@ public class ProcurementOrderItem
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrder.class)
    private SimpleObjectProperty<ProcurementOrderItemProcurementOrder> procurementOrder;
    @Description("ProcurementOrderItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<ProcurementOrderItemArticle> article;
    @Description("ProcurementOrderItem_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
@@ -374,6 +376,7 @@ public class ProcurementOrderItem
          procurementOrder = new ProcurementOrderItemProcurementOrder();
       }
       PropertyReader.copy(procurementOrder, getProcurementOrder());
+      procurementOrderProperty().setValue(ObjectUtils.clone(getProcurementOrder()));
    }
 
    public SimpleObjectProperty<ProcurementOrderItemArticle> articleProperty()
@@ -398,6 +401,7 @@ public class ProcurementOrderItem
          article = new ProcurementOrderItemArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    public SimpleObjectProperty<ProcurementOrderItemCreatingUser> creatingUserProperty()
@@ -422,6 +426,7 @@ public class ProcurementOrderItem
          creatingUser = new ProcurementOrderItemCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    @Override
@@ -454,5 +459,40 @@ public class ProcurementOrderItem
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "articleName", "qtyOrdered");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ProcurementOrderItemProcurementOrder f = procurementOrder.get();
+      f.setId(null);
+      f.setVersion(0);
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProcurementOrderItem e = new ProcurementOrderItem();
+      e.id = id;
+      e.version = version;
+
+      e.mainPic = mainPic;
+      e.secondaryPic = secondaryPic;
+      e.articleName = articleName;
+      e.valid = valid;
+      e.qtyOrdered = qtyOrdered;
+      e.availableQty = availableQty;
+      e.freeQuantity = freeQuantity;
+      e.stockQuantity = stockQuantity;
+      e.salesPricePU = salesPricePU;
+      e.purchasePricePU = purchasePricePU;
+      e.totalPurchasePrice = totalPurchasePrice;
+      e.expirationDate = expirationDate;
+      e.productRecCreated = productRecCreated;
+      e.procurementOrder = procurementOrder;
+      e.article = article;
+      e.creatingUser = creatingUser;
+      return e;
    }
 }

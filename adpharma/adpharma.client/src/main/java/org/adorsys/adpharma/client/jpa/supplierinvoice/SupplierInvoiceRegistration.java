@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.supplierinvoice;
 import java.util.ResourceBundle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
@@ -18,6 +19,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
  *
  */
 @Eager
+@Singleton
 public class SupplierInvoiceRegistration extends DomainComponentRegistration
 {
 
@@ -45,4 +47,11 @@ public class SupplierInvoiceRegistration extends DomainComponentRegistration
          return resourceBundle.getString(annotation.value() + ".title");
       return SupplierInvoice.class.getName();
    }
+
+   @Override
+   public String getComponentPermission()
+   {
+      return "org.adorsys.adpharma.server.jpa.SupplierInvoice";
+   }
+
 }

@@ -98,7 +98,7 @@ public class PaymentInvoicesSelection extends AbstractSelection<Payment, Custome
       viewBuilder.addStringColumn(targetDataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle);
       // Field not displayed in table
       viewBuilder.addBigDecimalColumn(targetDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-      viewBuilder.addBigDecimalColumn(targetDataList, "amountVAT", "CustomerInvoice_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(targetDataList, "taxAmount", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(targetDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(targetDataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(targetDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -126,7 +126,7 @@ public class PaymentInvoicesSelection extends AbstractSelection<Payment, Custome
       viewBuilder.addStringColumn(assocDataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle);
       // Field not displayed in table
       viewBuilder.addBigDecimalColumn(assocDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-      viewBuilder.addBigDecimalColumn(assocDataList, "amountVAT", "CustomerInvoice_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(assocDataList, "taxAmount", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(assocDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(assocDataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(assocDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);

@@ -62,9 +62,15 @@ public class InsurranceDisplayController implements EntityController
 
    private Insurrance displayedEntity;
 
+   @Inject
+   private InsurranceRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

@@ -23,6 +23,6 @@ public class ArticleFamilyEditController extends ArticleFamilyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticleFamilySelection());
-      bind(editView.getView().getArticleFamilySelection());
+      bind(editView.getView().getArticleFamilySelection(), editView.getView().getArticleFamilyForm());
    }
 }

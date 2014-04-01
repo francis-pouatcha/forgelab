@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoiceitem.SupplierInvoiceItem;
 public class SupplierInvoiceItemArticleSelection extends AbstractSelection<SupplierInvoiceItem, Article>
 {
 
-   private ComboBox<Article> article;
+   private ComboBox<SupplierInvoiceItemArticle> article;
 
    @Inject
    @Bundle({ CrudKeys.class, Article.class, SupplierInvoiceItem.class })
@@ -39,10 +39,10 @@ public class SupplierInvoiceItemArticleSelection extends AbstractSelection<Suppl
 
       article = viewBuilder.addComboBox("SupplierInvoiceItem_article_description.title", "article", resourceBundle, false);
 
-      article.setCellFactory(new Callback<ListView<Article>, ListCell<Article>>()
+      article.setCellFactory(new Callback<ListView<SupplierInvoiceItemArticle>, ListCell<SupplierInvoiceItemArticle>>()
       {
          @Override
-         public ListCell<Article> call(ListView<Article> listView)
+         public ListCell<SupplierInvoiceItemArticle> call(ListView<SupplierInvoiceItemArticle> listView)
          {
             return new SupplierInvoiceItemArticleListCell();
          }
@@ -54,9 +54,10 @@ public class SupplierInvoiceItemArticleSelection extends AbstractSelection<Suppl
 
    public void bind(SupplierInvoiceItem model)
    {
+      article.valueProperty().bindBidirectional(model.articleProperty());
    }
 
-   public ComboBox<Article> getArticle()
+   public ComboBox<SupplierInvoiceItemArticle> getArticle()
    {
       return article;
    }

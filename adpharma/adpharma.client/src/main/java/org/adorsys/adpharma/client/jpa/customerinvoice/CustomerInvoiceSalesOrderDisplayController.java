@@ -27,5 +27,6 @@ public class CustomerInvoiceSalesOrderDisplayController extends CustomerInvoiceS
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerInvoiceSalesOrderSelection());
+      bind(displayView.getView().getCustomerInvoiceSalesOrderSelection(), displayView.getView().getCustomerInvoiceSalesOrderForm());
    }
 }

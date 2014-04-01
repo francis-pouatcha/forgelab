@@ -51,8 +51,10 @@ public abstract class PrescriptionBookAgencyController
    {
    }
 
-   protected void bind(final PrescriptionBookAgencySelection selection)
+   protected void bind(final PrescriptionBookAgencySelection selection, final PrescriptionBookAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PrescriptionBookAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new PrescriptionBookAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new PrescriptionBookAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PrescriptionBookAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<PrescriptionBookAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends PrescriptionBookAgency> ov, PrescriptionBookAgency oldValue,
+               PrescriptionBookAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new PrescriptionBookAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

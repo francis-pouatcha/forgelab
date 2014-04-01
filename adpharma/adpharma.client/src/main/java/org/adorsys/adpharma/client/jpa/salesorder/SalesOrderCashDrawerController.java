@@ -51,8 +51,10 @@ public abstract class SalesOrderCashDrawerController
    {
    }
 
-   protected void bind(final SalesOrderCashDrawerSelection selection)
+   protected void bind(final SalesOrderCashDrawerSelection selection, final SalesOrderCashDrawerForm form)
    {
+
+      //	    selection.getCashDrawer().valueProperty().bindBidirectional(sourceEntity.cashDrawerProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class SalesOrderCashDrawerController
             s.reset();
             List<CashDrawer> entities = targetSearchResult.getResultList();
             selection.getCashDrawer().getItems().clear();
-            selection.getCashDrawer().getItems().addAll(entities);
+            selection.getCashDrawer().getItems().add(new SalesOrderCashDrawer());
+            for (CashDrawer entity : entities)
+            {
+               selection.getCashDrawer().getItems().add(new SalesOrderCashDrawer(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class SalesOrderCashDrawerController
                }
             });
 
-      selection.getCashDrawer().valueProperty().addListener(new ChangeListener<CashDrawer>()
+      selection.getCashDrawer().valueProperty().addListener(new ChangeListener<SalesOrderCashDrawer>()
       {
          @Override
-         public void changed(ObservableValue<? extends CashDrawer> ov, CashDrawer oldValue,
-               CashDrawer newValue)
+         public void changed(ObservableValue<? extends SalesOrderCashDrawer> ov, SalesOrderCashDrawer oldValue,
+               SalesOrderCashDrawer newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCashDrawer(new SalesOrderCashDrawer(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCashDrawer(newValue);
          }
       });
 

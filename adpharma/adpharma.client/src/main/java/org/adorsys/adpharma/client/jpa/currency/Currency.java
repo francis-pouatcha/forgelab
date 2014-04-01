@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
@@ -21,9 +23,9 @@ import org.adorsys.javaext.list.ListField;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Currency_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ToStringField("name")
-@ListField("name")
-public class Currency
+@ToStringField({ "name", "cfaEquivalent" })
+@ListField({ "name", "cfaEquivalent" })
+public class Currency implements Cloneable
 {
 
    private Long id;
@@ -84,6 +86,7 @@ public class Currency
       return cfaEquivalent;
    }
 
+   @NotNull(message = "Currency_cfaEquivalent_NotNull_validation")
    public BigDecimal getCfaEquivalent()
    {
       return cfaEquivalentProperty().get();
@@ -123,6 +126,24 @@ public class Currency
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name");
+      return PropertyReader.buildToString(this, "name", "cfaEquivalent");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Currency e = new Currency();
+      e.id = id;
+      e.version = version;
+
+      e.name = name;
+      e.cfaEquivalent = cfaEquivalent;
+      return e;
    }
 }

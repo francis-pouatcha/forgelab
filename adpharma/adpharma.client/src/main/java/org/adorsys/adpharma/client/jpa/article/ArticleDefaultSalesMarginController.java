@@ -51,8 +51,10 @@ public abstract class ArticleDefaultSalesMarginController
    {
    }
 
-   protected void bind(final ArticleDefaultSalesMarginSelection selection)
+   protected void bind(final ArticleDefaultSalesMarginSelection selection, final ArticleDefaultSalesMarginForm form)
    {
+
+      //	    selection.getDefaultSalesMargin().valueProperty().bindBidirectional(sourceEntity.defaultSalesMarginProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleDefaultSalesMarginController
             s.reset();
             List<SalesMargin> entities = targetSearchResult.getResultList();
             selection.getDefaultSalesMargin().getItems().clear();
-            selection.getDefaultSalesMargin().getItems().addAll(entities);
+            selection.getDefaultSalesMargin().getItems().add(new ArticleDefaultSalesMargin());
+            for (SalesMargin entity : entities)
+            {
+               selection.getDefaultSalesMargin().getItems().add(new ArticleDefaultSalesMargin(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleDefaultSalesMarginController
                }
             });
 
-      selection.getDefaultSalesMargin().valueProperty().addListener(new ChangeListener<SalesMargin>()
+      selection.getDefaultSalesMargin().valueProperty().addListener(new ChangeListener<ArticleDefaultSalesMargin>()
       {
          @Override
-         public void changed(ObservableValue<? extends SalesMargin> ov, SalesMargin oldValue,
-               SalesMargin newValue)
+         public void changed(ObservableValue<? extends ArticleDefaultSalesMargin> ov, ArticleDefaultSalesMargin oldValue,
+               ArticleDefaultSalesMargin newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setDefaultSalesMargin(new ArticleDefaultSalesMargin(newValue));
+               form.update(newValue);
+            //                sourceEntity.setDefaultSalesMargin(newValue);
          }
       });
 

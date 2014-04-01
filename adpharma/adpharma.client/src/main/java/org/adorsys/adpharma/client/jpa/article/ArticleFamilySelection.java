@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 public class ArticleFamilySelection extends AbstractSelection<Article, ProductFamily>
 {
 
-   private ComboBox<ProductFamily> family;
+   private ComboBox<ArticleFamily> family;
 
    @Inject
    @Bundle({ CrudKeys.class, ProductFamily.class, Article.class })
@@ -39,10 +39,10 @@ public class ArticleFamilySelection extends AbstractSelection<Article, ProductFa
 
       family = viewBuilder.addComboBox("Article_family_description.title", "family", resourceBundle, false);
 
-      family.setCellFactory(new Callback<ListView<ProductFamily>, ListCell<ProductFamily>>()
+      family.setCellFactory(new Callback<ListView<ArticleFamily>, ListCell<ArticleFamily>>()
       {
          @Override
-         public ListCell<ProductFamily> call(ListView<ProductFamily> listView)
+         public ListCell<ArticleFamily> call(ListView<ArticleFamily> listView)
          {
             return new ArticleFamilyListCell();
          }
@@ -54,9 +54,10 @@ public class ArticleFamilySelection extends AbstractSelection<Article, ProductFa
 
    public void bind(Article model)
    {
+      family.valueProperty().bindBidirectional(model.familyProperty());
    }
 
-   public ComboBox<ProductFamily> getFamily()
+   public ComboBox<ArticleFamily> getFamily()
    {
       return family;
    }

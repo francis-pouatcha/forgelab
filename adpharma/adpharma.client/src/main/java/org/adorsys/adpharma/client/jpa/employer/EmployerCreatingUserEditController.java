@@ -23,6 +23,6 @@ public class EmployerCreatingUserEditController extends EmployerCreatingUserCont
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getEmployerCreatingUserSelection());
-      bind(editView.getView().getEmployerCreatingUserSelection());
+      bind(editView.getView().getEmployerCreatingUserSelection(), editView.getView().getEmployerCreatingUserForm());
    }
 }

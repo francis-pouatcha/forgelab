@@ -1,16 +1,21 @@
 package org.adorsys.adpharma.client.jpa.procurementorderitem;
 
-import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -19,110 +24,115 @@ import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
+import org.adorsys.adpharma.client.jpa.article.ArticleLoadService;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 
 public abstract class ProcurementOrderItemArticleController
 {
-   @Inject
-   private ArticleSearchService searchService;
-   @Inject
-   private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
-
-   private ArticleSearchResult targetSearchResult;
-
-   @Inject
-   @Bundle({ CrudKeys.class, Article.class, ProcurementOrderItem.class })
-   private ResourceBundle resourceBundle;
-
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
 
    protected ProcurementOrderItem sourceEntity;
 
-   protected void disableButton(final ProcurementOrderItemArticleSelection selection)
+   @Inject
+   private ArticleLoadService loadService;
+   @Inject
+   private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
+
+   @Inject
+   private ErrorMessageDialog loadErrorMessageDialog;
+
+   @Inject
+   @AssocSelectionRequestEvent
+   private Event<ProcurementOrderItemArticleSelectionEventData> selectionRequestEvent;
+
+   private ProcurementOrderItemArticleSelectionEventData pendingSelectionRequest;
+
+   @Inject
+   @ComponentSelectionRequestEvent
+   private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+
+   @Inject
+   @Bundle(CrudKeys.class)
+   private ResourceBundle resourceBundle;
+
+   protected void disableButton(final ProcurementOrderItemArticleSelection selection, final ProcurementOrderItemArticleForm form)
    {
-      selection.getArticle().setDisable(true);
+      selection.getSelectButton().setDisable(true);
    }
 
-   protected void activateButton(final ProcurementOrderItemArticleSelection selection)
+   protected void activateButton(final ProcurementOrderItemArticleSelection selection, final ProcurementOrderItemArticleForm form)
    {
    }
 
-   protected void bind(final ProcurementOrderItemArticleSelection selection)
+   protected void bind(final ProcurementOrderItemArticleSelection selection, final ProcurementOrderItemArticleForm form)
    {
-
-      // send search result event.
-      searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            ArticleSearchService s = (ArticleSearchService) event
-                  .getSource();
-            targetSearchResult = s.getValue();
-            event.consume();
-            s.reset();
-            List<Article> entities = targetSearchResult.getResultList();
-            selection.getArticle().getItems().clear();
-            selection.getArticle().getItems().addAll(entities);
-         }
-      });
-      searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_search_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      searchService.setOnFailed(searchServiceCallFailedEventHandler);
-
-      errorMessageDialog.getOkButton().setOnAction(
+      selection.getSelectButton().setOnAction(
             new EventHandler<ActionEvent>()
             {
                @Override
                public void handle(ActionEvent event)
                {
-                  errorMessageDialog.closeDialog();
+                  pendingSelectionRequest = new ProcurementOrderItemArticleSelectionEventData(
+                        UUID.randomUUID().toString(), sourceEntity, null);
+                  selectionRequestEvent.fire(pendingSelectionRequest);
                }
             });
 
-      selection.getArticle().valueProperty().addListener(new ChangeListener<Article>()
+      // Handle edit canceld, reloading entity
+      loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
       {
          @Override
-         public void changed(ObservableValue<? extends Article> ov, Article oldValue,
-               Article newValue)
+         public void handle(WorkerStateEvent event)
          {
-            if (sourceEntity != null)
-               sourceEntity.setArticle(new ProcurementOrderItemArticle(newValue));
+            ArticleLoadService s = (ArticleLoadService) event.getSource();
+            Article entity = s.getValue();
+            event.consume();
+            s.reset();
+            sourceEntity.setArticle(new ProcurementOrderItemArticle(entity));
          }
       });
-
-      selection.getArticle().armedProperty().addListener(new ChangeListener<Boolean>()
+      loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
       {
-
          @Override
-         public void changed(ObservableValue<? extends Boolean> observableValue,
-               Boolean oldValue, Boolean newValue)
+         protected void showError(Throwable exception)
          {
-            if (newValue)
-               load();
+            String message = exception.getMessage();
+            loadErrorMessageDialog.getTitleText().setText(
+                  resourceBundle.getString("Entity_load_error.title"));
+            if (!StringUtils.isBlank(message))
+               loadErrorMessageDialog.getDetailText().setText(message);
+            loadErrorMessageDialog.display();
          }
-
       });
+      loadService.setOnFailed(loadServiceCallFailedEventHandler);
+      loadErrorMessageDialog.getOkButton().setOnAction(
+            new EventHandler<ActionEvent>()
+            {
+               @Override
+               public void handle(ActionEvent event)
+               {
+                  loadErrorMessageDialog.closeDialog();
+               }
+            });
+
    }
 
-   public void load()
+   public void handleAssocSelectionResponseEvent(@Observes @AssocSelectionResponseEvent ProcurementOrderItemArticleSelectionEventData eventData)
    {
-      searchService.setSearchInputs(new ArticleSearchInput()).start();
+      if (eventData != null && pendingSelectionRequest != null && eventData.getId().equals(pendingSelectionRequest.getId())
+            && eventData.getSourceEntity() == sourceEntity && eventData.getTargetEntity() != null)
+      {
+         if (sourceEntity != null)
+            sourceEntity.setArticle(new ProcurementOrderItemArticle(eventData.getTargetEntity()));
+      }
+      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(ProcurementOrderItem.class.getName()));
+   }
+
+   /*
+    * Only load if you need more fields than the one specified in the
+    * association
+    */
+   protected void loadAssociation()
+   {
    }
 
 }

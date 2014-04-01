@@ -17,7 +17,7 @@ import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("PackagingMode_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArticlePackagingMode implements Association<Article, PackagingMode>
+public class ArticlePackagingMode implements Association<Article, PackagingMode>, Cloneable
 {
 
    private Long id;
@@ -83,25 +83,34 @@ public class ArticlePackagingMode implements Association<Article, PackagingMode>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ArticlePackagingMode other = (ArticlePackagingMode) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ArticlePackagingMode other = (ArticlePackagingMode) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticlePackagingMode a = new ArticlePackagingMode();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      return a;
+   }
+
 }

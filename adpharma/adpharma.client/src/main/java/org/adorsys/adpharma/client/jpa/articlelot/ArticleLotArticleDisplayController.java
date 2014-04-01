@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class ArticleLotArticleDisplayController extends ArticleLotArticleControl
    public void handleNewModelEvent(@Observes @SelectedModelEvent ArticleLot model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getArticleLotArticleSelection());
+      disableButton(displayView.getView().getArticleLotArticleSelection(), displayView.getView().getArticleLotArticleForm());
+      bind(displayView.getView().getArticleLotArticleSelection(), displayView.getView().getArticleLotArticleForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent ArticleLot selectedEntity)
+   {
+      loadAssociation();
    }
 }

@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.stockmovement.StockMovement;
 public class StockMovementArticleSelection extends AbstractSelection<StockMovement, Article>
 {
 
-   private ComboBox<Article> article;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, Article.class, StockMovement.class })
@@ -36,19 +32,9 @@ public class StockMovementArticleSelection extends AbstractSelection<StockMoveme
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      article = viewBuilder.addComboBox("StockMovement_article_description.title", "article", resourceBundle, false);
-
-      article.setCellFactory(new Callback<ListView<Article>, ListCell<Article>>()
-      {
-         @Override
-         public ListCell<Article> call(ListView<Article> listView)
-         {
-            return new StockMovementArticleListCell();
-         }
-      });
-      article.setButtonCell(new StockMovementArticleListCell());
-
+      selectButton = viewBuilder.addButton(
+            "StockMovement_article_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class StockMovementArticleSelection extends AbstractSelection<StockMoveme
    {
    }
 
-   public ComboBox<Article> getArticle()
+   public Button getSelectButton()
    {
-      return article;
+      return selectButton;
+   }
+
+   public Button getArticle()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

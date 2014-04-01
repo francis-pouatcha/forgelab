@@ -12,7 +12,6 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.adorsys.adpharma.server.jpa.Agency;
 import javax.persistence.ManyToOne;
 import org.adorsys.javaext.display.Association;
@@ -50,11 +49,6 @@ public class Section implements Serializable
    @Column
    @Description("Section_geoCode_description")
    private String geoCode;
-
-   @Column
-   @Description("Section_description_description")
-   @Size(max = 256, message = "Section_description_Size_validation")
-   private String description;
 
    @ManyToOne
    @Description("Section_agency_description")
@@ -154,16 +148,6 @@ public class Section implements Serializable
       this.geoCode = geoCode;
    }
 
-   public String getDescription()
-   {
-      return this.description;
-   }
-
-   public void setDescription(final String description)
-   {
-      this.description = description;
-   }
-
    @Override
    public String toString()
    {
@@ -176,8 +160,6 @@ public class Section implements Serializable
          result += ", position: " + position;
       if (geoCode != null && !geoCode.trim().isEmpty())
          result += ", geoCode: " + geoCode;
-      if (description != null && !description.trim().isEmpty())
-         result += ", description: " + description;
       return result;
    }
 

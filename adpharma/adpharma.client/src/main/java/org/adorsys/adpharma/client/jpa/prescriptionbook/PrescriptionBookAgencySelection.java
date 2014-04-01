@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 public class PrescriptionBookAgencySelection extends AbstractSelection<PrescriptionBook, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<PrescriptionBookAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, PrescriptionBook.class })
@@ -39,10 +39,10 @@ public class PrescriptionBookAgencySelection extends AbstractSelection<Prescript
 
       agency = viewBuilder.addComboBox("PrescriptionBook_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<PrescriptionBookAgency>, ListCell<PrescriptionBookAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<PrescriptionBookAgency> call(ListView<PrescriptionBookAgency> listView)
          {
             return new PrescriptionBookAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class PrescriptionBookAgencySelection extends AbstractSelection<Prescript
 
    public void bind(PrescriptionBook model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<PrescriptionBookAgency> getAgency()
    {
       return agency;
    }

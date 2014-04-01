@@ -22,7 +22,7 @@ public class InventoryAgencyCreateController extends InventoryAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Inventory model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getInventoryAgencySelection());
+      bind(createView.getView().getInventoryAgencySelection(), createView.getView().getInventoryAgencyForm());
       activateButton(createView.getView().getInventoryAgencySelection());
    }
 }

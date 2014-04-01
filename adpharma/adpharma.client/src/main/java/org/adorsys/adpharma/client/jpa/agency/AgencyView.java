@@ -14,10 +14,10 @@ import java.util.Calendar;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.javafx.crud.extensions.ViewModel;
+import javafx.scene.control.TextArea;
 import java.util.Locale;
 import jfxtras.scene.control.CalendarTextField;
 
@@ -39,8 +39,6 @@ public class AgencyView extends AbstractForm<Agency>
    private TextField agencyNumber;
 
    private TextField name;
-
-   private TextArea description;
 
    private CheckBox active;
 
@@ -83,7 +81,6 @@ public class AgencyView extends AbstractForm<Agency>
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       agencyNumber = viewBuilder.addTextField("Agency_agencyNumber_description.title", "agencyNumber", resourceBundle);
       name = viewBuilder.addTextField("Agency_name_description.title", "name", resourceBundle);
-      description = viewBuilder.addTextArea("Agency_description_description.title", "description", resourceBundle);
       active = viewBuilder.addCheckBox("Agency_active_description.title", "active", resourceBundle);
       street = viewBuilder.addTextField("Agency_street_description.title", "street", resourceBundle);
       zipCode = viewBuilder.addTextField("Agency_zipCode_description.title", "zipCode", resourceBundle);
@@ -104,7 +101,6 @@ public class AgencyView extends AbstractForm<Agency>
    public void addValidators()
    {
       name.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Agency>(textInputControlValidator, name, Agency.class, "name", resourceBundle));
-      description.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Agency>(textInputControlValidator, description, Agency.class, "description", resourceBundle));
       ticketMessage.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Agency>(textInputControlValidator, ticketMessage, Agency.class, "ticketMessage", resourceBundle));
       invoiceMessage.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Agency>(textInputControlValidator, invoiceMessage, Agency.class, "invoiceMessage", resourceBundle));
    }
@@ -113,7 +109,6 @@ public class AgencyView extends AbstractForm<Agency>
    {
       Set<ConstraintViolation<Agency>> violations = new HashSet<ConstraintViolation<Agency>>();
       violations.addAll(textInputControlValidator.validate(name, Agency.class, "name", resourceBundle));
-      violations.addAll(textInputControlValidator.validate(description, Agency.class, "description", resourceBundle));
       violations.addAll(textInputControlValidator.validate(ticketMessage, Agency.class, "ticketMessage", resourceBundle));
       violations.addAll(textInputControlValidator.validate(invoiceMessage, Agency.class, "invoiceMessage", resourceBundle));
       return violations;
@@ -123,7 +118,6 @@ public class AgencyView extends AbstractForm<Agency>
    {
       agencyNumber.textProperty().bindBidirectional(model.agencyNumberProperty());
       name.textProperty().bindBidirectional(model.nameProperty());
-      description.textProperty().bindBidirectional(model.descriptionProperty());
       active.textProperty().bindBidirectional(model.activeProperty(), new BooleanStringConverter());
       street.textProperty().bindBidirectional(model.streetProperty());
       zipCode.textProperty().bindBidirectional(model.zipCodeProperty());
@@ -146,11 +140,6 @@ public class AgencyView extends AbstractForm<Agency>
    public TextField getName()
    {
       return name;
-   }
-
-   public TextArea getDescription()
-   {
-      return description;
    }
 
    public CheckBox getActive()

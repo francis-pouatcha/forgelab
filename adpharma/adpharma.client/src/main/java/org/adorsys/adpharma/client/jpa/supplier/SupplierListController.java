@@ -58,9 +58,14 @@ public class SupplierListController implements EntityController
 
    private SupplierSearchResult searchResult;
 
+   @Inject
+   private SupplierRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Supplier>()
             {

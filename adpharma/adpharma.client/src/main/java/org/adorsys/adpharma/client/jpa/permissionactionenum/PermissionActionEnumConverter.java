@@ -26,6 +26,8 @@ public class PermissionActionEnumConverter extends StringConverter<PermissionAct
    @Override
    public String toString(PermissionActionEnum object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("PermissionActionEnum_" + object.name()
             + "_description.title");
    }

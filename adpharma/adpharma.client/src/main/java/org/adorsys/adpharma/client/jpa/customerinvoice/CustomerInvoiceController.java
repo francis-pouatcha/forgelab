@@ -59,6 +59,9 @@ public class CustomerInvoiceController extends DomainComponentController
    private CustomerInvoice searchModel = new CustomerInvoice();
    private CustomerInvoice selectedModel = new CustomerInvoice();
 
+   @Inject
+   private CustomerInvoiceRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class CustomerInvoiceController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<CustomerInvoice> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class CustomerInvoiceController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerInvoice selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of customerInvoices.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class CustomerInvoiceController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent CustomerInvoice selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class CustomerInvoiceController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent CustomerInvoice templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class CustomerInvoiceController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent CustomerInvoice selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

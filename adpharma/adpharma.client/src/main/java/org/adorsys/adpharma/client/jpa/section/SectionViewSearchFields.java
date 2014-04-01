@@ -10,7 +10,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javafx.beans.property.ObjectProperty;
@@ -35,8 +34,6 @@ public class SectionViewSearchFields extends AbstractForm<Section>
 
    private TextField geoCode;
 
-   private TextArea description;
-
    @Inject
    @Bundle({ CrudKeys.class, Section.class })
    private ResourceBundle resourceBundle;
@@ -49,7 +46,6 @@ public class SectionViewSearchFields extends AbstractForm<Section>
       name = viewBuilder.addTextField("Section_name_description.title", "name", resourceBundle);
       position = viewBuilder.addTextField("Section_position_description.title", "position", resourceBundle);
       geoCode = viewBuilder.addTextField("Section_geoCode_description.title", "geoCode", resourceBundle);
-      description = viewBuilder.addTextArea("Section_description_description.title", "description", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -60,7 +56,6 @@ public class SectionViewSearchFields extends AbstractForm<Section>
       name.textProperty().bindBidirectional(model.nameProperty());
       position.textProperty().bindBidirectional(model.positionProperty());
       geoCode.textProperty().bindBidirectional(model.geoCodeProperty());
-      description.textProperty().bindBidirectional(model.descriptionProperty());
 
    }
 
@@ -82,10 +77,5 @@ public class SectionViewSearchFields extends AbstractForm<Section>
    public TextField getGeoCode()
    {
       return geoCode;
-   }
-
-   public TextArea getDescription()
-   {
-      return description;
    }
 }

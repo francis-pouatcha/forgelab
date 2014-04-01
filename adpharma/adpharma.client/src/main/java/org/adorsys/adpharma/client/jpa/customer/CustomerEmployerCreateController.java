@@ -22,7 +22,7 @@ public class CustomerEmployerCreateController extends CustomerEmployerController
    public void handleNewModelEvent(@Observes @CreateModelEvent Customer model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerEmployerSelection());
+      bind(createView.getView().getCustomerEmployerSelection(), createView.getView().getCustomerEmployerForm());
       activateButton(createView.getView().getCustomerEmployerSelection());
    }
 }

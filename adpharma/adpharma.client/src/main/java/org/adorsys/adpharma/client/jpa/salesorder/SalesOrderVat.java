@@ -20,7 +20,7 @@ import org.adorsys.adpharma.client.jpa.vat.VAT;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("VAT_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SalesOrderVat implements Association<SalesOrder, VAT>
+public class SalesOrderVat implements Association<SalesOrder, VAT>, Cloneable
 {
 
    private Long id;
@@ -128,25 +128,36 @@ public class SalesOrderVat implements Association<SalesOrder, VAT>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SalesOrderVat other = (SalesOrderVat) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		SalesOrderVat other = (SalesOrderVat) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name","rate");
+      return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SalesOrderVat a = new SalesOrderVat();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.active = active;
+      a.rate = rate;
+      return a;
+   }
+
 }

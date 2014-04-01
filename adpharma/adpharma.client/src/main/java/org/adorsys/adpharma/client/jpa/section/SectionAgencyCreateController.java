@@ -22,7 +22,7 @@ public class SectionAgencyCreateController extends SectionAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Section model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSectionAgencySelection());
+      bind(createView.getView().getSectionAgencySelection(), createView.getView().getSectionAgencyForm());
       activateButton(createView.getView().getSectionAgencySelection());
    }
 }

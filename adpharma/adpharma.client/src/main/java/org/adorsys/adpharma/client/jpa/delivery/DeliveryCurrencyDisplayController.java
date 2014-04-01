@@ -27,5 +27,6 @@ public class DeliveryCurrencyDisplayController extends DeliveryCurrencyControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDeliveryCurrencySelection());
+      bind(displayView.getView().getDeliveryCurrencySelection(), displayView.getView().getDeliveryCurrencyForm());
    }
 }

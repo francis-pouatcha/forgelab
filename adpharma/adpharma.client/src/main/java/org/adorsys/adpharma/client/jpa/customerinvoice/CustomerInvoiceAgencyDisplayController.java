@@ -27,5 +27,6 @@ public class CustomerInvoiceAgencyDisplayController extends CustomerInvoiceAgenc
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerInvoiceAgencySelection());
+      bind(displayView.getView().getCustomerInvoiceAgencySelection(), displayView.getView().getCustomerInvoiceAgencyForm());
    }
 }

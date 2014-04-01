@@ -51,8 +51,10 @@ public abstract class DeliveryVatController
    {
    }
 
-   protected void bind(final DeliveryVatSelection selection)
+   protected void bind(final DeliveryVatSelection selection, final DeliveryVatForm form)
    {
+
+      //	    selection.getVat().valueProperty().bindBidirectional(sourceEntity.vatProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DeliveryVatController
             s.reset();
             List<VAT> entities = targetSearchResult.getResultList();
             selection.getVat().getItems().clear();
-            selection.getVat().getItems().addAll(entities);
+            selection.getVat().getItems().add(new DeliveryVat());
+            for (VAT entity : entities)
+            {
+               selection.getVat().getItems().add(new DeliveryVat(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DeliveryVatController
                }
             });
 
-      selection.getVat().valueProperty().addListener(new ChangeListener<VAT>()
+      selection.getVat().valueProperty().addListener(new ChangeListener<DeliveryVat>()
       {
          @Override
-         public void changed(ObservableValue<? extends VAT> ov, VAT oldValue,
-               VAT newValue)
+         public void changed(ObservableValue<? extends DeliveryVat> ov, DeliveryVat oldValue,
+               DeliveryVat newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setVat(new DeliveryVat(newValue));
+               form.update(newValue);
+            //                sourceEntity.setVat(newValue);
          }
       });
 

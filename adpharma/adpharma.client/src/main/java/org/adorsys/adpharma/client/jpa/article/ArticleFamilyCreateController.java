@@ -22,7 +22,7 @@ public class ArticleFamilyCreateController extends ArticleFamilyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleFamilySelection());
+      bind(createView.getView().getArticleFamilySelection(), createView.getView().getArticleFamilyForm());
       activateButton(createView.getView().getArticleFamilySelection());
    }
 }

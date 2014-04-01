@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.login.Login;
 
-public class CashDrawerCashierListCell extends AbstractToStringListCell<Login>
+public class CashDrawerCashierListCell extends AbstractToStringListCell<CashDrawerCashier>
 {
 
    @Override
-   protected String getToString(Login item)
+   protected String getToString(CashDrawerCashier item)
    {
       if (item == null)
       {

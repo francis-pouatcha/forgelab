@@ -22,7 +22,7 @@ public class SalesOrderCashDrawerCreateController extends SalesOrderCashDrawerCo
    public void handleNewModelEvent(@Observes @CreateModelEvent SalesOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSalesOrderCashDrawerSelection());
+      bind(createView.getView().getSalesOrderCashDrawerSelection(), createView.getView().getSalesOrderCashDrawerForm());
       activateButton(createView.getView().getSalesOrderCashDrawerSelection());
    }
 }

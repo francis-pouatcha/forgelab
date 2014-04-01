@@ -22,7 +22,7 @@ public class PaymentCashDrawerCreateController extends PaymentCashDrawerControll
    public void handleNewModelEvent(@Observes @CreateModelEvent Payment model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getPaymentCashDrawerSelection());
+      bind(createView.getView().getPaymentCashDrawerSelection(), createView.getView().getPaymentCashDrawerForm());
       activateButton(createView.getView().getPaymentCashDrawerSelection());
    }
 }

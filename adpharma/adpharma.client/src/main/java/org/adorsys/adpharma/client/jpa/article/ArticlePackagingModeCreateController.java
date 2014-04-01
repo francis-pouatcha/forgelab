@@ -22,7 +22,7 @@ public class ArticlePackagingModeCreateController extends ArticlePackagingModeCo
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticlePackagingModeSelection());
+      bind(createView.getView().getArticlePackagingModeSelection(), createView.getView().getArticlePackagingModeForm());
       activateButton(createView.getView().getArticlePackagingModeSelection());
    }
 }

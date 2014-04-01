@@ -58,9 +58,14 @@ public class DeliveryItemListController implements EntityController
 
    private DeliveryItemSearchResult searchResult;
 
+   @Inject
+   private DeliveryItemRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<DeliveryItem>()
             {

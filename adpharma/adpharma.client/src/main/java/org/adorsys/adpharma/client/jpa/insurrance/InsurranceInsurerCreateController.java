@@ -22,7 +22,7 @@ public class InsurranceInsurerCreateController extends InsurranceInsurerControll
    public void handleNewModelEvent(@Observes @CreateModelEvent Insurrance model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getInsurranceInsurerSelection());
+      bind(createView.getView().getInsurranceInsurerSelection(), createView.getView().getInsurranceInsurerForm());
       activateButton(createView.getView().getInsurranceInsurerSelection());
    }
 }

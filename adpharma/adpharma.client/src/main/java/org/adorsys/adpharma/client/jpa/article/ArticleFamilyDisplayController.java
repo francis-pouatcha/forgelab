@@ -27,5 +27,6 @@ public class ArticleFamilyDisplayController extends ArticleFamilyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleFamilySelection());
+      bind(displayView.getView().getArticleFamilySelection(), displayView.getView().getArticleFamilyForm());
    }
 }

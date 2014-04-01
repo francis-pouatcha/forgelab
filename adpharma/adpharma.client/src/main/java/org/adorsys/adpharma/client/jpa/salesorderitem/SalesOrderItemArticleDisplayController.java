@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class SalesOrderItemArticleDisplayController extends SalesOrderItemArticl
    public void handleNewModelEvent(@Observes @SelectedModelEvent SalesOrderItem model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getSalesOrderItemArticleSelection());
+      disableButton(displayView.getView().getSalesOrderItemArticleSelection(), displayView.getView().getSalesOrderItemArticleForm());
+      bind(displayView.getView().getSalesOrderItemArticleSelection(), displayView.getView().getSalesOrderItemArticleForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrderItem selectedEntity)
+   {
+      loadAssociation();
    }
 }

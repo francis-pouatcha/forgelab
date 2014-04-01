@@ -91,7 +91,7 @@ public class CashDrawerView extends AbstractForm<CashDrawer>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       cashDrawerNumber = viewBuilder.addTextField("CashDrawer_cashDrawerNumber_description.title", "cashDrawerNumber", resourceBundle);
-       opened = viewBuilder.addCheckBox("CashDrawer_opened_description.title", "opened", resourceBundle);
+      opened = viewBuilder.addCheckBox("CashDrawer_opened_description.title", "opened", resourceBundle);
       initialAmount = viewBuilder.addBigDecimalField("CashDrawer_initialAmount_description.title", "initialAmount", resourceBundle, NumberType.CURRENCY, locale);
       totalCashIn = viewBuilder.addBigDecimalField("CashDrawer_totalCashIn_description.title", "totalCashIn", resourceBundle, NumberType.CURRENCY, locale);
       totalCashOut = viewBuilder.addBigDecimalField("CashDrawer_totalCashOut_description.title", "totalCashOut", resourceBundle, NumberType.CURRENCY, locale);

@@ -59,6 +59,9 @@ public class ProductFamilyController extends DomainComponentController
    private ProductFamily searchModel = new ProductFamily();
    private ProductFamily selectedModel = new ProductFamily();
 
+   @Inject
+   private ProductFamilyRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class ProductFamilyController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<ProductFamily> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class ProductFamilyController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent ProductFamily selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of productFamilys.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class ProductFamilyController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent ProductFamily selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class ProductFamilyController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent ProductFamily templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class ProductFamilyController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent ProductFamily selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

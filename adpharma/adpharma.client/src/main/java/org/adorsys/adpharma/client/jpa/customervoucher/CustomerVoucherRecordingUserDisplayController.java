@@ -27,5 +27,6 @@ public class CustomerVoucherRecordingUserDisplayController extends CustomerVouch
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerVoucherRecordingUserSelection());
+      bind(displayView.getView().getCustomerVoucherRecordingUserSelection(), displayView.getView().getCustomerVoucherRecordingUserForm());
    }
 }

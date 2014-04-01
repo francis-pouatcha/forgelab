@@ -23,6 +23,6 @@ public class SalesOrderVatEditController extends SalesOrderVatController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSalesOrderVatSelection());
-      bind(editView.getView().getSalesOrderVatSelection());
+      bind(editView.getView().getSalesOrderVatSelection(), editView.getView().getSalesOrderVatForm());
    }
 }

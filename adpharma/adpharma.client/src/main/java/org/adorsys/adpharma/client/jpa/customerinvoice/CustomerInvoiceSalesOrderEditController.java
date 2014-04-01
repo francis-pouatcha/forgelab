@@ -23,6 +23,6 @@ public class CustomerInvoiceSalesOrderEditController extends CustomerInvoiceSale
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerInvoiceSalesOrderSelection());
-      bind(editView.getView().getCustomerInvoiceSalesOrderSelection());
+      bind(editView.getView().getCustomerInvoiceSalesOrderSelection(), editView.getView().getCustomerInvoiceSalesOrderForm());
    }
 }

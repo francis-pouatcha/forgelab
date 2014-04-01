@@ -27,7 +27,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Customer_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerVoucherCustomer implements Association<CustomerVoucher, Customer>
+public class CustomerVoucherCustomer implements Association<CustomerVoucher, Customer>, Cloneable
 {
 
    private Long id;
@@ -237,25 +237,41 @@ public class CustomerVoucherCustomer implements Association<CustomerVoucher, Cus
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerVoucherCustomer other = (CustomerVoucherCustomer) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerVoucherCustomer other = (CustomerVoucherCustomer) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "fullName");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerVoucherCustomer a = new CustomerVoucherCustomer();
+      a.id = id;
+      a.version = version;
+
+      a.fullName = fullName;
+      a.landLinePhone = landLinePhone;
+      a.mobile = mobile;
+      a.fax = fax;
+      a.email = email;
+      a.creditAuthorized = creditAuthorized;
+      a.discountAuthorized = discountAuthorized;
+      a.birthDate = birthDate;
+      return a;
+   }
+
 }

@@ -27,5 +27,6 @@ public class InventoryAgencyDisplayController extends InventoryAgencyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getInventoryAgencySelection());
+      bind(displayView.getView().getInventoryAgencySelection(), displayView.getView().getInventoryAgencyForm());
    }
 }

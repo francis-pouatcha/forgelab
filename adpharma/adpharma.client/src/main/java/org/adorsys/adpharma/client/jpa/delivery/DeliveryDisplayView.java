@@ -272,8 +272,7 @@ public class DeliveryDisplayView
 		agency.valueProperty().bindBidirectional(model.receivingAgencyProperty());
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
-		dataList.getItems().setAll(model.getDeliveryItems());
-		dataList.getItems().setAll(model.getDeliveryItems());
+		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
 		
 	}
 

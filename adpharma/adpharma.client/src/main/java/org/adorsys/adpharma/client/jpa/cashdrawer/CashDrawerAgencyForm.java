@@ -6,12 +6,12 @@ import java.util.ResourceBundle;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.adpharma.client.jpa.agency.AgencyCompanyForm;
 import org.adorsys.adpharma.client.jpa.agency.AgencyCompanySelection;
 import org.adorsys.javafx.crud.extensions.ViewModel;
+import javafx.scene.control.TextArea;
 import java.util.Locale;
 import jfxtras.scene.control.CalendarTextField;
 
@@ -65,6 +65,15 @@ public class CashDrawerAgencyForm extends AbstractToOneAssociation<CashDrawer, A
       active.textProperty().bindBidirectional(model.getAgency().activeProperty(), new BooleanStringConverter());
       phone.textProperty().bindBidirectional(model.getAgency().phoneProperty());
       fax.textProperty().bindBidirectional(model.getAgency().faxProperty());
+   }
+
+   public void update(CashDrawerAgency data)
+   {
+      agencyNumber.textProperty().set(data.agencyNumberProperty().get());
+      name.textProperty().set(data.nameProperty().get());
+      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+      phone.textProperty().set(data.phoneProperty().get());
+      fax.textProperty().set(data.faxProperty().get());
    }
 
    public TextField getAgencyNumber()

@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.articleequivalence.ArticleEquivalence;
 public class ArticleEquivalenceMainArticleSelection extends AbstractSelection<ArticleEquivalence, Article>
 {
 
-   private ComboBox<Article> mainArticle;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, Article.class, ArticleEquivalence.class })
@@ -36,19 +32,9 @@ public class ArticleEquivalenceMainArticleSelection extends AbstractSelection<Ar
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      mainArticle = viewBuilder.addComboBox("ArticleEquivalence_mainArticle_description.title", "mainArticle", resourceBundle, false);
-
-      mainArticle.setCellFactory(new Callback<ListView<Article>, ListCell<Article>>()
-      {
-         @Override
-         public ListCell<Article> call(ListView<Article> listView)
-         {
-            return new ArticleEquivalenceMainArticleListCell();
-         }
-      });
-      mainArticle.setButtonCell(new ArticleEquivalenceMainArticleListCell());
-
+      selectButton = viewBuilder.addButton(
+            "ArticleEquivalence_mainArticle_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class ArticleEquivalenceMainArticleSelection extends AbstractSelection<Ar
    {
    }
 
-   public ComboBox<Article> getMainArticle()
+   public Button getSelectButton()
    {
-      return mainArticle;
+      return selectButton;
+   }
+
+   public Button getMainArticle()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

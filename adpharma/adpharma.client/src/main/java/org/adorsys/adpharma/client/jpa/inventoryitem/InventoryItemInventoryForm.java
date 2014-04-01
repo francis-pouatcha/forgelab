@@ -90,6 +90,14 @@ public class InventoryItemInventoryForm extends AbstractToOneAssociation<Invento
       gapPurchaseAmount.numberProperty().bindBidirectional(model.getInventory().gapPurchaseAmountProperty());
    }
 
+   public void update(InventoryItemInventory data)
+   {
+      inventoryNumber.textProperty().set(data.inventoryNumberProperty().get());
+      inventoryStatus.valueProperty().set(data.inventoryStatusProperty().get());
+      gapSaleAmount.numberProperty().set(data.gapSaleAmountProperty().get());
+      gapPurchaseAmount.numberProperty().set(data.gapPurchaseAmountProperty().get());
+   }
+
    public TextField getInventoryNumber()
    {
       return inventoryNumber;

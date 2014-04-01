@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveConfirmedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -42,10 +41,6 @@ public class DeliveryRemoveControler
 
    @Inject
    private ConfirmDialog confirmDialog;
-   
-   @Inject
-	@EntitySearchRequestedEvent
-	private Event<Delivery> searchRequestEvent;
 
    private Delivery entity;
 
@@ -106,7 +101,6 @@ public class DeliveryRemoveControler
             wse.consume();
             service.reset();
             removedEvent.fire(p);
-            searchRequestEvent.fire(new Delivery());
          }
       });
       removeServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()

@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class CustomerVoucherCustomerInvoiceDisplayController extends CustomerVou
    public void handleNewModelEvent(@Observes @SelectedModelEvent CustomerVoucher model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getCustomerVoucherCustomerInvoiceSelection());
+      disableButton(displayView.getView().getCustomerVoucherCustomerInvoiceSelection(), displayView.getView().getCustomerVoucherCustomerInvoiceForm());
+      bind(displayView.getView().getCustomerVoucherCustomerInvoiceSelection(), displayView.getView().getCustomerVoucherCustomerInvoiceForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerVoucher selectedEntity)
+   {
+      loadAssociation();
    }
 }

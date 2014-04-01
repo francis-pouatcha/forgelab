@@ -58,9 +58,14 @@ public class ProductDetailConfigListController implements EntityController
 
    private ProductDetailConfigSearchResult searchResult;
 
+   @Inject
+   private ProductDetailConfigRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<ProductDetailConfig>()
             {

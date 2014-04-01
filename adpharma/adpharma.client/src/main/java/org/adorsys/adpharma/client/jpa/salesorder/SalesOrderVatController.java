@@ -51,8 +51,10 @@ public abstract class SalesOrderVatController
    {
    }
 
-   protected void bind(final SalesOrderVatSelection selection)
+   protected void bind(final SalesOrderVatSelection selection, final SalesOrderVatForm form)
    {
+
+      //	    selection.getVat().valueProperty().bindBidirectional(sourceEntity.vatProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class SalesOrderVatController
             s.reset();
             List<VAT> entities = targetSearchResult.getResultList();
             selection.getVat().getItems().clear();
-            selection.getVat().getItems().addAll(entities);
+            selection.getVat().getItems().add(new SalesOrderVat());
+            for (VAT entity : entities)
+            {
+               selection.getVat().getItems().add(new SalesOrderVat(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class SalesOrderVatController
                }
             });
 
-      selection.getVat().valueProperty().addListener(new ChangeListener<VAT>()
+      selection.getVat().valueProperty().addListener(new ChangeListener<SalesOrderVat>()
       {
          @Override
-         public void changed(ObservableValue<? extends VAT> ov, VAT oldValue,
-               VAT newValue)
+         public void changed(ObservableValue<? extends SalesOrderVat> ov, SalesOrderVat oldValue,
+               SalesOrderVat newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setVat(new SalesOrderVat(newValue));
+               form.update(newValue);
+            //                sourceEntity.setVat(newValue);
          }
       });
 

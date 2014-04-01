@@ -20,7 +20,7 @@ import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("SalesMargin_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArticleDefaultSalesMargin implements Association<Article, SalesMargin>
+public class ArticleDefaultSalesMargin implements Association<Article, SalesMargin>, Cloneable
 {
 
    private Long id;
@@ -128,25 +128,36 @@ public class ArticleDefaultSalesMargin implements Association<Article, SalesMarg
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ArticleDefaultSalesMargin other = (ArticleDefaultSalesMargin) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ArticleDefaultSalesMargin other = (ArticleDefaultSalesMargin) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleDefaultSalesMargin a = new ArticleDefaultSalesMargin();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.active = active;
+      a.rate = rate;
+      return a;
+   }
+
 }

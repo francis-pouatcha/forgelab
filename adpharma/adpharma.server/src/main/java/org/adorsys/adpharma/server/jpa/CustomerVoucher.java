@@ -51,7 +51,7 @@ public class CustomerVoucher implements Serializable
 
    @ManyToOne
    @Description("CustomerVoucher_customerInvoice_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
    private CustomerInvoice customerInvoice;
 
    @Column
@@ -62,7 +62,7 @@ public class CustomerVoucher implements Serializable
 
    @ManyToOne
    @Description("CustomerVoucher_customer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private Customer customer;
 
    @ManyToOne

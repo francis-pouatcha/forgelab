@@ -26,6 +26,8 @@ public class StockMovementTerminalConverter extends StringConverter<StockMovemen
    @Override
    public String toString(StockMovementTerminal object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("StockMovementTerminal_" + object.name()
             + "_description.title");
    }

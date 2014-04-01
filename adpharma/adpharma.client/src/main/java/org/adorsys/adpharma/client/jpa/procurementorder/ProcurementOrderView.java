@@ -66,6 +66,8 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
 
    private BigDecimalField amountDiscount;
 
+   private BigDecimalField taxAmount;
+
    private BigDecimalField netAmountToPay;
 
    private CalendarTextField submissionDate;
@@ -140,6 +142,7 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
       amountBeforeTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("ProcurementOrder_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
+      taxAmount = viewBuilder.addBigDecimalField("ProcurementOrder_taxAmount_description.title", "taxAmount", resourceBundle, NumberType.CURRENCY, locale);
       netAmountToPay = viewBuilder.addBigDecimalField("ProcurementOrder_netAmountToPay_description.title", "netAmountToPay", resourceBundle, NumberType.CURRENCY, locale);
       submissionDate = viewBuilder.addCalendarTextField("ProcurementOrder_submissionDate_description.title", "submissionDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       createdDate = viewBuilder.addCalendarTextField("ProcurementOrder_createdDate_description.title", "createdDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
@@ -193,6 +196,7 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
       amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
       amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+      taxAmount.numberProperty().bindBidirectional(model.taxAmountProperty());
       netAmountToPay.numberProperty().bindBidirectional(model.netAmountToPayProperty());
       submissionDate.calendarProperty().bindBidirectional(model.submissionDateProperty());
       createdDate.calendarProperty().bindBidirectional(model.createdDateProperty());
@@ -236,6 +240,11 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
    public BigDecimalField getAmountDiscount()
    {
       return amountDiscount;
+   }
+
+   public BigDecimalField getTaxAmount()
+   {
+      return taxAmount;
    }
 
    public BigDecimalField getNetAmountToPay()

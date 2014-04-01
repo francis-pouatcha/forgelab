@@ -27,5 +27,6 @@ public class ProcurementOrderAgencyDisplayController extends ProcurementOrderAge
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getProcurementOrderAgencySelection());
+      bind(displayView.getView().getProcurementOrderAgencySelection(), displayView.getView().getProcurementOrderAgencyForm());
    }
 }

@@ -29,6 +29,7 @@ import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+import javax.validation.constraints.Size;
 
 @Entity
 @Description("StockMovement_description")
@@ -36,7 +37,8 @@ import org.adorsys.javaext.format.NumberType;
       "article.articleName" })
 @ListField({ "movedQty", "movementType", "movementOrigin", "movementDestination",
       "article.articleName", "agency.name", "initialQty", "finalQty",
-      "totalPurchasingPrice", "totalDiscount", "totalSalesPrice" })
+      "totalPurchasingPrice", "totalDiscount", "totalSalesPrice",
+      "internalPic" })
 public class StockMovement implements Serializable
 {
 
@@ -81,7 +83,7 @@ public class StockMovement implements Serializable
 
    @ManyToOne
    @Description("StockMovement_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "StockMovement_article_NotNull_validation")
    private Article article;
 
@@ -118,6 +120,12 @@ public class StockMovement implements Serializable
    @Description("StockMovement_totalSalesPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private BigDecimal totalSalesPrice;
+
+   @Column
+   @Description("StockMovement_internalPic_description")
+   @Size(min = 7, message = "StockMovement_internalPic_Size_validation")
+   @NotNull(message = "StockMovement_internalPic_NotNull_validation")
+   private String internalPic;
 
    public Long getId()
    {
@@ -312,12 +320,24 @@ public class StockMovement implements Serializable
       this.totalSalesPrice = totalSalesPrice;
    }
 
+   public String getInternalPic()
+   {
+      return this.internalPic;
+   }
+
+   public void setInternalPic(final String internalPic)
+   {
+      this.internalPic = internalPic;
+   }
+
    @Override
    public String toString()
    {
       String result = getClass().getSimpleName() + " ";
       if (originatedDocNumber != null && !originatedDocNumber.trim().isEmpty())
          result += "originatedDocNumber: " + originatedDocNumber;
+      if (internalPic != null && !internalPic.trim().isEmpty())
+         result += ", internalPic: " + internalPic;
       return result;
    }
 }

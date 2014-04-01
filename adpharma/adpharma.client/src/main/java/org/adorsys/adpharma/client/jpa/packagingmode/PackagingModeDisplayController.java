@@ -62,9 +62,15 @@ public class PackagingModeDisplayController implements EntityController
 
    private PackagingMode displayedEntity;
 
+   @Inject
+   private PackagingModeRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

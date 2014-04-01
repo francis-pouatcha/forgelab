@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
@@ -29,7 +31,7 @@ import org.adorsys.javaext.display.ToStringField;
 @ListField({ "beginDate", "endDate", "customer.fullName", "insurer.fullName",
       "coverageRate" })
 @ToStringField({ "customer.fullName", "insurer.fullName", "coverageRate" })
-public class Insurrance
+public class Insurrance implements Cloneable
 {
 
    private Long id;
@@ -152,6 +154,7 @@ public class Insurrance
          customer = new InsurranceCustomer();
       }
       PropertyReader.copy(customer, getCustomer());
+      customerProperty().setValue(ObjectUtils.clone(getCustomer()));
    }
 
    public SimpleObjectProperty<InsurranceInsurer> insurerProperty()
@@ -176,6 +179,7 @@ public class Insurrance
          insurer = new InsurranceInsurer();
       }
       PropertyReader.copy(insurer, getInsurer());
+      insurerProperty().setValue(ObjectUtils.clone(getInsurer()));
    }
 
    @Override
@@ -207,6 +211,27 @@ public class Insurrance
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "insurer");
+      return PropertyReader.buildToString(this, "fullName", "fullName", "coverageRate");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Insurrance e = new Insurrance();
+      e.id = id;
+      e.version = version;
+
+      e.coverageRate = coverageRate;
+      e.beginDate = beginDate;
+      e.endDate = endDate;
+      e.customer = customer;
+      e.insurer = insurer;
+      return e;
    }
 }

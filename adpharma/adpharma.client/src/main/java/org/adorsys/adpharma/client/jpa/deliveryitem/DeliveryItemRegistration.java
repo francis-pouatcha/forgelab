@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.deliveryitem;
 import java.util.ResourceBundle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
@@ -18,6 +19,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
  *
  */
 @Eager
+@Singleton
 public class DeliveryItemRegistration extends DomainComponentRegistration
 {
 
@@ -45,4 +47,11 @@ public class DeliveryItemRegistration extends DomainComponentRegistration
          return resourceBundle.getString(annotation.value() + ".title");
       return DeliveryItem.class.getName();
    }
+
+   @Override
+   public String getComponentPermission()
+   {
+      return "org.adorsys.adpharma.server.jpa.DeliveryItem";
+   }
+
 }

@@ -58,9 +58,14 @@ public class SupplierInvoiceItemListController implements EntityController
 
    private SupplierInvoiceItemSearchResult searchResult;
 
+   @Inject
+   private SupplierInvoiceItemRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<SupplierInvoiceItem>()
             {

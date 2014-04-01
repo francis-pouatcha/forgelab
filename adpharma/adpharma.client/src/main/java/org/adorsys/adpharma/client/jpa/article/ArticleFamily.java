@@ -2,7 +2,7 @@ package org.adorsys.adpharma.client.jpa.article;
 
 import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamilly;
+import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamily;
 import javafx.beans.property.SimpleObjectProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,7 +20,7 @@ import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("ProductFamily_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArticleFamily implements Association<Article, ProductFamily>
+public class ArticleFamily implements Association<Article, ProductFamily>, Cloneable
 {
 
    private Long id;
@@ -86,25 +86,34 @@ public class ArticleFamily implements Association<Article, ProductFamily>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ArticleFamily other = (ArticleFamily) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ArticleFamily other = (ArticleFamily) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleFamily a = new ArticleFamily();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      return a;
+   }
+
 }

@@ -23,6 +23,6 @@ public class PrescriptionBookPrescriberEditController extends PrescriptionBookPr
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getPrescriptionBookPrescriberSelection());
-      bind(editView.getView().getPrescriptionBookPrescriberSelection());
+      bind(editView.getView().getPrescriptionBookPrescriberSelection(), editView.getView().getPrescriptionBookPrescriberForm());
    }
 }

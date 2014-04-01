@@ -40,7 +40,7 @@ public class SupplierInvoiceItemView extends AbstractForm<SupplierInvoiceItem>
 
    private BigDecimalField amountReturn;
 
-   private BigDecimalField totalSalesPrice;
+   private BigDecimalField totalPurchasePrice;
 
    @Inject
    private SupplierInvoiceItemInvoiceForm supplierInvoiceItemInvoiceForm;
@@ -66,7 +66,7 @@ public class SupplierInvoiceItemView extends AbstractForm<SupplierInvoiceItem>
       purchasePricePU = viewBuilder.addBigDecimalField("SupplierInvoiceItem_purchasePricePU_description.title", "purchasePricePU", resourceBundle, NumberType.CURRENCY, locale);
       salesPricePU = viewBuilder.addBigDecimalField("SupplierInvoiceItem_salesPricePU_description.title", "salesPricePU", resourceBundle, NumberType.CURRENCY, locale);
       amountReturn = viewBuilder.addBigDecimalField("SupplierInvoiceItem_amountReturn_description.title", "amountReturn", resourceBundle, NumberType.CURRENCY, locale);
-      totalSalesPrice = viewBuilder.addBigDecimalField("SupplierInvoiceItem_totalSalesPrice_description.title", "totalSalesPrice", resourceBundle, NumberType.CURRENCY, locale);
+      totalPurchasePrice = viewBuilder.addBigDecimalField("SupplierInvoiceItem_totalPurchasePrice_description.title", "totalPurchasePrice", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addTitlePane("SupplierInvoiceItem_invoice_description.title", resourceBundle);
       viewBuilder.addSubForm("SupplierInvoiceItem_invoice_description.title", "invoice", resourceBundle, supplierInvoiceItemInvoiceForm, ViewModel.READ_ONLY);
       viewBuilder.addTitlePane("SupplierInvoiceItem_article_description.title", resourceBundle);
@@ -93,7 +93,7 @@ public class SupplierInvoiceItemView extends AbstractForm<SupplierInvoiceItem>
       purchasePricePU.numberProperty().bindBidirectional(model.purchasePricePUProperty());
       salesPricePU.numberProperty().bindBidirectional(model.salesPricePUProperty());
       amountReturn.numberProperty().bindBidirectional(model.amountReturnProperty());
-      totalSalesPrice.numberProperty().bindBidirectional(model.totalSalesPriceProperty());
+      totalPurchasePrice.numberProperty().bindBidirectional(model.totalPurchasePriceProperty());
       supplierInvoiceItemInvoiceForm.bind(model);
       supplierInvoiceItemArticleForm.bind(model);
       supplierInvoiceItemArticleSelection.bind(model);
@@ -124,9 +124,9 @@ public class SupplierInvoiceItemView extends AbstractForm<SupplierInvoiceItem>
       return amountReturn;
    }
 
-   public BigDecimalField getTotalSalesPrice()
+   public BigDecimalField getTotalPurchasePrice()
    {
-      return totalSalesPrice;
+      return totalPurchasePrice;
    }
 
    public SupplierInvoiceItemInvoiceForm getSupplierInvoiceItemInvoiceForm()

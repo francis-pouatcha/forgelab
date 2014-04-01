@@ -63,9 +63,9 @@ public class EmployerView extends AbstractForm<Employer>
       zipCode = viewBuilder.addTextField("Employer_zipCode_description.title", "zipCode", resourceBundle);
       city = viewBuilder.addTextField("Employer_city_description.title", "city", resourceBundle);
       country = viewBuilder.addTextField("Employer_country_description.title", "country", resourceBundle);
-//      viewBuilder.addTitlePane("Employer_creatingUser_description.title", resourceBundle);
-//      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserForm, ViewModel.READ_ONLY);
-//      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserSelection, ViewModel.READ_WRITE);
+      viewBuilder.addTitlePane("Employer_creatingUser_description.title", resourceBundle);
+      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }
@@ -80,7 +80,7 @@ public class EmployerView extends AbstractForm<Employer>
    {
       Set<ConstraintViolation<Employer>> violations = new HashSet<ConstraintViolation<Employer>>();
       violations.addAll(textInputControlValidator.validate(name, Employer.class, "name", resourceBundle));
-//      violations.addAll(toOneAggreggationFieldValidator.validate(employerCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), Employer.class, "creatingUser", resourceBundle));
+      violations.addAll(toOneAggreggationFieldValidator.validate(employerCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), Employer.class, "creatingUser", resourceBundle));
       return violations;
    }
 

@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class SupplierInvoiceDeliveryDisplayController extends SupplierInvoiceDel
    public void handleNewModelEvent(@Observes @SelectedModelEvent SupplierInvoice model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getSupplierInvoiceDeliverySelection());
+      disableButton(displayView.getView().getSupplierInvoiceDeliverySelection(), displayView.getView().getSupplierInvoiceDeliveryForm());
+      bind(displayView.getView().getSupplierInvoiceDeliverySelection(), displayView.getView().getSupplierInvoiceDeliveryForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent SupplierInvoice selectedEntity)
+   {
+      loadAssociation();
    }
 }

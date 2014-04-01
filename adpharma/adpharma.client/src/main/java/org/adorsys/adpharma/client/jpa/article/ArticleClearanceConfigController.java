@@ -51,8 +51,10 @@ public abstract class ArticleClearanceConfigController
    {
    }
 
-   protected void bind(final ArticleClearanceConfigSelection selection)
+   protected void bind(final ArticleClearanceConfigSelection selection, final ArticleClearanceConfigForm form)
    {
+
+      //	    selection.getClearanceConfig().valueProperty().bindBidirectional(sourceEntity.clearanceConfigProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleClearanceConfigController
             s.reset();
             List<ClearanceConfig> entities = targetSearchResult.getResultList();
             selection.getClearanceConfig().getItems().clear();
-            selection.getClearanceConfig().getItems().addAll(entities);
+            selection.getClearanceConfig().getItems().add(new ArticleClearanceConfig());
+            for (ClearanceConfig entity : entities)
+            {
+               selection.getClearanceConfig().getItems().add(new ArticleClearanceConfig(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleClearanceConfigController
                }
             });
 
-      selection.getClearanceConfig().valueProperty().addListener(new ChangeListener<ClearanceConfig>()
+      selection.getClearanceConfig().valueProperty().addListener(new ChangeListener<ArticleClearanceConfig>()
       {
          @Override
-         public void changed(ObservableValue<? extends ClearanceConfig> ov, ClearanceConfig oldValue,
-               ClearanceConfig newValue)
+         public void changed(ObservableValue<? extends ArticleClearanceConfig> ov, ArticleClearanceConfig oldValue,
+               ArticleClearanceConfig newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setClearanceConfig(new ArticleClearanceConfig(newValue));
+               form.update(newValue);
+            //                sourceEntity.setClearanceConfig(newValue);
          }
       });
 

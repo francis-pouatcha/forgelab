@@ -54,6 +54,12 @@ public class CustomerCustomerCategoryForm extends AbstractToOneAssociation<Custo
       discountRate.numberProperty().bindBidirectional(model.getCustomerCategory().discountRateProperty());
    }
 
+   public void update(CustomerCustomerCategory data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      discountRate.numberProperty().set(data.discountRateProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -19,6 +18,13 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import jfxtras.scene.control.CalendarTextField;
+
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -28,38 +34,9 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-import javafx.beans.property.SimpleStringProperty;
-
-import java.util.Calendar;
-
-import javafx.beans.property.SimpleObjectProperty;
-
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-
-import java.math.BigDecimal;
-
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.currency.Currency;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
-
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import jfxtras.scene.control.CalendarTextField;
-
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 
 public class DeliveryListView
 {
-
 	@FXML
 	BorderPane rootPane;
 
@@ -78,10 +55,13 @@ public class DeliveryListView
 
 	@FXML
 	private Button createButton;
-	
+
 	@FXML
 	private Button updateButton;
 	
+	@FXML
+	private Button removeButton;
+
 	@FXML
 	private Button processButton;
 
@@ -112,11 +92,8 @@ public class DeliveryListView
 	})
 	private ResourceBundle resourceBundle;
 
-
-
 	@Inject
 	FXMLLoader fxmlLoader ;
-
 
 	@PostConstruct
 	public void postConstruct()
@@ -127,27 +104,30 @@ public class DeliveryListView
 		viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle);
-		//		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
-		viewBuilder.addStringColumn(dataList, "currency", "Delivery_currency_description.title", resourceBundle);
+		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "Delivery_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "Delivery_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addEnumColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle,deliveryProcessingStateConverter);
-		//      pagination = viewBuilder.addPagination();
-		//      viewBuilder.addSeparator();
-		//      HBox buttonBar = viewBuilder.addButtonBar();
-		//      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		//      rootPane = viewBuilder.toAnchorPane();
+		viewBuilder.addStringColumn(dataList, "vat", "Delivery_vat_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "receivingAgency", "Delivery_receivingAgency_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle);
+
+		//		pagination = viewBuilder.addPagination();
+		//		viewBuilder.addSeparator();
+		//
+		//		HBox buttonBar = viewBuilder.addButtonBar();
+		//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//		rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 	}
-
+	
 	public void bind(DeliverySearchInput searchInput)
 	{
+		
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
 		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
 		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
@@ -173,6 +153,7 @@ public class DeliveryListView
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryProcessingState,searchButton);
 	}
+
 	public Button getCreateButton()
 	{
 		return createButton;
@@ -227,5 +208,8 @@ public class DeliveryListView
 		return updateButton;
 	}
 
+	public Button getRemoveButton() {
+		return removeButton;
+	}
 
 }

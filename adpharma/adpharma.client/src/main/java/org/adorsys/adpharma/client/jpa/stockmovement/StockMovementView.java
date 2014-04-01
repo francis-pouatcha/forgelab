@@ -28,6 +28,8 @@ import org.adorsys.javafx.crud.extensions.validation.ComboBoxFoccusChangedListen
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -48,6 +50,8 @@ public class StockMovementView extends AbstractForm<StockMovement>
 {
 
    private TextField originatedDocNumber;
+
+   private TextField internalPic;
 
    private ComboBox<StockMovementType> movementType;
 
@@ -122,6 +126,8 @@ public class StockMovementView extends AbstractForm<StockMovement>
    @Inject
    private BigDecimalFieldValidator bigDecimalFieldValidator;
    @Inject
+   private TextInputControlValidator textInputControlValidator;
+   @Inject
    private ComboBoxValidator comboBoxValidator;
    @Inject
    private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
@@ -131,6 +137,7 @@ public class StockMovementView extends AbstractForm<StockMovement>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       originatedDocNumber = viewBuilder.addTextField("StockMovement_originatedDocNumber_description.title", "originatedDocNumber", resourceBundle);
+      internalPic = viewBuilder.addTextField("StockMovement_internalPic_description.title", "internalPic", resourceBundle);
       movementType = viewBuilder.addComboBox("StockMovement_movementType_description.title", "movementType", resourceBundle, StockMovementType.values());
       movementOrigin = viewBuilder.addComboBox("StockMovement_movementOrigin_description.title", "movementOrigin", resourceBundle, StockMovementTerminal.values());
       movementDestination = viewBuilder.addComboBox("StockMovement_movementDestination_description.title", "movementDestination", resourceBundle, StockMovementTerminal.values());
@@ -160,6 +167,7 @@ public class StockMovementView extends AbstractForm<StockMovement>
 
    public void addValidators()
    {
+      internalPic.focusedProperty().addListener(new TextInputControlFoccusChangedListener<StockMovement>(textInputControlValidator, internalPic, StockMovement.class, "internalPic", resourceBundle));
       movementType.valueProperty().addListener(new ComboBoxFoccusChangedListener<StockMovement, StockMovementType>(comboBoxValidator, movementType, StockMovement.class, "movementType", resourceBundle));
       totalPurchasingPrice.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<StockMovement>(bigDecimalFieldValidator, totalPurchasingPrice, StockMovement.class, "totalPurchasingPrice", resourceBundle));
       // no active validator
@@ -170,6 +178,7 @@ public class StockMovementView extends AbstractForm<StockMovement>
    public Set<ConstraintViolation<StockMovement>> validate(StockMovement model)
    {
       Set<ConstraintViolation<StockMovement>> violations = new HashSet<ConstraintViolation<StockMovement>>();
+      violations.addAll(textInputControlValidator.validate(internalPic, StockMovement.class, "internalPic", resourceBundle));
       violations.addAll(comboBoxValidator.validate(movementType, StockMovement.class, "movementType", resourceBundle));
       violations.addAll(bigDecimalFieldValidator.validate(totalPurchasingPrice, StockMovement.class, "totalPurchasingPrice", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(stockMovementCreatingUserSelection.getCreatingUser(), model.getCreatingUser(), StockMovement.class, "creatingUser", resourceBundle));
@@ -181,6 +190,7 @@ public class StockMovementView extends AbstractForm<StockMovement>
    public void bind(StockMovement model)
    {
       originatedDocNumber.textProperty().bindBidirectional(model.originatedDocNumberProperty());
+      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
       movementType.valueProperty().bindBidirectional(model.movementTypeProperty());
       movementOrigin.valueProperty().bindBidirectional(model.movementOriginProperty());
       movementDestination.valueProperty().bindBidirectional(model.movementDestinationProperty());
@@ -202,6 +212,11 @@ public class StockMovementView extends AbstractForm<StockMovement>
    public TextField getOriginatedDocNumber()
    {
       return originatedDocNumber;
+   }
+
+   public TextField getInternalPic()
+   {
+      return internalPic;
    }
 
    public ComboBox<StockMovementType> getMovementType()

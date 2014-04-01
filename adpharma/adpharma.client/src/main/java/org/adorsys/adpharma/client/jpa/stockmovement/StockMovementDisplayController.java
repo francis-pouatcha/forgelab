@@ -62,9 +62,15 @@ public class StockMovementDisplayController implements EntityController
 
    private StockMovement displayedEntity;
 
+   @Inject
+   private StockMovementRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

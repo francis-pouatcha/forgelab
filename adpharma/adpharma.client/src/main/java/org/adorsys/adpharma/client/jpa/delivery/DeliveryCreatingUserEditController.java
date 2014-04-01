@@ -23,6 +23,6 @@ public class DeliveryCreatingUserEditController extends DeliveryCreatingUserCont
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDeliveryCreatingUserSelection());
-      bind(editView.getView().getDeliveryCreatingUserSelection());
+      bind(editView.getView().getDeliveryCreatingUserSelection(), editView.getView().getDeliveryCreatingUserForm());
    }
 }

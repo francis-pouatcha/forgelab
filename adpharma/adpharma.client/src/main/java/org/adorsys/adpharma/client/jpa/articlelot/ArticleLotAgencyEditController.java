@@ -23,6 +23,6 @@ public class ArticleLotAgencyEditController extends ArticleLotAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticleLotAgencySelection());
-      bind(editView.getView().getArticleLotAgencySelection());
+      bind(editView.getView().getArticleLotAgencySelection(), editView.getView().getArticleLotAgencyForm());
    }
 }

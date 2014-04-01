@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 public class SalesOrderAgencySelection extends AbstractSelection<SalesOrder, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<SalesOrderAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, SalesOrder.class })
@@ -39,10 +39,10 @@ public class SalesOrderAgencySelection extends AbstractSelection<SalesOrder, Age
 
       agency = viewBuilder.addComboBox("SalesOrder_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<SalesOrderAgency>, ListCell<SalesOrderAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<SalesOrderAgency> call(ListView<SalesOrderAgency> listView)
          {
             return new SalesOrderAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class SalesOrderAgencySelection extends AbstractSelection<SalesOrder, Age
 
    public void bind(SalesOrder model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<SalesOrderAgency> getAgency()
    {
       return agency;
    }

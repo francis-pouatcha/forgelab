@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class DeliveryItemArticleDisplayController extends DeliveryItemArticleCon
    public void handleNewModelEvent(@Observes @SelectedModelEvent DeliveryItem model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getDeliveryItemArticleSelection());
+      disableButton(displayView.getView().getDeliveryItemArticleSelection(), displayView.getView().getDeliveryItemArticleForm());
+      bind(displayView.getView().getDeliveryItemArticleSelection(), displayView.getView().getDeliveryItemArticleForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent DeliveryItem selectedEntity)
+   {
+      loadAssociation();
    }
 }

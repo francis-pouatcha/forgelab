@@ -59,6 +59,9 @@ public class ArticleController extends DomainComponentController
    private Article searchModel = new Article();
    private Article selectedModel = new Article();
 
+   @Inject
+   private ArticleRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class ArticleController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<Article> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class ArticleController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent Article selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of articles.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class ArticleController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent Article selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class ArticleController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Article templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class ArticleController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent Article selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -152,7 +166,7 @@ public class ArticleController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-//      displayedViews.add(displayController);
+      displayedViews.add(displayController);
 
       displayComponent();
    }

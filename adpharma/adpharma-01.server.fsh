@@ -216,6 +216,10 @@ field number --named cfaEquivalent --type java.math.BigDecimal;
 description add-field-description --onProperty cfaEquivalent --title "CFA Equivalent" --text "Corresponding CFA value for conversions.";
 description add-field-description --onProperty cfaEquivalent --title "Equivalent CFA" --text "Valeur equivalant cfa pour faire les conversions." --locale fr;
 format add-number-type --onProperty cfaEquivalent --type CURRENCY;
+description add-notNull-message --onProperty cfaEquivalent --title "The cfa equivalent is required" --text "The cfa equivalent is required";
+description add-notNull-message --onProperty cfaEquivalent --title "L equivqlent cfa est requis" --text "Le libellé de la devise est réquis" --locale fr;
+display add-toString-field --field cfaEquivalent;
+display add-list-field --field cfaEquivalent;
 
 cd ~~;
 
@@ -558,6 +562,7 @@ entity --named PackagingMode --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Packaging Mode" --text "The product packaging mode";
 description add-class-description --locale fr --title "Mode de Conditionement" --text "Le mode de conditionnement du produit";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
@@ -577,6 +582,7 @@ entity --named Section --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Section" --text "A section in the storage of this pharmacie.";
 description add-class-description --locale fr --title "Rayon" --text "Un rayon dans le magasin de cette pharmacie";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named sectionCode;
@@ -622,6 +628,7 @@ entity --named ProductFamily --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Product Family" --text "The product family";
 description add-class-description --locale fr --title "Famille Produit" --text "La famille produit";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 
 field string --named name;
@@ -713,6 +720,7 @@ access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --rol
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action EDIT --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
@@ -756,7 +764,7 @@ display add-list-field --field active;
 field manyToOne --named family --fieldType ~.jpa.ProductFamily;
 description add-field-description --onProperty family --title "Product Family" --text "Specifies the product family of this article.";
 description add-field-description --onProperty family --title "Famille Produit" --text "Spécifie la famille de produit à laquelle appartient le produit." --locale fr;
-association set-selection-mode --onProperty family --selectionMode FORWARD;
+association set-selection-mode --onProperty family --selectionMode COMBOBOX;
 association set-type --onProperty family --type AGGREGATION --targetEntity ~.jpa.ProductFamily;
 
 field number --named qtyInStock --type java.math.BigDecimal;
@@ -811,8 +819,8 @@ association set-type --onProperty packagingMode --type AGGREGATION --targetEntit
 
 field boolean --named authorizedSale --primitive false; 
 @/*  vente_autorisee  default=true  */;
-description add-field-description --onProperty authorizedSale --title "Product Identification Code" --text "Allows to release a prouct for sale.";
-description add-field-description --onProperty authorizedSale --title "Code Identifiant Prouit" --text "Autorise ou non un produit à la vente" --locale fr;
+description add-field-description --onProperty authorizedSale --title "Salable" --text "Allows to release a prouct for sale.";
+description add-field-description --onProperty authorizedSale --title "Vendable" --text "Autorise ou non un produit à la vente" --locale fr;
 display add-list-field --field authorizedSale;
 
 field long --named maxStockQty --primitive false;
@@ -850,8 +858,7 @@ description add-class-description --title "Article Equivalence" --text "An artic
 description add-class-description  --locale fr --title "Equivalence Produit" --text "Un article équivalent à cet article";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
-access add-permission --actionEnum ~.jpa.PermissionActionEnum --action CREATE --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole STOCKS;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
 
@@ -1160,7 +1167,7 @@ enum enumerated-field --onProperty procurementOrderType ;
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
-association set-selection-mode --onProperty supplier --selectionMode  FORWARD;
+association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
 constraint NotNull --onProperty supplier;
 description add-notNull-message --onProperty supplier --title "The supplier  is required" --text "The supplier  is required";
@@ -1405,7 +1412,7 @@ format add-date-pattern --onProperty deliveryDate --pattern "dd-MM-yyyy HH:mm";
 field manyToOne --named supplier --fieldType ~.jpa.Supplier;
 description add-field-description --onProperty supplier --title "Supplier" --text "The supplier mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty supplier --title "Fournisseur" --text "Le fournisseur mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;
-association set-selection-mode --onProperty supplier --selectionMode  FORWARD;
+association set-selection-mode --onProperty supplier --selectionMode  COMBOBOX;
 association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.jpa.Supplier;
 constraint NotNull --onProperty supplier;
 description add-notNull-message --onProperty supplier --title "The supplier  is required" --text "The supplier  is required";
@@ -1432,8 +1439,8 @@ format add-number-type --onProperty amountDiscount --type CURRENCY;
 display add-list-field --field amountDiscount;
 
 field number --named netAmountToPay --type java.math.BigDecimal;
-description add-field-description --onProperty netAmountToPay --title "Net Amount to Pay" --text "Teh net amount to pay.";
-description add-field-description --onProperty netAmountToPay --title "Montant net a payer" --text "Montant de la remise de l approvisionement." --locale fr;
+description add-field-description --onProperty netAmountToPay --title "Net to Pay" --text "Teh net amount to pay.";
+description add-field-description --onProperty netAmountToPay --title "Net a payer" --text "Montant de la remise de l approvisionement." --locale fr;
 format add-number-type --onProperty netAmountToPay --type CURRENCY;
 display add-list-field --field netAmountToPay;
 
@@ -1778,7 +1785,7 @@ description add-field-description --onProperty totalCreditLine --title "Credit M
 field manyToOne --named employer --fieldType ~.jpa.Employer;
 description add-field-description --onProperty employer --title "Employer" --text "The employer of this client.";
 description add-field-description --onProperty employer --title "Employeur" --text "L employeur de ce client." --locale fr;
-association set-selection-mode --onProperty employer --selectionMode FORWARD;
+association set-selection-mode --onProperty employer --selectionMode COMBOBOX;
 association set-type --onProperty employer --type AGGREGATION --targetEntity ~.jpa.Employer;
 
 field manyToOne --named customerCategory --fieldType ~.jpa.CustomerCategory;
@@ -2004,7 +2011,7 @@ description add-notNull-message --onProperty endDate --title "La date de fin est
 field manyToOne --named customer --fieldType ~.jpa.Customer;
 description add-field-description --onProperty customer --title "Customer" --text "The Customer.";
 description add-field-description --onProperty customer --title "Client" --text "Le client." --locale fr;
-association set-selection-mode --onProperty customer --selectionMode FORWARD;
+association set-selection-mode --onProperty customer --selectionMode COMBOBOX;
 association set-type --onProperty customer --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field customer.fullName;
 display add-toString-field --field customer.fullName;
@@ -3349,7 +3356,7 @@ description add-class-description  --locale fr --title "Ordonnancier" --text "Or
 field manyToOne --named prescriber --fieldType ~.jpa.Prescriber;
 description add-field-description --onProperty prescriber --title "Prescriber" --text "The doctor who prescribed the order.";
 description add-field-description --onProperty prescriber --title "Prescripteur" --text "Le medecin ayant prescrit de cet ordonnance." --locale fr;
-association set-selection-mode --onProperty prescriber --selectionMode FORWARD;
+association set-selection-mode --onProperty prescriber --selectionMode COMBOBOX;
 association set-type --onProperty prescriber --type AGGREGATION --targetEntity ~.jpa.Prescriber;
 display add-list-field --field prescriber.name;
 constraint NotNull --onProperty prescriber;
@@ -3359,7 +3366,7 @@ description add-notNull-message --onProperty prescriber --title "Le prescripteur
 field manyToOne --named hospital --fieldType ~.jpa.Hospital;
 description add-field-description --onProperty hospital --title "Hospital" --text "The hospital subjet of this prescription.";
 description add-field-description --onProperty hospital --title "Hopital" --text "Cet hopital ayant prescrit l ordonnance." --locale fr;
-association set-selection-mode --onProperty hospital --selectionMode FORWARD;
+association set-selection-mode --onProperty hospital --selectionMode COMBOBOX;
 association set-type --onProperty hospital --type AGGREGATION --targetEntity ~.jpa.Hospital;
 display add-list-field --field hospital.name;
 constraint NotNull --onProperty hospital;

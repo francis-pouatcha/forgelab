@@ -51,8 +51,10 @@ public abstract class InventoryRecordingUserController
    {
    }
 
-   protected void bind(final InventoryRecordingUserSelection selection)
+   protected void bind(final InventoryRecordingUserSelection selection, final InventoryRecordingUserForm form)
    {
+
+      //	    selection.getRecordingUser().valueProperty().bindBidirectional(sourceEntity.recordingUserProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class InventoryRecordingUserController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getRecordingUser().getItems().clear();
-            selection.getRecordingUser().getItems().addAll(entities);
+            selection.getRecordingUser().getItems().add(new InventoryRecordingUser());
+            for (Login entity : entities)
+            {
+               selection.getRecordingUser().getItems().add(new InventoryRecordingUser(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class InventoryRecordingUserController
                }
             });
 
-      selection.getRecordingUser().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getRecordingUser().valueProperty().addListener(new ChangeListener<InventoryRecordingUser>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends InventoryRecordingUser> ov, InventoryRecordingUser oldValue,
+               InventoryRecordingUser newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setRecordingUser(new InventoryRecordingUser(newValue));
+               form.update(newValue);
+            //                sourceEntity.setRecordingUser(newValue);
          }
       });
 

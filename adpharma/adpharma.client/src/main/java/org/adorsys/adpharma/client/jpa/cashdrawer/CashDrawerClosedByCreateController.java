@@ -22,7 +22,7 @@ public class CashDrawerClosedByCreateController extends CashDrawerClosedByContro
    public void handleNewModelEvent(@Observes @CreateModelEvent CashDrawer model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCashDrawerClosedBySelection());
+      bind(createView.getView().getCashDrawerClosedBySelection(), createView.getView().getCashDrawerClosedByForm());
       activateButton(createView.getView().getCashDrawerClosedBySelection());
    }
 }

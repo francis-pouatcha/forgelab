@@ -23,6 +23,6 @@ public class PrescriptionBookHospitalEditController extends PrescriptionBookHosp
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getPrescriptionBookHospitalSelection());
-      bind(editView.getView().getPrescriptionBookHospitalSelection());
+      bind(editView.getView().getPrescriptionBookHospitalSelection(), editView.getView().getPrescriptionBookHospitalForm());
    }
 }

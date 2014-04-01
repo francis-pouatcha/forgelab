@@ -22,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Insurrance_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerInvoiceInsurance implements Association<CustomerInvoice, Insurrance>
+public class CustomerInvoiceInsurance implements Association<CustomerInvoice, Insurrance>, Cloneable
 {
 
    private Long id;
@@ -128,25 +128,36 @@ public class CustomerInvoiceInsurance implements Association<CustomerInvoice, In
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerInvoiceInsurance other = (CustomerInvoiceInsurance) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerInvoiceInsurance other = (CustomerInvoiceInsurance) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "fullName", "fullName", "coverageRate");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerInvoiceInsurance a = new CustomerInvoiceInsurance();
+      a.id = id;
+      a.version = version;
+
+      a.coverageRate = coverageRate;
+      a.beginDate = beginDate;
+      a.endDate = endDate;
+      return a;
+   }
+
 }

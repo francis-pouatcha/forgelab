@@ -2,10 +2,7 @@ package org.adorsys.adpharma.server.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.jpamodelgen.xml.jaxb.Entity;
 
 /**
  * Holds an entity and corresponding field descriptions 
@@ -21,7 +18,7 @@ public class LoginSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Login entity = new Login();
+   private Login entity;
 
    /**
     * The start cursor

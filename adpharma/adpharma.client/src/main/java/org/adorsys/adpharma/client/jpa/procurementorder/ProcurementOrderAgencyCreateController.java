@@ -22,7 +22,7 @@ public class ProcurementOrderAgencyCreateController extends ProcurementOrderAgen
    public void handleNewModelEvent(@Observes @CreateModelEvent ProcurementOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getProcurementOrderAgencySelection());
+      bind(createView.getView().getProcurementOrderAgencySelection(), createView.getView().getProcurementOrderAgencyForm());
       activateButton(createView.getView().getProcurementOrderAgencySelection());
    }
 }

@@ -23,6 +23,6 @@ public class SalesOrderCashDrawerEditController extends SalesOrderCashDrawerCont
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSalesOrderCashDrawerSelection());
-      bind(editView.getView().getSalesOrderCashDrawerSelection());
+      bind(editView.getView().getSalesOrderCashDrawerSelection(), editView.getView().getSalesOrderCashDrawerForm());
    }
 }

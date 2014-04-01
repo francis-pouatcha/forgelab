@@ -1,16 +1,21 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
+import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -19,110 +24,115 @@ import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderLoadService;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 
 public abstract class PrescriptionBookSalesOrderController
 {
-   @Inject
-   private SalesOrderSearchService searchService;
-   @Inject
-   private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
-
-   private SalesOrderSearchResult targetSearchResult;
-
-   @Inject
-   @Bundle({ CrudKeys.class, SalesOrder.class, PrescriptionBook.class })
-   private ResourceBundle resourceBundle;
-
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
 
    protected PrescriptionBook sourceEntity;
 
-   protected void disableButton(final PrescriptionBookSalesOrderSelection selection)
+   @Inject
+   private SalesOrderLoadService loadService;
+   @Inject
+   private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
+
+   @Inject
+   private ErrorMessageDialog loadErrorMessageDialog;
+
+   @Inject
+   @AssocSelectionRequestEvent
+   private Event<PrescriptionBookSalesOrderSelectionEventData> selectionRequestEvent;
+
+   private PrescriptionBookSalesOrderSelectionEventData pendingSelectionRequest;
+
+   @Inject
+   @ComponentSelectionRequestEvent
+   private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+
+   @Inject
+   @Bundle(CrudKeys.class)
+   private ResourceBundle resourceBundle;
+
+   protected void disableButton(final PrescriptionBookSalesOrderSelection selection, final PrescriptionBookSalesOrderForm form)
    {
-      selection.getSalesOrder().setDisable(true);
+      selection.getSelectButton().setDisable(true);
    }
 
-   protected void activateButton(final PrescriptionBookSalesOrderSelection selection)
+   protected void activateButton(final PrescriptionBookSalesOrderSelection selection, final PrescriptionBookSalesOrderForm form)
    {
    }
 
-   protected void bind(final PrescriptionBookSalesOrderSelection selection)
+   protected void bind(final PrescriptionBookSalesOrderSelection selection, final PrescriptionBookSalesOrderForm form)
    {
-
-      // send search result event.
-      searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            SalesOrderSearchService s = (SalesOrderSearchService) event
-                  .getSource();
-            targetSearchResult = s.getValue();
-            event.consume();
-            s.reset();
-            List<SalesOrder> entities = targetSearchResult.getResultList();
-            selection.getSalesOrder().getItems().clear();
-            selection.getSalesOrder().getItems().addAll(entities);
-         }
-      });
-      searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_search_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      searchService.setOnFailed(searchServiceCallFailedEventHandler);
-
-      errorMessageDialog.getOkButton().setOnAction(
+      selection.getSelectButton().setOnAction(
             new EventHandler<ActionEvent>()
             {
                @Override
                public void handle(ActionEvent event)
                {
-                  errorMessageDialog.closeDialog();
+                  pendingSelectionRequest = new PrescriptionBookSalesOrderSelectionEventData(
+                        UUID.randomUUID().toString(), sourceEntity, null);
+                  selectionRequestEvent.fire(pendingSelectionRequest);
                }
             });
 
-      selection.getSalesOrder().valueProperty().addListener(new ChangeListener<SalesOrder>()
+      // Handle edit canceld, reloading entity
+      loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
       {
          @Override
-         public void changed(ObservableValue<? extends SalesOrder> ov, SalesOrder oldValue,
-               SalesOrder newValue)
+         public void handle(WorkerStateEvent event)
          {
-            if (sourceEntity != null)
-               sourceEntity.setSalesOrder(new PrescriptionBookSalesOrder(newValue));
+            SalesOrderLoadService s = (SalesOrderLoadService) event.getSource();
+            SalesOrder entity = s.getValue();
+            event.consume();
+            s.reset();
+            sourceEntity.setSalesOrder(new PrescriptionBookSalesOrder(entity));
          }
       });
-
-      selection.getSalesOrder().armedProperty().addListener(new ChangeListener<Boolean>()
+      loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
       {
-
          @Override
-         public void changed(ObservableValue<? extends Boolean> observableValue,
-               Boolean oldValue, Boolean newValue)
+         protected void showError(Throwable exception)
          {
-            if (newValue)
-               load();
+            String message = exception.getMessage();
+            loadErrorMessageDialog.getTitleText().setText(
+                  resourceBundle.getString("Entity_load_error.title"));
+            if (!StringUtils.isBlank(message))
+               loadErrorMessageDialog.getDetailText().setText(message);
+            loadErrorMessageDialog.display();
          }
-
       });
+      loadService.setOnFailed(loadServiceCallFailedEventHandler);
+      loadErrorMessageDialog.getOkButton().setOnAction(
+            new EventHandler<ActionEvent>()
+            {
+               @Override
+               public void handle(ActionEvent event)
+               {
+                  loadErrorMessageDialog.closeDialog();
+               }
+            });
+
    }
 
-   public void load()
+   public void handleAssocSelectionResponseEvent(@Observes @AssocSelectionResponseEvent PrescriptionBookSalesOrderSelectionEventData eventData)
    {
-      searchService.setSearchInputs(new SalesOrderSearchInput()).start();
+      if (eventData != null && pendingSelectionRequest != null && eventData.getId().equals(pendingSelectionRequest.getId())
+            && eventData.getSourceEntity() == sourceEntity && eventData.getTargetEntity() != null)
+      {
+         if (sourceEntity != null)
+            sourceEntity.setSalesOrder(new PrescriptionBookSalesOrder(eventData.getTargetEntity()));
+      }
+      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(PrescriptionBook.class.getName()));
+   }
+
+   /*
+    * Only load if you need more fields than the one specified in the
+    * association
+    */
+   protected void loadAssociation()
+   {
    }
 
 }

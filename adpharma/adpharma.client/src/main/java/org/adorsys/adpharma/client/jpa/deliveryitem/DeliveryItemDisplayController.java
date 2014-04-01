@@ -62,9 +62,15 @@ public class DeliveryItemDisplayController implements EntityController
 
    private DeliveryItem displayedEntity;
 
+   @Inject
+   private DeliveryItemRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

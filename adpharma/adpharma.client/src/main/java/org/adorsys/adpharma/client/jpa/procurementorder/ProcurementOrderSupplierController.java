@@ -51,8 +51,10 @@ public abstract class ProcurementOrderSupplierController
    {
    }
 
-   protected void bind(final ProcurementOrderSupplierSelection selection)
+   protected void bind(final ProcurementOrderSupplierSelection selection, final ProcurementOrderSupplierForm form)
    {
+
+      //	    selection.getSupplier().valueProperty().bindBidirectional(sourceEntity.supplierProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ProcurementOrderSupplierController
             s.reset();
             List<Supplier> entities = targetSearchResult.getResultList();
             selection.getSupplier().getItems().clear();
-            selection.getSupplier().getItems().addAll(entities);
+            selection.getSupplier().getItems().add(new ProcurementOrderSupplier());
+            for (Supplier entity : entities)
+            {
+               selection.getSupplier().getItems().add(new ProcurementOrderSupplier(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ProcurementOrderSupplierController
                }
             });
 
-      selection.getSupplier().valueProperty().addListener(new ChangeListener<Supplier>()
+      selection.getSupplier().valueProperty().addListener(new ChangeListener<ProcurementOrderSupplier>()
       {
          @Override
-         public void changed(ObservableValue<? extends Supplier> ov, Supplier oldValue,
-               Supplier newValue)
+         public void changed(ObservableValue<? extends ProcurementOrderSupplier> ov, ProcurementOrderSupplier oldValue,
+               ProcurementOrderSupplier newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setSupplier(new ProcurementOrderSupplier(newValue));
+               form.update(newValue);
+            //                sourceEntity.setSupplier(newValue);
          }
       });
 

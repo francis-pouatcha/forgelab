@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javax.annotation.PostConstruct;

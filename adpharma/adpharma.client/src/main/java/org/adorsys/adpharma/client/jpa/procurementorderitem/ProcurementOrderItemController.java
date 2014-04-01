@@ -59,6 +59,9 @@ public class ProcurementOrderItemController extends DomainComponentController
    private ProcurementOrderItem searchModel = new ProcurementOrderItem();
    private ProcurementOrderItem selectedModel = new ProcurementOrderItem();
 
+   @Inject
+   private ProcurementOrderItemRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class ProcurementOrderItemController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<ProcurementOrderItem> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class ProcurementOrderItemController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent ProcurementOrderItem selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of procurementOrderItems.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class ProcurementOrderItemController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent ProcurementOrderItem selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class ProcurementOrderItemController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent ProcurementOrderItem templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class ProcurementOrderItemController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent ProcurementOrderItem selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

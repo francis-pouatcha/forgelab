@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 public class CustomerInvoiceSalesOrderSelection extends AbstractSelection<CustomerInvoice, SalesOrder>
 {
 
-   private ComboBox<SalesOrder> salesOrder;
+   private ComboBox<CustomerInvoiceSalesOrder> salesOrder;
 
    @Inject
    @Bundle({ CrudKeys.class, SalesOrder.class, CustomerInvoice.class })
@@ -39,10 +39,10 @@ public class CustomerInvoiceSalesOrderSelection extends AbstractSelection<Custom
 
       salesOrder = viewBuilder.addComboBox("CustomerInvoice_salesOrder_description.title", "salesOrder", resourceBundle, false);
 
-      salesOrder.setCellFactory(new Callback<ListView<SalesOrder>, ListCell<SalesOrder>>()
+      salesOrder.setCellFactory(new Callback<ListView<CustomerInvoiceSalesOrder>, ListCell<CustomerInvoiceSalesOrder>>()
       {
          @Override
-         public ListCell<SalesOrder> call(ListView<SalesOrder> listView)
+         public ListCell<CustomerInvoiceSalesOrder> call(ListView<CustomerInvoiceSalesOrder> listView)
          {
             return new CustomerInvoiceSalesOrderListCell();
          }
@@ -54,9 +54,10 @@ public class CustomerInvoiceSalesOrderSelection extends AbstractSelection<Custom
 
    public void bind(CustomerInvoice model)
    {
+      salesOrder.valueProperty().bindBidirectional(model.salesOrderProperty());
    }
 
-   public ComboBox<SalesOrder> getSalesOrder()
+   public ComboBox<CustomerInvoiceSalesOrder> getSalesOrder()
    {
       return salesOrder;
    }

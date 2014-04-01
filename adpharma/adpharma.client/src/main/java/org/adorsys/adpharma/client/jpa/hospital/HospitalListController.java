@@ -58,9 +58,14 @@ public class HospitalListController implements EntityController
 
    private HospitalSearchResult searchResult;
 
+   @Inject
+   private HospitalRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Hospital>()
             {

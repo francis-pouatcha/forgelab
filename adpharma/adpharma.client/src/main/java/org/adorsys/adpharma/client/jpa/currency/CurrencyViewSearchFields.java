@@ -13,6 +13,8 @@ import javafx.scene.control.TextField;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
 
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;

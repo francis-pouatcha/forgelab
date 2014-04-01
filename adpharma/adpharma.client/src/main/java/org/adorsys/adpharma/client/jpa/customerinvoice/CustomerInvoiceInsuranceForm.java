@@ -64,6 +64,13 @@ public class CustomerInvoiceInsuranceForm extends AbstractToOneAssociation<Custo
       endDate.calendarProperty().bindBidirectional(model.getInsurance().endDateProperty());
    }
 
+   public void update(CustomerInvoiceInsurance data)
+   {
+      coverageRate.numberProperty().set(data.coverageRateProperty().get());
+      beginDate.calendarProperty().set(data.beginDateProperty().get());
+      endDate.calendarProperty().set(data.endDateProperty().get());
+   }
+
    public BigDecimalField getCoverageRate()
    {
       return coverageRate;

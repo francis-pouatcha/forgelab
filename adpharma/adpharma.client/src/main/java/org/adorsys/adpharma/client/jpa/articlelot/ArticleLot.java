@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -34,7 +36,7 @@ import org.adorsys.javaext.display.ToStringField;
       "salesPricePU", "purchasePricePU", "totalPurchasePrice",
       "totalSalePrice" })
 @ToStringField({ "articleName", "article.articleName" })
-public class ArticleLot
+public class ArticleLot implements Cloneable
 {
 
    private Long id;
@@ -72,7 +74,7 @@ public class ArticleLot
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<ArticleLotAgency> agency;
    @Description("ArticleLot_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<ArticleLotArticle> article;
 
    public Long getId()
@@ -331,6 +333,7 @@ public class ArticleLot
          agency = new ArticleLotAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<ArticleLotArticle> articleProperty()
@@ -355,6 +358,7 @@ public class ArticleLot
          article = new ArticleLotArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    @Override
@@ -387,5 +391,34 @@ public class ArticleLot
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "articleName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleLot e = new ArticleLot();
+      e.id = id;
+      e.version = version;
+
+      e.internalPic = internalPic;
+      e.mainPic = mainPic;
+      e.secondaryPic = secondaryPic;
+      e.articleName = articleName;
+      e.stockQuantity = stockQuantity;
+      e.salesPricePU = salesPricePU;
+      e.purchasePricePU = purchasePricePU;
+      e.totalPurchasePrice = totalPurchasePrice;
+      e.totalSalePrice = totalSalePrice;
+      e.expirationDate = expirationDate;
+      e.creationDate = creationDate;
+      e.agency = agency;
+      e.article = article;
+      return e;
    }
 }

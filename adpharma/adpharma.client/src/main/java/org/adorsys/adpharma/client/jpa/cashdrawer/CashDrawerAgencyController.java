@@ -51,8 +51,10 @@ public abstract class CashDrawerAgencyController
    {
    }
 
-   protected void bind(final CashDrawerAgencySelection selection)
+   protected void bind(final CashDrawerAgencySelection selection, final CashDrawerAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CashDrawerAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new CashDrawerAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new CashDrawerAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CashDrawerAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<CashDrawerAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends CashDrawerAgency> ov, CashDrawerAgency oldValue,
+               CashDrawerAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new CashDrawerAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

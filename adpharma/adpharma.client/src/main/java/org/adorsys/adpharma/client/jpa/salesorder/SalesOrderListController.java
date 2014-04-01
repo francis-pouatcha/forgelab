@@ -7,12 +7,10 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -32,11 +30,8 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
-import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
-import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class SalesOrderListController implements EntityController
@@ -54,47 +49,23 @@ public class SalesOrderListController implements EntityController
    private Event<SalesOrder> searchRequestedEvent;
 
    @Inject
-   @EntitySelectionEvent
+   @EntityCreateRequestedEvent
    private Event<SalesOrder> createRequestedEvent;
 
    @Inject
    @EntityListPageIndexChangedEvent
    private Event<SalesOrderSearchResult> entityListPageIndexChangedEvent;
-   
-   @Inject
-   private SalesOrderCreateService salesOrderCreateService;
-   
-   @Inject
-   private ServiceCallFailedEventHandler callFailedEventHandler;
 
    private SalesOrderSearchResult searchResult;
+
+   @Inject
+   private SalesOrderRegistration registration;
 
    @PostConstruct
    public void postConstruct()
    {
-	   callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-		
-		@Override
-		protected void showError(Throwable exception) {
-			Dialogs.create().nativeTitleBar().showException(exception);
-			
-		}
-	});
-//	   create sales order
-	   salesOrderCreateService.setOnFailed(callFailedEventHandler);
-	   salesOrderCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-	      {
-	         @Override
-	         public void handle(WorkerStateEvent event)
-	         {
-	            SalesOrderCreateService s = (SalesOrderCreateService) event.getSource();
-	            SalesOrder ent = s.getValue();
-	            event.consume();
-	            s.reset();
-	            selectionEvent.fire(ent);
-	         }
-	      });
-	   
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<SalesOrder>()
             {
@@ -128,8 +99,10 @@ public class SalesOrderListController implements EntityController
          @Override
          public void handle(ActionEvent e)
          {
-            SalesOrder salesOrder = new SalesOrder();
-            salesOrderCreateService.setModel(salesOrder).start();
+            SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+            if (selectedItem == null)
+               selectedItem = new SalesOrder();
+            createRequestedEvent.fire(selectedItem);
          }
       });
 
@@ -158,7 +131,7 @@ public class SalesOrderListController implements EntityController
    @Override
    public void display(Pane parent)
    {
-      BorderPane rootPane = listView.getRootPane();
+      AnchorPane rootPane = listView.getRootPane();
       ObservableList<Node> children = parent.getChildren();
       if (!children.contains(rootPane))
       {

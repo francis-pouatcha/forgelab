@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class PrescriptionBookSalesOrderDisplayController extends PrescriptionBoo
    public void handleNewModelEvent(@Observes @SelectedModelEvent PrescriptionBook model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getPrescriptionBookSalesOrderSelection());
+      disableButton(displayView.getView().getPrescriptionBookSalesOrderSelection(), displayView.getView().getPrescriptionBookSalesOrderForm());
+      bind(displayView.getView().getPrescriptionBookSalesOrderSelection(), displayView.getView().getPrescriptionBookSalesOrderForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent PrescriptionBook selectedEntity)
+   {
+      loadAssociation();
    }
 }

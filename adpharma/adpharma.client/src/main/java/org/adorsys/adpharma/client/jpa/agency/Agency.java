@@ -13,11 +13,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+import javax.validation.constraints.Size;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
@@ -28,7 +30,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "agencyNumber", "name" })
 @ListField({ "agencyNumber", "name", "active", "name", "name", "phone", "fax" })
-public class Agency
+public class Agency implements Cloneable
 {
 
    private Long id;
@@ -38,8 +40,6 @@ public class Agency
    private SimpleStringProperty agencyNumber;
    @Description("Agency_name_description")
    private SimpleStringProperty name;
-   @Description("Agency_description_description")
-   private SimpleStringProperty description;
    @Description("Agency_active_description")
    private SimpleBooleanProperty active;
    @Description("Agency_street_description")
@@ -122,26 +122,6 @@ public class Agency
    public final void setName(String name)
    {
       this.nameProperty().set(name);
-   }
-
-   public SimpleStringProperty descriptionProperty()
-   {
-      if (description == null)
-      {
-         description = new SimpleStringProperty();
-      }
-      return description;
-   }
-
-   @Size(max = 256, message = "Agency_description_Size_validation")
-   public String getDescription()
-   {
-      return descriptionProperty().get();
-   }
-
-   public final void setDescription(String description)
-   {
-      this.descriptionProperty().set(description);
    }
 
    public SimpleBooleanProperty activeProperty()
@@ -359,6 +339,7 @@ public class Agency
          company = new AgencyCompany();
       }
       PropertyReader.copy(company, getCompany());
+      companyProperty().setValue(ObjectUtils.clone(getCompany()));
    }
 
    @Override
@@ -391,5 +372,34 @@ public class Agency
    public String toString()
    {
       return PropertyReader.buildToString(this, "agencyNumber", "name");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Agency e = new Agency();
+      e.id = id;
+      e.version = version;
+
+      e.agencyNumber = agencyNumber;
+      e.name = name;
+      e.active = active;
+      e.street = street;
+      e.zipCode = zipCode;
+      e.city = city;
+      e.country = country;
+      e.phone = phone;
+      e.fax = fax;
+      e.ticketMessage = ticketMessage;
+      e.invoiceMessage = invoiceMessage;
+      e.recordingDate = recordingDate;
+      e.company = company;
+      return e;
    }
 }

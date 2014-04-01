@@ -10,10 +10,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
 import org.adorsys.javafx.crud.extensions.ViewModel;
+import javafx.scene.control.TextArea;
 import java.util.Locale;
 import jfxtras.scene.control.CalendarTextField;
 

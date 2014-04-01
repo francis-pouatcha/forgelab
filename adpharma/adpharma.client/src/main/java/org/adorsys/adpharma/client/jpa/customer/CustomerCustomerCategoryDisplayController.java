@@ -27,5 +27,6 @@ public class CustomerCustomerCategoryDisplayController extends CustomerCustomerC
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerCustomerCategorySelection());
+      bind(displayView.getView().getCustomerCustomerCategorySelection(), displayView.getView().getCustomerCustomerCategoryForm());
    }
 }

@@ -27,5 +27,6 @@ public class ArticleDefaultSalesMarginDisplayController extends ArticleDefaultSa
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleDefaultSalesMarginSelection());
+      bind(displayView.getView().getArticleDefaultSalesMarginSelection(), displayView.getView().getArticleDefaultSalesMarginForm());
    }
 }

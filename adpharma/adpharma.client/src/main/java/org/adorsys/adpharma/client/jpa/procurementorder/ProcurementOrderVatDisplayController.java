@@ -27,5 +27,6 @@ public class ProcurementOrderVatDisplayController extends ProcurementOrderVatCon
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getProcurementOrderVatSelection());
+      bind(displayView.getView().getProcurementOrderVatSelection(), displayView.getView().getProcurementOrderVatForm());
    }
 }

@@ -51,8 +51,10 @@ public abstract class CustomerCustomerCategoryController
    {
    }
 
-   protected void bind(final CustomerCustomerCategorySelection selection)
+   protected void bind(final CustomerCustomerCategorySelection selection, final CustomerCustomerCategoryForm form)
    {
+
+      //	    selection.getCustomerCategory().valueProperty().bindBidirectional(sourceEntity.customerCategoryProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CustomerCustomerCategoryController
             s.reset();
             List<CustomerCategory> entities = targetSearchResult.getResultList();
             selection.getCustomerCategory().getItems().clear();
-            selection.getCustomerCategory().getItems().addAll(entities);
+            selection.getCustomerCategory().getItems().add(new CustomerCustomerCategory());
+            for (CustomerCategory entity : entities)
+            {
+               selection.getCustomerCategory().getItems().add(new CustomerCustomerCategory(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CustomerCustomerCategoryController
                }
             });
 
-      selection.getCustomerCategory().valueProperty().addListener(new ChangeListener<CustomerCategory>()
+      selection.getCustomerCategory().valueProperty().addListener(new ChangeListener<CustomerCustomerCategory>()
       {
          @Override
-         public void changed(ObservableValue<? extends CustomerCategory> ov, CustomerCategory oldValue,
-               CustomerCategory newValue)
+         public void changed(ObservableValue<? extends CustomerCustomerCategory> ov, CustomerCustomerCategory oldValue,
+               CustomerCustomerCategory newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCustomerCategory(new CustomerCustomerCategory(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCustomerCategory(newValue);
          }
       });
 

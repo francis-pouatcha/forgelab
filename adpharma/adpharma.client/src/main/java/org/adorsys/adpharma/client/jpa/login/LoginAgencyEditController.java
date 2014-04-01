@@ -23,6 +23,6 @@ public class LoginAgencyEditController extends LoginAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getLoginAgencySelection());
-      bind(editView.getView().getLoginAgencySelection());
+      bind(editView.getView().getLoginAgencySelection(), editView.getView().getLoginAgencyForm());
    }
 }

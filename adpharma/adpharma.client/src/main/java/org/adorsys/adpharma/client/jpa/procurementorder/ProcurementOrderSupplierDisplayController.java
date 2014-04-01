@@ -27,5 +27,6 @@ public class ProcurementOrderSupplierDisplayController extends ProcurementOrderS
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getProcurementOrderSupplierSelection());
+      bind(displayView.getView().getProcurementOrderSupplierSelection(), displayView.getView().getProcurementOrderSupplierForm());
    }
 }

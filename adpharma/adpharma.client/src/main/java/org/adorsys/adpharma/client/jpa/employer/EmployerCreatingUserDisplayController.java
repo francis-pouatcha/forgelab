@@ -27,5 +27,6 @@ public class EmployerCreatingUserDisplayController extends EmployerCreatingUserC
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getEmployerCreatingUserSelection());
+      bind(displayView.getView().getEmployerCreatingUserSelection(), displayView.getView().getEmployerCreatingUserForm());
    }
 }

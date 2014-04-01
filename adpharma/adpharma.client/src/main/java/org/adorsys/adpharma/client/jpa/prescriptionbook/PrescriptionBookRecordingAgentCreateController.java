@@ -22,7 +22,7 @@ public class PrescriptionBookRecordingAgentCreateController extends Prescription
    public void handleNewModelEvent(@Observes @CreateModelEvent PrescriptionBook model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getPrescriptionBookRecordingAgentSelection());
+      bind(createView.getView().getPrescriptionBookRecordingAgentSelection(), createView.getView().getPrescriptionBookRecordingAgentForm());
       activateButton(createView.getView().getPrescriptionBookRecordingAgentSelection());
    }
 }

@@ -22,7 +22,7 @@ public class LoginAgencyCreateController extends LoginAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Login model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getLoginAgencySelection());
+      bind(createView.getView().getLoginAgencySelection(), createView.getView().getLoginAgencyForm());
       activateButton(createView.getView().getLoginAgencySelection());
    }
 }

@@ -43,7 +43,7 @@ public class CustomerInvoiceItem implements Serializable
 
    @ManyToOne
    @Description("CustomerInvoiceItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private Article article;
 
    @Column

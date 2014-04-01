@@ -1,17 +1,12 @@
 package org.adorsys.adpharma.client.jpa.deliveryitem;
 
 import java.util.Calendar;
-
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-
 import org.adorsys.adpharma.client.jpa.article.Article;
-
 import java.math.BigDecimal;
-
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,11 +14,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.javaext.format.DateFormatPattern;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.adorsys.javaext.format.DateFormatPattern;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
-
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -41,7 +36,7 @@ import org.adorsys.javaext.display.ToStringField;
 	"stockQuantity", "salesPricePU", "purchasePricePU",
 "totalPurchasePrice" })
 @ToStringField({ "articleName", "article.articleName", "qtyOrdered" })
-public class DeliveryItem
+public class DeliveryItem implements Cloneable
 {
 
 	private Long id;
@@ -82,7 +77,7 @@ public class DeliveryItem
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = Delivery.class)
 	private SimpleObjectProperty<DeliveryItemDelivery> delivery;
 	@Description("DeliveryItem_article_description")
-	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
 	private SimpleObjectProperty<DeliveryItemArticle> article;
 	@Description("DeliveryItem_creatingUser_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
@@ -92,19 +87,18 @@ public class DeliveryItem
 		DeliveryItem deliveryItem = new DeliveryItem();	
 		deliveryItem.setMainPic(article.getPic());
 		deliveryItem.setSecondaryPic(article.getPic());
+		deliveryItem.setInternalPic(article.getPic());
 		deliveryItem.setArticleName(article.getArticleName());
 		deliveryItem.setArticle(new DeliveryItemArticle(article));
 		deliveryItem.setPurchasePricePU(article.getPppu());
 		deliveryItem.setSalesPricePU(article.getSppu());
 		return deliveryItem;
 	}
-	
 	public void calculateTotalAmout(){
 		BigDecimal pppu = purchasePricePU.get();
 		pppu = pppu.multiply(stockQuantity.get().subtract(freeQuantity.get()));
 		totalPurchasePrice.set(pppu);
 	}
-
 	public Long getId()
 	{
 		return id;
@@ -343,7 +337,7 @@ public class DeliveryItem
 	{
 		if (creationDate == null)
 		{
-			creationDate = new SimpleObjectProperty<Calendar>();
+			creationDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
 		}
 		return creationDate;
 	}
@@ -362,7 +356,7 @@ public class DeliveryItem
 	{
 		if (expirationDate == null)
 		{
-			expirationDate = new SimpleObjectProperty<Calendar>();
+			expirationDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
 		}
 		return expirationDate;
 	}
@@ -398,6 +392,7 @@ public class DeliveryItem
 			delivery = new DeliveryItemDelivery();
 		}
 		PropertyReader.copy(delivery, getDelivery());
+		deliveryProperty().setValue(ObjectUtils.clone(getDelivery()));
 	}
 
 	public SimpleObjectProperty<DeliveryItemArticle> articleProperty()
@@ -422,6 +417,7 @@ public class DeliveryItem
 			article = new DeliveryItemArticle();
 		}
 		PropertyReader.copy(article, getArticle());
+		articleProperty().setValue(ObjectUtils.clone(getArticle()));
 	}
 
 	public SimpleObjectProperty<DeliveryItemCreatingUser> creatingUserProperty()
@@ -446,6 +442,7 @@ public class DeliveryItem
 			creatingUser = new DeliveryItemCreatingUser();
 		}
 		PropertyReader.copy(creatingUser, getCreatingUser());
+		creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
 	}
 
 	@Override
@@ -477,6 +474,41 @@ public class DeliveryItem
 
 	public String toString()
 	{
-		return PropertyReader.buildToString(this, "articleName", "articleName", "qtyOrdered");
+		return PropertyReader.buildToString(this, "articleName", "internalPic");
+	}
+
+	public void cleanIds()
+	{
+		id = null;
+		version = 0;
+		DeliveryItemDelivery f = delivery.get();
+		f.setId(null);
+		f.setVersion(0);
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		DeliveryItem e = new DeliveryItem();
+		e.id = id;
+		e.version = version;
+
+		e.internalPic = internalPic;
+		e.mainPic = mainPic;
+		e.secondaryPic = secondaryPic;
+		e.articleName = articleName;
+		e.qtyOrdered = qtyOrdered;
+		e.availableQty = availableQty;
+		e.freeQuantity = freeQuantity;
+		e.stockQuantity = stockQuantity;
+		e.salesPricePU = salesPricePU;
+		e.purchasePricePU = purchasePricePU;
+		e.totalPurchasePrice = totalPurchasePrice;
+		e.creationDate = creationDate;
+		e.expirationDate = expirationDate;
+		e.delivery = delivery;
+		e.article = article;
+		e.creatingUser = creatingUser;
+		return e;
 	}
 }

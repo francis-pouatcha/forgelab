@@ -43,6 +43,11 @@ public class ArticlePackagingModeForm extends AbstractToOneAssociation<Article, 
       name.textProperty().bindBidirectional(model.getPackagingMode().nameProperty());
    }
 
+   public void update(ArticlePackagingMode data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

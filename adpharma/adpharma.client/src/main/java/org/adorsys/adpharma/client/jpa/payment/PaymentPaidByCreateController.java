@@ -22,7 +22,7 @@ public class PaymentPaidByCreateController extends PaymentPaidByController
    public void handleNewModelEvent(@Observes @CreateModelEvent Payment model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getPaymentPaidBySelection());
-      activateButton(createView.getView().getPaymentPaidBySelection());
+      activateButton(createView.getView().getPaymentPaidBySelection(), createView.getView().getPaymentPaidByForm());
+      bind(createView.getView().getPaymentPaidBySelection(), createView.getView().getPaymentPaidByForm());
    }
 }

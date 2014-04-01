@@ -37,7 +37,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("CustomerInvoice_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerInvoiceItemInvoice implements Association<CustomerInvoiceItem, CustomerInvoice>
+public class CustomerInvoiceItemInvoice implements Association<CustomerInvoiceItem, CustomerInvoice>, Cloneable
 {
 
    private Long id;
@@ -48,7 +48,7 @@ public class CustomerInvoiceItemInvoice implements Association<CustomerInvoiceIt
    private SimpleBooleanProperty cashed;
    private SimpleObjectProperty<InvoiceType> invoiceType;
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
-   private SimpleObjectProperty<BigDecimal> amountVAT;
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    private SimpleObjectProperty<BigDecimal> amountDiscount;
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
    private SimpleObjectProperty<BigDecimal> netToPay;
@@ -186,23 +186,23 @@ public class CustomerInvoiceItemInvoice implements Association<CustomerInvoiceIt
       this.amountBeforeTaxProperty().set(amountBeforeTax);
    }
 
-   public SimpleObjectProperty<BigDecimal> amountVATProperty()
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
    {
-      if (amountVAT == null)
+      if (taxAmount == null)
       {
-         amountVAT = new SimpleObjectProperty<BigDecimal>();
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
       }
-      return amountVAT;
+      return taxAmount;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return amountVATProperty().get();
+      return taxAmountProperty().get();
    }
 
-   public final void setAmountVAT(BigDecimal amountVAT)
+   public final void setTaxAmount(BigDecimal taxAmount)
    {
-      this.amountVATProperty().set(amountVAT);
+      this.taxAmountProperty().set(taxAmount);
    }
 
    public SimpleObjectProperty<BigDecimal> amountDiscountProperty()
@@ -367,25 +367,47 @@ public class CustomerInvoiceItemInvoice implements Association<CustomerInvoiceIt
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerInvoiceItemInvoice other = (CustomerInvoiceItemInvoice) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerInvoiceItemInvoice other = (CustomerInvoiceItemInvoice) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "invoiceNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerInvoiceItemInvoice a = new CustomerInvoiceItemInvoice();
+      a.id = id;
+      a.version = version;
+
+      a.invoiceNumber = invoiceNumber;
+      a.settled = settled;
+      a.cashed = cashed;
+      a.invoiceType = invoiceType;
+      a.amountBeforeTax = amountBeforeTax;
+      a.taxAmount = taxAmount;
+      a.amountDiscount = amountDiscount;
+      a.amountAfterTax = amountAfterTax;
+      a.netToPay = netToPay;
+      a.customerRestTopay = customerRestTopay;
+      a.insurranceRestTopay = insurranceRestTopay;
+      a.advancePayment = advancePayment;
+      a.totalRestToPay = totalRestToPay;
+      a.creationDate = creationDate;
+      return a;
+   }
+
 }

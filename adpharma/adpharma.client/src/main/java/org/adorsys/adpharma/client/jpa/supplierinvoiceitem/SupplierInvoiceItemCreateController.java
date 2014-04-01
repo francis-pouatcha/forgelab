@@ -165,6 +165,7 @@ public class SupplierInvoiceItemCreateController implements EntityController
    public void display(Pane parent)
    {
       createView.getView().validate(model);
+
       AnchorPane rootPane = createView.getRootPane();
       ObservableList<Node> children = parent.getChildren();
       if (!children.contains(rootPane))
@@ -187,7 +188,8 @@ public class SupplierInvoiceItemCreateController implements EntityController
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent SupplierInvoiceItem templateEntity)
    {
       PropertyReader.copy(templateEntity, model);
-      PropertyReader.cleanIds(model, new HashSet<Object>());
+      // PropertyReader.cleanIds(model, new HashSet<Object>());
+      model.cleanIds();
    }
 
    /**

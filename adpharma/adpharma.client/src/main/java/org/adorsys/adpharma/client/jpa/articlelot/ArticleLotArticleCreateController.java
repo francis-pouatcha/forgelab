@@ -22,7 +22,7 @@ public class ArticleLotArticleCreateController extends ArticleLotArticleControll
    public void handleNewModelEvent(@Observes @CreateModelEvent ArticleLot model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleLotArticleSelection());
-      activateButton(createView.getView().getArticleLotArticleSelection());
+      activateButton(createView.getView().getArticleLotArticleSelection(), createView.getView().getArticleLotArticleForm());
+      bind(createView.getView().getArticleLotArticleSelection(), createView.getView().getArticleLotArticleForm());
    }
 }

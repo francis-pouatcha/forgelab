@@ -22,7 +22,7 @@ public class DeliveryItemArticleCreateController extends DeliveryItemArticleCont
    public void handleNewModelEvent(@Observes @CreateModelEvent DeliveryItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliveryItemArticleSelection());
-      activateButton(createView.getView().getDeliveryItemArticleSelection());
+      activateButton(createView.getView().getDeliveryItemArticleSelection(), createView.getView().getDeliveryItemArticleForm());
+      bind(createView.getView().getDeliveryItemArticleSelection(), createView.getView().getDeliveryItemArticleForm());
    }
 }

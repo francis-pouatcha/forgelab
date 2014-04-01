@@ -27,5 +27,6 @@ public class InventoryItemRecordingUserDisplayController extends InventoryItemRe
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getInventoryItemRecordingUserSelection());
+      bind(displayView.getView().getInventoryItemRecordingUserSelection(), displayView.getView().getInventoryItemRecordingUserForm());
    }
 }

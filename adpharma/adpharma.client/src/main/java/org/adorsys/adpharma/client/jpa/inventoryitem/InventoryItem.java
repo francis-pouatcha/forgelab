@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.display.Association;
@@ -34,7 +36,7 @@ import org.adorsys.javaext.list.ListField;
 @ListField({ "expectedQty", "asseccedQty", "gap", "gapSalesPricePU",
       "gapPurchasePricePU", "gapTotalSalePrice", "gapTotalPurchasePrice",
       "internalPic", "article.articleName" })
-public class InventoryItem
+public class InventoryItem implements Cloneable
 {
 
    private Long id;
@@ -70,7 +72,7 @@ public class InventoryItem
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<InventoryItemRecordingUser> recordingUser;
    @Description("InventoryItem_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<InventoryItemArticle> article;
 
    public Long getId()
@@ -285,6 +287,7 @@ public class InventoryItem
          inventory = new InventoryItemInventory();
       }
       PropertyReader.copy(inventory, getInventory());
+      inventoryProperty().setValue(ObjectUtils.clone(getInventory()));
    }
 
    public SimpleObjectProperty<InventoryItemRecordingUser> recordingUserProperty()
@@ -309,6 +312,7 @@ public class InventoryItem
          recordingUser = new InventoryItemRecordingUser();
       }
       PropertyReader.copy(recordingUser, getRecordingUser());
+      recordingUserProperty().setValue(ObjectUtils.clone(getRecordingUser()));
    }
 
    public SimpleObjectProperty<InventoryItemArticle> articleProperty()
@@ -333,6 +337,7 @@ public class InventoryItem
          article = new InventoryItemArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    @Override
@@ -365,5 +370,36 @@ public class InventoryItem
    public String toString()
    {
       return PropertyReader.buildToString(this, "expectedQty", "asseccedQty", "gap", "internalPic", "articleName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      InventoryItemInventory f = inventory.get();
+      f.setId(null);
+      f.setVersion(0);
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      InventoryItem e = new InventoryItem();
+      e.id = id;
+      e.version = version;
+
+      e.gap = gap;
+      e.internalPic = internalPic;
+      e.expectedQty = expectedQty;
+      e.asseccedQty = asseccedQty;
+      e.gapSalesPricePU = gapSalesPricePU;
+      e.gapPurchasePricePU = gapPurchasePricePU;
+      e.gapTotalSalePrice = gapTotalSalePrice;
+      e.gapTotalPurchasePrice = gapTotalPurchasePrice;
+      e.recordingDate = recordingDate;
+      e.inventory = inventory;
+      e.recordingUser = recordingUser;
+      e.article = article;
+      return e;
    }
 }

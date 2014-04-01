@@ -23,6 +23,6 @@ public class DeliveryCurrencyEditController extends DeliveryCurrencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDeliveryCurrencySelection());
-      bind(editView.getView().getDeliveryCurrencySelection());
+      bind(editView.getView().getDeliveryCurrencySelection(), editView.getView().getDeliveryCurrencyForm());
    }
 }

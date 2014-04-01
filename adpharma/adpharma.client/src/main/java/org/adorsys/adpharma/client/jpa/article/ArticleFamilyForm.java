@@ -6,9 +6,8 @@ import java.util.ResourceBundle;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamillyForm;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamillySelection;
+import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamilyForm;
+import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilyParentFamilySelection;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 
 import javafx.beans.property.ObjectProperty;
@@ -45,6 +44,11 @@ public class ArticleFamilyForm extends AbstractToOneAssociation<Article, Product
    public void bind(Article model)
    {
       name.textProperty().bindBidirectional(model.getFamily().nameProperty());
+   }
+
+   public void update(ArticleFamily data)
+   {
+      name.textProperty().set(data.nameProperty().get());
    }
 
    public TextField getName()

@@ -10,8 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -24,7 +25,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("name")
 @ListField("name")
-public class ProductFamily
+public class ProductFamily implements Cloneable
 {
 
    private Long id;
@@ -32,11 +33,9 @@ public class ProductFamily
 
    @Description("ProductFamily_name_description")
    private SimpleStringProperty name;
-   @Description("ProductFamily_description_description")
-   private SimpleStringProperty description;
-   @Description("ProductFamily_parentFamilly_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = ProductFamily.class)
-   private SimpleObjectProperty<ProductFamilyParentFamilly> parentFamilly;
+   @Description("ProductFamily_parentFamily_description")
+   @Association(selectionMode = SelectionMode.TABLE, associationType = AssociationType.AGGREGATION, targetEntity = ProductFamily.class)
+   private SimpleObjectProperty<ProductFamilyParentFamily> parentFamily;
 
    public Long getId()
    {
@@ -78,47 +77,28 @@ public class ProductFamily
       this.nameProperty().set(name);
    }
 
-   public SimpleStringProperty descriptionProperty()
+   public SimpleObjectProperty<ProductFamilyParentFamily> parentFamilyProperty()
    {
-      if (description == null)
+      if (parentFamily == null)
       {
-         description = new SimpleStringProperty();
+         parentFamily = new SimpleObjectProperty<ProductFamilyParentFamily>(new ProductFamilyParentFamily());
       }
-      return description;
+      return parentFamily;
    }
 
-   @Size(max = 256, message = "ProductFamily_description_Size_validation")
-   public String getDescription()
+   public ProductFamilyParentFamily getParentFamily()
    {
-      return descriptionProperty().get();
+      return parentFamilyProperty().get();
    }
 
-   public final void setDescription(String description)
+   public final void setParentFamily(ProductFamilyParentFamily parentFamily)
    {
-      this.descriptionProperty().set(description);
-   }
-
-   public SimpleObjectProperty<ProductFamilyParentFamilly> parentFamillyProperty()
-   {
-      if (parentFamilly == null)
+      if (parentFamily == null)
       {
-         parentFamilly = new SimpleObjectProperty<ProductFamilyParentFamilly>(new ProductFamilyParentFamilly());
+         parentFamily = new ProductFamilyParentFamily();
       }
-      return parentFamilly;
-   }
-
-   public ProductFamilyParentFamilly getParentFamilly()
-   {
-      return parentFamillyProperty().get();
-   }
-
-   public final void setParentFamilly(ProductFamilyParentFamilly parentFamilly)
-   {
-      if (parentFamilly == null)
-      {
-         parentFamilly = new ProductFamilyParentFamilly();
-      }
-      PropertyReader.copy(parentFamilly, getParentFamilly());
+      PropertyReader.copy(parentFamily, getParentFamily());
+      parentFamilyProperty().setValue(ObjectUtils.clone(getParentFamily()));
    }
 
    @Override
@@ -151,5 +131,23 @@ public class ProductFamily
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProductFamily e = new ProductFamily();
+      e.id = id;
+      e.version = version;
+
+      e.name = name;
+      e.parentFamily = parentFamily;
+      return e;
    }
 }

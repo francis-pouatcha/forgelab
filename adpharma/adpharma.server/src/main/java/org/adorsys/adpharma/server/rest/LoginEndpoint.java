@@ -22,11 +22,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.LoginSearchInput;
 import org.adorsys.adpharma.server.jpa.LoginSearchResult;
-import org.adorsys.adpharma.server.jpa.Login_;
 
 /**
  * 
@@ -39,12 +38,12 @@ public class LoginEndpoint
 
    @Inject
    private LoginEJB ejb;
-   
-   @Inject
-   private AgencyMerger agencyMerger;
 
    @Inject
    private LoginRoleNameAssocMerger loginRoleNameAssocMerger;
+
+   @Inject
+   private AgencyMerger agencyMerger;
 
    @POST
    @Consumes({ "application/json", "application/xml" })
@@ -184,20 +183,20 @@ public class LoginEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> roleNamesFields = emptyList;
-   private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name");
+   private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
+   private static final List<String> roleNamesFields = emptyList;
 
    private Login detach(Login entity)
    {
       if (entity == null)
          return null;
 
+      // aggregated
+      entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
+
       // aggregated collection
       entity.setRoleNames(loginRoleNameAssocMerger.unbind(entity.getRoleNames(), roleNamesFields));
-      
-   // aggregated 
-      entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
 
       return entity;
    }

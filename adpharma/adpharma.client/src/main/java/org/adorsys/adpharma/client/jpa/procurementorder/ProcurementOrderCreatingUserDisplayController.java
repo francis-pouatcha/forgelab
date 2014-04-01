@@ -27,5 +27,6 @@ public class ProcurementOrderCreatingUserDisplayController extends ProcurementOr
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getProcurementOrderCreatingUserSelection());
+      bind(displayView.getView().getProcurementOrderCreatingUserSelection(), displayView.getView().getProcurementOrderCreatingUserForm());
    }
 }

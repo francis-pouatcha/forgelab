@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 public class ArticlePackagingModeSelection extends AbstractSelection<Article, PackagingMode>
 {
 
-   private ComboBox<PackagingMode> packagingMode;
+   private ComboBox<ArticlePackagingMode> packagingMode;
 
    @Inject
    @Bundle({ CrudKeys.class, PackagingMode.class, Article.class })
@@ -39,10 +39,10 @@ public class ArticlePackagingModeSelection extends AbstractSelection<Article, Pa
 
       packagingMode = viewBuilder.addComboBox("Article_packagingMode_description.title", "packagingMode", resourceBundle, false);
 
-      packagingMode.setCellFactory(new Callback<ListView<PackagingMode>, ListCell<PackagingMode>>()
+      packagingMode.setCellFactory(new Callback<ListView<ArticlePackagingMode>, ListCell<ArticlePackagingMode>>()
       {
          @Override
-         public ListCell<PackagingMode> call(ListView<PackagingMode> listView)
+         public ListCell<ArticlePackagingMode> call(ListView<ArticlePackagingMode> listView)
          {
             return new ArticlePackagingModeListCell();
          }
@@ -54,9 +54,10 @@ public class ArticlePackagingModeSelection extends AbstractSelection<Article, Pa
 
    public void bind(Article model)
    {
+      packagingMode.valueProperty().bindBidirectional(model.packagingModeProperty());
    }
 
-   public ComboBox<PackagingMode> getPackagingMode()
+   public ComboBox<ArticlePackagingMode> getPackagingMode()
    {
       return packagingMode;
    }

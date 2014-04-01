@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -40,7 +42,7 @@ import org.adorsys.javaext.list.ListField;
 @ListField({ "statementNumber", "insurrance.fullName", "agency.name",
       "paymentDate", "initialAmount", "advancePayment", "restAmount",
       "settled", "amountFromVouchers", "canceled", "useVoucher" })
-public class DebtStatement
+public class DebtStatement implements Cloneable
 {
 
    private Long id;
@@ -70,7 +72,7 @@ public class DebtStatement
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> paymentDate;
    @Description("DebtStatement_insurrance_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<DebtStatementInsurrance> insurrance;
    @Description("DebtStatement_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
@@ -298,6 +300,7 @@ public class DebtStatement
          insurrance = new DebtStatementInsurrance();
       }
       PropertyReader.copy(insurrance, getInsurrance());
+      insurranceProperty().setValue(ObjectUtils.clone(getInsurrance()));
    }
 
    public SimpleObjectProperty<DebtStatementAgency> agencyProperty()
@@ -322,6 +325,7 @@ public class DebtStatement
          agency = new DebtStatementAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<ObservableList<CustomerInvoice>> invoicesProperty()
@@ -376,5 +380,33 @@ public class DebtStatement
    public String toString()
    {
       return PropertyReader.buildToString(this, "statementNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      DebtStatement e = new DebtStatement();
+      e.id = id;
+      e.version = version;
+
+      e.statementNumber = statementNumber;
+      e.settled = settled;
+      e.canceled = canceled;
+      e.useVoucher = useVoucher;
+      e.initialAmount = initialAmount;
+      e.advancePayment = advancePayment;
+      e.restAmount = restAmount;
+      e.amountFromVouchers = amountFromVouchers;
+      e.paymentDate = paymentDate;
+      e.insurrance = insurrance;
+      e.agency = agency;
+      e.invoices = invoices;
+      return e;
    }
 }

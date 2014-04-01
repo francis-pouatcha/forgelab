@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 public class CashDrawerCashierSelection extends AbstractSelection<CashDrawer, Login>
 {
 
-   private ComboBox<Login> cashier;
+   private ComboBox<CashDrawerCashier> cashier;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, CashDrawer.class })
@@ -39,10 +39,10 @@ public class CashDrawerCashierSelection extends AbstractSelection<CashDrawer, Lo
 
       cashier = viewBuilder.addComboBox("CashDrawer_cashier_description.title", "cashier", resourceBundle, false);
 
-      cashier.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      cashier.setCellFactory(new Callback<ListView<CashDrawerCashier>, ListCell<CashDrawerCashier>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<CashDrawerCashier> call(ListView<CashDrawerCashier> listView)
          {
             return new CashDrawerCashierListCell();
          }
@@ -54,9 +54,10 @@ public class CashDrawerCashierSelection extends AbstractSelection<CashDrawer, Lo
 
    public void bind(CashDrawer model)
    {
+      cashier.valueProperty().bindBidirectional(model.cashierProperty());
    }
 
-   public ComboBox<Login> getCashier()
+   public ComboBox<CashDrawerCashier> getCashier()
    {
       return cashier;
    }

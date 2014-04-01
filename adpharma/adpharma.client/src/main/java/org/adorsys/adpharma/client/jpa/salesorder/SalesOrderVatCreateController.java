@@ -22,7 +22,7 @@ public class SalesOrderVatCreateController extends SalesOrderVatController
    public void handleNewModelEvent(@Observes @CreateModelEvent SalesOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSalesOrderVatSelection());
+      bind(createView.getView().getSalesOrderVatSelection(), createView.getView().getSalesOrderVatForm());
       activateButton(createView.getView().getSalesOrderVatSelection());
    }
 }

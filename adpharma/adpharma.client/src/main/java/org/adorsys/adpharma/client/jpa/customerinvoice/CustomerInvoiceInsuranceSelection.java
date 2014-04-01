@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 public class CustomerInvoiceInsuranceSelection extends AbstractSelection<CustomerInvoice, Insurrance>
 {
 
-   private ComboBox<Insurrance> insurance;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, Insurrance.class, CustomerInvoice.class })
@@ -36,19 +32,9 @@ public class CustomerInvoiceInsuranceSelection extends AbstractSelection<Custome
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      insurance = viewBuilder.addComboBox("CustomerInvoice_insurance_description.title", "insurance", resourceBundle, false);
-
-      insurance.setCellFactory(new Callback<ListView<Insurrance>, ListCell<Insurrance>>()
-      {
-         @Override
-         public ListCell<Insurrance> call(ListView<Insurrance> listView)
-         {
-            return new CustomerInvoiceInsuranceListCell();
-         }
-      });
-      insurance.setButtonCell(new CustomerInvoiceInsuranceListCell());
-
+      selectButton = viewBuilder.addButton(
+            "CustomerInvoice_insurance_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class CustomerInvoiceInsuranceSelection extends AbstractSelection<Custome
    {
    }
 
-   public ComboBox<Insurrance> getInsurance()
+   public Button getSelectButton()
    {
-      return insurance;
+      return selectButton;
+   }
+
+   public Button getInsurance()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

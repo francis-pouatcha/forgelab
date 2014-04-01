@@ -59,6 +59,9 @@ public class SalesOrderController extends DomainComponentController
    private SalesOrder searchModel = new SalesOrder();
    private SalesOrder selectedModel = new SalesOrder();
 
+   @Inject
+   private SalesOrderRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class SalesOrderController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<SalesOrder> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,11 +98,13 @@ public class SalesOrderController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrder selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of salesOrders.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
+      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();
@@ -108,9 +116,11 @@ public class SalesOrderController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent SalesOrder selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(searchController);
+      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -121,18 +131,22 @@ public class SalesOrderController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent SalesOrder templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
+      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent SalesOrder selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
+      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }
@@ -142,7 +156,7 @@ public class SalesOrderController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-//      displayedViews.add(displayController);
+      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -152,7 +166,7 @@ public class SalesOrderController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-//       displayedViews.add(displayController);
+      displayedViews.add(displayController);
 
       displayComponent();
    }

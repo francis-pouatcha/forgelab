@@ -116,7 +116,7 @@ public class Payment implements Serializable
 
    @ManyToOne
    @Description("Payment_paidBy_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private Customer paidBy;
 
    public Long getId()

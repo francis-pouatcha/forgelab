@@ -22,7 +22,7 @@ public class DeliveryVatCreateController extends DeliveryVatController
    public void handleNewModelEvent(@Observes @CreateModelEvent Delivery model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliveryVatSelection());
+      bind(createView.getView().getDeliveryVatSelection(), createView.getView().getDeliveryVatForm());
       activateButton(createView.getView().getDeliveryVatSelection());
    }
 }

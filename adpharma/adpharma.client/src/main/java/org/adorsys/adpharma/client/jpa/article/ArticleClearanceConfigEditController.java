@@ -23,6 +23,6 @@ public class ArticleClearanceConfigEditController extends ArticleClearanceConfig
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticleClearanceConfigSelection());
-      bind(editView.getView().getArticleClearanceConfigSelection());
+      bind(editView.getView().getArticleClearanceConfigSelection(), editView.getView().getArticleClearanceConfigForm());
    }
 }

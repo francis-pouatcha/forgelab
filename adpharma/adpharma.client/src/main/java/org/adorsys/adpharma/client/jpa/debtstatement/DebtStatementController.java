@@ -59,6 +59,9 @@ public class DebtStatementController extends DomainComponentController
    private DebtStatement searchModel = new DebtStatement();
    private DebtStatement selectedModel = new DebtStatement();
 
+   @Inject
+   private DebtStatementRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class DebtStatementController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<DebtStatement> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class DebtStatementController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent DebtStatement selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of debtStatements.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class DebtStatementController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent DebtStatement selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class DebtStatementController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent DebtStatement templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class DebtStatementController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent DebtStatement selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

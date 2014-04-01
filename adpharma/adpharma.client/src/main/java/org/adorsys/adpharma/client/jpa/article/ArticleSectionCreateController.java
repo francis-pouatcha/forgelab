@@ -22,7 +22,7 @@ public class ArticleSectionCreateController extends ArticleSectionController
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleSectionSelection());
+      bind(createView.getView().getArticleSectionSelection(), createView.getView().getArticleSectionForm());
       activateButton(createView.getView().getArticleSectionSelection());
    }
 }

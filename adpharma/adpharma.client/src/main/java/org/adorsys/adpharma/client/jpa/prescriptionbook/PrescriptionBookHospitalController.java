@@ -51,8 +51,10 @@ public abstract class PrescriptionBookHospitalController
    {
    }
 
-   protected void bind(final PrescriptionBookHospitalSelection selection)
+   protected void bind(final PrescriptionBookHospitalSelection selection, final PrescriptionBookHospitalForm form)
    {
+
+      //	    selection.getHospital().valueProperty().bindBidirectional(sourceEntity.hospitalProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PrescriptionBookHospitalController
             s.reset();
             List<Hospital> entities = targetSearchResult.getResultList();
             selection.getHospital().getItems().clear();
-            selection.getHospital().getItems().addAll(entities);
+            selection.getHospital().getItems().add(new PrescriptionBookHospital());
+            for (Hospital entity : entities)
+            {
+               selection.getHospital().getItems().add(new PrescriptionBookHospital(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PrescriptionBookHospitalController
                }
             });
 
-      selection.getHospital().valueProperty().addListener(new ChangeListener<Hospital>()
+      selection.getHospital().valueProperty().addListener(new ChangeListener<PrescriptionBookHospital>()
       {
          @Override
-         public void changed(ObservableValue<? extends Hospital> ov, Hospital oldValue,
-               Hospital newValue)
+         public void changed(ObservableValue<? extends PrescriptionBookHospital> ov, PrescriptionBookHospital oldValue,
+               PrescriptionBookHospital newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setHospital(new PrescriptionBookHospital(newValue));
+               form.update(newValue);
+            //                sourceEntity.setHospital(newValue);
          }
       });
 

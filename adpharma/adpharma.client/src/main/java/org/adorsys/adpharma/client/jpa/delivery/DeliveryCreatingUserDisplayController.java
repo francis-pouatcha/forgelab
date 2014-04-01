@@ -27,5 +27,6 @@ public class DeliveryCreatingUserDisplayController extends DeliveryCreatingUserC
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDeliveryCreatingUserSelection());
+      bind(displayView.getView().getDeliveryCreatingUserSelection(), displayView.getView().getDeliveryCreatingUserForm());
    }
 }

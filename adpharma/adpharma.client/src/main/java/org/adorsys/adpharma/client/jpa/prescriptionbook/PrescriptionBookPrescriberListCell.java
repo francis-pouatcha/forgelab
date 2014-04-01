@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
 
-public class PrescriptionBookPrescriberListCell extends AbstractToStringListCell<Prescriber>
+public class PrescriptionBookPrescriberListCell extends AbstractToStringListCell<PrescriptionBookPrescriber>
 {
 
    @Override
-   protected String getToString(Prescriber item)
+   protected String getToString(PrescriptionBookPrescriber item)
    {
       if (item == null)
       {

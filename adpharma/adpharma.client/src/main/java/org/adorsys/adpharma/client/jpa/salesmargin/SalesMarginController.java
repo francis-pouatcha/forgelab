@@ -59,6 +59,9 @@ public class SalesMarginController extends DomainComponentController
    private SalesMargin searchModel = new SalesMargin();
    private SalesMargin selectedModel = new SalesMargin();
 
+   @Inject
+   private SalesMarginRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class SalesMarginController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<SalesMargin> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class SalesMarginController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesMargin selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of salesMargins.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class SalesMarginController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent SalesMargin selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class SalesMarginController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent SalesMargin templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class SalesMarginController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent SalesMargin selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

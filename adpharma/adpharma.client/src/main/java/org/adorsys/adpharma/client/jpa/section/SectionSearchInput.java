@@ -23,7 +23,7 @@ public class SectionSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Section entity = new Section();
+   private Section entity;
 
    /**
     * The start cursor

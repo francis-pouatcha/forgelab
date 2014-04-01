@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 
-public class ArticleClearanceConfigListCell extends AbstractToStringListCell<ClearanceConfig>
+public class ArticleClearanceConfigListCell extends AbstractToStringListCell<ArticleClearanceConfig>
 {
 
    @Override
-   protected String getToString(ClearanceConfig item)
+   protected String getToString(ArticleClearanceConfig item)
    {
       if (item == null)
       {

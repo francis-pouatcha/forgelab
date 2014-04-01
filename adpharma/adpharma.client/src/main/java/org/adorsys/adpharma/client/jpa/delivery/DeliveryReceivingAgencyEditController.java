@@ -23,6 +23,6 @@ public class DeliveryReceivingAgencyEditController extends DeliveryReceivingAgen
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDeliveryReceivingAgencySelection());
-      bind(editView.getView().getDeliveryReceivingAgencySelection());
+      bind(editView.getView().getDeliveryReceivingAgencySelection(), editView.getView().getDeliveryReceivingAgencyForm());
    }
 }

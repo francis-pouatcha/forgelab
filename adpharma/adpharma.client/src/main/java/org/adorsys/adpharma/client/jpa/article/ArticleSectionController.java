@@ -51,8 +51,10 @@ public abstract class ArticleSectionController
    {
    }
 
-   protected void bind(final ArticleSectionSelection selection)
+   protected void bind(final ArticleSectionSelection selection, final ArticleSectionForm form)
    {
+
+      //	    selection.getSection().valueProperty().bindBidirectional(sourceEntity.sectionProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleSectionController
             s.reset();
             List<Section> entities = targetSearchResult.getResultList();
             selection.getSection().getItems().clear();
-            selection.getSection().getItems().addAll(entities);
+            selection.getSection().getItems().add(new ArticleSection());
+            for (Section entity : entities)
+            {
+               selection.getSection().getItems().add(new ArticleSection(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleSectionController
                }
             });
 
-      selection.getSection().valueProperty().addListener(new ChangeListener<Section>()
+      selection.getSection().valueProperty().addListener(new ChangeListener<ArticleSection>()
       {
          @Override
-         public void changed(ObservableValue<? extends Section> ov, Section oldValue,
-               Section newValue)
+         public void changed(ObservableValue<? extends ArticleSection> ov, ArticleSection oldValue,
+               ArticleSection newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setSection(new ArticleSection(newValue));
+               form.update(newValue);
+            //                sourceEntity.setSection(newValue);
          }
       });
 

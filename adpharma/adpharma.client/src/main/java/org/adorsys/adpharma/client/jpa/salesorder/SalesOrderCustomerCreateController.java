@@ -22,7 +22,7 @@ public class SalesOrderCustomerCreateController extends SalesOrderCustomerContro
    public void handleNewModelEvent(@Observes @CreateModelEvent SalesOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSalesOrderCustomerSelection());
-      activateButton(createView.getView().getSalesOrderCustomerSelection());
+      activateButton(createView.getView().getSalesOrderCustomerSelection(), createView.getView().getSalesOrderCustomerForm());
+      bind(createView.getView().getSalesOrderCustomerSelection(), createView.getView().getSalesOrderCustomerForm());
    }
 }

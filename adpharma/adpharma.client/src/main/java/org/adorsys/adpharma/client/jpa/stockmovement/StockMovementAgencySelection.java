@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.stockmovement.StockMovement;
 public class StockMovementAgencySelection extends AbstractSelection<StockMovement, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<StockMovementAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, StockMovement.class })
@@ -39,10 +39,10 @@ public class StockMovementAgencySelection extends AbstractSelection<StockMovemen
 
       agency = viewBuilder.addComboBox("StockMovement_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<StockMovementAgency>, ListCell<StockMovementAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<StockMovementAgency> call(ListView<StockMovementAgency> listView)
          {
             return new StockMovementAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class StockMovementAgencySelection extends AbstractSelection<StockMovemen
 
    public void bind(StockMovement model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<StockMovementAgency> getAgency()
    {
       return agency;
    }

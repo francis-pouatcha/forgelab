@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 public class ArticleDefaultSalesMarginSelection extends AbstractSelection<Article, SalesMargin>
 {
 
-   private ComboBox<SalesMargin> defaultSalesMargin;
+   private ComboBox<ArticleDefaultSalesMargin> defaultSalesMargin;
 
    @Inject
    @Bundle({ CrudKeys.class, SalesMargin.class, Article.class })
@@ -39,10 +39,10 @@ public class ArticleDefaultSalesMarginSelection extends AbstractSelection<Articl
 
       defaultSalesMargin = viewBuilder.addComboBox("Article_defaultSalesMargin_description.title", "defaultSalesMargin", resourceBundle, false);
 
-      defaultSalesMargin.setCellFactory(new Callback<ListView<SalesMargin>, ListCell<SalesMargin>>()
+      defaultSalesMargin.setCellFactory(new Callback<ListView<ArticleDefaultSalesMargin>, ListCell<ArticleDefaultSalesMargin>>()
       {
          @Override
-         public ListCell<SalesMargin> call(ListView<SalesMargin> listView)
+         public ListCell<ArticleDefaultSalesMargin> call(ListView<ArticleDefaultSalesMargin> listView)
          {
             return new ArticleDefaultSalesMarginListCell();
          }
@@ -54,9 +54,10 @@ public class ArticleDefaultSalesMarginSelection extends AbstractSelection<Articl
 
    public void bind(Article model)
    {
+      defaultSalesMargin.valueProperty().bindBidirectional(model.defaultSalesMarginProperty());
    }
 
-   public ComboBox<SalesMargin> getDefaultSalesMargin()
+   public ComboBox<ArticleDefaultSalesMargin> getDefaultSalesMargin()
    {
       return defaultSalesMargin;
    }

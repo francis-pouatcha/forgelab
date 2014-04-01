@@ -57,7 +57,7 @@ public class SupplierInvoiceItemInvoiceForm extends AbstractToOneAssociation<Sup
 
    private BigDecimalField amountBeforeTax;
 
-   private BigDecimalField amountVAT;
+   private BigDecimalField taxAmount;
 
    private BigDecimalField amountDiscount;
 
@@ -96,7 +96,7 @@ public class SupplierInvoiceItemInvoiceForm extends AbstractToOneAssociation<Sup
       settled = viewBuilder.addCheckBox("SupplierInvoice_settled_description.title", "settled", resourceBundle);
       invoiceType = viewBuilder.addComboBox("SupplierInvoice_invoiceType_description.title", "invoiceType", resourceBundle, InvoiceType.values());
       amountBeforeTax = viewBuilder.addBigDecimalField("SupplierInvoice_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
-      amountVAT = viewBuilder.addBigDecimalField("SupplierInvoice_amountVAT_description.title", "amountVAT", resourceBundle, NumberType.CURRENCY, locale);
+      taxAmount = viewBuilder.addBigDecimalField("SupplierInvoice_taxAmount_description.title", "taxAmount", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("SupplierInvoice_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("SupplierInvoice_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       netToPay = viewBuilder.addBigDecimalField("SupplierInvoice_netToPay_description.title", "netToPay", resourceBundle, NumberType.CURRENCY, locale);
@@ -115,13 +115,28 @@ public class SupplierInvoiceItemInvoiceForm extends AbstractToOneAssociation<Sup
       settled.textProperty().bindBidirectional(model.getInvoice().settledProperty(), new BooleanStringConverter());
       invoiceType.valueProperty().bindBidirectional(model.getInvoice().invoiceTypeProperty());
       amountBeforeTax.numberProperty().bindBidirectional(model.getInvoice().amountBeforeTaxProperty());
-      amountVAT.numberProperty().bindBidirectional(model.getInvoice().amountVATProperty());
+      taxAmount.numberProperty().bindBidirectional(model.getInvoice().taxAmountProperty());
       amountDiscount.numberProperty().bindBidirectional(model.getInvoice().amountDiscountProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.getInvoice().amountAfterTaxProperty());
       netToPay.numberProperty().bindBidirectional(model.getInvoice().netToPayProperty());
       advancePayment.numberProperty().bindBidirectional(model.getInvoice().advancePaymentProperty());
       totalRestToPay.numberProperty().bindBidirectional(model.getInvoice().totalRestToPayProperty());
       creationDate.calendarProperty().bindBidirectional(model.getInvoice().creationDateProperty());
+   }
+
+   public void update(SupplierInvoiceItemInvoice data)
+   {
+      invoiceNumber.textProperty().set(data.invoiceNumberProperty().get());
+      settled.textProperty().set(new BooleanStringConverter().toString(data.settledProperty().get()));
+      invoiceType.valueProperty().set(data.invoiceTypeProperty().get());
+      amountBeforeTax.numberProperty().set(data.amountBeforeTaxProperty().get());
+      taxAmount.numberProperty().set(data.taxAmountProperty().get());
+      amountDiscount.numberProperty().set(data.amountDiscountProperty().get());
+      amountAfterTax.numberProperty().set(data.amountAfterTaxProperty().get());
+      netToPay.numberProperty().set(data.netToPayProperty().get());
+      advancePayment.numberProperty().set(data.advancePaymentProperty().get());
+      totalRestToPay.numberProperty().set(data.totalRestToPayProperty().get());
+      creationDate.calendarProperty().set(data.creationDateProperty().get());
    }
 
    public TextField getInvoiceNumber()
@@ -144,9 +159,9 @@ public class SupplierInvoiceItemInvoiceForm extends AbstractToOneAssociation<Sup
       return amountBeforeTax;
    }
 
-   public BigDecimalField getAmountVAT()
+   public BigDecimalField getTaxAmount()
    {
-      return amountVAT;
+      return taxAmount;
    }
 
    public BigDecimalField getAmountDiscount()

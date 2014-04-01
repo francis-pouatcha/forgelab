@@ -51,8 +51,10 @@ public abstract class PaymentCashierController
    {
    }
 
-   protected void bind(final PaymentCashierSelection selection)
+   protected void bind(final PaymentCashierSelection selection, final PaymentCashierForm form)
    {
+
+      //	    selection.getCashier().valueProperty().bindBidirectional(sourceEntity.cashierProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PaymentCashierController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getCashier().getItems().clear();
-            selection.getCashier().getItems().addAll(entities);
+            selection.getCashier().getItems().add(new PaymentCashier());
+            for (Login entity : entities)
+            {
+               selection.getCashier().getItems().add(new PaymentCashier(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PaymentCashierController
                }
             });
 
-      selection.getCashier().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getCashier().valueProperty().addListener(new ChangeListener<PaymentCashier>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends PaymentCashier> ov, PaymentCashier oldValue,
+               PaymentCashier newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCashier(new PaymentCashier(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCashier(newValue);
          }
       });
 

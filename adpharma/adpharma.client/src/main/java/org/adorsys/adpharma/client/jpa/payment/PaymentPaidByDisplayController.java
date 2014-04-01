@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class PaymentPaidByDisplayController extends PaymentPaidByController
    public void handleNewModelEvent(@Observes @SelectedModelEvent Payment model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getPaymentPaidBySelection());
+      disableButton(displayView.getView().getPaymentPaidBySelection(), displayView.getView().getPaymentPaidByForm());
+      bind(displayView.getView().getPaymentPaidBySelection(), displayView.getView().getPaymentPaidByForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent Payment selectedEntity)
+   {
+      loadAssociation();
    }
 }

@@ -1,36 +1,59 @@
 package org.adorsys.adpharma.server.jpa;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+
+import java.io.Serializable;
+
+import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PostPersist;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Column;
+import javax.persistence.PrePersist;
 import javax.persistence.Version;
+
+import java.lang.Override;
+
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.list.ListField;
+
 import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.ToStringField;
+import java.util.Date;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
+import org.adorsys.adpharma.server.jpa.Login;
+
+import javax.persistence.ManyToOne;
+
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.adpharma.server.jpa.Supplier;
+
+import java.math.BigDecimal;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javaext.list.ListField;
+import org.adorsys.adpharma.server.jpa.VAT;
+import org.adorsys.adpharma.server.jpa.Currency;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+
+import javax.persistence.Enumerated;
+
+import org.adorsys.adpharma.server.jpa.Agency;
+import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.lang3.RandomStringUtils;
+
+import java.util.Set;
+import java.util.HashSet;
+
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
 
 @Entity
 @Description("Delivery_description")
@@ -51,6 +74,7 @@ public class Delivery implements Serializable
 
 	@Column
 	@Description("Delivery_deliveryNumber_description")
+	@NotNull(message = "Delivery_deliveryNumber_NotNull_validation")
 	private String deliveryNumber;
 
 	@Column
@@ -136,10 +160,10 @@ public class Delivery implements Serializable
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
 	private Set<DeliveryItem> deliveryItems = new HashSet<DeliveryItem>();
 
-	@PostPersist
-	public void onPostPersist(){
+	@PrePersist
+	public void prePersist(){
 		recordingDate = new Date();
-		deliveryNumber = SequenceGenerator.getSequence(getId(), SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE);
+		deliveryNumber = SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
 	}
 
 	public Long getId()

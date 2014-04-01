@@ -74,7 +74,7 @@ public class ArticleLot implements Serializable
 
    @ManyToOne
    @Description("ArticleLot_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "ArticleLot_article_NotNull_validation")
    private Article article;
 

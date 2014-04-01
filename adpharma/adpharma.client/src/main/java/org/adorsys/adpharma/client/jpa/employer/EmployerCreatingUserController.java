@@ -51,8 +51,10 @@ public abstract class EmployerCreatingUserController
    {
    }
 
-   protected void bind(final EmployerCreatingUserSelection selection)
+   protected void bind(final EmployerCreatingUserSelection selection, final EmployerCreatingUserForm form)
    {
+
+      //	    selection.getCreatingUser().valueProperty().bindBidirectional(sourceEntity.creatingUserProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class EmployerCreatingUserController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getCreatingUser().getItems().clear();
-            selection.getCreatingUser().getItems().addAll(entities);
+            selection.getCreatingUser().getItems().add(new EmployerCreatingUser());
+            for (Login entity : entities)
+            {
+               selection.getCreatingUser().getItems().add(new EmployerCreatingUser(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class EmployerCreatingUserController
                }
             });
 
-      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getCreatingUser().valueProperty().addListener(new ChangeListener<EmployerCreatingUser>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends EmployerCreatingUser> ov, EmployerCreatingUser oldValue,
+               EmployerCreatingUser newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCreatingUser(new EmployerCreatingUser(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCreatingUser(newValue);
          }
       });
 

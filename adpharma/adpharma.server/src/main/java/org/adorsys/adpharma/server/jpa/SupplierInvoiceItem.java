@@ -25,7 +25,7 @@ import org.adorsys.adpharma.server.jpa.SupplierInvoice;
 @Description("SupplierInvoiceItem_description")
 @ToStringField({ "internalPic", "article.articleName", "deliveryQty" })
 @ListField({ "internalPic", "article.articleName", "deliveryQty", "purchasePricePU",
-      "salesPricePU", "amountReturn", "totalSalesPrice" })
+      "salesPricePU", "amountReturn", "totalPurchasePrice" })
 public class SupplierInvoiceItem implements Serializable
 {
 
@@ -66,9 +66,9 @@ public class SupplierInvoiceItem implements Serializable
    private BigDecimal amountReturn;
 
    @Column
-   @Description("SupplierInvoiceItem_totalSalesPrice_description")
+   @Description("SupplierInvoiceItem_totalPurchasePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalSalesPrice;
+   private BigDecimal totalPurchasePrice;
 
    @ManyToOne
    @Description("SupplierInvoiceItem_invoice_description")
@@ -187,14 +187,14 @@ public class SupplierInvoiceItem implements Serializable
       this.amountReturn = amountReturn;
    }
 
-   public BigDecimal getTotalSalesPrice()
+   public BigDecimal getTotalPurchasePrice()
    {
-      return this.totalSalesPrice;
+      return this.totalPurchasePrice;
    }
 
-   public void setTotalSalesPrice(final BigDecimal totalSalesPrice)
+   public void setTotalPurchasePrice(final BigDecimal totalPurchasePrice)
    {
-      this.totalSalesPrice = totalSalesPrice;
+      this.totalPurchasePrice = totalPurchasePrice;
    }
 
    @Override

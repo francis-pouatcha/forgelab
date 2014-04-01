@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 public class DeliverySupplierSelection extends AbstractSelection<Delivery, Supplier>
 {
 
-   private ComboBox<Supplier> supplier;
+   private ComboBox<DeliverySupplier> supplier;
 
    @Inject
    @Bundle({ CrudKeys.class, Supplier.class, Delivery.class })
@@ -39,10 +39,10 @@ public class DeliverySupplierSelection extends AbstractSelection<Delivery, Suppl
 
       supplier = viewBuilder.addComboBox("Delivery_supplier_description.title", "supplier", resourceBundle, false);
 
-      supplier.setCellFactory(new Callback<ListView<Supplier>, ListCell<Supplier>>()
+      supplier.setCellFactory(new Callback<ListView<DeliverySupplier>, ListCell<DeliverySupplier>>()
       {
          @Override
-         public ListCell<Supplier> call(ListView<Supplier> listView)
+         public ListCell<DeliverySupplier> call(ListView<DeliverySupplier> listView)
          {
             return new DeliverySupplierListCell();
          }
@@ -54,9 +54,10 @@ public class DeliverySupplierSelection extends AbstractSelection<Delivery, Suppl
 
    public void bind(Delivery model)
    {
+      supplier.valueProperty().bindBidirectional(model.supplierProperty());
    }
 
-   public ComboBox<Supplier> getSupplier()
+   public ComboBox<DeliverySupplier> getSupplier()
    {
       return supplier;
    }

@@ -27,5 +27,6 @@ public class ArticleClearanceConfigDisplayController extends ArticleClearanceCon
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleClearanceConfigSelection());
+      bind(displayView.getView().getArticleClearanceConfigSelection(), displayView.getView().getArticleClearanceConfigForm());
    }
 }

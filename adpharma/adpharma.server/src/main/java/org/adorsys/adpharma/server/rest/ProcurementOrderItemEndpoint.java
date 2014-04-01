@@ -186,7 +186,7 @@ public class ProcurementOrderItemEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> procurementOrderFields = Arrays.asList("procurementOrderNumber", "agency.name", "amountBeforeTax", "amountAfterTax", "amountDiscount", "netAmountToPay", "vat.rate");
+   private static final List<String> procurementOrderFields = Arrays.asList("procurementOrderNumber", "agency.name", "amountBeforeTax", "amountAfterTax", "amountDiscount", "taxAmount", "netAmountToPay", "vat.rate");
 
    private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 

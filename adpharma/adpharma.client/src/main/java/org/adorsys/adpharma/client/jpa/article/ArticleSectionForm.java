@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import org.adorsys.adpharma.client.jpa.section.SectionAgencyForm;
 import org.adorsys.adpharma.client.jpa.section.SectionAgencySelection;
 import org.adorsys.javafx.crud.extensions.ViewModel;
@@ -55,6 +54,13 @@ public class ArticleSectionForm extends AbstractToOneAssociation<Article, Sectio
       sectionCode.textProperty().bindBidirectional(model.getSection().sectionCodeProperty());
       name.textProperty().bindBidirectional(model.getSection().nameProperty());
       position.textProperty().bindBidirectional(model.getSection().positionProperty());
+   }
+
+   public void update(ArticleSection data)
+   {
+      sectionCode.textProperty().set(data.sectionCodeProperty().get());
+      name.textProperty().set(data.nameProperty().get());
+      position.textProperty().set(data.positionProperty().get());
    }
 
    public TextField getSectionCode()

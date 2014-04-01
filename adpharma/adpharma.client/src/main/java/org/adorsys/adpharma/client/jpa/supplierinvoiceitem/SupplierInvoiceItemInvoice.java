@@ -34,7 +34,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("SupplierInvoice_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SupplierInvoiceItemInvoice implements Association<SupplierInvoiceItem, SupplierInvoice>
+public class SupplierInvoiceItemInvoice implements Association<SupplierInvoiceItem, SupplierInvoice>, Cloneable
 {
 
    private Long id;
@@ -44,7 +44,7 @@ public class SupplierInvoiceItemInvoice implements Association<SupplierInvoiceIt
    private SimpleBooleanProperty settled;
    private SimpleObjectProperty<InvoiceType> invoiceType;
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
-   private SimpleObjectProperty<BigDecimal> amountVAT;
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    private SimpleObjectProperty<BigDecimal> amountDiscount;
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
    private SimpleObjectProperty<BigDecimal> netToPay;
@@ -159,23 +159,23 @@ public class SupplierInvoiceItemInvoice implements Association<SupplierInvoiceIt
       this.amountBeforeTaxProperty().set(amountBeforeTax);
    }
 
-   public SimpleObjectProperty<BigDecimal> amountVATProperty()
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
    {
-      if (amountVAT == null)
+      if (taxAmount == null)
       {
-         amountVAT = new SimpleObjectProperty<BigDecimal>();
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
       }
-      return amountVAT;
+      return taxAmount;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return amountVATProperty().get();
+      return taxAmountProperty().get();
    }
 
-   public final void setAmountVAT(BigDecimal amountVAT)
+   public final void setTaxAmount(BigDecimal taxAmount)
    {
-      this.amountVATProperty().set(amountVAT);
+      this.taxAmountProperty().set(taxAmount);
    }
 
    public SimpleObjectProperty<BigDecimal> amountDiscountProperty()
@@ -302,25 +302,44 @@ public class SupplierInvoiceItemInvoice implements Association<SupplierInvoiceIt
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SupplierInvoiceItemInvoice other = (SupplierInvoiceItemInvoice) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		SupplierInvoiceItemInvoice other = (SupplierInvoiceItemInvoice) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "invoiceNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SupplierInvoiceItemInvoice a = new SupplierInvoiceItemInvoice();
+      a.id = id;
+      a.version = version;
+
+      a.invoiceNumber = invoiceNumber;
+      a.settled = settled;
+      a.invoiceType = invoiceType;
+      a.amountBeforeTax = amountBeforeTax;
+      a.taxAmount = taxAmount;
+      a.amountDiscount = amountDiscount;
+      a.amountAfterTax = amountAfterTax;
+      a.netToPay = netToPay;
+      a.advancePayment = advancePayment;
+      a.totalRestToPay = totalRestToPay;
+      a.creationDate = creationDate;
+      return a;
+   }
+
 }

@@ -51,8 +51,10 @@ public abstract class DeliverySupplierController
    {
    }
 
-   protected void bind(final DeliverySupplierSelection selection)
+   protected void bind(final DeliverySupplierSelection selection, final DeliverySupplierForm form)
    {
+
+      //	    selection.getSupplier().valueProperty().bindBidirectional(sourceEntity.supplierProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DeliverySupplierController
             s.reset();
             List<Supplier> entities = targetSearchResult.getResultList();
             selection.getSupplier().getItems().clear();
-            selection.getSupplier().getItems().addAll(entities);
+            selection.getSupplier().getItems().add(new DeliverySupplier());
+            for (Supplier entity : entities)
+            {
+               selection.getSupplier().getItems().add(new DeliverySupplier(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DeliverySupplierController
                }
             });
 
-      selection.getSupplier().valueProperty().addListener(new ChangeListener<Supplier>()
+      selection.getSupplier().valueProperty().addListener(new ChangeListener<DeliverySupplier>()
       {
          @Override
-         public void changed(ObservableValue<? extends Supplier> ov, Supplier oldValue,
-               Supplier newValue)
+         public void changed(ObservableValue<? extends DeliverySupplier> ov, DeliverySupplier oldValue,
+               DeliverySupplier newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setSupplier(new DeliverySupplier(newValue));
+               form.update(newValue);
+            //                sourceEntity.setSupplier(newValue);
          }
       });
 

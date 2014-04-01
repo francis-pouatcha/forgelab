@@ -27,5 +27,6 @@ public class DeliveryReceivingAgencyDisplayController extends DeliveryReceivingA
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDeliveryReceivingAgencySelection());
+      bind(displayView.getView().getDeliveryReceivingAgencySelection(), displayView.getView().getDeliveryReceivingAgencyForm());
    }
 }

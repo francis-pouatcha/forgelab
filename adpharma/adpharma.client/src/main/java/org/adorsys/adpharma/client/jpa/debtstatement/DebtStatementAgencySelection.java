@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
 public class DebtStatementAgencySelection extends AbstractSelection<DebtStatement, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<DebtStatementAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, DebtStatement.class })
@@ -39,10 +39,10 @@ public class DebtStatementAgencySelection extends AbstractSelection<DebtStatemen
 
       agency = viewBuilder.addComboBox("DebtStatement_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<DebtStatementAgency>, ListCell<DebtStatementAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<DebtStatementAgency> call(ListView<DebtStatementAgency> listView)
          {
             return new DebtStatementAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class DebtStatementAgencySelection extends AbstractSelection<DebtStatemen
 
    public void bind(DebtStatement model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<DebtStatementAgency> getAgency()
    {
       return agency;
    }

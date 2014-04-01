@@ -23,6 +23,6 @@ public class SupplierInvoiceCreatingUserEditController extends SupplierInvoiceCr
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSupplierInvoiceCreatingUserSelection());
-      bind(editView.getView().getSupplierInvoiceCreatingUserSelection());
+      bind(editView.getView().getSupplierInvoiceCreatingUserSelection(), editView.getView().getSupplierInvoiceCreatingUserForm());
    }
 }

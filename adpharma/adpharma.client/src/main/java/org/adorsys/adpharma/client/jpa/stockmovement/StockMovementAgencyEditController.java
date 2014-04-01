@@ -23,6 +23,6 @@ public class StockMovementAgencyEditController extends StockMovementAgencyContro
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getStockMovementAgencySelection());
-      bind(editView.getView().getStockMovementAgencySelection());
+      bind(editView.getView().getStockMovementAgencySelection(), editView.getView().getStockMovementAgencyForm());
    }
 }

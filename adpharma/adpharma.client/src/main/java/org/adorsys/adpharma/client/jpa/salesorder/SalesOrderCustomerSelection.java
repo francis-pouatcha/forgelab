@@ -4,12 +4,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.control.Button;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -26,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 public class SalesOrderCustomerSelection extends AbstractSelection<SalesOrder, Customer>
 {
 
-   private ComboBox<Customer> customer;
+   private Button selectButton;
 
    @Inject
    @Bundle({ CrudKeys.class, Customer.class, SalesOrder.class })
@@ -36,19 +32,9 @@ public class SalesOrderCustomerSelection extends AbstractSelection<SalesOrder, C
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-
-      customer = viewBuilder.addComboBox("SalesOrder_customer_description.title", "customer", resourceBundle, false);
-
-      customer.setCellFactory(new Callback<ListView<Customer>, ListCell<Customer>>()
-      {
-         @Override
-         public ListCell<Customer> call(ListView<Customer> listView)
-         {
-            return new SalesOrderCustomerListCell();
-         }
-      });
-      customer.setButtonCell(new SalesOrderCustomerListCell());
-
+      selectButton = viewBuilder.addButton(
+            "SalesOrder_customer_description.title", "Entity_select.title",
+            "selectButton", resourceBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -56,8 +42,13 @@ public class SalesOrderCustomerSelection extends AbstractSelection<SalesOrder, C
    {
    }
 
-   public ComboBox<Customer> getCustomer()
+   public Button getSelectButton()
    {
-      return customer;
+      return selectButton;
+   }
+
+   public Button getCustomer()
+   {
+      return selectButton; // select button required to mark invalid field.
    }
 }

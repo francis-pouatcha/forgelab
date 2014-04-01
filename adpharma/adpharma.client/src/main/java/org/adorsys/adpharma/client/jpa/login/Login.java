@@ -1,38 +1,37 @@
 package org.adorsys.adpharma.client.jpa.login;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+import javafx.beans.property.SimpleBooleanProperty;
+import java.util.Calendar;
+import javafx.beans.property.SimpleObjectProperty;
+import java.math.BigDecimal;
+import org.adorsys.adpharma.client.jpa.gender.Gender;
+import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 import javafx.collections.ObservableList;
-
-import javax.validation.constraints.NotNull;
+import javafx.collections.FXCollections;
+import java.util.ArrayList;
+import java.util.List;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencyCompany;
-import org.adorsys.adpharma.client.jpa.gender.Gender;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
+import javax.validation.constraints.NotNull;
+import org.adorsys.javaext.format.DateFormatPattern;
+import org.adorsys.javaext.format.NumberFormatType;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javaext.relation.Relationship;
+import org.adorsys.javaext.relation.RelationshipEnd;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.format.DateFormatPattern;
-import org.adorsys.javaext.format.NumberFormatType;
-import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.relation.Relationship;
-import org.adorsys.javaext.relation.RelationshipEnd;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -40,7 +39,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "loginName", "gender" })
 @ListField({ "loginName", "email", "gender" })
-public class Login
+public class Login implements Cloneable
 {
 
    private Long id;
@@ -78,7 +77,7 @@ public class Login
    @Description("Login_roleNames_description")
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = RoleName.class, selectionMode = SelectionMode.FORWARD)
    private SimpleObjectProperty<ObservableList<RoleName>> roleNames;
-   @Description("Agency_company_description")
+   @Description("Login_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<LoginAgency> agency;
 
@@ -100,28 +99,6 @@ public class Login
    public final void setVersion(int version)
    {
       this.version = version;
-   }
-   public SimpleObjectProperty<LoginAgency> agencyProperty()
-   {
-      if (agency == null)
-      {
-    	  agency = new SimpleObjectProperty<LoginAgency>(new LoginAgency());
-      }
-      return agency;
-   }
-
-   public LoginAgency getAgency()
-   {
-      return agencyProperty().get();
-   }
-
-   public final void setAgency(LoginAgency agency)
-   {
-      if (agency == null)
-      {
-    	  agency = new LoginAgency();
-      }
-      PropertyReader.copy(agency, getAgency());
    }
 
    public SimpleStringProperty loginNameProperty()
@@ -385,6 +362,30 @@ public class Login
       this.roleNamesProperty().get().add(entity);
    }
 
+   public SimpleObjectProperty<LoginAgency> agencyProperty()
+   {
+      if (agency == null)
+      {
+         agency = new SimpleObjectProperty<LoginAgency>(new LoginAgency());
+      }
+      return agency;
+   }
+
+   public LoginAgency getAgency()
+   {
+      return agencyProperty().get();
+   }
+
+   public final void setAgency(LoginAgency agency)
+   {
+      if (agency == null)
+      {
+         agency = new LoginAgency();
+      }
+      PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
+   }
+
    @Override
    public int hashCode()
    {
@@ -415,5 +416,35 @@ public class Login
    public String toString()
    {
       return PropertyReader.buildToString(this, "loginName", "gender");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Login e = new Login();
+      e.id = id;
+      e.version = version;
+
+      e.loginName = loginName;
+      e.email = email;
+      e.fullName = fullName;
+      e.password = password;
+      e.disableLogin = disableLogin;
+      e.accountLocked = accountLocked;
+      e.saleKey = saleKey;
+      e.gender = gender;
+      e.discountRate = discountRate;
+      e.credentialExpiration = credentialExpiration;
+      e.accountExpiration = accountExpiration;
+      e.recordingDate = recordingDate;
+      e.roleNames = roleNames;
+      e.agency = agency;
+      return e;
    }
 }

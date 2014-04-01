@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -25,7 +27,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "mainArticle.articleName", "equivalentArticle.articleName" })
 @ListField({ "mainArticle.articleName", "equivalentArticle.articleName" })
-public class ArticleEquivalence
+public class ArticleEquivalence implements Cloneable
 {
 
    private Long id;
@@ -35,10 +37,10 @@ public class ArticleEquivalence
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordingDate;
    @Description("ArticleEquivalence_mainArticle_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<ArticleEquivalenceMainArticle> mainArticle;
    @Description("ArticleEquivalence_equivalentArticle_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<ArticleEquivalenceEquivalentArticle> equivalentArticle;
 
    public Long getId()
@@ -102,6 +104,7 @@ public class ArticleEquivalence
          mainArticle = new ArticleEquivalenceMainArticle();
       }
       PropertyReader.copy(mainArticle, getMainArticle());
+      mainArticleProperty().setValue(ObjectUtils.clone(getMainArticle()));
    }
 
    public SimpleObjectProperty<ArticleEquivalenceEquivalentArticle> equivalentArticleProperty()
@@ -126,6 +129,7 @@ public class ArticleEquivalence
          equivalentArticle = new ArticleEquivalenceEquivalentArticle();
       }
       PropertyReader.copy(equivalentArticle, getEquivalentArticle());
+      equivalentArticleProperty().setValue(ObjectUtils.clone(getEquivalentArticle()));
    }
 
    @Override
@@ -158,5 +162,24 @@ public class ArticleEquivalence
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "articleName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleEquivalence e = new ArticleEquivalence();
+      e.id = id;
+      e.version = version;
+
+      e.recordingDate = recordingDate;
+      e.mainArticle = mainArticle;
+      e.equivalentArticle = equivalentArticle;
+      return e;
    }
 }

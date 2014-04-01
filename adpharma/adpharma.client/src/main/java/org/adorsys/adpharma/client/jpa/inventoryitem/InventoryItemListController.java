@@ -58,9 +58,14 @@ public class InventoryItemListController implements EntityController
 
    private InventoryItemSearchResult searchResult;
 
+   @Inject
+   private InventoryItemRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<InventoryItem>()
             {

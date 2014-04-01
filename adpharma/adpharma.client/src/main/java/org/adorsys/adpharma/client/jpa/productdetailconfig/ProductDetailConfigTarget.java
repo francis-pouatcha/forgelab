@@ -8,12 +8,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.article.ArticleFamily;
 import java.math.BigDecimal;
-import javafx.beans.property.SimpleLongProperty;
 import java.util.Calendar;
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMargin;
 import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
 import org.adorsys.adpharma.client.jpa.article.ArticlePackagingMode;
+import javafx.beans.property.SimpleLongProperty;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
@@ -34,7 +34,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Article_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductDetailConfigTarget implements Association<ProductDetailConfig, Article>
+public class ProductDetailConfigTarget implements Association<ProductDetailConfig, Article>, Cloneable
 {
 
    private Long id;
@@ -224,25 +224,40 @@ public class ProductDetailConfigTarget implements Association<ProductDetailConfi
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ProductDetailConfigTarget other = (ProductDetailConfigTarget) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ProductDetailConfigTarget other = (ProductDetailConfigTarget) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "pic");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ProductDetailConfigTarget a = new ProductDetailConfigTarget();
+      a.id = id;
+      a.version = version;
+
+      a.articleName = articleName;
+      a.pic = pic;
+      a.manufacturer = manufacturer;
+      a.active = active;
+      a.authorizedSale = authorizedSale;
+      a.qtyInStock = qtyInStock;
+      a.sppu = sppu;
+      return a;
+   }
+
 }

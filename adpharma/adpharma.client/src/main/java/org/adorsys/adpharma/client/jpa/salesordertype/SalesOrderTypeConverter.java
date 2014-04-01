@@ -26,6 +26,8 @@ public class SalesOrderTypeConverter extends StringConverter<SalesOrderType>
    @Override
    public String toString(SalesOrderType object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("SalesOrderType_" + object.name()
             + "_description.title");
    }

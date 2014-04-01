@@ -6,10 +6,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import java.math.BigDecimal;
-import javafx.beans.property.SimpleLongProperty;
 import java.util.Calendar;
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
+import javafx.beans.property.SimpleLongProperty;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -36,7 +38,7 @@ import org.adorsys.javaext.list.ListField;
 @ToStringField({ "articleName", "pic" })
 @ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock",
       "sppu", "authorizedSale", "agency.name" })
-public class Article
+public class Article implements Cloneable
 {
 
    private Long id;
@@ -50,20 +52,12 @@ public class Article
    private SimpleStringProperty manufacturer;
    @Description("Article_active_description")
    private SimpleBooleanProperty active;
-   @Description("Article_maxQtyPerPO_description")
-   private SimpleLongProperty maxQtyPerPO;
    @Description("Article_authorizedSale_description")
    private SimpleBooleanProperty authorizedSale;
-   @Description("Article_approvedOrder_description")
-   private SimpleBooleanProperty approvedOrder;
    @Description("Article_maxStockQty_description")
    private SimpleLongProperty maxStockQty;
    @Description("Article_qtyInStock_description")
    private SimpleObjectProperty<BigDecimal> qtyInStock;
-   @Description("Article_salableQty_description")
-   private SimpleObjectProperty<BigDecimal> salableQty;
-   @Description("Article_qtyInStore_description")
-   private SimpleObjectProperty<BigDecimal> qtyInStore;
    @Description("Article_pppu_description")
    private SimpleObjectProperty<BigDecimal> pppu;
    @Description("Article_sppu_description")
@@ -201,25 +195,6 @@ public class Article
       this.activeProperty().set(active);
    }
 
-   public SimpleLongProperty maxQtyPerPOProperty()
-   {
-      if (maxQtyPerPO == null)
-      {
-         maxQtyPerPO = new SimpleLongProperty(1L);
-      }
-      return maxQtyPerPO;
-   }
-
-   public Long getMaxQtyPerPO()
-   {
-      return maxQtyPerPOProperty().get();
-   }
-
-   public final void setMaxQtyPerPO(Long maxQtyPerPO)
-   {
-      this.maxQtyPerPOProperty().set(maxQtyPerPO);
-   }
-
    public SimpleBooleanProperty authorizedSaleProperty()
    {
       if (authorizedSale == null)
@@ -241,32 +216,11 @@ public class Article
       this.authorizedSaleProperty().set(authorizedSale);
    }
 
-   public SimpleBooleanProperty approvedOrderProperty()
-   {
-      if (approvedOrder == null)
-      {
-         approvedOrder = new SimpleBooleanProperty(Boolean.TRUE);
-      }
-      return approvedOrder;
-   }
-
-   public Boolean getApprovedOrder()
-   {
-      return approvedOrderProperty().get();
-   }
-
-   public final void setApprovedOrder(Boolean approvedOrder)
-   {
-      if (approvedOrder == null)
-         approvedOrder = Boolean.FALSE;
-      this.approvedOrderProperty().set(approvedOrder);
-   }
-
    public SimpleLongProperty maxStockQtyProperty()
    {
       if (maxStockQty == null)
       {
-         maxStockQty = new SimpleLongProperty();
+         maxStockQty = new SimpleLongProperty(Long.valueOf(0));
       }
       return maxStockQty;
    }
@@ -298,44 +252,6 @@ public class Article
    public final void setQtyInStock(BigDecimal qtyInStock)
    {
       this.qtyInStockProperty().set(qtyInStock);
-   }
-
-   public SimpleObjectProperty<BigDecimal> salableQtyProperty()
-   {
-      if (salableQty == null)
-      {
-         salableQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
-      }
-      return salableQty;
-   }
-
-   public BigDecimal getSalableQty()
-   {
-      return salableQtyProperty().get();
-   }
-
-   public final void setSalableQty(BigDecimal salableQty)
-   {
-      this.salableQtyProperty().set(salableQty);
-   }
-
-   public SimpleObjectProperty<BigDecimal> qtyInStoreProperty()
-   {
-      if (qtyInStore == null)
-      {
-         qtyInStore = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
-      }
-      return qtyInStore;
-   }
-
-   public BigDecimal getQtyInStore()
-   {
-      return qtyInStoreProperty().get();
-   }
-
-   public final void setQtyInStore(BigDecimal qtyInStore)
-   {
-      this.qtyInStoreProperty().set(qtyInStore);
    }
 
    public SimpleObjectProperty<BigDecimal> pppuProperty()
@@ -418,7 +334,7 @@ public class Article
    {
       if (lastStockEntry == null)
       {
-         lastStockEntry = new SimpleObjectProperty<Calendar>();
+         lastStockEntry = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return lastStockEntry;
    }
@@ -437,7 +353,7 @@ public class Article
    {
       if (lastOutOfStock == null)
       {
-         lastOutOfStock = new SimpleObjectProperty<Calendar>();
+         lastOutOfStock = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return lastOutOfStock;
    }
@@ -456,7 +372,7 @@ public class Article
    {
       if (recordingDate == null)
       {
-         recordingDate = new SimpleObjectProperty<Calendar>();
+         recordingDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return recordingDate;
    }
@@ -493,6 +409,7 @@ public class Article
          section = new ArticleSection();
       }
       PropertyReader.copy(section, getSection());
+      sectionProperty().setValue(ObjectUtils.clone(getSection()));
    }
 
    public SimpleObjectProperty<ArticleFamily> familyProperty()
@@ -516,6 +433,7 @@ public class Article
          family = new ArticleFamily();
       }
       PropertyReader.copy(family, getFamily());
+      familyProperty().setValue(ObjectUtils.clone(getFamily()));
    }
 
    public SimpleObjectProperty<ArticleDefaultSalesMargin> defaultSalesMarginProperty()
@@ -539,6 +457,7 @@ public class Article
          defaultSalesMargin = new ArticleDefaultSalesMargin();
       }
       PropertyReader.copy(defaultSalesMargin, getDefaultSalesMargin());
+      defaultSalesMarginProperty().setValue(ObjectUtils.clone(getDefaultSalesMargin()));
    }
 
    public SimpleObjectProperty<ArticlePackagingMode> packagingModeProperty()
@@ -562,6 +481,7 @@ public class Article
          packagingMode = new ArticlePackagingMode();
       }
       PropertyReader.copy(packagingMode, getPackagingMode());
+      packagingModeProperty().setValue(ObjectUtils.clone(getPackagingMode()));
    }
 
    public SimpleObjectProperty<ArticleAgency> agencyProperty()
@@ -586,6 +506,7 @@ public class Article
          agency = new ArticleAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<ArticleClearanceConfig> clearanceConfigProperty()
@@ -609,6 +530,7 @@ public class Article
          clearanceConfig = new ArticleClearanceConfig();
       }
       PropertyReader.copy(clearanceConfig, getClearanceConfig());
+      clearanceConfigProperty().setValue(ObjectUtils.clone(getClearanceConfig()));
    }
 
    @Override
@@ -641,5 +563,41 @@ public class Article
    public String toString()
    {
       return PropertyReader.buildToString(this, "articleName", "pic");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Article e = new Article();
+      e.id = id;
+      e.version = version;
+
+      e.articleName = articleName;
+      e.pic = pic;
+      e.manufacturer = manufacturer;
+      e.active = active;
+      e.authorizedSale = authorizedSale;
+      e.maxStockQty = maxStockQty;
+      e.qtyInStock = qtyInStock;
+      e.pppu = pppu;
+      e.sppu = sppu;
+      e.maxDiscountRate = maxDiscountRate;
+      e.totalStockPrice = totalStockPrice;
+      e.lastStockEntry = lastStockEntry;
+      e.lastOutOfStock = lastOutOfStock;
+      e.recordingDate = recordingDate;
+      e.section = section;
+      e.family = family;
+      e.defaultSalesMargin = defaultSalesMargin;
+      e.packagingMode = packagingMode;
+      e.agency = agency;
+      e.clearanceConfig = clearanceConfig;
+      return e;
    }
 }

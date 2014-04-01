@@ -62,9 +62,15 @@ public class CustomerCategoryDisplayController implements EntityController
 
    private CustomerCategory displayedEntity;
 
+   @Inject
+   private CustomerCategoryRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+
       /*
        * listen to search button and fire search requested event.
        */

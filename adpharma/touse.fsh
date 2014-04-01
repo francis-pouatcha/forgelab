@@ -1,40 +1,32 @@
-field temporal --type TIMESTAMP --named recordingDate; 
-@/* pattern= dd-MM-yyyy HH:mm */;
-description add-field-description --onProperty recordingDate --title "Recording Date" --text "The recording date ";
-description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
-format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
+@/* Enum AccessRoleEnum */;
+java new-enum-type --named AccessRoleEnum --package ~.jpa;
+enum add-enum-class-description --title "Access Role Names" --text "The name of access roles defined in this application";
+enum add-enum-class-description --title "Enumeration des Droit pour Accès" --text "les noms de rolles autprissant accès au systeme" --locale fr;
 
+java new-enum-const ADMIN;
+enum add-enum-constant-description --onConstant ADMIN --title "Administrator" --text "The user administrator";
+enum add-enum-constant-description --onConstant ADMIN --title "Administrateur" --text "Administrateur du système" --locale fr;
 
+java new-enum-const LOGIN;
+enum add-enum-constant-description --onConstant LOGIN  --title "Login" --text "Role assigned to each user that can sig into this system";
+enum add-enum-constant-description --onConstant LOGIN  --title "Connection" --text "Rôle attribué à chaque utilisateur pouvant ce connecter à ce système" --locale fr;
+access login-role --onConstant LOGIN;
 
-field string --named invoiceNumber;
-description add-field-description --onProperty invoiceNumber --title "Invoice Number" --text "The number of the invoice.";
-description add-field-description --onProperty invoiceNumber --title "Numéro Facture" --text "Le numéro de cette facture." --locale fr;
-display add-toString-field --field invoiceNumber;
-display add-list-field --field invoiceNumber;
+java new-enum-const MANAGER;
+enum add-enum-constant-description --onConstant MANAGER  --title "Manager" --text "The manager has access to each component except the user management component";
+enum add-enum-constant-description --onConstant MANAGER  --title "Gestionnaire" --text "Le gestionnaire a accès à chaque module sauf le module de gestion des utilisateurs" --locale fr;
 
+java new-enum-const CASHIER;
+enum add-enum-constant-description --onConstant CASHIER  --title "Cashier" --text "The cashier has access to the modules CashDrawer, Payment and Invoice";
+enum add-enum-constant-description --onConstant CASHIER  --title "Caissier" --text "Le caissier a accès aux modules Caisse, Paiement et facturation" --locale fr;
 
-field number --named amountVAT --type java.math.BigDecimal;
-description add-field-description --onProperty amountVAT --title "Amount VAT" --text "Total amount VAT for this sales order.";
-description add-field-description --onProperty amountVAT --title "Montant TVA" --text "Montant total TVA pour cette commande client." --locale fr;
-format add-number-type --onProperty amountVAT --type CURRENCY ;
-@/* Default=0, montant_tva */;
-display add-list-field --field amountVAT;
+java new-enum-const STOCKS;
+enum add-enum-constant-description --onConstant STOCKS  --title "Stocks" --text "The warehousemann has access to the modules Article, Delivery, Procurement Order, Packaging Mode, Supplier, Inventory, Purchase Order";
+enum add-enum-constant-description --onConstant STOCKS  --title "Magasinier" --text "Le magasinier a accès aux modules Produit, Livraison, Approvisionement, Mode de Conditionement, Inventaire, Commande Fournisseur" --locale fr;
 
-
-field manyToOne --named equivalentArticle --fieldType ~.jpa.Article;
-description add-field-description --onProperty equivalentArticle --title "Equivalent Article" --text "The Equivalent Article";
-description add-field-description --onProperty equivalentArticle --title "Article Equivalent" --text "Article equivalent." --locale fr;
-association set-selection-mode --onProperty equivalentArticle --selectionMode COMBOBOX;
-association set-type --onProperty equivalentArticle --type AGGREGATION --targetEntity ~.jpa.Article;
-display add-toString-field --field equivalentArticle.articleName;
-display add-list-field --field equivalentArticle.articleName;
-
-
-field custom --named paymentMode --type ~.jpa.PaymentMode;
-description add-field-description --onProperty paymentMode --title "Payment Mode" --text "The Mode of this payment.";
-description add-field-description --onProperty paymentMode --title "Mode de Paiement" --text "Le Mode de paiement." --locale fr;
-enum enumerated-field --onProperty paymentMode ;
-display add-list-field --field paymentMode;
+java new-enum-const SALES;
+enum add-enum-constant-description --onConstant SALES  --title "Sales" --text "The sales has access to the modules Sales Order, Customer, Insurance, Employer, Hospital, Prescriber, Prescription Book";
+enum add-enum-constant-description --onConstant SALES  --title "Vendeur" --text "Le vendeur a accès aux modules Command Client, Client, Assurance, Employeur, Hopital, Prescripteur, Ordonnancier" --locale fr;
 
 constraint NotNull --onProperty agency;
 description add-notNull-message --onProperty agency --title "The agency  is required" --text "The agency  is required";

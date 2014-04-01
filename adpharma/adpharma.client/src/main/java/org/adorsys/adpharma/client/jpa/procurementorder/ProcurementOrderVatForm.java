@@ -57,6 +57,13 @@ public class ProcurementOrderVatForm extends AbstractToOneAssociation<Procuremen
       rate.numberProperty().bindBidirectional(model.getVat().rateProperty());
    }
 
+   public void update(ProcurementOrderVat data)
+   {
+      name.textProperty().set(data.nameProperty().get());
+      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+      rate.numberProperty().set(data.rateProperty().get());
+   }
+
    public TextField getName()
    {
       return name;

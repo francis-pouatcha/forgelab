@@ -22,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Agency_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SupplierInvoiceAgency implements Association<SupplierInvoice, Agency>
+public class SupplierInvoiceAgency implements Association<SupplierInvoice, Agency>, Cloneable
 {
 
    private Long id;
@@ -170,25 +170,38 @@ public class SupplierInvoiceAgency implements Association<SupplierInvoice, Agenc
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SupplierInvoiceAgency other = (SupplierInvoiceAgency) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		SupplierInvoiceAgency other = (SupplierInvoiceAgency) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "agencyNumber", "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SupplierInvoiceAgency a = new SupplierInvoiceAgency();
+      a.id = id;
+      a.version = version;
+
+      a.agencyNumber = agencyNumber;
+      a.name = name;
+      a.active = active;
+      a.phone = phone;
+      a.fax = fax;
+      return a;
+   }
+
 }

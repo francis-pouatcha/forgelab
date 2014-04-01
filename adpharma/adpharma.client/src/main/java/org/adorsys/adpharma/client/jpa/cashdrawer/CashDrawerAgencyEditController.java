@@ -23,6 +23,6 @@ public class CashDrawerAgencyEditController extends CashDrawerAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCashDrawerAgencySelection());
-      bind(editView.getView().getCashDrawerAgencySelection());
+      bind(editView.getView().getCashDrawerAgencySelection(), editView.getView().getCashDrawerAgencyForm());
    }
 }

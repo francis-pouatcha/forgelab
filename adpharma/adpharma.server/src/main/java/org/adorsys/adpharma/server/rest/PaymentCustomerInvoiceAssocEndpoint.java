@@ -185,7 +185,7 @@ public class PaymentCustomerInvoiceAssocEndpoint
 
    private static final List<String> s_invoices_t_payments_sourceFields = Arrays.asList("paymentNumber", "paymentDate", "recordDate", "amount", "receivedAmount", "difference", "agency.name", "cashier.fullName", "cashDrawer.cashDrawerNumber", "paymentMode", "paymentReceiptPrinted", "paidBy.fullName");
 
-   private static final List<String> s_invoices_t_payments_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "amountVAT", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
+   private static final List<String> s_invoices_t_payments_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
 
    private PaymentCustomerInvoiceAssoc detach(PaymentCustomerInvoiceAssoc entity)
    {

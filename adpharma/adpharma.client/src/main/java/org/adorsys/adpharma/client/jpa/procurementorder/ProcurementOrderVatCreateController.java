@@ -22,7 +22,7 @@ public class ProcurementOrderVatCreateController extends ProcurementOrderVatCont
    public void handleNewModelEvent(@Observes @CreateModelEvent ProcurementOrder model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getProcurementOrderVatSelection());
+      bind(createView.getView().getProcurementOrderVatSelection(), createView.getView().getProcurementOrderVatForm());
       activateButton(createView.getView().getProcurementOrderVatSelection());
    }
 }

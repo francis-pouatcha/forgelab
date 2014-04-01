@@ -22,7 +22,7 @@ public class DeliveryReceivingAgencyCreateController extends DeliveryReceivingAg
    public void handleNewModelEvent(@Observes @CreateModelEvent Delivery model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliveryReceivingAgencySelection());
+      bind(createView.getView().getDeliveryReceivingAgencySelection(), createView.getView().getDeliveryReceivingAgencyForm());
       activateButton(createView.getView().getDeliveryReceivingAgencySelection());
    }
 }

@@ -15,6 +15,8 @@ import javafx.scene.control.TextField;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
 
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
@@ -43,6 +45,8 @@ public class CurrencyView extends AbstractForm<Currency>
    private Locale locale;
 
    @Inject
+   private BigDecimalFieldValidator bigDecimalFieldValidator;
+   @Inject
    private TextInputControlValidator textInputControlValidator;
 
    @PostConstruct
@@ -58,12 +62,14 @@ public class CurrencyView extends AbstractForm<Currency>
    public void addValidators()
    {
       name.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Currency>(textInputControlValidator, name, Currency.class, "name", resourceBundle));
+      cfaEquivalent.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<Currency>(bigDecimalFieldValidator, cfaEquivalent, Currency.class, "cfaEquivalent", resourceBundle));
    }
 
    public Set<ConstraintViolation<Currency>> validate(Currency model)
    {
       Set<ConstraintViolation<Currency>> violations = new HashSet<ConstraintViolation<Currency>>();
       violations.addAll(textInputControlValidator.validate(name, Currency.class, "name", resourceBundle));
+      violations.addAll(bigDecimalFieldValidator.validate(cfaEquivalent, Currency.class, "cfaEquivalent", resourceBundle));
       return violations;
    }
 

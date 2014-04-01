@@ -5,6 +5,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 
 @Singleton
@@ -26,6 +27,12 @@ public class ArticleEquivalenceEquivalentArticleDisplayController extends Articl
    public void handleNewModelEvent(@Observes @SelectedModelEvent ArticleEquivalence model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getArticleEquivalenceEquivalentArticleSelection());
+      disableButton(displayView.getView().getArticleEquivalenceEquivalentArticleSelection(), displayView.getView().getArticleEquivalenceEquivalentArticleForm());
+      bind(displayView.getView().getArticleEquivalenceEquivalentArticleSelection(), displayView.getView().getArticleEquivalenceEquivalentArticleForm());
+   }
+
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent ArticleEquivalence selectedEntity)
+   {
+      loadAssociation();
    }
 }

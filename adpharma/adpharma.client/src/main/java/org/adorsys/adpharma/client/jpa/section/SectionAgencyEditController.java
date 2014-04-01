@@ -23,6 +23,6 @@ public class SectionAgencyEditController extends SectionAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSectionAgencySelection());
-      bind(editView.getView().getSectionAgencySelection());
+      bind(editView.getView().getSectionAgencySelection(), editView.getView().getSectionAgencyForm());
    }
 }

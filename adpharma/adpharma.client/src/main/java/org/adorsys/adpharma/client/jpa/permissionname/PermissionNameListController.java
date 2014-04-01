@@ -58,9 +58,14 @@ public class PermissionNameListController implements EntityController
 
    private PermissionNameSearchResult searchResult;
 
+   @Inject
+   private PermissionNameRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<PermissionName>()
             {

@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.section.Section;
 public class SectionAgencySelection extends AbstractSelection<Section, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<SectionAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, Section.class })
@@ -39,10 +39,10 @@ public class SectionAgencySelection extends AbstractSelection<Section, Agency>
 
       agency = viewBuilder.addComboBox("Section_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<SectionAgency>, ListCell<SectionAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<SectionAgency> call(ListView<SectionAgency> listView)
          {
             return new SectionAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class SectionAgencySelection extends AbstractSelection<Section, Agency>
 
    public void bind(Section model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<SectionAgency> getAgency()
    {
       return agency;
    }

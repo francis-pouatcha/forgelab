@@ -23,6 +23,6 @@ public class CustomerInvoiceCreatingUserEditController extends CustomerInvoiceCr
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerInvoiceCreatingUserSelection());
-      bind(editView.getView().getCustomerInvoiceCreatingUserSelection());
+      bind(editView.getView().getCustomerInvoiceCreatingUserSelection(), editView.getView().getCustomerInvoiceCreatingUserForm());
    }
 }

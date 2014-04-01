@@ -27,7 +27,9 @@ public class SecurityUtil {
 
 	public Login getConnectedUser(){
 		LoginSearchInput searchInput = new LoginSearchInput();
-		searchInput.getEntity().setLoginName(getUserName());
+		Login login = new Login();
+		login.setLoginName(getUserName());
+		searchInput.setEntity(login);
 		List<Login> resultList = loginEndpoint.findBy(searchInput).getResultList();
 		if(!resultList.isEmpty()) return resultList.iterator().next();
 		return null;

@@ -23,6 +23,6 @@ public class AgencyCompanyEditController extends AgencyCompanyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getAgencyCompanySelection());
-      bind(editView.getView().getAgencyCompanySelection());
+      bind(editView.getView().getAgencyCompanySelection(), editView.getView().getAgencyCompanyForm());
    }
 }

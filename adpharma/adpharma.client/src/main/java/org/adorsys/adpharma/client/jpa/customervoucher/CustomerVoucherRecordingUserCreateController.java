@@ -22,7 +22,7 @@ public class CustomerVoucherRecordingUserCreateController extends CustomerVouche
    public void handleNewModelEvent(@Observes @CreateModelEvent CustomerVoucher model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerVoucherRecordingUserSelection());
+      bind(createView.getView().getCustomerVoucherRecordingUserSelection(), createView.getView().getCustomerVoucherRecordingUserForm());
       activateButton(createView.getView().getCustomerVoucherRecordingUserSelection());
    }
 }

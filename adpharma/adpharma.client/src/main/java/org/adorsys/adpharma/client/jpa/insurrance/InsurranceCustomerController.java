@@ -51,8 +51,10 @@ public abstract class InsurranceCustomerController
    {
    }
 
-   protected void bind(final InsurranceCustomerSelection selection)
+   protected void bind(final InsurranceCustomerSelection selection, final InsurranceCustomerForm form)
    {
+
+      //	    selection.getCustomer().valueProperty().bindBidirectional(sourceEntity.customerProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class InsurranceCustomerController
             s.reset();
             List<Customer> entities = targetSearchResult.getResultList();
             selection.getCustomer().getItems().clear();
-            selection.getCustomer().getItems().addAll(entities);
+            selection.getCustomer().getItems().add(new InsurranceCustomer());
+            for (Customer entity : entities)
+            {
+               selection.getCustomer().getItems().add(new InsurranceCustomer(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class InsurranceCustomerController
                }
             });
 
-      selection.getCustomer().valueProperty().addListener(new ChangeListener<Customer>()
+      selection.getCustomer().valueProperty().addListener(new ChangeListener<InsurranceCustomer>()
       {
          @Override
-         public void changed(ObservableValue<? extends Customer> ov, Customer oldValue,
-               Customer newValue)
+         public void changed(ObservableValue<? extends InsurranceCustomer> ov, InsurranceCustomer oldValue,
+               InsurranceCustomer newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCustomer(new InsurranceCustomer(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCustomer(newValue);
          }
       });
 

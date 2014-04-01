@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.payment.Payment;
 public class PaymentAgencySelection extends AbstractSelection<Payment, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<PaymentAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, Payment.class })
@@ -39,10 +39,10 @@ public class PaymentAgencySelection extends AbstractSelection<Payment, Agency>
 
       agency = viewBuilder.addComboBox("Payment_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<PaymentAgency>, ListCell<PaymentAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<PaymentAgency> call(ListView<PaymentAgency> listView)
          {
             return new PaymentAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class PaymentAgencySelection extends AbstractSelection<Payment, Agency>
 
    public void bind(Payment model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<PaymentAgency> getAgency()
    {
       return agency;
    }

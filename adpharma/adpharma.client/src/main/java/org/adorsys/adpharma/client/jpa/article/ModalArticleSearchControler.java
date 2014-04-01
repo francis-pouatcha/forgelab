@@ -13,11 +13,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchResult;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchService;
-import org.adorsys.adpharma.client.jpa.articlelot.ModalArticleLotSearchView;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;

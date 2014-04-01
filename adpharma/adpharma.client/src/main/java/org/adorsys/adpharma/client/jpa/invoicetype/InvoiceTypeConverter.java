@@ -26,6 +26,8 @@ public class InvoiceTypeConverter extends StringConverter<InvoiceType>
    @Override
    public String toString(InvoiceType object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("InvoiceType_" + object.name()
             + "_description.title");
    }

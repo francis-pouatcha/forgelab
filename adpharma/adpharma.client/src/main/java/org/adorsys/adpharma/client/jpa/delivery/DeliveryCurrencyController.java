@@ -51,8 +51,10 @@ public abstract class DeliveryCurrencyController
    {
    }
 
-   protected void bind(final DeliveryCurrencySelection selection)
+   protected void bind(final DeliveryCurrencySelection selection, final DeliveryCurrencyForm form)
    {
+
+      //	    selection.getCurrency().valueProperty().bindBidirectional(sourceEntity.currencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DeliveryCurrencyController
             s.reset();
             List<Currency> entities = targetSearchResult.getResultList();
             selection.getCurrency().getItems().clear();
-            selection.getCurrency().getItems().addAll(entities);
+            selection.getCurrency().getItems().add(new DeliveryCurrency());
+            for (Currency entity : entities)
+            {
+               selection.getCurrency().getItems().add(new DeliveryCurrency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DeliveryCurrencyController
                }
             });
 
-      selection.getCurrency().valueProperty().addListener(new ChangeListener<Currency>()
+      selection.getCurrency().valueProperty().addListener(new ChangeListener<DeliveryCurrency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Currency> ov, Currency oldValue,
-               Currency newValue)
+         public void changed(ObservableValue<? extends DeliveryCurrency> ov, DeliveryCurrency oldValue,
+               DeliveryCurrency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCurrency(new DeliveryCurrency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCurrency(newValue);
          }
       });
 

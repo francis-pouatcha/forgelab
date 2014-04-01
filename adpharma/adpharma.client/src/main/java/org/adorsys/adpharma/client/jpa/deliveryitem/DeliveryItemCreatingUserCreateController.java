@@ -22,7 +22,7 @@ public class DeliveryItemCreatingUserCreateController extends DeliveryItemCreati
    public void handleNewModelEvent(@Observes @CreateModelEvent DeliveryItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliveryItemCreatingUserSelection());
+      bind(createView.getView().getDeliveryItemCreatingUserSelection(), createView.getView().getDeliveryItemCreatingUserForm());
       activateButton(createView.getView().getDeliveryItemCreatingUserSelection());
    }
 }

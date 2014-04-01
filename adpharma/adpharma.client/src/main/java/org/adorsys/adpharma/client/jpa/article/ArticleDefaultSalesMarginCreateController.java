@@ -22,7 +22,7 @@ public class ArticleDefaultSalesMarginCreateController extends ArticleDefaultSal
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleDefaultSalesMarginSelection());
+      bind(createView.getView().getArticleDefaultSalesMarginSelection(), createView.getView().getArticleDefaultSalesMarginForm());
       activateButton(createView.getView().getArticleDefaultSalesMarginSelection());
    }
 }

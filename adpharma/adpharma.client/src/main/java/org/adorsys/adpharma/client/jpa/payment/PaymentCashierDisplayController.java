@@ -27,5 +27,6 @@ public class PaymentCashierDisplayController extends PaymentCashierController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPaymentCashierSelection());
+      bind(displayView.getView().getPaymentCashierSelection(), displayView.getView().getPaymentCashierForm());
    }
 }

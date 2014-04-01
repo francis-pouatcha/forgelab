@@ -27,5 +27,6 @@ public class CashDrawerAgencyDisplayController extends CashDrawerAgencyControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCashDrawerAgencySelection());
+      bind(displayView.getView().getCashDrawerAgencySelection(), displayView.getView().getCashDrawerAgencyForm());
    }
 }

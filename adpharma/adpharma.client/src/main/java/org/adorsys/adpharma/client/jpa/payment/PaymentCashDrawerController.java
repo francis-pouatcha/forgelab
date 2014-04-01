@@ -51,8 +51,10 @@ public abstract class PaymentCashDrawerController
    {
    }
 
-   protected void bind(final PaymentCashDrawerSelection selection)
+   protected void bind(final PaymentCashDrawerSelection selection, final PaymentCashDrawerForm form)
    {
+
+      //	    selection.getCashDrawer().valueProperty().bindBidirectional(sourceEntity.cashDrawerProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PaymentCashDrawerController
             s.reset();
             List<CashDrawer> entities = targetSearchResult.getResultList();
             selection.getCashDrawer().getItems().clear();
-            selection.getCashDrawer().getItems().addAll(entities);
+            selection.getCashDrawer().getItems().add(new PaymentCashDrawer());
+            for (CashDrawer entity : entities)
+            {
+               selection.getCashDrawer().getItems().add(new PaymentCashDrawer(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PaymentCashDrawerController
                }
             });
 
-      selection.getCashDrawer().valueProperty().addListener(new ChangeListener<CashDrawer>()
+      selection.getCashDrawer().valueProperty().addListener(new ChangeListener<PaymentCashDrawer>()
       {
          @Override
-         public void changed(ObservableValue<? extends CashDrawer> ov, CashDrawer oldValue,
-               CashDrawer newValue)
+         public void changed(ObservableValue<? extends PaymentCashDrawer> ov, PaymentCashDrawer oldValue,
+               PaymentCashDrawer newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCashDrawer(new PaymentCashDrawer(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCashDrawer(newValue);
          }
       });
 

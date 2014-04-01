@@ -35,11 +35,8 @@ import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchService;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
-import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
-import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -62,7 +59,7 @@ public class ModalArticleCreateController {
 
 	@Inject
 	Article model ;
-	
+
 	@Inject
 	@ModalEntityCreateDoneEvent
 	private Event<Article> modalArticleCreateDoneEvent;
@@ -77,29 +74,7 @@ public class ModalArticleCreateController {
 		bindViewButtonAction();
 		modalArticleCreateView.bind(model);
 
-		modalArticleCreateView.getView().getArticleAgencySelection().getAgency().valueProperty().addListener(new ChangeListener<Agency>()
-				{
-			@Override
-			public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-					Agency newValue)
-			{
-				if(newValue!=null){
-					model.setAgency(new ArticleAgency(newValue));
-				}
-			}
-				});
 
-		modalArticleCreateView.getView().getArticleSectionSelection().getSection().valueProperty().addListener(new ChangeListener<Section>()
-				{
-			@Override
-			public void changed(ObservableValue<? extends Section> ov, Section oldValue,
-					Section newValue)
-			{
-				if(newValue!=null){
-					model.setSection(new ArticleSection(newValue));
-				}
-			}
-				});
 
 		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -173,8 +148,11 @@ public class ModalArticleCreateController {
 				SectionSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				modalArticleCreateView.getView().getArticleSectionSelection().getSection().getItems().clear();
 				List<Section> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticleSectionSelection().getSection().getItems().setAll(resultList);
+				for (Section section : resultList) {
+					modalArticleCreateView.getView().getArticleSectionSelection().getSection().getItems().add(new ArticleSection(section));
+				}
 			}
 		});
 
@@ -187,7 +165,10 @@ public class ModalArticleCreateController {
 				event.consume();
 				s.reset();
 				List<PackagingMode> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticlePackagingModeSelection().getPackagingMode().getItems().setAll(resultList);
+				modalArticleCreateView.getView().getArticlePackagingModeSelection().getPackagingMode().getItems().clear();
+				for (PackagingMode packagingMode : resultList) {
+					modalArticleCreateView.getView().getArticlePackagingModeSelection().getPackagingMode().getItems().add(new ArticlePackagingMode(packagingMode));
+				}
 			}
 		});
 		modalArticleCreateView.getAgencySearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -198,8 +179,11 @@ public class ModalArticleCreateController {
 				AgencySearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				modalArticleCreateView.getView().getArticleAgencySelection().getAgency().getItems().clear();
 				List<Agency> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticleAgencySelection().getAgency().getItems().setAll(resultList);
+				for (Agency agency : resultList) {
+					modalArticleCreateView.getView().getArticleAgencySelection().getAgency().getItems().add(new ArticleAgency(agency));
+				}
 			}
 		});
 		modalArticleCreateView.getFamilySearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -210,8 +194,11 @@ public class ModalArticleCreateController {
 				ProductFamilySearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+//				modalArticleCreateView.getView().getArticleFamilySelection().getFamily().getItems().
 				List<ProductFamily> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticleFamilySelection().getFamily().getItems().setAll(resultList);
+				for (ProductFamily productFamily : resultList) {
+					
+				}
 			}
 		});
 		modalArticleCreateView.getMarginSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -222,8 +209,12 @@ public class ModalArticleCreateController {
 				SalesMarginSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				modalArticleCreateView.getView().getArticleDefaultSalesMarginSelection().getDefaultSalesMargin().getItems().clear();
 				List<SalesMargin> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticleDefaultSalesMarginSelection().getDefaultSalesMargin().getItems().setAll(resultList);
+				for (SalesMargin salesMargin : resultList) {
+					modalArticleCreateView.getView().getArticleDefaultSalesMarginSelection().getDefaultSalesMargin().getItems().add(new ArticleDefaultSalesMargin(salesMargin));
+					
+				}
 			}
 		});
 		modalArticleCreateView.getClearanceConfigSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -234,8 +225,11 @@ public class ModalArticleCreateController {
 				ClearanceConfigSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().clear();
 				List<ClearanceConfig> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().setAll(resultList);
+				for (ClearanceConfig clearanceConfig : resultList) {
+					modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().add(new ArticleClearanceConfig(clearanceConfig));
+				}
 			}
 		});
 	}
@@ -243,9 +237,9 @@ public class ModalArticleCreateController {
 	public Article getModel() {
 		return model;
 	}
-public void handleModalArticleCreateEvent(@Observes @ModalEntityCreateRequestedEvent Article article){
-	PropertyReader.copy(article, model);
-	modalArticleCreateView.showDiaLog();
-}
+	public void handleModalArticleCreateEvent(@Observes @ModalEntityCreateRequestedEvent Article article){
+		PropertyReader.copy(article, model);
+		modalArticleCreateView.showDiaLog();
+	}
 
 }

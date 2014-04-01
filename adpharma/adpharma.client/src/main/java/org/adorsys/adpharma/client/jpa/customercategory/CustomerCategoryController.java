@@ -59,6 +59,9 @@ public class CustomerCategoryController extends DomainComponentController
    private CustomerCategory searchModel = new CustomerCategory();
    private CustomerCategory selectedModel = new CustomerCategory();
 
+   @Inject
+   private CustomerCategoryRegistration registration;
+
    @Override
    protected void initViews(Map<ViewType, EntityController> entityViews)
    {
@@ -78,6 +81,9 @@ public class CustomerCategoryController extends DomainComponentController
     */
    public void handleSearchResult(@Observes @EntitySearchDoneEvent List<CustomerCategory> entities)
    {
+      if (!registration.canRead())
+         return;
+
       // if result is empty: display no result.
       if (!getDisplayedViews().contains(listController))
       {
@@ -92,6 +98,8 @@ public class CustomerCategoryController extends DomainComponentController
     */
    public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerCategory selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       // if result is empty: display no result.
       // else display list of customerCategorys.
       List<EntityController> displayedViews = getDisplayedViews();
@@ -108,6 +116,8 @@ public class CustomerCategoryController extends DomainComponentController
     */
    public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent CustomerCategory selectedEntity)
    {
+      if (!registration.canRead())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(searchController);
@@ -121,6 +131,8 @@ public class CustomerCategoryController extends DomainComponentController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent CustomerCategory templateEntity)
    {
+      if (!registration.canCreate())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
@@ -130,6 +142,8 @@ public class CustomerCategoryController extends DomainComponentController
 
    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent CustomerCategory selectedEntity)
    {
+      if (!registration.canEdit())
+         return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);

@@ -58,9 +58,14 @@ public class CustomerInvoiceListController implements EntityController
 
    private CustomerInvoiceSearchResult searchResult;
 
+   @Inject
+   private CustomerInvoiceRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<CustomerInvoice>()
             {

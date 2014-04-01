@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 
-public class ArticleDefaultSalesMarginListCell extends AbstractToStringListCell<SalesMargin>
+public class ArticleDefaultSalesMarginListCell extends AbstractToStringListCell<ArticleDefaultSalesMargin>
 {
 
    @Override
-   protected String getToString(SalesMargin item)
+   protected String getToString(ArticleDefaultSalesMargin item)
    {
       if (item == null)
       {

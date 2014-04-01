@@ -29,7 +29,7 @@ import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Inventory_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InventoryItemInventory implements Association<InventoryItem, Inventory>
+public class InventoryItemInventory implements Association<InventoryItem, Inventory>, Cloneable
 {
 
    private Long id;
@@ -155,25 +155,37 @@ public class InventoryItemInventory implements Association<InventoryItem, Invent
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      InventoryItemInventory other = (InventoryItemInventory) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		InventoryItemInventory other = (InventoryItemInventory) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "inventoryNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      InventoryItemInventory a = new InventoryItemInventory();
+      a.id = id;
+      a.version = version;
+
+      a.inventoryNumber = inventoryNumber;
+      a.inventoryStatus = inventoryStatus;
+      a.gapSaleAmount = gapSaleAmount;
+      a.gapPurchaseAmount = gapPurchaseAmount;
+      return a;
+   }
+
 }

@@ -23,6 +23,6 @@ public class CustomerInvoiceAgencyEditController extends CustomerInvoiceAgencyCo
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getCustomerInvoiceAgencySelection());
-      bind(editView.getView().getCustomerInvoiceAgencySelection());
+      bind(editView.getView().getCustomerInvoiceAgencySelection(), editView.getView().getCustomerInvoiceAgencyForm());
    }
 }

@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 public class CustomerVoucherRecordingUserSelection extends AbstractSelection<CustomerVoucher, Login>
 {
 
-   private ComboBox<Login> recordingUser;
+   private ComboBox<CustomerVoucherRecordingUser> recordingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, CustomerVoucher.class })
@@ -39,10 +39,10 @@ public class CustomerVoucherRecordingUserSelection extends AbstractSelection<Cus
 
       recordingUser = viewBuilder.addComboBox("CustomerVoucher_recordingUser_description.title", "recordingUser", resourceBundle, false);
 
-      recordingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      recordingUser.setCellFactory(new Callback<ListView<CustomerVoucherRecordingUser>, ListCell<CustomerVoucherRecordingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<CustomerVoucherRecordingUser> call(ListView<CustomerVoucherRecordingUser> listView)
          {
             return new CustomerVoucherRecordingUserListCell();
          }
@@ -54,9 +54,10 @@ public class CustomerVoucherRecordingUserSelection extends AbstractSelection<Cus
 
    public void bind(CustomerVoucher model)
    {
+      recordingUser.valueProperty().bindBidirectional(model.recordingUserProperty());
    }
 
-   public ComboBox<Login> getRecordingUser()
+   public ComboBox<CustomerVoucherRecordingUser> getRecordingUser()
    {
       return recordingUser;
    }

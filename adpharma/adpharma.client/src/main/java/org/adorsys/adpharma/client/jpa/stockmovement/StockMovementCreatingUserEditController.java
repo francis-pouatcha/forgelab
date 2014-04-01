@@ -23,6 +23,6 @@ public class StockMovementCreatingUserEditController extends StockMovementCreati
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getStockMovementCreatingUserSelection());
-      bind(editView.getView().getStockMovementCreatingUserSelection());
+      bind(editView.getView().getStockMovementCreatingUserSelection(), editView.getView().getStockMovementCreatingUserForm());
    }
 }

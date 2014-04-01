@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 public class SupplierInvoiceCreatingUserSelection extends AbstractSelection<SupplierInvoice, Login>
 {
 
-   private ComboBox<Login> creatingUser;
+   private ComboBox<SupplierInvoiceCreatingUser> creatingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, SupplierInvoice.class })
@@ -39,10 +39,10 @@ public class SupplierInvoiceCreatingUserSelection extends AbstractSelection<Supp
 
       creatingUser = viewBuilder.addComboBox("SupplierInvoice_creatingUser_description.title", "creatingUser", resourceBundle, false);
 
-      creatingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      creatingUser.setCellFactory(new Callback<ListView<SupplierInvoiceCreatingUser>, ListCell<SupplierInvoiceCreatingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<SupplierInvoiceCreatingUser> call(ListView<SupplierInvoiceCreatingUser> listView)
          {
             return new SupplierInvoiceCreatingUserListCell();
          }
@@ -54,9 +54,10 @@ public class SupplierInvoiceCreatingUserSelection extends AbstractSelection<Supp
 
    public void bind(SupplierInvoice model)
    {
+      creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
    }
 
-   public ComboBox<Login> getCreatingUser()
+   public ComboBox<SupplierInvoiceCreatingUser> getCreatingUser()
    {
       return creatingUser;
    }

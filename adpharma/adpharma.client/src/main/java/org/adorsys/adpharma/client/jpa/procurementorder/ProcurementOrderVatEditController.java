@@ -23,6 +23,6 @@ public class ProcurementOrderVatEditController extends ProcurementOrderVatContro
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getProcurementOrderVatSelection());
-      bind(editView.getView().getProcurementOrderVatSelection());
+      bind(editView.getView().getProcurementOrderVatSelection(), editView.getView().getProcurementOrderVatForm());
    }
 }

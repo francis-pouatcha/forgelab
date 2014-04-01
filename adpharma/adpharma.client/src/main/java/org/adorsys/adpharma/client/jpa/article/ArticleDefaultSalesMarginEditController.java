@@ -23,6 +23,6 @@ public class ArticleDefaultSalesMarginEditController extends ArticleDefaultSales
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticleDefaultSalesMarginSelection());
-      bind(editView.getView().getArticleDefaultSalesMarginSelection());
+      bind(editView.getView().getArticleDefaultSalesMarginSelection(), editView.getView().getArticleDefaultSalesMarginForm());
    }
 }

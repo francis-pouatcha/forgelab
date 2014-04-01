@@ -51,8 +51,10 @@ public abstract class DeliveryReceivingAgencyController
    {
    }
 
-   protected void bind(final DeliveryReceivingAgencySelection selection)
+   protected void bind(final DeliveryReceivingAgencySelection selection, final DeliveryReceivingAgencyForm form)
    {
+
+      //	    selection.getReceivingAgency().valueProperty().bindBidirectional(sourceEntity.receivingAgencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class DeliveryReceivingAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getReceivingAgency().getItems().clear();
-            selection.getReceivingAgency().getItems().addAll(entities);
+            selection.getReceivingAgency().getItems().add(new DeliveryReceivingAgency());
+            for (Agency entity : entities)
+            {
+               selection.getReceivingAgency().getItems().add(new DeliveryReceivingAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class DeliveryReceivingAgencyController
                }
             });
 
-      selection.getReceivingAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getReceivingAgency().valueProperty().addListener(new ChangeListener<DeliveryReceivingAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends DeliveryReceivingAgency> ov, DeliveryReceivingAgency oldValue,
+               DeliveryReceivingAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setReceivingAgency(new DeliveryReceivingAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setReceivingAgency(newValue);
          }
       });
 

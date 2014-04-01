@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -44,11 +46,11 @@ import org.adorsys.javaext.display.ToStringField;
 @ListField({ "invoiceType", "invoiceNumber", "creationDate",
       "customer.fullName", "insurance.customer.fullName",
       "insurance.insurer.fullName", "creatingUser.fullName", "agency.name",
-      "salesOrder.soNumber", "settled", "amountBeforeTax", "amountVAT",
+      "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount",
       "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay",
       "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay" })
 @ToStringField("invoiceNumber")
-public class CustomerInvoice
+public class CustomerInvoice implements Cloneable
 {
 
    private Long id;
@@ -64,9 +66,9 @@ public class CustomerInvoice
    private SimpleObjectProperty<InvoiceType> invoiceType;
    @Description("CustomerInvoice_amountBeforeTax_description")
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
-   @Description("CustomerInvoice_amountVAT_description")
+   @Description("CustomerInvoice_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private SimpleObjectProperty<BigDecimal> amountVAT;
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    @Description("CustomerInvoice_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountDiscount;
@@ -95,10 +97,10 @@ public class CustomerInvoice
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoiceItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<CustomerInvoiceItem>> invoiceItems;
    @Description("CustomerInvoice_customer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<CustomerInvoiceCustomer> customer;
    @Description("CustomerInvoice_insurance_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
    private SimpleObjectProperty<CustomerInvoiceInsurance> insurance;
    @Description("CustomerInvoice_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
@@ -233,23 +235,23 @@ public class CustomerInvoice
       this.amountBeforeTaxProperty().set(amountBeforeTax);
    }
 
-   public SimpleObjectProperty<BigDecimal> amountVATProperty()
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
    {
-      if (amountVAT == null)
+      if (taxAmount == null)
       {
-         amountVAT = new SimpleObjectProperty<BigDecimal>();
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
       }
-      return amountVAT;
+      return taxAmount;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return amountVATProperty().get();
+      return taxAmountProperty().get();
    }
 
-   public final void setAmountVAT(BigDecimal amountVAT)
+   public final void setTaxAmount(BigDecimal taxAmount)
    {
-      this.amountVATProperty().set(amountVAT);
+      this.taxAmountProperty().set(taxAmount);
    }
 
    public SimpleObjectProperty<BigDecimal> amountDiscountProperty()
@@ -453,6 +455,7 @@ public class CustomerInvoice
          customer = new CustomerInvoiceCustomer();
       }
       PropertyReader.copy(customer, getCustomer());
+      customerProperty().setValue(ObjectUtils.clone(getCustomer()));
    }
 
    public SimpleObjectProperty<CustomerInvoiceInsurance> insuranceProperty()
@@ -476,6 +479,7 @@ public class CustomerInvoice
          insurance = new CustomerInvoiceInsurance();
       }
       PropertyReader.copy(insurance, getInsurance());
+      insuranceProperty().setValue(ObjectUtils.clone(getInsurance()));
    }
 
    public SimpleObjectProperty<CustomerInvoiceCreatingUser> creatingUserProperty()
@@ -500,6 +504,7 @@ public class CustomerInvoice
          creatingUser = new CustomerInvoiceCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    public SimpleObjectProperty<CustomerInvoiceAgency> agencyProperty()
@@ -524,6 +529,7 @@ public class CustomerInvoice
          agency = new CustomerInvoiceAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<CustomerInvoiceSalesOrder> salesOrderProperty()
@@ -547,6 +553,7 @@ public class CustomerInvoice
          salesOrder = new CustomerInvoiceSalesOrder();
       }
       PropertyReader.copy(salesOrder, getSalesOrder());
+      salesOrderProperty().setValue(ObjectUtils.clone(getSalesOrder()));
    }
 
    public SimpleObjectProperty<ObservableList<Payment>> paymentsProperty()
@@ -601,5 +608,48 @@ public class CustomerInvoice
    public String toString()
    {
       return PropertyReader.buildToString(this, "invoiceNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ObservableList<CustomerInvoiceItem> f = invoiceItems.get();
+      for (CustomerInvoiceItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerInvoice e = new CustomerInvoice();
+      e.id = id;
+      e.version = version;
+
+      e.invoiceNumber = invoiceNumber;
+      e.settled = settled;
+      e.cashed = cashed;
+      e.invoiceType = invoiceType;
+      e.amountBeforeTax = amountBeforeTax;
+      e.taxAmount = taxAmount;
+      e.amountDiscount = amountDiscount;
+      e.amountAfterTax = amountAfterTax;
+      e.netToPay = netToPay;
+      e.customerRestTopay = customerRestTopay;
+      e.insurranceRestTopay = insurranceRestTopay;
+      e.advancePayment = advancePayment;
+      e.totalRestToPay = totalRestToPay;
+      e.creationDate = creationDate;
+      e.invoiceItems = invoiceItems;
+      e.customer = customer;
+      e.insurance = insurance;
+      e.creatingUser = creatingUser;
+      e.agency = agency;
+      e.salesOrder = salesOrder;
+      e.payments = payments;
+      return e;
    }
 }

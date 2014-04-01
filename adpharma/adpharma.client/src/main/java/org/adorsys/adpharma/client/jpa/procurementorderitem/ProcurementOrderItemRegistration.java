@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.procurementorderitem;
 import java.util.ResourceBundle;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
@@ -18,6 +19,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
  *
  */
 @Eager
+@Singleton
 public class ProcurementOrderItemRegistration extends DomainComponentRegistration
 {
 
@@ -45,4 +47,11 @@ public class ProcurementOrderItemRegistration extends DomainComponentRegistratio
          return resourceBundle.getString(annotation.value() + ".title");
       return ProcurementOrderItem.class.getName();
    }
+
+   @Override
+   public String getComponentPermission()
+   {
+      return "org.adorsys.adpharma.server.jpa.ProcurementOrderItem";
+   }
+
 }

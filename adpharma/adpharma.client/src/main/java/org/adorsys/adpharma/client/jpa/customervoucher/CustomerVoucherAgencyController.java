@@ -51,8 +51,10 @@ public abstract class CustomerVoucherAgencyController
    {
    }
 
-   protected void bind(final CustomerVoucherAgencySelection selection)
+   protected void bind(final CustomerVoucherAgencySelection selection, final CustomerVoucherAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CustomerVoucherAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new CustomerVoucherAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new CustomerVoucherAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CustomerVoucherAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<CustomerVoucherAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends CustomerVoucherAgency> ov, CustomerVoucherAgency oldValue,
+               CustomerVoucherAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new CustomerVoucherAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

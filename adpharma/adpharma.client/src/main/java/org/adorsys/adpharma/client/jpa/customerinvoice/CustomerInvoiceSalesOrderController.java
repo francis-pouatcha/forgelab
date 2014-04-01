@@ -51,8 +51,10 @@ public abstract class CustomerInvoiceSalesOrderController
    {
    }
 
-   protected void bind(final CustomerInvoiceSalesOrderSelection selection)
+   protected void bind(final CustomerInvoiceSalesOrderSelection selection, final CustomerInvoiceSalesOrderForm form)
    {
+
+      //	    selection.getSalesOrder().valueProperty().bindBidirectional(sourceEntity.salesOrderProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class CustomerInvoiceSalesOrderController
             s.reset();
             List<SalesOrder> entities = targetSearchResult.getResultList();
             selection.getSalesOrder().getItems().clear();
-            selection.getSalesOrder().getItems().addAll(entities);
+            selection.getSalesOrder().getItems().add(new CustomerInvoiceSalesOrder());
+            for (SalesOrder entity : entities)
+            {
+               selection.getSalesOrder().getItems().add(new CustomerInvoiceSalesOrder(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class CustomerInvoiceSalesOrderController
                }
             });
 
-      selection.getSalesOrder().valueProperty().addListener(new ChangeListener<SalesOrder>()
+      selection.getSalesOrder().valueProperty().addListener(new ChangeListener<CustomerInvoiceSalesOrder>()
       {
          @Override
-         public void changed(ObservableValue<? extends SalesOrder> ov, SalesOrder oldValue,
-               SalesOrder newValue)
+         public void changed(ObservableValue<? extends CustomerInvoiceSalesOrder> ov, CustomerInvoiceSalesOrder oldValue,
+               CustomerInvoiceSalesOrder newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setSalesOrder(new CustomerInvoiceSalesOrder(newValue));
+               form.update(newValue);
+            //                sourceEntity.setSalesOrder(newValue);
          }
       });
 

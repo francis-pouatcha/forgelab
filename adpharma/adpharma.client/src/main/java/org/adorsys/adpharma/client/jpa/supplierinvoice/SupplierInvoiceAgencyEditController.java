@@ -23,6 +23,6 @@ public class SupplierInvoiceAgencyEditController extends SupplierInvoiceAgencyCo
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getSupplierInvoiceAgencySelection());
-      bind(editView.getView().getSupplierInvoiceAgencySelection());
+      bind(editView.getView().getSupplierInvoiceAgencySelection(), editView.getView().getSupplierInvoiceAgencyForm());
    }
 }

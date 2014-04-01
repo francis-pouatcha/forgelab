@@ -51,8 +51,10 @@ public abstract class SupplierInvoiceItemArticleController
    {
    }
 
-   protected void bind(final SupplierInvoiceItemArticleSelection selection)
+   protected void bind(final SupplierInvoiceItemArticleSelection selection, final SupplierInvoiceItemArticleForm form)
    {
+
+      //	    selection.getArticle().valueProperty().bindBidirectional(sourceEntity.articleProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class SupplierInvoiceItemArticleController
             s.reset();
             List<Article> entities = targetSearchResult.getResultList();
             selection.getArticle().getItems().clear();
-            selection.getArticle().getItems().addAll(entities);
+            selection.getArticle().getItems().add(new SupplierInvoiceItemArticle());
+            for (Article entity : entities)
+            {
+               selection.getArticle().getItems().add(new SupplierInvoiceItemArticle(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class SupplierInvoiceItemArticleController
                }
             });
 
-      selection.getArticle().valueProperty().addListener(new ChangeListener<Article>()
+      selection.getArticle().valueProperty().addListener(new ChangeListener<SupplierInvoiceItemArticle>()
       {
          @Override
-         public void changed(ObservableValue<? extends Article> ov, Article oldValue,
-               Article newValue)
+         public void changed(ObservableValue<? extends SupplierInvoiceItemArticle> ov, SupplierInvoiceItemArticle oldValue,
+               SupplierInvoiceItemArticle newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setArticle(new SupplierInvoiceItemArticle(newValue));
+               form.update(newValue);
+            //                sourceEntity.setArticle(newValue);
          }
       });
 

@@ -32,7 +32,6 @@ import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.DeliveryListSearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
 import org.adorsys.adpharma.server.jpa.Delivery_;
@@ -64,12 +63,6 @@ public class DeliveryEndpoint
 
 	@Inject
 	private SupplierMerger supplierMerger;
-	
-	@Inject
-	private AgencyEJB agencyEJB ;
-
-	@EJB
-	SecurityUtil securityUtil;
 
 	@Inject
 	private VATMerger vATMerger;
@@ -82,6 +75,9 @@ public class DeliveryEndpoint
 
 	@Inject
 	private AgencyMerger agencyMerger;
+
+	@EJB
+	SecurityUtil securityUtil;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
@@ -114,7 +110,6 @@ public class DeliveryEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
-	
 	@Inject
 	private SupplierInvoiceItemEJB supplierInvoiceItemEJB;
 	@Inject
@@ -126,7 +121,7 @@ public class DeliveryEndpoint
 	@Inject
 	private ArticleLotEJB articleLotEJB;
 
-	
+
 	@PUT
 	@Path("/saveAndClose")
 	@Produces({ "application/json", "application/xml" })
@@ -134,7 +129,7 @@ public class DeliveryEndpoint
 	public Delivery saveAndClose(Delivery delivery) {
 		if (delivery.getDeliveryProcessingState() == DocumentProcessingState.CLOSED)
 			return delivery;
-		
+
 
 		SupplierInvoice si = new SupplierInvoice();
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -154,12 +149,12 @@ public class DeliveryEndpoint
 		for (DeliveryItem deliveryItem : deliveryItems) {
 			// Generate internal cip for each delivery item
 			// Last model: MMYY-UniqueNumber(4+)
-			String internalPic = new SimpleDateFormat("DDMMYYHH").format(new Date()) + RandomStringUtils.randomNumeric(3);
+			String internalPic = new SimpleDateFormat("DDMMYYHH").format(new Date()) + RandomStringUtils.randomNumeric(5);
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.create(deliveryItem);
 			amountBeforeTax = amountBeforeTax.add(deliveryItem.getTotalPurchasePrice());
-			
+
 			SupplierInvoiceItem sii = new SupplierInvoiceItem();
 			sii.setAmountReturn(BigDecimal.ZERO);
 			sii.setArticle(deliveryItem.getArticle());
@@ -167,13 +162,14 @@ public class DeliveryEndpoint
 			sii.setInternalPic(internalPic);
 			sii.setInvoice(si);
 			sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-//			sii.setSalesPricePU(deliveryItem.getSalesPricePU());// TODO delete
-			sii.setTotalSalesPrice(deliveryItem.getTotalPurchasePrice());// TODO rename in total purchase price
+			//			sii.setSalesPricePU(deliveryItem.getSalesPricePU());// TODO delete
+			sii.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
 			sii = supplierInvoiceItemEJB.create(sii);
-			
+
 			// Generate Stock Movement for each delivery item
 			StockMovement sm = new StockMovement();
 			sm.setAgency(agency);
+			sm.setInternalPic(internalPic);
 			sm.setMovementType(StockMovementType.IN);
 			sm.setArticle(deliveryItem.getArticle());
 			sm.setCreatingUser(creatingUser);
@@ -184,7 +180,7 @@ public class DeliveryEndpoint
 			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
 			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 			sm.setOriginatedDocNumber(delivery.getDeliveryNumber());
-//			sm.setTotalDiscount(deliveryItem.getA);// TODO remove field
+			//			sm.setTotalDiscount(deliveryItem.getA);// 
 			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
 			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
 				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
@@ -213,16 +209,16 @@ public class DeliveryEndpoint
 		amountBeforeTax = amountBeforeTax.subtract(delivery.getAmountDiscount());
 		si.setAmountBeforeTax(amountBeforeTax);
 		if(delivery.getVat()!=null && delivery.getVat().getRate()!=null){
-			si.setAmountVAT(delivery.getVat().getRate().multiply(amountBeforeTax));
+			si.setTaxAmount(delivery.getVat().getRate().multiply(amountBeforeTax));
 		}
-		si.setAmountAfterTax(amountBeforeTax.add(si.getAmountVAT()));
-		
+		si.setAmountAfterTax(amountBeforeTax.add(si.getTaxAmount()));
+
 		supplierInvoiceEJB.update(si);
-		
-		
+
+
 		// CHange DeliveryProcessingState to close
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-		
+
 		return detach(ejb.update(delivery));
 	}
 
@@ -295,16 +291,6 @@ public class DeliveryEndpoint
 	}
 
 	@POST
-	@Path("/findByDeliveryDateBetween")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public List<Delivery> findByDeliveryDateBetween(DeliveryListSearchInput searchInput)
-	{
-		List<Delivery> resultList = ejb.findByDelibveryDateBetween(searchInput.getDeliveryDateFrom(), searchInput.getDeliveryDateTo(), searchInput.getSupplier(), searchInput.getDeliveryProcessingState());
-		return resultList;
-	}
-
-	@POST
 	@Path("/countByLike")
 	@Consumes({ "application/json", "application/xml" })
 	public Long countByLike(DeliverySearchInput searchInput)
@@ -352,7 +338,7 @@ public class DeliveryEndpoint
 
 	private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 
-	private static final List<String> currencyFields = Arrays.asList("name");
+	private static final List<String> currencyFields = Arrays.asList("name", "cfaEquivalent");
 
 	private static final List<String> receivingAgencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 

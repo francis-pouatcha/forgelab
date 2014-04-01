@@ -56,6 +56,7 @@ public class CurrencyListView
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
       viewBuilder.addStringColumn(dataList, "name", "Currency_name_description.title", resourceBundle);
+      viewBuilder.addBigDecimalColumn(dataList, "cfaEquivalent", "Currency_cfaEquivalent_description.title", resourceBundle, NumberType.CURRENCY, locale);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

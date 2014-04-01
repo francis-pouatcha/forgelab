@@ -22,7 +22,7 @@ public class DebtStatementInsurranceCreateController extends DebtStatementInsurr
    public void handleNewModelEvent(@Observes @CreateModelEvent DebtStatement model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDebtStatementInsurranceSelection());
-      activateButton(createView.getView().getDebtStatementInsurranceSelection());
+      activateButton(createView.getView().getDebtStatementInsurranceSelection(), createView.getView().getDebtStatementInsurranceForm());
+      bind(createView.getView().getDebtStatementInsurranceSelection(), createView.getView().getDebtStatementInsurranceForm());
    }
 }

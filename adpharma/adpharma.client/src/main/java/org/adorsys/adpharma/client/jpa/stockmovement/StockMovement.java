@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
@@ -23,6 +25,7 @@ import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+import javax.validation.constraints.Size;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 
@@ -35,8 +38,8 @@ import org.adorsys.javaext.list.ListField;
 @ListField({ "movedQty", "movementType", "movementOrigin",
       "movementDestination", "article.articleName", "agency.name",
       "initialQty", "finalQty", "totalPurchasingPrice", "totalDiscount",
-      "totalSalesPrice" })
-public class StockMovement
+      "totalSalesPrice", "internalPic" })
+public class StockMovement implements Cloneable
 {
 
    private Long id;
@@ -44,6 +47,8 @@ public class StockMovement
 
    @Description("StockMovement_originatedDocNumber_description")
    private SimpleStringProperty originatedDocNumber;
+   @Description("StockMovement_internalPic_description")
+   private SimpleStringProperty internalPic;
    @Description("StockMovement_movementType_description")
    private SimpleObjectProperty<StockMovementType> movementType;
    @Description("StockMovement_movementOrigin_description")
@@ -72,7 +77,7 @@ public class StockMovement
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<StockMovementCreatingUser> creatingUser;
    @Description("StockMovement_article_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<StockMovementArticle> article;
    @Description("StockMovement_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
@@ -115,6 +120,27 @@ public class StockMovement
    public final void setOriginatedDocNumber(String originatedDocNumber)
    {
       this.originatedDocNumberProperty().set(originatedDocNumber);
+   }
+
+   public SimpleStringProperty internalPicProperty()
+   {
+      if (internalPic == null)
+      {
+         internalPic = new SimpleStringProperty();
+      }
+      return internalPic;
+   }
+
+   @Size(min = 7, message = "StockMovement_internalPic_Size_validation")
+   @NotNull(message = "StockMovement_internalPic_NotNull_validation")
+   public String getInternalPic()
+   {
+      return internalPicProperty().get();
+   }
+
+   public final void setInternalPic(String internalPic)
+   {
+      this.internalPicProperty().set(internalPic);
    }
 
    public SimpleObjectProperty<StockMovementType> movementTypeProperty()
@@ -331,6 +357,7 @@ public class StockMovement
          creatingUser = new StockMovementCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    public SimpleObjectProperty<StockMovementArticle> articleProperty()
@@ -355,6 +382,7 @@ public class StockMovement
          article = new StockMovementArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    public SimpleObjectProperty<StockMovementAgency> agencyProperty()
@@ -379,6 +407,7 @@ public class StockMovement
          agency = new StockMovementAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    @Override
@@ -411,5 +440,36 @@ public class StockMovement
    public String toString()
    {
       return PropertyReader.buildToString(this, "movedQty", "movementType", "movementOrigin", "movementDestination", "articleName");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      StockMovement e = new StockMovement();
+      e.id = id;
+      e.version = version;
+
+      e.originatedDocNumber = originatedDocNumber;
+      e.internalPic = internalPic;
+      e.movementType = movementType;
+      e.movementOrigin = movementOrigin;
+      e.movementDestination = movementDestination;
+      e.movedQty = movedQty;
+      e.initialQty = initialQty;
+      e.finalQty = finalQty;
+      e.totalPurchasingPrice = totalPurchasingPrice;
+      e.totalDiscount = totalDiscount;
+      e.totalSalesPrice = totalSalesPrice;
+      e.creationDate = creationDate;
+      e.creatingUser = creatingUser;
+      e.article = article;
+      e.agency = agency;
+      return e;
    }
 }

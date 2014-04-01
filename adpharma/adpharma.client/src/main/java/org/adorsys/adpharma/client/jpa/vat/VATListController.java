@@ -58,9 +58,14 @@ public class VATListController implements EntityController
 
    private VATSearchResult searchResult;
 
+   @Inject
+   private VATRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<VAT>()
             {

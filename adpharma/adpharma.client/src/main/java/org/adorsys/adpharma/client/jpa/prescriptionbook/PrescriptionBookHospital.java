@@ -17,7 +17,7 @@ import org.adorsys.adpharma.client.jpa.hospital.Hospital;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Hospital_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PrescriptionBookHospital implements Association<PrescriptionBook, Hospital>
+public class PrescriptionBookHospital implements Association<PrescriptionBook, Hospital>, Cloneable
 {
 
    private Long id;
@@ -143,25 +143,37 @@ public class PrescriptionBookHospital implements Association<PrescriptionBook, H
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      PrescriptionBookHospital other = (PrescriptionBookHospital) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		PrescriptionBookHospital other = (PrescriptionBookHospital) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      PrescriptionBookHospital a = new PrescriptionBookHospital();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.phone = phone;
+      a.street = street;
+      a.city = city;
+      return a;
+   }
+
 }

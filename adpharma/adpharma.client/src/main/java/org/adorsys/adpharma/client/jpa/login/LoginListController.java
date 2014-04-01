@@ -58,9 +58,14 @@ public class LoginListController implements EntityController
 
    private LoginSearchResult searchResult;
 
+   @Inject
+   private LoginRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Login>()
             {

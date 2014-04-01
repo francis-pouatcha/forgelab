@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 public class CustomerCustomerCategorySelection extends AbstractSelection<Customer, CustomerCategory>
 {
 
-   private ComboBox<CustomerCategory> customerCategory;
+   private ComboBox<CustomerCustomerCategory> customerCategory;
 
    @Inject
    @Bundle({ CrudKeys.class, CustomerCategory.class, Customer.class })
@@ -39,10 +39,10 @@ public class CustomerCustomerCategorySelection extends AbstractSelection<Custome
 
       customerCategory = viewBuilder.addComboBox("Customer_customerCategory_description.title", "customerCategory", resourceBundle, false);
 
-      customerCategory.setCellFactory(new Callback<ListView<CustomerCategory>, ListCell<CustomerCategory>>()
+      customerCategory.setCellFactory(new Callback<ListView<CustomerCustomerCategory>, ListCell<CustomerCustomerCategory>>()
       {
          @Override
-         public ListCell<CustomerCategory> call(ListView<CustomerCategory> listView)
+         public ListCell<CustomerCustomerCategory> call(ListView<CustomerCustomerCategory> listView)
          {
             return new CustomerCustomerCategoryListCell();
          }
@@ -54,9 +54,10 @@ public class CustomerCustomerCategorySelection extends AbstractSelection<Custome
 
    public void bind(Customer model)
    {
+      customerCategory.valueProperty().bindBidirectional(model.customerCategoryProperty());
    }
 
-   public ComboBox<CustomerCategory> getCustomerCategory()
+   public ComboBox<CustomerCustomerCategory> getCustomerCategory()
    {
       return customerCategory;
    }

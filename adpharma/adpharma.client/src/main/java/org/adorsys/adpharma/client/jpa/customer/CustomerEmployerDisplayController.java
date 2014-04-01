@@ -27,5 +27,6 @@ public class CustomerEmployerDisplayController extends CustomerEmployerControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerEmployerSelection());
+      bind(displayView.getView().getCustomerEmployerSelection(), displayView.getView().getCustomerEmployerForm());
    }
 }

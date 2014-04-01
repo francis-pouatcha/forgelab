@@ -23,6 +23,6 @@ public class PaymentAgencyEditController extends PaymentAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getPaymentAgencySelection());
-      bind(editView.getView().getPaymentAgencySelection());
+      bind(editView.getView().getPaymentAgencySelection(), editView.getView().getPaymentAgencyForm());
    }
 }

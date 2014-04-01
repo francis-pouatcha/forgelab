@@ -23,6 +23,6 @@ public class DeliveryVatEditController extends DeliveryVatController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDeliveryVatSelection());
-      bind(editView.getView().getDeliveryVatSelection());
+      bind(editView.getView().getDeliveryVatSelection(), editView.getView().getDeliveryVatForm());
    }
 }

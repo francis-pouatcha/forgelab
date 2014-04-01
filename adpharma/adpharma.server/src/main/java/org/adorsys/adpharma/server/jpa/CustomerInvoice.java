@@ -43,7 +43,7 @@ import org.adorsys.javaext.relation.RelationshipEnd;
 @ListField({ "invoiceType", "invoiceNumber", "creationDate", "customer.fullName",
       "insurance.customer.fullName", "insurance.insurer.fullName",
       "creatingUser.fullName", "agency.name", "salesOrder.soNumber",
-      "settled", "amountBeforeTax", "amountVAT", "amountDiscount",
+      "settled", "amountBeforeTax", "taxAmount", "amountDiscount",
       "amountAfterTax", "netToPay", "customerRestTopay",
       "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay" })
 @ToStringField("invoiceNumber")
@@ -74,13 +74,13 @@ public class CustomerInvoice implements Serializable
 
    @ManyToOne
    @Description("CustomerInvoice_customer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    @NotNull(message = "CustomerInvoice_customer_NotNull_validation")
    private Customer customer;
 
    @ManyToOne
    @Description("CustomerInvoice_insurance_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
    private Insurrance insurance;
 
    @ManyToOne
@@ -109,9 +109,9 @@ public class CustomerInvoice implements Serializable
    private BigDecimal amountBeforeTax;
 
    @Column
-   @Description("CustomerInvoice_amountVAT_description")
+   @Description("CustomerInvoice_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountVAT;
+   private BigDecimal taxAmount;
 
    @Column
    @Description("CustomerInvoice_amountDiscount_description")
@@ -315,14 +315,14 @@ public class CustomerInvoice implements Serializable
       this.amountBeforeTax = amountBeforeTax;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return this.amountVAT;
+      return this.taxAmount;
    }
 
-   public void setAmountVAT(final BigDecimal amountVAT)
+   public void setTaxAmount(final BigDecimal taxAmount)
    {
-      this.amountVAT = amountVAT;
+      this.taxAmount = taxAmount;
    }
 
    public BigDecimal getAmountDiscount()

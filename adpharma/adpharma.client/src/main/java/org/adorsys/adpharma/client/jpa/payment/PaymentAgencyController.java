@@ -51,8 +51,10 @@ public abstract class PaymentAgencyController
    {
    }
 
-   protected void bind(final PaymentAgencySelection selection)
+   protected void bind(final PaymentAgencySelection selection, final PaymentAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PaymentAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new PaymentAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new PaymentAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PaymentAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<PaymentAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends PaymentAgency> ov, PaymentAgency oldValue,
+               PaymentAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new PaymentAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

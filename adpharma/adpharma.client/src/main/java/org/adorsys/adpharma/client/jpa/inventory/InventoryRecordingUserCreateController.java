@@ -22,7 +22,7 @@ public class InventoryRecordingUserCreateController extends InventoryRecordingUs
    public void handleNewModelEvent(@Observes @CreateModelEvent Inventory model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getInventoryRecordingUserSelection());
+      bind(createView.getView().getInventoryRecordingUserSelection(), createView.getView().getInventoryRecordingUserForm());
       activateButton(createView.getView().getInventoryRecordingUserSelection());
    }
 }

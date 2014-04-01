@@ -51,8 +51,10 @@ public abstract class InventoryItemRecordingUserController
    {
    }
 
-   protected void bind(final InventoryItemRecordingUserSelection selection)
+   protected void bind(final InventoryItemRecordingUserSelection selection, final InventoryItemRecordingUserForm form)
    {
+
+      //	    selection.getRecordingUser().valueProperty().bindBidirectional(sourceEntity.recordingUserProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class InventoryItemRecordingUserController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getRecordingUser().getItems().clear();
-            selection.getRecordingUser().getItems().addAll(entities);
+            selection.getRecordingUser().getItems().add(new InventoryItemRecordingUser());
+            for (Login entity : entities)
+            {
+               selection.getRecordingUser().getItems().add(new InventoryItemRecordingUser(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class InventoryItemRecordingUserController
                }
             });
 
-      selection.getRecordingUser().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getRecordingUser().valueProperty().addListener(new ChangeListener<InventoryItemRecordingUser>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends InventoryItemRecordingUser> ov, InventoryItemRecordingUser oldValue,
+               InventoryItemRecordingUser newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setRecordingUser(new InventoryItemRecordingUser(newValue));
+               form.update(newValue);
+            //                sourceEntity.setRecordingUser(newValue);
          }
       });
 

@@ -27,5 +27,6 @@ public class SalesOrderAgencyDisplayController extends SalesOrderAgencyControlle
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSalesOrderAgencySelection());
+      bind(displayView.getView().getSalesOrderAgencySelection(), displayView.getView().getSalesOrderAgencyForm());
    }
 }

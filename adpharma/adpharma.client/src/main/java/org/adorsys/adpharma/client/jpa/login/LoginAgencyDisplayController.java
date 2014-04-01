@@ -27,5 +27,6 @@ public class LoginAgencyDisplayController extends LoginAgencyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getLoginAgencySelection());
+      bind(displayView.getView().getLoginAgencySelection(), displayView.getView().getLoginAgencyForm());
    }
 }

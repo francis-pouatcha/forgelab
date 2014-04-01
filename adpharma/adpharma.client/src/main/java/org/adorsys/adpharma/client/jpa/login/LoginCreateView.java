@@ -19,7 +19,6 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.ComboBox;
 import org.adorsys.javafx.crud.extensions.ViewModel;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 

@@ -17,7 +17,7 @@ import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Supplier_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeliverySupplier implements Association<Delivery, Supplier>
+public class DeliverySupplier implements Association<Delivery, Supplier>, Cloneable
 {
 
    private Long id;
@@ -123,25 +123,36 @@ public class DeliverySupplier implements Association<Delivery, Supplier>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DeliverySupplier other = (DeliverySupplier) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		DeliverySupplier other = (DeliverySupplier) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      DeliverySupplier a = new DeliverySupplier();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.fax = fax;
+      a.email = email;
+      return a;
+   }
+
 }

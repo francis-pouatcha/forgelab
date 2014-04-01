@@ -22,7 +22,7 @@ public class PaymentCashierCreateController extends PaymentCashierController
    public void handleNewModelEvent(@Observes @CreateModelEvent Payment model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getPaymentCashierSelection());
+      bind(createView.getView().getPaymentCashierSelection(), createView.getView().getPaymentCashierForm());
       activateButton(createView.getView().getPaymentCashierSelection());
    }
 }

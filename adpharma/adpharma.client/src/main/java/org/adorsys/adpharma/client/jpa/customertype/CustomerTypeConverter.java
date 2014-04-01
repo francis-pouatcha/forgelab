@@ -26,6 +26,8 @@ public class CustomerTypeConverter extends StringConverter<CustomerType>
    @Override
    public String toString(CustomerType object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("CustomerType_" + object.name()
             + "_description.title");
    }

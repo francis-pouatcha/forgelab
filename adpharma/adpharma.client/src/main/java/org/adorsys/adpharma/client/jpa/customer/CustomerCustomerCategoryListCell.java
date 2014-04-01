@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 
-public class CustomerCustomerCategoryListCell extends AbstractToStringListCell<CustomerCategory>
+public class CustomerCustomerCategoryListCell extends AbstractToStringListCell<CustomerCustomerCategory>
 {
 
    @Override
-   protected String getToString(CustomerCategory item)
+   protected String getToString(CustomerCustomerCategory item)
    {
       if (item == null)
       {

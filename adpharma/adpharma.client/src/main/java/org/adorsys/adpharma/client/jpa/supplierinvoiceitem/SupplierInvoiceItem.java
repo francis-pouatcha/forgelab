@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -26,8 +28,8 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "internalPic", "article.articleName", "deliveryQty" })
 @ListField({ "internalPic", "article.articleName", "deliveryQty",
-      "purchasePricePU", "salesPricePU", "amountReturn", "totalSalesPrice" })
-public class SupplierInvoiceItem
+      "purchasePricePU", "salesPricePU", "amountReturn", "totalPurchasePrice" })
+public class SupplierInvoiceItem implements Cloneable
 {
 
    private Long id;
@@ -46,9 +48,9 @@ public class SupplierInvoiceItem
    @Description("SupplierInvoiceItem_amountReturn_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountReturn;
-   @Description("SupplierInvoiceItem_totalSalesPrice_description")
+   @Description("SupplierInvoiceItem_totalPurchasePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private SimpleObjectProperty<BigDecimal> totalSalesPrice;
+   private SimpleObjectProperty<BigDecimal> totalPurchasePrice;
    @Description("SupplierInvoiceItem_invoice_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = SupplierInvoice.class)
    private SimpleObjectProperty<SupplierInvoiceItemInvoice> invoice;
@@ -171,23 +173,23 @@ public class SupplierInvoiceItem
       this.amountReturnProperty().set(amountReturn);
    }
 
-   public SimpleObjectProperty<BigDecimal> totalSalesPriceProperty()
+   public SimpleObjectProperty<BigDecimal> totalPurchasePriceProperty()
    {
-      if (totalSalesPrice == null)
+      if (totalPurchasePrice == null)
       {
-         totalSalesPrice = new SimpleObjectProperty<BigDecimal>();
+         totalPurchasePrice = new SimpleObjectProperty<BigDecimal>();
       }
-      return totalSalesPrice;
+      return totalPurchasePrice;
    }
 
-   public BigDecimal getTotalSalesPrice()
+   public BigDecimal getTotalPurchasePrice()
    {
-      return totalSalesPriceProperty().get();
+      return totalPurchasePriceProperty().get();
    }
 
-   public final void setTotalSalesPrice(BigDecimal totalSalesPrice)
+   public final void setTotalPurchasePrice(BigDecimal totalPurchasePrice)
    {
-      this.totalSalesPriceProperty().set(totalSalesPrice);
+      this.totalPurchasePriceProperty().set(totalPurchasePrice);
    }
 
    public SimpleObjectProperty<SupplierInvoiceItemInvoice> invoiceProperty()
@@ -211,6 +213,7 @@ public class SupplierInvoiceItem
          invoice = new SupplierInvoiceItemInvoice();
       }
       PropertyReader.copy(invoice, getInvoice());
+      invoiceProperty().setValue(ObjectUtils.clone(getInvoice()));
    }
 
    public SimpleObjectProperty<SupplierInvoiceItemArticle> articleProperty()
@@ -234,6 +237,7 @@ public class SupplierInvoiceItem
          article = new SupplierInvoiceItemArticle();
       }
       PropertyReader.copy(article, getArticle());
+      articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
    @Override
@@ -266,5 +270,32 @@ public class SupplierInvoiceItem
    public String toString()
    {
       return PropertyReader.buildToString(this, "internalPic", "articleName", "deliveryQty");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      SupplierInvoiceItemInvoice f = invoice.get();
+      f.setId(null);
+      f.setVersion(0);
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SupplierInvoiceItem e = new SupplierInvoiceItem();
+      e.id = id;
+      e.version = version;
+
+      e.internalPic = internalPic;
+      e.deliveryQty = deliveryQty;
+      e.purchasePricePU = purchasePricePU;
+      e.salesPricePU = salesPricePU;
+      e.amountReturn = amountReturn;
+      e.totalPurchasePrice = totalPurchasePrice;
+      e.invoice = invoice;
+      e.article = article;
+      return e;
    }
 }

@@ -26,6 +26,8 @@ public class DocumentProcessingStateConverter extends StringConverter<DocumentPr
    @Override
    public String toString(DocumentProcessingState object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("DocumentProcessingState_" + object.name()
             + "_description.title");
    }

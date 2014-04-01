@@ -27,5 +27,6 @@ public class SupplierInvoiceAgencyDisplayController extends SupplierInvoiceAgenc
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getSupplierInvoiceAgencySelection());
+      bind(displayView.getView().getSupplierInvoiceAgencySelection(), displayView.getView().getSupplierInvoiceAgencyForm());
    }
 }

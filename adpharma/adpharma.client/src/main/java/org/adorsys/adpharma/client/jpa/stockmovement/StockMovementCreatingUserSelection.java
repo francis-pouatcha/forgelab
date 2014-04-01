@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.stockmovement.StockMovement;
 public class StockMovementCreatingUserSelection extends AbstractSelection<StockMovement, Login>
 {
 
-   private ComboBox<Login> creatingUser;
+   private ComboBox<StockMovementCreatingUser> creatingUser;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, StockMovement.class })
@@ -39,10 +39,10 @@ public class StockMovementCreatingUserSelection extends AbstractSelection<StockM
 
       creatingUser = viewBuilder.addComboBox("StockMovement_creatingUser_description.title", "creatingUser", resourceBundle, false);
 
-      creatingUser.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      creatingUser.setCellFactory(new Callback<ListView<StockMovementCreatingUser>, ListCell<StockMovementCreatingUser>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<StockMovementCreatingUser> call(ListView<StockMovementCreatingUser> listView)
          {
             return new StockMovementCreatingUserListCell();
          }
@@ -54,9 +54,10 @@ public class StockMovementCreatingUserSelection extends AbstractSelection<StockM
 
    public void bind(StockMovement model)
    {
+      creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
    }
 
-   public ComboBox<Login> getCreatingUser()
+   public ComboBox<StockMovementCreatingUser> getCreatingUser()
    {
       return creatingUser;
    }

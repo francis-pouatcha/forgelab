@@ -22,7 +22,7 @@ public class ProcurementOrderItemArticleCreateController extends ProcurementOrde
    public void handleNewModelEvent(@Observes @CreateModelEvent ProcurementOrderItem model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getProcurementOrderItemArticleSelection());
-      activateButton(createView.getView().getProcurementOrderItemArticleSelection());
+      activateButton(createView.getView().getProcurementOrderItemArticleSelection(), createView.getView().getProcurementOrderItemArticleForm());
+      bind(createView.getView().getProcurementOrderItemArticleSelection(), createView.getView().getProcurementOrderItemArticleForm());
    }
 }

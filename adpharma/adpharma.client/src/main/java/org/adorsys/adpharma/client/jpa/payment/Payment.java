@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
@@ -43,7 +45,7 @@ import org.adorsys.javaext.list.ListField;
       "receivedAmount", "difference", "agency.name", "cashier.fullName",
       "cashDrawer.cashDrawerNumber", "paymentMode", "paymentReceiptPrinted",
       "paidBy.fullName" })
-public class Payment
+public class Payment implements Cloneable
 {
 
    private Long id;
@@ -84,7 +86,7 @@ public class Payment
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<CustomerInvoice>> invoices;
    @Description("Payment_paidBy_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<PaymentPaidBy> paidBy;
 
    public Long getId()
@@ -283,6 +285,7 @@ public class Payment
          agency = new PaymentAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<PaymentCashier> cashierProperty()
@@ -307,6 +310,7 @@ public class Payment
          cashier = new PaymentCashier();
       }
       PropertyReader.copy(cashier, getCashier());
+      cashierProperty().setValue(ObjectUtils.clone(getCashier()));
    }
 
    public SimpleObjectProperty<PaymentCashDrawer> cashDrawerProperty()
@@ -330,6 +334,7 @@ public class Payment
          cashDrawer = new PaymentCashDrawer();
       }
       PropertyReader.copy(cashDrawer, getCashDrawer());
+      cashDrawerProperty().setValue(ObjectUtils.clone(getCashDrawer()));
    }
 
    public SimpleObjectProperty<ObservableList<CustomerInvoice>> invoicesProperty()
@@ -380,6 +385,7 @@ public class Payment
          paidBy = new PaymentPaidBy();
       }
       PropertyReader.copy(paidBy, getPaidBy());
+      paidByProperty().setValue(ObjectUtils.clone(getPaidBy()));
    }
 
    @Override
@@ -412,5 +418,34 @@ public class Payment
    public String toString()
    {
       return PropertyReader.buildToString(this, "paymentNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Payment e = new Payment();
+      e.id = id;
+      e.version = version;
+
+      e.paymentNumber = paymentNumber;
+      e.paymentReceiptPrinted = paymentReceiptPrinted;
+      e.paymentMode = paymentMode;
+      e.amount = amount;
+      e.receivedAmount = receivedAmount;
+      e.difference = difference;
+      e.paymentDate = paymentDate;
+      e.recordDate = recordDate;
+      e.agency = agency;
+      e.cashier = cashier;
+      e.cashDrawer = cashDrawer;
+      e.invoices = invoices;
+      e.paidBy = paidBy;
+      return e;
    }
 }

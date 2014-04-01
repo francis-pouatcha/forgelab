@@ -27,5 +27,6 @@ public class CustomerVoucherAgencyDisplayController extends CustomerVoucherAgenc
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCustomerVoucherAgencySelection());
+      bind(displayView.getView().getCustomerVoucherAgencySelection(), displayView.getView().getCustomerVoucherAgencyForm());
    }
 }

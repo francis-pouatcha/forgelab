@@ -27,5 +27,6 @@ public class StockMovementCreatingUserDisplayController extends StockMovementCre
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getStockMovementCreatingUserSelection());
+      bind(displayView.getView().getStockMovementCreatingUserSelection(), displayView.getView().getStockMovementCreatingUserForm());
    }
 }

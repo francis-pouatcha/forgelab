@@ -51,8 +51,10 @@ public abstract class ArticleLotAgencyController
    {
    }
 
-   protected void bind(final ArticleLotAgencySelection selection)
+   protected void bind(final ArticleLotAgencySelection selection, final ArticleLotAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleLotAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new ArticleLotAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new ArticleLotAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleLotAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<ArticleLotAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends ArticleLotAgency> ov, ArticleLotAgency oldValue,
+               ArticleLotAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new ArticleLotAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

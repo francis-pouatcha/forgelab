@@ -27,5 +27,6 @@ public class PrescriptionBookPrescriberDisplayController extends PrescriptionBoo
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPrescriptionBookPrescriberSelection());
+      bind(displayView.getView().getPrescriptionBookPrescriberSelection(), displayView.getView().getPrescriptionBookPrescriberForm());
    }
 }

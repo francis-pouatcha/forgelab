@@ -35,7 +35,7 @@ import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Delivery_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeliveryItemDelivery implements Association<DeliveryItem, Delivery>
+public class DeliveryItemDelivery implements Association<DeliveryItem, Delivery>, Cloneable
 {
 
    private Long id;
@@ -221,25 +221,40 @@ public class DeliveryItemDelivery implements Association<DeliveryItem, Delivery>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DeliveryItemDelivery other = (DeliveryItemDelivery) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		DeliveryItemDelivery other = (DeliveryItemDelivery) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "deliveryNumber");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      DeliveryItemDelivery a = new DeliveryItemDelivery();
+      a.id = id;
+      a.version = version;
+
+      a.deliveryNumber = deliveryNumber;
+      a.deliverySlipNumber = deliverySlipNumber;
+      a.amountBeforeTax = amountBeforeTax;
+      a.amountAfterTax = amountAfterTax;
+      a.amountDiscount = amountDiscount;
+      a.netAmountToPay = netAmountToPay;
+      a.dateOnDeliverySlip = dateOnDeliverySlip;
+      return a;
+   }
+
 }

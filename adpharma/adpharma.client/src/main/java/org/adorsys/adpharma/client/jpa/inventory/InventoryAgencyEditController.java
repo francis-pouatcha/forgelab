@@ -23,6 +23,6 @@ public class InventoryAgencyEditController extends InventoryAgencyController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getInventoryAgencySelection());
-      bind(editView.getView().getInventoryAgencySelection());
+      bind(editView.getView().getInventoryAgencySelection(), editView.getView().getInventoryAgencyForm());
    }
 }

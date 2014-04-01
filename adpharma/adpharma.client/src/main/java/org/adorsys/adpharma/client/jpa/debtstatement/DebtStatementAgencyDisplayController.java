@@ -27,5 +27,6 @@ public class DebtStatementAgencyDisplayController extends DebtStatementAgencyCon
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getDebtStatementAgencySelection());
+      bind(displayView.getView().getDebtStatementAgencySelection(), displayView.getView().getDebtStatementAgencyForm());
    }
 }

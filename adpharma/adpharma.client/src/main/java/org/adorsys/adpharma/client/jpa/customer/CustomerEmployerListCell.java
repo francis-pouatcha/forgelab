@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.employer.Employer;
 
-public class CustomerEmployerListCell extends AbstractToStringListCell<Employer>
+public class CustomerEmployerListCell extends AbstractToStringListCell<CustomerEmployer>
 {
 
    @Override
-   protected String getToString(Employer item)
+   protected String getToString(CustomerEmployer item)
    {
       if (item == null)
       {

@@ -27,5 +27,6 @@ public class PaymentAgencyDisplayController extends PaymentAgencyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getPaymentAgencySelection());
+      bind(displayView.getView().getPaymentAgencySelection(), displayView.getView().getPaymentAgencyForm());
    }
 }

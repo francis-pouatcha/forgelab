@@ -22,7 +22,7 @@ public class ArticleAgencyCreateController extends ArticleAgencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleAgencySelection());
+      bind(createView.getView().getArticleAgencySelection(), createView.getView().getArticleAgencyForm());
       activateButton(createView.getView().getArticleAgencySelection());
    }
 }

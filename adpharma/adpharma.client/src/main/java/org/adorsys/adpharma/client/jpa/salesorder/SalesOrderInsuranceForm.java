@@ -64,6 +64,13 @@ public class SalesOrderInsuranceForm extends AbstractToOneAssociation<SalesOrder
       endDate.calendarProperty().bindBidirectional(model.getInsurance().endDateProperty());
    }
 
+   public void update(SalesOrderInsurance data)
+   {
+      coverageRate.numberProperty().set(data.coverageRateProperty().get());
+      beginDate.calendarProperty().set(data.beginDateProperty().get());
+      endDate.calendarProperty().set(data.endDateProperty().get());
+   }
+
    public BigDecimalField getCoverageRate()
    {
       return coverageRate;

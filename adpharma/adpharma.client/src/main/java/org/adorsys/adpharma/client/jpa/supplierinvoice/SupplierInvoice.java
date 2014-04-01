@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -39,10 +41,10 @@ import org.adorsys.javaext.display.ToStringField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ListField({ "invoiceType", "invoiceNumber", "creationDate", "supplier.name",
       "creatingUser.fullName", "agency.name", "delivery.deliveryNumber",
-      "settled", "amountBeforeTax", "amountVAT", "amountDiscount",
+      "settled", "amountBeforeTax", "taxAmount", "amountDiscount",
       "amountAfterTax", "netToPay", "advancePayment", "totalRestToPay" })
 @ToStringField("invoiceNumber")
-public class SupplierInvoice
+public class SupplierInvoice implements Cloneable
 {
 
    private Long id;
@@ -56,9 +58,9 @@ public class SupplierInvoice
    private SimpleObjectProperty<InvoiceType> invoiceType;
    @Description("SupplierInvoice_amountBeforeTax_description")
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
-   @Description("SupplierInvoice_amountVAT_description")
+   @Description("SupplierInvoice_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private SimpleObjectProperty<BigDecimal> amountVAT;
+   private SimpleObjectProperty<BigDecimal> taxAmount;
    @Description("SupplierInvoice_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountDiscount;
@@ -81,7 +83,7 @@ public class SupplierInvoice
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = SupplierInvoiceItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<SupplierInvoiceItem>> invoiceItems;
    @Description("SupplierInvoice_supplier_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    private SimpleObjectProperty<SupplierInvoiceSupplier> supplier;
    @Description("SupplierInvoice_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
@@ -90,7 +92,7 @@ public class SupplierInvoice
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<SupplierInvoiceAgency> agency;
    @Description("SupplierInvoice_delivery_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Delivery.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Delivery.class)
    private SimpleObjectProperty<SupplierInvoiceDelivery> delivery;
 
    public Long getId()
@@ -191,23 +193,23 @@ public class SupplierInvoice
       this.amountBeforeTaxProperty().set(amountBeforeTax);
    }
 
-   public SimpleObjectProperty<BigDecimal> amountVATProperty()
+   public SimpleObjectProperty<BigDecimal> taxAmountProperty()
    {
-      if (amountVAT == null)
+      if (taxAmount == null)
       {
-         amountVAT = new SimpleObjectProperty<BigDecimal>();
+         taxAmount = new SimpleObjectProperty<BigDecimal>();
       }
-      return amountVAT;
+      return taxAmount;
    }
 
-   public BigDecimal getAmountVAT()
+   public BigDecimal getTaxAmount()
    {
-      return amountVATProperty().get();
+      return taxAmountProperty().get();
    }
 
-   public final void setAmountVAT(BigDecimal amountVAT)
+   public final void setTaxAmount(BigDecimal taxAmount)
    {
-      this.amountVATProperty().set(amountVAT);
+      this.taxAmountProperty().set(taxAmount);
    }
 
    public SimpleObjectProperty<BigDecimal> amountDiscountProperty()
@@ -373,6 +375,7 @@ public class SupplierInvoice
          supplier = new SupplierInvoiceSupplier();
       }
       PropertyReader.copy(supplier, getSupplier());
+      supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
    }
 
    public SimpleObjectProperty<SupplierInvoiceCreatingUser> creatingUserProperty()
@@ -397,6 +400,7 @@ public class SupplierInvoice
          creatingUser = new SupplierInvoiceCreatingUser();
       }
       PropertyReader.copy(creatingUser, getCreatingUser());
+      creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
 
    public SimpleObjectProperty<SupplierInvoiceAgency> agencyProperty()
@@ -421,6 +425,7 @@ public class SupplierInvoice
          agency = new SupplierInvoiceAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<SupplierInvoiceDelivery> deliveryProperty()
@@ -444,6 +449,7 @@ public class SupplierInvoice
          delivery = new SupplierInvoiceDelivery();
       }
       PropertyReader.copy(delivery, getDelivery());
+      deliveryProperty().setValue(ObjectUtils.clone(getDelivery()));
    }
 
    @Override
@@ -476,5 +482,43 @@ public class SupplierInvoice
    public String toString()
    {
       return PropertyReader.buildToString(this, "invoiceNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+      ObservableList<SupplierInvoiceItem> f = invoiceItems.get();
+      for (SupplierInvoiceItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      SupplierInvoice e = new SupplierInvoice();
+      e.id = id;
+      e.version = version;
+
+      e.invoiceNumber = invoiceNumber;
+      e.settled = settled;
+      e.invoiceType = invoiceType;
+      e.amountBeforeTax = amountBeforeTax;
+      e.taxAmount = taxAmount;
+      e.amountDiscount = amountDiscount;
+      e.amountAfterTax = amountAfterTax;
+      e.netToPay = netToPay;
+      e.advancePayment = advancePayment;
+      e.totalRestToPay = totalRestToPay;
+      e.creationDate = creationDate;
+      e.invoiceItems = invoiceItems;
+      e.supplier = supplier;
+      e.creatingUser = creatingUser;
+      e.agency = agency;
+      e.delivery = delivery;
+      return e;
    }
 }

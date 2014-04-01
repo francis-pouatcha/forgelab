@@ -22,7 +22,7 @@ public class StockMovementCreatingUserCreateController extends StockMovementCrea
    public void handleNewModelEvent(@Observes @CreateModelEvent StockMovement model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getStockMovementCreatingUserSelection());
+      bind(createView.getView().getStockMovementCreatingUserSelection(), createView.getView().getStockMovementCreatingUserForm());
       activateButton(createView.getView().getStockMovementCreatingUserSelection());
    }
 }

@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -32,7 +34,7 @@ import org.adorsys.javaext.display.ToStringField;
       "recordingAgent.fullName", "prescriptionNumber", "salesOrder.soNumber",
       "prescriptionDate", "recordingDate" })
 @ToStringField("prescriptionNumber")
-public class PrescriptionBook
+public class PrescriptionBook implements Cloneable
 {
 
    private Long id;
@@ -59,7 +61,7 @@ public class PrescriptionBook
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<PrescriptionBookRecordingAgent> recordingAgent;
    @Description("PrescriptionBook_salesOrder_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
    private SimpleObjectProperty<PrescriptionBookSalesOrder> salesOrder;
 
    public Long getId()
@@ -161,6 +163,7 @@ public class PrescriptionBook
          prescriber = new PrescriptionBookPrescriber();
       }
       PropertyReader.copy(prescriber, getPrescriber());
+      prescriberProperty().setValue(ObjectUtils.clone(getPrescriber()));
    }
 
    public SimpleObjectProperty<PrescriptionBookHospital> hospitalProperty()
@@ -185,6 +188,7 @@ public class PrescriptionBook
          hospital = new PrescriptionBookHospital();
       }
       PropertyReader.copy(hospital, getHospital());
+      hospitalProperty().setValue(ObjectUtils.clone(getHospital()));
    }
 
    public SimpleObjectProperty<PrescriptionBookAgency> agencyProperty()
@@ -209,6 +213,7 @@ public class PrescriptionBook
          agency = new PrescriptionBookAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    public SimpleObjectProperty<PrescriptionBookRecordingAgent> recordingAgentProperty()
@@ -233,6 +238,7 @@ public class PrescriptionBook
          recordingAgent = new PrescriptionBookRecordingAgent();
       }
       PropertyReader.copy(recordingAgent, getRecordingAgent());
+      recordingAgentProperty().setValue(ObjectUtils.clone(getRecordingAgent()));
    }
 
    public SimpleObjectProperty<PrescriptionBookSalesOrder> salesOrderProperty()
@@ -256,6 +262,7 @@ public class PrescriptionBook
          salesOrder = new PrescriptionBookSalesOrder();
       }
       PropertyReader.copy(salesOrder, getSalesOrder());
+      salesOrderProperty().setValue(ObjectUtils.clone(getSalesOrder()));
    }
 
    @Override
@@ -288,5 +295,29 @@ public class PrescriptionBook
    public String toString()
    {
       return PropertyReader.buildToString(this, "prescriptionNumber");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      PrescriptionBook e = new PrescriptionBook();
+      e.id = id;
+      e.version = version;
+
+      e.prescriptionNumber = prescriptionNumber;
+      e.prescriptionDate = prescriptionDate;
+      e.recordingDate = recordingDate;
+      e.prescriber = prescriber;
+      e.hospital = hospital;
+      e.agency = agency;
+      e.recordingAgent = recordingAgent;
+      e.salesOrder = salesOrder;
+      return e;
    }
 }

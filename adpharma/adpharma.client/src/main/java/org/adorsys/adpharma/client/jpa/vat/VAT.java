@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.display.ToStringField;
@@ -23,7 +25,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("name")
 @ListField({ "name", "rate", "active" })
-public class VAT
+public class VAT implements Cloneable
 {
 
    private Long id;
@@ -145,6 +147,25 @@ public class VAT
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name","rate");
+      return PropertyReader.buildToString(this, "name");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      VAT e = new VAT();
+      e.id = id;
+      e.version = version;
+
+      e.name = name;
+      e.active = active;
+      e.rate = rate;
+      return e;
    }
 }

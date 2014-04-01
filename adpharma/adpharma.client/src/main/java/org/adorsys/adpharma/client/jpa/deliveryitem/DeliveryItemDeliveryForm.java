@@ -95,6 +95,17 @@ public class DeliveryItemDeliveryForm extends AbstractToOneAssociation<DeliveryI
       dateOnDeliverySlip.calendarProperty().bindBidirectional(model.getDelivery().dateOnDeliverySlipProperty());
    }
 
+   public void update(DeliveryItemDelivery data)
+   {
+      deliveryNumber.textProperty().set(data.deliveryNumberProperty().get());
+      deliverySlipNumber.textProperty().set(data.deliverySlipNumberProperty().get());
+      amountBeforeTax.numberProperty().set(data.amountBeforeTaxProperty().get());
+      amountAfterTax.numberProperty().set(data.amountAfterTaxProperty().get());
+      amountDiscount.numberProperty().set(data.amountDiscountProperty().get());
+      netAmountToPay.numberProperty().set(data.netAmountToPayProperty().get());
+      dateOnDeliverySlip.calendarProperty().set(data.dateOnDeliverySlipProperty().get());
+   }
+
    public TextField getDeliveryNumber()
    {
       return deliveryNumber;

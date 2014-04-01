@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 public class CashDrawerClosedBySelection extends AbstractSelection<CashDrawer, Login>
 {
 
-   private ComboBox<Login> closedBy;
+   private ComboBox<CashDrawerClosedBy> closedBy;
 
    @Inject
    @Bundle({ CrudKeys.class, Login.class, CashDrawer.class })
@@ -39,10 +39,10 @@ public class CashDrawerClosedBySelection extends AbstractSelection<CashDrawer, L
 
       closedBy = viewBuilder.addComboBox("CashDrawer_closedBy_description.title", "closedBy", resourceBundle, false);
 
-      closedBy.setCellFactory(new Callback<ListView<Login>, ListCell<Login>>()
+      closedBy.setCellFactory(new Callback<ListView<CashDrawerClosedBy>, ListCell<CashDrawerClosedBy>>()
       {
          @Override
-         public ListCell<Login> call(ListView<Login> listView)
+         public ListCell<CashDrawerClosedBy> call(ListView<CashDrawerClosedBy> listView)
          {
             return new CashDrawerClosedByListCell();
          }
@@ -54,9 +54,10 @@ public class CashDrawerClosedBySelection extends AbstractSelection<CashDrawer, L
 
    public void bind(CashDrawer model)
    {
+      closedBy.valueProperty().bindBidirectional(model.closedByProperty());
    }
 
-   public ComboBox<Login> getClosedBy()
+   public ComboBox<CashDrawerClosedBy> getClosedBy()
    {
       return closedBy;
    }

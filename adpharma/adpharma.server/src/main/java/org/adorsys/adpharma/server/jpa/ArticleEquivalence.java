@@ -39,13 +39,13 @@ public class ArticleEquivalence implements Serializable
 
    @ManyToOne
    @Description("ArticleEquivalence_mainArticle_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "ArticleEquivalence_mainArticle_NotNull_validation")
    private Article mainArticle;
 
    @ManyToOne
    @Description("ArticleEquivalence_equivalentArticle_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    @NotNull(message = "ArticleEquivalence_equivalentArticle_NotNull_validation")
    private Article equivalentArticle;
 

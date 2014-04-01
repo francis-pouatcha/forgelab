@@ -11,6 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import java.util.ArrayList;
 import java.util.List;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +29,7 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Login_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StockMovementCreatingUser implements Association<StockMovement, Login>
+public class StockMovementCreatingUser implements Association<StockMovement, Login>, Cloneable
 {
 
    private Long id;
@@ -133,25 +135,36 @@ public class StockMovementCreatingUser implements Association<StockMovement, Log
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      StockMovementCreatingUser other = (StockMovementCreatingUser) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		StockMovementCreatingUser other = (StockMovementCreatingUser) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "loginName", "gender");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      StockMovementCreatingUser a = new StockMovementCreatingUser();
+      a.id = id;
+      a.version = version;
+
+      a.loginName = loginName;
+      a.email = email;
+      a.gender = gender;
+      return a;
+   }
+
 }

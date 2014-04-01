@@ -51,8 +51,10 @@ public abstract class ArticleAgencyController
    {
    }
 
-   protected void bind(final ArticleAgencySelection selection)
+   protected void bind(final ArticleAgencySelection selection, final ArticleAgencyForm form)
    {
+
+      //	    selection.getAgency().valueProperty().bindBidirectional(sourceEntity.agencyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class ArticleAgencyController
             s.reset();
             List<Agency> entities = targetSearchResult.getResultList();
             selection.getAgency().getItems().clear();
-            selection.getAgency().getItems().addAll(entities);
+            selection.getAgency().getItems().add(new ArticleAgency());
+            for (Agency entity : entities)
+            {
+               selection.getAgency().getItems().add(new ArticleAgency(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class ArticleAgencyController
                }
             });
 
-      selection.getAgency().valueProperty().addListener(new ChangeListener<Agency>()
+      selection.getAgency().valueProperty().addListener(new ChangeListener<ArticleAgency>()
       {
          @Override
-         public void changed(ObservableValue<? extends Agency> ov, Agency oldValue,
-               Agency newValue)
+         public void changed(ObservableValue<? extends ArticleAgency> ov, ArticleAgency oldValue,
+               ArticleAgency newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setAgency(new ArticleAgency(newValue));
+               form.update(newValue);
+            //                sourceEntity.setAgency(newValue);
          }
       });
 

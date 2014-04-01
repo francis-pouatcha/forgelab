@@ -58,9 +58,14 @@ public class PrescriberListController implements EntityController
 
    private PrescriberSearchResult searchResult;
 
+   @Inject
+   private PrescriberRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<Prescriber>()
             {

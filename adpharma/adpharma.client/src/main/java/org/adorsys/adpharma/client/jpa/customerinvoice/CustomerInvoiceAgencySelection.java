@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 public class CustomerInvoiceAgencySelection extends AbstractSelection<CustomerInvoice, Agency>
 {
 
-   private ComboBox<Agency> agency;
+   private ComboBox<CustomerInvoiceAgency> agency;
 
    @Inject
    @Bundle({ CrudKeys.class, Agency.class, CustomerInvoice.class })
@@ -39,10 +39,10 @@ public class CustomerInvoiceAgencySelection extends AbstractSelection<CustomerIn
 
       agency = viewBuilder.addComboBox("CustomerInvoice_agency_description.title", "agency", resourceBundle, false);
 
-      agency.setCellFactory(new Callback<ListView<Agency>, ListCell<Agency>>()
+      agency.setCellFactory(new Callback<ListView<CustomerInvoiceAgency>, ListCell<CustomerInvoiceAgency>>()
       {
          @Override
-         public ListCell<Agency> call(ListView<Agency> listView)
+         public ListCell<CustomerInvoiceAgency> call(ListView<CustomerInvoiceAgency> listView)
          {
             return new CustomerInvoiceAgencyListCell();
          }
@@ -54,9 +54,10 @@ public class CustomerInvoiceAgencySelection extends AbstractSelection<CustomerIn
 
    public void bind(CustomerInvoice model)
    {
+      agency.valueProperty().bindBidirectional(model.agencyProperty());
    }
 
-   public ComboBox<Agency> getAgency()
+   public ComboBox<CustomerInvoiceAgency> getAgency()
    {
       return agency;
    }

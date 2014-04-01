@@ -26,7 +26,7 @@ import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 public class ProcurementOrderSupplierSelection extends AbstractSelection<ProcurementOrder, Supplier>
 {
 
-   private ComboBox<Supplier> supplier;
+   private ComboBox<ProcurementOrderSupplier> supplier;
 
    @Inject
    @Bundle({ CrudKeys.class, Supplier.class, ProcurementOrder.class })
@@ -39,10 +39,10 @@ public class ProcurementOrderSupplierSelection extends AbstractSelection<Procure
 
       supplier = viewBuilder.addComboBox("ProcurementOrder_supplier_description.title", "supplier", resourceBundle, false);
 
-      supplier.setCellFactory(new Callback<ListView<Supplier>, ListCell<Supplier>>()
+      supplier.setCellFactory(new Callback<ListView<ProcurementOrderSupplier>, ListCell<ProcurementOrderSupplier>>()
       {
          @Override
-         public ListCell<Supplier> call(ListView<Supplier> listView)
+         public ListCell<ProcurementOrderSupplier> call(ListView<ProcurementOrderSupplier> listView)
          {
             return new ProcurementOrderSupplierListCell();
          }
@@ -54,9 +54,10 @@ public class ProcurementOrderSupplierSelection extends AbstractSelection<Procure
 
    public void bind(ProcurementOrder model)
    {
+      supplier.valueProperty().bindBidirectional(model.supplierProperty());
    }
 
-   public ComboBox<Supplier> getSupplier()
+   public ComboBox<ProcurementOrderSupplier> getSupplier()
    {
       return supplier;
    }

@@ -22,7 +22,7 @@ public class ArticleEquivalenceEquivalentArticleCreateController extends Article
    public void handleNewModelEvent(@Observes @CreateModelEvent ArticleEquivalence model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleEquivalenceEquivalentArticleSelection());
-      activateButton(createView.getView().getArticleEquivalenceEquivalentArticleSelection());
+      activateButton(createView.getView().getArticleEquivalenceEquivalentArticleSelection(), createView.getView().getArticleEquivalenceEquivalentArticleForm());
+      bind(createView.getView().getArticleEquivalenceEquivalentArticleSelection(), createView.getView().getArticleEquivalenceEquivalentArticleForm());
    }
 }

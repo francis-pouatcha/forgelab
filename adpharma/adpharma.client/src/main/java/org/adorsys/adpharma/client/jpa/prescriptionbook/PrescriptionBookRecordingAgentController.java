@@ -51,8 +51,10 @@ public abstract class PrescriptionBookRecordingAgentController
    {
    }
 
-   protected void bind(final PrescriptionBookRecordingAgentSelection selection)
+   protected void bind(final PrescriptionBookRecordingAgentSelection selection, final PrescriptionBookRecordingAgentForm form)
    {
+
+      //	    selection.getRecordingAgent().valueProperty().bindBidirectional(sourceEntity.recordingAgentProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class PrescriptionBookRecordingAgentController
             s.reset();
             List<Login> entities = targetSearchResult.getResultList();
             selection.getRecordingAgent().getItems().clear();
-            selection.getRecordingAgent().getItems().addAll(entities);
+            selection.getRecordingAgent().getItems().add(new PrescriptionBookRecordingAgent());
+            for (Login entity : entities)
+            {
+               selection.getRecordingAgent().getItems().add(new PrescriptionBookRecordingAgent(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class PrescriptionBookRecordingAgentController
                }
             });
 
-      selection.getRecordingAgent().valueProperty().addListener(new ChangeListener<Login>()
+      selection.getRecordingAgent().valueProperty().addListener(new ChangeListener<PrescriptionBookRecordingAgent>()
       {
          @Override
-         public void changed(ObservableValue<? extends Login> ov, Login oldValue,
-               Login newValue)
+         public void changed(ObservableValue<? extends PrescriptionBookRecordingAgent> ov, PrescriptionBookRecordingAgent oldValue,
+               PrescriptionBookRecordingAgent newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setRecordingAgent(new PrescriptionBookRecordingAgent(newValue));
+               form.update(newValue);
+            //                sourceEntity.setRecordingAgent(newValue);
          }
       });
 

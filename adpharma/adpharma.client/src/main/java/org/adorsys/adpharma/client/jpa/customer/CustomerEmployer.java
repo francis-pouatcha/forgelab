@@ -20,7 +20,7 @@ import org.adorsys.adpharma.client.jpa.employer.Employer;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Employer_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerEmployer implements Association<Customer, Employer>
+public class CustomerEmployer implements Association<Customer, Employer>, Cloneable
 {
 
    private Long id;
@@ -106,25 +106,35 @@ public class CustomerEmployer implements Association<Customer, Employer>
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      CustomerEmployer other = (CustomerEmployer) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		CustomerEmployer other = (CustomerEmployer) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "name");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      CustomerEmployer a = new CustomerEmployer();
+      a.id = id;
+      a.version = version;
+
+      a.name = name;
+      a.phone = phone;
+      return a;
+   }
+
 }

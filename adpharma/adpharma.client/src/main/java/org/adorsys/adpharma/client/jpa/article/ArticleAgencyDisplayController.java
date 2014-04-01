@@ -27,5 +27,6 @@ public class ArticleAgencyDisplayController extends ArticleAgencyController
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getArticleAgencySelection());
+      bind(displayView.getView().getArticleAgencySelection(), displayView.getView().getArticleAgencyForm());
    }
 }

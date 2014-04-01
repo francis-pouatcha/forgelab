@@ -22,7 +22,7 @@ public class CustomerInvoiceInsuranceCreateController extends CustomerInvoiceIns
    public void handleNewModelEvent(@Observes @CreateModelEvent CustomerInvoice model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerInvoiceInsuranceSelection());
-      activateButton(createView.getView().getCustomerInvoiceInsuranceSelection());
+      activateButton(createView.getView().getCustomerInvoiceInsuranceSelection(), createView.getView().getCustomerInvoiceInsuranceForm());
+      bind(createView.getView().getCustomerInvoiceInsuranceSelection(), createView.getView().getCustomerInvoiceInsuranceForm());
    }
 }

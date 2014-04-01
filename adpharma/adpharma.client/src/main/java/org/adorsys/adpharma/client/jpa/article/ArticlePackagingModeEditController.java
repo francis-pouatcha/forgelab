@@ -23,6 +23,6 @@ public class ArticlePackagingModeEditController extends ArticlePackagingModeCont
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticlePackagingModeSelection());
-      bind(editView.getView().getArticlePackagingModeSelection());
+      bind(editView.getView().getArticlePackagingModeSelection(), editView.getView().getArticlePackagingModeForm());
    }
 }

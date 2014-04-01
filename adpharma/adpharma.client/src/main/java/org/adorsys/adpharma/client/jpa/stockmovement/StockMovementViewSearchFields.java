@@ -26,6 +26,8 @@ import org.adorsys.javafx.crud.extensions.validation.ComboBoxFoccusChangedListen
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -45,6 +47,8 @@ public class StockMovementViewSearchFields extends AbstractForm<StockMovement>
 {
 
    private TextField originatedDocNumber;
+
+   private TextField internalPic;
 
    @Inject
    @Bundle({ CrudKeys.class, StockMovement.class })
@@ -86,6 +90,7 @@ public class StockMovementViewSearchFields extends AbstractForm<StockMovement>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       originatedDocNumber = viewBuilder.addTextField("StockMovement_originatedDocNumber_description.title", "originatedDocNumber", resourceBundle);
+      internalPic = viewBuilder.addTextField("StockMovement_internalPic_description.title", "internalPic", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -93,11 +98,17 @@ public class StockMovementViewSearchFields extends AbstractForm<StockMovement>
    public void bind(StockMovement model)
    {
       originatedDocNumber.textProperty().bindBidirectional(model.originatedDocNumberProperty());
+      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
 
    }
 
    public TextField getOriginatedDocNumber()
    {
       return originatedDocNumber;
+   }
+
+   public TextField getInternalPic()
+   {
+      return internalPic;
    }
 }

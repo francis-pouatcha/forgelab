@@ -54,6 +54,8 @@ public class ProcurementOrderItemProcurementOrderForm extends AbstractToOneAssoc
 
    private BigDecimalField amountDiscount;
 
+   private BigDecimalField taxAmount;
+
    private BigDecimalField netAmountToPay;
 
    @Inject
@@ -71,6 +73,7 @@ public class ProcurementOrderItemProcurementOrderForm extends AbstractToOneAssoc
       amountBeforeTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("ProcurementOrder_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
+      taxAmount = viewBuilder.addBigDecimalField("ProcurementOrder_taxAmount_description.title", "taxAmount", resourceBundle, NumberType.CURRENCY, locale);
       netAmountToPay = viewBuilder.addBigDecimalField("ProcurementOrder_netAmountToPay_description.title", "netAmountToPay", resourceBundle, NumberType.CURRENCY, locale);
 
       gridRows = viewBuilder.toRows();
@@ -82,7 +85,18 @@ public class ProcurementOrderItemProcurementOrderForm extends AbstractToOneAssoc
       amountBeforeTax.numberProperty().bindBidirectional(model.getProcurementOrder().amountBeforeTaxProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.getProcurementOrder().amountAfterTaxProperty());
       amountDiscount.numberProperty().bindBidirectional(model.getProcurementOrder().amountDiscountProperty());
+      taxAmount.numberProperty().bindBidirectional(model.getProcurementOrder().taxAmountProperty());
       netAmountToPay.numberProperty().bindBidirectional(model.getProcurementOrder().netAmountToPayProperty());
+   }
+
+   public void update(ProcurementOrderItemProcurementOrder data)
+   {
+      procurementOrderNumber.textProperty().set(data.procurementOrderNumberProperty().get());
+      amountBeforeTax.numberProperty().set(data.amountBeforeTaxProperty().get());
+      amountAfterTax.numberProperty().set(data.amountAfterTaxProperty().get());
+      amountDiscount.numberProperty().set(data.amountDiscountProperty().get());
+      taxAmount.numberProperty().set(data.taxAmountProperty().get());
+      netAmountToPay.numberProperty().set(data.netAmountToPayProperty().get());
    }
 
    public TextField getProcurementOrderNumber()
@@ -103,6 +117,11 @@ public class ProcurementOrderItemProcurementOrderForm extends AbstractToOneAssoc
    public BigDecimalField getAmountDiscount()
    {
       return amountDiscount;
+   }
+
+   public BigDecimalField getTaxAmount()
+   {
+      return taxAmount;
    }
 
    public BigDecimalField getNetAmountToPay()

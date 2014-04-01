@@ -5,11 +5,11 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 import org.adorsys.adpharma.client.jpa.vat.VAT;
 
-public class ProcurementOrderVatListCell extends AbstractToStringListCell<VAT>
+public class ProcurementOrderVatListCell extends AbstractToStringListCell<ProcurementOrderVat>
 {
 
    @Override
-   protected String getToString(VAT item)
+   protected String getToString(ProcurementOrderVat item)
    {
       if (item == null)
       {

@@ -22,7 +22,7 @@ public class ArticleClearanceConfigCreateController extends ArticleClearanceConf
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleClearanceConfigSelection());
+      bind(createView.getView().getArticleClearanceConfigSelection(), createView.getView().getArticleClearanceConfigForm());
       activateButton(createView.getView().getArticleClearanceConfigSelection());
    }
 }

@@ -11,8 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -25,7 +26,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("sectionCode")
 @ListField({ "sectionCode", "name", "position", "agency.name" })
-public class Section
+public class Section implements Cloneable
 {
 
    private Long id;
@@ -39,8 +40,6 @@ public class Section
    private SimpleStringProperty position;
    @Description("Section_geoCode_description")
    private SimpleStringProperty geoCode;
-   @Description("Section_description_description")
-   private SimpleStringProperty description;
    @Description("Section_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<SectionAgency> agency;
@@ -142,26 +141,6 @@ public class Section
       this.geoCodeProperty().set(geoCode);
    }
 
-   public SimpleStringProperty descriptionProperty()
-   {
-      if (description == null)
-      {
-         description = new SimpleStringProperty();
-      }
-      return description;
-   }
-
-   @Size(max = 256, message = "Section_description_Size_validation")
-   public String getDescription()
-   {
-      return descriptionProperty().get();
-   }
-
-   public final void setDescription(String description)
-   {
-      this.descriptionProperty().set(description);
-   }
-
    public SimpleObjectProperty<SectionAgency> agencyProperty()
    {
       if (agency == null)
@@ -184,6 +163,7 @@ public class Section
          agency = new SectionAgency();
       }
       PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
    @Override
@@ -216,5 +196,26 @@ public class Section
    public String toString()
    {
       return PropertyReader.buildToString(this, "sectionCode");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      Section e = new Section();
+      e.id = id;
+      e.version = version;
+
+      e.sectionCode = sectionCode;
+      e.name = name;
+      e.position = position;
+      e.geoCode = geoCode;
+      e.agency = agency;
+      return e;
    }
 }

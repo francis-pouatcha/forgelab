@@ -21,7 +21,7 @@ import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("ClearanceConfig_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArticleClearanceConfig implements Association<Article, ClearanceConfig>
+public class ArticleClearanceConfig implements Association<Article, ClearanceConfig>, Cloneable
 {
 
    private Long id;
@@ -169,25 +169,38 @@ public class ArticleClearanceConfig implements Association<Article, ClearanceCon
       return result;
    }
 
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ArticleClearanceConfig other = (ArticleClearanceConfig) obj;
-      if (id == other.id)
-         return true;
-      if (id == null)
-         return other.id == null;
-      return id.equals(other.id);
-   }
+   //	@Override
+   //	public boolean equals(Object obj) {
+   //		if (this == obj)
+   //			return true;
+   //		if (obj == null)
+   //			return false;
+   //		if (getClass() != obj.getClass())
+   //			return false;
+   //		ArticleClearanceConfig other = (ArticleClearanceConfig) obj;
+   //      if(id==other.id) return true;
+   //      if (id== null) return other.id==null;
+   //      return id.equals(other.id);
+   //	}
 
    public String toString()
    {
       return PropertyReader.buildToString(this, "startDate", "endDate", "discountRate", "clearanceState");
    }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      ArticleClearanceConfig a = new ArticleClearanceConfig();
+      a.id = id;
+      a.version = version;
+
+      a.active = active;
+      a.clearanceState = clearanceState;
+      a.discountRate = discountRate;
+      a.startDate = startDate;
+      a.endDate = endDate;
+      return a;
+   }
+
 }

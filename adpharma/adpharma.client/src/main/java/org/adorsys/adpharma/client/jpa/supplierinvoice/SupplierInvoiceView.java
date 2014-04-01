@@ -58,7 +58,7 @@ public class SupplierInvoiceView extends AbstractForm<SupplierInvoice>
 
    private BigDecimalField amountBeforeTax;
 
-   private BigDecimalField amountVAT;
+   private BigDecimalField taxAmount;
 
    private BigDecimalField amountDiscount;
 
@@ -125,7 +125,7 @@ public class SupplierInvoiceView extends AbstractForm<SupplierInvoice>
       settled = viewBuilder.addCheckBox("SupplierInvoice_settled_description.title", "settled", resourceBundle);
       invoiceType = viewBuilder.addComboBox("SupplierInvoice_invoiceType_description.title", "invoiceType", resourceBundle, InvoiceType.values());
       amountBeforeTax = viewBuilder.addBigDecimalField("SupplierInvoice_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
-      amountVAT = viewBuilder.addBigDecimalField("SupplierInvoice_amountVAT_description.title", "amountVAT", resourceBundle, NumberType.CURRENCY, locale);
+      taxAmount = viewBuilder.addBigDecimalField("SupplierInvoice_taxAmount_description.title", "taxAmount", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("SupplierInvoice_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("SupplierInvoice_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       netToPay = viewBuilder.addBigDecimalField("SupplierInvoice_netToPay_description.title", "netToPay", resourceBundle, NumberType.CURRENCY, locale);
@@ -175,7 +175,7 @@ public class SupplierInvoiceView extends AbstractForm<SupplierInvoice>
       settled.textProperty().bindBidirectional(model.settledProperty(), new BooleanStringConverter());
       invoiceType.valueProperty().bindBidirectional(model.invoiceTypeProperty());
       amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
-      amountVAT.numberProperty().bindBidirectional(model.amountVATProperty());
+      taxAmount.numberProperty().bindBidirectional(model.taxAmountProperty());
       amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
       netToPay.numberProperty().bindBidirectional(model.netToPayProperty());
@@ -214,9 +214,9 @@ public class SupplierInvoiceView extends AbstractForm<SupplierInvoice>
       return amountBeforeTax;
    }
 
-   public BigDecimalField getAmountVAT()
+   public BigDecimalField getTaxAmount()
    {
-      return amountVAT;
+      return taxAmount;
    }
 
    public BigDecimalField getAmountDiscount()

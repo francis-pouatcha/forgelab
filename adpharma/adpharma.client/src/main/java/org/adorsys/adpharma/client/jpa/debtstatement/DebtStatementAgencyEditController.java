@@ -23,6 +23,6 @@ public class DebtStatementAgencyEditController extends DebtStatementAgencyContro
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getDebtStatementAgencySelection());
-      bind(editView.getView().getDebtStatementAgencySelection());
+      bind(editView.getView().getDebtStatementAgencySelection(), editView.getView().getDebtStatementAgencyForm());
    }
 }

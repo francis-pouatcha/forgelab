@@ -26,6 +26,8 @@ public class ProcmtOrderTriggerModeConverter extends StringConverter<ProcmtOrder
    @Override
    public String toString(ProcmtOrderTriggerMode object)
    {
+      if (object == null)
+         return null;
       return bundle.getString("ProcmtOrderTriggerMode_" + object.name()
             + "_description.title");
    }

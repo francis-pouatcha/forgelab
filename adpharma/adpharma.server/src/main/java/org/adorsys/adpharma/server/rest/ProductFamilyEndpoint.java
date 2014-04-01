@@ -180,7 +180,7 @@ public class ProductFamilyEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> parentFamillyFields = Arrays.asList("name");
+   private static final List<String> parentFamilyFields = Arrays.asList("name");
 
    private ProductFamily detach(ProductFamily entity)
    {
@@ -188,7 +188,7 @@ public class ProductFamilyEndpoint
          return null;
 
       // aggregated
-      entity.setParentFamilly(productFamilyMerger.unbind(entity.getParentFamilly(), parentFamillyFields));
+      entity.setParentFamily(productFamilyMerger.unbind(entity.getParentFamily(), parentFamilyFields));
 
       return entity;
    }

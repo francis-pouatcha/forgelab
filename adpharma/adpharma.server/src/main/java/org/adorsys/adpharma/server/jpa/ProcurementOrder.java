@@ -40,7 +40,7 @@ import javax.persistence.CascadeType;
 @Description("ProcurementOrder_description")
 @ToStringField("procurementOrderNumber")
 @ListField({ "procurementOrderNumber", "agency.name", "amountBeforeTax", "amountAfterTax",
-      "amountDiscount", "netAmountToPay", "vat.rate" })
+      "amountDiscount", "taxAmount", "netAmountToPay", "vat.rate" })
 public class ProcurementOrder implements Serializable
 {
 
@@ -109,6 +109,11 @@ public class ProcurementOrder implements Serializable
    @Description("ProcurementOrder_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private BigDecimal amountDiscount;
+
+   @Column
+   @Description("ProcurementOrder_taxAmount_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private BigDecimal taxAmount;
 
    @Column
    @Description("ProcurementOrder_netAmountToPay_description")
@@ -287,6 +292,16 @@ public class ProcurementOrder implements Serializable
    public void setAmountDiscount(final BigDecimal amountDiscount)
    {
       this.amountDiscount = amountDiscount;
+   }
+
+   public BigDecimal getTaxAmount()
+   {
+      return this.taxAmount;
+   }
+
+   public void setTaxAmount(final BigDecimal taxAmount)
+   {
+      this.taxAmount = taxAmount;
    }
 
    public BigDecimal getNetAmountToPay()

@@ -21,13 +21,14 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleCreateService;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateController;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -35,6 +36,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
@@ -65,6 +67,9 @@ public class DeliveryDisplayController implements EntityController
 	private DeliveryCloseService closeService;
 
 	@Inject
+	private DeliveryItemSearchService deliveryItemSearchService;
+
+	@Inject
 	private ServiceCallFailedEventHandler editServiceCallFailedEventHandler;
 
 	@Inject
@@ -87,16 +92,16 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@EntityRemoveRequestEvent
 	private Event<Delivery> removeRequestEvent;
-	
+
 	@Inject 
 	@ModalEntitySearchRequestedEvent
 	private Event<ArticleSearchInput> modalArticleSearchEvent;
-	
+
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<Article> modalArticleCreateRequestEvent;
 
-//	services
+	//	services
 	@Inject
 	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
@@ -116,9 +121,15 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	DeliveryItem deliveryItem;
 
+	@Inject
+	private DeliveryRegistration registration;
+
 	@PostConstruct
 	public void postConstruct()
 	{
+		displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+		displayView.getDeleteButton().disableProperty().bind(registration.canEditProperty().not());
+
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
 
@@ -139,7 +150,7 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		displayView.getDataList().getItems().addListener(new ListChangeListener<DeliveryItem>() {
+		displayView.getDataList().itemsProperty().getValue().addListener(new ListChangeListener<DeliveryItem>() {
 
 			@Override
 			public void onChanged(
@@ -167,6 +178,9 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
+		/*
+		 * listen to Ok button.
+		 */
 		displayView.getOkButton().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -188,6 +202,9 @@ public class DeliveryDisplayController implements EntityController
 
 		});
 
+		/*
+		 * listen to delete menu Item.
+		 */
 
 		displayView.getDeleteDeliveryMenu().setOnAction(new EventHandler<ActionEvent>() {
 
@@ -198,6 +215,10 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
+
+		/*
+		 * listen to edit menu Item.
+		 */
 		displayView.getEditDeliveryMenu().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -211,6 +232,10 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
+
+		/*
+		 * listen to article name textfied.
+		 */
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -228,10 +253,12 @@ public class DeliveryDisplayController implements EntityController
 				}
 			}
 		});
-		
-	
 
-		// Reset
+
+
+		/*
+		 * listen to cancel button .
+		 */
 		displayView.getCancelButton().setOnAction(
 				new EventHandler<ActionEvent>()
 				{
@@ -242,7 +269,9 @@ public class DeliveryDisplayController implements EntityController
 					}
 				});
 
-		// Delete
+		/*
+		 * listen to delete button.
+		 */
 		displayView.getDeleteButton().setOnAction(
 				new EventHandler<ActionEvent>()
 				{
@@ -257,25 +286,28 @@ public class DeliveryDisplayController implements EntityController
 					}
 				});
 
-		// Edit
+		/*
+		 * listen to edit button .
+		 */
 		displayView.getEditButton().setOnAction(
 				new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle(ActionEvent e)
 					{
-						//								if(!displayedEntity.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
-						//									removeRequestEvent.fire(displayedEntity);
-						//								}else {
-						//									Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
-						//								}
-						deliveryEditEvent.fire(displayedEntity);
+						if(!displayedEntity.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
+							deliveryEditEvent.fire(displayedEntity);
+						}else {
+							Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
+						}
 					}
 				});
 
 
 
-		// Save
+		/*
+		 * listen to save button .
+		 */
 		displayView.getSaveButton().setOnAction(
 				new EventHandler<ActionEvent>()
 				{
@@ -287,7 +319,9 @@ public class DeliveryDisplayController implements EntityController
 					}
 				});
 
-		// send search result event.
+		/*
+		 *  send search result event.
+		 */
 		editService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
 				{
 			@Override
@@ -321,17 +355,32 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			protected void showError(Throwable exception)
 			{
-//				String message = exception.getMessage();
-//				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
-//				if (!StringUtils.isBlank(message))
-//					editErrorMessageDialog.getDetailText().setText(message);
-//				editErrorMessageDialog.display();
+				//				String message = exception.getMessage();
+				//				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
+				//				if (!StringUtils.isBlank(message))
+				//					editErrorMessageDialog.getDetailText().setText(message);
+				//				editErrorMessageDialog.display();
 				Dialogs.create().nativeTitleBar().showException(exception);
 			}
 		});
 		closeService.setOnFailed(editServiceCallFailedEventHandler);
 		editService.setOnFailed(editServiceCallFailedEventHandler);
+		deliveryItemSearchService.setOnFailed(editServiceCallFailedEventHandler);
+		deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent event)
+			{
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				DeliveryItemSearchResult deliveryItemSearchResult = s.getValue();
+				event.consume();
+				s.reset();
+				List<DeliveryItem> resultList = deliveryItemSearchResult.getResultList();
+				displayedEntity.setDeliveryItems(resultList);
+			}
+				});
 		editErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
+
 				{
 			@Override
 			public void handle(ActionEvent event)
@@ -344,7 +393,7 @@ public class DeliveryDisplayController implements EntityController
 		displayView.getSaveButton().disableProperty()
 		.bind(editService.runningProperty());
 
-		// Handle edit canceld, reloading entity
+		// Handle edit cancel, reloading entity
 		loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
 				{
 			@Override
@@ -401,10 +450,20 @@ public class DeliveryDisplayController implements EntityController
 	{
 		return ViewType.EDIT;
 	}
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent Agency removedEntity)
+	{
+		displayView.getDataList().getItems().remove(removedEntity);
+	}
 
 	public void handleEditRequestEvent(
 			@Observes @EntitySelectionEvent Delivery p)
 	{
+		DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
+		deliveryItemSearchInput.getFieldNames().add("delivery");
+		DeliveryItem deliveryItem2 = new DeliveryItem();
+		deliveryItem2.setDelivery(new DeliveryItemDelivery(p));
+		deliveryItemSearchInput.setEntity(deliveryItem2);
+		deliveryItemSearchService.setSearchInputs(deliveryItemSearchInput).start();
 		PropertyReader.copy(p, displayedEntity);
 	}
 
@@ -419,6 +478,12 @@ public class DeliveryDisplayController implements EntityController
 
 	}
 
+	public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Delivery model)
+	{
+		handleNewModelEvent(model);
+
+	}
+
 	private void handleSelectedArticle(Article article) {
 		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
 		PropertyReader.copy(fromArticle, deliveryItem);
@@ -427,8 +492,8 @@ public class DeliveryDisplayController implements EntityController
 	private void handleModalArticleCreateDone(@Observes @ModalEntityCreateDoneEvent Article article) {
 		handleSelectedArticle(article);
 
-	}
-	
+	} 
+
 	public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article)
 	{
 		handleSelectedArticle(article);
@@ -436,7 +501,8 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
 		deliveryItem.calculateTotalAmout();
-		DeliveryItem deliveryItem2 = new DeliveryItem();
+		DeliveryItem deliveryItem2 =new DeliveryItem();
+
 		PropertyReader.copy(deliveryItem, deliveryItem2);
 		displayView.getDataList().getItems().add(deliveryItem2);
 		PropertyReader.copy(new DeliveryItem(), deliveryItem);
@@ -448,5 +514,4 @@ public class DeliveryDisplayController implements EntityController
 		closeService.setDelivery(displayedEntity).start();
 
 	}
-
 }

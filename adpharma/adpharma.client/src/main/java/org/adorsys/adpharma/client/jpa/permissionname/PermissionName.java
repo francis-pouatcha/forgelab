@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
+import org.apache.commons.lang3.ObjectUtils;
 import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
@@ -21,7 +23,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "name", "action" })
 @ListField({ "name", "action" })
-public class PermissionName
+public class PermissionName implements Cloneable
 {
 
    private Long id;
@@ -122,5 +124,23 @@ public class PermissionName
    public String toString()
    {
       return PropertyReader.buildToString(this, "name", "action");
+   }
+
+   public void cleanIds()
+   {
+      id = null;
+      version = 0;
+   }
+
+   @Override
+   public Object clone() throws CloneNotSupportedException
+   {
+      PermissionName e = new PermissionName();
+      e.id = id;
+      e.version = version;
+
+      e.name = name;
+      e.action = action;
+      return e;
    }
 }

@@ -17,12 +17,12 @@ import org.adorsys.adpharma.client.jpa.article.ArticleFamilySelection;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import java.text.NumberFormat;
 import jfxtras.scene.control.CalendarTextField;
 import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMarginForm;
 import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMarginSelection;
 import org.adorsys.adpharma.client.jpa.article.ArticlePackagingModeForm;
 import org.adorsys.adpharma.client.jpa.article.ArticlePackagingModeSelection;
+import java.text.NumberFormat;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgencyForm;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgencySelection;
 import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfigForm;
@@ -90,6 +90,17 @@ public class DeliveryItemArticleForm extends AbstractToOneAssociation<DeliveryIt
       authorizedSale.textProperty().bindBidirectional(model.getArticle().authorizedSaleProperty(), new BooleanStringConverter());
       qtyInStock.numberProperty().bindBidirectional(model.getArticle().qtyInStockProperty());
       sppu.numberProperty().bindBidirectional(model.getArticle().sppuProperty());
+   }
+
+   public void update(DeliveryItemArticle data)
+   {
+      articleName.textProperty().set(data.articleNameProperty().get());
+      pic.textProperty().set(data.picProperty().get());
+      manufacturer.textProperty().set(data.manufacturerProperty().get());
+      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+      authorizedSale.textProperty().set(new BooleanStringConverter().toString(data.authorizedSaleProperty().get()));
+      qtyInStock.numberProperty().set(data.qtyInStockProperty().get());
+      sppu.numberProperty().set(data.sppuProperty().get());
    }
 
    public TextField getArticleName()

@@ -22,7 +22,7 @@ public class DeliveryCurrencyCreateController extends DeliveryCurrencyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Delivery model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getDeliveryCurrencySelection());
+      bind(createView.getView().getDeliveryCurrencySelection(), createView.getView().getDeliveryCurrencyForm());
       activateButton(createView.getView().getDeliveryCurrencySelection());
    }
 }

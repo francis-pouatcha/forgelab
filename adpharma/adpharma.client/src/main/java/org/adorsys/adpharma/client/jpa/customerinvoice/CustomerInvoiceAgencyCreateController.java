@@ -22,7 +22,7 @@ public class CustomerInvoiceAgencyCreateController extends CustomerInvoiceAgency
    public void handleNewModelEvent(@Observes @CreateModelEvent CustomerInvoice model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCustomerInvoiceAgencySelection());
+      bind(createView.getView().getCustomerInvoiceAgencySelection(), createView.getView().getCustomerInvoiceAgencyForm());
       activateButton(createView.getView().getCustomerInvoiceAgencySelection());
    }
 }

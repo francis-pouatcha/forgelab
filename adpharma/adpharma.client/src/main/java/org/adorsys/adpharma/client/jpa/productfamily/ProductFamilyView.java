@@ -11,7 +11,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 
 import javafx.beans.property.ObjectProperty;
@@ -30,12 +29,10 @@ public class ProductFamilyView extends AbstractForm<ProductFamily>
 
    private TextField name;
 
-   private TextArea description;
-
    @Inject
-   private ProductFamilyParentFamillyForm productFamilyParentFamillyForm;
+   private ProductFamilyParentFamilyForm productFamilyParentFamilyForm;
    @Inject
-   private ProductFamilyParentFamillySelection productFamilyParentFamillySelection;
+   private ProductFamilyParentFamilySelection productFamilyParentFamilySelection;
 
    @Inject
    @Bundle({ CrudKeys.class, ProductFamily.class })
@@ -49,10 +46,9 @@ public class ProductFamilyView extends AbstractForm<ProductFamily>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       name = viewBuilder.addTextField("ProductFamily_name_description.title", "name", resourceBundle);
-      description = viewBuilder.addTextArea("ProductFamily_description_description.title", "description", resourceBundle);
-      viewBuilder.addTitlePane("ProductFamily_parentFamilly_description.title", resourceBundle);
-      viewBuilder.addSubForm("ProductFamily_parentFamilly_description.title", "parentFamilly", resourceBundle, productFamilyParentFamillyForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("ProductFamily_parentFamilly_description.title", "parentFamilly", resourceBundle, productFamilyParentFamillySelection, ViewModel.READ_WRITE);
+      viewBuilder.addTitlePane("ProductFamily_parentFamily_description.title", resourceBundle);
+      viewBuilder.addSubForm("ProductFamily_parentFamily_description.title", "parentFamily", resourceBundle, productFamilyParentFamilyForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("ProductFamily_parentFamily_description.title", "parentFamily", resourceBundle, productFamilyParentFamilySelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }
@@ -60,23 +56,20 @@ public class ProductFamilyView extends AbstractForm<ProductFamily>
    public void addValidators()
    {
       name.focusedProperty().addListener(new TextInputControlFoccusChangedListener<ProductFamily>(textInputControlValidator, name, ProductFamily.class, "name", resourceBundle));
-      description.focusedProperty().addListener(new TextInputControlFoccusChangedListener<ProductFamily>(textInputControlValidator, description, ProductFamily.class, "description", resourceBundle));
    }
 
    public Set<ConstraintViolation<ProductFamily>> validate(ProductFamily model)
    {
       Set<ConstraintViolation<ProductFamily>> violations = new HashSet<ConstraintViolation<ProductFamily>>();
       violations.addAll(textInputControlValidator.validate(name, ProductFamily.class, "name", resourceBundle));
-      violations.addAll(textInputControlValidator.validate(description, ProductFamily.class, "description", resourceBundle));
       return violations;
    }
 
    public void bind(ProductFamily model)
    {
       name.textProperty().bindBidirectional(model.nameProperty());
-      description.textProperty().bindBidirectional(model.descriptionProperty());
-      productFamilyParentFamillyForm.bind(model);
-      productFamilyParentFamillySelection.bind(model);
+      productFamilyParentFamilyForm.bind(model);
+      productFamilyParentFamilySelection.bind(model);
    }
 
    public TextField getName()
@@ -84,18 +77,13 @@ public class ProductFamilyView extends AbstractForm<ProductFamily>
       return name;
    }
 
-   public TextArea getDescription()
+   public ProductFamilyParentFamilyForm getProductFamilyParentFamilyForm()
    {
-      return description;
+      return productFamilyParentFamilyForm;
    }
 
-   public ProductFamilyParentFamillyForm getProductFamilyParentFamillyForm()
+   public ProductFamilyParentFamilySelection getProductFamilyParentFamilySelection()
    {
-      return productFamilyParentFamillyForm;
-   }
-
-   public ProductFamilyParentFamillySelection getProductFamilyParentFamillySelection()
-   {
-      return productFamilyParentFamillySelection;
+      return productFamilyParentFamilySelection;
    }
 }

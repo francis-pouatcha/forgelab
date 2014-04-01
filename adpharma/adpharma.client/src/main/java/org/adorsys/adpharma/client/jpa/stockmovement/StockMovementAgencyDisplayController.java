@@ -27,5 +27,6 @@ public class StockMovementAgencyDisplayController extends StockMovementAgencyCon
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getStockMovementAgencySelection());
+      bind(displayView.getView().getStockMovementAgencySelection(), displayView.getView().getStockMovementAgencyForm());
    }
 }

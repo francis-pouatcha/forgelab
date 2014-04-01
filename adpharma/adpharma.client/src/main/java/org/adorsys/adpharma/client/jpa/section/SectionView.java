@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TextField;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javafx.beans.property.ObjectProperty;
@@ -38,8 +37,6 @@ public class SectionView extends AbstractForm<Section>
 
    private TextField geoCode;
 
-   private TextArea description;
-
    @Inject
    private SectionAgencyForm sectionAgencyForm;
    @Inject
@@ -62,7 +59,6 @@ public class SectionView extends AbstractForm<Section>
       name = viewBuilder.addTextField("Section_name_description.title", "name", resourceBundle);
       position = viewBuilder.addTextField("Section_position_description.title", "position", resourceBundle);
       geoCode = viewBuilder.addTextField("Section_geoCode_description.title", "geoCode", resourceBundle);
-      description = viewBuilder.addTextArea("Section_description_description.title", "description", resourceBundle);
       viewBuilder.addTitlePane("Section_agency_description.title", resourceBundle);
       viewBuilder.addSubForm("Section_agency_description.title", "agency", resourceBundle, sectionAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Section_agency_description.title", "agency", resourceBundle, sectionAgencySelection, ViewModel.READ_WRITE);
@@ -73,7 +69,6 @@ public class SectionView extends AbstractForm<Section>
    public void addValidators()
    {
       name.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Section>(textInputControlValidator, name, Section.class, "name", resourceBundle));
-      description.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Section>(textInputControlValidator, description, Section.class, "description", resourceBundle));
       // no active validator
    }
 
@@ -81,7 +76,6 @@ public class SectionView extends AbstractForm<Section>
    {
       Set<ConstraintViolation<Section>> violations = new HashSet<ConstraintViolation<Section>>();
       violations.addAll(textInputControlValidator.validate(name, Section.class, "name", resourceBundle));
-      violations.addAll(textInputControlValidator.validate(description, Section.class, "description", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(sectionAgencySelection.getAgency(), model.getAgency(), Section.class, "agency", resourceBundle));
       return violations;
    }
@@ -92,7 +86,6 @@ public class SectionView extends AbstractForm<Section>
       name.textProperty().bindBidirectional(model.nameProperty());
       position.textProperty().bindBidirectional(model.positionProperty());
       geoCode.textProperty().bindBidirectional(model.geoCodeProperty());
-      description.textProperty().bindBidirectional(model.descriptionProperty());
       sectionAgencyForm.bind(model);
       sectionAgencySelection.bind(model);
    }
@@ -115,11 +108,6 @@ public class SectionView extends AbstractForm<Section>
    public TextField getGeoCode()
    {
       return geoCode;
-   }
-
-   public TextArea getDescription()
-   {
-      return description;
    }
 
    public SectionAgencyForm getSectionAgencyForm()

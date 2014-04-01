@@ -22,7 +22,7 @@ public class SupplierInvoiceDeliveryCreateController extends SupplierInvoiceDeli
    public void handleNewModelEvent(@Observes @CreateModelEvent SupplierInvoice model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getSupplierInvoiceDeliverySelection());
-      activateButton(createView.getView().getSupplierInvoiceDeliverySelection());
+      activateButton(createView.getView().getSupplierInvoiceDeliverySelection(), createView.getView().getSupplierInvoiceDeliveryForm());
+      bind(createView.getView().getSupplierInvoiceDeliverySelection(), createView.getView().getSupplierInvoiceDeliveryForm());
    }
 }

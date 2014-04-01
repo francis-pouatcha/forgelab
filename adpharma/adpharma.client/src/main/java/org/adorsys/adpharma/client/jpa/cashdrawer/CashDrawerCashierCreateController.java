@@ -22,7 +22,7 @@ public class CashDrawerCashierCreateController extends CashDrawerCashierControll
    public void handleNewModelEvent(@Observes @CreateModelEvent CashDrawer model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getCashDrawerCashierSelection());
+      bind(createView.getView().getCashDrawerCashierSelection(), createView.getView().getCashDrawerCashierForm());
       activateButton(createView.getView().getCashDrawerCashierSelection());
    }
 }

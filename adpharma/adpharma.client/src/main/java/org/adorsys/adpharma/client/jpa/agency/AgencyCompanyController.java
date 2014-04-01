@@ -51,8 +51,10 @@ public abstract class AgencyCompanyController
    {
    }
 
-   protected void bind(final AgencyCompanySelection selection)
+   protected void bind(final AgencyCompanySelection selection, final AgencyCompanyForm form)
    {
+
+      //	    selection.getCompany().valueProperty().bindBidirectional(sourceEntity.companyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -67,7 +69,11 @@ public abstract class AgencyCompanyController
             s.reset();
             List<Company> entities = targetSearchResult.getResultList();
             selection.getCompany().getItems().clear();
-            selection.getCompany().getItems().addAll(entities);
+            selection.getCompany().getItems().add(new AgencyCompany());
+            for (Company entity : entities)
+            {
+               selection.getCompany().getItems().add(new AgencyCompany(entity));
+            }
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -95,14 +101,15 @@ public abstract class AgencyCompanyController
                }
             });
 
-      selection.getCompany().valueProperty().addListener(new ChangeListener<Company>()
+      selection.getCompany().valueProperty().addListener(new ChangeListener<AgencyCompany>()
       {
          @Override
-         public void changed(ObservableValue<? extends Company> ov, Company oldValue,
-               Company newValue)
+         public void changed(ObservableValue<? extends AgencyCompany> ov, AgencyCompany oldValue,
+               AgencyCompany newValue)
          {
             if (sourceEntity != null)
-               sourceEntity.setCompany(new AgencyCompany(newValue));
+               form.update(newValue);
+            //                sourceEntity.setCompany(newValue);
          }
       });
 

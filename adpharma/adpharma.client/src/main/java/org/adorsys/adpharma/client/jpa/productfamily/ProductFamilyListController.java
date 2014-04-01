@@ -58,9 +58,14 @@ public class ProductFamilyListController implements EntityController
 
    private ProductFamilySearchResult searchResult;
 
+   @Inject
+   private ProductFamilyRegistration registration;
+
    @PostConstruct
    public void postConstruct()
    {
+      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<ProductFamily>()
             {

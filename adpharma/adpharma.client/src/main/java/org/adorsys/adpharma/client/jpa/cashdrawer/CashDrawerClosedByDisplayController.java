@@ -27,5 +27,6 @@ public class CashDrawerClosedByDisplayController extends CashDrawerClosedByContr
    {
       this.sourceEntity = model;
       disableButton(displayView.getView().getCashDrawerClosedBySelection());
+      bind(displayView.getView().getCashDrawerClosedBySelection(), displayView.getView().getCashDrawerClosedByForm());
    }
 }

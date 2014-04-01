@@ -23,6 +23,6 @@ public class ArticleSectionEditController extends ArticleSectionController
    {
       this.sourceEntity = model;
       activateButton(editView.getView().getArticleSectionSelection());
-      bind(editView.getView().getArticleSectionSelection());
+      bind(editView.getView().getArticleSectionSelection(), editView.getView().getArticleSectionForm());
    }
 }
