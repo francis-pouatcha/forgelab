@@ -38,6 +38,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
@@ -70,24 +71,16 @@ public class DeliveryDisplayController implements EntityController
 	private DeliveryItemSearchService deliveryItemSearchService;
 
 	@Inject
-	private ServiceCallFailedEventHandler editServiceCallFailedEventHandler;
-
-	@Inject
-	private DeliveryLoadService loadService;
-	@Inject
-	private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
-
-	@Inject
-	@EntityEditCanceledEvent
-	private Event<Delivery> editCanceledEvent;
+	private ServiceCallFailedEventHandler serviceCallFailedEventHandler;
 
 	@Inject
 	@EntityEditRequestedEvent
-	private Event<Delivery> deliveryEditEvent;
-
+	private Event<Delivery> editRequestEvent;
+	
 	@Inject
-	@EntityEditDoneEvent
-	private Event<Delivery> editedDoneEvent;
+	@EntitySearchRequestedEvent
+	private Event<Delivery> searchRequestEvent;
+
 
 	@Inject
 	@EntityRemoveRequestEvent
@@ -101,18 +94,10 @@ public class DeliveryDisplayController implements EntityController
 	@ModalEntityCreateRequestedEvent
 	private Event<Article> modalArticleCreateRequestEvent;
 
-	//	services
-	@Inject
-	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
 	@Inject
 	private Delivery displayedEntity;
 
-	@Inject
-	private ErrorMessageDialog editErrorMessageDialog;
-
-	@Inject
-	private ErrorMessageDialog loadErrorMessageDialog;
 
 	@Inject
 	@Bundle(CrudKeys.class)
@@ -133,7 +118,7 @@ public class DeliveryDisplayController implements EntityController
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
 
-		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
 			protected void showError(Throwable exception) {
@@ -265,7 +250,7 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						loadService.setId(displayedEntity.getId()).start();
+						searchRequestEvent.fire(displayedEntity);
 					}
 				});
 
@@ -296,7 +281,7 @@ public class DeliveryDisplayController implements EntityController
 					public void handle(ActionEvent e)
 					{
 						if(!displayedEntity.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
-							deliveryEditEvent.fire(displayedEntity);
+							editRequestEvent.fire(displayedEntity);
 						}else {
 							Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
 						}
@@ -314,7 +299,6 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						List<DeliveryItem> deliveryItems = displayedEntity.getDeliveryItems();
 						handleDeliveryClosedEvent(displayedEntity);
 					}
 				});
@@ -332,7 +316,7 @@ public class DeliveryDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				PropertyReader.copy(entity, displayedEntity);
-				editedDoneEvent.fire(entity);
+				//				editedDoneEvent.fire(entity);
 			}
 				});
 
@@ -344,28 +328,17 @@ public class DeliveryDisplayController implements EntityController
 				Delivery entity = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(new Delivery(), displayedEntity);
-				editedDoneEvent.fire(entity);
+				PropertyReader.copy(entity, displayedEntity);
+				deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(entity)).start();
 
 			}
 		});
 
-		editServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-		{
-			@Override
-			protected void showError(Throwable exception)
-			{
-				//				String message = exception.getMessage();
-				//				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
-				//				if (!StringUtils.isBlank(message))
-				//					editErrorMessageDialog.getDetailText().setText(message);
-				//				editErrorMessageDialog.display();
-				Dialogs.create().nativeTitleBar().showException(exception);
-			}
-		});
-		closeService.setOnFailed(editServiceCallFailedEventHandler);
-		editService.setOnFailed(editServiceCallFailedEventHandler);
-		deliveryItemSearchService.setOnFailed(editServiceCallFailedEventHandler);
+		
+		closeService.setOnFailed(serviceCallFailedEventHandler);
+		editService.setOnFailed(serviceCallFailedEventHandler);
+		deliveryItemSearchService.setOnFailed(serviceCallFailedEventHandler);
+		
 		deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
 				{
 			@Override
@@ -379,57 +352,13 @@ public class DeliveryDisplayController implements EntityController
 				displayedEntity.setDeliveryItems(resultList);
 			}
 				});
-		editErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
-
-				{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				editErrorMessageDialog.closeDialog();
-			}
-				});
+		
 
 		// Disable save button during creation
 		displayView.getSaveButton().disableProperty()
 		.bind(editService.runningProperty());
 
-		// Handle edit cancel, reloading entity
-		loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-				{
-			@Override
-			public void handle(WorkerStateEvent event)
-			{
-				DeliveryLoadService s = (DeliveryLoadService) event.getSource();
-				Delivery entity = s.getValue();
-				event.consume();
-				s.reset();
-				PropertyReader.copy(entity, displayedEntity);
-				editCanceledEvent.fire(displayedEntity);
-			}
-				});
-
-		loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-		{
-			@Override
-			protected void showError(Throwable exception)
-			{
-				String message = exception.getMessage();
-				loadErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_load_error.title"));
-				if (!StringUtils.isBlank(message))
-					loadErrorMessageDialog.getDetailText().setText(message);
-				loadErrorMessageDialog.display();
-			}
-		});
-		loadService.setOnFailed(loadServiceCallFailedEventHandler);
-		loadErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
-				{
-			@Override
-			public void handle(ActionEvent event)
-			{
-				loadErrorMessageDialog.closeDialog();
-				editCanceledEvent.fire(displayedEntity);
-			}
-				});
+		
 
 		displayView.getView().addValidators();
 	}
@@ -458,12 +387,8 @@ public class DeliveryDisplayController implements EntityController
 	public void handleEditRequestEvent(
 			@Observes @EntitySelectionEvent Delivery p)
 	{
-		DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
-		deliveryItemSearchInput.getFieldNames().add("delivery");
-		DeliveryItem deliveryItem2 = new DeliveryItem();
-		deliveryItem2.setDelivery(new DeliveryItemDelivery(p));
-		deliveryItemSearchInput.setEntity(deliveryItem2);
-		deliveryItemSearchService.setSearchInputs(deliveryItemSearchInput).start();
+
+		deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(p)).start();
 		PropertyReader.copy(p, displayedEntity);
 	}
 
@@ -501,7 +426,7 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
 		deliveryItem.calculateTotalAmout();
-		DeliveryItem deliveryItem2 =new DeliveryItem();
+		DeliveryItem deliveryItem2 = new DeliveryItem();
 
 		PropertyReader.copy(deliveryItem, deliveryItem2);
 		displayView.getDataList().getItems().add(deliveryItem2);
@@ -513,5 +438,14 @@ public class DeliveryDisplayController implements EntityController
 			Delivery displayedEntity) {
 		closeService.setDelivery(displayedEntity).start();
 
+	}
+
+	public DeliveryItemSearchInput getDeliveryItemSearchInput(Delivery delivery){
+		DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
+		deliveryItemSearchInput.getFieldNames().add("delivery");
+		DeliveryItem deliveryItem2 = new DeliveryItem();
+		deliveryItem2.setDelivery(new DeliveryItemDelivery(delivery));
+		deliveryItemSearchInput.setEntity(deliveryItem2);
+		return deliveryItemSearchInput;
 	}
 }

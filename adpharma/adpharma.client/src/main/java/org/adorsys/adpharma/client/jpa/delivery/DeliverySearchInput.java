@@ -23,7 +23,7 @@ public class DeliverySearchInput
    /**
     * The entity holding search inputs.
     */
-   private Delivery entity;
+   private Delivery entity = new Delivery();
 
    /**
     * The start cursor

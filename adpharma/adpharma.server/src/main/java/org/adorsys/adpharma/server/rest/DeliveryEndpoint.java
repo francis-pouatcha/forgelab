@@ -50,7 +50,7 @@ import org.apache.commons.lang3.RandomStringUtils;
  * 
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Path("/deliverys")
 public class DeliveryEndpoint
 {
@@ -129,7 +129,6 @@ public class DeliveryEndpoint
 	public Delivery saveAndClose(Delivery delivery) {
 		if (delivery.getDeliveryProcessingState() == DocumentProcessingState.CLOSED)
 			return delivery;
-
 
 		SupplierInvoice si = new SupplierInvoice();
 		Login creatingUser = securityUtil.getConnectedUser();
