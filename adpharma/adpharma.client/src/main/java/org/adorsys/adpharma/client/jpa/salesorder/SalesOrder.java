@@ -107,7 +107,10 @@ public class SalesOrder implements Cloneable
    @Description("SalesOrder_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<SalesOrderAgency> agency;
-
+   
+   public void calculateAmount() {
+		//  TODO calculate all the amount of this sale oder	
+	}
    public Long getId()
    {
       return id;

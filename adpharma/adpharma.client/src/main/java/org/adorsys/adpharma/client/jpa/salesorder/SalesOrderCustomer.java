@@ -30,248 +30,273 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cloneable
 {
 
-   private Long id;
-   private int version;
+	private Long id;
+	private int version;
 
-   private SimpleStringProperty fullName;
-   private SimpleStringProperty landLinePhone;
-   private SimpleStringProperty mobile;
-   private SimpleStringProperty fax;
-   private SimpleStringProperty email;
-   private SimpleBooleanProperty creditAuthorized;
-   private SimpleBooleanProperty discountAuthorized;
-   private SimpleObjectProperty<Calendar> birthDate;
+	private SimpleStringProperty fullName;
+	private SimpleStringProperty landLinePhone;
+	private SimpleStringProperty mobile;
+	private SimpleStringProperty fax;
+	private SimpleStringProperty email;
+	private SimpleBooleanProperty creditAuthorized;
+	private SimpleBooleanProperty discountAuthorized;
+	private SimpleObjectProperty<Calendar> birthDate;
+	private SimpleObjectProperty<CustomerCustomerCategory> customerCategory;
 
-   public SalesOrderCustomer()
-   {
-   }
+	public SalesOrderCustomer()
+	{
+	}
 
-   public SalesOrderCustomer(Customer entity)
-   {
-      PropertyReader.copy(entity, this);
-   }
+	public SalesOrderCustomer(Customer entity)
+	{
+		PropertyReader.copy(entity, this);
+	}
 
-   public Long getId()
-   {
-      return id;
-   }
+	public Long getId()
+	{
+		return id;
+	}
 
-   public final void setId(Long id)
-   {
-      this.id = id;
-   }
+	public final void setId(Long id)
+	{
+		this.id = id;
+	}
 
-   public int getVersion()
-   {
-      return version;
-   }
+	public int getVersion()
+	{
+		return version;
+	}
 
-   public final void setVersion(int version)
-   {
-      this.version = version;
-   }
+	public final void setVersion(int version)
+	{
+		this.version = version;
+	}
 
-   public SimpleStringProperty fullNameProperty()
-   {
-      if (fullName == null)
-      {
-         fullName = new SimpleStringProperty();
-      }
-      return fullName;
-   }
+	public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
+	{
+		if (customerCategory == null)
+		{
+			customerCategory = new SimpleObjectProperty<CustomerCustomerCategory>(new CustomerCustomerCategory());
+		}
+		return customerCategory;
+	}
 
-   public String getFullName()
-   {
-      return fullNameProperty().get();
-   }
+	public CustomerCustomerCategory getCustomerCategory()
+	{
+		return customerCategoryProperty().get();
+	}
 
-   public final void setFullName(String fullName)
-   {
-      this.fullNameProperty().set(fullName);
-   }
+	public final void setCustomerCategory(CustomerCustomerCategory customerCategory)
+	{
+		if (customerCategory == null)
+		{
+			customerCategory = new CustomerCustomerCategory();
+		}
+		PropertyReader.copy(customerCategory, getCustomerCategory());
+	}
 
-   public SimpleStringProperty landLinePhoneProperty()
-   {
-      if (landLinePhone == null)
-      {
-         landLinePhone = new SimpleStringProperty();
-      }
-      return landLinePhone;
-   }
 
-   public String getLandLinePhone()
-   {
-      return landLinePhoneProperty().get();
-   }
+	public SimpleStringProperty fullNameProperty()
+	{
+		if (fullName == null)
+		{
+			fullName = new SimpleStringProperty();
+		}
+		return fullName;
+	}
 
-   public final void setLandLinePhone(String landLinePhone)
-   {
-      this.landLinePhoneProperty().set(landLinePhone);
-   }
+	public String getFullName()
+	{
+		return fullNameProperty().get();
+	}
 
-   public SimpleStringProperty mobileProperty()
-   {
-      if (mobile == null)
-      {
-         mobile = new SimpleStringProperty();
-      }
-      return mobile;
-   }
+	public final void setFullName(String fullName)
+	{
+		this.fullNameProperty().set(fullName);
+	}
 
-   public String getMobile()
-   {
-      return mobileProperty().get();
-   }
+	public SimpleStringProperty landLinePhoneProperty()
+	{
+		if (landLinePhone == null)
+		{
+			landLinePhone = new SimpleStringProperty();
+		}
+		return landLinePhone;
+	}
 
-   public final void setMobile(String mobile)
-   {
-      this.mobileProperty().set(mobile);
-   }
+	public String getLandLinePhone()
+	{
+		return landLinePhoneProperty().get();
+	}
 
-   public SimpleStringProperty faxProperty()
-   {
-      if (fax == null)
-      {
-         fax = new SimpleStringProperty();
-      }
-      return fax;
-   }
+	public final void setLandLinePhone(String landLinePhone)
+	{
+		this.landLinePhoneProperty().set(landLinePhone);
+	}
 
-   public String getFax()
-   {
-      return faxProperty().get();
-   }
+	public SimpleStringProperty mobileProperty()
+	{
+		if (mobile == null)
+		{
+			mobile = new SimpleStringProperty();
+		}
+		return mobile;
+	}
 
-   public final void setFax(String fax)
-   {
-      this.faxProperty().set(fax);
-   }
+	public String getMobile()
+	{
+		return mobileProperty().get();
+	}
 
-   public SimpleStringProperty emailProperty()
-   {
-      if (email == null)
-      {
-         email = new SimpleStringProperty();
-      }
-      return email;
-   }
+	public final void setMobile(String mobile)
+	{
+		this.mobileProperty().set(mobile);
+	}
 
-   public String getEmail()
-   {
-      return emailProperty().get();
-   }
+	public SimpleStringProperty faxProperty()
+	{
+		if (fax == null)
+		{
+			fax = new SimpleStringProperty();
+		}
+		return fax;
+	}
 
-   public final void setEmail(String email)
-   {
-      this.emailProperty().set(email);
-   }
+	public String getFax()
+	{
+		return faxProperty().get();
+	}
 
-   public SimpleBooleanProperty creditAuthorizedProperty()
-   {
-      if (creditAuthorized == null)
-      {
-         creditAuthorized = new SimpleBooleanProperty();
-      }
-      return creditAuthorized;
-   }
+	public final void setFax(String fax)
+	{
+		this.faxProperty().set(fax);
+	}
 
-   public Boolean getCreditAuthorized()
-   {
-      return creditAuthorizedProperty().get();
-   }
+	public SimpleStringProperty emailProperty()
+	{
+		if (email == null)
+		{
+			email = new SimpleStringProperty();
+		}
+		return email;
+	}
 
-   public final void setCreditAuthorized(Boolean creditAuthorized)
-   {
-      if (creditAuthorized == null)
-         creditAuthorized = Boolean.FALSE;
-      this.creditAuthorizedProperty().set(creditAuthorized);
-   }
+	public String getEmail()
+	{
+		return emailProperty().get();
+	}
 
-   public SimpleBooleanProperty discountAuthorizedProperty()
-   {
-      if (discountAuthorized == null)
-      {
-         discountAuthorized = new SimpleBooleanProperty();
-      }
-      return discountAuthorized;
-   }
+	public final void setEmail(String email)
+	{
+		this.emailProperty().set(email);
+	}
 
-   public Boolean getDiscountAuthorized()
-   {
-      return discountAuthorizedProperty().get();
-   }
+	public SimpleBooleanProperty creditAuthorizedProperty()
+	{
+		if (creditAuthorized == null)
+		{
+			creditAuthorized = new SimpleBooleanProperty();
+		}
+		return creditAuthorized;
+	}
 
-   public final void setDiscountAuthorized(Boolean discountAuthorized)
-   {
-      if (discountAuthorized == null)
-         discountAuthorized = Boolean.FALSE;
-      this.discountAuthorizedProperty().set(discountAuthorized);
-   }
+	public Boolean getCreditAuthorized()
+	{
+		return creditAuthorizedProperty().get();
+	}
 
-   public SimpleObjectProperty<Calendar> birthDateProperty()
-   {
-      if (birthDate == null)
-      {
-         birthDate = new SimpleObjectProperty<Calendar>();
-      }
-      return birthDate;
-   }
+	public final void setCreditAuthorized(Boolean creditAuthorized)
+	{
+		if (creditAuthorized == null)
+			creditAuthorized = Boolean.FALSE;
+		this.creditAuthorizedProperty().set(creditAuthorized);
+	}
 
-   public Calendar getBirthDate()
-   {
-      return birthDateProperty().get();
-   }
+	public SimpleBooleanProperty discountAuthorizedProperty()
+	{
+		if (discountAuthorized == null)
+		{
+			discountAuthorized = new SimpleBooleanProperty();
+		}
+		return discountAuthorized;
+	}
 
-   public final void setBirthDate(Calendar birthDate)
-   {
-      this.birthDateProperty().set(birthDate);
-   }
+	public Boolean getDiscountAuthorized()
+	{
+		return discountAuthorizedProperty().get();
+	}
 
-   @Override
-   public int hashCode()
-   {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result
-            + ((id == null) ? 0 : id.hashCode());
-      return result;
-   }
+	public final void setDiscountAuthorized(Boolean discountAuthorized)
+	{
+		if (discountAuthorized == null)
+			discountAuthorized = Boolean.FALSE;
+		this.discountAuthorizedProperty().set(discountAuthorized);
+	}
 
-   //	@Override
-   //	public boolean equals(Object obj) {
-   //		if (this == obj)
-   //			return true;
-   //		if (obj == null)
-   //			return false;
-   //		if (getClass() != obj.getClass())
-   //			return false;
-   //		SalesOrderCustomer other = (SalesOrderCustomer) obj;
-   //      if(id==other.id) return true;
-   //      if (id== null) return other.id==null;
-   //      return id.equals(other.id);
-   //	}
+	public SimpleObjectProperty<Calendar> birthDateProperty()
+	{
+		if (birthDate == null)
+		{
+			birthDate = new SimpleObjectProperty<Calendar>();
+		}
+		return birthDate;
+	}
 
-   public String toString()
-   {
-      return PropertyReader.buildToString(this, "fullName");
-   }
+	public Calendar getBirthDate()
+	{
+		return birthDateProperty().get();
+	}
 
-   @Override
-   public Object clone() throws CloneNotSupportedException
-   {
-      SalesOrderCustomer a = new SalesOrderCustomer();
-      a.id = id;
-      a.version = version;
+	public final void setBirthDate(Calendar birthDate)
+	{
+		this.birthDateProperty().set(birthDate);
+	}
 
-      a.fullName = fullName;
-      a.landLinePhone = landLinePhone;
-      a.mobile = mobile;
-      a.fax = fax;
-      a.email = email;
-      a.creditAuthorized = creditAuthorized;
-      a.discountAuthorized = discountAuthorized;
-      a.birthDate = birthDate;
-      return a;
-   }
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	//	@Override
+	//	public boolean equals(Object obj) {
+		//		if (this == obj)
+			//			return true;
+		//		if (obj == null)
+			//			return false;
+		//		if (getClass() != obj.getClass())
+			//			return false;
+		//		SalesOrderCustomer other = (SalesOrderCustomer) obj;
+		//      if(id==other.id) return true;
+		//      if (id== null) return other.id==null;
+		//      return id.equals(other.id);
+		//	}
+
+	public String toString()
+	{
+		return PropertyReader.buildToString(this, "fullName");
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		SalesOrderCustomer a = new SalesOrderCustomer();
+		a.id = id;
+		a.version = version;
+
+		a.fullName = fullName;
+		a.landLinePhone = landLinePhone;
+		a.mobile = mobile;
+		a.fax = fax;
+		a.email = email;
+		a.creditAuthorized = creditAuthorized;
+		a.discountAuthorized = discountAuthorized;
+		a.birthDate = birthDate;
+		return a;
+	}
 
 }
