@@ -1,11 +1,8 @@
 package org.adorsys.adpharma.client.jpa.article;
 
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,24 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchResult;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchService;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchResult;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchService;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchResult;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchService;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchResult;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchService;
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
+import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -52,10 +32,16 @@ public class ModalArticleCreateController {
 	@Inject
 	ArticleCreateService articleCreateService ;
 
+	@Inject   
+	ServiceCallFailedEventHandler serviceCallFailedEventHandler ;
+
 	@Inject
 	@Bundle({ CrudKeys.class, Article.class })
 	private ResourceBundle resourceBundle;
 
+	@Inject
+	@CreateModelEvent
+	private Event<Article> createModelEvent;
 
 	@Inject
 	Article model ;
@@ -64,33 +50,11 @@ public class ModalArticleCreateController {
 	@ModalEntityCreateDoneEvent
 	private Event<Article> modalArticleCreateDoneEvent;
 
-	@Inject
-	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
-
 	@PostConstruct
 	public void postConstruct(){          
 
-		bindOnSucceedService();
-		bindViewButtonAction();
 		modalArticleCreateView.bind(model);
-
-
-
-		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
-			@Override
-			protected void showError(Throwable exception) {
-				Dialogs.create().nativeTitleBar().title(resourceBundle.getString("Entity_create_error.title")).showException(exception);
-
-			}
-		});
-		articleCreateService.setOnFailed(createServiceCallFailedEventHandler);
-
-
-	}
-
-
-	public void bindViewButtonAction(){
+		//		handle cancel action
 		modalArticleCreateView.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -98,7 +62,7 @@ public class ModalArticleCreateController {
 
 			}
 		});
-
+		//  handele create action
 		modalArticleCreateView.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -106,7 +70,7 @@ public class ModalArticleCreateController {
 				PropertyReader.copy(new Article(), model);
 			}
 		});
-
+		//  handle save action
 		modalArticleCreateView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -124,9 +88,19 @@ public class ModalArticleCreateController {
 			}
 
 		});
-	}
 
-	public void bindOnSucceedService(){
+
+		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().title(resourceBundle.getString("Entity_create_error.title")).showException(exception);
+
+			}
+		});
+
+
+		//		  handle created call 
 		articleCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -140,99 +114,12 @@ public class ModalArticleCreateController {
 
 			}
 		});
-		modalArticleCreateView.getSectionSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		articleCreateService.setOnFailed(serviceCallFailedEventHandler);
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				SectionSearchService s = (SectionSearchService) event.getSource();
-				SectionSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				modalArticleCreateView.getView().getArticleSectionSelection().getSection().getItems().clear();
-				List<Section> resultList = searchResult.getResultList();
-				for (Section section : resultList) {
-					modalArticleCreateView.getView().getArticleSectionSelection().getSection().getItems().add(new ArticleSection(section));
-				}
-			}
-		});
+		createModelEvent.fire(model);
 
-		modalArticleCreateView.getPackagingModeSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				PackagingModeSearchService s = (PackagingModeSearchService) event.getSource();
-				PackagingModeSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				List<PackagingMode> resultList = searchResult.getResultList();
-				modalArticleCreateView.getView().getArticlePackagingModeSelection().getPackagingMode().getItems().clear();
-				for (PackagingMode packagingMode : resultList) {
-					modalArticleCreateView.getView().getArticlePackagingModeSelection().getPackagingMode().getItems().add(new ArticlePackagingMode(packagingMode));
-				}
-			}
-		});
-		modalArticleCreateView.getAgencySearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				AgencySearchService s = (AgencySearchService) event.getSource();
-				AgencySearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				modalArticleCreateView.getView().getArticleAgencySelection().getAgency().getItems().clear();
-				List<Agency> resultList = searchResult.getResultList();
-				for (Agency agency : resultList) {
-					modalArticleCreateView.getView().getArticleAgencySelection().getAgency().getItems().add(new ArticleAgency(agency));
-				}
-			}
-		});
-		modalArticleCreateView.getFamilySearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				ProductFamilySearchService s = (ProductFamilySearchService) event.getSource();
-				ProductFamilySearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-//				modalArticleCreateView.getView().getArticleFamilySelection().getFamily().getItems().
-				List<ProductFamily> resultList = searchResult.getResultList();
-				for (ProductFamily productFamily : resultList) {
-					
-				}
-			}
-		});
-		modalArticleCreateView.getMarginSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				SalesMarginSearchService s = (SalesMarginSearchService) event.getSource();
-				SalesMarginSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				modalArticleCreateView.getView().getArticleDefaultSalesMarginSelection().getDefaultSalesMargin().getItems().clear();
-				List<SalesMargin> resultList = searchResult.getResultList();
-				for (SalesMargin salesMargin : resultList) {
-					modalArticleCreateView.getView().getArticleDefaultSalesMarginSelection().getDefaultSalesMargin().getItems().add(new ArticleDefaultSalesMargin(salesMargin));
-					
-				}
-			}
-		});
-		modalArticleCreateView.getClearanceConfigSearchService().setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				ClearanceConfigSearchService s = (ClearanceConfigSearchService) event.getSource();
-				ClearanceConfigSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().clear();
-				List<ClearanceConfig> resultList = searchResult.getResultList();
-				for (ClearanceConfig clearanceConfig : resultList) {
-					modalArticleCreateView.getView().getArticleClearanceConfigSelection().getClearanceConfig().getItems().add(new ArticleClearanceConfig(clearanceConfig));
-				}
-			}
-		});
 	}
+
 
 	public Article getModel() {
 		return model;

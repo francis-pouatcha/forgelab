@@ -40,7 +40,7 @@ public class ArticleView extends AbstractForm<Article>
 
    private CheckBox authorizedSale;
 
-   private TextField maxStockQty;
+   private BigDecimalField maxStockQty;
 
    private BigDecimalField qtyInStock;
 
@@ -109,15 +109,15 @@ public class ArticleView extends AbstractForm<Article>
       manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
       active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
       authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
-      maxStockQty = viewBuilder.addTextField("Article_maxStockQty_description.title", "maxStockQty", resourceBundle);
+      maxStockQty = viewBuilder.addBigDecimalField("Article_maxStockQty_description.title", "maxStockQty", resourceBundle, NumberType.INTEGER, locale);
       qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
       pppu = viewBuilder.addBigDecimalField("Article_pppu_description.title", "pppu", resourceBundle, NumberType.INTEGER, locale);
       sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
       maxDiscountRate = viewBuilder.addBigDecimalField("Article_maxDiscountRate_description.title", "maxDiscountRate", resourceBundle, NumberType.PERCENTAGE, locale);
-      totalStockPrice = viewBuilder.addBigDecimalField("Article_totalStockPrice_description.title", "totalStockPrice", resourceBundle, NumberType.CURRENCY, locale);
-      lastStockEntry = viewBuilder.addCalendarTextField("Article_lastStockEntry_description.title", "lastStockEntry", resourceBundle, "dd-MM-yyyy", locale);
-      lastOutOfStock = viewBuilder.addCalendarTextField("Article_lastOutOfStock_description.title", "lastOutOfStock", resourceBundle, "dd-MM-yyyy", locale);
-      recordingDate = viewBuilder.addCalendarTextField("Article_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      totalStockPrice = viewBuilder.addBigDecimalField("Article_totalStockPrice_description.title", "totalStockPrice", resourceBundle, NumberType.CURRENCY, locale);
+//      lastStockEntry = viewBuilder.addCalendarTextField("Article_lastStockEntry_description.title", "lastStockEntry", resourceBundle, "dd-MM-yyyy", locale);
+//      lastOutOfStock = viewBuilder.addCalendarTextField("Article_lastOutOfStock_description.title", "lastOutOfStock", resourceBundle, "dd-MM-yyyy", locale);
+//      recordingDate = viewBuilder.addCalendarTextField("Article_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //      viewBuilder.addTitlePane("Article_section_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Article_section_description.title", "section", resourceBundle, articleSectionSelection, ViewModel.READ_WRITE);
@@ -163,17 +163,16 @@ public class ArticleView extends AbstractForm<Article>
       manufacturer.textProperty().bindBidirectional(model.manufacturerProperty());
       active.textProperty().bindBidirectional(model.activeProperty(), new BooleanStringConverter());
       authorizedSale.textProperty().bindBidirectional(model.authorizedSaleProperty(), new BooleanStringConverter());
-      maxStockQty.textProperty().bindBidirectional(model.maxStockQtyProperty(), NumberFormat.getInstance(locale));
+      maxStockQty.numberProperty().bindBidirectional(model.maxStockQtyProperty());
       qtyInStock.numberProperty().bindBidirectional(model.qtyInStockProperty());
       pppu.numberProperty().bindBidirectional(model.pppuProperty());
       sppu.numberProperty().bindBidirectional(model.sppuProperty());
       maxDiscountRate.numberProperty().bindBidirectional(model.maxDiscountRateProperty());
-//      totalStockPrice.numberProperty().bindBidirectional(model.totalStockPriceProperty());
-      totalStockPrice.numberProperty().bind(model.totalStockPriceProperty());
-      totalStockPrice.setDisable(true);
-      lastStockEntry.calendarProperty().bindBidirectional(model.lastStockEntryProperty());
-      lastOutOfStock.calendarProperty().bindBidirectional(model.lastOutOfStockProperty());
-      recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
+//      totalStockPrice.numberProperty() .bind(model.totalStockPriceProperty());
+//      totalStockPrice.setDisable(true);
+//      lastStockEntry.calendarProperty().bindBidirectional(model.lastStockEntryProperty());
+//      lastOutOfStock.calendarProperty().bindBidirectional(model.lastOutOfStockProperty());
+//      recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
       articleSectionForm.bind(model);
       articleSectionSelection.bind(model);
       articleFamilyForm.bind(model);
@@ -213,7 +212,7 @@ public class ArticleView extends AbstractForm<Article>
       return authorizedSale;
    }
 
-   public TextField getMaxStockQty()
+   public BigDecimalField getMaxStockQty()
    {
       return maxStockQty;
    }

@@ -54,7 +54,7 @@ public abstract class ArticleDefaultSalesMarginController
    protected void bind(final ArticleDefaultSalesMarginSelection selection, final ArticleDefaultSalesMarginForm form)
    {
 
-      //	    selection.getDefaultSalesMargin().valueProperty().bindBidirectional(sourceEntity.defaultSalesMarginProperty());
+//      	    selection.getDefaultSalesMargin().valueProperty().bindBidirectional(sourceEntity.defaultSalesMarginProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()

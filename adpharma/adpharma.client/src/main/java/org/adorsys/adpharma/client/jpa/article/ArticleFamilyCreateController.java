@@ -13,6 +13,9 @@ public class ArticleFamilyCreateController extends ArticleFamilyController
 
    @Inject
    ArticleCreateView createView;
+   
+   @Inject
+   ModalArticleCreateView modalCreateView;
 
    @PostConstruct
    public void postConstruct()
@@ -23,6 +26,7 @@ public class ArticleFamilyCreateController extends ArticleFamilyController
    {
       this.sourceEntity = model;
       bind(createView.getView().getArticleFamilySelection(), createView.getView().getArticleFamilyForm());
+      bind(modalCreateView.getArticleView().getArticleFamilySelection(), modalCreateView.getArticleView().getArticleFamilyForm());
       activateButton(createView.getView().getArticleFamilySelection());
    }
 }

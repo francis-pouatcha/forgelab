@@ -1,12 +1,23 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class ArticleLotEJB
@@ -21,6 +32,9 @@ public class ArticleLotEJB
    @Inject
    private ArticleMerger articleMerger;
 
+	@EJB
+	private SecurityUtil securityUtil;
+   
    public ArticleLot create(ArticleLot entity)
    {
       return repository.save(attach(entity));
@@ -89,4 +103,32 @@ public class ArticleLotEJB
 
       return entity;
    }
+
+	public void generateArticleLot(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+
+		// generate Article lot for each delivery item
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			ArticleLot al = new  ArticleLot();
+			al.setAgency(creatingUser.getAgency());
+			al.setArticle(deliveryItem.getArticle());
+			if(deliveryItem.getArticle()!=null)
+				al.setArticleName(deliveryItem.getArticle().getArticleName());
+			al.setCreationDate(creationDate);
+			al.setExpirationDate(deliveryItem.getExpirationDate());
+			al.setInternalPic(deliveryItem.getInternalPic());
+			al.setMainPic(deliveryItem.getMainPic());
+			al.setSecondaryPic(deliveryItem.getSecondaryPic());
+			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+			al.setSalesPricePU(deliveryItem.getSalesPricePU());
+			al.setStockQuantity(deliveryItem.getStockQuantity());
+			al.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
+			al.setTotalSalePrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
+			al = create(al);
+		}
+	}
+
+   
 }

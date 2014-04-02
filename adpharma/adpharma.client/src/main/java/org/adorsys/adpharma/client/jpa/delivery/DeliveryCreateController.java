@@ -25,6 +25,8 @@ import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -53,6 +55,10 @@ public class DeliveryCreateController implements EntityController
    @Inject
    @EntitySearchRequestedEvent
    private Event<Delivery> searchRequestedEvent;
+   
+   @Inject
+   @EntitySelectionEvent
+   private Event<Delivery> selectionEvent;
 
    /**
     * The create page has it own model object.
@@ -117,6 +123,7 @@ public class DeliveryCreateController implements EntityController
             event.consume();
             s.reset();
             createDoneEvent.fire(ent);
+            selectionEvent.fire(ent);
          }
       });
       createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()

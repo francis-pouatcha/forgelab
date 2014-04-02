@@ -13,6 +13,10 @@ public class ArticleDefaultSalesMarginCreateController extends ArticleDefaultSal
 
    @Inject
    ArticleCreateView createView;
+   
+   @Inject
+   ModalArticleCreateView modalCreateView;
+
 
    @PostConstruct
    public void postConstruct()
@@ -23,6 +27,7 @@ public class ArticleDefaultSalesMarginCreateController extends ArticleDefaultSal
    {
       this.sourceEntity = model;
       bind(createView.getView().getArticleDefaultSalesMarginSelection(), createView.getView().getArticleDefaultSalesMarginForm());
+      bind(modalCreateView.getView().getArticleDefaultSalesMarginSelection(), modalCreateView.getView().getArticleDefaultSalesMarginForm());
       activateButton(createView.getView().getArticleDefaultSalesMarginSelection());
    }
 }

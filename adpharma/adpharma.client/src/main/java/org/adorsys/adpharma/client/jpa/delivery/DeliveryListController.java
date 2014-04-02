@@ -51,7 +51,6 @@ import org.controlsfx.dialog.Dialogs;
 @Singleton
 public class DeliveryListController implements EntityController
 {
-
 	@Inject
 	private DeliveryListView listView;
 
@@ -66,27 +65,16 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@EntitySelectionEvent
 	private Event<Delivery> precessDeliveryRequestedEvent;
-
+	
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Delivery> deliveryEditEvent;
 
 	@Inject
-	@EntityRemoveRequestEvent
-	private Event<Delivery> removeRequestEvent;
-
-	@Inject
 	SupplierSearchService supplierSearchService;
 
 	@Inject
-	DeliverySearchService deliverySearchService;
-
-	@Inject
-	private ServiceCallFailedEventHandler serviceCallFailedEventHandler;
-
-	@Inject
-	@Bundle(CrudKeys.class)
-	private ResourceBundle resourceBundle;
+	DeliverySearchService searchService;
 
 
 
@@ -108,20 +96,20 @@ public class DeliveryListController implements EntityController
 	{
 
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.bind(searchInput);
 
-		//      listView.getDataList().getSelectionModel().selectedItemProperty()
-		//            .addListener(new ChangeListener<Delivery>()
-		//            {
-		//               @Override
-		//               public void changed(
-		//                     ObservableValue<? extends Delivery> property,
-		//                     Delivery oldValue, Delivery newValue)
-		//               {
-		//                  if (newValue != null)
-		//                     selectionEvent.fire(newValue);
-		//               }
-		//            });
-
+		listView.getDataList().getSelectionModel().selectedItemProperty()
+		.addListener(new ChangeListener<Delivery>()
+				{
+			@Override
+			public void changed(
+					ObservableValue<? extends Delivery> property,
+					Delivery oldValue, Delivery newValue)
+			{
+				if (newValue != null){}
+				//	selectionEvent.fire(newValue);
+			}
+				});
 		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -141,30 +129,12 @@ public class DeliveryListController implements EntityController
 			public void handle(ActionEvent e)
 			{							
 				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
-				deliverySearchService.setSearchInputs(searchInput).start();
+				searchService.setSearchInputs(searchInput).start();
 
 			}
+
 
 				});
-		deliverySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				DeliverySearchService s = (DeliverySearchService) event.getSource();
-				DeliverySearchResult result = s.getValue();
-				event.consume();
-				s.reset();
-				List<Delivery> resultList = result.getResultList();
-				listView.getDataList().getItems().setAll(resultList);
-
-			}
-		});
-
-		deliverySearchService.setOnFailed(serviceCallFailedEventHandler);
-
-		/*
-		 * listen to supplier search service .
-		 */
 		supplierSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -183,7 +153,36 @@ public class DeliveryListController implements EntityController
 
 			}
 		});
-		supplierSearchService.setOnFailed(serviceCallFailedEventHandler);
+		supplierSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SupplierSearchService s = (SupplierSearchService) event.getSource();
+				s.reset();				
+			}
+		});
+		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliverySearchService s = (DeliverySearchService) event.getSource();
+				DeliverySearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<Delivery> resultList = result.getResultList();
+				listView.getDataList().getItems().setAll(resultList);
+
+			}
+		});
+
+		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliverySearchService s = (DeliverySearchService) event.getSource();
+				s.reset();				
+			}
+		});
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -193,9 +192,7 @@ public class DeliveryListController implements EntityController
 				createRequestedEvent.fire(new Delivery());
 			}
 				});
-		/*
-		 * listen to update Button.
-		 */
+
 		listView.getUpdateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
@@ -205,24 +202,6 @@ public class DeliveryListController implements EntityController
 				if (selectedItem != null)
 					deliveryEditEvent.fire(selectedItem);
 			}
-				});
-		/*
-		 * listen to remove button.
-		 */
-		listView.getRemoveButton().setOnAction(
-				new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent e)
-					{
-						Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-						if(selectedItem == null) return;
-						if(!selectedItem.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
-							removeRequestEvent.fire(selectedItem);
-						}else {
-							Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
-						}
-					}
 				});
 
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
@@ -245,20 +224,16 @@ public class DeliveryListController implements EntityController
 
 			}
 				});
-
-		listView.getSupplier().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				supplierSearchService.setSearchInputs(new SupplierSearchInput()).start();
-
-			}
-		});
 	}
 
+	public void onDisplayed(){
+		supplierSearchService.setSearchInputs(new SupplierSearchInput()).start();
+
+	}
 	@Override
 	public void display(Pane parent)
 	{
+		onDisplayed();
 		BorderPane rootPane = listView.getRootPane();
 		ObservableList<Node> children = parent.getChildren();
 		if (!children.contains(rootPane))
@@ -297,19 +272,15 @@ public class DeliveryListController implements EntityController
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
-
+     
 	}
-	/*
-	 * add new created delivery at the begining of listview datalist.
-	 */
-	public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Delivery createdEntity)
+
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Delivery createdEntity)
 	{
 		listView.getDataList().getItems().add(0, createdEntity);
 	}
-	/*
-	 * remove deleted delivery in listview datalist
-	 */
-	public void handleRemoveDoneEvent(@Observes @EntityRemoveDoneEvent Delivery removedEntity)
+
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent Delivery removedEntity)
 	{
 		listView.getDataList().getItems().remove(removedEntity);
 	}

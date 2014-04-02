@@ -139,7 +139,16 @@ public class Article implements Serializable
    @Description("Article_recordingDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private Date recordingDate;
-
+   
+   public void handleStockEntry(DeliveryItem deliveryItem){
+	   qtyInStock = qtyInStock !=null ? qtyInStock : BigDecimal.ZERO;
+	   lastStockEntry = new Date();
+	   pppu = deliveryItem.getPurchasePricePU();
+	   sppu = deliveryItem.getSalesPricePU();
+	   qtyInStock = qtyInStock.add(deliveryItem.getStockQuantity());
+	   
+   }
+   
    public Long getId()
    {
       return this.id;

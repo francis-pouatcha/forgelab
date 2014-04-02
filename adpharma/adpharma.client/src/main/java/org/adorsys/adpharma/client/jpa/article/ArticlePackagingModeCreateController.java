@@ -13,6 +13,10 @@ public class ArticlePackagingModeCreateController extends ArticlePackagingModeCo
 
    @Inject
    ArticleCreateView createView;
+   
+   @Inject
+   ModalArticleCreateView modalCreateView;
+
 
    @PostConstruct
    public void postConstruct()
@@ -23,6 +27,7 @@ public class ArticlePackagingModeCreateController extends ArticlePackagingModeCo
    {
       this.sourceEntity = model;
       bind(createView.getView().getArticlePackagingModeSelection(), createView.getView().getArticlePackagingModeForm());
+      bind(modalCreateView.getView().getArticlePackagingModeSelection(), modalCreateView.getView().getArticlePackagingModeForm());
       activateButton(createView.getView().getArticlePackagingModeSelection());
    }
 }

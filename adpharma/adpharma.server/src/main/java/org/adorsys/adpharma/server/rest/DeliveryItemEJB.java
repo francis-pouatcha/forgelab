@@ -5,6 +5,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.repo.DeliveryItemRepository;
 
@@ -48,6 +50,10 @@ public class DeliveryItemEJB
    {
       return repository.findBy(id);
    }
+   
+  public List<DeliveryItem> findByDelivery(Delivery delivery){
+	  return repository.findByDelivery(delivery);
+  }
 
    public List<DeliveryItem> listAll(int start, int max)
    {

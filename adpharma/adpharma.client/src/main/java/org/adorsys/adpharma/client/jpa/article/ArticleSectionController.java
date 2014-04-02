@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
-import org.adorsys.adpharma.client.jpa.article.Article;
 
 public abstract class ArticleSectionController
 {
@@ -54,7 +52,7 @@ public abstract class ArticleSectionController
    protected void bind(final ArticleSectionSelection selection, final ArticleSectionForm form)
    {
 
-      //	    selection.getSection().valueProperty().bindBidirectional(sourceEntity.sectionProperty());
+//      selection.getSection().valueProperty().bindBidirectional(sourceEntity.sectionProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
@@ -129,6 +127,7 @@ public abstract class ArticleSectionController
 
    public void load()
    {
+//	  if(searchService.isRunning()) return;
       searchService.setSearchInputs(new SectionSearchInput()).start();
    }
 

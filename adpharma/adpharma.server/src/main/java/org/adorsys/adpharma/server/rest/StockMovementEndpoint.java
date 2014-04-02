@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.jpa.StockMovementSearchInput;
@@ -152,7 +153,7 @@ public class StockMovementEndpoint
       SingularAttribute<StockMovement, ?>[] attributes = readSeachAttributes(searchInput);
       return ejb.countByLike(searchInput.getEntity(), attributes);
    }
-
+   
    @SuppressWarnings("unchecked")
    private SingularAttribute<StockMovement, ?>[] readSeachAttributes(
          StockMovementSearchInput searchInput)
