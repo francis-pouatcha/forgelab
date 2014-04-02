@@ -1,19 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -28,17 +23,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
-import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.jpa.StockMovementSearchInput;
 import org.adorsys.adpharma.server.jpa.StockMovementSearchResult;
-import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -165,36 +153,6 @@ public class StockMovementEndpoint
       SingularAttribute<StockMovement, ?>[] attributes = readSeachAttributes(searchInput);
       return ejb.countByLike(searchInput.getEntity(), attributes);
    }
-   
-   @Inject
-   private SecurityUtil securityUtil ;
-   
-   public void generateDeliveryStockMouvements(@Observes(during=TransactionPhase.AFTER_SUCCESS) @DocumentClosedDoneEvent Delivery closedDelivery){
-		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-
-		// Generate Stock Movement for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			StockMovement sm = new StockMovement();
-			sm.setAgency(creatingUser.getAgency());
-			sm.setInternalPic(deliveryItem.getInternalPic());
-			sm.setMovementType(StockMovementType.IN);
-			sm.setArticle(deliveryItem.getArticle());
-			sm.setCreatingUser(creatingUser);
-			sm.setCreationDate(creationDate);
-			sm.setInitialQty(BigDecimal.ZERO);
-			sm.setMovedQty(deliveryItem.getStockQuantity());
-			sm.setFinalQty(deliveryItem.getStockQuantity());
-			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
-			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
-			sm.setOriginatedDocNumber(closedDelivery.getDeliveryNumber());
-			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
-			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
-				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			sm = ejb.create(sm);
-		}
-	}
    @SuppressWarnings("unchecked")
    private SingularAttribute<StockMovement, ?>[] readSeachAttributes(
          StockMovementSearchInput searchInput)

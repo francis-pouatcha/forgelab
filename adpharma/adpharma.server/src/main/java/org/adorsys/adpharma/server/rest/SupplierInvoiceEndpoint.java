@@ -1,19 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -28,19 +23,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.InvoiceType;
-import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice;
-import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice_;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceSearchInput;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceSearchResult;
-import org.adorsys.adpharma.server.security.SecurityUtil;
-import org.apache.deltaspike.data.impl.criteria.selection.strings.Upper;
 
 /**
  * 
@@ -53,12 +39,6 @@ public class SupplierInvoiceEndpoint
 
 	@Inject
 	private SupplierInvoiceEJB ejb;
-
-	@Inject
-	private SupplierInvoiceItemEJB supplierInvoiceItemEJB;
-
-	@Inject
-	private SecurityUtil securityUtilEJB;
 
 	@Inject
 	private LoginMerger loginMerger;
@@ -180,42 +160,6 @@ public class SupplierInvoiceEndpoint
 		return ejb.countByLike(searchInput.getEntity(), attributes);
 	}
 
-	public void generateSupplierInvoice(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
-		SupplierInvoice si = new SupplierInvoice();
-		Login creatingUser = securityUtilEJB.getConnectedUser();
-		Date creationDate = new Date();
-		Agency agency = creatingUser.getAgency();
-		si.setDelivery(closedDelivery);
-		si.setAgency(agency);
-		si.setSupplier(closedDelivery.getSupplier());
-		si.setCreatingUser(creatingUser);
-		si.setCreationDate(creationDate);
-		si.setInvoiceType(InvoiceType.CASHDRAWER);
-		si = ejb.create(si);
-		// Generate the supplier invoice items
-		BigDecimal amountBeforeTax = BigDecimal.ZERO;
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			SupplierInvoiceItem sii = new SupplierInvoiceItem();
-			sii.setAmountReturn(BigDecimal.ZERO);
-			sii.setArticle(deliveryItem.getArticle());
-			sii.setDeliveryQty(deliveryItem.getStockQuantity());
-			sii.setInternalPic(deliveryItem.getInternalPic());
-			sii.setInvoice(si);
-			sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			sii.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			sii = supplierInvoiceItemEJB.create(sii);
-		}
-
-		si.setAmountDiscount(closedDelivery.getAmountDiscount());
-		amountBeforeTax = amountBeforeTax.subtract(closedDelivery.getAmountDiscount());
-		si.setAmountBeforeTax(amountBeforeTax);
-		if(closedDelivery.getVat()!=null && closedDelivery.getVat().getRate()!=null){
-			si.setTaxAmount(closedDelivery.getVat().getRate().multiply(amountBeforeTax));
-		}
-		si.setAmountAfterTax(amountBeforeTax.add(si.getTaxAmount()));
-		ejb.update(si);
-	}
 	@SuppressWarnings("unchecked")
 	private SingularAttribute<SupplierInvoice, ?>[] readSeachAttributes(
 			SupplierInvoiceSearchInput searchInput)

@@ -140,8 +140,8 @@ public class AgencyDisplayController implements EntityController
    public void handleSelectionEvent(@Observes @EntitySelectionEvent Agency selectedEntity)
    {
       PropertyReader.copy(selectedEntity, displayedEntity);
-      displayView.getRemoveButton().setDisable(false);
-      displayView.getEditButton().setDisable(false);
+            
+      
    }
 
    public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<Agency> eventData)

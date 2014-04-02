@@ -54,7 +54,7 @@ public abstract class ArticleFamilyController
    protected void bind(final ArticleFamilySelection selection, final ArticleFamilyForm form)
    {
 
-      //	    selection.getFamily().valueProperty().bindBidirectional(sourceEntity.familyProperty());
+//      	    selection.getFamily().valueProperty().bindBidirectional(sourceEntity.familyProperty());
 
       // send search result event.
       searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()

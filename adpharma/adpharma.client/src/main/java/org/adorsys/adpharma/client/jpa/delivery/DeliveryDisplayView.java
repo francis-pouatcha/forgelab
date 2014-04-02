@@ -431,5 +431,10 @@ public class DeliveryDisplayView
 	public Button getAddButton() {
 		return addButton;
 	}
+	public HBox getDeliveryItemBar() {
+		return deliveryItemBar;
+	}
+	
+	
 	
 }

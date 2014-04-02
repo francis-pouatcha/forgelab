@@ -1,11 +1,8 @@
 package org.adorsys.adpharma.client.jpa.article;
 
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,24 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchResult;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchService;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchResult;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchService;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchResult;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchService;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchResult;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchService;
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;

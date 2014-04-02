@@ -1,14 +1,27 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
+
 import java.util.Set;
+
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class DeliveryEJB
@@ -35,6 +48,20 @@ public class DeliveryEJB
    @Inject
    private AgencyMerger agencyMerger;
 
+
+	@Inject
+	private DeliveryItemEJB deliveryItemEJB;
+
+	@Inject
+	private ArticleEJB articleEJB;
+
+	@EJB
+	private SecurityUtil securityUtil;
+  
+	@Inject
+	@DocumentClosedDoneEvent
+	private Event<Delivery> deliveryClosedDoneEvent;
+   
    public Delivery create(Delivery entity)
    {
       return repository.save(attach(entity));
@@ -54,6 +81,26 @@ public class DeliveryEJB
    {
       return repository.save(attach(entity));
    }
+   	
+	public Delivery saveAndClose(Delivery delivery) {
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			String internalPic = new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
+			deliveryItem.setInternalPic(internalPic);
+			deliveryItem.setCreatingUser(creatingUser);
+			deliveryItem = deliveryItemEJB.update(deliveryItem);
+			Article article = deliveryItem.getArticle();
+			article.handleStockEntry(deliveryItem);
+			articleEJB.update(article);
+		}
+		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
+		Delivery closedDelivery = update(delivery);
+		deliveryClosedDoneEvent.fire(closedDelivery);
+		return closedDelivery;
+	}
+   
 
    public Delivery findById(Long id)
    {

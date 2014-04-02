@@ -4,10 +4,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.article.Article;
 
-@Singleton
 public class ArticleCreateService extends Service<Article>
 {
 
@@ -32,7 +29,12 @@ public class ArticleCreateService extends Service<Article>
          {
             if (model == null)
                return null;
-            return remoteService.create(model);
+            try {
+            	Article create = remoteService.create(model);
+            	return create;
+            } catch (Exception e){
+            	throw e;
+            }
          }
       };
    }

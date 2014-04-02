@@ -140,8 +140,8 @@ public class CompanyDisplayController implements EntityController
    public void handleSelectionEvent(@Observes @EntitySelectionEvent Company selectedEntity)
    {
       PropertyReader.copy(selectedEntity, displayedEntity);
-      displayView.getRemoveButton().setDisable(false);
-      displayView.getEditButton().setDisable(false);
+      
+      	
    }
 
    public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<Company> eventData)

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -428,6 +429,8 @@ public class DeliveryDisplayController implements EntityController
 		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
 
 		displayView.getView().addValidators();
+		
+		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	@Override

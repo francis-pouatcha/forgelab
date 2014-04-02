@@ -1,20 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -29,20 +23,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
-import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
-import org.adorsys.adpharma.server.jpa.StockMovementType;
-import org.adorsys.adpharma.server.jpa.SupplierInvoice;
-import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -61,10 +45,6 @@ public class ArticleLotEndpoint
 
 	@Inject
 	private ArticleMerger articleMerger;
-
-
-	@EJB
-	SecurityUtil securityUtil;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
@@ -171,33 +151,6 @@ public class ArticleLotEndpoint
 		return ejb.countByLike(searchInput.getEntity(), attributes);
 	}
 	
-	public void generateArticleLot(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
-		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-
-		// generate Article lot for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			ArticleLot al = new  ArticleLot();
-			al.setAgency(creatingUser.getAgency());
-			al.setArticle(deliveryItem.getArticle());
-			if(deliveryItem.getArticle()!=null)
-				al.setArticleName(deliveryItem.getArticle().getArticleName());
-			al.setCreationDate(creationDate);
-			al.setExpirationDate(deliveryItem.getExpirationDate());
-			al.setInternalPic(deliveryItem.getInternalPic());
-			al.setMainPic(deliveryItem.getMainPic());
-			al.setSecondaryPic(deliveryItem.getSecondaryPic());
-			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			al.setSalesPricePU(deliveryItem.getSalesPricePU());
-			al.setStockQuantity(deliveryItem.getStockQuantity());
-			al.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			al.setTotalSalePrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			al = ejb.create(al);
-		}
-	}
-
-
 	@SuppressWarnings("unchecked")
 	private SingularAttribute<ArticleLot, ?>[] readSeachAttributes(
 			ArticleLotSearchInput searchInput)

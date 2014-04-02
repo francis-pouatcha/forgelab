@@ -1,22 +1,15 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -31,31 +24,19 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.Article;
-import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
-import org.adorsys.adpharma.server.jpa.StockMovementType;
-import org.adorsys.adpharma.server.jpa.SupplierInvoice;
-import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
 import org.adorsys.adpharma.server.security.SecurityUtil;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * 
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Path("/deliverys")
 public class DeliveryEndpoint
 {
@@ -82,11 +63,7 @@ public class DeliveryEndpoint
 	private AgencyMerger agencyMerger;
 
 	@EJB
-	SecurityUtil securityUtil;
-
-	@Inject
-	@DocumentClosedDoneEvent
-	private Event<Delivery> deliveryClosedDoneEvent;
+	private SecurityUtil securityUtil;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
@@ -120,14 +97,6 @@ public class DeliveryEndpoint
 		return detach(ejb.update(entity));
 	}
 
-
-	@Inject
-	private DeliveryItemEJB deliveryItemEJB;
-
-	@Inject
-	private ArticleEJB articleEJB;
-
-
 	@PUT
 	@Path("/saveAndClose")
 	@Produces({ "application/json", "application/xml" })
@@ -136,22 +105,9 @@ public class DeliveryEndpoint
 		if (delivery.getDeliveryProcessingState() == DocumentProcessingState.CLOSED)
 			return delivery;
 
-		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
-		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
-			deliveryItem.setInternalPic(internalPic);
-			deliveryItem.setCreatingUser(creatingUser);
-			deliveryItem = deliveryItemEJB.update(deliveryItem);
-			Article article = deliveryItem.getArticle();
-			article.handleStockEntry(deliveryItem);
-			articleEJB.update(article);
-		}
-		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-		Delivery closedDelivery = ejb.update(delivery);
-		deliveryClosedDoneEvent.fire(delivery);
-		return detach(delivery);
+		Delivery closedDelivery = ejb.saveAndClose(delivery);
+
+		return detach(closedDelivery);
 	}
 
 	@GET

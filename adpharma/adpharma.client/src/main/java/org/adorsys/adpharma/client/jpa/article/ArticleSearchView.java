@@ -6,29 +6,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.javaext.format.NumberType;
-import java.util.Locale;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import jfxtras.scene.control.CalendarTextField;
-import java.text.NumberFormat;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.adorsys.javafx.crud.extensions.ViewType;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.article.Article;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class ArticleSearchView

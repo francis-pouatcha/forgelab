@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -159,6 +160,7 @@ public class ArticleCreateController implements EntityController
       });
 
       createView.getView().addValidators();
+      
    }
 
    @Override

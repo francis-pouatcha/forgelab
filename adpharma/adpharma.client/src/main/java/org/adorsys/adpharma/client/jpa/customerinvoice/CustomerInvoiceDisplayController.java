@@ -140,8 +140,8 @@ public class CustomerInvoiceDisplayController implements EntityController
    public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerInvoice selectedEntity)
    {
       PropertyReader.copy(selectedEntity, displayedEntity);
-      displayView.getRemoveButton().setDisable(false);
-      displayView.getEditButton().setDisable(false);
+            
+      
    }
 
    public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<CustomerInvoice> eventData)
