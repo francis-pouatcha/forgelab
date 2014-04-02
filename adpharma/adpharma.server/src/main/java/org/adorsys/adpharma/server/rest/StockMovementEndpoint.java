@@ -169,7 +169,7 @@ public class StockMovementEndpoint
    @Inject
    private SecurityUtil securityUtil ;
    
-   public void generateDeliveryStockMouvements(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+   public void generateDeliveryStockMouvements(@Observes(during=TransactionPhase.AFTER_SUCCESS) @DocumentClosedDoneEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();

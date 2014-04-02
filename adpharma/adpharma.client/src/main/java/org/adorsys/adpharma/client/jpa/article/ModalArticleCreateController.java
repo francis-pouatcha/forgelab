@@ -89,6 +89,7 @@ public class ModalArticleCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				PropertyReader.copy(new Article(), model);
+				modalArticleCreateView.closeDialog();
 			}
 		});
 		//  handle save action
@@ -120,7 +121,6 @@ public class ModalArticleCreateController {
 			}
 		});
 
-
 		//		  handle created call 
 		articleCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -135,6 +135,7 @@ public class ModalArticleCreateController {
 
 			}
 		});
+
 		articleCreateService.setOnFailed(serviceCallFailedEventHandler);
 
 		createModelEvent.fire(model);
