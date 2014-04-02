@@ -13,4 +13,6 @@ target/
 */.settings
 */bin/
 *.prefs
-
+*/.classpath
+*/*/.classpath
+*/*/.forge_settings
