@@ -1,17 +1,26 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.section.Section;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
+
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
+
 import javafx.beans.property.SimpleLongProperty;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,9 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
 import org.apache.commons.lang3.ObjectUtils;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -67,7 +77,8 @@ public class Article implements Cloneable
    private SimpleObjectProperty<BigDecimal> maxDiscountRate;
    @Description("Article_totalStockPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private SimpleObjectProperty<BigDecimal> totalStockPrice;
+//   private SimpleObjectProperty<BigDecimal> totalStockPrice;
+   ObjectBinding<BigDecimal> totalStockPrice;
    @Description("Article_lastStockEntry_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy")
    private SimpleObjectProperty<Calendar> lastStockEntry;
@@ -311,11 +322,19 @@ public class Article implements Cloneable
       this.maxDiscountRateProperty().set(maxDiscountRate);
    }
 
-   public SimpleObjectProperty<BigDecimal> totalStockPriceProperty()
+   public ObjectBinding<BigDecimal> totalStockPriceProperty()
    {
       if (totalStockPrice == null)
       {
-         totalStockPrice = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+//         totalStockPrice = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+    	   totalStockPrice = new ObjectBinding<BigDecimal>() {
+    		   
+    		    { bind(qtyInStockProperty(),sppuProperty());}
+    		    protected BigDecimal computeValue() {
+    		        if (qtyInStockProperty().get() == null || sppuProperty().get() == null) return null;
+    		        return qtyInStockProperty().get().multiply(sppuProperty().get());
+    		    }
+    		};
       }
       return totalStockPrice;
    }
@@ -327,7 +346,7 @@ public class Article implements Cloneable
 
    public final void setTotalStockPrice(BigDecimal totalStockPrice)
    {
-      this.totalStockPriceProperty().set(totalStockPrice);
+//      this.totalStockPriceProperty().set(totalStockPrice);
    }
 
    public SimpleObjectProperty<Calendar> lastStockEntryProperty()

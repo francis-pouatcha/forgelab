@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.agency;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -159,6 +162,8 @@ public class AgencyCreateController implements EntityController
       });
 
       createView.getView().addValidators();
+      
+      createView.getView().getRecordingDate().setDisable(true);
    }
 
    @Override
@@ -190,6 +195,7 @@ public class AgencyCreateController implements EntityController
       PropertyReader.copy(templateEntity, model);
       // PropertyReader.cleanIds(model, new HashSet<Object>());
       model.cleanIds();
+      model.setRecordingDate(new GregorianCalendar());
    }
 
    /**
