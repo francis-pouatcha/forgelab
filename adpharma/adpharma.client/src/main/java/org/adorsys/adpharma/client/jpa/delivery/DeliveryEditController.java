@@ -23,6 +23,7 @@ import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -53,6 +54,10 @@ public class DeliveryEditController implements EntityController
    @Inject
    @EntityEditCanceledEvent
    private Event<Delivery> editCanceledEvent;
+   
+   @Inject
+   @EntitySelectionEvent
+   private Event<Delivery> selectionEvent;
 
    @Inject
    @EntityEditDoneEvent
@@ -119,6 +124,7 @@ public class DeliveryEditController implements EntityController
             s.reset();
             PropertyReader.copy(entity, displayedEntity);
             editedDoneEvent.fire(entity);
+            selectionEvent.fire(entity);
          }
       });
 
@@ -160,6 +166,7 @@ public class DeliveryEditController implements EntityController
             s.reset();
             PropertyReader.copy(entity, displayedEntity);
             editCanceledEvent.fire(displayedEntity);
+            selectionEvent.fire(entity);
          }
       });
 

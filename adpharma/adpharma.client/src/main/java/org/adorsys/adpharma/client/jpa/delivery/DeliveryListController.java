@@ -266,13 +266,13 @@ public class DeliveryListController implements EntityController
 			entities = new ArrayList<Delivery>();
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(entities);
-		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 50;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
-
+     
 	}
 
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Delivery createdEntity)

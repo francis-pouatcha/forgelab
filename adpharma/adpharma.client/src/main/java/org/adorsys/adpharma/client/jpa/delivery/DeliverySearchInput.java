@@ -33,7 +33,7 @@ public class DeliverySearchInput
    /**
     * The max number of records to return.
     */
-   private int max = 5;
+   private int max = 50;
 
    /**
     * The field names to be included in the search.

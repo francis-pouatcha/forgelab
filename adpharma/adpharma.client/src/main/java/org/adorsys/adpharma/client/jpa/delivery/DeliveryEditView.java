@@ -58,6 +58,7 @@ public class DeliveryEditView
       saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
       cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
       rootPane = viewBuilder.toAnchorPane();
+      rootPane.setPrefWidth(600d);
    }
 
    public void bind(Delivery model)

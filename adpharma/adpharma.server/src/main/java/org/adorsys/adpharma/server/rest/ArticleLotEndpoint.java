@@ -1,14 +1,20 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -22,10 +28,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
+import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.StockMovement;
+import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
+import org.adorsys.adpharma.server.jpa.SupplierInvoice;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -36,186 +53,217 @@ import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
 public class ArticleLotEndpoint
 {
 
-   @Inject
-   private ArticleLotEJB ejb;
+	@Inject
+	private ArticleLotEJB ejb;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private ArticleMerger articleMerger;
 
-   @POST
-   @Consumes({ "application/json", "application/xml" })
-   @Produces({ "application/json", "application/xml" })
-   public ArticleLot create(ArticleLot entity)
-   {
-      return detach(ejb.create(entity));
-   }
 
-   @DELETE
-   @Path("/{id:[0-9][0-9]*}")
-   public Response deleteById(@PathParam("id") Long id)
-   {
-      ArticleLot deleted = ejb.deleteById(id);
-      if (deleted == null)
-         return Response.status(Status.NOT_FOUND).build();
+	@EJB
+	SecurityUtil securityUtil;
 
-      return Response.ok(detach(deleted)).build();
-   }
+	@POST
+	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml" })
+	public ArticleLot create(ArticleLot entity)
+	{
+		return detach(ejb.create(entity));
+	}
 
-   @PUT
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public ArticleLot update(ArticleLot entity)
-   {
-      return detach(ejb.update(entity));
-   }
+	@DELETE
+	@Path("/{id:[0-9][0-9]*}")
+	public Response deleteById(@PathParam("id") Long id)
+	{
+		ArticleLot deleted = ejb.deleteById(id);
+		if (deleted == null)
+			return Response.status(Status.NOT_FOUND).build();
 
-   @GET
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   public Response findById(@PathParam("id") Long id)
-   {
-      ArticleLot found = ejb.findById(id);
-      if (found == null)
-         return Response.status(Status.NOT_FOUND).build();
-      return Response.ok(detach(found)).build();
-   }
+		return Response.ok(detach(deleted)).build();
+	}
 
-   @GET
-   @Produces({ "application/json", "application/xml" })
-   public ArticleLotSearchResult listAll(@QueryParam("start") int start,
-         @QueryParam("max") int max)
-   {
-      List<ArticleLot> resultList = ejb.listAll(start, max);
-      ArticleLotSearchInput searchInput = new ArticleLotSearchInput();
-      searchInput.setStart(start);
-      searchInput.setMax(max);
-      return new ArticleLotSearchResult((long) resultList.size(),
-            detach(resultList), detach(searchInput));
-   }
+	@PUT
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ArticleLot update(ArticleLot entity)
+	{
+		return detach(ejb.update(entity));
+	}
 
-   @GET
-   @Path("/count")
-   public Long count()
-   {
-      return ejb.count();
-   }
+	@GET
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	public Response findById(@PathParam("id") Long id)
+	{
+		ArticleLot found = ejb.findById(id);
+		if (found == null)
+			return Response.status(Status.NOT_FOUND).build();
+		return Response.ok(detach(found)).build();
+	}
 
-   @POST
-   @Path("/findBy")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public ArticleLotSearchResult findBy(ArticleLotSearchInput searchInput)
-   {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
-      Long count = ejb.countBy(searchInput.getEntity(), attributes);
-      List<ArticleLot> resultList = ejb.findBy(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new ArticleLotSearchResult(count, detach(resultList),
-            detach(searchInput));
-   }
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public ArticleLotSearchResult listAll(@QueryParam("start") int start,
+			@QueryParam("max") int max)
+	{
+		List<ArticleLot> resultList = ejb.listAll(start, max);
+		ArticleLotSearchInput searchInput = new ArticleLotSearchInput();
+		searchInput.setStart(start);
+		searchInput.setMax(max);
+		return new ArticleLotSearchResult((long) resultList.size(),
+				detach(resultList), detach(searchInput));
+	}
 
-   @POST
-   @Path("/countBy")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countBy(ArticleLotSearchInput searchInput)
-   {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countBy(searchInput.getEntity(), attributes);
-   }
+	@GET
+	@Path("/count")
+	public Long count()
+	{
+		return ejb.count();
+	}
 
-   @POST
-   @Path("/findByLike")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public ArticleLotSearchResult findByLike(ArticleLotSearchInput searchInput)
-   {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
-      Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
-      List<ArticleLot> resultList = ejb.findByLike(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new ArticleLotSearchResult(countLike, detach(resultList),
-            detach(searchInput));
-   }
+	@POST
+	@Path("/findBy")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ArticleLotSearchResult findBy(ArticleLotSearchInput searchInput)
+	{
+		SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+		Long count = ejb.countBy(searchInput.getEntity(), attributes);
+		List<ArticleLot> resultList = ejb.findBy(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new ArticleLotSearchResult(count, detach(resultList),
+				detach(searchInput));
+	}
 
-   @POST
-   @Path("/countByLike")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countByLike(ArticleLotSearchInput searchInput)
-   {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countByLike(searchInput.getEntity(), attributes);
-   }
+	@POST
+	@Path("/countBy")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countBy(ArticleLotSearchInput searchInput)
+	{
+		SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countBy(searchInput.getEntity(), attributes);
+	}
 
-   @SuppressWarnings("unchecked")
-   private SingularAttribute<ArticleLot, ?>[] readSeachAttributes(
-         ArticleLotSearchInput searchInput)
-   {
-      List<String> fieldNames = searchInput.getFieldNames();
-      List<SingularAttribute<ArticleLot, ?>> result = new ArrayList<SingularAttribute<ArticleLot, ?>>();
-      for (String fieldName : fieldNames)
-      {
-         Field[] fields = ArticleLot_.class.getFields();
-         for (Field field : fields)
-         {
-            if (field.getName().equals(fieldName))
-            {
-               try
-               {
-                  result.add((SingularAttribute<ArticleLot, ?>) field.get(null));
-               }
-               catch (IllegalArgumentException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-               catch (IllegalAccessException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-            }
-         }
-      }
-      return result.toArray(new SingularAttribute[result.size()]);
-   }
+	@POST
+	@Path("/findByLike")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ArticleLotSearchResult findByLike(ArticleLotSearchInput searchInput)
+	{
+		SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
+		List<ArticleLot> resultList = ejb.findByLike(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new ArticleLotSearchResult(countLike, detach(resultList),
+				detach(searchInput));
+	}
 
-   private static final List<String> emptyList = Collections.emptyList();
+	@POST
+	@Path("/countByLike")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countByLike(ArticleLotSearchInput searchInput)
+	{
+		SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countByLike(searchInput.getEntity(), attributes);
+	}
+	
+	public void generateArticleLot(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
-   private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
+		// generate Article lot for each delivery item
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			ArticleLot al = new  ArticleLot();
+			al.setAgency(creatingUser.getAgency());
+			al.setArticle(deliveryItem.getArticle());
+			if(deliveryItem.getArticle()!=null)
+				al.setArticleName(deliveryItem.getArticle().getArticleName());
+			al.setCreationDate(creationDate);
+			al.setExpirationDate(deliveryItem.getExpirationDate());
+			al.setInternalPic(deliveryItem.getInternalPic());
+			al.setMainPic(deliveryItem.getMainPic());
+			al.setSecondaryPic(deliveryItem.getSecondaryPic());
+			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+			al.setSalesPricePU(deliveryItem.getSalesPricePU());
+			al.setStockQuantity(deliveryItem.getStockQuantity());
+			al.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
+			al.setTotalSalePrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
+			al = ejb.create(al);
+		}
+	}
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 
-   private ArticleLot detach(ArticleLot entity)
-   {
-      if (entity == null)
-         return null;
+	@SuppressWarnings("unchecked")
+	private SingularAttribute<ArticleLot, ?>[] readSeachAttributes(
+			ArticleLotSearchInput searchInput)
+			{
+		List<String> fieldNames = searchInput.getFieldNames();
+		List<SingularAttribute<ArticleLot, ?>> result = new ArrayList<SingularAttribute<ArticleLot, ?>>();
+		for (String fieldName : fieldNames)
+		{
+			Field[] fields = ArticleLot_.class.getFields();
+			for (Field field : fields)
+			{
+				if (field.getName().equals(fieldName))
+				{
+					try
+					{
+						result.add((SingularAttribute<ArticleLot, ?>) field.get(null));
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new IllegalStateException(e);
+					}
+					catch (IllegalAccessException e)
+					{
+						throw new IllegalStateException(e);
+					}
+				}
+			}
+		}
+		return result.toArray(new SingularAttribute[result.size()]);
+			}
 
-      // aggregated
-      entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
+	private static final List<String> emptyList = Collections.emptyList();
 
-      // aggregated
-      entity.setArticle(articleMerger.unbind(entity.getArticle(), articleFields));
+	private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
-      return entity;
-   }
+	private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 
-   private List<ArticleLot> detach(List<ArticleLot> list)
-   {
-      if (list == null)
-         return list;
-      List<ArticleLot> result = new ArrayList<ArticleLot>();
-      for (ArticleLot entity : list)
-      {
-         result.add(detach(entity));
-      }
-      return result;
-   }
+	private ArticleLot detach(ArticleLot entity)
+	{
+		if (entity == null)
+			return null;
 
-   private ArticleLotSearchInput detach(ArticleLotSearchInput searchInput)
-   {
-      searchInput.setEntity(detach(searchInput.getEntity()));
-      return searchInput;
-   }
+		// aggregated
+		entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
+
+		// aggregated
+		entity.setArticle(articleMerger.unbind(entity.getArticle(), articleFields));
+
+		return entity;
+	}
+
+	private List<ArticleLot> detach(List<ArticleLot> list)
+	{
+		if (list == null)
+			return list;
+		List<ArticleLot> result = new ArrayList<ArticleLot>();
+		for (ArticleLot entity : list)
+		{
+			result.add(detach(entity));
+		}
+		return result;
+	}
+
+	private ArticleLotSearchInput detach(ArticleLotSearchInput searchInput)
+	{
+		searchInput.setEntity(detach(searchInput.getEntity()));
+		return searchInput;
+	}
 }

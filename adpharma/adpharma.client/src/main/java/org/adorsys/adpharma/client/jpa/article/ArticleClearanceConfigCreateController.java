@@ -13,6 +13,9 @@ public class ArticleClearanceConfigCreateController extends ArticleClearanceConf
 
    @Inject
    ArticleCreateView createView;
+   
+   @Inject
+   ModalArticleCreateView modalCreateView;
 
    @PostConstruct
    public void postConstruct()
@@ -23,6 +26,7 @@ public class ArticleClearanceConfigCreateController extends ArticleClearanceConf
    {
       this.sourceEntity = model;
       bind(createView.getView().getArticleClearanceConfigSelection(), createView.getView().getArticleClearanceConfigForm());
+      bind(modalCreateView.getView().getArticleClearanceConfigSelection(), modalCreateView.getView().getArticleClearanceConfigForm());
       activateButton(createView.getView().getArticleClearanceConfigSelection());
    }
 }

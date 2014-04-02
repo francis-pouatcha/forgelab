@@ -50,27 +50,7 @@ public class ModalArticleCreateView extends ApplicationModal{
 
 	private Button cancelButton;
 
-	@Inject   
-	ServiceCallFailedEventHandler callFailedEventHandler ;
-
-	@Inject
-	private SectionSearchService sectionSearchService;
-
-	@Inject
-	private ProductFamilySearchService familySearchService ;
-
-	@Inject
-	private SalesMarginSearchService marginSearchService;
-
-	@Inject
-	private PackagingModeSearchService packagingModeSearchService;
-
-	@Inject
-	private AgencySearchService agencySearchService;
-
-	@Inject
-	private ClearanceConfigSearchService clearanceConfigSearchService ;
-
+	
 	@Inject
 	private ArticleView view;
 
@@ -102,20 +82,6 @@ public class ModalArticleCreateView extends ApplicationModal{
 		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.TRASH_ALT);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(600d);
-		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
-			@Override
-			protected void showError(Throwable exception) {
-				Dialogs.create().nativeTitleBar().showException(exception);				
-			}
-		});
-
-		sectionSearchService.setOnFailed(callFailedEventHandler);
-		familySearchService.setOnFailed(callFailedEventHandler); 
-		marginSearchService.setOnFailed(callFailedEventHandler);
-		packagingModeSearchService.setOnFailed(callFailedEventHandler);
-		agencySearchService.setOnFailed(callFailedEventHandler);
-		clearanceConfigSearchService.setOnFailed(callFailedEventHandler);
 
 	}
 
@@ -138,40 +104,5 @@ public class ModalArticleCreateView extends ApplicationModal{
 	public Button getCancelButton() {
 		return cancelButton;
 	}
-
-	@BeforeShowing
-	public void beforShowing(){
-		sectionSearchService.setSearchInputs(new SectionSearchInput()).start();
-		agencySearchService.setSearchInputs(new AgencySearchInput()).start();
-		familySearchService.setSearchInputs(new ProductFamilySearchInput()).start();;
-		marginSearchService.setSearchInputs(new SalesMarginSearchInput()).start();
-		clearanceConfigSearchService.setSearchInputs(new ClearanceConfigSearchInput()).start();
-		packagingModeSearchService.setSearchInputs(new PackagingModeSearchInput()).start();
-	}
-
-	public SectionSearchService getSectionSearchService() {
-		return sectionSearchService;
-	}
-	public ServiceCallFailedEventHandler getCallFailedEventHandler() {
-		return callFailedEventHandler;
-	}
-	public ProductFamilySearchService getFamilySearchService() {
-		return familySearchService;
-	}
-	public SalesMarginSearchService getMarginSearchService() {
-		return marginSearchService;
-	}
-	public PackagingModeSearchService getPackagingModeSearchService() {
-		return packagingModeSearchService;
-	}
-	public AgencySearchService getAgencySearchService() {
-		return agencySearchService;
-	}
-	public ClearanceConfigSearchService getClearanceConfigSearchService() {
-		return clearanceConfigSearchService;
-	}
-
-
-
 
 }

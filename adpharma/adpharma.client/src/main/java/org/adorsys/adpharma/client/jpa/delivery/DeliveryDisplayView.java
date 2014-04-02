@@ -1,58 +1,40 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-
-import javafx.scene.control.TextField;
-
-import java.util.Locale;
-
-import jfxtras.labs.scene.control.BeanPathAdapter;
-import jfxtras.scene.control.CalendarTextField;
-
-import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
-
-import javafx.scene.control.ComboBox;
+import javafx.scene.layout.VBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.adorsys.javafx.crud.extensions.ViewType;
-
-import de.jensd.fx.fontawesome.AwesomeIcon;
-
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import jfxtras.scene.control.CalendarTextField;
+
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
+import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
+
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class DeliveryDisplayView
@@ -60,16 +42,22 @@ public class DeliveryDisplayView
 
 	@FXML
 	BorderPane rootPane;
+	
+	@FXML
+	private VBox actionbar ;
 
-	@FXML
 	private Button saveButton;
-	
-	@FXML
+
 	private Button deleteButton;
-	
-	@FXML
+
 	private Button editButton;
 	
+	private Button addButton;
+
+	private Button cancelButton;
+
+	private Button addArticleButton ;
+
 	private Button okButton ;
 
 	@FXML
@@ -115,14 +103,6 @@ public class DeliveryDisplayView
 	@FXML
 	private MenuItem editDeliveryMenu;
 
-
-
-	@FXML
-	private Button cancelButton;
-
-	@FXML
-	private Button addArticleButton ;
-
 	private TextField articleName;
 
 	private TextField mainPic;
@@ -136,7 +116,7 @@ public class DeliveryDisplayView
 	private BigDecimalField salesPricePU;
 
 	private TextField expirationDate;
-	
+
 	@FXML
 	private ComboBox<VAT> tax;
 
@@ -187,6 +167,7 @@ public class DeliveryDisplayView
 		buildDeliveryItemBar();
 		buildAmountPane();
 		buildLeftGrid();
+		buildActionBar();
 	}
 	public void buildLeftGrid(){
 		recordingDate =ViewBuilderUtils.newCalendarTextField("recordingDate", "dd-MM-yyyy HH:mm", locale, false);
@@ -200,6 +181,34 @@ public class DeliveryDisplayView
 		leftGride.add(deliveryDate, 1, 3);
 
 
+	}
+	
+	public void buildActionBar(){
+		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
+		saveButton.setPrefWidth(150d);
+		saveButton.setAlignment(Pos.CENTER_LEFT);
+		
+       cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
+       cancelButton.setPrefWidth(150d);
+       cancelButton.setAlignment(Pos.CENTER_LEFT);
+       
+       addArticleButton = ViewBuilderUtils.newButton( "Delivery_Add_article.title", "addArticleButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+       addArticleButton.setPrefWidth(150d);
+       addArticleButton.setAlignment(Pos.CENTER_LEFT);
+       
+       deleteButton =ViewBuilderUtils.newButton( "Entity_remove.title", "deleteButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+       deleteButton.setPrefWidth(150d);
+       deleteButton.setAlignment(Pos.CENTER_LEFT);
+       
+       editButton  =ViewBuilderUtils.newButton( "Delivery_Edit_Head.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
+       editButton.setPrefWidth(150d);
+       editButton.setAlignment(Pos.CENTER_LEFT);
+       
+       addButton = ViewBuilderUtils.newButton( "Delivery_New.title", "addButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+       addButton.setPrefWidth(150d);
+       addButton.setAlignment(Pos.CENTER_LEFT);
+       
+       actionbar.getChildren().addAll(saveButton,cancelButton,deleteButton,editButton,addButton,addArticleButton);
 	}
 	public void buildDeliveryItemBar(){
 		mainPic = ViewBuilderUtils.newTextField( "mainPic", false);
@@ -231,7 +240,7 @@ public class DeliveryDisplayView
 
 		deliveryItemBar.getChildren().addAll(
 				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
-		
+
 	}
 
 	public void buildAmountPane(){
@@ -273,7 +282,7 @@ public class DeliveryDisplayView
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
-		
+
 	}
 
 	public void bind(DeliveryItem deliveryItem) {
@@ -284,7 +293,7 @@ public class DeliveryDisplayView
 		salesPricePU.numberProperty().bindBidirectional(deliveryItem.salesPricePUProperty());
 		purchasePricePU.numberProperty().bindBidirectional(deliveryItem.purchasePricePUProperty());
 	}
-
+	
 
 	public BorderPane getRootPane()
 	{
@@ -401,22 +410,24 @@ public class DeliveryDisplayView
 	public Button getAddArticleButton() {
 		return addArticleButton;
 	}
-	
+
 	public Button getOkButton() {
 		return okButton;
 	}
-	
+
 	public Button getDeleteButton() {
 		return deleteButton;
 	}
-	
+
 	public Button getEditButton() {
 		return editButton;
 	}
-	
+
 	public ComboBox<VAT> getTax() {
 		return tax;
 	}
-	
+	public Button getAddButton() {
+		return addButton;
+	}
 	
 }

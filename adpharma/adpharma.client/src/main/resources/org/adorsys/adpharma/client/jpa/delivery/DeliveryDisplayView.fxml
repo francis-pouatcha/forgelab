@@ -51,40 +51,7 @@
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="265.0" />
 							</content>
 						</TitledPane>
-						<VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="386.0" prefWidth="267.0" VBox.vgrow="ALWAYS">
-							<children>
-								<Button fx:id="saveButton" mnemonicParsing="false" prefWidth="150.0" text="Sauvegarder">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button fx:id="addArticleButton" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" prefWidth="150.0" text="Creer un Article">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button layoutX="114.0" layoutY="10.0" mnemonicParsing="false" prefWidth="150.0" text="Imprimer BL">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button layoutX="114.0" layoutY="36.0" mnemonicParsing="false" prefWidth="150.0" text="Imprimer CB">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button fx:id="deleteButton" layoutX="69.0" layoutY="164.0" mnemonicParsing="false" prefWidth="150.0" text="Suprimer la Liv.">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
-								<Button fx:id="editButton" layoutX="69.0" layoutY="200.0" mnemonicParsing="false" prefWidth="150.0" text="Modifier Entete" />
-							</children>
+						<VBox fx:id="actionbar" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="386.0" prefWidth="267.0" spacing="10.0" VBox.vgrow="ALWAYS">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>

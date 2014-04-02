@@ -31,324 +31,332 @@ import org.adorsys.adpharma.server.jpa.Delivery;
 @Entity
 @Description("DeliveryItem_description")
 @ListField({ "internalPic", "mainPic", "secondaryPic", "articleName",
-      "article.articleName", "expirationDate", "qtyOrdered", "freeQuantity",
-      "stockQuantity", "salesPricePU", "purchasePricePU",
-      "totalPurchasePrice" })
+	"article.articleName", "expirationDate", "qtyOrdered", "freeQuantity",
+	"stockQuantity", "salesPricePU", "purchasePricePU",
+"totalPurchasePrice" })
 @ToStringField({ "articleName", "article.articleName", "qtyOrdered" })
 public class DeliveryItem implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("DeliveryItem_creationDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date creationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("DeliveryItem_creationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date creationDate;
 
-   @Column
-   @Description("DeliveryItem_internalPic_description")
-   @Size(min = 7, message = "DeliveryItem_internalPic_Size_validation")
-   @NotNull(message = "DeliveryItem_internalPic_NotNull_validation")
-   private String internalPic;
+	@Column
+	@Description("DeliveryItem_internalPic_description")
+	@Size(min = 7, message = "DeliveryItem_internalPic_Size_validation")
+	@NotNull(message = "DeliveryItem_internalPic_NotNull_validation")
+	private String internalPic;
 
-   @Column
-   @Description("DeliveryItem_mainPic_description")
-   @Size(min = 7, message = "DeliveryItem_mainPic_Size_validation")
-   private String mainPic;
+	@Column
+	@Description("DeliveryItem_mainPic_description")
+	@Size(min = 7, message = "DeliveryItem_mainPic_Size_validation")
+	private String mainPic;
 
-   @Column
-   @Description("DeliveryItem_secondaryPic_description")
-   @Size(min = 7, message = "DeliveryItem_secondaryPic_Size_validation")
-   private String secondaryPic;
+	@Column
+	@Description("DeliveryItem_secondaryPic_description")
+	@Size(min = 7, message = "DeliveryItem_secondaryPic_Size_validation")
+	private String secondaryPic;
 
-   @Column
-   @Description("DeliveryItem_articleName_description")
-   @NotNull(message = "DeliveryItem_articleName_NotNull_validation")
-   private String articleName;
+	@Column
+	@Description("DeliveryItem_articleName_description")
+	@NotNull(message = "DeliveryItem_articleName_NotNull_validation")
+	private String articleName;
 
-   @ManyToOne
-   @Description("DeliveryItem_article_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
-   @NotNull(message = "DeliveryItem_article_NotNull_validation")
-   private Article article;
+	@ManyToOne
+	@Description("DeliveryItem_article_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+	@NotNull(message = "DeliveryItem_article_NotNull_validation")
+	private Article article;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("DeliveryItem_expirationDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy")
-   private Date expirationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("DeliveryItem_expirationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy")
+	private Date expirationDate;
 
-   @Column
-   @Description("DeliveryItem_qtyOrdered_description")
-   private BigDecimal qtyOrdered;
+	@Column
+	@Description("DeliveryItem_qtyOrdered_description")
+	private BigDecimal qtyOrdered ;
 
-   @Column
-   @Description("DeliveryItem_availableQty_description")
-   private BigDecimal availableQty;
+	@Column
+	@Description("DeliveryItem_availableQty_description")
+	private BigDecimal availableQty;
 
-   @Column
-   @Description("DeliveryItem_freeQuantity_description")
-   private BigDecimal freeQuantity;
+	@Column
+	@Description("DeliveryItem_freeQuantity_description")
+	private BigDecimal freeQuantity;
 
-   @ManyToOne
-   @Description("DeliveryItem_creatingUser_description")
-   @NotNull(message = "DeliveryItem_creatingUser_NotNull_validation")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
-   private Login creatingUser;
+	@ManyToOne
+	@Description("DeliveryItem_creatingUser_description")
+	@NotNull(message = "DeliveryItem_creatingUser_NotNull_validation")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
+	private Login creatingUser;
 
-   @Column
-   @Description("DeliveryItem_stockQuantity_description")
-   private BigDecimal stockQuantity;
+	@Column
+	@Description("DeliveryItem_stockQuantity_description")
+	private BigDecimal stockQuantity;
 
-   @Column
-   @Description("DeliveryItem_salesPricePU_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU;
+	@Column
+	@Description("DeliveryItem_salesPricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal salesPricePU;
 
-   @Column
-   @Description("DeliveryItem_purchasePricePU_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal purchasePricePU;
+	@Column
+	@Description("DeliveryItem_purchasePricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal purchasePricePU;
 
-   @Column
-   @Description("DeliveryItem_totalPurchasePrice_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalPurchasePrice;
+	@Column
+	@Description("DeliveryItem_totalPurchasePrice_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal totalPurchasePrice;
 
-   @ManyToOne
-   @Description("DeliveryItem_delivery_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = Delivery.class)
-   private Delivery delivery;
+	@ManyToOne
+	@Description("DeliveryItem_delivery_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = Delivery.class)
+	private Delivery delivery;
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	public void calculateAmount(){
+		totalPurchasePrice = totalPurchasePrice!=null?totalPurchasePrice:BigDecimal.ZERO; 
+		purchasePricePU = purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO; 
+		stockQuantity = stockQuantity!=null?stockQuantity:BigDecimal.ZERO; 
+		freeQuantity = freeQuantity!=null?freeQuantity:BigDecimal.ZERO; 
+		totalPurchasePrice= purchasePricePU.multiply(stockQuantity.subtract(freeQuantity));
+	}
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((DeliveryItem) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((DeliveryItem) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public Date getCreationDate()
-   {
-      return this.creationDate;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setCreationDate(final Date creationDate)
-   {
-      this.creationDate = creationDate;
-   }
+	public Date getCreationDate()
+	{
+		return this.creationDate;
+	}
 
-   public String getInternalPic()
-   {
-      return this.internalPic;
-   }
+	public void setCreationDate(final Date creationDate)
+	{
+		this.creationDate = creationDate;
+	}
 
-   public void setInternalPic(final String internalPic)
-   {
-      this.internalPic = internalPic;
-   }
+	public String getInternalPic()
+	{
+		return this.internalPic;
+	}
 
-   public String getMainPic()
-   {
-      return this.mainPic;
-   }
+	public void setInternalPic(final String internalPic)
+	{
+		this.internalPic = internalPic;
+	}
 
-   public void setMainPic(final String mainPic)
-   {
-      this.mainPic = mainPic;
-   }
+	public String getMainPic()
+	{
+		return this.mainPic;
+	}
 
-   public String getSecondaryPic()
-   {
-      return this.secondaryPic;
-   }
+	public void setMainPic(final String mainPic)
+	{
+		this.mainPic = mainPic;
+	}
 
-   public void setSecondaryPic(final String secondaryPic)
-   {
-      this.secondaryPic = secondaryPic;
-   }
+	public String getSecondaryPic()
+	{
+		return this.secondaryPic;
+	}
 
-   public String getArticleName()
-   {
-      return this.articleName;
-   }
+	public void setSecondaryPic(final String secondaryPic)
+	{
+		this.secondaryPic = secondaryPic;
+	}
 
-   public void setArticleName(final String articleName)
-   {
-      this.articleName = articleName;
-   }
+	public String getArticleName()
+	{
+		return this.articleName;
+	}
 
-   public Article getArticle()
-   {
-      return this.article;
-   }
+	public void setArticleName(final String articleName)
+	{
+		this.articleName = articleName;
+	}
 
-   public void setArticle(final Article article)
-   {
-      this.article = article;
-   }
+	public Article getArticle()
+	{
+		return this.article;
+	}
 
-   public Date getExpirationDate()
-   {
-      return this.expirationDate;
-   }
+	public void setArticle(final Article article)
+	{
+		this.article = article;
+	}
 
-   public void setExpirationDate(final Date expirationDate)
-   {
-      this.expirationDate = expirationDate;
-   }
+	public Date getExpirationDate()
+	{
+		return this.expirationDate;
+	}
 
-   public BigDecimal getQtyOrdered()
-   {
-      return this.qtyOrdered;
-   }
+	public void setExpirationDate(final Date expirationDate)
+	{
+		this.expirationDate = expirationDate;
+	}
 
-   public void setQtyOrdered(final BigDecimal qtyOrdered)
-   {
-      this.qtyOrdered = qtyOrdered;
-   }
+	public BigDecimal getQtyOrdered()
+	{
+		return this.qtyOrdered;
+	}
 
-   public BigDecimal getAvailableQty()
-   {
-      return this.availableQty;
-   }
+	public void setQtyOrdered(final BigDecimal qtyOrdered)
+	{
+		this.qtyOrdered = qtyOrdered;
+	}
 
-   public void setAvailableQty(final BigDecimal availableQty)
-   {
-      this.availableQty = availableQty;
-   }
+	public BigDecimal getAvailableQty()
+	{
+		return this.availableQty;
+	}
 
-   public BigDecimal getFreeQuantity()
-   {
-      return this.freeQuantity;
-   }
+	public void setAvailableQty(final BigDecimal availableQty)
+	{
+		this.availableQty = availableQty;
+	}
 
-   public void setFreeQuantity(final BigDecimal freeQuantity)
-   {
-      this.freeQuantity = freeQuantity;
-   }
+	public BigDecimal getFreeQuantity()
+	{
+		return this.freeQuantity;
+	}
 
-   public Login getCreatingUser()
-   {
-      return this.creatingUser;
-   }
+	public void setFreeQuantity(final BigDecimal freeQuantity)
+	{
+		this.freeQuantity = freeQuantity;
+	}
 
-   public void setCreatingUser(final Login creatingUser)
-   {
-      this.creatingUser = creatingUser;
-   }
+	public Login getCreatingUser()
+	{
+		return this.creatingUser;
+	}
 
-   public BigDecimal getStockQuantity()
-   {
-      return this.stockQuantity;
-   }
+	public void setCreatingUser(final Login creatingUser)
+	{
+		this.creatingUser = creatingUser;
+	}
 
-   public void setStockQuantity(final BigDecimal stockQuantity)
-   {
-      this.stockQuantity = stockQuantity;
-   }
+	public BigDecimal getStockQuantity()
+	{
+		return this.stockQuantity;
+	}
 
-   public BigDecimal getSalesPricePU()
-   {
-      return this.salesPricePU;
-   }
+	public void setStockQuantity(final BigDecimal stockQuantity)
+	{
+		this.stockQuantity = stockQuantity;
+	}
 
-   public void setSalesPricePU(final BigDecimal salesPricePU)
-   {
-      this.salesPricePU = salesPricePU;
-   }
+	public BigDecimal getSalesPricePU()
+	{
+		return this.salesPricePU;
+	}
 
-   public BigDecimal getPurchasePricePU()
-   {
-      return this.purchasePricePU;
-   }
+	public void setSalesPricePU(final BigDecimal salesPricePU)
+	{
+		this.salesPricePU = salesPricePU;
+	}
 
-   public void setPurchasePricePU(final BigDecimal purchasePricePU)
-   {
-      this.purchasePricePU = purchasePricePU;
-   }
+	public BigDecimal getPurchasePricePU()
+	{
+		return this.purchasePricePU;
+	}
 
-   public BigDecimal getTotalPurchasePrice()
-   {
-      return this.totalPurchasePrice;
-   }
+	public void setPurchasePricePU(final BigDecimal purchasePricePU)
+	{
+		this.purchasePricePU = purchasePricePU;
+	}
 
-   public void setTotalPurchasePrice(final BigDecimal totalPurchasePrice)
-   {
-      this.totalPurchasePrice = totalPurchasePrice;
-   }
+	public BigDecimal getTotalPurchasePrice()
+	{
+		return this.totalPurchasePrice;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (internalPic != null && !internalPic.trim().isEmpty())
-         result += "internalPic: " + internalPic;
-      if (mainPic != null && !mainPic.trim().isEmpty())
-         result += ", mainPic: " + mainPic;
-      if (secondaryPic != null && !secondaryPic.trim().isEmpty())
-         result += ", secondaryPic: " + secondaryPic;
-      if (articleName != null && !articleName.trim().isEmpty())
-         result += ", articleName: " + articleName;
-      return result;
-   }
+	public void setTotalPurchasePrice(final BigDecimal totalPurchasePrice)
+	{
+		this.totalPurchasePrice = totalPurchasePrice;
+	}
 
-   public Delivery getDelivery()
-   {
-      return this.delivery;
-   }
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (internalPic != null && !internalPic.trim().isEmpty())
+			result += "internalPic: " + internalPic;
+		if (mainPic != null && !mainPic.trim().isEmpty())
+			result += ", mainPic: " + mainPic;
+		if (secondaryPic != null && !secondaryPic.trim().isEmpty())
+			result += ", secondaryPic: " + secondaryPic;
+		if (articleName != null && !articleName.trim().isEmpty())
+			result += ", articleName: " + articleName;
+		return result;
+	}
 
-   public void setDelivery(final Delivery delivery)
-   {
-      this.delivery = delivery;
-   }
+	public Delivery getDelivery()
+	{
+		return this.delivery;
+	}
+
+	public void setDelivery(final Delivery delivery)
+	{
+		this.delivery = delivery;
+	}
 }

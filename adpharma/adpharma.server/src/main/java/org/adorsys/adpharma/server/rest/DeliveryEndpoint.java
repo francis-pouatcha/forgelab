@@ -14,6 +14,9 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.ws.rs.Consumes;
@@ -28,7 +31,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -50,7 +55,7 @@ import org.apache.commons.lang3.RandomStringUtils;
  * 
  */
 @Stateless
-//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Path("/deliverys")
 public class DeliveryEndpoint
 {
@@ -78,6 +83,10 @@ public class DeliveryEndpoint
 
 	@EJB
 	SecurityUtil securityUtil;
+
+	@Inject
+	@DocumentClosedDoneEvent
+	private Event<Delivery> deliveryClosedDoneEvent;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
@@ -110,16 +119,13 @@ public class DeliveryEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
-	@Inject
-	private SupplierInvoiceItemEJB supplierInvoiceItemEJB;
-	@Inject
-	private SupplierInvoiceEJB supplierInvoiceEJB;
+
+
 	@Inject
 	private DeliveryItemEJB deliveryItemEJB;
+
 	@Inject
-	private StockMovementEJB stockMovementEJB;
-	@Inject
-	private ArticleLotEJB articleLotEJB;
+	private ArticleEJB articleEJB;
 
 
 	@PUT
@@ -130,95 +136,22 @@ public class DeliveryEndpoint
 		if (delivery.getDeliveryProcessingState() == DocumentProcessingState.CLOSED)
 			return delivery;
 
-		SupplierInvoice si = new SupplierInvoice();
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
-		Agency agency = creatingUser.getAgency();
-		si.setDelivery(delivery);
-		si.setAgency(agency);
-		si.setSupplier(delivery.getSupplier());
-		si.setCreatingUser(creatingUser);
-		si.setCreationDate(creationDate);
-		si.setInvoiceType(InvoiceType.CASHDRAWER);
-		si = supplierInvoiceEJB.create(si);
-		// Generate the supplier invoice
-		BigDecimal amountBeforeTax = BigDecimal.ZERO;
-
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			// Generate internal cip for each delivery item
-			// Last model: MMYY-UniqueNumber(4+)
-			String internalPic = new SimpleDateFormat("DDMMYYHH").format(new Date()) + RandomStringUtils.randomNumeric(5);
+			String internalPic = new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
-			deliveryItem = deliveryItemEJB.create(deliveryItem);
-			amountBeforeTax = amountBeforeTax.add(deliveryItem.getTotalPurchasePrice());
-
-			SupplierInvoiceItem sii = new SupplierInvoiceItem();
-			sii.setAmountReturn(BigDecimal.ZERO);
-			sii.setArticle(deliveryItem.getArticle());
-			sii.setDeliveryQty(deliveryItem.getStockQuantity());
-			sii.setInternalPic(internalPic);
-			sii.setInvoice(si);
-			sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			//			sii.setSalesPricePU(deliveryItem.getSalesPricePU());// TODO delete
-			sii.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			sii = supplierInvoiceItemEJB.create(sii);
-
-			// Generate Stock Movement for each delivery item
-			StockMovement sm = new StockMovement();
-			sm.setAgency(agency);
-			sm.setInternalPic(internalPic);
-			sm.setMovementType(StockMovementType.IN);
-			sm.setArticle(deliveryItem.getArticle());
-			sm.setCreatingUser(creatingUser);
-			sm.setCreationDate(creationDate);
-			sm.setInitialQty(BigDecimal.ZERO);
-			sm.setMovedQty(deliveryItem.getStockQuantity());
-			sm.setFinalQty(deliveryItem.getStockQuantity());
-			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
-			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
-			sm.setOriginatedDocNumber(delivery.getDeliveryNumber());
-			//			sm.setTotalDiscount(deliveryItem.getA);// 
-			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
-			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
-				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			sm = stockMovementEJB.create(sm);
-
-			// generate Article lot for each delivery item
-			ArticleLot al = new  ArticleLot();
-			al.setAgency(agency);
-			al.setArticle(deliveryItem.getArticle());
-			if(deliveryItem.getArticle()!=null)
-				al.setArticleName(deliveryItem.getArticle().getArticleName());
-			al.setCreationDate(creationDate);
-			al.setExpirationDate(deliveryItem.getExpirationDate());
-			al.setInternalPic(internalPic);
-			al.setMainPic(deliveryItem.getMainPic());
-			al.setSecondaryPic(deliveryItem.getSecondaryPic());
-			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			al.setSalesPricePU(deliveryItem.getSalesPricePU());
-			al.setStockQuantity(deliveryItem.getStockQuantity());
-			al.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			al.setTotalSalePrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			al = articleLotEJB.create(al);
+			deliveryItem = deliveryItemEJB.update(deliveryItem);
+			Article article = deliveryItem.getArticle();
+			article.handleStockEntry(deliveryItem);
+			articleEJB.update(article);
 		}
-
-		si.setAmountDiscount(delivery.getAmountDiscount());
-		amountBeforeTax = amountBeforeTax.subtract(delivery.getAmountDiscount());
-		si.setAmountBeforeTax(amountBeforeTax);
-		if(delivery.getVat()!=null && delivery.getVat().getRate()!=null){
-			si.setTaxAmount(delivery.getVat().getRate().multiply(amountBeforeTax));
-		}
-		si.setAmountAfterTax(amountBeforeTax.add(si.getTaxAmount()));
-
-		supplierInvoiceEJB.update(si);
-
-
-		// CHange DeliveryProcessingState to close
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-
-		return detach(ejb.update(delivery));
+		Delivery closedDelivery = ejb.update(delivery);
+		deliveryClosedDoneEvent.fire(delivery);
+		return detach(delivery);
 	}
 
 	@GET
@@ -297,6 +230,10 @@ public class DeliveryEndpoint
 		SingularAttribute<Delivery, ?>[] attributes = readSeachAttributes(searchInput);
 		return ejb.countByLike(searchInput.getEntity(), attributes);
 	}
+
+
+
+
 
 	@SuppressWarnings("unchecked")
 	private SingularAttribute<Delivery, ?>[] readSeachAttributes(

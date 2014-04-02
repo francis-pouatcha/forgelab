@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -25,7 +27,10 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemCreateService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemEditService;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemRemoveService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
@@ -33,6 +38,7 @@ import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessin
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
@@ -54,6 +60,8 @@ import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.dialog.Dialogs;
 
+import com.sun.org.apache.bcel.internal.generic.DALOAD;
+
 @Singleton
 public class DeliveryDisplayController implements EntityController
 {
@@ -61,11 +69,18 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	private DeliveryDisplayView displayView;
 
-	@Inject
-	private DeliveryEditService editService;
 
 	@Inject
 	private DeliveryCloseService closeService;
+
+	@Inject
+	private DeliveryItemEditService deliveryItemEditService;
+
+	@Inject
+	private DeliveryItemRemoveService deliveryItemRemoveService;
+
+	@Inject
+	private DeliveryItemCreateService deliveryItemCreateService;
 
 	@Inject
 	private DeliveryItemSearchService deliveryItemSearchService;
@@ -76,7 +91,11 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Delivery> editRequestEvent;
-	
+
+	@Inject
+	@EntityCreateRequestedEvent
+	private Event<Delivery> createRequestEvent;
+
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<Delivery> searchRequestEvent;
@@ -118,6 +137,7 @@ public class DeliveryDisplayController implements EntityController
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
 
+
 		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -135,39 +155,40 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		displayView.getDataList().itemsProperty().getValue().addListener(new ListChangeListener<DeliveryItem>() {
-
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends DeliveryItem> c) {
-				BigDecimal processingAmount = displayView.getProcessAmont().getNumber();
-				c.next();
-				if(c.getAddedSize()!=0){
-					List<? extends DeliveryItem> addedSubList = c.getAddedSubList();
-					for (DeliveryItem item : addedSubList) {
-						processingAmount = processingAmount.add(item.getTotalPurchasePrice());
-						item.setDelivery(new DeliveryItemDelivery(displayedEntity));
-						displayedEntity.deliveryItemsProperty().getValue().add(item);
-					}
-				}
-
-				if(c.getRemovedSize()!=0){
-					List<? extends DeliveryItem> removed = c.getRemoved();
-					for (DeliveryItem item : removed) {
-						processingAmount =processingAmount.subtract(item.getTotalPurchasePrice());
-						displayedEntity.deliveryItemsProperty().getValue().remove(item);
-					}
-				}
-				displayView.getProcessAmont().setNumber(processingAmount);
-
-			}
-		});
+		//		displayView.getDataList().itemsProperty().getValue().addListener(new ListChangeListener<DeliveryItem>() {
+		//
+		//			@Override
+		//			public void onChanged(
+		//					javafx.collections.ListChangeListener.Change<? extends DeliveryItem> c) {
+		//				BigDecimal processingAmount = displayView.getProcessAmont().getNumber();
+		//				c.next();
+		//				if(c.getAddedSize()!=0){
+		//					List<? extends DeliveryItem> addedSubList = c.getAddedSubList();
+		//					for (DeliveryItem item : addedSubList) {
+		//						processingAmount = processingAmount.add(item.getTotalPurchasePrice());
+		//						item.setDelivery(new DeliveryItemDelivery(displayedEntity));
+		//						displayedEntity.deliveryItemsProperty().getValue().add(item);
+		//					}
+		//				}
+		//
+		//				if(c.getRemovedSize()!=0){
+		//					List<? extends DeliveryItem> removed = c.getRemoved();
+		//					for (DeliveryItem item : removed) {
+		//						processingAmount =processingAmount.subtract(item.getTotalPurchasePrice());
+		//						displayedEntity.deliveryItemsProperty().getValue().remove(item);
+		//					}
+		//				}
+		//				displayView.getProcessAmont().setNumber(processingAmount);
+		//
+		//			}
+		//		});
 
 		/*
 		 * listen to Ok button.
 		 */
+		displayView.getOkButton().disableProperty().bind(deliveryItemCreateService.runningProperty());
+		displayView.getOkButton().disableProperty().bind(deliveryItemEditService.runningProperty());
 		displayView.getOkButton().setOnKeyPressed(new EventHandler<KeyEvent>() {
-
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
@@ -196,7 +217,9 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				DeliveryItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null) displayView.getDataList().getItems().remove(selectedItem);
+				if(selectedItem!=null) {
+					deliveryItemRemoveService.setEntity(selectedItem).start();
+				}
 
 			}
 		});
@@ -250,6 +273,7 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
+						PropertyReader.copy(new Delivery(), displayedEntity);
 						searchRequestEvent.fire(displayedEntity);
 					}
 				});
@@ -282,43 +306,44 @@ public class DeliveryDisplayController implements EntityController
 					{
 						if(!displayedEntity.getDeliveryProcessingState().equals(DocumentProcessingState.CLOSED)){
 							editRequestEvent.fire(displayedEntity);
-						}else {
-							Dialogs.create().nativeTitleBar().message(resourceBundle.getString("Entity_remove_error.title")).showError();
 						}
 					}
 				});
-
+		/*
+		 * listen to add button .
+		 */
+		displayView.getAddButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
+						createRequestEvent.fire(new Delivery());
+					}
+				});
 
 
 		/*
 		 * listen to save button .
 		 */
+		displayView.getSaveButton().disableProperty().bind(closeService.runningProperty());
 		displayView.getSaveButton().setOnAction(
 				new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle(ActionEvent e)
 					{
-						handleDeliveryClosedEvent(displayedEntity);
+						BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
+						BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
+						if(amountBeforeTax.compareTo(processAmount)!=0){
+							handleDeliveryClosedEvent(displayedEntity);
+						}else {
+							Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
+							.nativeTitleBar().showError();
+						}
 					}
 				});
 
-		/*
-		 *  send search result event.
-		 */
-		editService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-				{
-			@Override
-			public void handle(WorkerStateEvent event)
-			{
-				DeliveryEditService s = (DeliveryEditService) event.getSource();
-				Delivery entity = s.getValue();
-				event.consume();
-				s.reset();
-				PropertyReader.copy(entity, displayedEntity);
-				//				editedDoneEvent.fire(entity);
-			}
-				});
 
 		closeService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -334,11 +359,11 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		
+
 		closeService.setOnFailed(serviceCallFailedEventHandler);
-		editService.setOnFailed(serviceCallFailedEventHandler);
+
 		deliveryItemSearchService.setOnFailed(serviceCallFailedEventHandler);
-		
+
 		deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
 				{
 			@Override
@@ -350,15 +375,57 @@ public class DeliveryDisplayController implements EntityController
 				s.reset();
 				List<DeliveryItem> resultList = deliveryItemSearchResult.getResultList();
 				displayedEntity.setDeliveryItems(resultList);
+				calculateProcessAmont();
 			}
 				});
-		
 
-		// Disable save button during creation
-		displayView.getSaveButton().disableProperty()
-		.bind(editService.runningProperty());
+		deliveryItemCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-		
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemCreateService s = (DeliveryItemCreateService) event.getSource();
+				DeliveryItem createdItem = s.getValue();
+				event.consume();
+				s.reset();
+				displayView.getDataList().getItems().add(createdItem);
+				PropertyReader.copy(new DeliveryItem(), deliveryItem);
+				calculateProcessAmont();
+
+			}
+		});
+		deliveryItemCreateService.setOnFailed(serviceCallFailedEventHandler);
+
+		deliveryItemEditService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemEditService s = (DeliveryItemEditService) event.getSource();
+				DeliveryItem editedItem = s.getValue();
+				event.consume();
+				s.reset();
+				displayView.getDataList().getItems().add(editedItem);
+				PropertyReader.copy(new DeliveryItem(), deliveryItem);
+				calculateProcessAmont();
+
+			}
+		});
+		deliveryItemEditService.setOnFailed(serviceCallFailedEventHandler);
+
+		deliveryItemRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemRemoveService s = (DeliveryItemRemoveService) event.getSource();
+				DeliveryItem removeddItem = s.getValue();
+				event.consume();
+				s.reset();
+				displayView.getDataList().getItems().remove(removeddItem);
+				PropertyReader.copy(new DeliveryItem(), deliveryItem);
+				calculateProcessAmont();
+
+			}
+		});
+		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
 
 		displayView.getView().addValidators();
 	}
@@ -379,17 +446,17 @@ public class DeliveryDisplayController implements EntityController
 	{
 		return ViewType.EDIT;
 	}
-	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent Agency removedEntity)
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent DeliveryItem removedEntity)
 	{
 		displayView.getDataList().getItems().remove(removedEntity);
 	}
 
-	public void handleEditRequestEvent(
+	public void handleSelectedRequestEvent(
 			@Observes @EntitySelectionEvent Delivery p)
 	{
 
-		deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(p)).start();
 		PropertyReader.copy(p, displayedEntity);
+		deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(p)).start();
 	}
 
 	/**
@@ -403,14 +470,9 @@ public class DeliveryDisplayController implements EntityController
 
 	}
 
-	public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Delivery model)
-	{
-		handleNewModelEvent(model);
-
-	}
-
 	private void handleSelectedArticle(Article article) {
 		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
+		fromArticle.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		PropertyReader.copy(fromArticle, deliveryItem);
 	}
 
@@ -426,18 +488,26 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
 		deliveryItem.calculateTotalAmout();
-		DeliveryItem deliveryItem2 = new DeliveryItem();
-
-		PropertyReader.copy(deliveryItem, deliveryItem2);
-		displayView.getDataList().getItems().add(deliveryItem2);
-		PropertyReader.copy(new DeliveryItem(), deliveryItem);
-
+		if(deliveryItem.getId()==null){
+			deliveryItemCreateService.setModel(deliveryItem).start();
+		}else {
+			deliveryItemEditService.setDeliveryItem(deliveryItem).start();
+		}
 	}
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
 		closeService.setDelivery(displayedEntity).start();
 
+	}
+
+	public void calculateProcessAmont(){
+		List<DeliveryItem> deliveryItems = displayedEntity.getDeliveryItems();
+		BigDecimal processAmount = BigDecimal.ZERO;
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			processAmount=processAmount.add(deliveryItem.getTotalPurchasePrice());
+		}
+		displayView.getProcessAmont().setNumber(processAmount);
 	}
 
 	public DeliveryItemSearchInput getDeliveryItemSearchInput(Delivery delivery){
