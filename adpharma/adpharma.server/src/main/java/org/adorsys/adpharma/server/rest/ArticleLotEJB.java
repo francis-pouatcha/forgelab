@@ -115,7 +115,7 @@ public class ArticleLotEJB
 	public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-		Boolean isManagedLot = (Boolean) applicationConfiguration.getConfiguration().get("managed_articleLot.config");
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		// generate Article lot for each delivery item
 		if(isManagedLot){

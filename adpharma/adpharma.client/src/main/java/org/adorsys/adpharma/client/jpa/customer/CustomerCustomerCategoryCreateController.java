@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 
-@Singleton
 public class CustomerCustomerCategoryCreateController extends CustomerCustomerCategoryController
 {
 

@@ -17,7 +17,7 @@ public class ApplicationConfiguration {
 	@PostConstruct
 	public void  postConstruct(){
 
-		Properties configuration = new Properties();
+	   configuration = new Properties();
 		InputStream configurationStream = this.getClass().getClassLoader().getResourceAsStream("application.properties");
 		if (configurationStream != null)
 		{

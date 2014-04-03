@@ -90,11 +90,11 @@ public class DeliveryEJB
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
-		Boolean isManagedLot = (Boolean) applicationConfiguration.getConfiguration().get("managed_articleLot.config");
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
-			if(!isManagedLot) internalPic=deliveryItem.getMainPic();
+			String internalPic = deliveryItem.getMainPic();
+			if(isManagedLot) internalPic=new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.update(deliveryItem);
