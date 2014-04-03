@@ -3,6 +3,9 @@ package org.adorsys.adpharma.client.jpa.delivery;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -264,7 +267,6 @@ public class DeliveryDisplayView
 		amountPane.add(amountDiscount, 1, 2);
 		amountPane.add(amountAfterTax, 1, 3);
 		amountPane.add(processAmont, 1, 4);
-
 	}
 
 	public void bind(Delivery model)

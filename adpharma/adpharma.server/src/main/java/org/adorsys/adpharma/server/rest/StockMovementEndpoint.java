@@ -153,7 +153,6 @@ public class StockMovementEndpoint
       SingularAttribute<StockMovement, ?>[] attributes = readSeachAttributes(searchInput);
       return ejb.countByLike(searchInput.getEntity(), attributes);
    }
-   
    @SuppressWarnings("unchecked")
    private SingularAttribute<StockMovement, ?>[] readSeachAttributes(
          StockMovementSearchInput searchInput)
