@@ -151,7 +151,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderCloseService closeService;
-	
+
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderRequestEvent;

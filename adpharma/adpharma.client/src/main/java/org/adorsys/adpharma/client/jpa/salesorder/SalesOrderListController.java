@@ -83,6 +83,7 @@ public class SalesOrderListController implements EntityController
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
+		searchInput.setMax(100);
 
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -117,8 +118,8 @@ public class SalesOrderListController implements EntityController
 				{
 			@Override
 			public void handle(ActionEvent e)
-			{							
-				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
+			{						
+				searchInput.setFieldNames(Arrays.asList("salesOrderStatus","customer"));
 				salesOrederSearchService.setSearchInputs(searchInput).start();
 
 			}
@@ -223,7 +224,7 @@ public class SalesOrderListController implements EntityController
 			entities = new ArrayList<SalesOrder>();
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(entities);
-		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 100;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
