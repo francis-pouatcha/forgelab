@@ -240,7 +240,7 @@ public class SalesOrderItemArticle implements Association<SalesOrderItem, Articl
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "articleName", "pic");
+      return PropertyReader.buildToString(this, "articleName");
    }
 
    @Override
