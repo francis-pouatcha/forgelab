@@ -212,10 +212,10 @@
 							<columns>
 							</columns>
 							<contextMenu>
-								<ContextMenu>
+								<ContextMenu fx:id="datalistContextMenu">
 									<items>
-										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
-										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
+										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit" />
+										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete" />
 									</items>
 								</ContextMenu>
 							</contextMenu>
@@ -237,7 +237,7 @@
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="removeButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
+								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>

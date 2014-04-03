@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,10 +23,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchResult;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 
 /**
  * 
@@ -36,186 +38,192 @@ import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchResult;
 public class SalesOrderItemEndpoint
 {
 
-   @Inject
-   private SalesOrderItemEJB ejb;
+	@Inject
+	private SalesOrderItemEJB ejb;
 
-   @Inject
-   private SalesOrderMerger salesOrderMerger;
+	@Inject
+	private SalesOrderMerger salesOrderMerger;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private ArticleMerger articleMerger;
 
-   @POST
-   @Consumes({ "application/json", "application/xml" })
-   @Produces({ "application/json", "application/xml" })
-   public SalesOrderItem create(SalesOrderItem entity)
-   {
-      return detach(ejb.create(entity));
-   }
 
-   @DELETE
-   @Path("/{id:[0-9][0-9]*}")
-   public Response deleteById(@PathParam("id") Long id)
-   {
-      SalesOrderItem deleted = ejb.deleteById(id);
-      if (deleted == null)
-         return Response.status(Status.NOT_FOUND).build();
+	@POST
+	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml" })
+	public SalesOrderItem create(SalesOrderItem entity)
+	{
+		entity.setRecordDate(new Date()) ;
+		entity.calucateDeliveryQty();
+		entity.calculateAmount();
+		return detach(ejb.create(entity));
+	}
 
-      return Response.ok(detach(deleted)).build();
-   }
+	@DELETE
+	@Path("/{id:[0-9][0-9]*}")
+	public Response deleteById(@PathParam("id") Long id)
+	{
+		SalesOrderItem deleted = ejb.deleteById(id);
+		if (deleted == null)
+			return Response.status(Status.NOT_FOUND).build();
 
-   @PUT
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public SalesOrderItem update(SalesOrderItem entity)
-   {
-      return detach(ejb.update(entity));
-   }
+		return Response.ok(detach(deleted)).build();
+	}
 
-   @GET
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   public Response findById(@PathParam("id") Long id)
-   {
-      SalesOrderItem found = ejb.findById(id);
-      if (found == null)
-         return Response.status(Status.NOT_FOUND).build();
-      return Response.ok(detach(found)).build();
-   }
+	@PUT
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrderItem update(SalesOrderItem entity)
+	{
+		entity.calucateDeliveryQty();
+		entity.calculateAmount();
+		return detach(ejb.update(entity));
+	}
 
-   @GET
-   @Produces({ "application/json", "application/xml" })
-   public SalesOrderItemSearchResult listAll(@QueryParam("start") int start,
-         @QueryParam("max") int max)
-   {
-      List<SalesOrderItem> resultList = ejb.listAll(start, max);
-      SalesOrderItemSearchInput searchInput = new SalesOrderItemSearchInput();
-      searchInput.setStart(start);
-      searchInput.setMax(max);
-      return new SalesOrderItemSearchResult((long) resultList.size(),
-            detach(resultList), detach(searchInput));
-   }
+	@GET
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	public Response findById(@PathParam("id") Long id)
+	{
+		SalesOrderItem found = ejb.findById(id);
+		if (found == null)
+			return Response.status(Status.NOT_FOUND).build();
+		return Response.ok(detach(found)).build();
+	}
 
-   @GET
-   @Path("/count")
-   public Long count()
-   {
-      return ejb.count();
-   }
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public SalesOrderItemSearchResult listAll(@QueryParam("start") int start,
+			@QueryParam("max") int max)
+	{
+		List<SalesOrderItem> resultList = ejb.listAll(start, max);
+		SalesOrderItemSearchInput searchInput = new SalesOrderItemSearchInput();
+		searchInput.setStart(start);
+		searchInput.setMax(max);
+		return new SalesOrderItemSearchResult((long) resultList.size(),
+				detach(resultList), detach(searchInput));
+	}
 
-   @POST
-   @Path("/findBy")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public SalesOrderItemSearchResult findBy(SalesOrderItemSearchInput searchInput)
-   {
-      SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
-      Long count = ejb.countBy(searchInput.getEntity(), attributes);
-      List<SalesOrderItem> resultList = ejb.findBy(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new SalesOrderItemSearchResult(count, detach(resultList),
-            detach(searchInput));
-   }
+	@GET
+	@Path("/count")
+	public Long count()
+	{
+		return ejb.count();
+	}
 
-   @POST
-   @Path("/countBy")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countBy(SalesOrderItemSearchInput searchInput)
-   {
-      SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countBy(searchInput.getEntity(), attributes);
-   }
+	@POST
+	@Path("/findBy")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrderItemSearchResult findBy(SalesOrderItemSearchInput searchInput)
+	{
+		SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
+		Long count = ejb.countBy(searchInput.getEntity(), attributes);
+		List<SalesOrderItem> resultList = ejb.findBy(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new SalesOrderItemSearchResult(count, detach(resultList),
+				detach(searchInput));
+	}
 
-   @POST
-   @Path("/findByLike")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public SalesOrderItemSearchResult findByLike(SalesOrderItemSearchInput searchInput)
-   {
-      SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
-      Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
-      List<SalesOrderItem> resultList = ejb.findByLike(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new SalesOrderItemSearchResult(countLike, detach(resultList),
-            detach(searchInput));
-   }
+	@POST
+	@Path("/countBy")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countBy(SalesOrderItemSearchInput searchInput)
+	{
+		SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countBy(searchInput.getEntity(), attributes);
+	}
 
-   @POST
-   @Path("/countByLike")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countByLike(SalesOrderItemSearchInput searchInput)
-   {
-      SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countByLike(searchInput.getEntity(), attributes);
-   }
+	@POST
+	@Path("/findByLike")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrderItemSearchResult findByLike(SalesOrderItemSearchInput searchInput)
+	{
+		SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
+		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
+		List<SalesOrderItem> resultList = ejb.findByLike(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new SalesOrderItemSearchResult(countLike, detach(resultList),
+				detach(searchInput));
+	}
 
-   @SuppressWarnings("unchecked")
-   private SingularAttribute<SalesOrderItem, ?>[] readSeachAttributes(
-         SalesOrderItemSearchInput searchInput)
-   {
-      List<String> fieldNames = searchInput.getFieldNames();
-      List<SingularAttribute<SalesOrderItem, ?>> result = new ArrayList<SingularAttribute<SalesOrderItem, ?>>();
-      for (String fieldName : fieldNames)
-      {
-         Field[] fields = SalesOrderItem_.class.getFields();
-         for (Field field : fields)
-         {
-            if (field.getName().equals(fieldName))
-            {
-               try
-               {
-                  result.add((SingularAttribute<SalesOrderItem, ?>) field.get(null));
-               }
-               catch (IllegalArgumentException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-               catch (IllegalAccessException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-            }
-         }
-      }
-      return result.toArray(new SingularAttribute[result.size()]);
-   }
+	@POST
+	@Path("/countByLike")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countByLike(SalesOrderItemSearchInput searchInput)
+	{
+		SingularAttribute<SalesOrderItem, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countByLike(searchInput.getEntity(), attributes);
+	}
 
-   private static final List<String> emptyList = Collections.emptyList();
+	@SuppressWarnings("unchecked")
+	private SingularAttribute<SalesOrderItem, ?>[] readSeachAttributes(
+			SalesOrderItemSearchInput searchInput)
+			{
+		List<String> fieldNames = searchInput.getFieldNames();
+		List<SingularAttribute<SalesOrderItem, ?>> result = new ArrayList<SingularAttribute<SalesOrderItem, ?>>();
+		for (String fieldName : fieldNames)
+		{
+			Field[] fields = SalesOrderItem_.class.getFields();
+			for (Field field : fields)
+			{
+				if (field.getName().equals(fieldName))
+				{
+					try
+					{
+						result.add((SingularAttribute<SalesOrderItem, ?>) field.get(null));
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new IllegalStateException(e);
+					}
+					catch (IllegalAccessException e)
+					{
+						throw new IllegalStateException(e);
+					}
+				}
+			}
+		}
+		return result.toArray(new SingularAttribute[result.size()]);
+			}
 
-   private static final List<String> salesOrderFields = Arrays.asList("cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus", "cashed", "amountBeforeTax", "amountVAT", "amountDiscount", "totalReturnAmount", "amountAfterTax", "salesOrderType");
+	private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
+	private static final List<String> salesOrderFields = Arrays.asList("cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus", "cashed", "amountBeforeTax", "amountVAT", "amountDiscount", "totalReturnAmount", "amountAfterTax", "salesOrderType");
 
-   private SalesOrderItem detach(SalesOrderItem entity)
-   {
-      if (entity == null)
-         return null;
+	private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 
-      // composed
-      entity.setSalesOrder(salesOrderMerger.unbind(entity.getSalesOrder(), salesOrderFields));
+	private SalesOrderItem detach(SalesOrderItem entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setArticle(articleMerger.unbind(entity.getArticle(), articleFields));
+		// composed
+		entity.setSalesOrder(salesOrderMerger.unbind(entity.getSalesOrder(), salesOrderFields));
 
-      return entity;
-   }
+		// aggregated
+		entity.setArticle(articleMerger.unbind(entity.getArticle(), articleFields));
 
-   private List<SalesOrderItem> detach(List<SalesOrderItem> list)
-   {
-      if (list == null)
-         return list;
-      List<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
-      for (SalesOrderItem entity : list)
-      {
-         result.add(detach(entity));
-      }
-      return result;
-   }
+		return entity;
+	}
 
-   private SalesOrderItemSearchInput detach(SalesOrderItemSearchInput searchInput)
-   {
-      searchInput.setEntity(detach(searchInput.getEntity()));
-      return searchInput;
-   }
+	private List<SalesOrderItem> detach(List<SalesOrderItem> list)
+	{
+		if (list == null)
+			return list;
+		List<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
+		for (SalesOrderItem entity : list)
+		{
+			result.add(detach(entity));
+		}
+		return result;
+	}
+
+	private SalesOrderItemSearchInput detach(SalesOrderItemSearchInput searchInput)
+	{
+		searchInput.setEntity(detach(searchInput.getEntity()));
+		return searchInput;
+	}
 }

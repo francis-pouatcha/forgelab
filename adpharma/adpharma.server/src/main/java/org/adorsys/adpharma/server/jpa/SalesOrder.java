@@ -69,7 +69,7 @@ public class SalesOrder implements Serializable
    @Temporal(TemporalType.TIMESTAMP)
    @Description("SalesOrder_creationDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date creationDate;
+   private Date creationDate = new Date();
 
    @Temporal(TemporalType.TIMESTAMP)
    @Description("SalesOrder_cancelationDate_description")
@@ -112,41 +112,41 @@ public class SalesOrder implements Serializable
    @Column
    @Description("SalesOrder_salesOrderStatus_description")
    @Enumerated
-   private DocumentProcessingState salesOrderStatus;
+   private DocumentProcessingState salesOrderStatus = DocumentProcessingState.ONGOING;
 
    @Column
    @Description("SalesOrder_cashed_description")
-   private Boolean cashed;
+   private Boolean cashed =Boolean.FALSE;
 
    @Column
    @Description("SalesOrder_amountBeforeTax_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountBeforeTax;
+   private BigDecimal amountBeforeTax =BigDecimal.ZERO;
 
    @Column
    @Description("SalesOrder_amountVAT_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountVAT;
+   private BigDecimal amountVAT =BigDecimal.ZERO;
 
    @Column
    @Description("SalesOrder_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount;
+   private BigDecimal amountDiscount =BigDecimal.ZERO;
 
    @Column
    @Description("SalesOrder_totalReturnAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalReturnAmount;
+   private BigDecimal totalReturnAmount =BigDecimal.ZERO;
 
    @Column
    @Description("SalesOrder_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax;
+   private BigDecimal amountAfterTax =BigDecimal.ZERO;
 
    @Column
    @Description("SalesOrder_salesOrderType_description")
    @Enumerated
-   private SalesOrderType salesOrderType;
+   private SalesOrderType salesOrderType=SalesOrderType.CASH_SALE;
 
    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
    @Description("SalesOrder_salesOrderItems_description")

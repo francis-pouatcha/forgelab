@@ -156,34 +156,7 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		//		displayView.getDataList().itemsProperty().getValue().addListener(new ListChangeListener<DeliveryItem>() {
-		//
-		//			@Override
-		//			public void onChanged(
-		//					javafx.collections.ListChangeListener.Change<? extends DeliveryItem> c) {
-		//				BigDecimal processingAmount = displayView.getProcessAmont().getNumber();
-		//				c.next();
-		//				if(c.getAddedSize()!=0){
-		//					List<? extends DeliveryItem> addedSubList = c.getAddedSubList();
-		//					for (DeliveryItem item : addedSubList) {
-		//						processingAmount = processingAmount.add(item.getTotalPurchasePrice());
-		//						item.setDelivery(new DeliveryItemDelivery(displayedEntity));
-		//						displayedEntity.deliveryItemsProperty().getValue().add(item);
-		//					}
-		//				}
-		//
-		//				if(c.getRemovedSize()!=0){
-		//					List<? extends DeliveryItem> removed = c.getRemoved();
-		//					for (DeliveryItem item : removed) {
-		//						processingAmount =processingAmount.subtract(item.getTotalPurchasePrice());
-		//						displayedEntity.deliveryItemsProperty().getValue().remove(item);
-		//					}
-		//				}
-		//				displayView.getProcessAmont().setNumber(processingAmount);
-		//
-		//			}
-		//		});
-
+		
 		/*
 		 * listen to Ok button.
 		 */
@@ -500,6 +473,7 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
+		
 		closeService.setDelivery(displayedEntity).start();
 
 	}

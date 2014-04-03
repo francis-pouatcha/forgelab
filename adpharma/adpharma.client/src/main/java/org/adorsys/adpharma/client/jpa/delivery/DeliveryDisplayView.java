@@ -51,9 +51,6 @@ public class DeliveryDisplayView
 	@FXML
 	private VBox actionbar ;
 	
-	@FXML
-	private ContextMenu datalistContextMenu;
-
 	private Button saveButton;
 
 	private Button deleteButton;
@@ -106,6 +103,9 @@ public class DeliveryDisplayView
 	@FXML
 	private GridPane amountPane ;
 
+	@FXML
+	private ContextMenu datalistContextMenu;
+	
 	@FXML
 	private MenuItem deleteDeliveryMenu;
 

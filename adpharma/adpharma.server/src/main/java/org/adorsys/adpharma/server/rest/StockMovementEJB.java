@@ -173,6 +173,7 @@ public class StockMovementEJB
 
 			sm.setOriginatedDocNumber(salesOrder.getSoNumber());
 			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
+			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
 			sm = create(sm);
 		}
 	}

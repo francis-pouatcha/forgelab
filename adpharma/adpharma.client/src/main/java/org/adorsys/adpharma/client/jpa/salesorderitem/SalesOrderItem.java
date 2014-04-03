@@ -1,11 +1,18 @@
 package org.adorsys.adpharma.client.jpa.salesorderitem;
 
 import java.math.BigDecimal;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,16 +20,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+
 import javax.validation.constraints.Size;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.display.ToStringField;
 
@@ -62,6 +72,13 @@ public class SalesOrderItem implements Cloneable
    @Description("SalesOrderItem_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<SalesOrderItemArticle> article;
+   
+   public void calculateTotalAmout(){
+		BigDecimal pppu = salesPricePU.get();
+		pppu = pppu.multiply(orderedQty.get());
+		totalSalePrice.set(pppu);
+	}
+  
 
    public Long getId()
    {
@@ -107,7 +124,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (orderedQty == null)
       {
-         orderedQty = new SimpleObjectProperty<BigDecimal>();
+         orderedQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return orderedQty;
    }
@@ -126,7 +143,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (returnedQty == null)
       {
-         returnedQty = new SimpleObjectProperty<BigDecimal>();
+         returnedQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return returnedQty;
    }
@@ -145,7 +162,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (deliveredQty == null)
       {
-         deliveredQty = new SimpleObjectProperty<BigDecimal>();
+         deliveredQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return deliveredQty;
    }
@@ -164,7 +181,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (salesPricePU == null)
       {
-         salesPricePU = new SimpleObjectProperty<BigDecimal>();
+         salesPricePU = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return salesPricePU;
    }
@@ -183,7 +200,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (totalSalePrice == null)
       {
-         totalSalePrice = new SimpleObjectProperty<BigDecimal>();
+         totalSalePrice = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return totalSalePrice;
    }
@@ -202,7 +219,7 @@ public class SalesOrderItem implements Cloneable
    {
       if (recordDate == null)
       {
-         recordDate = new SimpleObjectProperty<Calendar>();
+         recordDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
       }
       return recordDate;
    }

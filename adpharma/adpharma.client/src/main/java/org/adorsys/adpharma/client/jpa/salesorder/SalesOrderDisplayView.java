@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -41,15 +43,15 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private Button closeButton;
-	
+
 	@FXML
 	private Button clientButton;
-	
+
 	@FXML
 	private Button insurreurButton;
 
 	@FXML
-	private Button removeButton;
+	private Button cancelButton;
 
 	@FXML
 	private Button ordonnancierButton;
@@ -77,7 +79,7 @@ public class SalesOrderDisplayView
 	//	left grid pane components
 	@FXML
 	private ComboBox<SalesOrderCustomer> client;
-	
+
 	@FXML
 	private ComboBox<SalesOrderCashDrawer> cashDrawer;
 
@@ -89,8 +91,8 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private TextField clientcategorie;
-	
-//	Rigth grid pane components
+
+	//	Rigth grid pane components
 	@FXML
 	private ComboBox<SalesOrderInsurance> insurrer;
 
@@ -99,30 +101,30 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private TextField numcmd;
-	
+
 	@FXML
 	private GridPane rigthGrid ;
-	
-//	amounts grid pane components
-	
+
+	//	amounts grid pane components
+
 	@FXML
 	private GridPane amountPane;
-	
+
 	private BigDecimalField amountHT;
 
 	private BigDecimalField taxAmount;
 
 	private BigDecimalField discount;
-	
+
 	private BigDecimalField amountTTC;
-	
+
 	private BigDecimalField discountRate;
 
 	@FXML
 	private ComboBox<SalesOrderVat> tax;
-	
 
-	
+
+
 	@Inject
 	private SalesOrderView view;
 
@@ -142,7 +144,14 @@ public class SalesOrderDisplayView
 	@Inject
 	private Locale locale;
 
+	@FXML
+	private ContextMenu datalistContextMenu;
+	
+	@FXML
+	private MenuItem deleteSOIMenu;
 
+	@FXML
+	private MenuItem editSOIMenu;
 
 
 
@@ -163,15 +172,13 @@ public class SalesOrderDisplayView
 		//      rootPane = viewBuilder.toAnchorPane();
 
 		//	   defined datalist columns
-		dataList = viewBuilder.addTable("dataList");
+		//		dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataList, "article", "SalesOrderItem_article_description.title", resourceBundle,400d);
 		viewBuilder.addBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
-		
+
 		buildOrderItemBar();
 		buildAmountPane();
 		buildInsurranceGrid();
@@ -196,7 +203,7 @@ public class SalesOrderDisplayView
 		amountPane.add(amountTTC, 1, 3);
 
 	}
-	
+
 	public void buildInsurranceGrid(){
 		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
 		discountRate.setEditable(true);
@@ -228,10 +235,10 @@ public class SalesOrderDisplayView
 		totalSalePrice.setEditable(false);
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
-        saleOrderItemBar.addRow(0,new Label("CipM"),new Label("Designation"),new Label("Qte"),new Label("Prix U"),new Label("PrixTT"));
-        saleOrderItemBar.addRow(1,internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
-//		saleOrderItemBar.getChildren().addAll(
-//				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
+		saleOrderItemBar.addRow(0,new Label("CipM"),new Label("Designation"),new Label("Qte"),new Label("Prix U"),new Label("PrixTT"));
+		saleOrderItemBar.addRow(1,internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
+		//		saleOrderItemBar.getChildren().addAll(
+		//				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
 
 	}
 
@@ -249,9 +256,10 @@ public class SalesOrderDisplayView
 		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
-		
-		
-//		view.bind(model);
+		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
+
+
+		//		view.bind(model);
 	}
 
 	public void bind(SalesOrderItem soi){
@@ -272,9 +280,9 @@ public class SalesOrderDisplayView
 		return closeButton;
 	}
 
-	public Button getRemoveButton()
+	public Button getCancelButton()
 	{
-		return removeButton;
+		return cancelButton;
 	}
 
 	public Button getOrdonnancierButton()
@@ -319,7 +327,7 @@ public class SalesOrderDisplayView
 		return saleOrderItemBar;
 	}
 
-	
+
 	public TextField getArticleName() {
 		return articleName;
 	}
@@ -419,19 +427,21 @@ public class SalesOrderDisplayView
 	public BigDecimalField getAmountTTC() {
 		return amountTTC;
 	}
+	
 
+	public ContextMenu getDatalistContextMenu() {
+		return datalistContextMenu;
+	}
 
+	public MenuItem getDeleteSOIMenu() {
+		return deleteSOIMenu;
+	}
 
-	public FXMLLoader getFxmlLoader() {
-		return fxmlLoader;
+	public MenuItem getEditSOIMenu() {
+		return editSOIMenu;
 	}
 
 
-	public Pagination getPagination() {
-		return pagination;
-	}
 
-	
-	
-	
+
 }

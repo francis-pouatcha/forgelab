@@ -55,10 +55,6 @@ public class DeliveryListController implements EntityController
 	private DeliveryListView listView;
 
 	@Inject
-	@EntitySearchRequestedEvent
-	private Event<Delivery> searchRequestedEvent;
-
-	@Inject
 	@EntityCreateRequestedEvent
 	private Event<Delivery> createRequestedEvent;
 
@@ -98,18 +94,6 @@ public class DeliveryListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 
-		listView.getDataList().getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<Delivery>()
-				{
-			@Override
-			public void changed(
-					ObservableValue<? extends Delivery> property,
-					Delivery oldValue, Delivery newValue)
-			{
-				if (newValue != null){}
-				//	selectionEvent.fire(newValue);
-			}
-				});
 		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override

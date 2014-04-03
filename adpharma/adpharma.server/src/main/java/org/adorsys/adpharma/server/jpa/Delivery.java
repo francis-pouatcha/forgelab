@@ -155,7 +155,7 @@ public class Delivery implements Serializable
 	@NotNull(message = "Delivery_receivingAgency_NotNull_validation")
 	private Agency receivingAgency;
 
-	@OneToMany(mappedBy = "delivery", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
 	@Description("Delivery_deliveryItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
 	private Set<DeliveryItem> deliveryItems = new HashSet<DeliveryItem>();
