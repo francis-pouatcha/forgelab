@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -56,7 +57,7 @@ public class SalesOrderDisplayView
 	private HBox buttonBarLeft;
 
 	@FXML
-	private HBox saleOrderItemBar;
+	private GridPane saleOrderItemBar;
 
 	//	sale order items bar components
 	private TextField articleName;
@@ -92,8 +93,6 @@ public class SalesOrderDisplayView
 //	Rigth grid pane components
 	@FXML
 	private ComboBox<SalesOrderInsurance> insurrer;
-
-	private BigDecimalField coverageRate;
 
 	@FXML
 	private TextField numBon;
@@ -190,21 +189,18 @@ public class SalesOrderDisplayView
 
 		taxAmount = ViewBuilderUtils.newBigDecimalField( "taxAmount", NumberType.CURRENCY,locale,false);
 		taxAmount.setEditable(false);
-		
-		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
 
 		amountPane.add(amountHT, 1, 0);
 		amountPane.add(taxAmount, 1, 1);
 		amountPane.add(discount, 1, 2);
 		amountPane.add(amountTTC, 1, 3);
-		amountPane.add(discountRate, 1, 5);
 
 	}
 	
 	public void buildInsurranceGrid(){
-		coverageRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
-		coverageRate.setEditable(false);
-		rigthGrid.add(coverageRate, 1, 1);
+		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
+		discountRate.setEditable(true);
+		rigthGrid.add(discountRate, 1, 3);
 
 	}
 	public void buildOrderItemBar(){
@@ -232,9 +228,10 @@ public class SalesOrderDisplayView
 		totalSalePrice.setEditable(false);
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
-
-		saleOrderItemBar.getChildren().addAll(
-				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
+        saleOrderItemBar.addRow(0,new Label("CipM"),new Label("Designation"),new Label("Qte"),new Label("Prix U"),new Label("PrixTT"));
+        saleOrderItemBar.addRow(1,internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
+//		saleOrderItemBar.getChildren().addAll(
+//				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
 
 	}
 
@@ -251,8 +248,8 @@ public class SalesOrderDisplayView
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
 		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
-		coverageRate.numberProperty().bindBidirectional(model.getInsurance().coverageRateProperty());
 		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
+		
 		
 //		view.bind(model);
 	}
@@ -307,132 +304,84 @@ public class SalesOrderDisplayView
 		return clientButton;
 	}
 
-	public void setClientButton(Button clientButton) {
-		this.clientButton = clientButton;
-	}
 
 	public Button getInsurreurButton() {
 		return insurreurButton;
 	}
 
-	public void setInsurreurButton(Button insurreurButton) {
-		this.insurreurButton = insurreurButton;
-	}
 
 	public HBox getButtonBarLeft() {
 		return buttonBarLeft;
 	}
 
-	public void setButtonBarLeft(HBox buttonBarLeft) {
-		this.buttonBarLeft = buttonBarLeft;
-	}
 
-	public HBox getSaleOrderItemBar() {
+	public GridPane getSaleOrderItemBar() {
 		return saleOrderItemBar;
 	}
 
-	public void setSaleOrderItemBar(HBox saleOrderItemBar) {
-		this.saleOrderItemBar = saleOrderItemBar;
-	}
-
+	
 	public TextField getArticleName() {
 		return articleName;
 	}
 
-	public void setArticleName(TextField articleName) {
-		this.articleName = articleName;
-	}
 
 	public TextField getInternalPic() {
 		return internalPic;
 	}
 
-	public void setInternalPic(TextField internalPic) {
-		this.internalPic = internalPic;
-	}
 
 	public BigDecimalField getOrderedQty() {
 		return orderedQty;
 	}
 
-	public void setOrderedQty(BigDecimalField orderedQty) {
-		this.orderedQty = orderedQty;
-	}
 
 	public BigDecimalField getTotalSalePrice() {
 		return totalSalePrice;
 	}
 
-	public void setTotalSalePrice(BigDecimalField totalSalePrice) {
-		this.totalSalePrice = totalSalePrice;
-	}
 
 	public BigDecimalField getSalesPricePU() {
 		return salesPricePU;
 	}
 
-	public void setSalesPricePU(BigDecimalField salesPricePU) {
-		this.salesPricePU = salesPricePU;
-	}
 
 	public Button getOkButton() {
 		return okButton;
 	}
 
-	public void setOkButton(Button okButton) {
-		this.okButton = okButton;
-	}
 
 	public ComboBox<SalesOrderCustomer> getClient() {
 		return client;
 	}
 
-	public void setClient(ComboBox<SalesOrderCustomer> client) {
-		this.client = client;
-	}
 
 	public ComboBox<SalesOrderCashDrawer> getCashDrawer() {
 		return cashDrawer;
 	}
 
-	public void setCashDrawer(ComboBox<SalesOrderCashDrawer> cashDrawer) {
-		this.cashDrawer = cashDrawer;
-	}
 
 	public TextField getClientPhone() {
 		return clientPhone;
 	}
 
-	public void setClientPhone(TextField clientPhone) {
-		this.clientPhone = clientPhone;
-	}
 
 	public TextField getClientAdresse() {
 		return clientAdresse;
 	}
 
-	public void setClientAdresse(TextField clientAdresse) {
-		this.clientAdresse = clientAdresse;
-	}
 
 	public TextField getClientcategorie() {
 		return clientcategorie;
 	}
 
-	public void setClientcategorie(TextField clientcategorie) {
-		this.clientcategorie = clientcategorie;
-	}
 
 	public ComboBox<SalesOrderInsurance> getInsurrer() {
 		return insurrer;
 	}
 
-	public void setInsurrer(ComboBox<SalesOrderInsurance> insurrer) {
-		this.insurrer = insurrer;
-	}
 
-	public BigDecimalField getCoverageRate() {
-		return coverageRate;
+	public BigDecimalField getDiscountRate() {
+		return discountRate;
 	}
 
 
@@ -441,73 +390,42 @@ public class SalesOrderDisplayView
 		return numBon;
 	}
 
-	public void setNumBon(TextField numBon) {
-		this.numBon = numBon;
-	}
 
 	public TextField getNumcmd() {
 		return numcmd;
 	}
 
-	public void setNumcmd(TextField numcmd) {
-		this.numcmd = numcmd;
-	}
 
 	public GridPane getAmountPane() {
 		return amountPane;
 	}
 
-	public void setAmountPane(GridPane amountPane) {
-		this.amountPane = amountPane;
-	}
 
 	public BigDecimalField getAmountHT() {
 		return amountHT;
 	}
 
-	public void setAmountHT(BigDecimalField amountHT) {
-		this.amountHT = amountHT;
-	}
 
 	public BigDecimalField getTaxAmount() {
 		return taxAmount;
 	}
 
-	public void setTaxAmount(BigDecimalField taxAmount) {
-		this.taxAmount = taxAmount;
-	}
 
 	public BigDecimalField getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(BigDecimalField discount) {
-		this.discount = discount;
-	}
 
 	public BigDecimalField getAmountTTC() {
 		return amountTTC;
 	}
 
-	public void setAmountTTC(BigDecimalField amountTTC) {
-		this.amountTTC = amountTTC;
-	}
 
-	public BigDecimalField getDiscountRate() {
-		return discountRate;
-	}
-
-	public void setDiscountRate(BigDecimalField discountRate) {
-		this.discountRate = discountRate;
-	}
 
 	public FXMLLoader getFxmlLoader() {
 		return fxmlLoader;
 	}
 
-	public void setFxmlLoader(FXMLLoader fxmlLoader) {
-		this.fxmlLoader = fxmlLoader;
-	}
 
 	public Pagination getPagination() {
 		return pagination;

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -35,6 +37,7 @@ import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
@@ -79,7 +82,12 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
-	private Event<Customer> modalCustomerCreateREquestEvent ;
+	private Event<Customer> modalCustomerCreateRequestEvent ;
+
+
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<CustomerSearchInput> modalCutomerSearchRequestEvent ;
 
 	@Inject
 	@EntitySearchRequestedEvent
@@ -110,9 +118,6 @@ public class SalesOrderDisplayController implements EntityController
 	//  services
 	@Inject
 	private VATSearchService vatSearchService;
-
-	@Inject
-	CustomerSearchService customerSearchService;
 
 	@Inject
 	CashDrawerSearchService cashDrawerSearchService;
@@ -159,7 +164,7 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				modalCustomerCreateREquestEvent.fire(new Customer());
+				modalCustomerCreateRequestEvent.fire(new Customer());
 			}
 		});
 
@@ -167,41 +172,16 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(MouseEvent event) {
-				customerSearchService.setSearchInputs(new CustomerSearchInput()).start();
+				CustomerSearchInput customerSearchInput = new CustomerSearchInput();
+				customerSearchInput.setMax(50);
+				modalCutomerSearchRequestEvent.fire(customerSearchInput);
 			}
 
 
 		});
-		customerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		
+		
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				CustomerSearchService s = (CustomerSearchService) event.getSource();
-				CustomerSearchResult cs = s.getValue();
-				event.consume();
-				s.reset();
-				List<Customer> resultList = cs.getResultList();
-				resultList.add(0, null);
-				Customer showChoices = Dialogs.create().title("List of Customer ").showChoices(resultList);
-				if(showChoices !=null){
-					displayView.getClient().setValue(new SalesOrderCustomer(showChoices));
-					displayView.getClientAdresse().setText(showChoices.getEmail());
-					displayView.getClientPhone().setText(showChoices.getMobile()+"/"+showChoices.getLandLinePhone());
-					displayView.getClientcategorie().setText(showChoices.getCustomerCategory().getName()+"-"+showChoices.getCustomerCategory().getDiscountRate());
-				}
-			}
-		});
-		customerSearchService.setOnFailed(callFailedEventHandler);
-
-		displayView.getInsurrer().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				insurranceSearchService.setSearchInputs(new InsurranceSearchInput()).start(); // TODO : provider et service which return insurreur for specifique clien
-			}
-
-
-		});
 		insurranceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -211,12 +191,10 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				List<Insurrance> resultList = cs.getResultList();
-				resultList.add(0, null);
-				Insurrance showChoices = Dialogs.create().title("List of Inssurer ").showChoices(resultList);
-				if(showChoices !=null){
-					displayView.getInsurrer().setValue(new SalesOrderInsurance(showChoices));
-					displayView.getCoverageRate().setText(showChoices.getCoverageRate()+" %");
-
+				displayView.getInsurrer().getItems().clear();
+				resultList.add(0, new Insurrance());
+				for (Insurrance insurrance : resultList) {
+					displayView.getInsurrer().getItems().add(new SalesOrderInsurance(insurrance));
 				}
 
 			}
@@ -247,6 +225,7 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
+		
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
 
 		displayView.getTax().setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -423,7 +402,7 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrder selectedEntity)
 	{
 		PropertyReader.copy(selectedEntity, displayedEntity);
-		      //      
+		//      
 		//      
 	}
 
@@ -441,14 +420,36 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleCustomerCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Customer model)
 	{
-		displayView.getClient().setValue(new SalesOrderCustomer(model));
-		//		displayedEntity.setCustomer(new SalesOrderCustomer(model));
+		handleNewCustomer(model);
+	}
+
+
+	public void handleCustomerSearchDoneEvent(@Observes @ModalEntitySearchDoneEvent Customer model)
+	{
+		handleNewCustomer(model);
+	}
+
+	public void handleNewCustomer(Customer model){
+		if(model !=null){
+			displayView.getClient().setValue(new SalesOrderCustomer(model));
+			displayView.getClientAdresse().setText(model.getEmail());
+			displayView.getClientPhone().setText(model.getMobile()+"/"+model.getLandLinePhone());
+			displayView.getClientcategorie().setText(model.getCustomerCategory().getName()+"-"+model.getCustomerCategory().getDiscountRate());
+
+			Insurrance insurrance = new Insurrance();
+			insurrance.setCustomer(new InsurranceCustomer(model));
+			InsurranceSearchInput isi = new InsurranceSearchInput();
+			isi.setEntity(insurrance);
+			isi.setMax(100);
+			isi.getFieldNames().add("customer");
+			insurranceSearchService.setSearchInputs(isi).start();
+		}
 	}
 
 
 	public void handleInsurranceCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Insurrance model)
 	{
-		displayView.getInsurrer().setValue(new SalesOrderInsurance(model));
+		displayView.getInsurrer().getItems().add(0,new SalesOrderInsurance(model));
 	}
 
 	/**
@@ -461,7 +462,7 @@ public class SalesOrderDisplayController implements EntityController
 		this.displayedEntity = model;
 		displayView.bind(this.displayedEntity);
 	}
-	
+
 	public SalesOrderItem SalesOrderItemfromArticle(ArticleLot al){
 		SalesOrderItem soItem = new SalesOrderItem();
 		SalesOrderItemArticle soia = new SalesOrderItemArticle();

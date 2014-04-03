@@ -13,6 +13,9 @@ public class CustomerCustomerCategoryCreateController extends CustomerCustomerCa
 
    @Inject
    CustomerCreateView createView;
+   
+   @Inject
+   ModalCustomerCreateView modalCustomerCreateView;
 
    @PostConstruct
    public void postConstruct()
@@ -23,6 +26,7 @@ public class CustomerCustomerCategoryCreateController extends CustomerCustomerCa
    {
       this.sourceEntity = model;
       bind(createView.getView().getCustomerCustomerCategorySelection(), createView.getView().getCustomerCustomerCategoryForm());
+      bind(modalCustomerCreateView.getView().getCustomerCustomerCategorySelection(), modalCustomerCreateView.getView().getCustomerCustomerCategoryForm());
       activateButton(createView.getView().getCustomerCustomerCategorySelection());
    }
 }

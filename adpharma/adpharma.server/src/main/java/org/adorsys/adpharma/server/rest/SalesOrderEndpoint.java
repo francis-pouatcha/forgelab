@@ -130,59 +130,7 @@ public class SalesOrderEndpoint
 
 		return detach(closedOrder);
 	}
-
-	@PUT
-	@Path("/close")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public SalesOrder close(SalesOrder entity)
-	{
-		if(DocumentProcessingState.CLOSED.equals(entity.getSalesOrderStatus()))
-			return entity;
-		Login login = securityUtilEJB.getConnectedUser();
-		Agency agency = login.getAgency();
-		Date creationDate = new Date();
-
-		//	   generate customer invoice
-		CustomerInvoice ci = new CustomerInvoice();
-		ci.setAgency(agency);
-		ci.setCustomer(entity.getCustomer());
-		ci.setInsurance(entity.getInsurance());
-		ci.setCreatingUser(login);
-		ci.setCreationDate(creationDate);
-		ci.setSalesOrder(entity);
-		CustomerInvoice customerInvoice = customerInvoiceEJB.create(ci);
-		Set<SalesOrderItem> salesOrderItems = entity.getSalesOrderItems();
-		for (SalesOrderItem salesOrderItem : salesOrderItems) {
-
-			//		generate sale order item
-
-			//		generate customer invoice item
-
-			//		   generate stok mouvements for each sale order item
-			//			StockMovement sm = new StockMovement();
-			//			sm.setAgency(agency);
-			//			sm.setMovementType(StockMovementType.IN);
-			//			sm.setArticle(salesOrderItem.getArticle());
-			//			sm.setCreatingUser(login);
-			//			sm.setCreationDate(creationDate);
-			//			sm.setInitialQty(BigDecimal.ZERO);
-			//			sm.setMovedQty(salesOrderItem.getDeliveredQty());
-			//			sm.setFinalQty(salesOrderItem.getStockQuantity());
-			//			sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
-			//			sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
-			//			sm.setOriginatedDocNumber(entity.getSoNumber());
-			//			//			sm.setTotalDiscount(entity.get);// TODO remove field
-			//			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
-			//			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
-			//				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			//			sm = stockMovementEJB.create(sm);
-		}
-
-
-		return detach(ejb.update(entity));
-	}
-
+	
 	@GET
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces({ "application/json", "application/xml" })

@@ -129,7 +129,7 @@ public class ArticleEJB
     * 	- 
     * @param closedDelivery
     */
-   protected void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
 		// generate Article lot for each delivery item
@@ -167,7 +167,7 @@ public class ArticleEJB
     * 	- 
     * @param closedDelivery
     */
-   protected void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 	   
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {

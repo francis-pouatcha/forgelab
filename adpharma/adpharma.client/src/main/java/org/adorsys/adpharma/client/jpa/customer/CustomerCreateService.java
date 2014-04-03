@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 
-@Singleton
 public class CustomerCreateService extends Service<Customer>
 {
 

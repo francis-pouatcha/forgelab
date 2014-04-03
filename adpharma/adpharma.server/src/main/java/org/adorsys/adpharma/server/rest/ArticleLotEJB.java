@@ -22,146 +22,162 @@ import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 
 @Stateless
 public class ArticleLotEJB
 {
 
-   @Inject
-   private ArticleLotRepository repository;
+	@Inject
+	private ArticleLotRepository repository;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private ApplicationConfiguration applicationConfiguration;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
+
+	@Inject
+	private ArticleMerger articleMerger;
 
 	@EJB
 	private SecurityUtil securityUtil;
-   
-   public ArticleLot create(ArticleLot entity)
-   {
-      return repository.save(attach(entity));
-   }
 
-   public ArticleLot deleteById(Long id)
-   {
-      ArticleLot entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public ArticleLot create(ArticleLot entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public ArticleLot update(ArticleLot entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public ArticleLot deleteById(Long id)
+	{
+		ArticleLot entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public ArticleLot findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public ArticleLot update(ArticleLot entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public List<ArticleLot> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public ArticleLot findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<ArticleLot> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   private ArticleLot attach(ArticleLot entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+	private ArticleLot attach(ArticleLot entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-      return entity;
-   }
+		// aggregated
+		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 
-   protected void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+		return entity;
+	}
+
+	public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-
+		Boolean isManagedLot = (Boolean) applicationConfiguration.getConfiguration().get("managed_articleLot.config");
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		// generate Article lot for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			ArticleLot al = new  ArticleLot();
-			al.setAgency(creatingUser.getAgency());
-			al.setArticle(deliveryItem.getArticle());
-			if(deliveryItem.getArticle()!=null)
-				al.setArticleName(deliveryItem.getArticle().getArticleName());
-			al.setCreationDate(creationDate);
-			al.setExpirationDate(deliveryItem.getExpirationDate());
-			al.setInternalPic(deliveryItem.getInternalPic());
-			al.setMainPic(deliveryItem.getMainPic());
-			al.setSecondaryPic(deliveryItem.getSecondaryPic());
-			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			al.setSalesPricePU(deliveryItem.getSalesPricePU());
-			al.setStockQuantity(deliveryItem.getStockQuantity());
-			al.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			al.setTotalSalePrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			al = create(al);
+		if(isManagedLot){
+			for (DeliveryItem deliveryItem : deliveryItems) {
+				ArticleLot al = new  ArticleLot();
+				al =ArticleLot.fromDeliveryItem(deliveryItem, creatingUser);
+				al = create(al);
+			}
+		}else {
+			for (DeliveryItem deliveryItem : deliveryItems) {
+				ArticleLot al = new  ArticleLot();
+				al.setArticle(deliveryItem.getArticle());
+				al.setAgency(deliveryItem.getDelivery().getReceivingAgency());
+				List<ArticleLot> found = findByLike(al, 0, 1, new SingularAttribute[]{ArticleLot_.article,ArticleLot_.agency});
+				if(!found.isEmpty()){
+					al = found.iterator().next();
+					if(deliveryItem.getArticle()!=null)
+						al.setArticleName(deliveryItem.getArticle().getArticleName());
+					al.setExpirationDate(deliveryItem.getExpirationDate());
+					al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+					al.setSalesPricePU(deliveryItem.getSalesPricePU());
+					al.setStockQuantity(al.getStockQuantity().add(deliveryItem.getStockQuantity()));
+					al.calculateTotalAmout();
+					al = update(al);
+				}else {
+					al = ArticleLot.fromDeliveryItem(deliveryItem, creatingUser);
+					al = create(al);
+				}
+
+			}
+		}
+
+	}
+
+	/**
+	 * Process a completed sales. Will process with the known lot if provided if not
+	 * will use the FIFO technique to manage stocks. 
+	 * 
+	 * @param closedDelivery
+	 */
+	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			String internalPic = salesOrderItem.getInternalPic();
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(internalPic);
+			@SuppressWarnings("unchecked")
+			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+			articleLot = found.iterator().next();
+
+			BigDecimal currenQtyInStock = articleLot.getStockQuantity()==null?BigDecimal.ZERO:articleLot.getStockQuantity();
+			BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+
+			BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
+			articleLot.setStockQuantity(qtyInStock);
+			articleLot.setTotalPurchasePrice(qtyInStock.multiply(articleLot.getPurchasePricePU()));
+			articleLot.setTotalSalePrice(qtyInStock.multiply(articleLot.getSalesPricePU()));
+
+			update(articleLot);
 		}
 	}
 
-   /**
-    * Process a completed sales. Will process with the known lot if provided if not
-    * will use the FIFO technique to manage stocks. 
-    * 
-    * @param closedDelivery
-    */
-   protected void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
-	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
-	   
-	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
-		   String internalPic = salesOrderItem.getInternalPic();
-		   ArticleLot articleLot = new ArticleLot();
-		   articleLot.setInternalPic(internalPic);
-		   @SuppressWarnings("unchecked")
-		   List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
-		   articleLot = found.iterator().next();
-
-		   BigDecimal currenQtyInStock = articleLot.getStockQuantity()==null?BigDecimal.ZERO:articleLot.getStockQuantity();
-		   BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
-		   BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
-
-		   BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
-		   articleLot.setStockQuantity(qtyInStock);
-		   articleLot.setTotalPurchasePrice(qtyInStock.multiply(articleLot.getPurchasePricePU()));
-		   articleLot.setTotalSalePrice(qtyInStock.multiply(articleLot.getSalesPricePU()));
-
-		   update(articleLot);
-		}
-   }
-   
 }

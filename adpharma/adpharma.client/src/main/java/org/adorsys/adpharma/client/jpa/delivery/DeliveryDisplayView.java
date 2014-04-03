@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -48,6 +50,9 @@ public class DeliveryDisplayView
 	
 	@FXML
 	private VBox actionbar ;
+	
+	@FXML
+	private ContextMenu datalistContextMenu;
 
 	private Button saveButton;
 
@@ -62,6 +67,7 @@ public class DeliveryDisplayView
 	private Button addArticleButton ;
 
 	private Button okButton ;
+	
 
 	@FXML
 	private TextField deliveryNumber;
@@ -130,7 +136,7 @@ public class DeliveryDisplayView
 	TableView<DeliveryItem> dataList;
 
 	@FXML
-	private HBox deliveryItemBar;
+	private GridPane deliveryItemBar;
 
 	@Inject
 	private DeliveryView view;
@@ -241,8 +247,10 @@ public class DeliveryDisplayView
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
-		deliveryItemBar.getChildren().addAll(
-				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
+		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente"),new Label("Prix d\'achat"));
+		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
+//		deliveryItemBar.getChildren().addAll(
+//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
 
 	}
 
@@ -431,8 +439,12 @@ public class DeliveryDisplayView
 	public Button getAddButton() {
 		return addButton;
 	}
-	public HBox getDeliveryItemBar() {
+	public GridPane getDeliveryItemBar() {
 		return deliveryItemBar;
+	}
+	
+	public ContextMenu getDatalistContextMenu() {
+		return datalistContextMenu;
 	}
 	
 	

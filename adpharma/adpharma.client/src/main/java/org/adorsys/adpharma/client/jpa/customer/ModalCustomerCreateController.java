@@ -14,8 +14,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchService;
 import org.adorsys.adpharma.client.jpa.employer.EmployerSearchService;
+import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -31,24 +33,22 @@ public class ModalCustomerCreateController {
 	ModalCustomerCreateView createView;
 
 	@Inject
-	@Bundle(CrudKeys.class)
+	@Bundle({CrudKeys.class,Customer.class})
 	private ResourceBundle resourceBundle;  
 
 	@Inject 
 	CustomerCreateService createService;
 	
-	@Inject
-	private EmployerSearchService employerSearchService;
-	
-	@Inject
-	private CustomerCategorySearchService categorySearchService ;
-
 	@Inject   
 	ServiceCallFailedEventHandler callFailedEventHandler ;
 
 	@Inject
 	@ModalEntityCreateDoneEvent 
 	private Event<Customer> modalCustomerCreateDoneEvent ;
+	
+	@Inject
+	@CreateModelEvent
+	private Event<Customer> createModelEvent;
 
    @Inject
 	private Customer customer ;
@@ -115,6 +115,9 @@ public class ModalCustomerCreateController {
 
 			}
 		});
+		
+		createModelEvent.fire(customer);
+		
 		
 	}
 

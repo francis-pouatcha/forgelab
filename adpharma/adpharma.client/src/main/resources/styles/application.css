@@ -117,6 +117,15 @@ Description: MistSilver Skin for JavaFX
 	-fx-text-fill: rgb(59,48,255);
 }
 
+.colored-text > .text-field{
+	
+	-fx-text-fill: rgb(59,48,255);
+}
+
+.separator{
+	-fx-background-color: rgb(78,166,172);
+}
+
 
 
 

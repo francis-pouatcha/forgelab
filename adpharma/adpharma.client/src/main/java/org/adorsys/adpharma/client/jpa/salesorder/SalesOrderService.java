@@ -19,6 +19,7 @@ public class SalesOrderService
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
+   private static final String SAVE_AND_CLOSE_PATH = "saveAndClose";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
@@ -59,6 +60,16 @@ public class SalesOrderService
    {
       Entity<SalesOrder> ent = Entity.entity(entity, media);
       return target.path("" + entity.getId())
+            .request(media).put(ent, SalesOrder.class);
+   }
+   
+// @PUT
+   // @Path("/{id:[0-9][0-9]*}")
+   // @Consumes("application/xml")
+   public SalesOrder saveAndClose(SalesOrder entity)
+   {
+      Entity<SalesOrder> ent = Entity.entity(entity, media);
+      return target.path(SAVE_AND_CLOSE_PATH)
             .request(media).put(ent, SalesOrder.class);
    }
 

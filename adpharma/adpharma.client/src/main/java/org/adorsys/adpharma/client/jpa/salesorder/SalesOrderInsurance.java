@@ -31,6 +31,7 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>,
    private SimpleObjectProperty<BigDecimal> coverageRate;
    private SimpleObjectProperty<Calendar> beginDate;
    private SimpleObjectProperty<Calendar> endDate;
+   private SimpleObjectProperty<InsurranceInsurer> insurer;
 
    public SalesOrderInsurance()
    {
@@ -60,7 +61,25 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>,
    {
       this.version = version;
    }
+   public SimpleObjectProperty<InsurranceInsurer> insurerProperty()
+   {
+      if (insurer == null)
+      {
+    	  insurer = new SimpleObjectProperty<InsurranceInsurer>();
+      }
+      return insurer;
+   }
 
+   public InsurranceInsurer getInsurer()
+   {
+      return insurerProperty().get();
+   }
+
+   public final void setInsurer(InsurranceInsurer insurer)
+   {
+      this.insurerProperty().set(insurer);
+   }
+   
    public SimpleObjectProperty<BigDecimal> coverageRateProperty()
    {
       if (coverageRate == null)
@@ -144,7 +163,7 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>,
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "fullName", "fullName", "coverageRate");
+      return PropertyReader.buildToString(this, "insurer", "coverageRate");
    }
 
    @Override
