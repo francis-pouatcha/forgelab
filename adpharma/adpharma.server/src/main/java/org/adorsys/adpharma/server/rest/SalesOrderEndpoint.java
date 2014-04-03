@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response.Status;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -115,6 +116,19 @@ public class SalesOrderEndpoint
 	public SalesOrder update(SalesOrder entity)
 	{
 		return detach(ejb.update(entity));
+	}
+
+	@PUT
+	@Path("/saveAndClose")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+		if(salesOrder.getSalesOrderStatus()==DocumentProcessingState.CLOSED)
+			return salesOrder;
+		
+		SalesOrder closedOrder = ejb.saveAndClose(salesOrder);
+
+		return detach(closedOrder);
 	}
 
 	@PUT

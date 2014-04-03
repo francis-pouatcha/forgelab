@@ -1,11 +1,21 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
 
 @Stateless
@@ -113,4 +123,69 @@ public class ArticleEJB
 
       return entity;
    }
+   
+   /**
+    * Process a completed delivery.
+    * 	- 
+    * @param closedDelivery
+    */
+   protected void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+
+		// generate Article lot for each delivery item
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			Article article = deliveryItem.getArticle();
+			BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+			BigDecimal enteringQty = deliveryItem.getStockQuantity()==null?BigDecimal.ZERO:deliveryItem.getStockQuantity();
+
+			BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
+			article.setQtyInStock(qtyInStock);
+			article.setLastStockEntry(new Date());
+			
+			BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
+			BigDecimal purchasePricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
+			
+			// average pppu
+			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(purchasePricePU)).divide(qtyInStock);
+			article.setPppu(newPppu);
+			
+			BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
+			BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
+			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
+			article.setSppu(newSppu);
+			
+			article.setTotalStockPrice(qtyInStock.multiply(newSppu));
+
+			article.setRecordingDate(new Date());
+
+			update(article);
+		}
+   }
+
+   /**
+    * Process a completed sales.
+    * 	- 
+    * @param closedDelivery
+    */
+   protected void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+	   
+	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
+		   Article article = salesOrderItem.getArticle();
+		   BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+		   BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+		   BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+
+		   BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
+		   article.setQtyInStock(qtyInStock);
+		   article.setLastOutOfStock(new Date());
+						
+		   article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
+
+		   article.setRecordingDate(new Date());
+
+		   update(article);
+		}
+   }
+
 }

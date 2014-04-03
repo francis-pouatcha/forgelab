@@ -1,34 +1,29 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
-import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-import java.lang.Override;
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-import javax.validation.constraints.NotNull;
-import org.adorsys.adpharma.server.jpa.Section;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.adpharma.server.jpa.ProductFamily;
-import java.math.BigDecimal;
-import org.adorsys.javaext.format.NumberFormatType;
-import org.adorsys.javaext.format.NumberType;
-import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
-import org.adorsys.adpharma.server.jpa.SalesMargin;
-import org.adorsys.adpharma.server.jpa.PackagingMode;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.ClearanceConfig;
+import org.adorsys.javaext.format.NumberFormatType;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("Article_description")
@@ -139,15 +134,6 @@ public class Article implements Serializable
    @Description("Article_recordingDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private Date recordingDate;
-   
-   public void handleStockEntry(DeliveryItem deliveryItem){
-	   qtyInStock = qtyInStock !=null ? qtyInStock : BigDecimal.ZERO;
-	   lastStockEntry = new Date();
-	   pppu = deliveryItem.getPurchasePricePU();
-	   sppu = deliveryItem.getSalesPricePU();
-	   qtyInStock = qtyInStock.add(deliveryItem.getStockQuantity());
-	   
-   }
    
    public Long getId()
    {

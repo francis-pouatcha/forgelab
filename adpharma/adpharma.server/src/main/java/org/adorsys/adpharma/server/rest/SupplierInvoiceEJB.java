@@ -134,7 +134,7 @@ public class SupplierInvoiceEJB
       return entity;
    }
 
-	public void generateSupplierInvoice(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+	public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
 		SupplierInvoice si = new SupplierInvoice();
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();

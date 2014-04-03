@@ -14,6 +14,8 @@ import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
 import org.adorsys.adpharma.server.jpa.StockMovementType;
@@ -111,7 +113,7 @@ public class StockMovementEJB
       return entity;
    }
    
-   public void generateDeliveryStockMouvements(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
@@ -138,4 +140,41 @@ public class StockMovementEJB
 		}
 	}
 
+   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			StockMovement sm = new StockMovement();
+			sm.setAgency(salesOrder.getAgency());
+			sm.setInternalPic(salesOrderItem.getInternalPic());
+			sm.setMovementType(StockMovementType.OUT);
+			sm.setArticle(salesOrderItem.getArticle());
+			sm.setCreatingUser(creatingUser);
+			sm.setCreationDate(creationDate);
+			sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
+			BigDecimal releasedQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+			BigDecimal movedQty = releasedQty.subtract(returnedQty);
+			sm.setMovedQty(movedQty);
+			sm.setFinalQty(movedQty);//supposed to be qty in stock.
+			
+			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
+			} else if (returnedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			} else {
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			}
+
+			sm.setOriginatedDocNumber(salesOrder.getSoNumber());
+			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
+			sm = create(sm);
+		}
+	}
+   
 }

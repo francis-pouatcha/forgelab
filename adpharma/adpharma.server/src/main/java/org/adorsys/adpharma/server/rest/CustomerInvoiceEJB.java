@@ -1,128 +1,178 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
-import java.util.Set;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
+import org.adorsys.adpharma.server.jpa.InvoiceType;
+import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
-public class CustomerInvoiceEJB
-{
+public class CustomerInvoiceEJB {
 
-   @Inject
-   private CustomerInvoiceRepository repository;
+	@Inject
+	private CustomerInvoiceRepository repository;
 
-   @Inject
-   private CustomerMerger customerMerger;
+	@Inject
+	private CustomerMerger customerMerger;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   @Inject
-   private CustomerInvoiceItemMerger customerInvoiceItemMerger;
+	@Inject
+	private CustomerInvoiceItemMerger customerInvoiceItemMerger;
 
-   @Inject
-   private SalesOrderMerger salesOrderMerger;
+	@Inject
+	private SalesOrderMerger salesOrderMerger;
 
-   @Inject
-   private InsurranceMerger insurranceMerger;
+	@Inject
+	private InsurranceMerger insurranceMerger;
 
-   @Inject
-   private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
+	@Inject
+	private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   public CustomerInvoice create(CustomerInvoice entity)
-   {
-      return repository.save(attach(entity));
-   }
+	@Inject
+	private SecurityUtil securityUtil;
+	
+	@Inject
+	private CustomerInvoiceItemEJB customerInvoiceItemEJB;
 
-   public CustomerInvoice deleteById(Long id)
-   {
-      CustomerInvoice entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public CustomerInvoice create(CustomerInvoice entity) {
+		return repository.save(attach(entity));
+	}
 
-   public CustomerInvoice update(CustomerInvoice entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public CustomerInvoice deleteById(Long id) {
+		CustomerInvoice entity = repository.findBy(id);
+		if (entity != null) {
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public CustomerInvoice findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public CustomerInvoice update(CustomerInvoice entity) {
+		return repository.save(attach(entity));
+	}
 
-   public List<CustomerInvoice> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public CustomerInvoice findById(Long id) {
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<CustomerInvoice> listAll(int start, int max) {
+		return repository.findAll(start, max);
+	}
 
-   public List<CustomerInvoice> findBy(CustomerInvoice entity, int start, int max, SingularAttribute<CustomerInvoice, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public Long count() {
+		return repository.count();
+	}
 
-   public Long countBy(CustomerInvoice entity, SingularAttribute<CustomerInvoice, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public List<CustomerInvoice> findBy(CustomerInvoice entity, int start,
+			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public List<CustomerInvoice> findByLike(CustomerInvoice entity, int start, int max, SingularAttribute<CustomerInvoice, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public Long countBy(CustomerInvoice entity,
+			SingularAttribute<CustomerInvoice, ?>[] attributes) {
+		return repository.count(entity, attributes);
+	}
 
-   public Long countByLike(CustomerInvoice entity, SingularAttribute<CustomerInvoice, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public List<CustomerInvoice> findByLike(CustomerInvoice entity, int start,
+			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   private CustomerInvoice attach(CustomerInvoice entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(CustomerInvoice entity,
+			SingularAttribute<CustomerInvoice, ?>[] attributes) {
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated
-      entity.setCustomer(customerMerger.bindAggregated(entity.getCustomer()));
+	private CustomerInvoice attach(CustomerInvoice entity) {
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setInsurance(insurranceMerger.bindAggregated(entity.getInsurance()));
+		// aggregated
+		entity.setCustomer(customerMerger.bindAggregated(entity.getCustomer()));
 
-      // aggregated
-      entity.setCreatingUser(loginMerger.bindAggregated(entity.getCreatingUser()));
+		// aggregated
+		entity.setInsurance(insurranceMerger.bindAggregated(entity
+				.getInsurance()));
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+		// aggregated
+		entity.setCreatingUser(loginMerger.bindAggregated(entity
+				.getCreatingUser()));
 
-      // aggregated
-      entity.setSalesOrder(salesOrderMerger.bindAggregated(entity.getSalesOrder()));
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-      // composed collections
-      Set<CustomerInvoiceItem> invoiceItems = entity.getInvoiceItems();
-      for (CustomerInvoiceItem customerInvoiceItem : invoiceItems)
-      {
-         customerInvoiceItem.setInvoice(entity);
-      }
+		// aggregated
+		entity.setSalesOrder(salesOrderMerger.bindAggregated(entity
+				.getSalesOrder()));
 
-      // aggregated collection
-      paymentCustomerInvoiceAssocMerger.bindAggregated(entity.getPayments());
+		// composed collections
+		Set<CustomerInvoiceItem> invoiceItems = entity.getInvoiceItems();
+		for (CustomerInvoiceItem customerInvoiceItem : invoiceItems) {
+			customerInvoiceItem.setInvoice(entity);
+		}
 
-      return entity;
-   }
+		// aggregated collection
+		paymentCustomerInvoiceAssocMerger.bindAggregated(entity.getPayments());
+
+		return entity;
+	}
+
+	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+		CustomerInvoice ci = new CustomerInvoice();
+
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		ci.setCreatingUser(creatingUser);
+		ci.setCreationDate(creationDate);
+		ci.setAgency(salesOrder.getAgency());
+		ci.setAmountBeforeTax(salesOrder.getAmountBeforeTax());
+		ci.setTaxAmount(salesOrder.getAmountVAT());
+		ci.setAmountAfterTax(salesOrder.getAmountAfterTax());
+		ci.setAmountDiscount(salesOrder.getAmountDiscount());
+		ci.setNetToPay(salesOrder.getAmountAfterTax().subtract(salesOrder.getAmountDiscount()));
+		ci.setCashed(salesOrder.getCashed());
+		ci.setTotalRestToPay(ci.getNetToPay());
+		ci.setCustomer(salesOrder.getCustomer());
+		ci.setCustomerRestTopay(ci.getNetToPay());
+		ci.setInsurance(salesOrder.getInsurance());
+		ci.setInsurranceRestTopay(BigDecimal.ZERO);
+		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
+		ci.setInvoiceType(InvoiceType.CASHDRAWER);
+		ci.setSalesOrder(salesOrder);
+		ci.setSettled(Boolean.TRUE);
+		ci.setAdvancePayment(BigDecimal.ZERO);
+		
+		ci = create(ci);
+		
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
+			ciItem.setArticle(salesOrderItem.getArticle());
+			ciItem.setInternalPic(salesOrderItem.getInternalPic());
+			ciItem.setInvoice(ci);
+			ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
+			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+			ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
+			ciItem = customerInvoiceItemEJB.create(ciItem);
+		}
+	}
 }

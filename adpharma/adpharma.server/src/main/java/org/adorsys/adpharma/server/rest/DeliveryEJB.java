@@ -91,9 +91,6 @@ public class DeliveryEJB
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.update(deliveryItem);
-			Article article = deliveryItem.getArticle();
-			article.handleStockEntry(deliveryItem);
-			articleEJB.update(article);
 		}
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
 		Delivery closedDelivery = update(delivery);
