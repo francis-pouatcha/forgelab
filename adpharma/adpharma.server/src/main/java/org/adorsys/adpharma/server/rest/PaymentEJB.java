@@ -120,6 +120,7 @@ public class PaymentEJB
 	private SecurityUtil securityUtil;   
 	@EJB
 	private CashDrawerEJB cashDrawerEJB;
+	
 	@CustomerPaymentProcessingEvent
 	private Event<Payment> customerPaymentProcessingEvent;
 

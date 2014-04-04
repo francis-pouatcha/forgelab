@@ -143,7 +143,7 @@ public class CustomerInvoiceEJB {
 		return entity;
 	}
 
-	protected void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
 		CustomerInvoice ci = new CustomerInvoice();
 
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -183,7 +183,7 @@ public class CustomerInvoiceEJB {
 		}
 	}
 	
-	protected void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+	public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
 		BigDecimal amount = payment.getAmount();
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
 		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {

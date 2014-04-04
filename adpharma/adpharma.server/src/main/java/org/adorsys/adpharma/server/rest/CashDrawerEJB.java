@@ -99,7 +99,7 @@ public class CashDrawerEJB
       return entity;
    }
    
-   protected void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+   public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
 	   CashDrawer cashDrawer = payment.getCashDrawer();
 	   PaymentMode paymentMode = payment.getPaymentMode();
 	   BigDecimal amount = payment.getAmount();
