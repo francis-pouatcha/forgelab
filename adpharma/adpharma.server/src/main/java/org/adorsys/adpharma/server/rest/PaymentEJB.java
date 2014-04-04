@@ -2,11 +2,19 @@ package org.adorsys.adpharma.server.rest;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
+import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CashDrawer_;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.repo.PaymentRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class PaymentEJB
@@ -107,4 +115,35 @@ public class PaymentEJB
 
       return entity;
    }
+
+	@EJB
+	private SecurityUtil securityUtil;   
+	@EJB
+	private CashDrawerEJB cashDrawerEJB;
+	@CustomerPaymentProcessingEvent
+	private Event<Payment> customerPaymentProcessingEvent;
+
+	@SuppressWarnings("unchecked")
+	public Payment customerPayment(Payment entity)
+   {
+		entity = attach(entity);
+		
+		// Set the cash drawer
+		Login connectedUser = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setCashier(connectedUser);
+		cashDrawer.setOpened(Boolean.TRUE);
+		List<CashDrawer> found = cashDrawerEJB.findBy(cashDrawer, 0, 1, new SingularAttribute[]{CashDrawer_.cashier, CashDrawer_.opened});
+		cashDrawer = found.iterator().next();
+		entity.setCashDrawer(cashDrawer);
+		entity.setAgency(connectedUser.getAgency());
+		entity.setCashier(connectedUser);
+		
+		entity = repository.save(entity);
+		
+		customerPaymentProcessingEvent.fire(entity);
+		
+		return entity;
+   }
+
 }

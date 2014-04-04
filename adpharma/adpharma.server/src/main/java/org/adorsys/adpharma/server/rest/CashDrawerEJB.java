@@ -1,11 +1,17 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 
 @Stateless
@@ -91,5 +97,33 @@ public class CashDrawerEJB
       entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
       return entity;
+   }
+   
+   protected void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+	   CashDrawer cashDrawer = payment.getCashDrawer();
+	   PaymentMode paymentMode = payment.getPaymentMode();
+	   BigDecimal amount = payment.getAmount();
+	   cashDrawer.setTotalCashIn(amount);
+	   switch (paymentMode) {
+		case CASH:
+			BigDecimal totalCash = cashDrawer.getTotalCash()==null?BigDecimal.ZERO:cashDrawer.getTotalCash();
+			cashDrawer.setTotalCash(totalCash.add(amount));
+			break;
+		case CREDIT_CARD:
+			BigDecimal totalCreditCard = cashDrawer.getTotalCreditCard()==null?BigDecimal.ZERO:cashDrawer.getTotalCreditCard();
+			cashDrawer.setTotalCreditCard(totalCreditCard.add(amount));
+			break;
+		case CHECK:
+			BigDecimal totalCheck = cashDrawer.getTotalCheck()==null?BigDecimal.ZERO:cashDrawer.getTotalCheck();
+			cashDrawer.setTotalCheck(totalCheck.add(amount));
+			break;
+		case VOUCHER:
+			BigDecimal totalClientVoucher = cashDrawer.getTotalClientVoucher()==null?BigDecimal.ZERO:cashDrawer.getTotalClientVoucher();
+			cashDrawer.setTotalClientVoucher(totalClientVoucher.add(amount));
+			break;
+		default:
+			throw new IllegalStateException("Unknown payment mode: "+paymentMode);
+	   }
+	   update(cashDrawer);
    }
 }

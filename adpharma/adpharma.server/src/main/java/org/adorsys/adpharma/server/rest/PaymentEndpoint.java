@@ -22,10 +22,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Payment;
-import org.adorsys.adpharma.server.jpa.Payment_;
 import org.adorsys.adpharma.server.jpa.PaymentSearchInput;
 import org.adorsys.adpharma.server.jpa.PaymentSearchResult;
+import org.adorsys.adpharma.server.jpa.Payment_;
 
 /**
  * 
@@ -242,4 +243,14 @@ public class PaymentEndpoint
       searchInput.setEntity(detach(searchInput.getEntity()));
       return searchInput;
    }
+
+   @PUT
+   @Path("/customerPayment/{id:[0-9][0-9]*}")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public Payment customerPayment(Payment entity)
+   {
+      return detach(ejb.customerPayment(entity));
+   }
+   
 }

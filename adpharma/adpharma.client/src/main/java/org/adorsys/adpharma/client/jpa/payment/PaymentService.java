@@ -1,14 +1,11 @@
 package org.adorsys.adpharma.client.jpa.payment;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
@@ -136,4 +133,15 @@ public class PaymentService
       return target.path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
+   
+//   @PUT
+//   @Path("/customerPayment/{id:[0-9][0-9]*}")
+//   @Produces({ "application/json", "application/xml" })
+//   @Consumes({ "application/json", "application/xml" })
+   public Payment customerPayment(Payment entity)
+   {
+      Entity<Payment> ent = Entity.entity(entity, media);
+      return target.path("customerPayment/" + entity.getId())
+            .request(media).put(ent, Payment.class);
+   }   
 }

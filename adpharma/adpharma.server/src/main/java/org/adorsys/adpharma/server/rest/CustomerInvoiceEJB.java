@@ -5,16 +5,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
@@ -54,6 +58,9 @@ public class CustomerInvoiceEJB {
 	@Inject
 	private CustomerInvoiceItemEJB customerInvoiceItemEJB;
 
+	@EJB
+	private PaymentCustomerInvoiceAssocEJB paymentCustomerInvoiceAssocEJB;
+	
 	public CustomerInvoice create(CustomerInvoice entity) {
 		return repository.save(attach(entity));
 	}
@@ -136,7 +143,7 @@ public class CustomerInvoiceEJB {
 		return entity;
 	}
 
-	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	protected void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
 		CustomerInvoice ci = new CustomerInvoice();
 
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -173,6 +180,38 @@ public class CustomerInvoiceEJB {
 			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
 			ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
 			ciItem = customerInvoiceItemEJB.create(ciItem);
+		}
+	}
+	
+	protected void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+		BigDecimal amount = payment.getAmount();
+		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
+		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
+			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
+				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
+				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
+				paymentCustomerInvoiceAssocEJB.deleteById(paymentCustomerInvoiceAssoc.getId());
+			}
+			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
+			BigDecimal customerRestTopay = customerInvoice.getCustomerRestTopay();
+			BigDecimal amountForThisInvoice = null;
+			if(amount.compareTo(customerRestTopay)>0){
+				amountForThisInvoice = amount.subtract(customerRestTopay);
+				amount = amount.subtract(amountForThisInvoice);
+			} else {
+				amountForThisInvoice = amount;
+				amount = BigDecimal.ZERO;
+			}
+			customerRestTopay = customerRestTopay.subtract(amountForThisInvoice);
+			customerInvoice.setCustomerRestTopay(customerRestTopay);
+			totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
+			customerInvoice.setTotalRestToPay(totalRestToPay);
+			if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
+				customerInvoice.setSettled(Boolean.TRUE);
+				customerInvoice.setCashed(Boolean.TRUE);
+			}
+			update(customerInvoice);
 		}
 	}
 }
