@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.SalesFinalizedEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -140,7 +141,7 @@ public class StockMovementEJB
 		}
 	}
 
-   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+   public void handleSalesFinalized(@Observes @SalesFinalizedEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();

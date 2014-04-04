@@ -191,7 +191,8 @@ public class CustomerInvoiceEJB {
 			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
 				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
 				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
-				paymentCustomerInvoiceAssocEJB.deleteById(paymentCustomerInvoiceAssoc.getId());
+//				paymentCustomerInvoiceAssocEJB.deleteById(paymentCustomerInvoiceAssoc.getId());
+				continue;
 			}
 			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
 			BigDecimal customerRestTopay = customerInvoice.getCustomerRestTopay();

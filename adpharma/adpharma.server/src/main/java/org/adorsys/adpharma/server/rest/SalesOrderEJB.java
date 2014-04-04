@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -7,15 +8,21 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.SalesFinalizedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -62,6 +69,13 @@ public class SalesOrderEJB
 	@Inject
 	@DocumentClosedDoneEvent
 	private Event<SalesOrder> salesOrderClosedDoneEvent;
+	
+	@Inject
+	@SalesFinalizedEvent
+	private Event<SalesOrder> salesFinalizedEvent;
+	
+	@Inject
+	private CustomerInvoiceEJB customerInvoiceEJB;
    
    public SalesOrder create(SalesOrder entity)
    {
@@ -165,5 +179,18 @@ public class SalesOrderEJB
 		SalesOrder closedSales = update(salesOrder);
 		salesOrderClosedDoneEvent.fire(closedSales);
 		return closedSales;
+	}
+
+	public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
+		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
+			if(!Boolean.TRUE.equals(customerInvoice.getCashed())){
+				customerInvoice.setCashed(Boolean.TRUE);
+				customerInvoiceEJB.update(customerInvoice);
+				SalesOrder salesOrder = customerInvoice.getSalesOrder();
+				salesFinalizedEvent.fire(salesOrder);// handle good to customer when payment voucher is delivered.
+			}
+		}
 	}
 }
