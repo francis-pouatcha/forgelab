@@ -8,11 +8,12 @@ import javax.inject.Singleton;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 
 @Singleton
-public class ArticleFamilyCreateController extends ArticleFamilyController
+public class ModalArticlePackagingModeCreateController extends ArticlePackagingModeController
 {
 
    @Inject
-   ArticleCreateView createView;
+   ModalArticleCreateView modalCreateView;
+
 
    @PostConstruct
    public void postConstruct()
@@ -22,7 +23,7 @@ public class ArticleFamilyCreateController extends ArticleFamilyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(createView.getView().getArticleFamilySelection(), createView.getView().getArticleFamilyForm());
-      activateButton(createView.getView().getArticleFamilySelection());
+      bind(modalCreateView.getView().getArticlePackagingModeSelection(), modalCreateView.getView().getArticlePackagingModeForm());
+      activateButton(modalCreateView.getView().getArticlePackagingModeSelection());
    }
 }
