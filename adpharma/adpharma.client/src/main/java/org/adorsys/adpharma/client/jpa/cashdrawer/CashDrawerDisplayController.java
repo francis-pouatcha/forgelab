@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -68,59 +69,59 @@ public class CashDrawerDisplayController implements EntityController
    @PostConstruct
    public void postConstruct()
    {
-      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
-      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
-
-      /*
-       * listen to search button and fire search requested event.
-       */
-      displayView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            searchRequestedEvent.fire(displayedEntity);
-         }
-      });
-
-      displayView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            editRequestEvent.fire(displayedEntity);
-         }
-      });
-
-      displayView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            removeRequest.fire(displayedEntity);
-         }
-      });
-
-      displayView.getConfirmSelectionButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            final AssocSelectionEventData<CashDrawer> pendingSelectionRequest = pendingSelectionRequestProperty.get();
-            if (pendingSelectionRequest == null)
-               return;
-            pendingSelectionRequestProperty.set(null);
-            pendingSelectionRequest.setTargetEntity(displayedEntity);
-            selectionResponseEvent.fire(pendingSelectionRequest);
-         }
-      });
-
-      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
+//      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+//      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
+//
+//      /*
+//       * listen to search button and fire search requested event.
+//       */
+//      displayView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//            searchRequestedEvent.fire(displayedEntity);
+//         }
+//      });
+//
+//      displayView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//            editRequestEvent.fire(displayedEntity);
+//         }
+//      });
+//
+//      displayView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//            removeRequest.fire(displayedEntity);
+//         }
+//      });
+//
+//      displayView.getConfirmSelectionButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//            final AssocSelectionEventData<CashDrawer> pendingSelectionRequest = pendingSelectionRequestProperty.get();
+//            if (pendingSelectionRequest == null)
+//               return;
+//            pendingSelectionRequestProperty.set(null);
+//            pendingSelectionRequest.setTargetEntity(displayedEntity);
+//            selectionResponseEvent.fire(pendingSelectionRequest);
+//         }
+//      });
+//
+//      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
    }
 
    public void display(Pane parent)
    {
-      AnchorPane rootPane = displayView.getRootPane();
+      BorderPane rootPane = displayView.getRootPane();
       ObservableList<Node> children = parent.getChildren();
       if (!children.contains(rootPane))
       {

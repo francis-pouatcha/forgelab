@@ -200,6 +200,8 @@ public class SalesOrderView extends AbstractForm<SalesOrder>
       violations.addAll(toOneAggreggationFieldValidator.validate(salesOrderCustomerSelection.getCustomer(), model.getCustomer(), SalesOrder.class, "customer", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(salesOrderSalesAgentSelection.getSalesAgent(), model.getSalesAgent(), SalesOrder.class, "salesAgent", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(salesOrderAgencySelection.getAgency(), model.getAgency(), SalesOrder.class, "agency", resourceBundle));
+      violations.addAll(toOneAggreggationFieldValidator.validate(salesOrderCashDrawerSelection.getCashDrawer(), model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
+
       return violations;
    }
 
