@@ -13,9 +13,6 @@ public class ArticleSectionCreateController extends ArticleSectionController
 
    @Inject
    ArticleCreateView createView;
-   
-   @Inject
-   ModalArticleCreateView modalCreateView;
 
    @PostConstruct
    public void postConstruct()
@@ -26,7 +23,6 @@ public class ArticleSectionCreateController extends ArticleSectionController
    {
       this.sourceEntity = model;
       bind(createView.getView().getArticleSectionSelection(), createView.getView().getArticleSectionForm());
-      bind(modalCreateView.getArticleView().getArticleSectionSelection(), modalCreateView.getArticleView().getArticleSectionForm());
       activateButton(createView.getView().getArticleSectionSelection());
    }
 }
