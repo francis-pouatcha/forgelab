@@ -22,10 +22,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchInput;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchResult;
+import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
  * 
@@ -36,191 +39,198 @@ import org.adorsys.adpharma.server.jpa.CashDrawerSearchResult;
 public class CashDrawerEndpoint
 {
 
-   @Inject
-   private CashDrawerEJB ejb;
+	@Inject
+	private CashDrawerEJB ejb;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   @POST
-   @Consumes({ "application/json", "application/xml" })
-   @Produces({ "application/json", "application/xml" })
-   public CashDrawer create(CashDrawer entity)
-   {
-      return detach(ejb.create(entity));
-   }
+	@Inject
+	private SecurityUtil securityUtil;
 
-   @DELETE
-   @Path("/{id:[0-9][0-9]*}")
-   public Response deleteById(@PathParam("id") Long id)
-   {
-      CashDrawer deleted = ejb.deleteById(id);
-      if (deleted == null)
-         return Response.status(Status.NOT_FOUND).build();
+	@POST
+	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml" })
+	public CashDrawer create(CashDrawer entity)
+	{
+		Login login = securityUtil.getConnectedUser();
+		entity.setCashier(login);
+		entity.setAgency(login.getAgency());
+		entity.initAmount();
+		return detach(ejb.create(entity));
+	}
 
-      return Response.ok(detach(deleted)).build();
-   }
+	@DELETE
+	@Path("/{id:[0-9][0-9]*}")
+	public Response deleteById(@PathParam("id") Long id)
+	{
+		CashDrawer deleted = ejb.deleteById(id);
+		if (deleted == null)
+			return Response.status(Status.NOT_FOUND).build();
 
-   @PUT
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public CashDrawer update(CashDrawer entity)
-   {
-      return detach(ejb.update(entity));
-   }
+		return Response.ok(detach(deleted)).build();
+	}
 
-   @GET
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   public Response findById(@PathParam("id") Long id)
-   {
-      CashDrawer found = ejb.findById(id);
-      if (found == null)
-         return Response.status(Status.NOT_FOUND).build();
-      return Response.ok(detach(found)).build();
-   }
+	@PUT
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CashDrawer update(CashDrawer entity)
+	{
+		return detach(ejb.update(entity));
+	}
 
-   @GET
-   @Produces({ "application/json", "application/xml" })
-   public CashDrawerSearchResult listAll(@QueryParam("start") int start,
-         @QueryParam("max") int max)
-   {
-      List<CashDrawer> resultList = ejb.listAll(start, max);
-      CashDrawerSearchInput searchInput = new CashDrawerSearchInput();
-      searchInput.setStart(start);
-      searchInput.setMax(max);
-      return new CashDrawerSearchResult((long) resultList.size(),
-            detach(resultList), detach(searchInput));
-   }
+	@GET
+	@Path("/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	public Response findById(@PathParam("id") Long id)
+	{
+		CashDrawer found = ejb.findById(id);
+		if (found == null)
+			return Response.status(Status.NOT_FOUND).build();
+		return Response.ok(detach(found)).build();
+	}
 
-   @GET
-   @Path("/count")
-   public Long count()
-   {
-      return ejb.count();
-   }
+	@GET
+	@Produces({ "application/json", "application/xml" })
+	public CashDrawerSearchResult listAll(@QueryParam("start") int start,
+			@QueryParam("max") int max)
+	{
+		List<CashDrawer> resultList = ejb.listAll(start, max);
+		CashDrawerSearchInput searchInput = new CashDrawerSearchInput();
+		searchInput.setStart(start);
+		searchInput.setMax(max);
+		return new CashDrawerSearchResult((long) resultList.size(),
+				detach(resultList), detach(searchInput));
+	}
 
-   @POST
-   @Path("/findBy")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public CashDrawerSearchResult findBy(CashDrawerSearchInput searchInput)
-   {
-      SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
-      Long count = ejb.countBy(searchInput.getEntity(), attributes);
-      List<CashDrawer> resultList = ejb.findBy(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new CashDrawerSearchResult(count, detach(resultList),
-            detach(searchInput));
-   }
+	@GET
+	@Path("/count")
+	public Long count()
+	{
+		return ejb.count();
+	}
 
-   @POST
-   @Path("/countBy")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countBy(CashDrawerSearchInput searchInput)
-   {
-      SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countBy(searchInput.getEntity(), attributes);
-   }
+	@POST
+	@Path("/findBy")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CashDrawerSearchResult findBy(CashDrawerSearchInput searchInput)
+	{
+		SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
+		Long count = ejb.countBy(searchInput.getEntity(), attributes);
+		List<CashDrawer> resultList = ejb.findBy(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new CashDrawerSearchResult(count, detach(resultList),
+				detach(searchInput));
+	}
 
-   @POST
-   @Path("/findByLike")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public CashDrawerSearchResult findByLike(CashDrawerSearchInput searchInput)
-   {
-      SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
-      Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
-      List<CashDrawer> resultList = ejb.findByLike(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
-      return new CashDrawerSearchResult(countLike, detach(resultList),
-            detach(searchInput));
-   }
+	@POST
+	@Path("/countBy")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countBy(CashDrawerSearchInput searchInput)
+	{
+		SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countBy(searchInput.getEntity(), attributes);
+	}
 
-   @POST
-   @Path("/countByLike")
-   @Consumes({ "application/json", "application/xml" })
-   public Long countByLike(CashDrawerSearchInput searchInput)
-   {
-      SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
-      return ejb.countByLike(searchInput.getEntity(), attributes);
-   }
+	@POST
+	@Path("/findByLike")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CashDrawerSearchResult findByLike(CashDrawerSearchInput searchInput)
+	{
+		SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
+		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
+		List<CashDrawer> resultList = ejb.findByLike(searchInput.getEntity(),
+				searchInput.getStart(), searchInput.getMax(), attributes);
+		return new CashDrawerSearchResult(countLike, detach(resultList),
+				detach(searchInput));
+	}
 
-   @SuppressWarnings("unchecked")
-   private SingularAttribute<CashDrawer, ?>[] readSeachAttributes(
-         CashDrawerSearchInput searchInput)
-   {
-      List<String> fieldNames = searchInput.getFieldNames();
-      List<SingularAttribute<CashDrawer, ?>> result = new ArrayList<SingularAttribute<CashDrawer, ?>>();
-      for (String fieldName : fieldNames)
-      {
-         Field[] fields = CashDrawer_.class.getFields();
-         for (Field field : fields)
-         {
-            if (field.getName().equals(fieldName))
-            {
-               try
-               {
-                  result.add((SingularAttribute<CashDrawer, ?>) field.get(null));
-               }
-               catch (IllegalArgumentException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-               catch (IllegalAccessException e)
-               {
-                  throw new IllegalStateException(e);
-               }
-            }
-         }
-      }
-      return result.toArray(new SingularAttribute[result.size()]);
-   }
+	@POST
+	@Path("/countByLike")
+	@Consumes({ "application/json", "application/xml" })
+	public Long countByLike(CashDrawerSearchInput searchInput)
+	{
+		SingularAttribute<CashDrawer, ?>[] attributes = readSeachAttributes(searchInput);
+		return ejb.countByLike(searchInput.getEntity(), attributes);
+	}
 
-   private static final List<String> emptyList = Collections.emptyList();
+	@SuppressWarnings("unchecked")
+	private SingularAttribute<CashDrawer, ?>[] readSeachAttributes(
+			CashDrawerSearchInput searchInput)
+			{
+		List<String> fieldNames = searchInput.getFieldNames();
+		List<SingularAttribute<CashDrawer, ?>> result = new ArrayList<SingularAttribute<CashDrawer, ?>>();
+		for (String fieldName : fieldNames)
+		{
+			Field[] fields = CashDrawer_.class.getFields();
+			for (Field field : fields)
+			{
+				if (field.getName().equals(fieldName))
+				{
+					try
+					{
+						result.add((SingularAttribute<CashDrawer, ?>) field.get(null));
+					}
+					catch (IllegalArgumentException e)
+					{
+						throw new IllegalStateException(e);
+					}
+					catch (IllegalAccessException e)
+					{
+						throw new IllegalStateException(e);
+					}
+				}
+			}
+		}
+		return result.toArray(new SingularAttribute[result.size()]);
+			}
 
-   private static final List<String> cashierFields = Arrays.asList("loginName", "email", "gender");
+	private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> closedByFields = Arrays.asList("loginName", "email", "gender");
+	private static final List<String> cashierFields = Arrays.asList("loginName", "email", "gender");
 
-   private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
+	private static final List<String> closedByFields = Arrays.asList("loginName", "email", "gender");
 
-   private CashDrawer detach(CashDrawer entity)
-   {
-      if (entity == null)
-         return null;
+	private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
-      // aggregated
-      entity.setCashier(loginMerger.unbind(entity.getCashier(), cashierFields));
+	private CashDrawer detach(CashDrawer entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setClosedBy(loginMerger.unbind(entity.getClosedBy(), closedByFields));
+		// aggregated
+		entity.setCashier(loginMerger.unbind(entity.getCashier(), cashierFields));
 
-      // aggregated
-      entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
+		// aggregated
+		entity.setClosedBy(loginMerger.unbind(entity.getClosedBy(), closedByFields));
 
-      return entity;
-   }
+		// aggregated
+		entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
 
-   private List<CashDrawer> detach(List<CashDrawer> list)
-   {
-      if (list == null)
-         return list;
-      List<CashDrawer> result = new ArrayList<CashDrawer>();
-      for (CashDrawer entity : list)
-      {
-         result.add(detach(entity));
-      }
-      return result;
-   }
+		return entity;
+	}
 
-   private CashDrawerSearchInput detach(CashDrawerSearchInput searchInput)
-   {
-      searchInput.setEntity(detach(searchInput.getEntity()));
-      return searchInput;
-   }
+	private List<CashDrawer> detach(List<CashDrawer> list)
+	{
+		if (list == null)
+			return list;
+		List<CashDrawer> result = new ArrayList<CashDrawer>();
+		for (CashDrawer entity : list)
+		{
+			result.add(detach(entity));
+		}
+		return result;
+	}
+
+	private CashDrawerSearchInput detach(CashDrawerSearchInput searchInput)
+	{
+		searchInput.setEntity(detach(searchInput.getEntity()));
+		return searchInput;
+	}
 }
