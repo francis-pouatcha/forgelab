@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customer.CustomerView;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -23,12 +26,9 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.controlsfx.dialog.Dialogs;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
+@Singleton
 public class ModalInsurranceCreateView extends ApplicationModal {
 
-
-	@Inject
-	private Insurrance insurrance ;
 
 	@Inject
 	private InsurranceView view;
@@ -64,22 +64,28 @@ public class ModalInsurranceCreateView extends ApplicationModal {
 		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.TRASH_ALT);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(600d);
-		
-		cancelButton.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				closeDialog();
-				
-			}
-		});
 	}
 	
 	public void bind(Insurrance model)
 	{
-		this.insurrance = model;
-		view.bind(this.insurrance);
+		view.bind(model);
 		
+	}
+
+	public InsurranceView getView() {
+		return view;
+	}
+
+	public Button getSaveButton() {
+		return saveButton;
+	}
+
+	public Button getResetButton() {
+		return resetButton;
+	}
+
+	public Button getCancelButton() {
+		return cancelButton;
 	}
 
 	

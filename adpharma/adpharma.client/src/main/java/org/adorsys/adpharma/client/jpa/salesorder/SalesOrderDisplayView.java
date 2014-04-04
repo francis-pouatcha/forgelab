@@ -1,7 +1,9 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
@@ -29,6 +32,7 @@ import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
@@ -146,12 +150,15 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private ContextMenu datalistContextMenu;
-	
+
 	@FXML
 	private MenuItem deleteSOIMenu;
 
 	@FXML
 	private MenuItem editSOIMenu;
+
+	@Inject
+	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
 
 
@@ -184,6 +191,21 @@ public class SalesOrderDisplayView
 		buildInsurranceGrid();
 	}
 
+	public void addValidators()
+	{
+		// no active validator
+		// no active validator
+		// no active validator
+	}
+
+	public Set<ConstraintViolation<SalesOrder>> validate(SalesOrder model)
+	{
+		Set<ConstraintViolation<SalesOrder>> violations = new HashSet<ConstraintViolation<SalesOrder>>();
+		violations.addAll(toOneAggreggationFieldValidator.validate(client, model.getCustomer(), SalesOrder.class, "customer", resourceBundle));
+		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
+
+		return violations;
+	}
 	public void buildAmountPane(){
 		amountHT = ViewBuilderUtils.newBigDecimalField( "amountHT", NumberType.CURRENCY,locale,false);
 		amountHT.setEditable(false);
@@ -257,6 +279,7 @@ public class SalesOrderDisplayView
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
+		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
 
 
 		//		view.bind(model);
@@ -427,7 +450,7 @@ public class SalesOrderDisplayView
 	public BigDecimalField getAmountTTC() {
 		return amountTTC;
 	}
-	
+
 
 	public ContextMenu getDatalistContextMenu() {
 		return datalistContextMenu;

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,6 +24,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
@@ -83,13 +85,14 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private SalesOrderDisplayView displayView;
 
-	@Inject
-	private ModalInsurranceCreateView modalInsurranceCreateView;
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<Customer> modalCustomerCreateRequestEvent ;
 
+	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<Insurrance> modalInsurerCreateRequestEvent ;
 
 	@Inject
 	@ModalEntitySearchRequestedEvent
@@ -151,7 +154,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderCloseService closeService;
-	
+
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderRequestEvent;
@@ -164,7 +167,6 @@ public class SalesOrderDisplayController implements EntityController
 	{
 		//      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//		displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
-		displayView.getSaleOrderItemBar().visibleProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 		//		bind models to the view
 		displayView.bind(displayedEntity);
@@ -243,7 +245,16 @@ public class SalesOrderDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						closeService.setSalesOrder(displayedEntity).start();
+						Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
+			            if (violations.isEmpty())
+			            {
+			            	closeService.setSalesOrder(displayedEntity).start();
+			            }
+			            else
+			            {
+			               Dialogs.create().nativeTitleBar().title("Entity_create_error.title")
+			               .message("Entity_click_to_see_error").showError();
+			            }
 					}
 				});
 
@@ -260,7 +271,11 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				modalInsurranceCreateView.showDiaLog();
+				Insurrance insurrance = new Insurrance();
+				InsurranceCustomer customer = new InsurranceCustomer();
+				PropertyReader.copy(displayedEntity.getCustomer(), customer);
+				insurrance.setCustomer(customer);
+				modalInsurerCreateRequestEvent.fire(insurrance);
 
 			}
 		});
@@ -529,6 +544,9 @@ public class SalesOrderDisplayController implements EntityController
 		//      });
 
 		//      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
+		displayView.addValidators();
+		displayView.getSaleOrderItemBar().visibleProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+
 	}
 
 	public void display(Pane parent)
@@ -584,6 +602,11 @@ public class SalesOrderDisplayController implements EntityController
 	{
 		handleNewCustomer(model);
 	}
+	
+	public void handleInssuranceCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Insurrance model)
+	{
+		handleNewInsurance(model);
+	}
 
 
 	public void handleCustomerSearchDoneEvent(@Observes @ModalEntitySearchDoneEvent Customer model)
@@ -594,6 +617,7 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleNewCustomer(Customer model){
 		if(model !=null){
 			displayView.getClient().setValue(new SalesOrderCustomer(model));
+			displayedEntity.setInsurance(new SalesOrderInsurance());
 			displayView.getClientAdresse().setText(model.getEmail());
 			displayView.getClientPhone().setText(model.getMobile()+"/"+model.getLandLinePhone());
 			displayView.getClientcategorie().setText(model.getCustomerCategory().getName()+"-"+model.getCustomerCategory().getDiscountRate());
@@ -606,13 +630,28 @@ public class SalesOrderDisplayController implements EntityController
 			isi.getFieldNames().add("customer");
 			insurranceSearchService.setSearchInputs(isi).start();
 		}
+		
+		
 	}
+	
+	public void handleNewInsurance(Insurrance model){
+		displayedEntity.setInsurance(new SalesOrderInsurance(model));
+//		new SalesOrderInsurance(model);
+//		Insurrance insurrance = new Insurrance();
+//		insurrance.setCustomer(model.getCustomer());
+//		InsurranceSearchInput isi = new InsurranceSearchInput();
+//		isi.setEntity(insurrance);
+//		isi.setMax(100);
+//		isi.getFieldNames().add("customer");
+//		insurranceSearchService.setSearchInputs(isi).start();
+		
+		}
 
 
-	public void handleInsurranceCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Insurrance model)
-	{
-		displayView.getInsurrer().getItems().add(0,new SalesOrderInsurance(model));
-	}
+//	public void handleInsurranceCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Insurrance model)
+//	{
+//		displayView.getInsurrer().getItems().add(0,new SalesOrderInsurance(model));
+//	}
 
 	/**
 	 * This is the only time where the bind method is called on this object.

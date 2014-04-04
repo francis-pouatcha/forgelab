@@ -129,16 +129,16 @@ public class SalesOrderController extends DomainComponentController
 	  * Display search form.
 	  * @param selectedSalesOrder
 	  */
-	 public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent SalesOrder templateEntity)
-	 {
-		 if (!registration.canCreate())
-			 return;
-		 List<EntityController> displayedViews = getDisplayedViews();
-		 displayedViews.clear();
-		 //      displayedViews.add(listController);
-		 displayedViews.add(createController);
-		 displayComponent();
-	 }
+//	 public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent SalesOrder templateEntity)
+//	 {
+//		 if (!registration.canCreate())
+//			 return;
+//		 List<EntityController> displayedViews = getDisplayedViews();
+//		 displayedViews.clear();
+//		 //      displayedViews.add(listController);
+//		 displayedViews.add(createController);
+//		 displayComponent();
+//	 }
 
 	 public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent SalesOrder selectedEntity)
 	 {

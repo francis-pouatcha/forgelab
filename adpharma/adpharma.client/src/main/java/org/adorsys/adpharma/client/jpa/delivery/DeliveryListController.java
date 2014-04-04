@@ -150,10 +150,10 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(WorkerStateEvent event) {
 				DeliverySearchService s = (DeliverySearchService) event.getSource();
-				DeliverySearchResult result = s.getValue();
+				searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<Delivery> resultList = result.getResultList();
+				List<Delivery> resultList = searchResult.getResultList();
 				listView.getDataList().getItems().setAll(resultList);
 
 			}

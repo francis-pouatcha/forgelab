@@ -329,6 +329,7 @@ public class DeliveryDisplayController implements EntityController
 				s.reset();
 				PropertyReader.copy(entity, displayedEntity);
 				deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(entity)).start();
+				
 
 			}
 		});

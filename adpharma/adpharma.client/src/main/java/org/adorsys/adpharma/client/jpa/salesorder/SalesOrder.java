@@ -89,6 +89,7 @@ public class SalesOrder implements Cloneable
    @Description("SalesOrder_salesOrderItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<SalesOrderItem>> salesOrderItems;
+   
    @Description("SalesOrder_cashDrawer_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
    private SimpleObjectProperty<SalesOrderCashDrawer> cashDrawer;
@@ -396,7 +397,7 @@ public class SalesOrder implements Cloneable
       }
       return cashDrawer;
    }
-
+   @NotNull(message = "SalesOrder_cashDrawer_NotNull_validation")
    public SalesOrderCashDrawer getCashDrawer()
    {
       return cashDrawerProperty().get();
