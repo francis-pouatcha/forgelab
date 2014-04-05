@@ -250,7 +250,7 @@ public class PaymentEndpoint
    @Consumes({ "application/json", "application/xml" })
    public Payment customerPayment(Payment entity)
    {
-      return detach(ejb.customerPayment(entity));
+      return detach(ejb.directSalesClosed(entity));
    }
    
 }

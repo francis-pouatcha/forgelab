@@ -1,14 +1,11 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
@@ -19,7 +16,8 @@ public class SalesOrderService
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
-   private static final String SAVE_AND_CLOSE_PATH = "saveAndClose";
+   private static final String SAVE_AND_CLOSE_PATH = "saveAndClose/";
+   private static final String CANCEL_PATH = "cancel/";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
@@ -63,13 +61,13 @@ public class SalesOrderService
             .request(media).put(ent, SalesOrder.class);
    }
    
-// @PUT
-   // @Path("/{id:[0-9][0-9]*}")
+   // @PUT
+   // @Path("/saveAndClose/{id:[0-9][0-9]*}")
    // @Consumes("application/xml")
    public SalesOrder saveAndClose(SalesOrder entity)
    {
       Entity<SalesOrder> ent = Entity.entity(entity, media);
-      return target.path(SAVE_AND_CLOSE_PATH)
+      return target.path(SAVE_AND_CLOSE_PATH + entity.getId())
             .request(media).put(ent, SalesOrder.class);
    }
 
@@ -147,4 +145,15 @@ public class SalesOrderService
       return target.path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
+   
+   // @PUT
+   // @Path("/cancel/{id:[0-9][0-9]*}")
+   // @Consumes("application/xml")
+   public SalesOrder cancel(SalesOrder entity)
+   {
+      Entity<SalesOrder> ent = Entity.entity(entity, media);
+      return target.path(CANCEL_PATH + entity.getId())
+            .request(media).put(ent, SalesOrder.class);
+   }
+   
 }

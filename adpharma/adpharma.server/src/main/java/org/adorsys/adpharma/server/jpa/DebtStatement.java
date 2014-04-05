@@ -1,33 +1,49 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.adpharma.server.jpa.Customer;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.adpharma.server.jpa.Agency;
+
 import javax.validation.constraints.NotNull;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
+
 import java.math.BigDecimal;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+
 import java.util.Set;
 import java.util.HashSet;
+
 import javax.persistence.OneToMany;
+
 import org.adorsys.javaext.relation.Relationship;
 import org.adorsys.javaext.relation.RelationshipEnd;
 
@@ -106,6 +122,11 @@ public class DebtStatement implements Serializable
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
    private Set<DebtStatementCustomerInvoiceAssoc> invoices = new HashSet<DebtStatementCustomerInvoiceAssoc>();
 
+   @Column
+   @Description("DebtStatement_statementStatus_description")
+   @Enumerated
+   private DocumentProcessingState statementStatus = DocumentProcessingState.ONGOING;
+   
    public Long getId()
    {
       return this.id;

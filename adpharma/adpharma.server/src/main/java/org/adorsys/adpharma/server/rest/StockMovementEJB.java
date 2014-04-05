@@ -10,8 +10,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.events.SalesFinalizedEvent;
+import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -114,7 +114,7 @@ public class StockMovementEJB
       return entity;
    }
    
-   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+   public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
@@ -141,7 +141,12 @@ public class StockMovementEJB
 		}
 	}
 
-   public void handleSalesFinalized(@Observes @SalesFinalizedEvent SalesOrder salesOrder){
+   /**
+    * Create corresponding stock movement.
+    * 
+    * @param salesOrder
+    */
+   public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
@@ -179,4 +184,49 @@ public class StockMovementEJB
 		}
 	}
    
+   /**
+    * Sales order canceled, create corresponding stock movement.
+    * 
+    * Canceling will not delete the original stock movement, but create a new one
+    * to neutralize the effect of the old one.
+    * 
+    * @param salesOrder
+    */
+   public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			StockMovement sm = new StockMovement();
+			sm.setAgency(salesOrder.getAgency());
+			sm.setInternalPic(salesOrderItem.getInternalPic());
+			sm.setMovementType(StockMovementType.IN);// return article in the stock.
+			sm.setArticle(salesOrderItem.getArticle());
+			sm.setCreatingUser(creatingUser);
+			sm.setCreationDate(creationDate);
+			sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
+			BigDecimal releasedQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+			BigDecimal movedQty = returnedQty.subtract(releasedQty);// Return minus release. inverse of sales operation.
+			sm.setMovedQty(movedQty);
+			sm.setFinalQty(movedQty);//supposed to be qty in stock.
+			
+			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			} else if (returnedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
+			} else {
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			}
+
+			sm.setOriginatedDocNumber(salesOrder.getSoNumber());
+			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
+			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on sales order item
+			sm = create(sm);
+		}
+	}
 }

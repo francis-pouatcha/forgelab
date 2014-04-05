@@ -7,14 +7,19 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
+import org.adorsys.adpharma.server.jpa.Insurrance;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
@@ -60,6 +65,10 @@ public class CustomerInvoiceEJB {
 
 	@EJB
 	private PaymentCustomerInvoiceAssocEJB paymentCustomerInvoiceAssocEJB;
+	
+	@Inject
+	@DocumentProcessedEvent
+	private Event<CustomerInvoice> customerInvoiceProcessedEvent;
 	
 	public CustomerInvoice create(CustomerInvoice entity) {
 		return repository.save(attach(entity));
@@ -143,7 +152,7 @@ public class CustomerInvoiceEJB {
 		return entity;
 	}
 
-	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
 		CustomerInvoice ci = new CustomerInvoice();
 
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -156,16 +165,24 @@ public class CustomerInvoiceEJB {
 		ci.setAmountAfterTax(salesOrder.getAmountAfterTax());
 		ci.setAmountDiscount(salesOrder.getAmountDiscount());
 		ci.setNetToPay(salesOrder.getAmountAfterTax().subtract(salesOrder.getAmountDiscount()));
-		ci.setCashed(salesOrder.getCashed());
 		ci.setTotalRestToPay(ci.getNetToPay());
 		ci.setCustomer(salesOrder.getCustomer());
-		ci.setCustomerRestTopay(ci.getNetToPay());
 		ci.setInsurance(salesOrder.getInsurance());
-		ci.setInsurranceRestTopay(BigDecimal.ZERO);
+		
+		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
+		BigDecimal customerCoverageRate = BigDecimal.ONE;
+		Insurrance insurance = salesOrder.getInsurance();
+		if(insurance!=null){
+			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate();
+			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
+		}
+		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
+		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
+		
+
 		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
 		ci.setInvoiceType(InvoiceType.CASHDRAWER);
 		ci.setSalesOrder(salesOrder);
-		ci.setSettled(Boolean.TRUE);
 		ci.setAdvancePayment(BigDecimal.ZERO);
 		
 		ci = create(ci);
@@ -182,8 +199,22 @@ public class CustomerInvoiceEJB {
 			ciItem = customerInvoiceItemEJB.create(ciItem);
 		}
 	}
+
+	/**
+	 * If we cancel a closed sales, we must delete the corresponding invoice.
+	 * 
+	 * @param salesOrder
+	 */
+	@SuppressWarnings("unchecked")
+	public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+		CustomerInvoice ci = new CustomerInvoice();
+		ci.setSalesOrder(salesOrder);
+		List<CustomerInvoice> found = findBy(ci, 0, 1, new SingularAttribute[]{CustomerInvoice_.salesOrder});
+		ci = found.iterator().next();
+		deleteById(ci.getId());
+	}
 	
-	public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+	public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
 		BigDecimal amount = payment.getAmount();
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
 		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
@@ -191,7 +222,6 @@ public class CustomerInvoiceEJB {
 			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
 				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
 				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
-//				paymentCustomerInvoiceAssocEJB.deleteById(paymentCustomerInvoiceAssoc.getId());
 				continue;
 			}
 			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
@@ -212,7 +242,11 @@ public class CustomerInvoiceEJB {
 				customerInvoice.setSettled(Boolean.TRUE);
 				customerInvoice.setCashed(Boolean.TRUE);
 			}
-			update(customerInvoice);
+			customerInvoice = update(customerInvoice);
+			
+			// Announce customer invoice processed.
+			customerInvoiceProcessedEvent.fire(customerInvoice);
+
 		}
 	}
 }

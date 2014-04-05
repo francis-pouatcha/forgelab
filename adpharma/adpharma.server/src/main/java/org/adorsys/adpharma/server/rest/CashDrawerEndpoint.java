@@ -77,14 +77,14 @@ public class CashDrawerEndpoint
 		return detach(ejb.update(entity));
 	}
 	
-	@PUT
-	@Path("/close")
-	@Produces({ "application/json", "application/xml" })
-	@Consumes({ "application/json", "application/xml" })
-	public CashDrawer close(CashDrawer entity)
-	{
-		return detach(ejb.close(entity));
-	}
+//	@PUT
+//	@Path("/close")
+//	@Produces({ "application/json", "application/xml" })
+//	@Consumes({ "application/json", "application/xml" })
+//	public CashDrawer close(CashDrawer entity)
+//	{
+//		return detach(ejb.close(entity));
+//	}
 
 	@GET
 	@Path("/{id:[0-9][0-9]*}")

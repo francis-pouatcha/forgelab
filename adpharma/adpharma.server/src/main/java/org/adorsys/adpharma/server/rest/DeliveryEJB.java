@@ -10,7 +10,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
@@ -60,7 +60,7 @@ public class DeliveryEJB
 	private SecurityUtil securityUtil;
 
 	@Inject
-	@DocumentClosedDoneEvent
+	@DocumentClosedEvent
 	private Event<Delivery> deliveryClosedDoneEvent;
 
 	@Inject

@@ -4,9 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -25,17 +23,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Customer;
-import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
-import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
-import org.adorsys.adpharma.server.jpa.SalesOrderType;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
@@ -118,7 +111,7 @@ public class SalesOrderEndpoint
 	}
 
 	@PUT
-	@Path("/saveAndClose")
+	@Path("/saveAndClose/{id:[0-9][0-9]*}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
@@ -300,4 +293,18 @@ public class SalesOrderEndpoint
 		searchInput.setEntity(detach(searchInput.getEntity()));
 		return searchInput;
 	}
+	
+	@PUT
+	@Path("/cancel/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder cancel(SalesOrder salesOrder) {
+		if(salesOrder.getSalesOrderStatus()!=DocumentProcessingState.CLOSED)
+			return salesOrder;
+		
+		SalesOrder closedOrder = ejb.cancelSalesOrder(salesOrder);
+
+		return detach(closedOrder);
+	}
+	
 }

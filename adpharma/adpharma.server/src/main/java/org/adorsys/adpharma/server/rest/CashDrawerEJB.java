@@ -9,9 +9,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
-import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -24,6 +22,7 @@ import org.adorsys.adpharma.server.security.SecurityUtil;
 public class CashDrawerEJB
 {
 
+
 	@Inject
 	private CashDrawerRepository repository;
 
@@ -33,34 +32,9 @@ public class CashDrawerEJB
 	@Inject
 	private AgencyMerger agencyMerger;
 
-	@Inject
-	private SecurityUtil securityUtil ;
-
 	public CashDrawer create(CashDrawer entity)
 	{
-		Login login = securityUtil.getConnectedUser();
-		entity.setCashier(login);
-		entity.setAgency(login.getAgency());
-		entity.initAmount();
-
-		CashDrawer cd = new  CashDrawer();
-		cd.setCashier(login);
-		List<CashDrawer> found = findByLike(cd, 0, 1, new SingularAttribute[]{CashDrawer_.cashier});
-		for (CashDrawer cashDrawer : found) {
-			if(cashDrawer.isOpen()) 
-				return cashDrawer;
-		}
 		return repository.save(attach(entity));
-	}
-
-	public CashDrawer close(CashDrawer cashDrawer){
-		if(cashDrawer.isOpen()){
-			Login login = securityUtil.getConnectedUser();
-			cashDrawer.setClosedBy(login);
-			cashDrawer.setClosingDate(new Date());
-		}
-		return update(cashDrawer);
-
 	}
 
 	public CashDrawer deleteById(Long id)
@@ -130,7 +104,7 @@ public class CashDrawerEJB
 		return entity;
 	}
 
-	public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+	public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
 		CashDrawer cashDrawer = payment.getCashDrawer();
 		PaymentMode paymentMode = payment.getPaymentMode();
 		BigDecimal amount = payment.getAmount();
