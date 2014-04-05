@@ -8,7 +8,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -38,6 +38,14 @@ public class PaymentEJB
    @Inject
    private AgencyMerger agencyMerger;
 
+	@EJB
+	private SecurityUtil securityUtil;   
+	@EJB
+	private CashDrawerEJB cashDrawerEJB;
+	
+	@DirectSalesClosedEvent
+	private Event<Payment> directSalesClosedEvent;
+   
    public Payment create(Payment entity)
    {
       return repository.save(attach(entity));
@@ -116,16 +124,8 @@ public class PaymentEJB
       return entity;
    }
 
-	@EJB
-	private SecurityUtil securityUtil;   
-	@EJB
-	private CashDrawerEJB cashDrawerEJB;
-	
-	@CustomerPaymentProcessingEvent
-	private Event<Payment> customerPaymentProcessingEvent;
-
 	@SuppressWarnings("unchecked")
-	public Payment customerPayment(Payment entity)
+	public Payment directSalesClosed(Payment entity)
    {
 		entity = attach(entity);
 		
@@ -142,7 +142,7 @@ public class PaymentEJB
 		
 		entity = repository.save(entity);
 		
-		customerPaymentProcessingEvent.fire(entity);
+		directSalesClosedEvent.fire(entity);
 		
 		return entity;
    }

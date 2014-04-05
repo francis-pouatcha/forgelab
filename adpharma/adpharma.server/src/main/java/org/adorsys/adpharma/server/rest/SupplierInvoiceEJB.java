@@ -9,7 +9,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -134,7 +134,7 @@ public class SupplierInvoiceEJB
       return entity;
    }
 
-	public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		SupplierInvoice si = new SupplierInvoice();
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();

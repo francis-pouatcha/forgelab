@@ -8,7 +8,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
@@ -99,7 +99,7 @@ public class CashDrawerEJB
       return entity;
    }
    
-   public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
+   public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
 	   CashDrawer cashDrawer = payment.getCashDrawer();
 	   PaymentMode paymentMode = payment.getPaymentMode();
 	   BigDecimal amount = payment.getAmount();

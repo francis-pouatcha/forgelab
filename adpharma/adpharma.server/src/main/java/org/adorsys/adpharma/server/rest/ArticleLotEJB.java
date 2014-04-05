@@ -11,7 +11,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
@@ -112,7 +113,7 @@ public class ArticleLotEJB
 		return entity;
 	}
 
-	public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
@@ -154,9 +155,9 @@ public class ArticleLotEJB
 	 * Process a completed sales. Will process with the known lot if provided if not
 	 * will use the FIFO technique to manage stocks. 
 	 * 
-	 * @param closedDelivery
+	 * @param closedSales
 	 */
-	public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
@@ -180,4 +181,33 @@ public class ArticleLotEJB
 		}
 	}
 
+	/**
+	 * Process a canceled sales. Will process with the known lot if provided if not
+	 * will use the FIFO technique to manage stocks. 
+	 * 
+	 * @param canceledSales
+	 */
+	public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			String internalPic = salesOrderItem.getInternalPic();
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(internalPic);
+			@SuppressWarnings("unchecked")
+			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+			articleLot = found.iterator().next();
+
+			BigDecimal currenQtyInStock = articleLot.getStockQuantity()==null?BigDecimal.ZERO:articleLot.getStockQuantity();
+			BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+
+			BigDecimal qtyInStock = currenQtyInStock.add(releasingQty).subtract(returnedQty);
+			articleLot.setStockQuantity(qtyInStock);
+			articleLot.setTotalPurchasePrice(qtyInStock.multiply(articleLot.getPurchasePricePU()));
+			articleLot.setTotalSalePrice(qtyInStock.multiply(articleLot.getSalesPricePU()));
+
+			update(articleLot);
+		}
+	}
 }

@@ -1,9 +1,8 @@
 package org.adorsys.adpharma.server.rest;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -12,25 +11,19 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.CustomerPaymentProcessingEvent;
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
-import org.adorsys.adpharma.server.events.SalesFinalizedEvent;
-import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-import org.adorsys.adpharma.server.jpa.Delivery;
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
-
-import java.util.Set;
-
-import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class SalesOrderEJB
@@ -67,12 +60,12 @@ public class SalesOrderEJB
 	private SalesOrderItemEJB salesOrderItemEJB;
 
 	@Inject
-	@DocumentClosedDoneEvent
-	private Event<SalesOrder> salesOrderClosedDoneEvent;
-	
+	@DocumentClosedEvent
+	private Event<SalesOrder> salesOrderClosedEvent;
+
 	@Inject
-	@SalesFinalizedEvent
-	private Event<SalesOrder> salesFinalizedEvent;
+	@DocumentCanceledEvent
+	private Event<SalesOrder> salesOrderCanceledEvent;
 	
 	@Inject
 	private CustomerInvoiceEJB customerInvoiceEJB;
@@ -177,20 +170,35 @@ public class SalesOrderEJB
 		salesOrder.setSalesAgent(creatingUser);
 		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		SalesOrder closedSales = update(salesOrder);
-		salesOrderClosedDoneEvent.fire(closedSales);
+		salesOrderClosedEvent.fire(closedSales);
 		return closedSales;
 	}
 
-	public void processPayment(@Observes @CustomerPaymentProcessingEvent Payment payment){
-		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
-		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
-			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
-			if(!Boolean.TRUE.equals(customerInvoice.getCashed())){
-				customerInvoice.setCashed(Boolean.TRUE);
-				customerInvoiceEJB.update(customerInvoice);
-				SalesOrder salesOrder = customerInvoice.getSalesOrder();
-				salesFinalizedEvent.fire(salesOrder);// handle good to customer when payment voucher is delivered.
-			}
+	public SalesOrder cancelSalesOrder(SalesOrder salesOrder) {
+		if(Boolean.TRUE.equals(salesOrder.getCashed())){
+			throw new IllegalStateException("Can not cancel frozen sales order.");
+		}
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		salesOrder.setSalesOrderStatus(DocumentProcessingState.SUSPENDED);
+		salesOrderCanceledEvent.fire(salesOrder);
+		salesOrder.setCreationDate(creationDate);
+		salesOrder.setSalesAgent(creatingUser);
+		SalesOrder canceledSales = update(salesOrder);
+		return canceledSales;
+	}
+	
+	/**
+	 * Freeze the order of this customer with setCashed = true. Sales order can no
+	 * be canceled anymore.
+	 * 
+	 * @param payment
+	 */
+	public void handleCustomerInvoiceProcessed(@Observes @DocumentProcessedEvent CustomerInvoice customerInvoice){
+		SalesOrder salesOrder = customerInvoice.getSalesOrder();
+		if(!Boolean.TRUE.equals(salesOrder.getCashed())){
+			salesOrder.setCashed(Boolean.TRUE);// Freezes sales order
+			update(salesOrder);
 		}
 	}
 }

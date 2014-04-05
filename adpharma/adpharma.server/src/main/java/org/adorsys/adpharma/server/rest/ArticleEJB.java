@@ -10,7 +10,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -129,7 +130,7 @@ public class ArticleEJB
     * 	- 
     * @param closedDelivery
     */
-   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+   public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
 		// generate Article lot for each delivery item
@@ -163,11 +164,11 @@ public class ArticleEJB
    }
 
    /**
-    * Process a completed sales.
+    * Process a completed sales. Update the quantity of this article in stock.
     * 	- 
     * @param closedDelivery
     */
-   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+   public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 	   
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
@@ -188,4 +189,29 @@ public class ArticleEJB
 		}
    }
 
+   /**
+    * Reset the stock quantity in case this sales has been canceled.
+    * 
+    * @param salesOrder
+    */
+   public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+	   
+	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
+		   Article article = salesOrderItem.getArticle();
+		   BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+		   BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+		   BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+
+		   BigDecimal qtyInStock = currenQtyInStock.add(releasingQty).subtract(returnedQty);
+		   article.setQtyInStock(qtyInStock);
+		   article.setLastOutOfStock(new Date());
+						
+		   article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
+
+		   article.setRecordingDate(new Date());
+
+		   update(article);
+		}
+   }
 }
