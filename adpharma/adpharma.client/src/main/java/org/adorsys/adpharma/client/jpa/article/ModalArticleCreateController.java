@@ -68,7 +68,6 @@ public class ModalArticleCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				PropertyReader.copy(new Article(), model);
-				modalArticleCreateView.closeDialog();
 			}
 		});
 		//  handle save action

@@ -144,7 +144,12 @@ public class CashDrawer implements Serializable
 	@PrePersist
 	public void prePersist(){
 		openingDate = new Date();
+		closingDate=null;
 		cashDrawerNumber = SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+	}
+	
+	public Boolean isOpen(){
+		return closingDate == null ;
 	}
 	@Column
 	@Description("CashDrawer_opened_description")

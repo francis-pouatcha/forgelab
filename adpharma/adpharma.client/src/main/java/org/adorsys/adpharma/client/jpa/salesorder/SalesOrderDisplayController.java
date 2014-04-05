@@ -34,8 +34,6 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCloseService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemRemoveService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
@@ -44,7 +42,6 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
-import org.adorsys.adpharma.client.jpa.insurrance.ModalInsurranceCreateView;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateService;
@@ -165,7 +162,7 @@ public class SalesOrderDisplayController implements EntityController
 	@PostConstruct
 	public void postConstruct()
 	{
-		//      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
+//		      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//		displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
 
 		//		bind models to the view

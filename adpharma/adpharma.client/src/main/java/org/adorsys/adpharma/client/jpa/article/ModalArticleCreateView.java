@@ -92,9 +92,7 @@ public class ModalArticleCreateView extends ApplicationModal{
 		view.bind(this.article);
 		
 	}
-	public ArticleView getArticleView() {
-		return view;
-	}
+	
 	public Button getSaveButton() {
 		return saveButton;
 	}

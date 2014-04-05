@@ -151,7 +151,7 @@ public class CashDrawerCashier implements Association<CashDrawer, Login>, Clonea
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    @Override

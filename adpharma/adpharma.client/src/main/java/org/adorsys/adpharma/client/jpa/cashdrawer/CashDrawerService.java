@@ -19,6 +19,7 @@ public class CashDrawerService
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
+   private static final String CLOSE_PATH = "close";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
@@ -59,6 +60,16 @@ public class CashDrawerService
    {
       Entity<CashDrawer> ent = Entity.entity(entity, media);
       return target.path("" + entity.getId())
+            .request(media).put(ent, CashDrawer.class);
+   }
+   
+// @PUT
+   // @Path("/{id:[0-9][0-9]*}")
+   // @Consumes("application/xml")
+   public CashDrawer close(CashDrawer entity)
+   {
+      Entity<CashDrawer> ent = Entity.entity(entity, media);
+      return target.path(CLOSE_PATH)
             .request(media).put(ent, CashDrawer.class);
    }
 

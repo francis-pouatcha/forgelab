@@ -37,7 +37,7 @@ import de.jensd.fx.fontawesome.AwesomeIcon;
 public class CashDrawerDisplayView
 {
 
-	
+
 	@FXML
 	private BorderPane rootPane;
 
@@ -51,33 +51,39 @@ public class CashDrawerDisplayView
 
 	@FXML
 	private GridPane invoiceHeadGrid ;
-	
+
 	private TextField invoiceNumber;
-	
+
 	private BigDecimalField customerRestTopay;
-	
+
 	private BigDecimalField insurranceRestTopay;
-	
+
 	private BigDecimalField amountDiscount;
-	
+
 	private ComboBox<CustomerInvoiceCustomer> customer;
-	
+
 	private ComboBox<CustomerInvoiceInsurance> insurrance;
-	
-    private ComboBox<CustomerInvoiceCreatingUser> creatingUser;
-    
-    private Button cancelButton;
-    
-    @FXML
-    private GridPane invoiceSearchGrid;
-    
-    private TextField invoiceNumberToSearch ;
-    
-    private ComboBox<CashDrawer> openCashDrawer; 
-    
-    private Button searchButton;
+
+	private ComboBox<CustomerInvoiceCreatingUser> creatingUser;
+
+	private Button cancelButton;
+
+	@FXML
+	private GridPane invoiceSearchGrid;
+
+	private TextField invoiceNumberToSearch ;
+
+	private ComboBox<CashDrawer> openCashDrawer; 
+
+	private Button searchButton;
 	@Inject
 	private CashDrawerView view;
+
+	@FXML
+	private Button openCashDrawerButton;
+
+	@FXML
+	private Button closeCashDrawerButton;
 
 	@Inject
 	@Bundle({ CrudKeys.class, CashDrawer.class ,CustomerInvoice.class })
@@ -85,7 +91,7 @@ public class CashDrawerDisplayView
 
 	@Inject
 	private FXMLLoader fxmlLoader;
-	
+
 	@Inject
 	private Locale locale;
 
@@ -108,23 +114,23 @@ public class CashDrawerDisplayView
 		buildinvoiceHeadGrid();
 		buildinvoiceSearchGrid();
 	}
-	
+
 	public void buildinvoiceSearchGrid(){
 		invoiceNumberToSearch = ViewBuilderUtils.newTextField( "invoiceNumberToSearch", false);
 		invoiceNumberToSearch.setPrefHeight(50d);
-		
+
 		openCashDrawer = ViewBuilderUtils.newComboBox(null,"openCashDrawer", false);
 		openCashDrawer.setPrefWidth(200d);
 		openCashDrawer.setPrefHeight(50d);
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchButton.setPrefHeight(50d);
-		
+
 		invoiceSearchGrid.addRow(0,new Label("invoiceNumber"),new Label("Open CashDrawer"));
 		invoiceSearchGrid.addRow(1,invoiceNumberToSearch,openCashDrawer,searchButton);
-//		invoiceSearchGrid.setGridLinesVisible(true);
+		//		invoiceSearchGrid.setGridLinesVisible(true);
 	}
-	
+
 	public void buildinvoiceHeadGrid(){
 		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", true);
 
@@ -140,9 +146,9 @@ public class CashDrawerDisplayView
 		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
 
 		customerRestTopay = ViewBuilderUtils.newBigDecimalField( "customerRestTopay", NumberType.CURRENCY, locale,false);
-		
+
 		insurranceRestTopay = ViewBuilderUtils.newBigDecimalField( "insurranceRestTopay", NumberType.CURRENCY, locale,false);
-		
+
 
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
 
@@ -186,4 +192,14 @@ public class CashDrawerDisplayView
 	{
 		return confirmSelectionButton;
 	}
+
+	public Button getOpenCashDrawerButton(){
+		return openCashDrawerButton ;
+	}
+
+	public Button getCloseCashDrawerButton(){
+		return closeCashDrawerButton ;
+	}
+
+
 }
