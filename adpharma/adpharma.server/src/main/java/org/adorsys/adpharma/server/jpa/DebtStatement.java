@@ -288,8 +288,18 @@ public class DebtStatement implements Serializable
    {
       this.useVoucher = useVoucher;
    }
+   
+   
 
-   @Override
+   public DocumentProcessingState getStatementStatus() {
+	return statementStatus;
+   }
+
+	public void setStatementStatus(DocumentProcessingState statementStatus) {
+		this.statementStatus = statementStatus;
+	}
+
+@Override
    public String toString()
    {
       String result = getClass().getSimpleName() + " ";

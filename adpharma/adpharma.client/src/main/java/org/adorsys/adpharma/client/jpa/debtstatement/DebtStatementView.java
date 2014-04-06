@@ -6,28 +6,43 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+
 import java.util.Calendar;
 import java.math.BigDecimal;
+
 import javafx.beans.property.SimpleBooleanProperty;
+
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
+
 import java.util.Locale;
+
 import jfxtras.scene.control.CalendarTextField;
+
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
 import javafx.beans.property.ObjectProperty;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -35,9 +50,13 @@ import javax.validation.ConstraintViolation;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 
 public class DebtStatementView extends AbstractForm<DebtStatement>
 {
@@ -60,6 +79,8 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
 
    private CalendarTextField paymentDate;
 
+   private ComboBox<DocumentProcessingState> statementStatus;
+   
    @Inject
    private DebtStatementInsurranceForm debtStatementInsurranceForm;
    @Inject
@@ -77,6 +98,15 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
    @Bundle({ CrudKeys.class, DebtStatement.class })
    private ResourceBundle resourceBundle;
 
+   @Inject
+   @Bundle(DocumentProcessingState.class)
+   private ResourceBundle statementStatusBundle;
+   @Inject
+   private DocumentProcessingStateConverter statementStatusConverter;
+
+   @Inject
+   private DocumentProcessingStateListCellFatory statementStatusListCellFatory;
+   
    @Inject
    private Locale locale;
 
@@ -96,6 +126,7 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
       restAmount = viewBuilder.addBigDecimalField("DebtStatement_restAmount_description.title", "restAmount", resourceBundle, NumberType.CURRENCY, locale);
       amountFromVouchers = viewBuilder.addBigDecimalField("DebtStatement_amountFromVouchers_description.title", "amountFromVouchers", resourceBundle, NumberType.CURRENCY, locale);
       paymentDate = viewBuilder.addCalendarTextField("DebtStatement_paymentDate_description.title", "paymentDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      statementStatus = viewBuilder.addComboBox("DebtStatement_statementStatus_description.title", "statementStatus", resourceBundle, DocumentProcessingState.values());
       viewBuilder.addTitlePane("DebtStatement_insurrance_description.title", resourceBundle);
       viewBuilder.addSubForm("DebtStatement_insurrance_description.title", "insurrance", resourceBundle, debtStatementInsurranceForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("DebtStatement_insurrance_description.title", "insurrance", resourceBundle, debtStatementInsurranceSelection, ViewModel.READ_WRITE);
@@ -105,6 +136,7 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
       viewBuilder.addTitlePane("DebtStatement_invoices_description.title", resourceBundle);
       viewBuilder.addSubForm("DebtStatement_invoices_description.title", "invoices", resourceBundle, debtStatementInvoicesForm, ViewModel.READ_WRITE);
 
+      ComboBoxInitializer.initialize(statementStatus, statementStatusConverter, statementStatusListCellFatory, statementStatusBundle);
       gridRows = viewBuilder.toRows();
    }
 
@@ -131,6 +163,7 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
       restAmount.numberProperty().bindBidirectional(model.restAmountProperty());
       amountFromVouchers.numberProperty().bindBidirectional(model.amountFromVouchersProperty());
       paymentDate.calendarProperty().bindBidirectional(model.paymentDateProperty());
+      statementStatus.valueProperty().bindBidirectional(model.statementStatusProperty());
       debtStatementInsurranceForm.bind(model);
       debtStatementInsurranceSelection.bind(model);
       debtStatementAgencyForm.bind(model);
@@ -207,4 +240,9 @@ public class DebtStatementView extends AbstractForm<DebtStatement>
    {
       return debtStatementInvoicesForm;
    }
+   public ComboBox<DocumentProcessingState> getStatementStatus()
+   {
+      return statementStatus;
+   }
+   
 }
