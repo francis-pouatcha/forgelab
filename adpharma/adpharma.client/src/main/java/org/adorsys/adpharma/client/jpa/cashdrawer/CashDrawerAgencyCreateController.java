@@ -14,6 +14,7 @@ public class CashDrawerAgencyCreateController extends CashDrawerAgencyController
    @Inject
    CashDrawerCreateView createView;
 
+   
    @PostConstruct
    public void postConstruct()
    {

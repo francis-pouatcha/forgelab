@@ -439,7 +439,7 @@ public class CashDrawer implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "cashDrawerNumber");
+      return PropertyReader.buildToString(this, "cashier","cashDrawerNumber");
    }
 
    public void cleanIds()

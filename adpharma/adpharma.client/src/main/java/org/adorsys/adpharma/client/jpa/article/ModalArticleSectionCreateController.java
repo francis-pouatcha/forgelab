@@ -22,7 +22,7 @@ public class ModalArticleSectionCreateController extends ArticleSectionControlle
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(modalCreateView.getArticleView().getArticleSectionSelection(), modalCreateView.getArticleView().getArticleSectionForm());
+      bind(modalCreateView.getView().getArticleSectionSelection(), modalCreateView.getView().getArticleSectionForm());
       activateButton(modalCreateView.getView().getArticleSectionSelection());
    }
 }

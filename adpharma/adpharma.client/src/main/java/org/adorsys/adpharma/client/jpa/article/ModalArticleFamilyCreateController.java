@@ -22,7 +22,7 @@ public class ModalArticleFamilyCreateController extends ArticleFamilyController
    public void handleNewModelEvent(@Observes @CreateModelEvent Article model)
    {
       this.sourceEntity = model;
-      bind(modalCreateView.getArticleView().getArticleFamilySelection(), modalCreateView.getArticleView().getArticleFamilyForm());
+      bind(modalCreateView.getView().getArticleFamilySelection(), modalCreateView.getView().getArticleFamilyForm());
       activateButton(modalCreateView.getView().getArticleFamilySelection());
    }
 }

@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,101 +11,105 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CashDrawer_;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class CashDrawerEJB
 {
 
-   @Inject
-   private CashDrawerRepository repository;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private CashDrawerRepository repository;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   public CashDrawer create(CashDrawer entity)
-   {
-      return repository.save(attach(entity));
-   }
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   public CashDrawer deleteById(Long id)
-   {
-      CashDrawer entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public CashDrawer create(CashDrawer entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public CashDrawer update(CashDrawer entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public CashDrawer deleteById(Long id)
+	{
+		CashDrawer entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public CashDrawer findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public CashDrawer update(CashDrawer entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public List<CashDrawer> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public CashDrawer findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<CashDrawer> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public List<CashDrawer> findBy(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public Long countBy(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public List<CashDrawer> findBy(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public List<CashDrawer> findByLike(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public Long countBy(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   public Long countByLike(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public List<CashDrawer> findByLike(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   private CashDrawer attach(CashDrawer entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated
-      entity.setCashier(loginMerger.bindAggregated(entity.getCashier()));
+	private CashDrawer attach(CashDrawer entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setClosedBy(loginMerger.bindAggregated(entity.getClosedBy()));
+		// aggregated
+		entity.setCashier(loginMerger.bindAggregated(entity.getCashier()));
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+		// aggregated
+		entity.setClosedBy(loginMerger.bindAggregated(entity.getClosedBy()));
 
-      return entity;
-   }
-   
-   public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
-	   CashDrawer cashDrawer = payment.getCashDrawer();
-	   PaymentMode paymentMode = payment.getPaymentMode();
-	   BigDecimal amount = payment.getAmount();
-	   cashDrawer.setTotalCashIn(amount);
-	   switch (paymentMode) {
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+
+		return entity;
+	}
+
+	public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
+		CashDrawer cashDrawer = payment.getCashDrawer();
+		PaymentMode paymentMode = payment.getPaymentMode();
+		BigDecimal amount = payment.getAmount();
+		cashDrawer.setTotalCashIn(amount);
+		switch (paymentMode) {
 		case CASH:
 			BigDecimal totalCash = cashDrawer.getTotalCash()==null?BigDecimal.ZERO:cashDrawer.getTotalCash();
 			cashDrawer.setTotalCash(totalCash.add(amount));
@@ -123,7 +128,7 @@ public class CashDrawerEJB
 			break;
 		default:
 			throw new IllegalStateException("Unknown payment mode: "+paymentMode);
-	   }
-	   update(cashDrawer);
-   }
+		}
+		update(cashDrawer);
+	}
 }

@@ -48,18 +48,12 @@ public class CashDrawerEndpoint
 	@Inject
 	private AgencyMerger agencyMerger;
 
-	@Inject
-	private SecurityUtil securityUtil;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
 	@Produces({ "application/json", "application/xml" })
 	public CashDrawer create(CashDrawer entity)
 	{
-		Login login = securityUtil.getConnectedUser();
-		entity.setCashier(login);
-		entity.setAgency(login.getAgency());
-		entity.initAmount();
 		return detach(ejb.create(entity));
 	}
 
@@ -82,6 +76,15 @@ public class CashDrawerEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
+	
+//	@PUT
+//	@Path("/close")
+//	@Produces({ "application/json", "application/xml" })
+//	@Consumes({ "application/json", "application/xml" })
+//	public CashDrawer close(CashDrawer entity)
+//	{
+//		return detach(ejb.close(entity));
+//	}
 
 	@GET
 	@Path("/{id:[0-9][0-9]*}")
