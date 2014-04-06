@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -43,8 +44,13 @@ public class PaymentEJB
 	@EJB
 	private CashDrawerEJB cashDrawerEJB;
 	
+	@Inject
 	@DirectSalesClosedEvent
 	private Event<Payment> directSalesClosedEvent;
+	
+	@Inject
+	@DocumentProcessedEvent
+	private Event<Payment> paymentProcessedEvent;
    
    public Payment create(Payment entity)
    {
@@ -146,5 +152,27 @@ public class PaymentEJB
 		
 		return entity;
    }
+	
+	public Payment processPayment(Payment entity){
+
+		entity = attach(entity);
+		
+		// Set the cash drawer
+		Login connectedUser = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setCashier(connectedUser);
+		cashDrawer.setOpened(Boolean.TRUE);
+		List<CashDrawer> found = cashDrawerEJB.findBy(cashDrawer, 0, 1, new SingularAttribute[]{CashDrawer_.cashier, CashDrawer_.opened});
+		cashDrawer = found.iterator().next();
+		entity.setCashDrawer(cashDrawer);
+		entity.setAgency(connectedUser.getAgency());
+		entity.setCashier(connectedUser);
+		
+		entity = repository.save(entity);
+		
+		paymentProcessedEvent.fire(entity);
+		
+		return entity;
+	}
 
 }

@@ -16,6 +16,7 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
@@ -214,7 +215,7 @@ public class CustomerInvoiceEJB {
 		deleteById(ci.getId());
 	}
 	
-	public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
+	public void processDirectSales(@Observes @DirectSalesClosedEvent Payment payment){
 		BigDecimal amount = payment.getAmount();
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
 		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
@@ -236,6 +237,51 @@ public class CustomerInvoiceEJB {
 			}
 			customerRestTopay = customerRestTopay.subtract(amountForThisInvoice);
 			customerInvoice.setCustomerRestTopay(customerRestTopay);
+			totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
+			customerInvoice.setTotalRestToPay(totalRestToPay);
+			if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
+				customerInvoice.setSettled(Boolean.TRUE);
+				customerInvoice.setCashed(Boolean.TRUE);
+			}
+			customerInvoice = update(customerInvoice);
+			
+			// Announce customer invoice processed.
+			customerInvoiceProcessedEvent.fire(customerInvoice);
+
+		}
+	}
+
+	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
+		BigDecimal amount = payment.getAmount();
+		Customer paidBy = payment.getPaidBy();
+		
+		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
+		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
+			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
+				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
+				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
+				continue;
+			}
+			if(paidBy==null || (!paidBy.equals(customerInvoice.getCustomer()) && !paidBy.equals(customerInvoice.getInsurance().getInsurer()))) continue;
+			boolean customer = customerInvoice.getCustomer().equals(paidBy);
+
+			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
+			BigDecimal customerRestTopay = customer?customerInvoice.getCustomerRestTopay():customerInvoice.getInsurranceRestTopay();
+			BigDecimal amountForThisInvoice = null;
+			if(amount.compareTo(customerRestTopay)>0){
+				amountForThisInvoice = amount.subtract(customerRestTopay);
+				amount = amount.subtract(amountForThisInvoice);
+			} else {
+				amountForThisInvoice = amount;
+				amount = BigDecimal.ZERO;
+			}
+			customerRestTopay = customerRestTopay.subtract(amountForThisInvoice);
+			if(customer)
+				customerInvoice.setCustomerRestTopay(customerRestTopay);
+			else 
+				customerInvoice.setInsurranceRestTopay(customerRestTopay);
+			
 			totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
 			customerInvoice.setTotalRestToPay(totalRestToPay);
 			if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){

@@ -1,15 +1,18 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Customer;
@@ -18,6 +21,7 @@ import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc_;
 import org.adorsys.adpharma.server.jpa.DebtStatement_;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DebtStatementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -154,20 +158,13 @@ public class DebtStatementEJB
 		// find the debt statement associated with this customer
 		debtStatement = new DebtStatement();
 		debtStatement.setInsurrance(customerInvoice.getCustomer());
-		debtStatement.setSettled(Boolean.FALSE);
-		List<DebtStatement> dsFound = findBy(debtStatement, 0, -1, new SingularAttribute[]{DebtStatement_.insurrance, DebtStatement_.settled});
-		debtStatement = null;
-		for (DebtStatement d : dsFound) {// always put the invoice in the latest debt statement.
-			if(debtStatement==null){
-				debtStatement=d;
-				continue;
-			}
-			// Keep the one with the latest payment date. WE will use payment date for the initialization date.
-			if(debtStatement.getPaymentDate()!=null && d.getPaymentDate()!=null && debtStatement.getPaymentDate().before(d.getPaymentDate()))
-				debtStatement = d;
-		}
-		
-		if(debtStatement==null){
+		debtStatement.setStatementStatus(DocumentProcessingState.ONGOING);
+		// Todo we will make sure a debt statement is closed before a new one is opened.
+		// So there shouldn't be more than one customer's deb statement with the status ongoing.
+		List<DebtStatement> dsFound = findBy(debtStatement, 0, 1, new SingularAttribute[]{DebtStatement_.insurrance, DebtStatement_.statementStatus});
+		if(!dsFound.isEmpty()) {
+			debtStatement = dsFound.iterator().next();
+		} else {
 			// create a new DebtStatement
 			debtStatement = new DebtStatement();
 			debtStatement.setStatementNumber(RandomStringUtils.randomAlphanumeric(7));
@@ -180,6 +177,7 @@ public class DebtStatementEJB
 			debtStatement.setRestAmount(BigDecimal.ZERO);
 			debtStatement.setSettled(Boolean.FALSE);
 			debtStatement.setUseVoucher(Boolean.TRUE);
+			debtStatement.setStatementStatus(DocumentProcessingState.ONGOING);
 			debtStatement = create(debtStatement);
 		}
 		
@@ -193,5 +191,32 @@ public class DebtStatementEJB
 		debtStatement.setRestAmount(debtStatement.getRestAmount().add(restTopay));
 		debtStatement.setPaymentDate(new Date());
 		update(debtStatement);
+	}
+	
+	@Inject
+	@DocumentClosedEvent
+	private Event<DebtStatement> debtStatementClosedEvent;
+	
+	/**
+	 * This will close any open debt statement of the given customer.
+	 * 
+	 * Closing a debt statement means we can not add any invoice on it. But settlement 
+	 * keeps going on.
+	 * 
+	 * @param customer
+	 * @return
+	 */
+	public List<DebtStatement> closeDebtStatement(Customer customer){
+		DebtStatement debtStatement = new DebtStatement();
+		debtStatement.setInsurrance(customer);
+		debtStatement.setStatementStatus(DocumentProcessingState.ONGOING);
+		List<DebtStatement> dsFound = findBy(debtStatement, 0, 1, new SingularAttribute[]{DebtStatement_.insurrance, DebtStatement_.statementStatus});
+		List<DebtStatement> result = new ArrayList<DebtStatement>(dsFound.size());
+		for (DebtStatement ds : dsFound) {
+			ds.setStatementStatus(DocumentProcessingState.CLOSED);
+			result.add(debtStatement);
+			debtStatementClosedEvent.fire(debtStatement);
+		}
+		return result;
 	}
 }

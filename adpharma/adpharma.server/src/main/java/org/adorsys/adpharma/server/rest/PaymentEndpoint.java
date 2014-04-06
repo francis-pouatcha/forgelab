@@ -245,12 +245,20 @@ public class PaymentEndpoint
    }
 
    @PUT
-   @Path("/customerPayment/{id:[0-9][0-9]*}")
+   @Path("/directSales/{id:[0-9][0-9]*}")
    @Produces({ "application/json", "application/xml" })
    @Consumes({ "application/json", "application/xml" })
-   public Payment customerPayment(Payment entity)
+   public Payment directSales(Payment entity)
    {
       return detach(ejb.directSalesClosed(entity));
    }
    
+   @PUT
+   @Path("/processPayment/{id:[0-9][0-9]*}")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public Payment processPayment(Payment entity)
+   {
+      return detach(ejb.processPayment(entity));
+   }
 }

@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,13 +9,11 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
-import org.adorsys.adpharma.server.jpa.CashDrawer_;
-import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
-import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class CashDrawerEJB
@@ -104,7 +101,14 @@ public class CashDrawerEJB
 		return entity;
 	}
 
-	public void processPayment(@Observes @DirectSalesClosedEvent Payment payment){
+	public void processDirectSales(@Observes @DirectSalesClosedEvent Payment payment){
+		processPaymentIntern(payment);
+	}
+	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
+		processPaymentIntern(payment);
+	}
+
+	private void processPaymentIntern(Payment payment){
 		CashDrawer cashDrawer = payment.getCashDrawer();
 		PaymentMode paymentMode = payment.getPaymentMode();
 		BigDecimal amount = payment.getAmount();

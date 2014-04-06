@@ -135,13 +135,24 @@ public class PaymentService
    }
    
 //   @PUT
-//   @Path("/customerPayment/{id:[0-9][0-9]*}")
+//   @Path("/directSales/{id:[0-9][0-9]*}")
 //   @Produces({ "application/json", "application/xml" })
 //   @Consumes({ "application/json", "application/xml" })
-   public Payment customerPayment(Payment entity)
+   public Payment directSales(Payment entity)
    {
       Entity<Payment> ent = Entity.entity(entity, media);
-      return target.path("customerPayment/" + entity.getId())
+      return target.path("directSales/" + entity.getId())
             .request(media).put(ent, Payment.class);
    }   
+   
+//   @PUT
+//   @Path("/processPayment/{id:[0-9][0-9]*}")
+//   @Produces({ "application/json", "application/xml" })
+//   @Consumes({ "application/json", "application/xml" })
+   public Payment processPayment(Payment entity)
+   {
+      Entity<Payment> ent = Entity.entity(entity, media);
+      return target.path("processPayment/" + entity.getId())
+            .request(media).put(ent, Payment.class);
+   }
 }
