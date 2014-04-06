@@ -216,39 +216,52 @@ public class CustomerInvoiceEJB {
 	}
 	
 	public void processDirectSales(@Observes @DirectSalesClosedEvent Payment payment){
+		// The amount that went in or out of the cash drawer.
 		BigDecimal amount = payment.getAmount();
+		
+		// Customer or insurance.
+		Customer paidBy = payment.getPaidBy();
+		
+		// A direct sale must not have more than one invoice.
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
-		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
-			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
-			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
-				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
-				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
-				continue;
-			}
-			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
-			BigDecimal customerRestTopay = customerInvoice.getCustomerRestTopay();
-			BigDecimal amountForThisInvoice = null;
-			if(amount.compareTo(customerRestTopay)>0){
-				amountForThisInvoice = amount.subtract(customerRestTopay);
-				amount = amount.subtract(amountForThisInvoice);
-			} else {
-				amountForThisInvoice = amount;
-				amount = BigDecimal.ZERO;
-			}
-			customerRestTopay = customerRestTopay.subtract(amountForThisInvoice);
-			customerInvoice.setCustomerRestTopay(customerRestTopay);
-			totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
-			customerInvoice.setTotalRestToPay(totalRestToPay);
-			if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
-				customerInvoice.setSettled(Boolean.TRUE);
-				customerInvoice.setCashed(Boolean.TRUE);
-			}
-			customerInvoice = update(customerInvoice);
-			
-			// Announce customer invoice processed.
-			customerInvoiceProcessedEvent.fire(customerInvoice);
-
+		if(invoices.size()>1) throw new IllegalStateException("Direct sale can not contain more than one invoice.");
+		if(invoices.size()<1) throw new IllegalStateException("Direct sale can not contain less than one invoice.");
+		PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = invoices.iterator().next();
+		
+		CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
+		boolean insurancePaying =  customerInvoice.getInsurance()!=null && paidBy.equals(customerInvoice.getInsurance().getInsurer());
+		if(customerInvoice.getCustomer().equals(customerInvoice.getInsurance().getInsurer())){
+			throw new IllegalStateException("Inconsistent invoice, customer and insurer can not be identical.");
 		}
+		// BTW both might be true.
+
+		BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
+		BigDecimal restToPay = null;
+		if(insurancePaying){
+			restToPay = customerInvoice.getInsurranceRestTopay();
+		} else {
+			restToPay = customerInvoice.getCustomerRestTopay();
+		}
+		if(restToPay.compareTo(BigDecimal.ZERO)<=0) throw new IllegalStateException("Invoice balance is zero or less. Can not pay a balanced invoice.");
+		// The rest to pay if positive is equals or more than the amount.
+		if(amount.compareTo(BigDecimal.ZERO)<0) throw new IllegalStateException("Payment amount is negative. Can not pay with a negative amount.");
+		if(restToPay.compareTo(amount)<0) throw new IllegalStateException("Invoice amount less than payment amount. Balance will be negative.");
+		restToPay = restToPay.subtract(amount);
+		totalRestToPay = totalRestToPay.subtract(amount);
+		customerInvoice.setTotalRestToPay(totalRestToPay);
+		if(insurancePaying){
+			customerInvoice.setInsurranceRestTopay(restToPay);
+		} else {
+			customerInvoice.setCustomerRestTopay(restToPay);
+		}
+		if(totalRestToPay.compareTo(BigDecimal.ZERO)==0){
+			customerInvoice.setSettled(Boolean.TRUE);
+			customerInvoice.setCashed(Boolean.TRUE);
+		}
+		customerInvoice = update(customerInvoice);
+			
+		// Announce customer invoice processed.
+		customerInvoiceProcessedEvent.fire(customerInvoice);
 	}
 
 	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
