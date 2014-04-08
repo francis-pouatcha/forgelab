@@ -132,7 +132,7 @@ public class Payment implements Cloneable
    {
       if (paymentReceiptPrinted == null)
       {
-         paymentReceiptPrinted = new SimpleBooleanProperty();
+         paymentReceiptPrinted = new SimpleBooleanProperty(Boolean.FALSE);
       }
       return paymentReceiptPrinted;
    }
@@ -153,7 +153,7 @@ public class Payment implements Cloneable
    {
       if (paymentMode == null)
       {
-         paymentMode = new SimpleObjectProperty<PaymentMode>();
+         paymentMode = new SimpleObjectProperty<PaymentMode>(PaymentMode.CASH);
       }
       return paymentMode;
    }
@@ -172,7 +172,7 @@ public class Payment implements Cloneable
    {
       if (amount == null)
       {
-         amount = new SimpleObjectProperty<BigDecimal>();
+         amount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return amount;
    }
@@ -191,7 +191,7 @@ public class Payment implements Cloneable
    {
       if (receivedAmount == null)
       {
-         receivedAmount = new SimpleObjectProperty<BigDecimal>();
+         receivedAmount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return receivedAmount;
    }
@@ -210,7 +210,7 @@ public class Payment implements Cloneable
    {
       if (difference == null)
       {
-         difference = new SimpleObjectProperty<BigDecimal>();
+         difference = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return difference;
    }

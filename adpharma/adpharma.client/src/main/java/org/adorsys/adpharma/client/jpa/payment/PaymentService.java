@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.payment;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -8,6 +10,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class PaymentService
@@ -58,6 +61,8 @@ public class PaymentService
       return target.path("" + entity.getId())
             .request(media).put(ent, Payment.class);
    }
+   
+  
 
    // @GET
    // @Path("/{id:[0-9][0-9]*}")
@@ -135,24 +140,13 @@ public class PaymentService
    }
    
 //   @PUT
-//   @Path("/directSales/{id:[0-9][0-9]*}")
+// @Path("/customerPayment/{id:[0-9][0-9]*}")
 //   @Produces({ "application/json", "application/xml" })
 //   @Consumes({ "application/json", "application/xml" })
-   public Payment directSales(Payment entity)
+   public Payment customerPayment(Long id , List<CustomerInvoice> customerInvoices)
    {
-      Entity<Payment> ent = Entity.entity(entity, media);
-      return target.path("directSales/" + entity.getId())
+      Entity<List<CustomerInvoice>> ent = Entity.entity(customerInvoices, media);
+      return target.path("customerPayment/"+id)
             .request(media).put(ent, Payment.class);
    }   
-   
-//   @PUT
-//   @Path("/processPayment/{id:[0-9][0-9]*}")
-//   @Produces({ "application/json", "application/xml" })
-//   @Consumes({ "application/json", "application/xml" })
-   public Payment processPayment(Payment entity)
-   {
-      Entity<Payment> ent = Entity.entity(entity, media);
-      return target.path("processPayment/" + entity.getId())
-            .request(media).put(ent, Payment.class);
-   }
 }

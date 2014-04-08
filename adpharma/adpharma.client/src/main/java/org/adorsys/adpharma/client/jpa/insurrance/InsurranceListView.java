@@ -57,10 +57,10 @@ public class InsurranceListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
+      viewBuilder.addStringColumn(dataList, "customer", "Insurrance_customer_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "insurer", "Insurrance_insurer_description.title", resourceBundle);
       viewBuilder.addDateColumn(dataList, "beginDate", "Insurrance_beginDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
       viewBuilder.addDateColumn(dataList, "endDate", "Insurrance_endDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "coverageRate", "Insurrance_coverageRate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();

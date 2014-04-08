@@ -202,7 +202,7 @@ public class SalesOrderDisplayView
 	{
 		Set<ConstraintViolation<SalesOrder>> violations = new HashSet<ConstraintViolation<SalesOrder>>();
 		violations.addAll(toOneAggreggationFieldValidator.validate(client, model.getCustomer(), SalesOrder.class, "customer", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
+//		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
 
 		return violations;
 	}

@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 
-@Singleton
 public class CashDrawerCreateService extends Service<CashDrawer>
 {
 

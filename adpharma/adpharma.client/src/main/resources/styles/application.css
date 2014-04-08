@@ -26,6 +26,9 @@ Description: MistSilver Skin for JavaFX
 .cash-btn{
 	-fx-graphic: url("cash2.jpg");
 }
+.cash-gackgroun{
+	-fx-background-image: url("backgroun.jpg");
+}
 
 /*******************************************************************************
 * *

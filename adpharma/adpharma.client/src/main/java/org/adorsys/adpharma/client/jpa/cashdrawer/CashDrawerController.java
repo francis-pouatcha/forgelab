@@ -104,7 +104,7 @@ public class CashDrawerController extends DomainComponentController
 		 // else display list of cashDrawers.
 		 List<EntityController> displayedViews = getDisplayedViews();
 		 displayedViews.clear();
-		 //      displayedViews.add(listController);
+//		       displayedViews.add(listController);
 		 displayedViews.add(displayController);
 
 		 displayComponent();
@@ -120,7 +120,7 @@ public class CashDrawerController extends DomainComponentController
 			 return;
 		 List<EntityController> displayedViews = getDisplayedViews();
 		 displayedViews.clear();
-		 //      displayedViews.add(searchController);
+		       displayedViews.add(searchController);
 		 displayedViews.add(listController);
 		 displayComponent();
 	 }
@@ -140,36 +140,36 @@ public class CashDrawerController extends DomainComponentController
 		 displayComponent();
 	 }
 
-	 //   public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent CashDrawer selectedEntity)
-	 //   {
-	 //      if (!registration.canEdit())
-	 //         return;
-	 //      List<EntityController> displayedViews = getDisplayedViews();
-	 //      displayedViews.clear();
-	 //      displayedViews.add(listController);
-	 //      displayedViews.add(editController);
-	 //      displayComponent();
-	 //   }
+	    public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent CashDrawer selectedEntity)
+	    {
+	       if (!registration.canEdit())
+	          return;
+	       List<EntityController> displayedViews = getDisplayedViews();
+	       displayedViews.clear();
+	       displayedViews.add(listController);
+	       displayedViews.add(editController);
+	       displayComponent();
+	    }
 
-	 //   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent CashDrawer selectedEntity)
-	 //   {
-	 //      List<EntityController> displayedViews = getDisplayedViews();
-	 //      displayedViews.clear();
-	 //      displayedViews.add(listController);
-	 //      displayedViews.add(displayController);
-	 //
-	 //      displayComponent();
-	 //   }
+	    public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent CashDrawer selectedEntity)
+	    {
+	       List<EntityController> displayedViews = getDisplayedViews();
+	       displayedViews.clear();
+	       displayedViews.add(listController);
+	       displayedViews.add(displayController);
+	 
+	       displayComponent();
+	    }
 
-	 //   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent CashDrawer selectedEntity)
-	 //   {
-	 //      List<EntityController> displayedViews = getDisplayedViews();
-	 //      displayedViews.clear();
-	 //      displayedViews.add(listController);
-	 //      displayedViews.add(displayController);
-	 //
-	 //      displayComponent();
-	 //   }
+	    public void handleEditDoneEvent(@Observes @EntityEditDoneEvent CashDrawer selectedEntity)
+	    {
+	       List<EntityController> displayedViews = getDisplayedViews();
+	       displayedViews.clear();
+	       displayedViews.add(listController);
+	       displayedViews.add(displayController);
+	 
+	       displayComponent();
+	    }
 
 	 @Override
 	 protected void selectDisplay()
@@ -180,7 +180,7 @@ public class CashDrawerController extends DomainComponentController
 		 }
 		 else if (createController != null)
 		 {
-			 intialScreenController.startWithCreate();
+			 intialScreenController.startWithCreate(); 
 		 }
 		 else if (searchController!=null) {
 			 intialScreenController.startWithSeach();
