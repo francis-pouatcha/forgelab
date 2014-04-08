@@ -115,12 +115,14 @@ public class SalesOrderEJB
 
    public List<SalesOrder> findByLike(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   SalesOrder salesOrder = attach(entity);
+      return repository.findByLike(salesOrder, start, max, attributes);
    }
 
    public Long countByLike(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   SalesOrder salesOrder = attach(entity);
+      return repository.countLike(salesOrder, attributes);
    }
 
    private SalesOrder attach(SalesOrder entity)

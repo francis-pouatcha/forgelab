@@ -54,21 +54,22 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private CustomerSearchService customerSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler customerSearchServiceCallFailedEventHandler;
 
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderRequestEvent;
 
 	@Inject
-	SalesOrderSearchService salesOrederSearchService;
+	private SalesOrderSearchService salesOrederSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler salesOrederSearchServiceCallFailedEventHandler;
 
 
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<SalesOrderSearchResult> entityListPageIndexChangedEvent;
-
-	@Inject
-	private ServiceCallFailedEventHandler callFailedEventHandler;
 
 	private SalesOrderSearchResult searchResult;
 
@@ -85,7 +86,7 @@ public class SalesOrderListController implements EntityController
 		listView.bind(searchInput);
 		searchInput.setMax(100);
 
-		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		customerSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
 			protected void showError(Throwable exception) {
@@ -93,6 +94,15 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+		salesOrederSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+
 		listView.getCustomer().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -144,7 +154,8 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		customerSearchService.setOnFailed(callFailedEventHandler);
+		customerSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
+		
 		salesOrederSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -159,7 +170,7 @@ public class SalesOrderListController implements EntityController
 			}
 		});
 
-		salesOrederSearchService.setOnFailed(callFailedEventHandler);
+		salesOrederSearchService.setOnFailed(salesOrederSearchServiceCallFailedEventHandler);
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{

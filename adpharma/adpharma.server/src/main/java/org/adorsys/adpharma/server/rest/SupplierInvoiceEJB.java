@@ -167,7 +167,7 @@ public class SupplierInvoiceEJB
 		if(closedDelivery.getVat()!=null && closedDelivery.getVat().getRate()!=null){
 			si.setTaxAmount(closedDelivery.getVat().getRate().multiply(amountBeforeTax));
 		}
-		si.setAmountAfterTax(amountBeforeTax.add(si.getTaxAmount()));
+		si.setAmountAfterTax(amountBeforeTax.add(si.getTaxAmount()==null?BigDecimal.ZERO:si.getTaxAmount()));
 		si = update(si);
 	}
 }

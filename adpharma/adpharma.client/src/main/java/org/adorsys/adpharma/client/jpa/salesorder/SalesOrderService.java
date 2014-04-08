@@ -12,7 +12,7 @@ import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class SalesOrderService
 {
-   private WebTarget target;
+//   private WebTarget target;
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
@@ -22,25 +22,26 @@ public class SalesOrderService
    @Inject
    private ClientCookieFilter clientCookieFilter;
 
+   Client client = ClientBuilder.newClient();
+   String serverAddress = System.getProperty("server.address");
    public SalesOrderService()
    {
-      Client client = ClientBuilder.newClient();
-      String serverAddress = System.getProperty("server.address");
       if (serverAddress == null)
          throw new IllegalStateException("Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-      this.target = client.target(serverAddress + "/rest/salesorders");
    }
 
    @PostConstruct
    protected void postConstruct()
    {
-      this.target.register(clientCookieFilter);
    }
 
+   private WebTarget target(){
+	   return client.target(serverAddress + "/rest/salesorders").register(clientCookieFilter);
+   }
    public SalesOrder create(SalesOrder entity)
    {
       Entity<SalesOrder> eCopy = Entity.entity(entity, media);
-      return target.request(media).post(eCopy, SalesOrder.class);
+      return target().request(media).post(eCopy, SalesOrder.class);
    }
 
    // @DELETE
@@ -48,7 +49,7 @@ public class SalesOrderService
    public SalesOrder deleteById(Long id)
    {//@PathParam("id")
       // TODO encode id
-      return target.path("" + id).request(media).delete(SalesOrder.class);
+      return target().path("" + id).request(media).delete(SalesOrder.class);
    }
 
    // @PUT
@@ -57,7 +58,7 @@ public class SalesOrderService
    public SalesOrder update(SalesOrder entity)
    {
       Entity<SalesOrder> ent = Entity.entity(entity, media);
-      return target.path("" + entity.getId())
+      return target().path("" + entity.getId())
             .request(media).put(ent, SalesOrder.class);
    }
    
@@ -67,7 +68,7 @@ public class SalesOrderService
    public SalesOrder saveAndClose(SalesOrder entity)
    {
       Entity<SalesOrder> ent = Entity.entity(entity, media);
-      return target.path(SAVE_AND_CLOSE_PATH + entity.getId())
+      return target().path(SAVE_AND_CLOSE_PATH + entity.getId())
             .request(media).put(ent, SalesOrder.class);
    }
 
@@ -76,21 +77,21 @@ public class SalesOrderService
    // @Produces("application/xml")
    public SalesOrder findById(Long id)
    {// @PathParam("id") 
-      return target.path("" + id).request(media).get(SalesOrder.class);
+      return target().path("" + id).request(media).get(SalesOrder.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public SalesOrderSearchResult listAll()
    {
-      return target.request(media).get(SalesOrderSearchResult.class);
+      return target().request(media).get(SalesOrderSearchResult.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public SalesOrderSearchResult listAll(int start, int max)
    {
-      return target.queryParam("start", start).queryParam("max", max)
+      return target().queryParam("start", start).queryParam("max", max)
             .request(media).get(SalesOrderSearchResult.class);
    }
 
@@ -98,7 +99,7 @@ public class SalesOrderService
    //	@Path("/count")
    public Long count()
    {
-      return target.path("count").request().get(Long.class);
+      return target().path("count").request().get(Long.class);
    }
 
    // @POST
@@ -108,7 +109,7 @@ public class SalesOrderService
    {
       Entity<SalesOrderSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY).request(media).post(
+      return target().path(FIND_BY).request(media).post(
             searchInputEntity, SalesOrderSearchResult.class);
    }
 
@@ -119,7 +120,7 @@ public class SalesOrderService
    {
       Entity<SalesOrderSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countBy").request()
+      return target().path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
 
@@ -131,7 +132,7 @@ public class SalesOrderService
    {
       Entity<SalesOrderSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY_LIKE_PATH).request(media).post(
+      return target().path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, SalesOrderSearchResult.class);
    }
 
@@ -142,7 +143,7 @@ public class SalesOrderService
    {
       Entity<SalesOrderSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countByLike").request()
+      return target().path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
    
@@ -152,7 +153,7 @@ public class SalesOrderService
    public SalesOrder cancel(SalesOrder entity)
    {
       Entity<SalesOrder> ent = Entity.entity(entity, media);
-      return target.path(CANCEL_PATH + entity.getId())
+      return target().path(CANCEL_PATH + entity.getId())
             .request(media).put(ent, SalesOrder.class);
    }
    
