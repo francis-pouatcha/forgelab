@@ -125,6 +125,7 @@ public class InitUserAccountService
 			createPermission("org.adorsys.adpharma.server.jpa.CustomerInvoiceItem");
 			createPermission("org.adorsys.adpharma.server.jpa.PermissionName");
 			createPermission("org.adorsys.adpharma.server.jpa.Employer");
+		    createPermission("org.adorsys.adpharma.server.jpa.PaymentItem");
 			createPermission("org.adorsys.adpharma.server.jpa.PackagingMode");
 			createPermission("org.adorsys.adpharma.server.jpa.ProcurementOrder");
 			createPermission("org.adorsys.adpharma.server.jpa.PrescriptionBook");

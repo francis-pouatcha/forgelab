@@ -34,6 +34,8 @@ import org.adorsys.javaext.relation.RelationshipEnd;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import javax.persistence.Enumerated;
 import org.adorsys.adpharma.server.jpa.Customer;
+import org.adorsys.adpharma.server.jpa.PaymentItem;
+import javax.persistence.CascadeType;
 
 @Entity
 @Description("Payment_description")
@@ -118,6 +120,11 @@ public class Payment implements Serializable
    @Description("Payment_paidBy_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private Customer paidBy;
+
+   @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
+   @Description("Payment_paymentItems_description")
+   @Association(associationType = AssociationType.COMPOSITION, targetEntity = PaymentItem.class, selectionMode = SelectionMode.TABLE)
+   private Set<PaymentItem> paymentItems = new HashSet<PaymentItem>();
 
    public Long getId()
    {
@@ -310,5 +317,15 @@ public class Payment implements Serializable
    public void setPaidBy(final Customer paidBy)
    {
       this.paidBy = paidBy;
+   }
+
+   public Set<PaymentItem> getPaymentItems()
+   {
+      return this.paymentItems;
+   }
+
+   public void setPaymentItems(final Set<PaymentItem> paymentItems)
+   {
+      this.paymentItems = paymentItems;
    }
 }

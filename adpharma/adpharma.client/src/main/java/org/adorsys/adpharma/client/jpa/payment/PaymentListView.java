@@ -34,6 +34,7 @@ import java.util.List;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 

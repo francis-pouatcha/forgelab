@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.payment;
+package org.adorsys.adpharma.client.jpa.paymentitem;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,41 +29,41 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 
 @Singleton
-public class PaymentDisplayController implements EntityController
+public class PaymentItemDisplayController implements EntityController
 {
 
    @Inject
-   private PaymentDisplayView displayView;
+   private PaymentItemDisplayView displayView;
 
    @Inject
    @EntitySearchRequestedEvent
-   private Event<Payment> searchRequestedEvent;
+   private Event<PaymentItem> searchRequestedEvent;
 
    @Inject
    @EntityEditRequestedEvent
-   private Event<Payment> editRequestEvent;
+   private Event<PaymentItem> editRequestEvent;
 
    @Inject
    @EntityRemoveRequestEvent
-   private Event<Payment> removeRequest;
+   private Event<PaymentItem> removeRequest;
 
    @Inject
    @AssocSelectionResponseEvent
-   private Event<AssocSelectionEventData<Payment>> selectionResponseEvent;
+   private Event<AssocSelectionEventData<PaymentItem>> selectionResponseEvent;
 
-   private ObjectProperty<AssocSelectionEventData<Payment>> pendingSelectionRequestProperty = new SimpleObjectProperty<AssocSelectionEventData<Payment>>();
+   private ObjectProperty<AssocSelectionEventData<PaymentItem>> pendingSelectionRequestProperty = new SimpleObjectProperty<AssocSelectionEventData<PaymentItem>>();
 
    @Inject
    @ComponentSelectionRequestEvent
    private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
 
-   private Payment displayedEntity;
+   private PaymentItem displayedEntity;
 
    @Inject
-   private PaymentRegistration registration;
+   private PaymentItemRegistration registration;
 
    @PostConstruct
    public void postConstruct()
@@ -106,7 +106,7 @@ public class PaymentDisplayController implements EntityController
          @Override
          public void handle(ActionEvent e)
          {
-            final AssocSelectionEventData<Payment> pendingSelectionRequest = pendingSelectionRequestProperty.get();
+            final AssocSelectionEventData<PaymentItem> pendingSelectionRequest = pendingSelectionRequestProperty.get();
             if (pendingSelectionRequest == null)
                return;
             pendingSelectionRequestProperty.set(null);
@@ -137,25 +137,25 @@ public class PaymentDisplayController implements EntityController
    /**
     * Listens to list selection events and bind selected to pane
     */
-   public void handleSelectionEvent(@Observes @EntitySelectionEvent Payment selectedEntity)
+   public void handleSelectionEvent(@Observes @EntitySelectionEvent PaymentItem selectedEntity)
    {
       PropertyReader.copy(selectedEntity, displayedEntity);
       displayView.getRemoveButton().setDisable(false);
       displayView.getEditButton().setDisable(false);
    }
 
-   public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<Payment> eventData)
+   public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<PaymentItem> eventData)
    {
       pendingSelectionRequestProperty.set(eventData);
-      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(Payment.class.getName()));
-      searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new Payment());
+      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(PaymentItem.class.getName()));
+      searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new PaymentItem());
    }
 
    /**
     * This is the only time where the bind method is called on this object.
     * @param model
     */
-   public void handleNewModelEvent(@Observes @SelectedModelEvent Payment model)
+   public void handleNewModelEvent(@Observes @SelectedModelEvent PaymentItem model)
    {
       this.displayedEntity = model;
       displayView.bind(this.displayedEntity);

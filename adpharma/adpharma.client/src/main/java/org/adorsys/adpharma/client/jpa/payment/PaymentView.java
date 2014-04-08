@@ -20,6 +20,8 @@ import java.util.List;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
+
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 
 import javafx.scene.control.TextField;
@@ -64,6 +66,11 @@ public class PaymentView extends AbstractForm<Payment>
    private CalendarTextField paymentDate;
 
    private CalendarTextField recordDate;
+
+   @Inject
+   private PaymentPaymentItemsForm paymentPaymentItemsForm;
+   @Inject
+   private PaymentPaymentItemsSelection paymentPaymentItemsSelection;
 
    @Inject
    private PaymentAgencyForm paymentAgencyForm;
@@ -122,6 +129,9 @@ public class PaymentView extends AbstractForm<Payment>
       difference = viewBuilder.addBigDecimalField("Payment_difference_description.title", "difference", resourceBundle, NumberType.CURRENCY, locale);
       paymentDate = viewBuilder.addCalendarTextField("Payment_paymentDate_description.title", "paymentDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       recordDate = viewBuilder.addCalendarTextField("Payment_recordDate_description.title", "recordDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      viewBuilder.addTitlePane("Payment_paymentItems_description.title", resourceBundle);
+      viewBuilder.addSubForm("Payment_paymentItems_description.title", "paymentItems", resourceBundle, paymentPaymentItemsForm, ViewModel.READ_WRITE);
+      viewBuilder.addSubForm("Payment_paymentItems_description.title", "paymentItems", resourceBundle, paymentPaymentItemsSelection, ViewModel.READ_WRITE);
       viewBuilder.addTitlePane("Payment_agency_description.title", resourceBundle);
       viewBuilder.addSubForm("Payment_agency_description.title", "agency", resourceBundle, paymentAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Payment_agency_description.title", "agency", resourceBundle, paymentAgencySelection, ViewModel.READ_WRITE);
@@ -167,6 +177,8 @@ public class PaymentView extends AbstractForm<Payment>
       difference.numberProperty().bindBidirectional(model.differenceProperty());
       paymentDate.calendarProperty().bindBidirectional(model.paymentDateProperty());
       recordDate.calendarProperty().bindBidirectional(model.recordDateProperty());
+      paymentPaymentItemsForm.bind(model);
+      paymentPaymentItemsSelection.bind(model);
       paymentAgencyForm.bind(model);
       paymentAgencySelection.bind(model);
       paymentCashierForm.bind(model);
@@ -217,6 +229,16 @@ public class PaymentView extends AbstractForm<Payment>
    public CalendarTextField getRecordDate()
    {
       return recordDate;
+   }
+
+   public PaymentPaymentItemsForm getPaymentPaymentItemsForm()
+   {
+      return paymentPaymentItemsForm;
+   }
+
+   public PaymentPaymentItemsSelection getPaymentPaymentItemsSelection()
+   {
+      return paymentPaymentItemsSelection;
    }
 
    public PaymentAgencyForm getPaymentAgencyForm()
