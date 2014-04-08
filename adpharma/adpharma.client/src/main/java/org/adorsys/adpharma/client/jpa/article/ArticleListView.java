@@ -69,10 +69,14 @@ public class ArticleListView
       viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "manufacturer", "Article_manufacturer_description.title", resourceBundle);
       // Field not displayed in table
-      viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.INTEGER, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "pppu", "Article_pppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
+     
+      viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       // Field not displayed in table
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "agency", "Article_agency_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

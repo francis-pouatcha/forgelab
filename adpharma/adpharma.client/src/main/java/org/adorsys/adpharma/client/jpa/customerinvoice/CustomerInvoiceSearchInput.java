@@ -23,7 +23,7 @@ public class CustomerInvoiceSearchInput
    /**
     * The entity holding search inputs.
     */
-   private CustomerInvoice entity;
+   private CustomerInvoice entity = new CustomerInvoice();
 
    /**
     * The start cursor

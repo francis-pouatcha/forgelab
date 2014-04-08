@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +27,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
@@ -155,6 +158,9 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderRequestEvent;
+	
+	@Inject 
+	private SecurityUtil securityUtil;
 
 	@Inject
 	private SalesOrderRegistration registration;
@@ -322,7 +328,13 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(MouseEvent event) {
-				cashDrawerSearchService.setSearchInputs(new CashDrawerSearchInput()).start();
+				CashDrawerSearchInput cdsi = new CashDrawerSearchInput();
+				cdsi.getEntity().setOpened(Boolean.TRUE);
+				CashDrawerAgency cashDrawerAgency = new CashDrawerAgency();
+				PropertyReader.copy(securityUtil.getAgency(), cashDrawerAgency);
+				cdsi.getEntity().setAgency(cashDrawerAgency);
+				cdsi.getFieldNames().addAll(Arrays.asList("opened","agency"));
+				cashDrawerSearchService.setSearchInputs(cdsi).start();
 			}
 
 		});
@@ -336,10 +348,14 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				List<CashDrawer> resultList = cs.getResultList();
-				resultList.add(0, null);
-				CashDrawer showChoices = Dialogs.create().title("List of Cash Drawer ").showChoices(resultList);
-				if(showChoices !=null)
-					displayView.getCashDrawer().setValue(new SalesOrderCashDrawer(showChoices));
+				if(!resultList.isEmpty()){
+					
+					for (CashDrawer cashDrawer : resultList) {
+						displayView.getCashDrawer().getItems().add(new SalesOrderCashDrawer(cashDrawer) );
+						
+					}
+					displayedEntity.setCashDrawer(new SalesOrderCashDrawer(resultList.iterator().next()));
+				}
 
 			}
 		});
@@ -400,8 +416,8 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				DeliveryItemRemoveService s = (DeliveryItemRemoveService) event.getSource();
-				DeliveryItem removeddItem = s.getValue();
+				SalesOrderItemRemoveService s = (SalesOrderItemRemoveService) event.getSource();
+				SalesOrderItem removeddItem = s.getValue();
 				event.consume();
 				s.reset();
 				displayView.getDataList().getItems().remove(removeddItem);

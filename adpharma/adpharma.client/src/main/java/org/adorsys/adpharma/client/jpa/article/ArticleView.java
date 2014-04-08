@@ -110,7 +110,7 @@ public class ArticleView extends AbstractForm<Article>
       active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
       authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
       maxStockQty = viewBuilder.addBigDecimalField("Article_maxStockQty_description.title", "maxStockQty", resourceBundle, NumberType.INTEGER, locale);
-      qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
+//      qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
       pppu = viewBuilder.addBigDecimalField("Article_pppu_description.title", "pppu", resourceBundle, NumberType.INTEGER, locale);
       sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
       maxDiscountRate = viewBuilder.addBigDecimalField("Article_maxDiscountRate_description.title", "maxDiscountRate", resourceBundle, NumberType.PERCENTAGE, locale);
@@ -164,7 +164,7 @@ public class ArticleView extends AbstractForm<Article>
       active.textProperty().bindBidirectional(model.activeProperty(), new BooleanStringConverter());
       authorizedSale.textProperty().bindBidirectional(model.authorizedSaleProperty(), new BooleanStringConverter());
       maxStockQty.numberProperty().bindBidirectional(model.maxStockQtyProperty());
-      qtyInStock.numberProperty().bindBidirectional(model.qtyInStockProperty());
+//      qtyInStock.numberProperty().bindBidirectional(model.qtyInStockProperty());
       pppu.numberProperty().bindBidirectional(model.pppuProperty());
       sppu.numberProperty().bindBidirectional(model.sppuProperty());
       maxDiscountRate.numberProperty().bindBidirectional(model.maxDiscountRateProperty());

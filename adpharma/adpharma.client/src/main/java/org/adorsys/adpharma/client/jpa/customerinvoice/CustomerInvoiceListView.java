@@ -79,12 +79,10 @@ public class CustomerInvoiceListView
       dataList = viewBuilder.addTable("dataList");
       viewBuilder.addEnumColumn(dataList, "invoiceType", "CustomerInvoice_invoiceType_description.title", resourceBundle, invoiceTypeConverter);
       viewBuilder.addStringColumn(dataList, "invoiceNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "cashed", "SalesOrder_cashed_description.title", resourceBundle);
       viewBuilder.addDateColumn(dataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Login_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "agency", "CustomerInvoice_agency_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle);
       // Field not displayed in table
       viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -97,6 +95,7 @@ public class CustomerInvoiceListView
       // Field not displayed in table
       viewBuilder.addBigDecimalColumn(dataList, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

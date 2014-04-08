@@ -81,12 +81,12 @@ public class PaymentListView
       viewBuilder.addBigDecimalColumn(dataList, "amount", "Payment_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "receivedAmount", "Payment_receivedAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "difference", "Payment_difference_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Login_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "cashDrawerNumber", "CashDrawer_cashDrawerNumber_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "agency", "Payment_agency_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "cashier", "Payment_cashier_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "cashDrawer", "Payment_cashDrawer_description.title", resourceBundle);
       viewBuilder.addEnumColumn(dataList, "paymentMode", "Payment_paymentMode_description.title", resourceBundle, paymentModeConverter);
       // Field not displayed in table
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "customer", "Payment_paidBy_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

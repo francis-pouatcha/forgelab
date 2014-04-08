@@ -59,6 +59,7 @@ public class PaymentCreateView
       resetButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
       searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
       rootPane = viewBuilder.toAnchorPane();
+      rootPane.setPrefWidth(600d);
    }
 
    public void bind(Payment model)

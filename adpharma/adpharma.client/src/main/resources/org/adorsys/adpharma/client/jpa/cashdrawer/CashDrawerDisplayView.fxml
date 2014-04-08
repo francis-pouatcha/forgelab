@@ -10,101 +10,112 @@
 	<children>
 		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<right>
-				<VBox prefHeight="661.0" prefWidth="230.0" BorderPane.alignment="CENTER">
+				<VBox prefHeight="661.0" prefWidth="200.0" BorderPane.alignment="CENTER">
 					<BorderPane.margin>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</BorderPane.margin>
 					<children>
-						<Pane prefHeight="673.0" prefWidth="230.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS" />
+						<Pane prefHeight="673.0" prefWidth="230.0" styleClass="cash-gackgroun" VBox.vgrow="ALWAYS" />
 					</children>
 				</VBox>
 			</right>
 			<center>
-				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+				<VBox>
 					<children>
-						<VBox maxWidth="900.0" prefHeight="45.0" prefWidth="724.0" VBox.vgrow="NEVER">
-							<VBox.margin>
-								<Insets bottom="5.0" />
-							</VBox.margin>
-							<children>
-								<HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
-									<children>
-										<GridPane fx:id="invoiceSearchGrid" hgap="2.0">
-											<columnConstraints>
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-											</columnConstraints>
-											<rowConstraints>
-												<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-											</rowConstraints>
-										</GridPane>
-									</children>
-									<VBox.margin>
-										<Insets />
-									</VBox.margin>
-									<padding>
-										<Insets left="5.0" />
-									</padding>
-								</HBox>
-							</children>
-						</VBox>
-						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
-						<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT" prefHeight="183.0" prefWidth="724.0" spacing="4.0" VBox.vgrow="NEVER">
-							<children>
-								<TableView prefHeight="212.0" prefWidth="724.0" HBox.hgrow="ALWAYS">
-									<columns>
-										<TableColumn prefWidth="75.0" text="C1" />
-										<TableColumn prefWidth="75.0" text="C2" />
-									</columns>
-									<HBox.margin>
-										<Insets bottom="3.0" />
-									</HBox.margin>
-								</TableView>
-							</children>
-						</HBox>
-						<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1">
-							<content>
-								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-							</content>
-						</TitledPane>
-						<Separator layoutX="10.0" layoutY="288.0" prefHeight="0.0" prefWidth="167.0" />
-						<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
-							<columnConstraints>
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-							</columnConstraints>
-							<rowConstraints>
-								<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-								<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-							</rowConstraints>
-						</GridPane>
-						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0" prefWidth="167.0" />
-						<TableView fx:id="dataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
-							<contextMenu>
-								<ContextMenu>
-									<items>
-										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
-										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
-									</items>
-								</ContextMenu>
-							</contextMenu>
-							<VBox.margin>
-								<Insets bottom="2.0" />
-							</VBox.margin>
-							<columns>
-								<TableColumn prefWidth="75.0" text="Column X" />
-								<TableColumn prefWidth="75.0" text="Column X" />
-								<TableColumn prefWidth="75.0" text="Column X" />
-							</columns>
-						</TableView>
-						<Separator layoutX="10.0" layoutY="291.0" prefHeight="0.0" prefWidth="167.0" />
+						<TabPane VBox.vgrow="ALWAYS">
+							<tabs>
+								<Tab text="Customer Invoice Payement">
+									<content>
+										<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+											<children>
+												<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0" prefWidth="167.0" />
+												<VBox maxWidth="900.0" prefHeight="45.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
+													<VBox.margin>
+														<Insets bottom="5.0" />
+													</VBox.margin>
+													<children>
+														<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
+															<VBox.margin>
+																<Insets />
+															</VBox.margin>
+															<padding>
+																<Insets left="5.0" />
+															</padding>
+														</HBox>
+													</children>
+													<padding>
+														<Insets top="10.0" />
+													</padding>
+												</VBox>
+												<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" /><TitledPane animated="false" text="Invoices waiting for paiement" textFill="#230b9a" />
+												<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT" prefHeight="183.0" prefWidth="724.0" spacing="4.0" VBox.vgrow="NEVER">
+													<children>
+														<TableView fx:id="invoicesDataList" prefHeight="212.0" prefWidth="724.0" HBox.hgrow="ALWAYS">
+															<HBox.margin>
+																<Insets bottom="3.0" />
+															</HBox.margin>
+														</TableView>
+													</children>
+												</HBox>
+												<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1" />
+												<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
+													<columnConstraints>
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+														<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+													</columnConstraints>
+													<rowConstraints>
+														<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+													</rowConstraints>
+												</GridPane>
+												<TableView fx:id="invoiceItemDataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+													<contextMenu>
+														<ContextMenu>
+															<items>
+																<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
+																<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
+															</items>
+														</ContextMenu>
+													</contextMenu>
+													<VBox.margin>
+														<Insets bottom="2.0" />
+													</VBox.margin>
+												</TableView>
+												<Separator layoutX="10.0" layoutY="291.0" prefHeight="0.0" prefWidth="167.0" />
+											</children>
+											<BorderPane.margin>
+												<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+											</BorderPane.margin>
+										</VBox>
+									</content>
+								</Tab>
+								<Tab text="DebStatement PAyement">
+									<content>
+										<VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+											<children>
+												<TitledPane animated="false" text="list of debstaement to pay" textFill="#280e6f" />
+												<TableView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+													<columns>
+														<TableColumn prefWidth="75.0" text="C1" />
+														<TableColumn prefWidth="75.0" text="C2" />
+													</columns>
+												</TableView>
+												<Separator prefWidth="200.0" />
+											</children>
+											<padding>
+												<Insets top="10.0" />
+											</padding>
+										</VBox>
+									</content>
+								</Tab>
+							</tabs>
+						</TabPane>
 						<HBox alignment="CENTER_RIGHT" prefHeight="183.0" prefWidth="724.0" spacing="10.0" VBox.vgrow="NEVER">
 							<children>
 								<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="OUVRIR" textFill="#1e8334">
@@ -117,7 +128,7 @@
 										<Font size="24.0" />
 									</font>
 								</Button>
-								<Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="Deccaisser" textFill="#d70d0d">
+								<Button fx:id="cashOutButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="Deccaisser" textFill="#d70d0d">
 									<font>
 										<Font size="24.0" />
 									</font>
@@ -135,7 +146,7 @@
 												<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 											</content>
 										</TitledPane>
-										<GridPane fx:id="amountPane" prefHeight="164.0" prefWidth="343.0" vgap="3.0">
+										<GridPane fx:id="paymentGrid" prefHeight="164.0" prefWidth="343.0" vgap="3.0">
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="149.0" />
 												<ColumnConstraints halignment="CENTER" maxWidth="235.79999999999995" minWidth="10.0" percentWidth="65.0" prefWidth="195.79999999999995" />
@@ -150,38 +161,22 @@
 												<Insets top="10.0" />
 											</VBox.margin>
 											<children>
-												<Label text="Net A Payer" />
-												<Label layoutX="10.0" layoutY="17.0" text="Mode Paiement" GridPane.rowIndex="1">
+												<Label text="Amoun to pay :" />
+												<Label layoutX="10.0" layoutY="17.0" text="Payment Mode :" GridPane.rowIndex="1">
 													<font>
 														<Font size="14.0" />
 													</font>
 												</Label>
-												<Label layoutX="10.0" layoutY="47.0" text="Montant Recu :" GridPane.rowIndex="2">
+												<Label layoutX="10.0" layoutY="47.0" text="Receive Amount :" GridPane.rowIndex="2">
 													<font>
 														<Font size="14.0" />
 													</font>
 												</Label>
-												<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Solde :" textFill="#1919b2" GridPane.rowIndex="3">
+												<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Difference :" textFill="#1919b2" GridPane.rowIndex="3">
 													<font>
 														<Font size="18.0" />
 													</font>
 												</Label>
-												<TextField fx:id="amountHT" editable="false" layoutX="168.0" layoutY="54.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<TextField fx:id="discount" layoutX="125.0" layoutY="42.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<TextField fx:id="netopay" editable="false" layoutX="125.0" layoutY="72.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<ComboBox fx:id="tax" layoutX="168.0" layoutY="21.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 											</children>
 										</GridPane>
 									</children>
@@ -189,9 +184,6 @@
 							</children>
 						</HBox>
 					</children>
-					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</BorderPane.margin>
 				</VBox>
 			</center>
 		</BorderPane>

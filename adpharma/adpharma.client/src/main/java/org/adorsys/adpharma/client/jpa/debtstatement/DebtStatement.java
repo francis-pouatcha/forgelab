@@ -1,24 +1,15 @@
 package org.adorsys.adpharma.client.jpa.debtstatement;
 
 import javafx.beans.property.SimpleStringProperty;
-
 import org.adorsys.adpharma.client.jpa.customer.Customer;
-
 import javafx.beans.property.SimpleObjectProperty;
-
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-
 import java.util.Calendar;
 import java.math.BigDecimal;
-
 import javafx.beans.property.SimpleBooleanProperty;
-
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +20,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-
 import javax.validation.constraints.NotNull;
-
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
@@ -91,8 +81,6 @@ public class DebtStatement implements Cloneable
    @Description("DebtStatement_invoices_description")
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
    private SimpleObjectProperty<ObservableList<CustomerInvoice>> invoices;
-   @Description("DebtStatement_statementStatus_description")
-   private SimpleObjectProperty<DocumentProcessingState> statementStatus;
 
    public Long getId()
    {
@@ -361,26 +349,6 @@ public class DebtStatement implements Cloneable
       if (invoices != null)
          this.invoicesProperty().get().addAll(invoices);
    }
-   
-   public SimpleObjectProperty<DocumentProcessingState> statementStatusProperty()
-   {
-      if (statementStatus == null)
-      {
-    	  statementStatus = new SimpleObjectProperty<DocumentProcessingState>();
-      }
-      return statementStatus;
-   }
-
-   public DocumentProcessingState getStatementStatus()
-   {
-      return statementStatusProperty().get();
-   }
-
-   public final void setStatementStatus(DocumentProcessingState statementStatus)
-   {
-      this.statementStatusProperty().set(statementStatus);
-   }
-   
 
    @Override
    public int hashCode()
@@ -439,7 +407,6 @@ public class DebtStatement implements Cloneable
       e.insurrance = insurrance;
       e.agency = agency;
       e.invoices = invoices;
-      e.statementStatus = statementStatus;
       return e;
    }
 }
