@@ -147,6 +147,8 @@ public class InitUserAccountService
 			createPermission("org.adorsys.adpharma.server.jpa.CustomerVoucher");
 			createPermission("org.adorsys.adpharma.server.jpa.InventoryItem");
 			createPermission("org.adorsys.adpharma.server.jpa.Insurrance");
+		    createPermission("org.adorsys.adpharma.server.jpa.DocumentStore");
+		    createPermission("org.adorsys.adpharma.server.jpa.DocumentArchive");
 
 			AccessRoleEnum[] roleEnums = AccessRoleEnum.values();
 			for (AccessRoleEnum roleEnum : roleEnums)
