@@ -15,6 +15,8 @@ import java.util.List;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -72,6 +74,9 @@ public class Payment implements Cloneable
    @Description("Payment_recordDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordDate;
+   @Description("Payment_paymentItems_description")
+   @Association(associationType = AssociationType.COMPOSITION, targetEntity = PaymentItem.class, selectionMode = SelectionMode.TABLE)
+   private SimpleObjectProperty<ObservableList<PaymentItem>> paymentItems;
    @Description("Payment_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<PaymentAgency> agency;
@@ -263,6 +268,33 @@ public class Payment implements Cloneable
       this.recordDateProperty().set(recordDate);
    }
 
+   public SimpleObjectProperty<ObservableList<PaymentItem>> paymentItemsProperty()
+   {
+      if (paymentItems == null)
+      {
+         ObservableList<PaymentItem> observableArrayList = FXCollections.observableArrayList();
+         paymentItems = new SimpleObjectProperty<ObservableList<PaymentItem>>(observableArrayList);
+      }
+      return paymentItems;
+   }
+
+   public List<PaymentItem> getPaymentItems()
+   {
+      return new ArrayList<PaymentItem>(paymentItemsProperty().get());
+   }
+
+   public final void setPaymentItems(List<PaymentItem> paymentItems)
+   {
+      this.paymentItemsProperty().get().clear();
+      if (paymentItems != null)
+         this.paymentItemsProperty().get().addAll(paymentItems);
+   }
+
+   public final void addToPaymentItems(PaymentItem entity)
+   {
+      this.paymentItemsProperty().get().add(entity);
+   }
+
    public SimpleObjectProperty<PaymentAgency> agencyProperty()
    {
       if (agency == null)
@@ -424,6 +456,12 @@ public class Payment implements Cloneable
    {
       id = null;
       version = 0;
+      ObservableList<PaymentItem> f = paymentItems.get();
+      for (PaymentItem e : f)
+      {
+         e.setId(null);
+         e.setVersion(0);
+      }
    }
 
    @Override
@@ -441,6 +479,7 @@ public class Payment implements Cloneable
       e.difference = difference;
       e.paymentDate = paymentDate;
       e.recordDate = recordDate;
+      e.paymentItems = paymentItems;
       e.agency = agency;
       e.cashier = cashier;
       e.cashDrawer = cashDrawer;

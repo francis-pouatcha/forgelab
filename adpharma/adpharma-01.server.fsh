@@ -3063,6 +3063,53 @@ enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Avo
 
 cd ~~;
 
+@/* Entite Ligne Payement */;
+entity --named PaymentItem --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Payment Item" --text "A payment item.";
+description add-class-description  --locale fr --title "Ligne de Paiement" --text "Une ligne de paiement";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
+
+field custom --named paymentMode --type ~.jpa.PaymentMode;
+description add-field-description --onProperty paymentMode --title "Payment Mode" --text "The Mode of this payment.";
+description add-field-description --onProperty paymentMode --title "Mode de Paiement" --text "Le Mode de paiement." --locale fr;
+enum enumerated-field --onProperty paymentMode;
+display add-list-field --field paymentMode;
+
+field string --named documentNumber;
+description add-field-description --onProperty documentNumber --title "Document Number" --text "The document number.";
+description add-field-description --onProperty documentNumber --title "Numéro du document" --text "Le numéro du document." --locale fr;
+display add-toString-field --field documentNumber;
+display add-list-field --field documentNumber;
+
+field string --named documentDetails;
+description add-field-description --onProperty documentDetails --title "Document Details" --text "The document details.";
+description add-field-description --onProperty documentDetails --title "Details du Document" --text "Les details du document." --locale fr;
+
+field number --named amount --type java.math.BigDecimal;
+description add-field-description --onProperty amount --title "Payment Amount" --text "The payment amount.";
+description add-field-description --onProperty amount --title "Montant du Paiement" --text "Le montant du paiement." --locale fr;
+format add-number-type --onProperty amount --type CURRENCY;
+display add-list-field --field amount;
+
+field number --named receivedAmount --type java.math.BigDecimal;
+description add-field-description --onProperty receivedAmount --title "Received Amount" --text "The amount received from the payment.";
+description add-field-description --onProperty receivedAmount --title "Montant Reçue" --text "Le montant reçue du paiement." --locale fr;
+format add-number-type --onProperty receivedAmount --type CURRENCY;
+display add-list-field --field receivedAmount;
+
+field manyToOne --named paidBy --fieldType ~.jpa.Customer;
+description add-field-description --onProperty paidBy --title "Paid By" --text "Paid By.";
+description add-field-description --onProperty paidBy --title "Payer Par" --text "Payer Par." --locale fr;
+association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
+association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa.Customer;
+display add-list-field --field paidBy.fullName;
+
+
+cd ~~;
+
 
 @/* Entité  paiement */;
 entity --named Payment --package ~.jpa --idStrategy AUTO;
@@ -3172,6 +3219,16 @@ association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
 association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field paidBy.fullName;
 
+field oneToMany --named paymentItems --fieldType ~.jpa.PaymentItem --inverseFieldName payment;
+description add-field-description --onProperty paymentItems --title "Payment Items" --text "The payment items";
+description add-field-description --onProperty paymentItems --title "Lignes Paiement" --text "Les lignes de paiement" --locale fr;
+association set-type --onProperty paymentItems --type COMPOSITION --targetEntity ~.jpa.PaymentItem;
+association set-selection-mode --onProperty paymentItems --selectionMode TABLE;
+
+cd ../PaymentItem.java;
+description add-field-description --onProperty payment --title "Payment" --text "The payment containing this item";
+description add-field-description --onProperty payment --title "Paiement" --text "Paiement contenant cette ligne" --locale fr;
+association set-type --onProperty payment --type COMPOSITION --targetEntity ~.jpa.Payment;
 
 cd ~~;
 
