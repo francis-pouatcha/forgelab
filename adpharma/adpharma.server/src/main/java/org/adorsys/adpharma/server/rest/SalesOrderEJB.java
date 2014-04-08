@@ -14,12 +14,9 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
-import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.Payment;
-import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
@@ -66,10 +63,11 @@ public class SalesOrderEJB
 	@Inject
 	@DocumentCanceledEvent
 	private Event<SalesOrder> salesOrderCanceledEvent;
-	
+
 	@Inject
-	private CustomerInvoiceEJB customerInvoiceEJB;
-   
+	@DirectSalesClosedEvent
+	private Event<SalesOrder> directSalesClosedEvent;
+	
    public SalesOrder create(SalesOrder entity)
    {
       return repository.save(attach(entity));
@@ -194,11 +192,10 @@ public class SalesOrderEJB
 	 * 
 	 * @param payment
 	 */
-	public void handleCustomerInvoiceProcessed(@Observes @DocumentProcessedEvent CustomerInvoice customerInvoice){
+	public void handleCustomerInvoiceProcessed(@Observes @DirectSalesClosedEvent CustomerInvoice customerInvoice){
 		SalesOrder salesOrder = customerInvoice.getSalesOrder();
-		if(!Boolean.TRUE.equals(salesOrder.getCashed())){
-			salesOrder.setCashed(Boolean.TRUE);// Freezes sales order
-			update(salesOrder);
-		}
+		salesOrder.setCashed(Boolean.TRUE);// Freezes sales order
+		salesOrder = update(salesOrder);
+		directSalesClosedEvent.fire(salesOrder);
 	}
 }

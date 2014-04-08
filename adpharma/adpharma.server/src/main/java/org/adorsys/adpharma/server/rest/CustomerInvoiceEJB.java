@@ -70,6 +70,10 @@ public class CustomerInvoiceEJB {
 	@Inject
 	@DocumentProcessedEvent
 	private Event<CustomerInvoice> customerInvoiceProcessedEvent;
+
+	@Inject
+	@DirectSalesClosedEvent
+	private Event<CustomerInvoice> customerInvoiceClosedEvent;
 	
 	public CustomerInvoice create(CustomerInvoice entity) {
 		return repository.save(attach(entity));
@@ -260,6 +264,7 @@ public class CustomerInvoiceEJB {
 		}
 		customerInvoice = update(customerInvoice);
 			
+		customerInvoiceClosedEvent.fire(customerInvoice);
 		// Announce customer invoice processed.
 		customerInvoiceProcessedEvent.fire(customerInvoice);
 	}

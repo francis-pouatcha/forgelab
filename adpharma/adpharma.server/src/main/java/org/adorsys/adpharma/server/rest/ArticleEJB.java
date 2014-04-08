@@ -10,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
@@ -168,7 +169,7 @@ public class ArticleEJB
     * 	- 
     * @param closedDelivery
     */
-   public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
+   public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 	   
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
@@ -193,7 +194,6 @@ public class ArticleEJB
     * Reset the stock quantity in case this sales has been canceled.
     * 
     * @param salesOrder
-    */
    public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 	   
@@ -214,4 +214,5 @@ public class ArticleEJB
 		   update(article);
 		}
    }
+    */
 }

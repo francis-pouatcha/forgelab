@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -11,9 +10,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
-import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
@@ -157,7 +155,7 @@ public class ArticleLotEJB
 	 * 
 	 * @param closedSales
 	 */
-	public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
+	public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
@@ -186,7 +184,6 @@ public class ArticleLotEJB
 	 * will use the FIFO technique to manage stocks. 
 	 * 
 	 * @param canceledSales
-	 */
 	public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 
@@ -210,4 +207,5 @@ public class ArticleLotEJB
 			update(articleLot);
 		}
 	}
+	 */
 }

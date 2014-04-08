@@ -10,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
@@ -146,7 +147,7 @@ public class StockMovementEJB
     * 
     * @param salesOrder
     */
-   public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
+   public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
@@ -191,7 +192,6 @@ public class StockMovementEJB
     * to neutralize the effect of the old one.
     * 
     * @param salesOrder
-    */
    public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
@@ -229,4 +229,5 @@ public class StockMovementEJB
 			sm = create(sm);
 		}
 	}
+    */
 }
