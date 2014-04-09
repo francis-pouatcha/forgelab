@@ -309,7 +309,7 @@ public class DeliveryDisplayController implements EntityController
 					{
 						BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
 						BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
-						if(amountBeforeTax.compareTo(processAmount)!=0){
+						if(amountBeforeTax.compareTo(processAmount)==0){
 							handleDeliveryClosedEvent(displayedEntity);
 						}else {
 							Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
@@ -405,6 +405,11 @@ public class DeliveryDisplayController implements EntityController
 		displayView.getView().addValidators();
 		
 		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getDeleteButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getEditButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getAddArticleButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getSaveButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getPrintButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	@Override

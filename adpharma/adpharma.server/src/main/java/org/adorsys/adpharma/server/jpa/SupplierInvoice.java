@@ -92,41 +92,41 @@ public class SupplierInvoice implements Serializable
 
    @Column
    @Description("SupplierInvoice_settled_description")
-   private Boolean settled;
+   private Boolean settled = Boolean.FALSE;
 
    @Column
    @Description("SupplierInvoice_amountBeforeTax_description")
-   private BigDecimal amountBeforeTax;
+   private BigDecimal amountBeforeTax = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal taxAmount;
+   private BigDecimal taxAmount = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount;
+   private BigDecimal amountDiscount = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax;
+   private BigDecimal amountAfterTax = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_netToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal netToPay;
+   private BigDecimal netToPay = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_advancePayment_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal advancePayment;
+   private BigDecimal advancePayment = BigDecimal.ZERO;
 
    @Column
    @Description("SupplierInvoice_totalRestToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalRestToPay;
+   private BigDecimal totalRestToPay = BigDecimal.ZERO;
 
    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
    @Description("SupplierInvoice_invoiceItems_description")

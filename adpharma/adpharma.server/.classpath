@@ -33,7 +33,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="target/generated-sources/annotations">
+	<classpathentry excluding="target/generated-sources/annotations/" kind="src" path="target/generated-sources">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>

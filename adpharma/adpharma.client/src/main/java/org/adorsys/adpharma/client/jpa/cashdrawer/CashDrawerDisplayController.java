@@ -491,9 +491,14 @@ public class CashDrawerDisplayController implements EntityController
 		BigDecimal diff = BigDecimal.ZERO;
 		BigDecimal receive = BigDecimal.ZERO;
 		String stringValue = displayView.getReceivedAmount().getText();
-		BigDecimal number = new BigDecimal(stringValue);
-		if(number!=null) receive = number;
-		diff = receive.subtract(amount);
+		try {
+			BigDecimal number = new BigDecimal(stringValue);
+			receive = number;
+			diff = receive.subtract(amount);
+			
+		} catch (Exception e) {
+			
+		} 
 		payment.setDifference(diff);
 	}
 

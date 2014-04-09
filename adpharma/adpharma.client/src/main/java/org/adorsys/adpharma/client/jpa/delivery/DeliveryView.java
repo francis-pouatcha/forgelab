@@ -64,6 +64,8 @@ public class DeliveryView extends AbstractForm<Delivery>
 
 	private BigDecimalField amountDiscount;
 
+	private BigDecimalField amountVat;
+
 	private BigDecimalField netAmountToPay;
 
 	private CalendarTextField dateOnDeliverySlip;
@@ -132,13 +134,14 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		//      deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
+		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
-		//      deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
+		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(),ViewModel.READ_ONLY);
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.CURRENCY, locale);
-		amountAfterTax = viewBuilder.addBigDecimalField("Delivery_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
+		amountVat = viewBuilder.addBigDecimalField("Delivery_amountVat_description.title", "amountVat", resourceBundle, NumberType.CURRENCY, locale,ViewModel.READ_ONLY);
 		amountDiscount = viewBuilder.addBigDecimalField("Delivery_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
-		netAmountToPay = viewBuilder.addBigDecimalField("Delivery_netAmountToPay_description.title", "netAmountToPay", resourceBundle, NumberType.CURRENCY, locale);
+		amountAfterTax = viewBuilder.addBigDecimalField("Delivery_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale,ViewModel.READ_ONLY);
+		netAmountToPay = viewBuilder.addBigDecimalField("Delivery_netAmountToPay_description.title", "netAmountToPay", resourceBundle, NumberType.CURRENCY, locale,ViewModel.READ_ONLY);
 		dateOnDeliverySlip = viewBuilder.addCalendarTextField("Delivery_dateOnDeliverySlip_description.title", "dateOnDeliverySlip", resourceBundle, "dd-MM-yyyy", locale);
 		orderDate = viewBuilder.addCalendarTextField("Delivery_orderDate_description.title", "orderDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		deliveryDate = viewBuilder.addCalendarTextField("Delivery_deliveryDate_description.title", "deliveryDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
@@ -161,14 +164,14 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//         viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencyForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencySelection, ViewModel.READ_WRITE);
 
-//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
+		//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 		gridRows = viewBuilder.toRows();
 	}
 
 	public void addValidators()
 	{
-		//      deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
+		//		      deliveryNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliveryNumber, Delivery.class, "deliveryNumber", resourceBundle));
 		deliverySlipNumber.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Delivery>(textInputControlValidator, deliverySlipNumber, Delivery.class, "deliverySlipNumber", resourceBundle));
 		amountBeforeTax.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<Delivery>(bigDecimalFieldValidator, amountBeforeTax, Delivery.class, "amountBeforeTax", resourceBundle));
 		// no active validator
@@ -190,12 +193,13 @@ public class DeliveryView extends AbstractForm<Delivery>
 
 	public void bind(Delivery model)
 	{
-		//      deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
+		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
 		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
-		//      deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
+		deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+		amountVat.numberProperty().bindBidirectional(model.amountVatProperty());
 		netAmountToPay.numberProperty().bindBidirectional(model.netAmountToPayProperty());
 		dateOnDeliverySlip.calendarProperty().bindBidirectional(model.dateOnDeliverySlipProperty());
 		orderDate.calendarProperty().bindBidirectional(model.orderDateProperty());
