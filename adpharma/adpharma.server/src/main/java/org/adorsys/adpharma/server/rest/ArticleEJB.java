@@ -24,114 +24,114 @@ import org.adorsys.adpharma.server.repo.ArticleRepository;
 public class ArticleEJB
 {
 
-   @Inject
-   private ArticleRepository repository;
+	@Inject
+	private ArticleRepository repository;
 
-   @Inject
-   private ClearanceConfigMerger clearanceConfigMerger;
+	@Inject
+	private ClearanceConfigMerger clearanceConfigMerger;
 
-   @Inject
-   private SectionMerger sectionMerger;
+	@Inject
+	private SectionMerger sectionMerger;
 
-   @Inject
-   private ProductFamilyMerger productFamilyMerger;
+	@Inject
+	private ProductFamilyMerger productFamilyMerger;
 
-   @Inject
-   private SalesMarginMerger salesMarginMerger;
+	@Inject
+	private SalesMarginMerger salesMarginMerger;
 
-   @Inject
-   private PackagingModeMerger packagingModeMerger;
+	@Inject
+	private PackagingModeMerger packagingModeMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   public Article create(Article entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public Article create(Article entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public Article deleteById(Long id)
-   {
-      Article entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public Article deleteById(Long id)
+	{
+		Article entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public Article update(Article entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public Article update(Article entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public Article findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public Article findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public List<Article> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public List<Article> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-   private Article attach(Article entity)
-   {
-      if (entity == null)
-         return null;
+	private Article attach(Article entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setSection(sectionMerger.bindAggregated(entity.getSection()));
+		// aggregated
+		entity.setSection(sectionMerger.bindAggregated(entity.getSection()));
 
-      // aggregated
-      entity.setFamily(productFamilyMerger.bindAggregated(entity.getFamily()));
+		// aggregated
+		entity.setFamily(productFamilyMerger.bindAggregated(entity.getFamily()));
 
-      // aggregated
-      entity.setDefaultSalesMargin(salesMarginMerger.bindAggregated(entity.getDefaultSalesMargin()));
+		// aggregated
+		entity.setDefaultSalesMargin(salesMarginMerger.bindAggregated(entity.getDefaultSalesMargin()));
 
-      // aggregated
-      entity.setPackagingMode(packagingModeMerger.bindAggregated(entity.getPackagingMode()));
+		// aggregated
+		entity.setPackagingMode(packagingModeMerger.bindAggregated(entity.getPackagingMode()));
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-      // aggregated
-      entity.setClearanceConfig(clearanceConfigMerger.bindAggregated(entity.getClearanceConfig()));
+		// aggregated
+		entity.setClearanceConfig(clearanceConfigMerger.bindAggregated(entity.getClearanceConfig()));
 
-      return entity;
-   }
-   
-   /**
-    * Process a completed delivery.
-    * 	- 
-    * @param closedDelivery
-    */
-   public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
+		return entity;
+	}
+
+	/**
+	 * Process a completed delivery.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
 		// generate Article lot for each delivery item
@@ -143,60 +143,60 @@ public class ArticleEJB
 			BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
 			article.setQtyInStock(qtyInStock);
 			article.setLastStockEntry(new Date());
-			
+
 			BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
-			BigDecimal purchasePricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
-			
+			BigDecimal enteringPricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
+
 			// average pppu
-			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(purchasePricePU)).divide(qtyInStock);
-			article.setPppu(newPppu);
-			
+			//			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(enteringPricePU)).divide(qtyInStock);
+			article.setPppu(enteringPricePU); // just use last Price because qtyInstock could be zero
+
 			BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
 			BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
-			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
-			article.setSppu(newSppu);
-			
-			article.setTotalStockPrice(qtyInStock.multiply(newSppu));
+			//			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
+			article.setSppu(enteringSppu); // just use last Price because qtyInstock could be zero
+
+			article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
 
 			article.setRecordingDate(new Date());
 
 			update(article);
 		}
-   }
+	}
 
-   /**
-    * Process a completed sales. Update the quantity of this article in stock.
-    * 	- 
-    * @param closedDelivery
-    */
-   public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
-	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
-	   
-	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
-		   Article article = salesOrderItem.getArticle();
-		   BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
-		   BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
-		   BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+	/**
+	 * Process a completed sales. Update the quantity of this article in stock.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+	public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 
-		   BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
-		   article.setQtyInStock(qtyInStock);
-		   article.setLastOutOfStock(new Date());
-						
-		   article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			Article article = salesOrderItem.getArticle();
+			BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+			BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
 
-		   article.setRecordingDate(new Date());
+			BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
+			article.setQtyInStock(qtyInStock);
+			article.setLastOutOfStock(new Date());
 
-		   update(article);
+			article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
+
+			article.setRecordingDate(new Date());
+
+			update(article);
 		}
-   }
+	}
 
-   /**
-    * Reset the stock quantity in case this sales has been canceled.
-    * 
-    * @param salesOrder
+	/**
+	 * Reset the stock quantity in case this sales has been canceled.
+	 * 
+	 * @param salesOrder
    public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
-	   
+
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
 		   Article article = salesOrderItem.getArticle();
 		   BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
@@ -206,7 +206,7 @@ public class ArticleEJB
 		   BigDecimal qtyInStock = currenQtyInStock.add(releasingQty).subtract(returnedQty);
 		   article.setQtyInStock(qtyInStock);
 		   article.setLastOutOfStock(new Date());
-						
+
 		   article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
 
 		   article.setRecordingDate(new Date());
@@ -214,5 +214,5 @@ public class ArticleEJB
 		   update(article);
 		}
    }
-    */
+	 */
 }

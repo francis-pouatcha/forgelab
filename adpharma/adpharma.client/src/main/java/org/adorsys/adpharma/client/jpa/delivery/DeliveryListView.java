@@ -129,7 +129,7 @@ public class DeliveryListView
 	{
 		
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
-		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
+//		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
 		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
 		deliveryProcessingState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
 	}
@@ -138,10 +138,10 @@ public class DeliveryListView
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
 		deliveryNumber.setPromptText("delivery Number");
 
-		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
-		deliveryDateFrom.setPromptText("date From");
-		deliveryDateFrom.setPrefWidth(160d);
-		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
+//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
+//		deliveryDateFrom.setPromptText("date From");
+//		deliveryDateFrom.setPrefWidth(160d);
+//		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("Supplier");
@@ -151,7 +151,7 @@ public class DeliveryListView
 		deliveryProcessingState.setPromptText("state");
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryProcessingState,searchButton);
+		searchBar.getChildren().addAll(deliveryNumber,supplier,deliveryProcessingState,searchButton);
 	}
 
 	public Button getCreateButton()
@@ -183,9 +183,9 @@ public class DeliveryListView
 		return deliveryNumber;
 	}
 
-	public CalendarTextField getDeliveryDateFrom() {
-		return deliveryDateFrom;
-	}
+//	public CalendarTextField getDeliveryDateFrom() {
+//		return deliveryDateFrom;
+//	}
 
 	public ComboBox<DeliverySupplier> getSupplier() {
 		return supplier;

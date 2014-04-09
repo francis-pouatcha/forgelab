@@ -47,24 +47,26 @@ public class DeliveryDisplayView
 
 	@FXML
 	BorderPane rootPane;
-	
+
 	@FXML
 	private VBox actionbar ;
-	
+
 	private Button saveButton;
 
 	private Button deleteButton;
 
 	private Button editButton;
-	
+
 	private Button addButton;
+
+	private Button printButton;
 
 	private Button cancelButton;
 
 	private Button addArticleButton ;
 
 	private Button okButton ;
-	
+
 
 	@FXML
 	private TextField deliveryNumber;
@@ -105,7 +107,7 @@ public class DeliveryDisplayView
 
 	@FXML
 	private ContextMenu datalistContextMenu;
-	
+
 	@FXML
 	private MenuItem deleteDeliveryMenu;
 
@@ -191,33 +193,38 @@ public class DeliveryDisplayView
 
 
 	}
-	
+
 	public void buildActionBar(){
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		saveButton.setPrefWidth(150d);
 		saveButton.setAlignment(Pos.CENTER_LEFT);
+
+		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
+		cancelButton.setPrefWidth(150d);
+		cancelButton.setAlignment(Pos.CENTER_LEFT);
+
+		addArticleButton = ViewBuilderUtils.newButton( "Delivery_Add_article.title", "addArticleButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+		addArticleButton.setPrefWidth(150d);
+		addArticleButton.setAlignment(Pos.CENTER_LEFT);
+
+		deleteButton =ViewBuilderUtils.newButton( "Entity_remove.title", "deleteButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+		deleteButton.setPrefWidth(150d);
+		deleteButton.setAlignment(Pos.CENTER_LEFT);
+
+		editButton  =ViewBuilderUtils.newButton( "Delivery_Edit_Head.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
+		editButton.setPrefWidth(150d);
+		editButton.setAlignment(Pos.CENTER_LEFT);
+
+		addButton = ViewBuilderUtils.newButton( "Delivery_New.title", "addButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+		addButton.setPrefWidth(150d);
+		addButton.setAlignment(Pos.CENTER_LEFT);
 		
-       cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
-       cancelButton.setPrefWidth(150d);
-       cancelButton.setAlignment(Pos.CENTER_LEFT);
-       
-       addArticleButton = ViewBuilderUtils.newButton( "Delivery_Add_article.title", "addArticleButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
-       addArticleButton.setPrefWidth(150d);
-       addArticleButton.setAlignment(Pos.CENTER_LEFT);
-       
-       deleteButton =ViewBuilderUtils.newButton( "Entity_remove.title", "deleteButton", resourceBundle, AwesomeIcon.TRASH_ALT);
-       deleteButton.setPrefWidth(150d);
-       deleteButton.setAlignment(Pos.CENTER_LEFT);
-       
-       editButton  =ViewBuilderUtils.newButton( "Delivery_Edit_Head.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
-       editButton.setPrefWidth(150d);
-       editButton.setAlignment(Pos.CENTER_LEFT);
-       
-       addButton = ViewBuilderUtils.newButton( "Delivery_New.title", "addButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
-       addButton.setPrefWidth(150d);
-       addButton.setAlignment(Pos.CENTER_LEFT);
-       
-       actionbar.getChildren().addAll(saveButton,cancelButton,deleteButton,editButton,addButton,addArticleButton);
+		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+		printButton.setPrefWidth(150d);
+		printButton.setAlignment(Pos.CENTER_LEFT);
+
+		actionbar.getChildren().addAll(saveButton,editButton,deleteButton,addArticleButton,cancelButton,addButton,printButton);
+
 	}
 	public void buildDeliveryItemBar(){
 		mainPic = ViewBuilderUtils.newTextField( "mainPic", false);
@@ -239,18 +246,24 @@ public class DeliveryDisplayView
 
 		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
 		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
-		salesPricePU.setPrefWidth(130d);
+		salesPricePU.setPrefWidth(110d);
 
 		purchasePricePU = ViewBuilderUtils.newBigDecimalField( "purchasePricePU", NumberType.CURRENCY, locale,false);
 		purchasePricePU.setTooltip(new Tooltip("Prix d achat unitaire"));
-		purchasePricePU.setPrefWidth(130d);
+		purchasePricePU.setPrefWidth(110d);
+
+		expirationDate = ViewBuilderUtils.newTextField( "expirationDate", false);
+		expirationDate.setPromptText("MMYY");
+		expirationDate.setTooltip(new Tooltip("expiration Date"));
+		expirationDate.setPrefWidth(60d);
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
-		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente"),new Label("Prix d\'achat"));
-		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
-//		deliveryItemBar.getChildren().addAll(
-//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
+		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente")
+		,new Label("Prix d\'achat"),new Label("Exp Date"));
+		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,expirationDate,okButton);
+		//		deliveryItemBar.getChildren().addAll(
+		//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
 
 	}
 
@@ -291,6 +304,7 @@ public class DeliveryDisplayView
 		agency.valueProperty().bindBidirectional(model.receivingAgencyProperty());
 		recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
+		taxAmount.numberProperty().bindBidirectional(model.amountVatProperty());
 		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
 
 	}
@@ -303,7 +317,7 @@ public class DeliveryDisplayView
 		salesPricePU.numberProperty().bindBidirectional(deliveryItem.salesPricePUProperty());
 		purchasePricePU.numberProperty().bindBidirectional(deliveryItem.purchasePricePUProperty());
 	}
-	
+
 
 	public BorderPane getRootPane()
 	{
@@ -425,6 +439,10 @@ public class DeliveryDisplayView
 		return okButton;
 	}
 
+	public Button getPrintButton() {
+		return printButton;
+	}
+
 	public Button getDeleteButton() {
 		return deleteButton;
 	}
@@ -442,11 +460,11 @@ public class DeliveryDisplayView
 	public GridPane getDeliveryItemBar() {
 		return deliveryItemBar;
 	}
-	
+
 	public ContextMenu getDatalistContextMenu() {
 		return datalistContextMenu;
 	}
-	
-	
-	
+
+
+
 }

@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -14,23 +13,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.BooleanStringConverter;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceCreatingUser;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceCustomer;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceInsurance;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
-import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -74,9 +68,6 @@ public class CashDrawerDisplayView
 
 	private BigDecimalField amountDiscount;
 
-	private ComboBox<CustomerInvoiceCustomer> customer;
-
-	private ComboBox<CustomerInvoiceInsurance> insurrance;
 
 	private ComboBox<CustomerInvoiceCreatingUser> creatingUser;
 
@@ -216,12 +207,6 @@ public class CashDrawerDisplayView
 		creatingUser = ViewBuilderUtils.newComboBox(null,"creatingUser", false);
 		creatingUser.setPrefWidth(130d);
 
-		customer = ViewBuilderUtils.newComboBox(null, "customer",false);
-		customer.setPrefWidth(130d);
-
-		insurrance = ViewBuilderUtils.newComboBox(null, "insurrance",false);
-		insurrance.setPrefWidth(130d);
-
 		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
 
 		customerRestTopay = ViewBuilderUtils.newBigDecimalField( "customerRestTopay", NumberType.CURRENCY, locale,false);
@@ -231,9 +216,8 @@ public class CashDrawerDisplayView
 
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
 
-		invoiceHeadGrid.addRow(0,new Label("invoiceNumber"),new Label("Saller"),new Label("customer"),new Label("insurrance")
-		,new Label("discount"),new Label("Customer part"),new Label("Insurrance part"));
-		invoiceHeadGrid.addRow(1,invoiceNumber,creatingUser,customer,insurrance,amountDiscount,customerRestTopay,insurranceRestTopay,cancelButton);
+		invoiceHeadGrid.addRow(0,new Label("invoiceNumber"),new Label("Saller"),new Label("discount"),new Label("Customer part"),new Label("Insurrance part"));
+		invoiceHeadGrid.addRow(1,invoiceNumber,creatingUser,amountDiscount,customerRestTopay,insurranceRestTopay,cancelButton);
 		invoiceHeadGrid.setGridLinesVisible(true);
 	}
 
@@ -245,8 +229,6 @@ public class CashDrawerDisplayView
 	public void bindInvoice(CustomerInvoice model){
 		invoiceNumber.textProperty().bindBidirectional(model.invoiceNumberProperty());
 		creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
-		customer.valueProperty().bindBidirectional(model.customerProperty());
-		insurrance.valueProperty().bindBidirectional(model.insuranceProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		customerRestTopay.numberProperty().bindBidirectional(model.customerRestTopayProperty());
 		insurranceRestTopay.numberProperty().bindBidirectional(model.insurranceRestTopayProperty());
@@ -290,10 +272,6 @@ public class CashDrawerDisplayView
 		return view;
 	}
 
-	public Button getConfirmSelectionButton()
-	{
-		return confirmSelectionButton;
-	}
 
 	public Button getOpenCashDrawerButton(){
 		return openCashDrawerButton ;

@@ -66,6 +66,9 @@ public class Delivery implements Cloneable
    @Description("Delivery_netAmountToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
+   @Description("Delivery_amountVat_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private SimpleObjectProperty<BigDecimal> amountVat;
    @Description("Delivery_dateOnDeliverySlip_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy")
    private SimpleObjectProperty<Calendar> dateOnDeliverySlip;
@@ -97,6 +100,14 @@ public class Delivery implements Cloneable
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<DeliveryReceivingAgency> receivingAgency;
 
+   
+   public void calculateAmount(){
+	   BigDecimal amountBeforeTax2  = getAmountBeforeTax()!=null?getAmountBeforeTax():BigDecimal.ZERO;
+	   BigDecimal amountVat2 = getAmountVat()!=null?getAmountVat():BigDecimal.ZERO;
+	   BigDecimal amountDiscount2 =  getAmountDiscount()!=null?getAmountDiscount():BigDecimal.ZERO;
+	   setAmountAfterTax((amountBeforeTax2.add(amountVat2)));
+	   setNetAmountToPay(getAmountAfterTax().subtract(amountDiscount2));
+   }
    public Long getId()
    {
       return id;
@@ -161,7 +172,7 @@ public class Delivery implements Cloneable
    {
       if (deliveryProcessingState == null)
       {
-         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>();
+         deliveryProcessingState = new SimpleObjectProperty<DocumentProcessingState>(DocumentProcessingState.ONGOING);
       }
       return deliveryProcessingState;
    }
@@ -253,6 +264,26 @@ public class Delivery implements Cloneable
       this.netAmountToPayProperty().set(netAmountToPay);
    }
 
+   public SimpleObjectProperty<BigDecimal> amountVatProperty()
+   {
+      if (amountVat == null)
+      {
+    	  amountVat = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+      }
+      return amountVat;
+   }
+
+   public BigDecimal getAmountVat()
+   {
+      return amountVatProperty().get();
+   }
+
+   public final void setAmountVat(BigDecimal amountVat)
+   {
+      this.amountVatProperty().set(amountVat);
+   }
+
+   
    public SimpleObjectProperty<Calendar> dateOnDeliverySlipProperty()
    {
       if (dateOnDeliverySlip == null)
