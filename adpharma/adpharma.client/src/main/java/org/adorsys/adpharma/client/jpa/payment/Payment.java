@@ -1,20 +1,30 @@
 package org.adorsys.adpharma.client.jpa.payment;
 
 import javafx.beans.property.SimpleStringProperty;
+
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
+
 import javafx.beans.property.SimpleBooleanProperty;
+
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
@@ -32,7 +41,9 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.relation.Relationship;
 import org.adorsys.javaext.relation.RelationshipEnd;
 import org.adorsys.javaext.display.ToStringField;
@@ -89,7 +100,7 @@ public class Payment implements Cloneable
    @Relationship(end = RelationshipEnd.SOURCE, sourceEntity = Payment.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices", targetQualifier = "payments")
    @Description("Payment_invoices_description")
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class, selectionMode = SelectionMode.TABLE)
-   private SimpleObjectProperty<ObservableList<CustomerInvoice>> invoices;
+   private SimpleObjectProperty<ObservableList<PaymentCustomerInvoiceAssoc>> invoices;
    @Description("Payment_paidBy_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<PaymentPaidBy> paidBy;
@@ -369,29 +380,29 @@ public class Payment implements Cloneable
       cashDrawerProperty().setValue(ObjectUtils.clone(getCashDrawer()));
    }
 
-   public SimpleObjectProperty<ObservableList<CustomerInvoice>> invoicesProperty()
+   public SimpleObjectProperty<ObservableList<PaymentCustomerInvoiceAssoc>> invoicesProperty()
    {
       if (invoices == null)
       {
-         ObservableList<CustomerInvoice> observableArrayList = FXCollections.observableArrayList();
-         invoices = new SimpleObjectProperty<ObservableList<CustomerInvoice>>(observableArrayList);
+         ObservableList<PaymentCustomerInvoiceAssoc> observableArrayList = FXCollections.observableArrayList();
+         invoices = new SimpleObjectProperty<ObservableList<PaymentCustomerInvoiceAssoc>>(observableArrayList);
       }
       return invoices;
    }
 
-   public List<CustomerInvoice> getInvoices()
+   public List<PaymentCustomerInvoiceAssoc> getInvoices()
    {
-      return new ArrayList<CustomerInvoice>(invoicesProperty().get());
+      return new ArrayList<PaymentCustomerInvoiceAssoc>(invoicesProperty().get());
    }
 
-   public final void setInvoices(List<CustomerInvoice> invoices)
+   public final void setInvoices(List<PaymentCustomerInvoiceAssoc> invoices)
    {
       this.invoicesProperty().get().clear();
       if (invoices != null)
          this.invoicesProperty().get().addAll(invoices);
    }
 
-   public final void addToInvoices(CustomerInvoice entity)
+   public final void addToInvoices(PaymentCustomerInvoiceAssoc entity)
    {
       this.invoicesProperty().get().add(entity);
    }

@@ -101,7 +101,7 @@ public class Payment implements Serializable
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
    private CashDrawer cashDrawer;
 
-   @OneToMany(mappedBy = "source", targetEntity = PaymentCustomerInvoiceAssoc.class)
+   @OneToMany(mappedBy = "source", targetEntity = PaymentCustomerInvoiceAssoc.class, cascade=CascadeType.PERSIST)
    @Relationship(end = RelationshipEnd.SOURCE, sourceEntity = Payment.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices", targetQualifier = "payments")
    @Description("Payment_invoices_description")
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class, selectionMode = SelectionMode.TABLE)
