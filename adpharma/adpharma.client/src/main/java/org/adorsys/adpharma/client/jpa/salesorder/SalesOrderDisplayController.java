@@ -581,6 +581,9 @@ public class SalesOrderDisplayController implements EntityController
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
 		salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
+			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder()); 
+			if(salesOrderItem.getSalesOrder().getId()==null)
+				salesOrderItem.getSalesOrder().setId(displayedEntity.getId());
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
 		}else {
 			salesOrderItemEditService.setSalesOrderItem(salesOrderItem).start();
@@ -607,7 +610,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
-		PropertyReader.copy(SalesOrderItemfromArticle(model), salesOrderItem);
+		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
 	}
 
 
@@ -694,7 +697,7 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 
-	public SalesOrderItem SalesOrderItemfromArticle(ArticleLot al){
+	public SalesOrderItem salesOrderItemfromArticle(ArticleLot al){
 		SalesOrderItem soItem = new SalesOrderItem();
 		SalesOrderItemArticle soia = new SalesOrderItemArticle();
 		soia.setId(al.getArticle().getId());
