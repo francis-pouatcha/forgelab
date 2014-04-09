@@ -1,42 +1,46 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import javafx.beans.property.SimpleBooleanProperty;
 import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
-import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import quicktime.std.sg.SequenceGrabber;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -112,6 +116,8 @@ public class SalesOrder implements Cloneable
    public void calculateAmount() {
 		//  TODO calculate all the amount of this sale oder	
 	}
+   
+  
    public Long getId()
    {
       return id;
