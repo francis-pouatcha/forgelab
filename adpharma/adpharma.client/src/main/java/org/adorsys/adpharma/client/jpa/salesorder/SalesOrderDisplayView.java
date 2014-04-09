@@ -281,7 +281,6 @@ public class SalesOrderDisplayView
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
 
-
 		//		view.bind(model);
 	}
 

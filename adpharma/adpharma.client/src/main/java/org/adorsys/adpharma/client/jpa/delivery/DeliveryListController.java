@@ -61,7 +61,7 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@EntitySelectionEvent
 	private Event<Delivery> precessDeliveryRequestedEvent;
-	
+
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Delivery> deliveryEditEvent;
@@ -71,6 +71,9 @@ public class DeliveryListController implements EntityController
 
 	@Inject
 	DeliverySearchService searchService;
+
+	@Inject
+	private DeliveryRemoveService deliveryRemoveService;
 
 
 
@@ -93,7 +96,21 @@ public class DeliveryListController implements EntityController
 
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Delivery>() {
 
+			@Override
+			public void changed(ObservableValue<? extends Delivery> observable,
+					Delivery oldValue, Delivery newValue) {
+				if(newValue!=null){
+					listView.getRemoveButton().visibleProperty().unbind();
+					listView.getUpdateButton().visibleProperty().unbind();
+					listView.getRemoveButton().visibleProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getUpdateButton().visibleProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+
+				}
+
+			}
+		});
 		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -114,6 +131,23 @@ public class DeliveryListController implements EntityController
 			{							
 				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
 				searchService.setSearchInputs(searchInput).start();
+
+			}
+
+
+				});
+		/*
+		 * listen to remove button .
+		 */
+		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{							
+				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					deliveryRemoveService.setEntity(selectedItem).start();
+				}
 
 			}
 
@@ -142,6 +176,26 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(WorkerStateEvent event) {
 				SupplierSearchService s = (SupplierSearchService) event.getSource();
+				s.reset();				
+			}
+		});
+		deliveryRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryRemoveService s = (DeliveryRemoveService) event.getSource();
+				Delivery result = s.getValue();
+				event.consume();
+				s.reset();
+				listView.getDataList().getItems().remove(result);
+
+			}
+		});
+		deliveryRemoveService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryRemoveService s = (DeliveryRemoveService) event.getSource();
 				s.reset();				
 			}
 		});
@@ -256,7 +310,7 @@ public class DeliveryListController implements EntityController
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
-     
+
 	}
 
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Delivery createdEntity)
