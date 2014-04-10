@@ -76,6 +76,12 @@
 												<Insets bottom="2.0" />
 											</VBox.margin>
 										</TableView>
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Payments" textFill="#1e0fa1" />
+										<TableView fx:id="paymentItemDataList" prefHeight="98.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+										</TableView>
 									</children>
 								</VBox>
 								<VBox prefHeight="203.0" prefWidth="344.0" spacing="5.0" VBox.vgrow="NEVER">
@@ -117,11 +123,17 @@
 														<Font size="18.0" />
 													</font>
 												</Label>
+												<Label fx:id="documentNumber" layoutX="10.0" layoutY="77.0" text="Reference :" textFill="#1919b2" GridPane.rowIndex="4">
+													<font>
+														<Font size="18.0" />
+													</font>
+												</Label>
 											</children>
 										</GridPane>
 </children>
 </VBox><Separator prefWidth="200.0" /><VBox alignment="CENTER" prefHeight="166.0" prefWidth="344.0" spacing="10.0" VBox.vgrow="NEVER">
 <children>
+								<HBox>
 								<Button fx:id="cashButon" layoutX="178.0" layoutY="10.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="300.0" text="Enccaisser" textFill="#132f83">
 									<font>
 										<Font size="24.0" />
@@ -132,6 +144,8 @@
 										<Font size="24.0" />
 									</font>
 								</Button>
+								</HBox>
+								<HBox>
 								<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="300.0" text="OUVRIR" textFill="#1e8334">
 									<font>
 										<Font size="24.0" />
@@ -142,6 +156,7 @@
 										<Font size="24.0" />
 									</font>
 								</Button>
+								</HBox>
 </children>
 <padding>
 <Insets top="5.0" />

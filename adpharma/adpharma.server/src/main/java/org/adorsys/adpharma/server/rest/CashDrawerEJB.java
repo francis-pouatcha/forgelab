@@ -1,8 +1,10 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -10,10 +12,15 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CashDrawer_;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class CashDrawerEJB
@@ -29,9 +36,26 @@ public class CashDrawerEJB
 	@Inject
 	private AgencyMerger agencyMerger;
 
+	@EJB
+	private SecurityUtil securityUtil;
+
 	public CashDrawer create(CashDrawer entity)
-	{
-		return repository.save(attach(entity));
+	{	
+		CashDrawer cashDrawer = attach(entity);
+		Login cashier = securityUtil.getConnectedUser();
+		cashDrawer.setCashier(cashier);
+		cashDrawer.setAgency(cashier.getAgency());
+		cashDrawer.setCashDrawerNumber("CD-"+RandomStringUtils.randomAlphanumeric(5));
+		cashDrawer.setOpened(true);
+		cashDrawer.setOpeningDate(new Date());
+		cashDrawer.setTotalCash(cashDrawer.getInitialAmount());
+		cashDrawer.setTotalCashIn(BigDecimal.ZERO);
+		cashDrawer.setTotalCashOut(BigDecimal.ZERO);
+		cashDrawer.setTotalCheck(BigDecimal.ZERO);
+		cashDrawer.setTotalClientVoucher(BigDecimal.ZERO);
+		cashDrawer.setTotalCompanyVoucher(BigDecimal.ZERO);
+		cashDrawer.setTotalCreditCard(BigDecimal.ZERO);
+		return repository.save(cashDrawer);
 	}
 
 	public CashDrawer deleteById(Long id)
@@ -134,5 +158,31 @@ public class CashDrawerEJB
 			throw new IllegalStateException("Unknown payment mode: "+paymentMode);
 		}
 		update(cashDrawer);
+	}
+
+	public List<CashDrawer> myOpenDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setCashier(cashier);
+		cashDrawer.setOpened(true);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.cashier, CashDrawer_.opened});
+	}
+
+	public List<CashDrawer> agencyDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		Agency agency = cashier.getAgency();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setAgency(agency);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency});
+	}
+
+	public CashDrawer close(CashDrawer entity) {
+		CashDrawer cashDrawer = attach(entity);
+		Login cashier = securityUtil.getConnectedUser();
+		if(!cashier.equals(cashDrawer.getCashier())) throw new IllegalStateException("Cash drawer can only be closed by owing cashier.");
+		cashDrawer.setOpened(false);
+		cashDrawer.setClosedBy(cashier);
+		cashDrawer.setClosingDate(new Date());
+		return update(cashDrawer);
 	}
 }

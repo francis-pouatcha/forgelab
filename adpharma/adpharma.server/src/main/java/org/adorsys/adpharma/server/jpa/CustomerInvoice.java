@@ -140,7 +140,7 @@ public class CustomerInvoice implements Serializable
 
    @Column
    @Description("CustomerInvoice_cashed_description")
-   private Boolean cashed;
+   private Boolean cashed = Boolean.FALSE;
 
    @Column
    @Description("CustomerInvoice_advancePayment_description")
