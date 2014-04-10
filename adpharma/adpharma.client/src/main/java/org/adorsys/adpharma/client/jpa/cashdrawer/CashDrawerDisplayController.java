@@ -46,6 +46,7 @@ import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCustomerService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentPaidBy;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPaidBy;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPayment;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javafx.crud.extensions.DomainComponent;
@@ -114,8 +115,8 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	private CustomerInvoiceItemSearchService customerInvoiceItemSearchService ;
 
-	@Inject
-	private PaymentCustomerService paymentCustomerService;
+//	@Inject
+//	private PaymentCustomerService paymentCustomerService;
 	
 	@Inject 
 	private PaymentCreateService paymentCreateService;
@@ -153,16 +154,10 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	private CashDrawerRegistration registration;
 
-//	private Map<PaymentMode, PaymentItem> paymentItems = new HashMap<PaymentMode, PaymentItem>();
-	
 	@PostConstruct
 	public void postConstruct()
 	{
-//		paymentItems.put(PaymentMode.CASH, new PaymentItem());
-//		paymentItems.put(PaymentMode.VOUCHER, new PaymentItem());
-//		paymentItems.put(PaymentMode.CHECK, new PaymentItem());
-//		paymentItems.put(PaymentMode.CREDIT_CARD, new PaymentItem());
-		
+
 		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
 		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.bindInvoice(proccessingInvoice);
@@ -233,6 +228,9 @@ public class CashDrawerDisplayController implements EntityController
 						expectedItem.setReceivedAmount(payment.getReceivedAmount());
 						expectedItem.setPayment(new PaymentItemPayment(payment));
 						expectedItem.setDocumentNumber(payment.getPaymentNumber());
+						PaymentItemPaidBy paymentItemPaidBy = new PaymentItemPaidBy();
+						paymentItemPaidBy.setId(payment.getPaidBy().getId());
+						expectedItem.setPaidBy(paymentItemPaidBy);
 	//					payment.getPaymentItems().add(expectedItem);
 						displayView.getPaymentItemDataList().itemsProperty().getValue().add(expectedItem);
 					} 
@@ -356,36 +354,36 @@ public class CashDrawerDisplayController implements EntityController
 
 		cashDrawerLoadOpenService.setOnFailed(serviceCallFailedEventHandler);
 
-		paymentCustomerService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				PaymentCustomerService s = (PaymentCustomerService) event.getSource();
-				Payment pay = s.getValue();
-				event.consume();
-				s.reset();
-				PropertyReader.copy(new Payment(), payment);
-				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
-				handleCustomerInvoiceSearchEvent();
-			}
-		});
-		paymentCustomerService.setOnFailed(serviceCallFailedEventHandler);
-		
-		paymentCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				PaymentCreateService s = (PaymentCreateService) event.getSource();
-				Payment pay = s.getValue();
-				event.consume();
-				s.reset();
-				PropertyReader.copy(pay, payment);
-				ArrayList<CustomerInvoice> invoices = new ArrayList<CustomerInvoice>();
-				invoices.add(proccessingInvoice);
-				paymentCustomerService.setEntityId(pay.getId()).setInvoices(invoices).start();
-				
-			}
-		});
+//		paymentCustomerService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//
+//			@Override
+//			public void handle(WorkerStateEvent event) {
+//				PaymentCustomerService s = (PaymentCustomerService) event.getSource();
+//				Payment pay = s.getValue();
+//				event.consume();
+//				s.reset();
+//				PropertyReader.copy(new Payment(), payment);
+//				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
+//				handleCustomerInvoiceSearchEvent();
+//			}
+//		});
+//		paymentCustomerService.setOnFailed(serviceCallFailedEventHandler);
+//		
+//		paymentCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//
+//			@Override
+//			public void handle(WorkerStateEvent event) {
+//				PaymentCreateService s = (PaymentCreateService) event.getSource();
+//				Payment pay = s.getValue();
+//				event.consume();
+//				s.reset();
+//				PropertyReader.copy(pay, payment);
+//				ArrayList<CustomerInvoice> invoices = new ArrayList<CustomerInvoice>();
+//				invoices.add(proccessingInvoice);
+//				paymentCustomerService.setEntityId(pay.getId()).setInvoices(invoices).start();
+//				
+//			}
+//		});
 		paymentCreateService.setOnFailed(serviceCallFailedEventHandler);
 
 		/*

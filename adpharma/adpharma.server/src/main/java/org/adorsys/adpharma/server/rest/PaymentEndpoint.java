@@ -50,6 +50,9 @@ public class PaymentEndpoint
    private CashDrawerMerger cashDrawerMerger;
 
    @Inject
+   private PaymentItemMerger paymentItemMerger;
+
+   @Inject
    private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
 
    @Inject
@@ -201,6 +204,8 @@ public class PaymentEndpoint
 
    private static final List<String> paidByFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized");
 
+   private static final List<String> paymentItemsFields = Arrays.asList("paymentMode", "documentNumber", "amount", "receivedAmount", "paidBy.fullName");
+
    private static final List<String> invoicesFields = emptyList;
 
    private Payment detach(Payment entity)
@@ -219,6 +224,9 @@ public class PaymentEndpoint
 
       // aggregated
       entity.setPaidBy(customerMerger.unbind(entity.getPaidBy(), paidByFields));
+
+      // composed collections
+      entity.setPaymentItems(paymentItemMerger.unbind(entity.getPaymentItems(), paymentItemsFields));
 
       // aggregated collection
       entity.setInvoices(paymentCustomerInvoiceAssocMerger.unbind(entity.getInvoices(), invoicesFields));
@@ -243,23 +251,4 @@ public class PaymentEndpoint
       searchInput.setEntity(detach(searchInput.getEntity()));
       return searchInput;
    }
-
-//   @PUT
-//   @Path("/directSales/{id:[0-9][0-9]*}")
-//   @Produces({ "application/json", "application/xml" })
-//   @Consumes({ "application/json", "application/xml" })
-//   public Payment directSales(Payment entity)
-//   {
-//      return detach(ejb.directSalesClosed(entity));
-//   }
-//   
-   
-//   @PUT
-//   @Path("/processPayment/{id:[0-9][0-9]*}")
-//   @Produces({ "application/json", "application/xml" })
-//   @Consumes({ "application/json", "application/xml" })
-//   public Payment processPayment(Payment entity)
-//   {
-//      return detach(ejb.processPayment(entity));
-//   }
 }

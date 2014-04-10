@@ -160,6 +160,13 @@ public class PaymentEJB
       // aggregated
       entity.setPaidBy(customerMerger.bindAggregated(entity.getPaidBy()));
 
+      // composed collections
+      Set<PaymentItem> paymentItems = entity.getPaymentItems();
+      for (PaymentItem paymentItem : paymentItems)
+      {
+         paymentItem.setPayment(entity);
+      }
+
       // aggregated collection
       paymentCustomerInvoiceAssocMerger.bindAggregated(entity.getInvoices());
 

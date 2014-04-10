@@ -38,7 +38,8 @@ public class PaymentCustomerService extends Service<Payment> {
 	         @Override
 	         protected Payment call() throws Exception
 	         {
-	            return remoteService.customerPayment(id,customerInvoices);
+//	            return remoteService.customerPayment(id,customerInvoices);
+	        	 return null;
 	         }
 	      };
 	   }
