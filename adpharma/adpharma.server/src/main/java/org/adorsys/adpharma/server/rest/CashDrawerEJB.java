@@ -162,6 +162,15 @@ public class CashDrawerEJB
 		cashDrawer.setAgency(agency);
 		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency});
 	}
+	
+	public List<CashDrawer> agencyOpenDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		Agency agency = cashier.getAgency();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setOpened(true);
+		cashDrawer.setAgency(agency);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency,CashDrawer_.opened});
+	}
 
 	public CashDrawer close(CashDrawer entity) {
 		CashDrawer cashDrawer = attach(entity);
