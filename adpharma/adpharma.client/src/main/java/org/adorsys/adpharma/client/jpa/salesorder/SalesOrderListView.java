@@ -147,16 +147,20 @@ public class SalesOrderListView
 	public void buildsearchBar(){
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
 		soNumber.setPromptText("so Number");
+		soNumber.setPrefHeight(40d);
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
 		customer.setPromptText("All customers");
 		customer.setPrefWidth(300d);
+		customer.setPrefHeight(40d);
 
 		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		salesOrderStatus.setPromptText("state");
+		salesOrderStatus.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(soNumber,customer,salesOrderStatus,searchButton);
 	}
 	public Button getCreateButton()

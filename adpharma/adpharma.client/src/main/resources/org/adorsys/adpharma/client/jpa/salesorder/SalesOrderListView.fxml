@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -44,6 +45,10 @@
 		</VBox>
 	</right>
 	<center>
+<TabPane>
+<tabs>
+<Tab closable="false" text="Sales List">
+<content>
 		<VBox>
 			<children>
 				<Separator prefWidth="200.0" />
@@ -70,5 +75,31 @@
 				</HBox>
 			</children>
 		</VBox>
+</content>
+</Tab><Tab closable="false" text="Sales turnover">
+<content><VBox prefHeight="200.0" prefWidth="100.0">
+<children><HBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="801.0" spacing="5.0" VBox.vgrow="NEVER">
+<VBox.margin>
+<Insets left="5.0" />
+</VBox.margin>
+<children><ComboBox prefHeight="42.0" prefWidth="232.0" promptText="Customer ">
+<HBox.margin>
+<Insets left="5.0" />
+</HBox.margin></ComboBox><ComboBox prefHeight="41.0" prefWidth="115.0" promptText="Years" /><Button mnemonicParsing="false" prefHeight="42.0" prefWidth="89.0" text="Search" />
+</children></HBox><Separator prefWidth="200.0" /><VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+<children><StackedBarChart VBox.vgrow="ALWAYS">
+  <xAxis>
+    <CategoryAxis prefHeight="35.0" prefWidth="740.0" side="BOTTOM" />
+  </xAxis>
+  <yAxis>
+    <NumberAxis side="LEFT" />
+  </yAxis>
+</StackedBarChart>
+</children></VBox>
+</children></VBox>
+</content>
+</Tab>
+</tabs>
+</TabPane>
 	</center>
 </BorderPane>

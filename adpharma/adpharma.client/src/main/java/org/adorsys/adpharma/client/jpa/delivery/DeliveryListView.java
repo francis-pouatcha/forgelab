@@ -139,6 +139,7 @@ public class DeliveryListView
 	public void buildsearchBar(){
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
 		deliveryNumber.setPromptText("delivery Number");
+		deliveryNumber.setPrefHeight(40d);
 
 //		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
 //		deliveryDateFrom.setPromptText("date From");
@@ -148,12 +149,15 @@ public class DeliveryListView
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("All Suppliers");
 		supplier.setPrefWidth(200d);
+		supplier.setPrefHeight(40d);
 
 		
 		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		deliveryProcessingState.setPromptText("state");
+		deliveryProcessingState.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(deliveryNumber,supplier,deliveryProcessingState,searchButton);
 	}
 
