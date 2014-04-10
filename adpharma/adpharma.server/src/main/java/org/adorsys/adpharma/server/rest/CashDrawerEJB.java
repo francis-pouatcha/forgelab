@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -10,7 +11,9 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
@@ -41,7 +44,7 @@ public class CashDrawerEJB
 	entity.initAmount();
 	return repository.save(attach(entity));
 	}
-
+	
 	public CashDrawer deleteById(Long id)
 	{
 		CashDrawer entity = repository.findBy(id);
@@ -142,5 +145,31 @@ public class CashDrawerEJB
 			throw new IllegalStateException("Unknown payment mode: "+paymentMode);
 		}
 		update(cashDrawer);
+	}
+
+	public List<CashDrawer> myOpenDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setCashier(cashier);
+		cashDrawer.setOpened(true);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.cashier, CashDrawer_.opened});
+	}
+
+	public List<CashDrawer> agencyDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		Agency agency = cashier.getAgency();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setAgency(agency);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency});
+	}
+
+	public CashDrawer close(CashDrawer entity) {
+		CashDrawer cashDrawer = attach(entity);
+		Login cashier = securityUtil.getConnectedUser();
+		if(!cashier.equals(cashDrawer.getCashier())) throw new IllegalStateException("Cash drawer can only be closed by owing cashier.");
+		cashDrawer.setOpened(false);
+		cashDrawer.setClosedBy(cashier);
+		cashDrawer.setClosingDate(new Date());
+		return update(cashDrawer);
 	}
 }

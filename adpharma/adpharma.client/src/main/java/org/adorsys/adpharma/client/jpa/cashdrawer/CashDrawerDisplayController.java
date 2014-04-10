@@ -7,12 +7,13 @@ import java.util.ResourceBundle;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -37,12 +38,13 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemIn
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchService;
-import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCustomerService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentPaidBy;
-import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocService;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPayment;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javafx.crud.extensions.DomainComponent;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -64,6 +66,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.PermissionsEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -136,18 +139,27 @@ public class CashDrawerDisplayController implements EntityController
 	private CashDrawer displayedEntity; 
 
 	@Inject 
-	private Payment payment ;
+	private Payment payment;
 
 	@Inject
 	private CustomerInvoice proccessingInvoice;
 
+   @Inject
+   private ErrorMessageDialog noCashDrawerErrorMessageDialog;
 
 	@Inject
 	private CashDrawerRegistration registration;
 
+//	private Map<PaymentMode, PaymentItem> paymentItems = new HashMap<PaymentMode, PaymentItem>();
+	
 	@PostConstruct
 	public void postConstruct()
 	{
+//		paymentItems.put(PaymentMode.CASH, new PaymentItem());
+//		paymentItems.put(PaymentMode.VOUCHER, new PaymentItem());
+//		paymentItems.put(PaymentMode.CHECK, new PaymentItem());
+//		paymentItems.put(PaymentMode.CREDIT_CARD, new PaymentItem());
+		
 		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
 		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.bindInvoice(proccessingInvoice);
@@ -164,7 +176,6 @@ public class CashDrawerDisplayController implements EntityController
 
 		/*
 		 * handle open cash drawer action
-		 */
 		displayView.getReceivedAmount().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -172,8 +183,90 @@ public class CashDrawerDisplayController implements EntityController
 				calculateDifference();
 			}
 		});
+		 */
+		displayView.getDocNumber().textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> obs,
+					String oldValue, String newValue) {
+				// check is we have the old payment on file and update it
+				List<PaymentItem> paymentItems = payment.getPaymentItems();
+				for (PaymentItem paymentItem : paymentItems) {
+					if(paymentItem.getPaymentMode().equals(payment.getPaymentMode())){
+						paymentItem.setDocumentNumber(payment.getPaymentNumber());
+					}
+					if(PaymentMode.VOUCHER.equals(paymentItem.getPaymentMode())){
+						// load voucher from the database.
+					}
+				}
+			}
+			
+			
+		});
+		displayView.getReceivedAmount().numberProperty().addListener(new ChangeListener<BigDecimal>() {
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> obs,
+					BigDecimal oldValue, BigDecimal newValue) {
+				
+				BigDecimal paidAmount = calculateDifference(newValue);
+				// check is we have the old payment on file and update it
+//				List<PaymentItem> paymentItems = payment.getPaymentItems();
+				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().itemsProperty().getValue();				
+				PaymentItem expectedItem = null;
+				for (PaymentItem paymentItem : paymentItems) {
+					if(paymentItem.getPaymentMode().equals(payment.getPaymentMode())){
+						expectedItem = paymentItem;
+						expectedItem.setReceivedAmount(newValue);
+						expectedItem.setAmount(paidAmount);
+						break;
+					}
+				}
+				if(BigDecimal.ZERO.compareTo(paidAmount)>=0){
+					displayView.getPaymentItemDataList().itemsProperty().getValue().remove(expectedItem);
+				} else {
+					if (expectedItem==null){
+						expectedItem = new PaymentItem();
+						expectedItem.setAmount(paidAmount);
+						expectedItem.setPaymentMode(payment.getPaymentMode());
+						expectedItem.setReceivedAmount(payment.getReceivedAmount());
+						expectedItem.setPayment(new PaymentItemPayment(payment));
+						expectedItem.setDocumentNumber(payment.getPaymentNumber());
+	//					payment.getPaymentItems().add(expectedItem);
+						displayView.getPaymentItemDataList().itemsProperty().getValue().add(expectedItem);
+					} 
+				}
+			}
+		});
 
+		displayView.getPaymentMode().valueProperty().addListener(new ChangeListener<PaymentMode>() {
 
+			@Override
+			public void changed(ObservableValue<? extends PaymentMode> obs,
+					PaymentMode oldValue, PaymentMode newValue) {
+				// Whatever comes here, first compute the amount to pay.
+				BigDecimal amount = payment.getAmount();
+				BigDecimal paid = BigDecimal.ZERO;
+				
+				PaymentItem selectedItem = null;
+//				List<PaymentItem> paymentItems = payment.getPaymentItems();
+				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().itemsProperty().getValue();				
+				for (PaymentItem paymentItem : paymentItems) {
+					paid = paid.add(paymentItem.getReceivedAmount());
+					if(paymentItem.getPaymentMode().equals(newValue))
+						selectedItem = paymentItem;
+				}				
+				if(selectedItem!=null){
+					payment.setAmount(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
+					payment.setReceivedAmount(selectedItem.getReceivedAmount());
+					payment.setPaymentNumber(selectedItem.getDocumentNumber());
+					payment.setDifference(BigDecimal.ZERO);
+				} else {
+					payment.setAmount(amount.subtract(paid));
+					payment.setReceivedAmount(BigDecimal.ZERO);
+					payment.setPaymentNumber("");
+					payment.setDifference(BigDecimal.ZERO);
+				}
+			}
+		});
 
 		/*
 		 * handle open cash drawer action
@@ -182,11 +275,7 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				BigDecimal cashDrawerInitialAmount = getCashDrawerInitialAmount();
-				CashDrawer cashDrawer = new CashDrawer();
-				cashDrawer.setInitialAmount(cashDrawerInitialAmount);
-				cashDrawerCreateService.setModel(cashDrawer).start();
-
+				createCashDrawer();
 			}
 		});
 
@@ -234,13 +323,34 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void handle(WorkerStateEvent event) {
 				CashDrawerLoadOpenService s = (CashDrawerLoadOpenService) event.getSource();
-				CashDrawer cd = s.getValue();
+				CashDrawerSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
-				if(cd !=null)PropertyReader.copy(cd, displayedEntity);
+				List<CashDrawer> resultList = result.getResultList();
+				if(resultList==null || resultList.isEmpty()){
+					// Display error to user.
+	               noCashDrawerErrorMessageDialog.getTitleText().setText(
+	                       resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
+	                 noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
+	                 noCashDrawerErrorMessageDialog.display();
+				} else {
+					CashDrawer cashDrawer = resultList.iterator().next();
+					PropertyReader.copy(cashDrawer, displayedEntity);
+				}
 
 			}
 		});
+	      noCashDrawerErrorMessageDialog.getOkButton().setOnAction(
+	              new EventHandler<ActionEvent>()
+	              {
+	                 @Override
+	                 public void handle(ActionEvent event)
+	                 {
+	                    noCashDrawerErrorMessageDialog.closeDialog();
+	                    createCashDrawer();
+	                 }
+	              });
+
 		cashDrawerLoadOpenService.setOnFailed(serviceCallFailedEventHandler);
 
 		paymentCustomerService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -385,46 +495,13 @@ public class CashDrawerDisplayController implements EntityController
 		});
 		customerInvoiceItemSearchService.setOnFailed(serviceCallFailedEventHandler);
 
+	}
 
-
-		//		      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
-		//		      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
-
-		
-
-		//		      displayView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
-		//		      {
-		//		         @Override
-		//		         public void handle(ActionEvent e)
-		//		         {
-		//		            editRequestEvent.fire(displayedEntity);
-		//		         }
-		//		      });
-		//		
-		//		      displayView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
-		//		      {
-		//		         @Override
-		//		         public void handle(ActionEvent e)
-		//		         {
-		//		            removeRequest.fire(displayedEntity);
-		//		         }
-		//		      });
-		//		
-		//		      displayView.getConfirmSelectionButton().setOnAction(new EventHandler<ActionEvent>()
-		//		      {
-		//		         @Override
-		//		         public void handle(ActionEvent e)
-		//		         {
-		//		            final AssocSelectionEventData<CashDrawer> pendingSelectionRequest = pendingSelectionRequestProperty.get();
-		//		            if (pendingSelectionRequest == null)
-		//		               return;
-		//		            pendingSelectionRequestProperty.set(null);
-		//		            pendingSelectionRequest.setTargetEntity(displayedEntity);
-		//		            selectionResponseEvent.fire(pendingSelectionRequest);
-		//		         }
-		//		      });
-
-		//		      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
+	protected void createCashDrawer() {
+		BigDecimal cashDrawerInitialAmount = getCashDrawerInitialAmount();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setInitialAmount(cashDrawerInitialAmount);
+		cashDrawerCreateService.setModel(cashDrawer).start();
 	}
 
 	public void display(Pane parent)
@@ -485,21 +562,16 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
-	private void calculateDifference()
+	private BigDecimal calculateDifference(BigDecimal newValue)
 	{
-		BigDecimal amount = payment.getAmount();
-		BigDecimal diff = BigDecimal.ZERO;
-		BigDecimal receive = BigDecimal.ZERO;
-		String stringValue = displayView.getReceivedAmount().getText();
-		try {
-			BigDecimal number = new BigDecimal(stringValue);
-			receive = number;
-			diff = receive.subtract(amount);
-			
-		} catch (Exception e) {
-			
-		} 
-		payment.setDifference(diff);
+		BigDecimal amount = displayView.getAmount().getNumber();
+		if(newValue.compareTo(amount)>=0){
+			displayView.getDifference().setNumber(newValue.subtract(amount));
+			return amount;
+		} else {
+			displayView.getDifference().setNumber(BigDecimal.ZERO);
+			return newValue;
+		}
 	}
 
 	public void handleCustomerInvoiceSearchEvent(){

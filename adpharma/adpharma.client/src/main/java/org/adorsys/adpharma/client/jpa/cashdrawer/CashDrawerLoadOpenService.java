@@ -5,21 +5,20 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 
-public class CashDrawerLoadOpenService extends Service<CashDrawer>
+public class CashDrawerLoadOpenService extends Service<CashDrawerSearchResult>
 {
-
 	   @Inject
 	   private CashDrawerService remoteService;
 
 	   @Override
-	   protected Task<CashDrawer> createTask()
+	   protected Task<CashDrawerSearchResult> createTask()
 	   {
-	      return new Task<CashDrawer>()
+	      return new Task<CashDrawerSearchResult>()
 	      {
 	         @Override
-	         protected CashDrawer call() throws Exception
+	         protected CashDrawerSearchResult call() throws Exception
 	         {
-	            return remoteService.loadOpenCashDrawer();
+	            return remoteService.myOpenDrawers();
 	         }
 	      };
 	   }

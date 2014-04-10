@@ -24,11 +24,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.CashDrawer;
-import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchInput;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchResult;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.jpa.CashDrawer_;
 
 /**
  * 
@@ -236,4 +234,40 @@ public class CashDrawerEndpoint
 		searchInput.setEntity(detach(searchInput.getEntity()));
 		return searchInput;
 	}
+	
+	/**
+	 * Returns the opened cash drawer of a cashier.
+	 * 
+	 * @param start
+	 * @param max
+	 * @return
+	 */
+	@GET
+	@Path("/myOpenDrawers")
+	@Produces({ "application/json", "application/xml" })
+	public CashDrawerSearchResult myOpenDrawers(){
+		
+		List<CashDrawer> resultList = ejb.myOpenDrawers();
+		return new CashDrawerSearchResult(new Long(resultList.size()), detach(resultList),
+				new CashDrawerSearchInput());
+	}
+	
+	@GET
+	@Path("/agencyDrawers")
+	@Produces({ "application/json", "application/xml" })
+	public CashDrawerSearchResult agencyDrawers(){
+		List<CashDrawer> resultList = ejb.agencyDrawers();
+		return new CashDrawerSearchResult(new Long(resultList.size()), detach(resultList),
+				new CashDrawerSearchInput());
+	}
+	
+	@PUT
+	@Path("/close/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CashDrawer close(CashDrawer entity)
+	{
+		return detach(ejb.close(entity));
+	}
+	
 }
