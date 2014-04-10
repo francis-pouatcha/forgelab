@@ -206,29 +206,33 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void changed(ObservableValue<? extends BigDecimal> obs,
 					BigDecimal oldValue, BigDecimal newValue) {
+				
+				BigDecimal paidAmount = calculateDifference(newValue);
 				// check is we have the old payment on file and update it
-				List<PaymentItem> paymentItems = payment.getPaymentItems();
+//				List<PaymentItem> paymentItems = payment.getPaymentItems();
+				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().itemsProperty().getValue();				
 				PaymentItem expectedItem = null;
 				for (PaymentItem paymentItem : paymentItems) {
 					if(paymentItem.getPaymentMode().equals(payment.getPaymentMode())){
 						expectedItem = paymentItem;
 						expectedItem.setReceivedAmount(newValue);
-						expectedItem.setAmount(newValue);
+						expectedItem.setAmount(paidAmount);
 						break;
 					}
 				}
-				if (expectedItem==null){
-					expectedItem = new PaymentItem();
-					expectedItem.setAmount(payment.getReceivedAmount());
-					expectedItem.setPaymentMode(payment.getPaymentMode());
-					expectedItem.setReceivedAmount(payment.getReceivedAmount());
-					expectedItem.setPayment(new PaymentItemPayment(payment));
-					expectedItem.setDocumentNumber(payment.getPaymentNumber());
-//					payment.getPaymentItems().add(expectedItem);
-					displayView.getPaymentItemDataList().itemsProperty().getValue().add(expectedItem);
-				}
-				if(PaymentMode.CASH.equals(payment.getPaymentMode())){
-					calculateDifference(newValue);
+				if(BigDecimal.ZERO.compareTo(paidAmount)>=0){
+					displayView.getPaymentItemDataList().itemsProperty().getValue().remove(expectedItem);
+				} else {
+					if (expectedItem==null){
+						expectedItem = new PaymentItem();
+						expectedItem.setAmount(paidAmount);
+						expectedItem.setPaymentMode(payment.getPaymentMode());
+						expectedItem.setReceivedAmount(payment.getReceivedAmount());
+						expectedItem.setPayment(new PaymentItemPayment(payment));
+						expectedItem.setDocumentNumber(payment.getPaymentNumber());
+	//					payment.getPaymentItems().add(expectedItem);
+						displayView.getPaymentItemDataList().itemsProperty().getValue().add(expectedItem);
+					} 
 				}
 			}
 		});
@@ -239,34 +243,28 @@ public class CashDrawerDisplayController implements EntityController
 			public void changed(ObservableValue<? extends PaymentMode> obs,
 					PaymentMode oldValue, PaymentMode newValue) {
 				// Whatever comes here, first compute the amount to pay.
-				BigDecimal amount = null;
+				BigDecimal amount = payment.getAmount();
 				BigDecimal paid = BigDecimal.ZERO;
 				
 				PaymentItem selectedItem = null;
-				List<PaymentItem> paymentItems = payment.getPaymentItems();
+//				List<PaymentItem> paymentItems = payment.getPaymentItems();
+				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().itemsProperty().getValue();				
 				for (PaymentItem paymentItem : paymentItems) {
-					if(amount==null) amount = paymentItem.getAmount();
 					paid = paid.add(paymentItem.getReceivedAmount());
 					if(paymentItem.getPaymentMode().equals(newValue))
 						selectedItem = paymentItem;
 				}				
-				if(amount==null) amount = payment.getAmount();
-				payment.setAmount(amount.subtract(paid));
 				if(selectedItem!=null){
 					payment.setAmount(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
 					payment.setReceivedAmount(selectedItem.getReceivedAmount());
 					payment.setPaymentNumber(selectedItem.getDocumentNumber());
-//					payment.setDifference(BigDecimal.ZERO);
+					payment.setDifference(BigDecimal.ZERO);
 				} else {
-					selectedItem = new PaymentItem();
-					selectedItem.setAmount(payment.getReceivedAmount());
-					selectedItem.setPaymentMode(payment.getPaymentMode());
-					selectedItem.setReceivedAmount(payment.getReceivedAmount());
-					selectedItem.setPayment(new PaymentItemPayment(payment));
-					selectedItem.setDocumentNumber(payment.getPaymentNumber());
-					payment.getPaymentItems().add(selectedItem);
+					payment.setAmount(amount.subtract(paid));
+					payment.setReceivedAmount(BigDecimal.ZERO);
+					payment.setPaymentNumber("");
+					payment.setDifference(BigDecimal.ZERO);
 				}
-				
 			}
 		});
 
@@ -564,13 +562,15 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
-	private void calculateDifference(BigDecimal newValue)
+	private BigDecimal calculateDifference(BigDecimal newValue)
 	{
 		BigDecimal amount = displayView.getAmount().getNumber();
 		if(newValue.compareTo(amount)>=0){
 			displayView.getDifference().setNumber(newValue.subtract(amount));
+			return amount;
 		} else {
 			displayView.getDifference().setNumber(BigDecimal.ZERO);
+			return newValue;
 		}
 	}
 
