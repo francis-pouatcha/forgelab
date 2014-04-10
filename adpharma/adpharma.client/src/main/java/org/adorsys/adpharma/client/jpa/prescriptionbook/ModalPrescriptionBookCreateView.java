@@ -1,9 +1,7 @@
-package org.adorsys.adpharma.client.jpa.article;
+package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
 import java.util.ResourceBundle;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -13,36 +11,15 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchInput;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfigSearchService;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchInput;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingModeSearchService;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchInput;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamilySearchService;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchInput;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMarginSearchService;
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ApplicationModal;
-import org.adorsys.javafx.crud.extensions.view.BeforeShowing;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.controlsfx.dialog.Dialogs;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
 @Singleton
-public class ModalArticleCreateView extends ApplicationModal{
-
-
+public class ModalPrescriptionBookCreateView  extends ApplicationModal{
 	private AnchorPane rootPane;
 
 	private Button saveButton;
@@ -51,22 +28,22 @@ public class ModalArticleCreateView extends ApplicationModal{
 
 	private Button cancelButton;
 
-	
-	@Inject
-	private ArticleView view;
 
 	@Inject
-	private Article article;
+	private PrescriptionBookView view;
 
 	@Inject
-	@Bundle({ CrudKeys.class, Article.class })
+	private PrescriptionBook prescriptionBook;
+
+	@Inject
+	@Bundle({ CrudKeys.class, PrescriptionBook.class })
 	private ResourceBundle resourceBundle;
 
 	@Override
 	public Pane getRootPane() {
 		return rootPane ;
 	}
-	public ArticleView getView() {
+	public PrescriptionBookView getView() {
 		return view;
 	}
 
@@ -87,13 +64,13 @@ public class ModalArticleCreateView extends ApplicationModal{
 	}
 
 
-	public void bind(Article model)
+	public void bind(PrescriptionBook model)
 	{
-		this.article = model;
-		view.bind(this.article);
-		
+		this.prescriptionBook = model;
+		view.bind(this.prescriptionBook);
+
 	}
-	
+
 	public Button getSaveButton() {
 		return saveButton;
 	}

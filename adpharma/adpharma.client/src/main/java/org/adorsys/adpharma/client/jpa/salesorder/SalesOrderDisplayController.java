@@ -44,6 +44,15 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookRecordingAgent;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSalesOrder;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchInput;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchResult;
+import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateService;
@@ -95,6 +104,10 @@ public class SalesOrderDisplayController implements EntityController
 	private Event<CustomerSearchInput> modalCutomerSearchRequestEvent ;
 
 	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<PrescriptionBook> modalPrescriptionBookCreateRequestEvent ;
+
+	@Inject
 	@EntitySearchRequestedEvent
 	private Event<SalesOrder> searchRequestedEvent;
 
@@ -132,6 +145,9 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderItemEditService salesOrderItemEditService;
+	
+	@Inject
+	private PrescriptionBookSearchService prescriptionBookSearchService;
 
 	@Inject
 	private SalesOrderItemRemoveService salesOrderItemRemoveService;
@@ -151,7 +167,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private InsurranceSearchInput insurranceSearchInput;
-
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -210,6 +226,7 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
+
 
 		/*
 		 * listen to cancel button .
@@ -514,16 +531,52 @@ public class SalesOrderDisplayController implements EntityController
 		});
 
 		/*
-		 * listen to search button and fire search requested event.
+		 * listen to ordonnancier button and fire modal create  requested event.
 		 */
 		displayView.getOrdonnancierButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
 			public void handle(ActionEvent e)
 			{
-				//				searchRequestedEvent.fire(displayedEntity);
+				PrescriptionBookSearchInput searchInput = new PrescriptionBookSearchInput();
+				searchInput.getEntity().setSalesOrder(new PrescriptionBookSalesOrder(displayedEntity));
+				searchInput.getFieldNames().add("salesOrder");
+				prescriptionBookSearchService.setSearchInputs(searchInput).start();
+				
 			}
 				});
+		prescriptionBookSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				PrescriptionBookSearchService s = (PrescriptionBookSearchService) event.getSource();
+				PrescriptionBookSearchResult searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				
+				PrescriptionBook prescriptionBook ;
+				if(searchResult.getResultList().isEmpty()){
+					Login login = securityUtil.getConnectedUser();
+					prescriptionBook = new PrescriptionBook();
+					
+					PrescriptionBookAgency agency = new PrescriptionBookAgency();
+					PropertyReader.copy(login.getAgency(), agency);
+					prescriptionBook.setAgency(agency);
+					
+					prescriptionBook.setSalesOrder(new PrescriptionBookSalesOrder(displayedEntity));
+					
+					PrescriptionBookRecordingAgent recordingAgent = new PrescriptionBookRecordingAgent();
+					PropertyReader.copy(login, recordingAgent);
+					prescriptionBook.setRecordingAgent(recordingAgent);
+				}else {
+					prescriptionBook = searchResult.getResultList().iterator().next();
+				}
+				
+				modalPrescriptionBookCreateRequestEvent.fire(prescriptionBook);
+				
+			}
+		});
+		prescriptionBookSearchService.setOnFailed(callFailedEventHandler);
 
 
 		//      displayView.getConfirmSelectionButton().setOnAction(new EventHandler<ActionEvent>()

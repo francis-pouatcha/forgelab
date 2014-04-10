@@ -60,7 +60,7 @@ public class DeliveryListView
 
 	@FXML
 	private Button updateButton;
-	
+
 	@FXML
 	private Button removeButton;
 
@@ -126,12 +126,12 @@ public class DeliveryListView
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 	}
-	
+
 	public void bind(DeliverySearchInput searchInput)
 	{
-		
+
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
-//		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
+		//		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
 		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
 		deliveryProcessingState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
 	}
@@ -141,17 +141,17 @@ public class DeliveryListView
 		deliveryNumber.setPromptText("delivery Number");
 		deliveryNumber.setPrefHeight(40d);
 
-//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
-//		deliveryDateFrom.setPromptText("date From");
-//		deliveryDateFrom.setPrefWidth(160d);
-//		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
+		//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
+		//		deliveryDateFrom.setPromptText("date From");
+		//		deliveryDateFrom.setPrefWidth(160d);
+		//		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("All Suppliers");
 		supplier.setPrefWidth(200d);
 		supplier.setPrefHeight(40d);
 
-		
+
 		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		deliveryProcessingState.setPromptText("state");
 		deliveryProcessingState.setPrefHeight(40d);
@@ -190,9 +190,9 @@ public class DeliveryListView
 		return deliveryNumber;
 	}
 
-//	public CalendarTextField getDeliveryDateFrom() {
-//		return deliveryDateFrom;
-//	}
+	//	public CalendarTextField getDeliveryDateFrom() {
+	//		return deliveryDateFrom;
+	//	}
 
 	public ComboBox<DeliverySupplier> getSupplier() {
 		return supplier;
