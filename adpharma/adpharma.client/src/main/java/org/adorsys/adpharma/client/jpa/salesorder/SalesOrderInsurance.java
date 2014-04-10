@@ -1,12 +1,16 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
+
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,8 +19,8 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import org.apache.commons.lang3.ObjectUtils;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -65,7 +69,7 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>,
    {
       if (insurer == null)
       {
-    	  insurer = new SimpleObjectProperty<InsurranceInsurer>();
+         insurer = new SimpleObjectProperty<InsurranceInsurer>(new InsurranceInsurer());
       }
       return insurer;
    }
@@ -77,9 +81,14 @@ public class SalesOrderInsurance implements Association<SalesOrder, Insurrance>,
 
    public final void setInsurer(InsurranceInsurer insurer)
    {
-      this.insurerProperty().set(insurer);
+      if (insurer == null)
+      {
+         insurer = new InsurranceInsurer();
+      }
+      PropertyReader.copy(insurer, getInsurer());
+      insurerProperty().setValue(ObjectUtils.clone(getInsurer()));
    }
-   
+
    public SimpleObjectProperty<BigDecimal> coverageRateProperty()
    {
       if (coverageRate == null)

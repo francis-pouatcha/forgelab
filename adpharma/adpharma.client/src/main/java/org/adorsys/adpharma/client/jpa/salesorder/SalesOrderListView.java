@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -45,7 +46,7 @@ public class SalesOrderListView
 	@FXML
 	BorderPane rootPane;
 
-	
+
 	private Button searchButton;
 
 	@FXML
@@ -53,6 +54,9 @@ public class SalesOrderListView
 
 	@FXML
 	private Button removeButton;
+
+	@FXML
+	private Button printInvoiceButton;
 
 	@FXML
 	private Button processButton;
@@ -65,16 +69,16 @@ public class SalesOrderListView
 
 	@FXML
 	private Pagination pagination;
-	
+
 	@FXML
 	HBox searchBar;
 
 	private TextField soNumber ;
 
 	private ComboBox<SalesOrderCustomer> customer;
-	
+
 	private ComboBox<DocumentProcessingState> salesOrderStatus;
-	
+
 	@Inject
 	@Bundle(DocumentProcessingState.class)
 	private ResourceBundle salesOrderStatusBundle;
@@ -88,10 +92,6 @@ public class SalesOrderListView
 	@Inject
 	@Bundle({ CrudKeys.class
 		, SalesOrder.class
-		, Customer.class
-		, VAT.class
-		, Login.class
-		, Agency.class
 	})
 	private ResourceBundle resourceBundle;
 
@@ -100,7 +100,7 @@ public class SalesOrderListView
 
 	@Inject
 	private SalesOrderTypeConverter salesOrderTypeConverter;
-	
+
 	@Inject
 	private FXMLLoader fxmlLoader;
 
@@ -130,7 +130,7 @@ public class SalesOrderListView
 		//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
 		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//		rootPane = viewBuilder.toAnchorPane();
-		
+
 		buildsearchBar();
 		ComboBoxInitializer.initialize(salesOrderStatus, salesOrderStatusConverter, salesOrderStatusListCellFatory, salesOrderStatusBundle);
 
@@ -138,25 +138,29 @@ public class SalesOrderListView
 	}
 	public void bind(SalesOrderSearchInput searchInput)
 	{
-		
+
 		soNumber.textProperty().bindBidirectional(searchInput.getEntity().soNumberProperty());
 		customer.valueProperty().bindBidirectional(searchInput.getEntity().customerProperty());
 		salesOrderStatus.valueProperty().bindBidirectional(searchInput.getEntity().salesOrderStatusProperty());
 	}
-	
+
 	public void buildsearchBar(){
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
 		soNumber.setPromptText("so Number");
+		soNumber.setPrefHeight(40d);
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
-		customer.setPromptText("customer");
+		customer.setPromptText("All customers");
 		customer.setPrefWidth(300d);
+		customer.setPrefHeight(40d);
 
-		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.values(), false);
+		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		salesOrderStatus.setPromptText("state");
+		salesOrderStatus.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(soNumber,customer,salesOrderStatus,searchButton);
 	}
 	public Button getCreateButton()
@@ -187,6 +191,10 @@ public class SalesOrderListView
 	public Button getRemoveButton() {
 		return removeButton;
 	}
+
+	public Button getPrintInvoiceButtonn() {
+		return printInvoiceButton;
+	}
 	public void setRemoveButton(Button removeButton) {
 		this.removeButton = removeButton;
 	}
@@ -202,7 +210,7 @@ public class SalesOrderListView
 	public void setCreateButton(Button createButton) {
 		this.createButton = createButton;
 	}
-	
+
 	public HBox getSearchBar() {
 		return searchBar;
 	}
@@ -215,6 +223,8 @@ public class SalesOrderListView
 	public ComboBox<DocumentProcessingState> getSalesOrderStatus() {
 		return salesOrderStatus;
 	}
-	
+
+
+
 
 }

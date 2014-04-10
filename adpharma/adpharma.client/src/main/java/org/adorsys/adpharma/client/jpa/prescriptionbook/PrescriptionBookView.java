@@ -79,24 +79,24 @@ public class PrescriptionBookView extends AbstractForm<PrescriptionBook>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      prescriptionNumber = viewBuilder.addTextField("PrescriptionBook_prescriptionNumber_description.title", "prescriptionNumber", resourceBundle);
+      prescriptionNumber = viewBuilder.addTextField("PrescriptionBook_prescriptionNumber_description.title", "prescriptionNumber", resourceBundle,ViewModel.READ_ONLY);
       prescriptionDate = viewBuilder.addCalendarTextField("PrescriptionBook_prescriptionDate_description.title", "prescriptionDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      recordingDate = viewBuilder.addCalendarTextField("PrescriptionBook_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      recordingDate = viewBuilder.addCalendarTextField("PrescriptionBook_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale,ViewModel.READ_ONLY);
       viewBuilder.addTitlePane("PrescriptionBook_prescriber_description.title", resourceBundle);
       viewBuilder.addSubForm("PrescriptionBook_prescriber_description.title", "prescriber", resourceBundle, prescriptionBookPrescriberForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("PrescriptionBook_prescriber_description.title", "prescriber", resourceBundle, prescriptionBookPrescriberSelection, ViewModel.READ_WRITE);
       viewBuilder.addTitlePane("PrescriptionBook_hospital_description.title", resourceBundle);
       viewBuilder.addSubForm("PrescriptionBook_hospital_description.title", "hospital", resourceBundle, prescriptionBookHospitalForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("PrescriptionBook_hospital_description.title", "hospital", resourceBundle, prescriptionBookHospitalSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("PrescriptionBook_agency_description.title", resourceBundle);
-      viewBuilder.addSubForm("PrescriptionBook_agency_description.title", "agency", resourceBundle, prescriptionBookAgencyForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("PrescriptionBook_agency_description.title", "agency", resourceBundle, prescriptionBookAgencySelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("PrescriptionBook_recordingAgent_description.title", resourceBundle);
-      viewBuilder.addSubForm("PrescriptionBook_recordingAgent_description.title", "recordingAgent", resourceBundle, prescriptionBookRecordingAgentForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("PrescriptionBook_recordingAgent_description.title", "recordingAgent", resourceBundle, prescriptionBookRecordingAgentSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("PrescriptionBook_salesOrder_description.title", resourceBundle);
-      viewBuilder.addSubForm("PrescriptionBook_salesOrder_description.title", "salesOrder", resourceBundle, prescriptionBookSalesOrderForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("PrescriptionBook_salesOrder_description.title", "salesOrder", resourceBundle, prescriptionBookSalesOrderSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("PrescriptionBook_agency_description.title", resourceBundle);
+//      viewBuilder.addSubForm("PrescriptionBook_agency_description.title", "agency", resourceBundle, prescriptionBookAgencyForm, ViewModel.READ_ONLY);
+//      viewBuilder.addSubForm("PrescriptionBook_agency_description.title", "agency", resourceBundle, prescriptionBookAgencySelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("PrescriptionBook_recordingAgent_description.title", resourceBundle);
+//      viewBuilder.addSubForm("PrescriptionBook_recordingAgent_description.title", "recordingAgent", resourceBundle, prescriptionBookRecordingAgentForm, ViewModel.READ_ONLY);
+//      viewBuilder.addSubForm("PrescriptionBook_recordingAgent_description.title", "recordingAgent", resourceBundle, prescriptionBookRecordingAgentSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("PrescriptionBook_salesOrder_description.title", resourceBundle);
+//      viewBuilder.addSubForm("PrescriptionBook_salesOrder_description.title", "salesOrder", resourceBundle, prescriptionBookSalesOrderForm, ViewModel.READ_ONLY);
+//      viewBuilder.addSubForm("PrescriptionBook_salesOrder_description.title", "salesOrder", resourceBundle, prescriptionBookSalesOrderSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }

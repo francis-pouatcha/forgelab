@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.javaext.format.NumberType;
@@ -22,7 +23,7 @@ import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ApplicationModal;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
-
+@Singleton
 public class ModalCustomerSearchView extends ApplicationModal{
 	@FXML
 	private VBox rootPane ;

@@ -28,6 +28,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemCreateService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemEditService;
@@ -36,6 +37,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -156,7 +158,7 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		
+
 		/*
 		 * listen to Ok button.
 		 */
@@ -166,9 +168,8 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
+				if(isValidDeliveryItem())
 					handleAddDeliveryItem(deliveryItem);
-				}
 			}
 
 		});
@@ -177,7 +178,8 @@ public class DeliveryDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				handleAddDeliveryItem(deliveryItem);
+				if(isValidDeliveryItem())
+					handleAddDeliveryItem(deliveryItem);
 			}
 
 		});
@@ -307,13 +309,15 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
-						BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
-						if(amountBeforeTax.compareTo(processAmount)==0){
-							handleDeliveryClosedEvent(displayedEntity);
-						}else {
-							Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
-							.nativeTitleBar().showError();
+						if(isValideDelivery()){
+							BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
+							BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
+							if(amountBeforeTax.compareTo(processAmount)==0){
+								handleDeliveryClosedEvent(displayedEntity);
+							}else {
+								Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
+								.nativeTitleBar().showError();
+							}
 						}
 					}
 				});
@@ -329,7 +333,7 @@ public class DeliveryDisplayController implements EntityController
 				s.reset();
 				PropertyReader.copy(entity, displayedEntity);
 				deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(entity)).start();
-				
+
 
 			}
 		});
@@ -403,7 +407,7 @@ public class DeliveryDisplayController implements EntityController
 		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
 
 		displayView.getView().addValidators();
-		
+
 		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		displayView.getDeleteButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		displayView.getEditButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
@@ -421,6 +425,30 @@ public class DeliveryDisplayController implements EntityController
 		{
 			children.add(rootPane);
 		}
+	}
+
+	public boolean isValidDeliveryItem(){
+		BigDecimal orderedQty = deliveryItem.getStockQuantity();
+		DeliveryItemArticle article = deliveryItem.getArticle();
+		if(article==null || article.getId()==null){
+			Dialogs.create().nativeTitleBar().message("you need to specified article ").showError();
+			return false;
+		}
+		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
+			Dialogs.create().nativeTitleBar().message("orderedQty is required ").showError();
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public boolean isValideDelivery(){
+		if(displayedEntity.getDeliveryItems().isEmpty()){
+			Dialogs.create().nativeTitleBar().message("DELIVERY  need to have at least one item").showError();
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -479,7 +507,7 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
-		
+
 		closeService.setDelivery(displayedEntity).start();
 
 	}

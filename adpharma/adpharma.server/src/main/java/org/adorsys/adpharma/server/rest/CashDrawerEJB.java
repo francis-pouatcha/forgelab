@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -24,7 +23,6 @@ import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
-import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class CashDrawerEJB
@@ -38,7 +36,7 @@ public class CashDrawerEJB
 	@Inject
 	private AgencyMerger agencyMerger;
 
-	@EJB
+	@Inject
 	private SecurityUtil securityUtil;
 	
 	@Inject 
@@ -46,24 +44,13 @@ public class CashDrawerEJB
 	private Event<PaymentItem> paymentItemProcessEvent;
 
 	public CashDrawer create(CashDrawer entity)
-	{	
-		CashDrawer cashDrawer = attach(entity);
-		Login cashier = securityUtil.getConnectedUser();
-		cashDrawer.setCashier(cashier);
-		cashDrawer.setAgency(cashier.getAgency());
-		cashDrawer.setCashDrawerNumber("CD-"+RandomStringUtils.randomAlphanumeric(5));
-		cashDrawer.setOpened(true);
-		cashDrawer.setOpeningDate(new Date());
-		cashDrawer.setTotalCash(cashDrawer.getInitialAmount());
-		cashDrawer.setTotalCashIn(BigDecimal.ZERO);
-		cashDrawer.setTotalCashOut(BigDecimal.ZERO);
-		cashDrawer.setTotalCheck(BigDecimal.ZERO);
-		cashDrawer.setTotalClientVoucher(BigDecimal.ZERO);
-		cashDrawer.setTotalCompanyVoucher(BigDecimal.ZERO);
-		cashDrawer.setTotalCreditCard(BigDecimal.ZERO);
-		return repository.save(cashDrawer);
+	{    Login connectedUser = securityUtil.getConnectedUser();
+	entity.setCashier(connectedUser);
+	entity.setAgency(connectedUser.getAgency());
+	entity.initAmount();
+	return repository.save(attach(entity));
 	}
-
+	
 	public CashDrawer deleteById(Long id)
 	{
 		CashDrawer entity = repository.findBy(id);
@@ -176,6 +163,15 @@ public class CashDrawerEJB
 		CashDrawer cashDrawer = new CashDrawer();
 		cashDrawer.setAgency(agency);
 		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency});
+	}
+	
+	public List<CashDrawer> agencyOpenDrawers() {
+		Login cashier = securityUtil.getConnectedUser();
+		Agency agency = cashier.getAgency();
+		CashDrawer cashDrawer = new CashDrawer();
+		cashDrawer.setOpened(true);
+		cashDrawer.setAgency(agency);
+		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency,CashDrawer_.opened});
 	}
 
 	public CashDrawer close(CashDrawer entity) {

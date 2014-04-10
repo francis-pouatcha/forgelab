@@ -123,8 +123,7 @@
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientAdresse" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-												<TextField fx:id="clientcategorie" editable="false" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-												<ComboBox fx:id="client" layoutX="168.0" layoutY="21.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" />
+												<ComboBox fx:id="client" layoutX="168.0" layoutY="21.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" /><ComboBox fx:id="clientcategorie" prefHeight="26.0" prefWidth="215.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 											</children>
 											<padding>
 												<Insets top="10.0" />

@@ -23,7 +23,7 @@ public class PrescriptionBookSearchInput
    /**
     * The entity holding search inputs.
     */
-   private PrescriptionBook entity;
+   private PrescriptionBook entity= new PrescriptionBook();
 
    /**
     * The start cursor

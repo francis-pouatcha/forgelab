@@ -316,7 +316,7 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				PropertyReader.copy(cd, displayedEntity);
-				System.out.println(cd.getCashier());
+				System.out.println(cd.getCashDrawerNumber());
 
 			}
 		});

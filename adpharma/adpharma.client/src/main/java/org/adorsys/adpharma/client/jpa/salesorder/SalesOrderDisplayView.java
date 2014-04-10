@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
@@ -94,7 +95,7 @@ public class SalesOrderDisplayView
 	private TextField clientAdresse;
 
 	@FXML
-	private TextField clientcategorie;
+	private ComboBox<CustomerCustomerCategory> clientcategorie;
 
 	//	Rigth grid pane components
 	@FXML
@@ -277,7 +278,7 @@ public class SalesOrderDisplayView
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
 		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
-		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
+		clientcategorie.valueProperty().bindBidirectional(model.getCustomer().customerCategoryProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
 
@@ -400,7 +401,7 @@ public class SalesOrderDisplayView
 	}
 
 
-	public TextField getClientcategorie() {
+	public ComboBox<CustomerCustomerCategory> getClientcategorie() {
 		return clientcategorie;
 	}
 

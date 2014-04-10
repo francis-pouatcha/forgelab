@@ -23,7 +23,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
-@Singleton
+
 public class ModalArticleCreateController {
 
 	@Inject
