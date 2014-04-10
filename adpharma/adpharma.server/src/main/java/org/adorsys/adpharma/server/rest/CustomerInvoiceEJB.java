@@ -25,6 +25,7 @@ import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
+import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
@@ -218,99 +219,59 @@ public class CustomerInvoiceEJB {
 		ci = found.iterator().next();
 		deleteById(ci.getId());
 	}
-	
-	public void processDirectSales(@Observes @DirectSalesClosedEvent Payment payment){
-		// The amount that went in or out of the cash drawer.
-		BigDecimal amount = payment.getAmount();
-		
-		// Customer or insurance.
-		Customer paidBy = payment.getPaidBy();
-		
-		// A direct sale must not have more than one invoice.
-		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
-		if(invoices.size()>1) throw new IllegalStateException("Direct sale can not contain more than one invoice.");
-		if(invoices.size()<1) throw new IllegalStateException("Direct sale can not contain less than one invoice.");
-		PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = invoices.iterator().next();
-		
-		CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
-		boolean insurancePaying =  customerInvoice.getInsurance()!=null && paidBy.equals(customerInvoice.getInsurance().getInsurer());
-		if(customerInvoice.getCustomer().equals(customerInvoice.getInsurance().getInsurer())){
-			throw new IllegalStateException("Inconsistent invoice, customer and insurer can not be identical.");
-		}
-		// BTW both might be true.
-
-		BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
-		BigDecimal restToPay = null;
-		if(insurancePaying){
-			restToPay = customerInvoice.getInsurranceRestTopay();
-		} else {
-			restToPay = customerInvoice.getCustomerRestTopay();
-		}
-		if(restToPay.compareTo(BigDecimal.ZERO)<=0) throw new IllegalStateException("Invoice balance is zero or less. Can not pay a balanced invoice.");
-		// The rest to pay if positive is equals or more than the amount.
-		if(amount.compareTo(BigDecimal.ZERO)<0) throw new IllegalStateException("Payment amount is negative. Can not pay with a negative amount.");
-		if(restToPay.compareTo(amount)<0) throw new IllegalStateException("Invoice amount less than payment amount. Balance will be negative.");
-		restToPay = restToPay.subtract(amount);
-		totalRestToPay = totalRestToPay.subtract(amount);
-		customerInvoice.setTotalRestToPay(totalRestToPay);
-		if(insurancePaying){
-			customerInvoice.setInsurranceRestTopay(restToPay);
-		} else {
-			customerInvoice.setCustomerRestTopay(restToPay);
-		}
-		if(totalRestToPay.compareTo(BigDecimal.ZERO)==0){
-			customerInvoice.setSettled(Boolean.TRUE);
-			customerInvoice.setCashed(Boolean.TRUE);
-		}
-		customerInvoice = update(customerInvoice);
-			
-		customerInvoiceClosedEvent.fire(customerInvoice);
-		// Announce customer invoice processed.
-		customerInvoiceProcessedEvent.fire(customerInvoice);
-	}
 
 	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
-		BigDecimal amount = payment.getAmount();
-		Customer paidBy = payment.getPaidBy();
-		
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
-		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
-			CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
-			if(amount.compareTo(BigDecimal.ZERO)<=0 ||// there is no money left for invoice settlement
-				Boolean.TRUE.equals(customerInvoice.getCashed() || // invoice is cashed
-				Boolean.TRUE.equals(customerInvoice.getSettled()))){ // invoice is settled
-				continue;
-			}
-			if(paidBy==null || (!paidBy.equals(customerInvoice.getCustomer()) && !paidBy.equals(customerInvoice.getInsurance().getInsurer()))) continue;
-			boolean customer = customerInvoice.getCustomer().equals(paidBy);
+		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+		BigDecimal difference = BigDecimal.ZERO;
+		for (PaymentItem paymentItem : paymentItems) {
+			Customer payer = paymentItem.getPaidBy();
+			BigDecimal amount = paymentItem.getAmount();
+			for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+				CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
+				if(!customerInvoice.getCashed())
+					customerInvoiceClosedEvent.fire(customerInvoice);
+				
+				if(customerInvoice.getSettled()) continue;
+				if(amount.compareTo(BigDecimal.ZERO)<=0) continue;
+				
+				boolean customer = true;// paid by the client
+				if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getCustomer().equals(payer))customer=false;// paid by the insurance.
 
-			BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
-			BigDecimal customerRestTopay = customer?customerInvoice.getCustomerRestTopay():customerInvoice.getInsurranceRestTopay();
-			BigDecimal amountForThisInvoice = null;
-			if(amount.compareTo(customerRestTopay)>0){
-				amountForThisInvoice = amount.subtract(customerRestTopay);
-				amount = amount.subtract(amountForThisInvoice);
-			} else {
-				amountForThisInvoice = amount;
-				amount = BigDecimal.ZERO;
+				
+				BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
+				BigDecimal payerRestTopay = customer?customerInvoice.getCustomerRestTopay():customerInvoice.getInsurranceRestTopay();
+				if(payerRestTopay.compareTo(BigDecimal.ZERO)<=0) continue;
+				
+				BigDecimal amountForThisInvoice = null;
+				if(amount.compareTo(payerRestTopay)>0){
+					amountForThisInvoice = amount.subtract(payerRestTopay);
+					amount = amount.subtract(amountForThisInvoice);
+				} else {
+					amountForThisInvoice = amount;
+					amount = BigDecimal.ZERO;
+				}
+				payerRestTopay = payerRestTopay.subtract(amountForThisInvoice);
+				if(customer)
+					customerInvoice.setCustomerRestTopay(payerRestTopay);
+				else 
+					customerInvoice.setInsurranceRestTopay(payerRestTopay);
+				
+				totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
+				customerInvoice.setTotalRestToPay(totalRestToPay);
+				if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
+					customerInvoice.setSettled(Boolean.TRUE);
+				}
+				customerInvoice = update(customerInvoice);
+				
+				// Announce customer invoice processed.
+				customerInvoiceProcessedEvent.fire(customerInvoice);
 			}
-			customerRestTopay = customerRestTopay.subtract(amountForThisInvoice);
-			if(customer)
-				customerInvoice.setCustomerRestTopay(customerRestTopay);
-			else 
-				customerInvoice.setInsurranceRestTopay(customerRestTopay);
-			
-			totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
-			customerInvoice.setTotalRestToPay(totalRestToPay);
-			if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
-				customerInvoice.setSettled(Boolean.TRUE);
-				customerInvoice.setCashed(Boolean.TRUE);
+			if(amount.compareTo(BigDecimal.ZERO)>=0){// payment item not exhausted
+				// Customer difference
+				difference = difference.add(amount);
 			}
-			customerInvoice = update(customerInvoice);
-			
-			// Announce customer invoice processed.
-			customerInvoiceProcessedEvent.fire(customerInvoice);
-
 		}
+		payment.setDifference(difference);
 	}
 }

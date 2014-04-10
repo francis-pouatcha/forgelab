@@ -1,12 +1,23 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher;
+import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
+import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentItem;
+import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CustomerVoucherRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class CustomerVoucherEJB
@@ -26,6 +37,9 @@ public class CustomerVoucherEJB
 
    @Inject
    private AgencyMerger agencyMerger;
+   
+   @Inject
+   private SecurityUtil securityUtil;
 
    public CustomerVoucher create(CustomerVoucher entity)
    {
@@ -101,4 +115,26 @@ public class CustomerVoucherEJB
 
       return entity;
    }
+   
+   @SuppressWarnings("unchecked")
+   public void processPaymentClosed(@Observes @DocumentClosedEvent Payment payment){
+	   Set<PaymentItem> paymentItems = payment.getPaymentItems();
+	   for (PaymentItem paymentItem : paymentItems) {
+		   if(PaymentMode.VOUCHER.equals(paymentItem.getPaymentMode())){
+			   String documentNumber = paymentItem.getDocumentNumber();
+			   CustomerVoucher customerVoucher = new CustomerVoucher();
+			   customerVoucher.setVoucherNumber(documentNumber);
+			   List<CustomerVoucher> found = findBy(customerVoucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber});
+			   if(found.isEmpty()) throw new IllegalStateException("Unknown customer voucher.");
+			   customerVoucher = found.iterator().next();
+			   customerVoucher.setAmountUsed(customerVoucher.getAmountUsed().add(paymentItem.getAmount()));
+			   customerVoucher.setModifiedDate(new Date());
+			   customerVoucher.setRecordingUser(securityUtil.getConnectedUser());
+			   customerVoucher.setRestAmount(customerVoucher.getRestAmount().subtract(paymentItem.getAmount()));
+			   if(customerVoucher.getRestAmount().compareTo(BigDecimal.ZERO)<=0)
+				   customerVoucher.setSettled(Boolean.TRUE);
+			   update(customerVoucher);
+		   }
+	   }
+	}
 }

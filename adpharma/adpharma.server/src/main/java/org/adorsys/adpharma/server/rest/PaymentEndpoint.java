@@ -244,21 +244,22 @@ public class PaymentEndpoint
       return searchInput;
    }
 
-   @PUT
-   @Path("/directSales/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public Payment directSales(Payment entity)
-   {
-      return detach(ejb.directSalesClosed(entity));
-   }
+//   @PUT
+//   @Path("/directSales/{id:[0-9][0-9]*}")
+//   @Produces({ "application/json", "application/xml" })
+//   @Consumes({ "application/json", "application/xml" })
+//   public Payment directSales(Payment entity)
+//   {
+//      return detach(ejb.directSalesClosed(entity));
+//   }
+//   
    
-   @PUT
-   @Path("/processPayment/{id:[0-9][0-9]*}")
-   @Produces({ "application/json", "application/xml" })
-   @Consumes({ "application/json", "application/xml" })
-   public Payment processPayment(Payment entity)
-   {
-      return detach(ejb.processPayment(entity));
-   }
+//   @PUT
+//   @Path("/processPayment/{id:[0-9][0-9]*}")
+//   @Produces({ "application/json", "application/xml" })
+//   @Consumes({ "application/json", "application/xml" })
+//   public Payment processPayment(Payment entity)
+//   {
+//      return detach(ejb.processPayment(entity));
+//   }
 }

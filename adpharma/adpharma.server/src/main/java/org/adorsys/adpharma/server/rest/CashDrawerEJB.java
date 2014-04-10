@@ -3,20 +3,24 @@ package org.adorsys.adpharma.server.rest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -25,8 +29,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 @Stateless
 public class CashDrawerEJB
 {
-
-
 	@Inject
 	private CashDrawerRepository repository;
 
@@ -38,6 +40,10 @@ public class CashDrawerEJB
 
 	@EJB
 	private SecurityUtil securityUtil;
+	
+	@Inject 
+	@DocumentProcessedEvent
+	private Event<PaymentItem> paymentItemProcessEvent;
 
 	public CashDrawer create(CashDrawer entity)
 	{	
@@ -125,37 +131,33 @@ public class CashDrawerEJB
 		return entity;
 	}
 
-	public void processDirectSales(@Observes @DirectSalesClosedEvent Payment payment){
-		processPaymentIntern(payment);
-	}
-	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
-		processPaymentIntern(payment);
-	}
-
-	private void processPaymentIntern(Payment payment){
+	public void processPaymentClosed(@Observes @DocumentClosedEvent Payment payment){
 		CashDrawer cashDrawer = payment.getCashDrawer();
-		PaymentMode paymentMode = payment.getPaymentMode();
+		Set<PaymentItem> paymentItems = payment.getPaymentItems();
 		BigDecimal amount = payment.getAmount();
 		cashDrawer.setTotalCashIn(amount);
-		switch (paymentMode) {
-		case CASH:
-			BigDecimal totalCash = cashDrawer.getTotalCash()==null?BigDecimal.ZERO:cashDrawer.getTotalCash();
-			cashDrawer.setTotalCash(totalCash.add(amount));
-			break;
-		case CREDIT_CARD:
-			BigDecimal totalCreditCard = cashDrawer.getTotalCreditCard()==null?BigDecimal.ZERO:cashDrawer.getTotalCreditCard();
-			cashDrawer.setTotalCreditCard(totalCreditCard.add(amount));
-			break;
-		case CHECK:
-			BigDecimal totalCheck = cashDrawer.getTotalCheck()==null?BigDecimal.ZERO:cashDrawer.getTotalCheck();
-			cashDrawer.setTotalCheck(totalCheck.add(amount));
-			break;
-		case VOUCHER:
-			BigDecimal totalClientVoucher = cashDrawer.getTotalClientVoucher()==null?BigDecimal.ZERO:cashDrawer.getTotalClientVoucher();
-			cashDrawer.setTotalClientVoucher(totalClientVoucher.add(amount));
-			break;
-		default:
-			throw new IllegalStateException("Unknown payment mode: "+paymentMode);
+		for (PaymentItem paymentItem : paymentItems) {
+			PaymentMode paymentMode = paymentItem.getPaymentMode();
+			switch (paymentMode) {
+			case CASH:
+				BigDecimal totalCash = cashDrawer.getTotalCash()==null?BigDecimal.ZERO:cashDrawer.getTotalCash();
+				cashDrawer.setTotalCash(totalCash.add(paymentItem.getAmount()));
+				break;
+			case CREDIT_CARD:
+				BigDecimal totalCreditCard = cashDrawer.getTotalCreditCard()==null?BigDecimal.ZERO:cashDrawer.getTotalCreditCard();
+				cashDrawer.setTotalCreditCard(totalCreditCard.add(paymentItem.getAmount()));
+				break;
+			case CHECK:
+				BigDecimal totalCheck = cashDrawer.getTotalCheck()==null?BigDecimal.ZERO:cashDrawer.getTotalCheck();
+				cashDrawer.setTotalCheck(totalCheck.add(paymentItem.getAmount()));
+				break;
+			case VOUCHER:
+				BigDecimal totalClientVoucher = cashDrawer.getTotalClientVoucher()==null?BigDecimal.ZERO:cashDrawer.getTotalClientVoucher();
+				cashDrawer.setTotalClientVoucher(totalClientVoucher.add(paymentItem.getAmount()));
+				break;
+			default:
+				throw new IllegalStateException("Unknown payment mode: "+paymentMode);
+			}
 		}
 		update(cashDrawer);
 	}

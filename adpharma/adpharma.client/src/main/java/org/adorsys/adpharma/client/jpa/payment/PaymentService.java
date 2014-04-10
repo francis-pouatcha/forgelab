@@ -8,7 +8,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
@@ -23,26 +22,27 @@ public class PaymentService
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
+   Client client = ClientBuilder.newClient();
+   String serverAddress = System.getProperty("server.address");
 
    public PaymentService()
    {
-      Client client = ClientBuilder.newClient();
-      String serverAddress = System.getProperty("server.address");
       if (serverAddress == null)
          throw new IllegalStateException("Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-      this.target = client.target(serverAddress + "/rest/payments");
    }
 
    @PostConstruct
    protected void postConstruct()
    {
-      this.target.register(clientCookieFilter);
    }
 
+   private WebTarget target(){
+	   return client.target(serverAddress + "/rest/payments").register(clientCookieFilter);
+   }
    public Payment create(Payment entity)
    {
       Entity<Payment> eCopy = Entity.entity(entity, media);
-      return target.request(media).post(eCopy, Payment.class);
+      return target().request(media).post(eCopy, Payment.class);
    }
 
    // @DELETE
@@ -50,7 +50,7 @@ public class PaymentService
    public Payment deleteById(Long id)
    {//@PathParam("id")
       // TODO encode id
-      return target.path("" + id).request(media).delete(Payment.class);
+      return target().path("" + id).request(media).delete(Payment.class);
    }
 
    // @PUT
@@ -59,7 +59,7 @@ public class PaymentService
    public Payment update(Payment entity)
    {
       Entity<Payment> ent = Entity.entity(entity, media);
-      return target.path("" + entity.getId())
+      return target().path("" + entity.getId())
             .request(media).put(ent, Payment.class);
    }
    
@@ -70,21 +70,21 @@ public class PaymentService
    // @Produces("application/xml")
    public Payment findById(Long id)
    {// @PathParam("id") 
-      return target.path("" + id).request(media).get(Payment.class);
+      return target().path("" + id).request(media).get(Payment.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public PaymentSearchResult listAll()
    {
-      return target.request(media).get(PaymentSearchResult.class);
+      return target().request(media).get(PaymentSearchResult.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public PaymentSearchResult listAll(int start, int max)
    {
-      return target.queryParam("start", start).queryParam("max", max)
+      return target().queryParam("start", start).queryParam("max", max)
             .request(media).get(PaymentSearchResult.class);
    }
 
@@ -92,7 +92,7 @@ public class PaymentService
    //	@Path("/count")
    public Long count()
    {
-      return target.path("count").request().get(Long.class);
+      return target().path("count").request().get(Long.class);
    }
 
    // @POST
@@ -102,7 +102,7 @@ public class PaymentService
    {
       Entity<PaymentSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY).request(media).post(
+      return target().path(FIND_BY).request(media).post(
             searchInputEntity, PaymentSearchResult.class);
    }
 
@@ -113,7 +113,7 @@ public class PaymentService
    {
       Entity<PaymentSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countBy").request()
+      return target().path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
 
@@ -125,7 +125,7 @@ public class PaymentService
    {
       Entity<PaymentSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY_LIKE_PATH).request(media).post(
+      return target().path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, PaymentSearchResult.class);
    }
 
@@ -136,7 +136,7 @@ public class PaymentService
    {
       Entity<PaymentSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countByLike").request()
+      return target().path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
    
@@ -144,10 +144,10 @@ public class PaymentService
 // @Path("/customerPayment/{id:[0-9][0-9]*}")
 //   @Produces({ "application/json", "application/xml" })
 //   @Consumes({ "application/json", "application/xml" })
-   public Payment customerPayment(Long id , List<CustomerInvoice> customerInvoices)
-   {
-      Entity<List<CustomerInvoice>> ent = Entity.entity(customerInvoices, media);
-      return target.path("customerPayment/"+id)
-            .request(media).put(ent, Payment.class);
-   }   
+//   public Payment customerPayment(Long id , List<CustomerInvoice> customerInvoices)
+//   {
+//      Entity<List<CustomerInvoice>> ent = Entity.entity(customerInvoices, media);
+//      return target().path("customerPayment/"+id)
+//            .request(media).put(ent, Payment.class);
+//   }   
 }

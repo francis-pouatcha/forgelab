@@ -39,6 +39,9 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSe
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchService;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.jpa.payment.PaymentAgency;
+import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
+import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCustomerService;
 import org.adorsys.adpharma.client.jpa.payment.PaymentPaidBy;
@@ -405,6 +408,7 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
+				payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));				
 				if(isValidCustomerPayement()){
 					paymentCreateService.setModel(payment).start();
 				}else {
@@ -583,9 +587,18 @@ public class CashDrawerDisplayController implements EntityController
 	}
 
 	private boolean isValidCustomerPayement(){
-		BigDecimal receivedAmount2 = payment.getReceivedAmount();
-		BigDecimal amount2 = payment.getAmount();
-		return (receivedAmount2.compareTo(amount2)==1 || receivedAmount2.compareTo(amount2)==0);
+		ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().itemsProperty().getValue();
+		ArrayList<PaymentItem> arrayList = new ArrayList<PaymentItem>(list);
+		payment.getPaymentItems().clear();
+		payment.getPaymentItems().addAll(arrayList);
+		BigDecimal receivedAmount2 = BigDecimal.ZERO;
+		BigDecimal amount2 = BigDecimal.ZERO;
+		for (PaymentItem paymentItem : arrayList) {
+			if(paymentItem.getReceivedAmount().compareTo(BigDecimal.ZERO)<=0) payment.getPaymentItems().remove(paymentItem);
+			receivedAmount2 = receivedAmount2.add(paymentItem.getAmount());
+			amount2 = amount2.add(paymentItem.getReceivedAmount());
+		}
+		return receivedAmount2.compareTo(BigDecimal.ZERO)>=0 && amount2.compareTo(BigDecimal.ZERO)>=0;
 	}
 
 	public void loadOpenCashDrawer(){
