@@ -149,6 +149,9 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private SalesOrderRegistration registration;
 
+	@Inject
+	private InsurranceSearchInput insurranceSearchInput;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -169,7 +172,8 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
-					handleAddSalesOrderItem(salesOrderItem);
+					if(isValidSalesOrderItem())
+						handleAddSalesOrderItem(salesOrderItem);
 				}
 			}
 
@@ -232,15 +236,17 @@ public class SalesOrderDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
-						if (violations.isEmpty())
-						{
-							closeService.setSalesOrder(displayedEntity).start();
-						}
-						else
-						{
-							Dialogs.create().nativeTitleBar().title("Entity_create_error.title")
-							.message("Entity_click_to_see_error").showError();
+						if(isValideSale()){
+							Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
+							if (violations.isEmpty())
+							{
+								closeService.setSalesOrder(displayedEntity).start();
+							}
+							else
+							{
+								Dialogs.create().nativeTitleBar().title("Entity_create_error.title")
+								.message("Entity_click_to_see_error").showError();
+							}
 						}
 					}
 				});
@@ -249,7 +255,8 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				handleAddSalesOrderItem(salesOrderItem);
+				if(isValidSalesOrderItem())
+					handleAddSalesOrderItem(salesOrderItem);
 			}
 		});
 
@@ -514,7 +521,7 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				searchRequestedEvent.fire(displayedEntity);
+				//				searchRequestedEvent.fire(displayedEntity);
 			}
 				});
 
@@ -585,8 +592,33 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrder selectedEntity)
 	{
 		PropertyReader.copy(selectedEntity, displayedEntity);
-		//      
-		//      
+		Customer customer = new Customer();
+		PropertyReader.copy(displayedEntity.getCustomer(), customer);
+		getCustomerInsurance(customer);
+	}
+
+	public boolean isValidSalesOrderItem(){
+		BigDecimal orderedQty = salesOrderItem.getOrderedQty();
+		SalesOrderItemArticle article = salesOrderItem.getArticle();
+		if(article==null || article.getId()==null){
+			Dialogs.create().nativeTitleBar().message("you need to specified article ").showError();
+			return false;
+		}
+		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
+			Dialogs.create().nativeTitleBar().message("orderedQty is required ").showError();
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public boolean isValideSale(){
+		if(displayedEntity.getSalesOrderItems().isEmpty()){
+			Dialogs.create().nativeTitleBar().message("Sales Order need to have at least one item").showError();
+			return false;
+		}
+		return true;
 	}
 
 	public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<SalesOrder> eventData)
@@ -620,22 +652,21 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleNewCustomer(Customer model){
 		if(model !=null){
-			displayView.getClient().setValue(new SalesOrderCustomer(model));
+			displayedEntity.setCustomer((new SalesOrderCustomer(model)));
 			displayedEntity.setInsurance(new SalesOrderInsurance());
-			displayView.getClientAdresse().setText(model.getEmail());
-			displayView.getClientPhone().setText(model.getMobile()+"/"+model.getLandLinePhone());
-			displayView.getClientcategorie().setText(model.getCustomerCategory().getName()+"-"+model.getCustomerCategory().getDiscountRate());
+			getCustomerInsurance(model);
 
-			Insurrance insurrance = new Insurrance();
-			insurrance.setCustomer(new InsurranceCustomer(model));
-			InsurranceSearchInput isi = new InsurranceSearchInput();
-			isi.setEntity(insurrance);
-			isi.setMax(100);
-			isi.getFieldNames().add("customer");
-			insurranceSearchService.setSearchInputs(isi).start();
 		}
 
 
+	}
+
+	public void getCustomerInsurance(Customer model){
+		insurranceSearchInput.getEntity().setCustomer(new InsurranceCustomer(model));
+		insurranceSearchInput.setMax(-1);
+		insurranceSearchInput.getFieldNames().clear();
+		insurranceSearchInput.getFieldNames().add("customer");
+		insurranceSearchService.setSearchInputs(insurranceSearchInput).start();
 	}
 
 	public void handleNewInsurance(Insurrance model){

@@ -23,7 +23,7 @@ public class InsurranceSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Insurrance entity;
+   private Insurrance entity = new Insurrance();
 
    /**
     * The start cursor

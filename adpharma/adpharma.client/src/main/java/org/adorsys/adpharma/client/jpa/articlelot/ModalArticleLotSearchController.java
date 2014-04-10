@@ -28,7 +28,6 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 
-@Singleton
 public class ModalArticleLotSearchController  {
 
 	@Inject

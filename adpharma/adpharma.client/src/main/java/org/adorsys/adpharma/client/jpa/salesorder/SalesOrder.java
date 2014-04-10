@@ -3,7 +3,6 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -37,10 +36,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import quicktime.std.sg.SequenceGrabber;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
