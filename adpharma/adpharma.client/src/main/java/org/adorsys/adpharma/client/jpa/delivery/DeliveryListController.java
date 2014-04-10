@@ -13,7 +13,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -37,15 +36,15 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -89,6 +88,10 @@ public class DeliveryListController implements EntityController
 	@Inject
 	private DeliveryRegistration registration;
 
+	@Inject
+	@Bundle({ CrudKeys.class})
+	private ResourceBundle resourceBundle;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -129,7 +132,8 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{							
-				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
+				searchInput.setFieldNames(readSearchAttributes());
+				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
 
 			}
@@ -146,7 +150,12 @@ public class DeliveryListController implements EntityController
 			{							
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-					deliveryRemoveService.setEntity(selectedItem).start();
+					Action showConfirm = Dialogs.create().
+							nativeTitleBar().
+							message(resourceBundle.getString("Entity_confirm_remove.title")).showConfirm();
+					if(showConfirm==Dialog.Actions.YES){
+						deliveryRemoveService.setEntity(selectedItem).start();
+					}
 				}
 
 			}
@@ -166,8 +175,9 @@ public class DeliveryListController implements EntityController
 				for (Supplier supplier : resultList) {
 					ds.add(new DeliverySupplier(supplier));
 				}
+				ds.add(0, null);
 				listView.getSupplier().getItems().setAll(ds);
-				listView.getSupplier().getSelectionModel().clearSelection();
+				listView.getSupplier().getSelectionModel().select(0);
 
 			}
 		});
@@ -207,8 +217,7 @@ public class DeliveryListController implements EntityController
 				searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<Delivery> resultList = searchResult.getResultList();
-				listView.getDataList().getItems().setAll(resultList);
+				handleSearchResult(searchResult);
 
 			}
 		});
@@ -349,6 +358,19 @@ public class DeliveryListController implements EntityController
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(arrayList);
 		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public List<String> readSearchAttributes(){
+		ArrayList<String> seachAttributes = new ArrayList<String>() ;
+		String deliveryNumber = searchInput.getEntity().getDeliveryNumber();
+		DeliverySupplier supplier = searchInput.getEntity().getSupplier();
+		DocumentProcessingState state = searchInput.getEntity().getDeliveryProcessingState();
+		
+		if(StringUtils.isNotBlank(deliveryNumber)) seachAttributes.add("deliveryNumber");
+		if(supplier!=null && supplier.getId()!=null) seachAttributes.add("supplier");
+		if(state!=null) seachAttributes.add("deliveryProcessingState") ;
+		return seachAttributes;
+
 	}
 
 }

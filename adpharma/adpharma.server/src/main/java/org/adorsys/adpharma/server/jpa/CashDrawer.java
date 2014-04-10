@@ -130,6 +130,10 @@ public class CashDrawer implements Serializable
 	@Description("CashDrawer_totalClientVoucher_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private BigDecimal totalClientVoucher;
+	
+	@Column
+	@Description("CashDrawer_opened_description")
+	private Boolean opened=Boolean.TRUE;
 
 	public void initAmount(){
 		initialAmount=initialAmount !=null ?initialAmount : BigDecimal.ZERO;
@@ -151,10 +155,7 @@ public class CashDrawer implements Serializable
 	public Boolean isOpen(){
 		return closingDate == null ;
 	}
-	@Column
-	@Description("CashDrawer_opened_description")
-	private Boolean opened;
-
+	
 	public Long getId()
 	{
 		return this.id;

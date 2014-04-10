@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -144,10 +146,11 @@ public class DeliveryListView
 //		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
-		supplier.setPromptText("Supplier");
+		supplier.setPromptText("All Suppliers");
 		supplier.setPrefWidth(200d);
 
-		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(), false);
+		
+		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		deliveryProcessingState.setPromptText("state");
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);

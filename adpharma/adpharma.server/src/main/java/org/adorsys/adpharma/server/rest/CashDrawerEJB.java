@@ -11,9 +11,11 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class CashDrawerEJB
@@ -29,9 +31,15 @@ public class CashDrawerEJB
 	@Inject
 	private AgencyMerger agencyMerger;
 
+	@Inject
+	private SecurityUtil securityUtil;
+
 	public CashDrawer create(CashDrawer entity)
-	{
-		return repository.save(attach(entity));
+	{    Login connectedUser = securityUtil.getConnectedUser();
+	entity.setCashier(connectedUser);
+	entity.setAgency(connectedUser.getAgency());
+	entity.initAmount();
+	return repository.save(attach(entity));
 	}
 
 	public CashDrawer deleteById(Long id)

@@ -129,7 +129,7 @@ public class CashDrawer implements Cloneable
    {
       if (opened == null)
       {
-         opened = new SimpleBooleanProperty();
+         opened = new SimpleBooleanProperty(Boolean.TRUE);
       }
       return opened;
    }
@@ -142,7 +142,7 @@ public class CashDrawer implements Cloneable
    public final void setOpened(Boolean opened)
    {
       if (opened == null)
-         opened = Boolean.FALSE;
+         opened = Boolean.TRUE;
       this.openedProperty().set(opened);
    }
 

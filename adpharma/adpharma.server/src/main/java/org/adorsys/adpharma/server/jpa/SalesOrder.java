@@ -103,7 +103,7 @@ public class SalesOrder implements Serializable
    @ManyToOne
    @Description("SalesOrder_customer_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
-//   @NotNull(message = "SalesOrder_customer_NotNull_validation")
+   @NotNull(message = "SalesOrder_customer_NotNull_validation")
    private Customer customer;
 
    @ManyToOne

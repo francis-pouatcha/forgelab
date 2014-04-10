@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -15,10 +18,14 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Singleton
@@ -43,6 +50,8 @@ public class ModalArticleLotSearchController  {
 
 	@Inject
 	ArticleLot articleLot;
+	
+	private ArticleLotSearchResult searchResult;
 
 
 	@PostConstruct
@@ -127,7 +136,6 @@ public class ModalArticleLotSearchController  {
 	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
 		articleSearchService.setSearchInputs(lotSearchInput).start();
 	}
-
-
+	
 
 }
