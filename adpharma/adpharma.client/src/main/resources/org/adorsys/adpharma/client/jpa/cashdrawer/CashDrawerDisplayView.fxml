@@ -81,6 +81,12 @@
 											<VBox.margin>
 												<Insets bottom="2.0" />
 											</VBox.margin>
+<contextMenu><ContextMenu>
+  <items>
+    <MenuItem fx:id="removePaymentMenuItem" mnemonicParsing="false" text="Remove Payment" />
+  </items>
+</ContextMenu>
+</contextMenu>
 										</TableView>
 									</children>
 								</VBox>

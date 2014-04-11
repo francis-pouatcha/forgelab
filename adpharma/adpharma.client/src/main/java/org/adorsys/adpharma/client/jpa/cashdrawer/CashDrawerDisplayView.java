@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -51,6 +52,9 @@ public class CashDrawerDisplayView
 	
 	@FXML
 	private Button cashButon;
+	
+	@FXML
+	private MenuItem removePaymentMenuItem;
 
 	private HBox buttonBarLeft;
 
@@ -335,6 +339,9 @@ public class CashDrawerDisplayView
 	}
 	public TextField getDocNumber() {
 		return docNumber;
+	}
+	public MenuItem getRemovePaymentMenuItem() {
+		return removePaymentMenuItem;
 	}
 	public void setDocNumber(TextField docNumber) {
 		this.docNumber = docNumber;

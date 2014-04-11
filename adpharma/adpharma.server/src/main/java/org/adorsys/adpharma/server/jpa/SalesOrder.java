@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -130,7 +131,7 @@ public class SalesOrder implements Serializable
 
    @Column
    @Description("SalesOrder_salesOrderStatus_description")
-   @Enumerated
+   @Enumerated(EnumType.STRING)
    private DocumentProcessingState salesOrderStatus = DocumentProcessingState.ONGOING;
 
    @Column

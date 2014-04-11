@@ -13,7 +13,9 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -27,10 +29,6 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.cashout.CashOut;
-import org.adorsys.adpharma.client.jpa.cashout.CashOutAgency;
-import org.adorsys.adpharma.client.jpa.cashout.CashOutCashDrawer;
-import org.adorsys.adpharma.client.jpa.cashout.CashOutCashier;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
@@ -45,6 +43,10 @@ import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherCustomer;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchInput;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchResult;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchService;
+import org.adorsys.adpharma.client.jpa.disbursement.Disbursement;
+import org.adorsys.adpharma.client.jpa.disbursement.DisbursementAgency;
+import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashDrawer;
+import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -90,7 +92,7 @@ public class CashDrawerDisplayController implements EntityController
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
-	private Event<CashOut> modalCashOutCreateRequestedEvent;
+	private Event<Disbursement> modalCashOutCreateRequestedEvent;
 
 	@Inject
 	@EntityEditRequestedEvent
@@ -135,8 +137,6 @@ public class CashDrawerDisplayController implements EntityController
 	private PaymentCreateService paymentCreateService;
 	@Inject
 	private ServiceCallFailedEventHandler paymentCreateServiceFailedHandler;
-
-
 
 	@Inject
 	@AssocSelectionResponseEvent
@@ -200,6 +200,17 @@ public class CashDrawerDisplayController implements EntityController
 				createCashDrawer();
 			}
 		});
+		
+		/*
+		 * handle Remove Payment action
+		 */
+		displayView.getRemovePaymentMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Dialogs.create().message("not yet implemented").showInformation();
+			}
+		});
 
 		/*
 		 * handle open cash drawer action
@@ -208,20 +219,20 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				CashOutAgency cashOutAgency = new CashOutAgency();
-				CashOutCashDrawer cashOutCashDrawer = new CashOutCashDrawer();
-				CashOutCashier cashOutCashier = new CashOutCashier();
+				DisbursementAgency cashOutAgency = new DisbursementAgency();
+				DisbursementCashDrawer cashOutCashDrawer = new DisbursementCashDrawer();
+				DisbursementCashier cashOutCashier = new DisbursementCashier();
 
 				PropertyReader.copy(displayedEntity.getAgency(), cashOutAgency);
 				PropertyReader.copy(displayedEntity.getCashier(), cashOutCashier);
 				PropertyReader.copy(displayedEntity, cashOutCashDrawer);
 
-				CashOut cashOut = new CashOut();
-				cashOut.setAgency(cashOutAgency);
-				cashOut.setCasDrawer(cashOutCashDrawer);
-				cashOut.setCashier(cashOutCashier);
+				Disbursement disbursement = new Disbursement();
+				disbursement.setAgency(cashOutAgency);
+				disbursement.setCashDrawer(cashOutCashDrawer);
+				disbursement.setCashier(cashOutCashier);
 
-				modalCashOutCreateRequestedEvent.fire(cashOut);
+				modalCashOutCreateRequestedEvent.fire(disbursement);
 
 			}
 		});

@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -151,7 +152,7 @@ public class Delivery implements Serializable
 
 	@Column
 	@Description("Delivery_deliveryProcessingState_description")
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	private DocumentProcessingState deliveryProcessingState;
 
 	@ManyToOne
