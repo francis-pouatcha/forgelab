@@ -229,10 +229,12 @@ public class CustomerInvoiceEJB {
 			BigDecimal amount = paymentItem.getAmount();
 			for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
 				CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
-				if(!customerInvoice.getCashed())
+				if(!customerInvoice.getCashed()){
 					customerInvoiceClosedEvent.fire(customerInvoice);
+					customerInvoice.setCashed(Boolean.TRUE);
+				}
 				
-				if(customerInvoice.getSettled()) continue;
+				if(Boolean.TRUE.equals(customerInvoice.getSettled())) continue;
 				if(amount.compareTo(BigDecimal.ZERO)<=0) continue;
 				
 				boolean customer = true;// paid by the client

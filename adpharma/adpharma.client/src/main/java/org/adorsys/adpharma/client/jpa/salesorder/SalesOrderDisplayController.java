@@ -468,7 +468,8 @@ public class SalesOrderDisplayController implements EntityController
 					sov.add(new SalesOrderVat(vat));
 				}
 				displayView.getTax().getItems().setAll(sov);
-				displayView.getTax().setValue(new SalesOrderVat(resultList.iterator().next()));
+				if(!resultList.isEmpty())
+					displayView.getTax().setValue(new SalesOrderVat(resultList.iterator().next()));
 			}
 		});
 		vatSearchService.setOnFailed(callFailedEventHandler);
