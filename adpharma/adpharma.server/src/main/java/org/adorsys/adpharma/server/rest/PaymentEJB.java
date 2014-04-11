@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -15,8 +16,10 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
+import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.PaymentRepository;
@@ -57,10 +60,24 @@ public class PaymentEJB
 	@Inject
 	@DocumentClosedEvent
 	private Event<Payment> paymentClosedEvent;
+	
+	@EJB
+	private CustomerInvoiceEJB customerInvoiceEJB;
 
 	public Payment create(Payment entity)
    {
+	   ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
 	   Payment payment = attach(entity);
+	   for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+		   PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
+		   i.setSource(payment);
+		   i.setSourceQualifier("invoices");
+		   CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
+		   CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
+		   i.setTarget(customerInvoice);
+		   i.setTargetQualifier("payments");
+		   payment.getInvoices().add(i);
+	   }
 	   Login cashier = securityUtil.getConnectedUser();
 	   CashDrawer cashDrawer = payment.getCashDrawer();
 	   // Is the cashier the owner of this cashdrawer
@@ -173,27 +190,5 @@ public class PaymentEJB
       return entity;
    }
 
-//	@SuppressWarnings("unchecked")
-//	public Payment directSalesClosed1(Payment entity)
-//   {
-//		entity = attach(entity);
-//		
-//		// Set the cash drawer
-//		Login connectedUser = securityUtil.getConnectedUser();
-//		CashDrawer cashDrawer = new CashDrawer();
-//		cashDrawer.setCashier(connectedUser);
-//		cashDrawer.setOpened(Boolean.TRUE);
-//		List<CashDrawer> found = cashDrawerEJB.findBy(cashDrawer, 0, 1, new SingularAttribute[]{CashDrawer_.cashier, CashDrawer_.opened});
-//		cashDrawer = found.iterator().next();
-//		entity.setCashDrawer(cashDrawer);
-//		entity.setAgency(connectedUser.getAgency());
-//		entity.setCashier(connectedUser);
-//		
-//		entity = repository.save(entity);
-//		
-//		directSalesClosedEvent.fire(entity);
-//		
-//		return entity;
-//   }
 
 }

@@ -265,11 +265,11 @@ public class CashDrawerDisplayView
 
 	public void bindPayment(Payment model) {
 		paymentItemDataList.itemsProperty().bindBidirectional(model.paymentItemsProperty());
-		paymentMode.valueProperty().bindBidirectional(model.paymentModeProperty());
-		amount.numberProperty().bindBidirectional(model.amountProperty());
-		receivedAmount.numberProperty().bindBidirectional(model.receivedAmountProperty());
-		difference.numberProperty().bindBidirectional(model.differenceProperty());
-		docNumber.textProperty().bindBidirectional(model.paymentNumberProperty());
+//		paymentMode.valueProperty().bindBidirectional(model.paymentModeProperty());
+//		amount.numberProperty().bindBidirectional(model.amountProperty());
+//		receivedAmount.numberProperty().bindBidirectional(model.receivedAmountProperty());
+//		difference.numberProperty().bindBidirectional(model.differenceProperty());
+//		docNumber.textProperty().bindBidirectional(model.paymentNumberProperty());
 	}
 
 
