@@ -14,6 +14,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -102,7 +104,7 @@ public class CashDrawerDisplayController implements EntityController
 	private CustomerInvoiceSearchService customerInvoiceSearchService;
 	@Inject
 	private ServiceCallFailedEventHandler customerInvoiceSearchServiceFailedHandler;
-	
+
 	@Inject
 	@PermissionsEvent
 	private Event<DomainComponent> permissionEvent;
@@ -121,8 +123,8 @@ public class CashDrawerDisplayController implements EntityController
 	private CashDrawerLoadOpenService cashDrawerLoadService ;
 	@Inject
 	private ServiceCallFailedEventHandler cashDrawerLoadServiceFailedHandler;
-    @Inject
-    private ErrorMessageDialog noCashDrawerErrorMessageDialog;
+	@Inject
+	private ErrorMessageDialog noCashDrawerErrorMessageDialog;
 
 	@Inject
 	private CustomerInvoiceItemSearchService customerInvoiceItemSearchService ;
@@ -133,7 +135,7 @@ public class CashDrawerDisplayController implements EntityController
 	private PaymentCreateService paymentCreateService;
 	@Inject
 	private ServiceCallFailedEventHandler paymentCreateServiceFailedHandler;
-	
+
 
 
 	@Inject
@@ -149,7 +151,7 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@Bundle({ CrudKeys.class, CashDrawer.class, CustomerInvoice.class })
 	private ResourceBundle resourceBundle;
-	
+
 	@Inject
 	private CashDrawer displayedEntity; 
 
@@ -162,15 +164,15 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	private CashDrawerRegistration registration;
 
-   @Inject
-   private CustomerVoucherSearchService customerVoucherSearchService;
-   @Inject
-   private ServiceCallFailedEventHandler customerVoucherSearchFailedEventHandler;
-   @Inject
-   private ErrorMessageDialog customerVoucherErrorMessageDialog;
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
-	
+	@Inject
+	private CustomerVoucherSearchService customerVoucherSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler customerVoucherSearchFailedEventHandler;
+	@Inject
+	private ErrorMessageDialog customerVoucherErrorMessageDialog;
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -178,7 +180,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
 		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.bindInvoice(proccessingInvoice);
-//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
+		//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
 		displayView.bindPayment(paymentManager.getPayment());
 
 		processDocumentNumberChanged();
@@ -261,7 +263,7 @@ public class CashDrawerDisplayController implements EntityController
 					ciisi.getFieldNames().add("invoice");
 					ciisi.setMax(-1);
 					customerInvoiceItemSearchService.setSearchInputs(ciisi).start();
-					
+
 					activate();
 				}
 
@@ -377,20 +379,20 @@ public class CashDrawerDisplayController implements EntityController
 	public void loadOpenCashDrawer(){
 		cashDrawerLoadService.start();
 	}
-	
+
 	static class PaymentManager {
 		private final Payment payment = new Payment();
-		
+
 		public void newPayment(){
 			PropertyReader.copy(new Payment(), payment);
 		}
-		
+
 		public Payment getPayment(){
 			return payment;
 		}
-		
+
 	}
-	
+
 	private void processDocumentNumberChanged(){
 		displayView.getDocNumber().textProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -428,7 +430,7 @@ public class CashDrawerDisplayController implements EntityController
 					// reset and show error.
 					// Display error to user.
 					customerVoucherErrorMessageDialog.getTitleText().setText(
-		                       resourceBundle.getString("Entity_search_error.title"));
+							resourceBundle.getString("Entity_search_error.title"));
 					customerVoucherErrorMessageDialog.getDetailText().setText("Customer voucher with Number: " + displayView.getDocNumber().getText() + " not found");
 					customerVoucherErrorMessageDialog.display();
 				} else {
@@ -457,19 +459,19 @@ public class CashDrawerDisplayController implements EntityController
 		});
 		customerVoucherSearchService.setOnFailed(customerVoucherSearchFailedEventHandler);
 		customerVoucherSearchFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-	      {
-	         @Override
-	         protected void showError(Throwable exception)
-	         {
-	            String message = exception.getMessage();
-	            errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
-	            if (!StringUtils.isBlank(message))
-	               errorMessageDialog.getDetailText().setText(message);
-	            errorMessageDialog.display();
-	         }
-	      });
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
 	}
-	
+
 	public void handleCashDrawerCreateService(){
 		cashDrawerCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -486,17 +488,17 @@ public class CashDrawerDisplayController implements EntityController
 		});
 		cashDrawerCreateService.setOnFailed(cashDrawerCreateServiceFailedHandler);
 		cashDrawerCreateServiceFailedHandler.setErrorDisplay(new ErrorDisplay()
-	      {
-	         @Override
-	         protected void showError(Throwable exception)
-	         {
-	            String message = exception.getMessage();
-	            errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
-	            if (!StringUtils.isBlank(message))
-	               errorMessageDialog.getDetailText().setText(message);
-	            errorMessageDialog.display();
-	         }
-	      });
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
 	}
 
 	public void handleCashDrawerLoadService(){
@@ -512,10 +514,10 @@ public class CashDrawerDisplayController implements EntityController
 				List<CashDrawer> resultList = result.getResultList();
 				if(resultList==null || resultList.isEmpty()){
 					// Display error to user.
-	               noCashDrawerErrorMessageDialog.getTitleText().setText(
-	                       resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
-	                 noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
-	                 noCashDrawerErrorMessageDialog.display();
+					noCashDrawerErrorMessageDialog.getTitleText().setText(
+							resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
+					noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
+					noCashDrawerErrorMessageDialog.display();
 				} else {
 					CashDrawer cashDrawer = resultList.iterator().next();
 					PropertyReader.copy(cashDrawer, displayedEntity);
@@ -523,32 +525,32 @@ public class CashDrawerDisplayController implements EntityController
 
 			}
 		});
-	      noCashDrawerErrorMessageDialog.getOkButton().setOnAction(
-	              new EventHandler<ActionEvent>()
-	              {
-	                 @Override
-	                 public void handle(ActionEvent event)
-	                 {
-	                    noCashDrawerErrorMessageDialog.closeDialog();
-	                    createCashDrawer();
-	                 }
-	              });
+		noCashDrawerErrorMessageDialog.getOkButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						noCashDrawerErrorMessageDialog.closeDialog();
+						createCashDrawer();
+					}
+				});
 
 		cashDrawerLoadService.setOnFailed(cashDrawerLoadServiceFailedHandler);
 		cashDrawerLoadServiceFailedHandler.setErrorDisplay(new ErrorDisplay()
-	      {
-	         @Override
-	         protected void showError(Throwable exception)
-	         {
-	            String message = exception.getMessage();
-	            errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
-	            if (!StringUtils.isBlank(message))
-	               errorMessageDialog.getDetailText().setText(message);
-	            errorMessageDialog.display();
-	         }
-	      });
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
 	}
-	
+
 	public void handleReceivedAmountChanged(){
 		displayView.getReceivedAmount().numberProperty().addListener(new ChangeListener<BigDecimal>() {
 			@Override
@@ -563,7 +565,7 @@ public class CashDrawerDisplayController implements EntityController
 					displayView.getDifference().setNumber(BigDecimal.ZERO);
 					paidAmount =  newValue;
 				}
-				
+
 				if(paymentItem!=null){
 					paymentItem.setReceivedAmount(newValue);
 					paymentItem.setAmount(paidAmount);
@@ -589,9 +591,9 @@ public class CashDrawerDisplayController implements EntityController
 				}
 			}
 		});
-		
+
 	}
-	
+
 	private PaymentItem getSelectedPaymentItem(){
 		ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
 		for (PaymentItem paymentItem : paymentItems) {
@@ -600,7 +602,7 @@ public class CashDrawerDisplayController implements EntityController
 		}
 		return null;
 	}
-	
+
 	private void handlePaymentModeChanged() {
 
 		displayView.getPaymentMode().valueProperty().addListener(new ChangeListener<PaymentMode>() {
@@ -608,11 +610,11 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void changed(ObservableValue<? extends PaymentMode> obs,
 					PaymentMode oldValue, PaymentMode newValue) {
-				
+
 				// Whatever comes here, first compute the amount to pay.
 				BigDecimal amount = displayView.getAmount().getNumber();
 				BigDecimal paid = BigDecimal.ZERO;
-				
+
 				PaymentItem selectedItem = getSelectedPaymentItem();
 				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
 				for (PaymentItem paymentItem : paymentItems) {
@@ -635,63 +637,42 @@ public class CashDrawerDisplayController implements EntityController
 			}
 		});
 	}
-	
+
 	private void handlePaymentCreateService(){
 		paymentCreateService.setOnFailed(paymentCreateServiceFailedHandler);
 		paymentCreateServiceFailedHandler.setErrorDisplay(new ErrorDisplay()
-	      {
-	         @Override
-	         protected void showError(Throwable exception)
-	         {
-	            String message = exception.getMessage();
-	            errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
-	            if (!StringUtils.isBlank(message))
-	               errorMessageDialog.getDetailText().setText(message);
-	            errorMessageDialog.display();
-	         }
-	      });
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
 		/*
 		 * handle  payement Action action
 		 */
 		displayView.getCashButon().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Payment payment = paymentManager.getPayment();
-				payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));
-				PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = new PaymentCustomerInvoiceAssoc();
-				paymentCustomerInvoiceAssoc.setSource(payment);
-				paymentCustomerInvoiceAssoc.setTarget(proccessingInvoice);
-				payment.addToInvoices(paymentCustomerInvoiceAssoc);
-				int size3 = payment.getInvoices().size();
-				
-				ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().getItems();
-				int size = list.size();
-				ArrayList<PaymentItem> arrayList = new ArrayList<PaymentItem>(list);
-				int size2 = arrayList.size();
-				BigDecimal receivedAmount2 = BigDecimal.ZERO;
-				BigDecimal amount2 = BigDecimal.ZERO;
-				for (PaymentItem paymentItem : arrayList) {
-					if(paymentItem.getAmount().compareTo(BigDecimal.ZERO)<0) 
-						displayView.getPaymentItemDataList().getItems().remove(paymentItem);
-					receivedAmount2 = receivedAmount2.add(paymentItem.getReceivedAmount());
-					amount2 = amount2.add(paymentItem.getAmount());
+				processPayment();
+			}
+		});
+		displayView.getCashButon().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					processPayment();
 				}
-				payment.setAmount(amount2);
-				payment.setReceivedAmount(receivedAmount2);
-				if(displayView.getPaymentItemDataList().getItems().isEmpty()){
-					PaymentItem paymentItem = new PaymentItem();
-					paymentItem.setAmount(BigDecimal.ZERO);
-					paymentItem.setPaymentMode(PaymentMode.CASH);
-					paymentItem.setReceivedAmount(BigDecimal.ZERO);
-					paymentItem.setDocumentNumber("");
-					displayView.getPaymentItemDataList().getItems().add(paymentItem);
-				}
-				int size4 = payment.getInvoices().size();
-				paymentCreateService.setModel(payment).start();
 
 			}
 		});
-		
+
 		paymentCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -699,15 +680,49 @@ public class CashDrawerDisplayController implements EntityController
 				Payment payment = s.getValue();
 				event.consume();
 				s.reset();
-				
+				displayView.getInvoicesDataList().getItems().remove(proccessingInvoice);
 				PropertyReader.copy(new Payment(), payment);
 				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
-				
+
 				deactivate();
 			}
 		});
 	}
-	
+	public void processPayment(){
+		Payment payment = paymentManager.getPayment();
+		payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));
+		PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = new PaymentCustomerInvoiceAssoc();
+		paymentCustomerInvoiceAssoc.setSource(payment);
+		paymentCustomerInvoiceAssoc.setTarget(proccessingInvoice);
+		payment.addToInvoices(paymentCustomerInvoiceAssoc);
+		int size3 = payment.getInvoices().size();
+
+		ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().getItems();
+		int size = list.size();
+		ArrayList<PaymentItem> arrayList = new ArrayList<PaymentItem>(list);
+		int size2 = arrayList.size();
+		BigDecimal receivedAmount2 = BigDecimal.ZERO;
+		BigDecimal amount2 = BigDecimal.ZERO;
+		for (PaymentItem paymentItem : arrayList) {
+			if(paymentItem.getAmount().compareTo(BigDecimal.ZERO)<0) 
+				displayView.getPaymentItemDataList().getItems().remove(paymentItem);
+			receivedAmount2 = receivedAmount2.add(paymentItem.getReceivedAmount());
+			amount2 = amount2.add(paymentItem.getAmount());
+		}
+		payment.setAmount(amount2);
+		payment.setReceivedAmount(receivedAmount2);
+		if(displayView.getPaymentItemDataList().getItems().isEmpty()){
+			PaymentItem paymentItem = new PaymentItem();
+			paymentItem.setAmount(BigDecimal.ZERO);
+			paymentItem.setPaymentMode(PaymentMode.CASH);
+			paymentItem.setReceivedAmount(BigDecimal.ZERO);
+			paymentItem.setDocumentNumber("");
+			displayView.getPaymentItemDataList().getItems().add(paymentItem);
+		}
+		int size4 = payment.getInvoices().size();
+		paymentCreateService.setModel(payment).start();
+
+	}
 	private void deactivate(){
 		displayView.getAmount().setNumber(BigDecimal.ZERO);
 		displayView.getAmount().setDisable(true);
@@ -720,13 +735,13 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getPaymentMode().setDisable(true);
 		displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
 		displayView.getReceivedAmount().setDisable(true);
-		
+
 		displayView.getPaymentItemDataList().getItems().clear();
 		// print receipt
 		displayView.getCashButon().setDisable(true);
 		displayView.getCashOutButton().setDisable(true);
 	}
-	
+
 	private void activate(){
 		displayView.getAmount().setDisable(false);
 		displayView.getDifference().setDisable(false);
