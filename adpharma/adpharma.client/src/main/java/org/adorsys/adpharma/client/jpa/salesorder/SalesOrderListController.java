@@ -110,10 +110,10 @@ public class SalesOrderListController implements EntityController
 			public void changed(ObservableValue<? extends SalesOrder> observable,
 					SalesOrder oldValue, SalesOrder newValue) {
 				if(newValue!=null){
-					listView.getRemoveButton().visibleProperty().unbind();
-					listView.getPrintInvoiceButtonn().visibleProperty().unbind();
-					listView.getRemoveButton().visibleProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-					listView.getPrintInvoiceButtonn().visibleProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getRemoveButton().disableProperty().unbind();
+					listView.getPrintInvoiceButtonn().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 				}
 

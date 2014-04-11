@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class DeliveryItemRegistration extends DomainComponentRegistration
 {

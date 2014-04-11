@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
  * @author francis
  *
  */
-@Eager
+//@Eager 
 @Singleton
 public class InventoryItemRegistration extends DomainComponentRegistration
 {

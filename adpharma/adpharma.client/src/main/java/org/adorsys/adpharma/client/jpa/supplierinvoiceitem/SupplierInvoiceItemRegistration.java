@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.supplierinvoiceitem.SupplierInvoiceItem;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class SupplierInvoiceItemRegistration extends DomainComponentRegistration
 {

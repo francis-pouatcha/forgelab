@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class CustomerInvoiceRegistration extends DomainComponentRegistration
 {

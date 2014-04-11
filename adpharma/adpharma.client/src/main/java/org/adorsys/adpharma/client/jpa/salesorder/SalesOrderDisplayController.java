@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -27,6 +28,8 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
+
+import jfxtras.animation.Timer;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
@@ -79,6 +82,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
@@ -167,6 +171,10 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private InsurranceSearchInput insurranceSearchInput;
+	
+	@Inject
+	@WorkingInformationEvent
+	private Event<String> workingInfosEvent;
 	
 	@PostConstruct
 	public void postConstruct()
@@ -423,7 +431,6 @@ public class SalesOrderDisplayController implements EntityController
 				displayView.getDataList().getItems().remove(removeddItem);
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				calculateProcessAmont();
-
 			}
 		});
 		salesOrderItemRemoveService.setOnFailed(callFailedEventHandler);
@@ -439,6 +446,7 @@ public class SalesOrderDisplayController implements EntityController
 				Action showConfirm = Dialogs.create().nativeTitleBar().message("would You Like to Print Invoice ?").showConfirm();
 				PropertyReader.copy(entity, displayedEntity);
 				salesOrderRequestEvent.fire(new SalesOrder());
+				workingInfosEvent.fire("Sales Number : "+entity.getSoNumber()+" Closed successfully!");
 
 			}
 		});

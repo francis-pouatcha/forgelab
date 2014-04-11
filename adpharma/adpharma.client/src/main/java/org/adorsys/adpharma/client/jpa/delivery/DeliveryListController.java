@@ -105,10 +105,10 @@ public class DeliveryListController implements EntityController
 			public void changed(ObservableValue<? extends Delivery> observable,
 					Delivery oldValue, Delivery newValue) {
 				if(newValue!=null){
-					listView.getRemoveButton().visibleProperty().unbind();
-					listView.getUpdateButton().visibleProperty().unbind();
-					listView.getRemoveButton().visibleProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-					listView.getUpdateButton().visibleProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getRemoveButton().disableProperty().unbind();
+					listView.getUpdateButton().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 				}
 
