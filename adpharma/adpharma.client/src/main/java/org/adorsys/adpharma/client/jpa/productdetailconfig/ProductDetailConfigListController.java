@@ -7,10 +7,12 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +21,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
+import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -37,173 +43,198 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 public class ProductDetailConfigListController implements EntityController
 {
 
-   @Inject
-   private ProductDetailConfigListView listView;
+	@Inject
+	private ProductDetailConfigFindByOriginAndTargetService configFindByOriginAndTargetService;
 
-   @Inject
-   @EntitySelectionEvent
-   private Event<ProductDetailConfig> selectionEvent;
+	@Inject
+	private ProductDetailConfigListView listView;
 
-   @Inject
-   @EntitySearchRequestedEvent
-   private Event<ProductDetailConfig> searchRequestedEvent;
+	@Inject
+	@EntitySelectionEvent
+	private Event<ProductDetailConfig> selectionEvent;
 
-   @Inject
-   @EntityCreateRequestedEvent
-   private Event<ProductDetailConfig> createRequestedEvent;
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<ProductDetailConfig> searchRequestedEvent;
 
-   @Inject
-   @EntityListPageIndexChangedEvent
-   private Event<ProductDetailConfigSearchResult> entityListPageIndexChangedEvent;
+	@Inject
+	@EntityCreateRequestedEvent
+	private Event<ProductDetailConfig> createRequestedEvent;
 
-   private ProductDetailConfigSearchResult searchResult;
+	@Inject
+	@EntityListPageIndexChangedEvent
+	private Event<ProductDetailConfigSearchResult> entityListPageIndexChangedEvent;
 
-   @Inject
-   private ProductDetailConfigRegistration registration;
+	private ProductDetailConfigSearchResult searchResult;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+	@Inject
+	private ProductDetailConfigRegistration registration;
 
-      listView.getDataList().getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<ProductDetailConfig>()
-            {
-               @Override
-               public void changed(
-                     ObservableValue<? extends ProductDetailConfig> property,
-                     ProductDetailConfig oldValue, ProductDetailConfig newValue)
-               {
-                  if (newValue != null)
-                     selectionEvent.fire(newValue);
-               }
-            });
+	@PostConstruct
+	public void postConstruct()
+	{
+		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 
-      /*
-       * listen to search button and fire search activated event.
-       */
-      listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            ProductDetailConfig selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new ProductDetailConfig();
-            searchRequestedEvent.fire(selectedItem);
-         }
-      });
+		listView.getDataList().getSelectionModel().selectedItemProperty()
+		.addListener(new ChangeListener<ProductDetailConfig>()
+				{
+			@Override
+			public void changed(
+					ObservableValue<? extends ProductDetailConfig> property,
+					ProductDetailConfig oldValue, ProductDetailConfig newValue)
+			{
+				if (newValue != null)
+					selectionEvent.fire(newValue);
+			}
+				});
 
-      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            ProductDetailConfig selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new ProductDetailConfig();
-            createRequestedEvent.fire(selectedItem);
-         }
-      });
+		/*
+		 * listen to search button and fire search activated event.
+		 */
+		listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				String sourceName = listView.getArticleOriginName().getText();
+				String targetName = listView.getArticleTargetName().getText();
+				configFindByOriginAndTargetService.setSourceName(sourceName).setTargetName(targetName).start();
 
-      listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-         {
-            if (searchResult == null)
-               return;
-            if (searchResult.getSearchInput() == null)
-               searchResult.setSearchInput(new ProductDetailConfigSearchInput());
-            int start = 0;
-            int max = searchResult.getSearchInput().getMax();
-            if (newValue != null)
-            {
-               start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
-            }
-            searchResult.getSearchInput().setStart(start);
-            entityListPageIndexChangedEvent.fire(searchResult);
 
-         }
-      });
-   }
+			}
+				});
+		configFindByOriginAndTargetService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-   @Override
-   public void display(Pane parent)
-   {
-      AnchorPane rootPane = listView.getRootPane();
-      ObservableList<Node> children = parent.getChildren();
-      if (!children.contains(rootPane))
-      {
-         children.add(rootPane);
-      }
-   }
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ProductDetailConfigFindByOriginAndTargetService s = (ProductDetailConfigFindByOriginAndTargetService) event.getSource();
+				List<ProductDetailConfig> result = s.getValue();
+				event.consume();
+				s.reset();
+				listView.getDataList().getItems().setAll(result);
 
-   @Override
-   public ViewType getViewType()
-   {
-      return ViewType.LIST;
-   }
+			}
+		});
+		configFindByOriginAndTargetService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
-   /**
-    * Handle search results. But the switch of displays is centralized
-    * in the main productDetailConfig controller.
-    * 
-    * @param entities
-    */
-   public void handleSearchResult(@Observes @EntitySearchDoneEvent ProductDetailConfigSearchResult searchResult)
-   {
-      this.searchResult = searchResult;
-      List<ProductDetailConfig> entities = searchResult.getResultList();
-      if (entities == null)
-         entities = new ArrayList<ProductDetailConfig>();
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(entities);
-      int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
-      int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
-      listView.getPagination().setPageCount(pageCount);
-      int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
-      int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
-      listView.getPagination().setCurrentPageIndex(pageIndex);
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ProductDetailConfigFindByOriginAndTargetService s = (ProductDetailConfigFindByOriginAndTargetService) event.getSource();
+				s.reset();				
+			}
+		});
 
-   }
+		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				ProductDetailConfig selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if (selectedItem == null)
+					selectedItem = new ProductDetailConfig();
+				createRequestedEvent.fire(selectedItem);
+			}
+				});
 
-   public void handleCreatedEvent(@Observes @EntityCreateDoneEvent ProductDetailConfig createdEntity)
-   {
-      listView.getDataList().getItems().add(0, createdEntity);
-   }
+		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new ProductDetailConfigSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				entityListPageIndexChangedEvent.fire(searchResult);
 
-   public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent ProductDetailConfig removedEntity)
-   {
-      listView.getDataList().getItems().remove(removedEntity);
-   }
+			}
+				});
 
-   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent ProductDetailConfig selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      ProductDetailConfig entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+	}
 
-      ArrayList<ProductDetailConfig> arrayList = new ArrayList<ProductDetailConfig>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+	@Override
+	public void display(Pane parent)
+	{
+		BorderPane rootPane = listView.getRootPane();
+		ObservableList<Node> children = parent.getChildren();
+		if (!children.contains(rootPane))
+		{
+			children.add(rootPane);
+		}
+	}
 
-   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent ProductDetailConfig selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      ProductDetailConfig entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+	@Override
+	public ViewType getViewType()
+	{
+		return ViewType.LIST;
+	}
 
-      ArrayList<ProductDetailConfig> arrayList = new ArrayList<ProductDetailConfig>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+	/**
+	 * Handle search results. But the switch of displays is centralized
+	 * in the main productDetailConfig controller.
+	 * 
+	 * @param entities
+	 */
+	public void handleSearchResult(@Observes @EntitySearchDoneEvent ProductDetailConfigSearchResult searchResult)
+	{
+		this.searchResult = searchResult;
+		List<ProductDetailConfig> entities = searchResult.getResultList();
+		if (entities == null)
+			entities = new ArrayList<ProductDetailConfig>();
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(entities);
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
+		listView.getPagination().setPageCount(pageCount);
+		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
+		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
+		listView.getPagination().setCurrentPageIndex(pageIndex);
+
+	}
+
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent ProductDetailConfig createdEntity)
+	{
+		listView.getDataList().getItems().add(0, createdEntity);
+	}
+
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent ProductDetailConfig removedEntity)
+	{
+		listView.getDataList().getItems().remove(removedEntity);
+	}
+
+	public void handleEditDoneEvent(@Observes @EntityEditDoneEvent ProductDetailConfig selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		ProductDetailConfig entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<ProductDetailConfig> arrayList = new ArrayList<ProductDetailConfig>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent ProductDetailConfig selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		ProductDetailConfig entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<ProductDetailConfig> arrayList = new ArrayList<ProductDetailConfig>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
 
 }

@@ -104,7 +104,7 @@ public class StockMovementListController implements EntityController
 			public void handle(ActionEvent e)
 			{
 				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(10);
+				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
 			}
 				});

@@ -71,10 +71,10 @@ public class ProductDetailConfigSourceForm extends AbstractToOneAssociation<Prod
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       articleName = viewBuilder.addTextField("Article_articleName_description.title", "articleName", resourceBundle);
-      pic = viewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle);
-      manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
-      active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
-      authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
+//      pic = viewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle);
+//      manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
+//      active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
+//      authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
       qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
       sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
 
@@ -84,21 +84,21 @@ public class ProductDetailConfigSourceForm extends AbstractToOneAssociation<Prod
    public void bind(ProductDetailConfig model)
    {
       articleName.textProperty().bindBidirectional(model.getSource().articleNameProperty());
-      pic.textProperty().bindBidirectional(model.getSource().picProperty());
-      manufacturer.textProperty().bindBidirectional(model.getSource().manufacturerProperty());
-      active.textProperty().bindBidirectional(model.getSource().activeProperty(), new BooleanStringConverter());
-      authorizedSale.textProperty().bindBidirectional(model.getSource().authorizedSaleProperty(), new BooleanStringConverter());
+//      pic.textProperty().bindBidirectional(model.getSource().picProperty());
+//      manufacturer.textProperty().bindBidirectional(model.getSource().manufacturerProperty());
+//      active.textProperty().bindBidirectional(model.getSource().activeProperty(), new BooleanStringConverter());
+//      authorizedSale.textProperty().bindBidirectional(model.getSource().authorizedSaleProperty(), new BooleanStringConverter());
       qtyInStock.numberProperty().bindBidirectional(model.getSource().qtyInStockProperty());
       sppu.numberProperty().bindBidirectional(model.getSource().sppuProperty());
    }
 
    public void update(ProductDetailConfigSource data)
    {
-      articleName.textProperty().set(data.articleNameProperty().get());
-      pic.textProperty().set(data.picProperty().get());
-      manufacturer.textProperty().set(data.manufacturerProperty().get());
-      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
-      authorizedSale.textProperty().set(new BooleanStringConverter().toString(data.authorizedSaleProperty().get()));
+//      articleName.textProperty().set(data.articleNameProperty().get());
+//      pic.textProperty().set(data.picProperty().get());
+//      manufacturer.textProperty().set(data.manufacturerProperty().get());
+//      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+//      authorizedSale.textProperty().set(new BooleanStringConverter().toString(data.authorizedSaleProperty().get()));
       qtyInStock.numberProperty().set(data.qtyInStockProperty().get());
       sppu.numberProperty().set(data.sppuProperty().get());
    }
@@ -108,25 +108,25 @@ public class ProductDetailConfigSourceForm extends AbstractToOneAssociation<Prod
       return articleName;
    }
 
-   public TextField getPic()
-   {
-      return pic;
-   }
-
-   public TextField getManufacturer()
-   {
-      return manufacturer;
-   }
-
-   public CheckBox getActive()
-   {
-      return active;
-   }
-
-   public CheckBox getAuthorizedSale()
-   {
-      return authorizedSale;
-   }
+//   public TextField getPic()
+//   {
+//      return pic;
+//   }
+//
+//   public TextField getManufacturer()
+//   {
+//      return manufacturer;
+//   }
+//
+//   public CheckBox getActive()
+//   {
+//      return active;
+//   }
+//
+//   public CheckBox getAuthorizedSale()
+//   {
+//      return authorizedSale;
+//   }
 
    public BigDecimalField getQtyInStock()
    {

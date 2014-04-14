@@ -27,164 +27,164 @@ import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 public class ProductDetailConfigController extends DomainComponentController
 {
 
-   @Inject
-   private ProductDetailConfigSearchController searchController;
+	@Inject
+	private ProductDetailConfigSearchController searchController;
 
-   @Inject
-   private ProductDetailConfigCreateController createController;
+	@Inject
+	private ProductDetailConfigCreateController createController;
 
-   @Inject
-   private ProductDetailConfigEditController editController;
+	@Inject
+	private ProductDetailConfigEditController editController;
 
-   @Inject
-   private ProductDetailConfigListController listController;
+	@Inject
+	private ProductDetailConfigListController listController;
 
-   @Inject
-   private ProductDetailConfigDisplayController displayController;
+	@Inject
+	private ProductDetailConfigDisplayController displayController;
 
-   @Inject
-   private ProductDetailConfigIntialScreenController intialScreenController;
+	@Inject
+	private ProductDetailConfigIntialScreenController intialScreenController;
 
-   @Inject
-   @CreateModelEvent
-   private Event<ProductDetailConfig> createModelEvent;
-   @Inject
-   @SearchModelEvent
-   private Event<ProductDetailConfig> searchModelEvent;
-   @Inject
-   @SelectedModelEvent
-   private Event<ProductDetailConfig> selectedModelEvent;
+	@Inject
+	@CreateModelEvent
+	private Event<ProductDetailConfig> createModelEvent;
+	@Inject
+	@SearchModelEvent
+	private Event<ProductDetailConfig> searchModelEvent;
+	@Inject
+	@SelectedModelEvent
+	private Event<ProductDetailConfig> selectedModelEvent;
 
-   private ProductDetailConfig createModel = new ProductDetailConfig();
-   private ProductDetailConfig searchModel = new ProductDetailConfig();
-   private ProductDetailConfig selectedModel = new ProductDetailConfig();
+	private ProductDetailConfig createModel = new ProductDetailConfig();
+	private ProductDetailConfig searchModel = new ProductDetailConfig();
+	private ProductDetailConfig selectedModel = new ProductDetailConfig();
 
-   @Inject
-   private ProductDetailConfigRegistration registration;
+	@Inject
+	private ProductDetailConfigRegistration registration;
 
-   @Override
-   protected void initViews(Map<ViewType, EntityController> entityViews)
-   {
-      entityViews.put(searchController.getViewType(), searchController);
-      entityViews.put(listController.getViewType(), listController);
-      entityViews.put(displayController.getViewType(), displayController);
-      entityViews.put(editController.getViewType(), editController);
-      entityViews.put(createController.getViewType(), createController);
-      createModelEvent.fire(createModel);
-      searchModelEvent.fire(searchModel);
-      selectedModelEvent.fire(selectedModel);
-   }
+	@Override
+	protected void initViews(Map<ViewType, EntityController> entityViews)
+	{
+		entityViews.put(searchController.getViewType(), searchController);
+		entityViews.put(listController.getViewType(), listController);
+		entityViews.put(displayController.getViewType(), displayController);
+		entityViews.put(editController.getViewType(), editController);
+		entityViews.put(createController.getViewType(), createController);
+		createModelEvent.fire(createModel);
+		searchModelEvent.fire(searchModel);
+		selectedModelEvent.fire(selectedModel);
+	}
 
-   /**
-    * Listen to search result and display.
-    * @param entities
-    */
-   public void handleSearchResult(@Observes @EntitySearchDoneEvent List<ProductDetailConfig> entities)
-   {
-      if (!registration.canRead())
-         return;
+	/**
+	 * Listen to search result and display.
+	 * @param entities
+	 */
+	 public void handleSearchResult(@Observes @EntitySearchDoneEvent List<ProductDetailConfig> entities)
+	 {
+		 if (!registration.canRead())
+			 return;
 
-      // if result is empty: display no result.
-      if (!getDisplayedViews().contains(listController))
-      {
-         getDisplayedViews().add(listController);
-      }
+		 // if result is empty: display no result.
+		 if (!getDisplayedViews().contains(listController))
+		 {
+			 getDisplayedViews().add(listController);
+		 }
 
-      displayComponent();
-   }
+		 displayComponent();
+	 }
 
-   /**
-    * Listens to list selection events and display
-    */
-   public void handleSelectionEvent(@Observes @EntitySelectionEvent ProductDetailConfig selectedEntity)
-   {
-      if (!registration.canRead())
-         return;
-      // if result is empty: display no result.
-      // else display list of productDetailConfigs.
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(displayController);
+	 /**
+	  * Listens to list selection events and display
+	  */
+	 public void handleSelectionEvent(@Observes @EntitySelectionEvent ProductDetailConfig selectedEntity)
+	 {
+		 if (!registration.canRead())
+			 return;
+		 // if result is empty: display no result.
+		 // else display list of productDetailConfigs.
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 //      displayedViews.add(listController);
+		 displayedViews.add(displayController);
 
-      displayComponent();
-   }
+		 displayComponent();
+	 }
 
-   /**
-    * Display the search and list panel
-    * @param selectedEntity
-    */
-   public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent ProductDetailConfig selectedEntity)
-   {
-      if (!registration.canRead())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(searchController);
-      displayedViews.add(listController);
-      displayComponent();
-   }
+	 /**
+	  * Display the search and list panel
+	  * @param selectedEntity
+	  */
+	 public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent ProductDetailConfig selectedEntity)
+	 {
+		 if (!registration.canRead())
+			 return;
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 //      displayedViews.add(searchController);
+		 displayedViews.add(listController);
+		 displayComponent();
+	 }
 
-   /**
-    * Display search form.
-    * @param selectedProductDetailConfig
-    */
-   public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent ProductDetailConfig templateEntity)
-   {
-      if (!registration.canCreate())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(createController);
-      displayComponent();
-   }
+	 /**
+	  * Display search form.
+	  * @param selectedProductDetailConfig
+	  */
+	 public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent ProductDetailConfig templateEntity)
+	 {
+		 if (!registration.canCreate())
+			 return;
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 //      displayedViews.add(listController);
+		 displayedViews.add(createController);
+		 displayComponent();
+	 }
 
-   public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent ProductDetailConfig selectedEntity)
-   {
-      if (!registration.canEdit())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(editController);
-      displayComponent();
-   }
+	 public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent ProductDetailConfig selectedEntity)
+	 {
+		 if (!registration.canEdit())
+			 return;
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 //      displayedViews.add(listController);
+		 displayedViews.add(editController);
+		 displayComponent();
+	 }
 
-   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent ProductDetailConfig selectedEntity)
-   {
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(displayController);
+	 public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent ProductDetailConfig selectedEntity)
+	 {
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 displayedViews.add(listController);
+		 //      displayedViews.add(displayController);
 
-      displayComponent();
-   }
+		 displayComponent();
+	 }
 
-   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent ProductDetailConfig selectedEntity)
-   {
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(displayController);
+	 public void handleEditDoneEvent(@Observes @EntityEditDoneEvent ProductDetailConfig selectedEntity)
+	 {
+		 List<EntityController> displayedViews = getDisplayedViews();
+		 displayedViews.clear();
+		 displayedViews.add(listController);
+		 //      displayedViews.add(displayController);
 
-      displayComponent();
-   }
+		 displayComponent();
+	 }
 
-   @Override
-   protected void selectDisplay()
-   {
-      if (searchController != null)
-      {
-         intialScreenController.startWithSeach();
-      }
-      else if (createController != null)
-      {
-         intialScreenController.startWithCreate();
-      }
-      else
-      {
-         throw new IllegalStateException("Missing search and display component.");
-      }
-   }
+	 @Override
+	 protected void selectDisplay()
+	 {
+		 if (searchController != null)
+		 {
+			 intialScreenController.startWithSeach();
+		 }
+		 else if (createController != null)
+		 {
+			 intialScreenController.startWithCreate();
+		 }
+		 else
+		 {
+			 throw new IllegalStateException("Missing search and display component.");
+		 }
+	 }
 }

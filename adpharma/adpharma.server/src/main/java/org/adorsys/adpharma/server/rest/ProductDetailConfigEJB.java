@@ -5,8 +5,12 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.repo.ProductDetailConfigRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.deltaspike.data.api.QueryResult;
+import org.apache.pdfbox.util.StringUtil;
 
 @Stateless
 public class ProductDetailConfigEJB
@@ -21,6 +25,13 @@ public class ProductDetailConfigEJB
    public ProductDetailConfig create(ProductDetailConfig entity)
    {
       return repository.save(attach(entity));
+   }
+   
+   public List<ProductDetailConfig>  findByOriginAndTArgetNameLike(String sourceName,String targetName){
+		   sourceName =sourceName+"%";
+		   targetName=targetName+"%";
+		   return repository.findByOriginAndTArgetNameLike(sourceName, targetName);
+	   
    }
 
    public ProductDetailConfig deleteById(Long id)

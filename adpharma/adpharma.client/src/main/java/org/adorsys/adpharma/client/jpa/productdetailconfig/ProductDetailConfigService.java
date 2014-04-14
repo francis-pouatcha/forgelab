@@ -4,11 +4,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
@@ -83,6 +85,15 @@ public class ProductDetailConfigService
    {
       return target.queryParam("start", start).queryParam("max", max)
             .request(media).get(ProductDetailConfigSearchResult.class);
+   }
+   
+//  @GET
+//	@Path("/findByOriginAndTargetNameLike")
+//	@Produces({ "application/json", "application/xml" })
+   public List<ProductDetailConfig> findByOriginAndTargetNameLike( String sourceName, String targetName)
+   {
+      return target.path("findByOriginAndTargetNameLike").queryParam("source", sourceName).queryParam("target", targetName)
+            .request(media).get(List.class);
    }
 
    //	@GET
