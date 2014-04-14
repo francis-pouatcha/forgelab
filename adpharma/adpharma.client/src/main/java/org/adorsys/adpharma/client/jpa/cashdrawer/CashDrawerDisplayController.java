@@ -200,7 +200,6 @@ public class CashDrawerDisplayController implements EntityController
 				createCashDrawer();
 			}
 		});
-		
 		/*
 		 * handle Remove Payment action
 		 */
@@ -208,7 +207,12 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				Dialogs.create().message("not yet implemented").showInformation();
+				PaymentItem selectedItem = displayView.getPaymentItemDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					BigDecimal amount = displayView.getAmount().getNumber();
+					displayView.getAmount().setNumber(amount.add(selectedItem.getAmount()));
+					displayView.getPaymentItemDataList().getItems().remove(selectedItem);
+				}
 			}
 		});
 
@@ -274,8 +278,8 @@ public class CashDrawerDisplayController implements EntityController
 					ciisi.getFieldNames().add("invoice");
 					ciisi.setMax(-1);
 					customerInvoiceItemSearchService.setSearchInputs(ciisi).start();
-
 					activate();
+					clearPaymentDataList();
 				}
 
 			}
@@ -409,7 +413,7 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void changed(ObservableValue<? extends String> obs,
 					String oldValue, String newValue) {
-				// check is we have the old payment on file and update it
+				// check if we have the old payment on file and update it
 				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
 				PaymentItem selectedItem = null;
 				for (PaymentItem paymentItem : paymentItems) {
@@ -493,7 +497,6 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				PropertyReader.copy(cd, displayedEntity);
-				System.out.println(cd.getCashDrawerNumber());
 
 			}
 		});
@@ -630,17 +633,21 @@ public class CashDrawerDisplayController implements EntityController
 				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
 				for (PaymentItem paymentItem : paymentItems) {
 					paid = paid.add(paymentItem.getReceivedAmount());
-				}				
-				if(selectedItem!=null){
-					displayView.getAmount().setNumber(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
-					displayView.getReceivedAmount().setNumber(selectedItem.getReceivedAmount());
-					displayView.getDocNumber().setText(selectedItem.getDocumentNumber());
-					displayView.getDifference().setNumber(BigDecimal.ZERO);
-				} else {
-					displayView.getAmount().setNumber(amount.subtract(paid));
-					displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
-					displayView.getDocNumber().setText("");
-					displayView.getDifference().setNumber(BigDecimal.ZERO);
+				}
+				if(amount.compareTo(paid)>=0 && oldValue!=newValue){
+					if(selectedItem!=null){
+						displayView.getAmount().setNumber(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
+						displayView.getReceivedAmount().setNumber(selectedItem.getReceivedAmount());
+						displayView.getDocNumber().setText(selectedItem.getDocumentNumber());
+						displayView.getDifference().setNumber(BigDecimal.ZERO);
+					} else {
+						displayView.getAmount().setNumber(amount.subtract(paid));
+						displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
+						displayView.getDocNumber().setText("");
+						displayView.getDifference().setNumber(BigDecimal.ZERO);
+					}
+				}else {
+					Dialogs.create().message("impossible to add annother payement !").showInformation();
 				}
 				if(newValue.equals(PaymentMode.VOUCHER)){
 					displayView.getPaymentMode().setEditable(false);
@@ -648,6 +655,7 @@ public class CashDrawerDisplayController implements EntityController
 			}
 		});
 	}
+
 
 	private void handlePaymentCreateService(){
 		paymentCreateService.setOnFailed(paymentCreateServiceFailedHandler);
@@ -753,6 +761,12 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashOutButton().setDisable(true);
 	}
 
+	public void clearPaymentDataList(){
+		displayView.getPaymentItemDataList().getItems().clear();
+		displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
+		displayView.getPaymentMode().setValue(PaymentMode.CASH);
+	}
+
 	private void activate(){
 		displayView.getAmount().setDisable(false);
 		displayView.getDifference().setDisable(false);
@@ -763,5 +777,6 @@ public class CashDrawerDisplayController implements EntityController
 		// print receipt
 		displayView.getCashButon().setDisable(false);
 		displayView.getCashOutButton().setDisable(false);
+
 	}
 }

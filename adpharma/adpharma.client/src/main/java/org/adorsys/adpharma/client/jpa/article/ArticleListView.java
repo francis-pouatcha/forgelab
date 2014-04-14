@@ -121,7 +121,7 @@ public class ArticleListView
 	
 	public void buildsearchBar(){
 		section =ViewBuilderUtils.newComboBox(null,"section", false);
-		section.setPromptText("section ");
+		section.setPromptText("ALL SECTION ");
 		section.setPrefHeight(40d);
 		section.setPrefWidth(150d);
 

@@ -151,7 +151,7 @@ public class SalesOrderListView
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
-		customer.setPromptText("All customers");
+		customer.setPromptText("ALL COSTUMERS");
 		customer.setPrefWidth(300d);
 		customer.setPrefHeight(40d);
 

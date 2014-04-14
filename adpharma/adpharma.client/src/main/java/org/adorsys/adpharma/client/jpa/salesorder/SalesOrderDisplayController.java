@@ -554,6 +554,7 @@ public class SalesOrderDisplayController implements EntityController
 				
 			}
 				});
+		
 		prescriptionBookSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override

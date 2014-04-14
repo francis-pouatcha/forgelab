@@ -212,6 +212,7 @@ public class CashDrawerDisplayView
 		difference.setEditable(false);
 		
 		docNumber = ViewBuilderUtils.newTextField("docNumber", false);
+		docNumber.setPromptText("Doc Number");
 		docNumber.setPrefHeight(50d);
 		docNumber.setPrefWidth(200d);
 
