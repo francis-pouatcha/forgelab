@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
@@ -17,6 +19,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
+import javafx.scene.control.ComboBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 

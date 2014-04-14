@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
-import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -41,7 +42,11 @@ public class StockMovementEJB
    private AgencyMerger agencyMerger;
 
    @Inject
-   private SecurityUtil securityUtil ;
+   private SecurityUtil securityUtil;
+   
+   @Inject
+   @DocumentProcessedEvent
+   private Event<StockMovement> stockMovementEvent;
    
    public StockMovement create(StockMovement entity)
    {
@@ -139,6 +144,7 @@ public class StockMovementEJB
 			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
 				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
 			sm = create(sm);
+			stockMovementEvent.fire(sm);
 		}
 	}
 
@@ -182,6 +188,7 @@ public class StockMovementEJB
 			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
 			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
 			sm = create(sm);
+			stockMovementEvent.fire(sm);
 		}
 	}
    
@@ -227,6 +234,7 @@ public class StockMovementEJB
 			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
 			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on sales order item
 			sm = create(sm);
+			stockMovementEvent.fire(sm);
 		}
 	}
     */

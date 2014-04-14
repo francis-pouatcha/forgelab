@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,6 +51,8 @@ public class ProcurementOrderItem implements Cloneable
    private SimpleStringProperty articleName;
    @Description("ProcurementOrderItem_valid_description")
    private SimpleBooleanProperty valid;
+   @Description("ProcurementOrderItem_poStatus_description")
+   private SimpleObjectProperty<DocumentProcessingState> poStatus;
    @Description("ProcurementOrderItem_qtyOrdered_description")
    private SimpleObjectProperty<BigDecimal> qtyOrdered;
    @Description("ProcurementOrderItem_availableQty_description")
@@ -182,6 +185,25 @@ public class ProcurementOrderItem implements Cloneable
       if (valid == null)
          valid = Boolean.FALSE;
       this.validProperty().set(valid);
+   }
+
+   public SimpleObjectProperty<DocumentProcessingState> poStatusProperty()
+   {
+      if (poStatus == null)
+      {
+         poStatus = new SimpleObjectProperty<DocumentProcessingState>();
+      }
+      return poStatus;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return poStatusProperty().get();
+   }
+
+   public final void setPoStatus(DocumentProcessingState poStatus)
+   {
+      this.poStatusProperty().set(poStatus);
    }
 
    public SimpleObjectProperty<BigDecimal> qtyOrderedProperty()
@@ -481,6 +503,7 @@ public class ProcurementOrderItem implements Cloneable
       e.secondaryPic = secondaryPic;
       e.articleName = articleName;
       e.valid = valid;
+      e.poStatus = poStatus;
       e.qtyOrdered = qtyOrdered;
       e.availableQty = availableQty;
       e.freeQuantity = freeQuantity;

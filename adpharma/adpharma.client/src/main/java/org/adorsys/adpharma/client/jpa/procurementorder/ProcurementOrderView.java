@@ -12,6 +12,7 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
@@ -50,6 +51,8 @@ import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTrigger
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerModeListCellFatory;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeConverter;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeListCellFatory;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 
 public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
 {
@@ -59,6 +62,8 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
    private ComboBox<ProcmtOrderTriggerMode> procmtOrderTriggerMode;
 
    private ComboBox<ProcurementOrderType> procurementOrderType;
+
+   private ComboBox<DocumentProcessingState> poStatus;
 
    private BigDecimalField amountBeforeTax;
 
@@ -121,6 +126,15 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
 
    @Inject
    private ProcurementOrderTypeListCellFatory procurementOrderTypeListCellFatory;
+   @Inject
+   @Bundle(DocumentProcessingState.class)
+   private ResourceBundle poStatusBundle;
+
+   @Inject
+   private DocumentProcessingStateConverter poStatusConverter;
+
+   @Inject
+   private DocumentProcessingStateListCellFatory poStatusListCellFatory;
 
    @Inject
    private Locale locale;
@@ -128,9 +142,9 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
    @Inject
    private BigDecimalFieldValidator bigDecimalFieldValidator;
    @Inject
-   private TextInputControlValidator textInputControlValidator;
-   @Inject
    private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
+   @Inject
+   private TextInputControlValidator textInputControlValidator;
 
    @PostConstruct
    public void postConstruct()
@@ -139,6 +153,7 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
       procurementOrderNumber = viewBuilder.addTextField("ProcurementOrder_procurementOrderNumber_description.title", "procurementOrderNumber", resourceBundle);
       procmtOrderTriggerMode = viewBuilder.addComboBox("ProcurementOrder_procmtOrderTriggerMode_description.title", "procmtOrderTriggerMode", resourceBundle, ProcmtOrderTriggerMode.values());
       procurementOrderType = viewBuilder.addComboBox("ProcurementOrder_procurementOrderType_description.title", "procurementOrderType", resourceBundle, ProcurementOrderType.values());
+      poStatus = viewBuilder.addComboBox("ProcurementOrder_poStatus_description.title", "poStatus", resourceBundle, DocumentProcessingState.values());
       amountBeforeTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.INTEGER, locale);
       amountAfterTax = viewBuilder.addBigDecimalField("ProcurementOrder_amountAfterTax_description.title", "amountAfterTax", resourceBundle, NumberType.CURRENCY, locale);
       amountDiscount = viewBuilder.addBigDecimalField("ProcurementOrder_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
@@ -164,6 +179,7 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
 
       ComboBoxInitializer.initialize(procmtOrderTriggerMode, procmtOrderTriggerModeConverter, procmtOrderTriggerModeListCellFatory, procmtOrderTriggerModeBundle);
       ComboBoxInitializer.initialize(procurementOrderType, procurementOrderTypeConverter, procurementOrderTypeListCellFatory, procurementOrderTypeBundle);
+      ComboBoxInitializer.initialize(poStatus, poStatusConverter, poStatusListCellFatory, poStatusBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -193,6 +209,7 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
       procurementOrderNumber.textProperty().bindBidirectional(model.procurementOrderNumberProperty());
       procmtOrderTriggerMode.valueProperty().bindBidirectional(model.procmtOrderTriggerModeProperty());
       procurementOrderType.valueProperty().bindBidirectional(model.procurementOrderTypeProperty());
+      poStatus.valueProperty().bindBidirectional(model.poStatusProperty());
       amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
       amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
       amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
@@ -225,6 +242,11 @@ public class ProcurementOrderView extends AbstractForm<ProcurementOrder>
    public ComboBox<ProcurementOrderType> getProcurementOrderType()
    {
       return procurementOrderType;
+   }
+
+   public ComboBox<DocumentProcessingState> getPoStatus()
+   {
+      return poStatus;
    }
 
    public BigDecimalField getAmountBeforeTax()

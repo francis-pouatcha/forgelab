@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
@@ -124,7 +125,7 @@ public class DebtStatement implements Serializable
 
    @Column
    @Description("DebtStatement_statementStatus_description")
-   @Enumerated
+   @Enumerated(EnumType.STRING)
    private DocumentProcessingState statementStatus = DocumentProcessingState.ONGOING;
    
    public Long getId()

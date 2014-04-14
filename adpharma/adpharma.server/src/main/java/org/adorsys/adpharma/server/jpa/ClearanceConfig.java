@@ -1,27 +1,39 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.format.DateFormatPattern;
+
 import java.math.BigDecimal;
+
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.DecimalMax;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+
 import javax.persistence.Enumerated;
 
 @Entity
@@ -61,7 +73,7 @@ public class ClearanceConfig implements Serializable
 
    @Column
    @Description("ClearanceConfig_clearanceState_description")
-   @Enumerated
+   @Enumerated(EnumType.STRING)
    private DocumentProcessingState clearanceState;
 
    @Column

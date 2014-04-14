@@ -1,31 +1,51 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
+
 import javax.validation.constraints.Size;
+
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.display.ToStringField;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.adpharma.server.jpa.Article;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
+
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+
+import javax.persistence.Enumerated;
+
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 
 @Entity
@@ -36,7 +56,6 @@ import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 @ToStringField({ "articleName", "article.articleName", "qtyOrdered" })
 public class ProcurementOrderItem implements Serializable
 {
-
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
@@ -116,6 +135,11 @@ public class ProcurementOrderItem implements Serializable
    @Column
    @Description("ProcurementOrderItem_valid_description")
    private Boolean valid;
+
+   @Column
+   @Description("ProcurementOrderItem_poStatus_description")
+   @Enumerated(EnumType.STRING)
+   private DocumentProcessingState poStatus;
 
    @ManyToOne
    @Description("ProcurementOrderItem_procurementOrder_description")
@@ -322,6 +346,16 @@ public class ProcurementOrderItem implements Serializable
    public void setValid(final Boolean valid)
    {
       this.valid = valid;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return this.poStatus;
+   }
+
+   public void setPoStatus(final DocumentProcessingState poStatus)
+   {
+      this.poStatus = poStatus;
    }
 
    @Override

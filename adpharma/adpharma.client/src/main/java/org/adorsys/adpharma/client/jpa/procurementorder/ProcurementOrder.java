@@ -7,6 +7,7 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
@@ -40,9 +41,9 @@ import org.adorsys.javaext.list.ListField;
 @Description("ProcurementOrder_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField("procurementOrderNumber")
-@ListField({ "procurementOrderNumber", "agency.name", "amountBeforeTax",
-      "amountAfterTax", "amountDiscount", "taxAmount", "netAmountToPay",
-      "vat.rate" })
+@ListField({ "procurementOrderNumber", "poStatus", "agency.name",
+      "amountBeforeTax", "amountAfterTax", "amountDiscount", "taxAmount",
+      "netAmountToPay", "vat.rate" })
 public class ProcurementOrder implements Cloneable
 {
 
@@ -55,6 +56,8 @@ public class ProcurementOrder implements Cloneable
    private SimpleObjectProperty<ProcmtOrderTriggerMode> procmtOrderTriggerMode;
    @Description("ProcurementOrder_procurementOrderType_description")
    private SimpleObjectProperty<ProcurementOrderType> procurementOrderType;
+   @Description("ProcurementOrder_poStatus_description")
+   private SimpleObjectProperty<DocumentProcessingState> poStatus;
    @Description("ProcurementOrder_amountBeforeTax_description")
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
    @Description("ProcurementOrder_amountAfterTax_description")
@@ -167,6 +170,25 @@ public class ProcurementOrder implements Cloneable
    public final void setProcurementOrderType(ProcurementOrderType procurementOrderType)
    {
       this.procurementOrderTypeProperty().set(procurementOrderType);
+   }
+
+   public SimpleObjectProperty<DocumentProcessingState> poStatusProperty()
+   {
+      if (poStatus == null)
+      {
+         poStatus = new SimpleObjectProperty<DocumentProcessingState>();
+      }
+      return poStatus;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return poStatusProperty().get();
+   }
+
+   public final void setPoStatus(DocumentProcessingState poStatus)
+   {
+      this.poStatusProperty().set(poStatus);
    }
 
    public SimpleObjectProperty<BigDecimal> amountBeforeTaxProperty()
@@ -483,6 +505,7 @@ public class ProcurementOrder implements Cloneable
       e.procurementOrderNumber = procurementOrderNumber;
       e.procmtOrderTriggerMode = procmtOrderTriggerMode;
       e.procurementOrderType = procurementOrderType;
+      e.poStatus = poStatus;
       e.amountBeforeTax = amountBeforeTax;
       e.amountAfterTax = amountAfterTax;
       e.amountDiscount = amountDiscount;

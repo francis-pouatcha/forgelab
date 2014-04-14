@@ -1,46 +1,65 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
+
 import javax.validation.constraints.NotNull;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.adpharma.server.jpa.Login;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
+
 import javax.persistence.Enumerated;
+
 import org.adorsys.adpharma.server.jpa.ProcurementOrderType;
 import org.adorsys.adpharma.server.jpa.Supplier;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Agency;
+
 import java.math.BigDecimal;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
+
 import java.util.Set;
 import java.util.HashSet;
+
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 
 @Entity
 @Description("ProcurementOrder_description")
 @ToStringField("procurementOrderNumber")
-@ListField({ "procurementOrderNumber", "agency.name", "amountBeforeTax", "amountAfterTax",
-      "amountDiscount", "taxAmount", "netAmountToPay", "vat.rate" })
+@ListField({ "procurementOrderNumber", "poStatus", "agency.name", "amountBeforeTax",
+      "amountAfterTax", "amountDiscount", "taxAmount", "netAmountToPay",
+      "vat.rate" })
 public class ProcurementOrder implements Serializable
 {
 
@@ -88,6 +107,11 @@ public class ProcurementOrder implements Serializable
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    @NotNull(message = "ProcurementOrder_supplier_NotNull_validation")
    private Supplier supplier;
+
+   @Column
+   @Description("ProcurementOrder_poStatus_description")
+   @Enumerated(EnumType.STRING)
+   private DocumentProcessingState poStatus;
 
    @ManyToOne
    @Description("ProcurementOrder_agency_description")
@@ -252,6 +276,16 @@ public class ProcurementOrder implements Serializable
    public void setSupplier(final Supplier supplier)
    {
       this.supplier = supplier;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return this.poStatus;
+   }
+
+   public void setPoStatus(final DocumentProcessingState poStatus)
+   {
+      this.poStatus = poStatus;
    }
 
    public Agency getAgency()

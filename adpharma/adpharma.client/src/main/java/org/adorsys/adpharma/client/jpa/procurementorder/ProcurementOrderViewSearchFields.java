@@ -10,6 +10,7 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
@@ -47,6 +48,8 @@ import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTrigger
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerModeListCellFatory;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeConverter;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeListCellFatory;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 
 public class ProcurementOrderViewSearchFields extends AbstractForm<ProcurementOrder>
 {
@@ -75,6 +78,15 @@ public class ProcurementOrderViewSearchFields extends AbstractForm<ProcurementOr
 
    @Inject
    private ProcurementOrderTypeListCellFatory procurementOrderTypeListCellFatory;
+   @Inject
+   @Bundle(DocumentProcessingState.class)
+   private ResourceBundle poStatusBundle;
+
+   @Inject
+   private DocumentProcessingStateConverter poStatusConverter;
+
+   @Inject
+   private DocumentProcessingStateListCellFatory poStatusListCellFatory;
 
    @Inject
    private Locale locale;

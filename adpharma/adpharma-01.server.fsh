@@ -1108,6 +1108,11 @@ description add-field-description --onProperty valid --title "Valid" --text "Det
 description add-field-description --onProperty valid --title "Valide" --text "Détermine si la ligne de commande est valide ou pas selon les attentes du fournisseur." --locale fr;
 display add-list-field --field valid;
 
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+
 
 cd ~~
 
@@ -1172,6 +1177,12 @@ association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.j
 constraint NotNull --onProperty supplier;
 description add-notNull-message --onProperty supplier --title "The supplier  is required" --text "The supplier  is required";
 description add-notNull-message --onProperty supplier --title "Le fournisseur est réquis" --text "le fournisseur est requis" --locale fr;
+
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+display add-list-field --field poStatus;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
