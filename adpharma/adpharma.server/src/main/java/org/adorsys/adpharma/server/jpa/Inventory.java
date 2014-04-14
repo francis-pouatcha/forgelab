@@ -1,36 +1,52 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.adpharma.server.jpa.Login;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
+
 import javax.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Size;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.InventoryItem;
+
 import java.util.Set;
 import java.util.HashSet;
+
 import javax.persistence.OneToMany;
 import javax.persistence.CascadeType;
 
@@ -72,7 +88,7 @@ public class Inventory implements Serializable
 
    @Column
    @Description("Inventory_inventoryStatus_description")
-   @Enumerated
+   @Enumerated(EnumType.STRING)
    private DocumentProcessingState inventoryStatus;
 
    @Column

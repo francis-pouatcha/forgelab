@@ -1108,6 +1108,11 @@ description add-field-description --onProperty valid --title "Valid" --text "Det
 description add-field-description --onProperty valid --title "Valide" --text "Détermine si la ligne de commande est valide ou pas selon les attentes du fournisseur." --locale fr;
 display add-list-field --field valid;
 
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+
 
 cd ~~
 

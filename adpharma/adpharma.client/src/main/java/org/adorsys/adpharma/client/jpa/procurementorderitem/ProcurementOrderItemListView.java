@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 

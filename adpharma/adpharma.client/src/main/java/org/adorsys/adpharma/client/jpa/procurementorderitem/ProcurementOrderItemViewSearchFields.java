@@ -10,7 +10,10 @@ import java.util.Calendar;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
@@ -22,6 +25,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
+import javafx.scene.control.ComboBox;
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,6 +36,8 @@ import org.adorsys.javafx.crud.extensions.view.AbstractForm;
 import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 
 public class ProcurementOrderItemViewSearchFields extends AbstractForm<ProcurementOrderItem>
 {
@@ -47,6 +53,16 @@ public class ProcurementOrderItemViewSearchFields extends AbstractForm<Procureme
    @Inject
    @Bundle({ CrudKeys.class, ProcurementOrderItem.class })
    private ResourceBundle resourceBundle;
+
+   @Inject
+   @Bundle(DocumentProcessingState.class)
+   private ResourceBundle poStatusBundle;
+
+   @Inject
+   private DocumentProcessingStateConverter poStatusConverter;
+
+   @Inject
+   private DocumentProcessingStateListCellFatory poStatusListCellFatory;
 
    @Inject
    private Locale locale;
