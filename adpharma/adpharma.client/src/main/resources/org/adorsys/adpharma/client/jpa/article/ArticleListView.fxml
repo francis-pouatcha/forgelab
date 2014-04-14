@@ -9,32 +9,21 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="moveButton" mnemonicParsing="false" prefWidth="140.0" text="Move to Stock">
+				<Button fx:id="createButton" mnemonicParsing="false" prefWidth="140.0" text="Create ">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="detailsButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Make Details">
+				<Button fx:id="editButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Edit">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="saleStatButton" layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="Show Sale Statistic">
+				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets left="5.0" />
 					</VBox.margin>
-				</Button>
-				<Button fx:id="purchaseButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Show Puschase Stat">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="stockMvtButton" layoutX="58.0" layoutY="154.0" mnemonicParsing="false" prefWidth="140.0" text="Show Stock Mvt">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Pane prefHeight="219.0" prefWidth="165.0" styleClass="application-Backgroun" VBox.vgrow="ALWAYS" />
+				</Pane>
 			</children>
 			<BorderPane.margin>
 				<Insets />
@@ -54,14 +43,14 @@
 					</padding>
 				</HBox>
 				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+				<TableView fx:id="dataList" prefHeight="564.0" prefWidth="791.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>
 					<VBox.margin>
 						<Insets left="10.0" />
 					</VBox.margin>
 				</TableView>
-				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
+				<HBox alignment="CENTER" prefHeight="14.0" prefWidth="801.0">
 					<children>
 						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 					</children>

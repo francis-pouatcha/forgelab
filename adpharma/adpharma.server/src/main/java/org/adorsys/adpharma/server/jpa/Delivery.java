@@ -152,7 +152,7 @@ public class Delivery implements Serializable
 
 	@Column
 	@Description("Delivery_deliveryProcessingState_description")
-	@Enumerated(EnumType.STRING)
+	@Enumerated
 	private DocumentProcessingState deliveryProcessingState;
 
 	@ManyToOne

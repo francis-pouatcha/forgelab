@@ -131,7 +131,7 @@ public class SalesOrder implements Serializable
 
    @Column
    @Description("SalesOrder_salesOrderStatus_description")
-   @Enumerated(EnumType.STRING)
+   @Enumerated
    private DocumentProcessingState salesOrderStatus = DocumentProcessingState.ONGOING;
 
    @Column

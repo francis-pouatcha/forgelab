@@ -56,6 +56,9 @@ public class SupplierListView
       viewBuilder.addStringColumn(dataList, "name", "Supplier_name_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "fax", "Supplier_fax_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "email", "Supplier_email_description.title", resourceBundle);
+      
+      viewBuilder.addStringColumn(dataList, "email", "Supplier_email_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "email", "Supplier_email_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

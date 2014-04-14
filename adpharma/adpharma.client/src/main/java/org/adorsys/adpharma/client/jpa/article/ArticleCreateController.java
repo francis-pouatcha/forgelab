@@ -30,6 +30,7 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,10 @@ public class ArticleCreateController implements EntityController
    @Inject
    @EntitySearchRequestedEvent
    private Event<Article> searchRequestedEvent;
+   
+   @Inject
+   @WorkingInformationEvent
+   private Event<String> workingProcessInfos;
 
    /**
     * The create page has it own model object.
@@ -118,6 +123,7 @@ public class ArticleCreateController implements EntityController
             event.consume();
             s.reset();
             createDoneEvent.fire(ent);
+            workingProcessInfos.fire("Article : "+ent.getPic()+" created sucessfully !");
          }
       });
       createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()

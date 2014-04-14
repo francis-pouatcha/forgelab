@@ -274,7 +274,9 @@ public class DeliveryListController implements EntityController
 	}
 
 	public void onDisplayed(){
-		supplierSearchService.setSearchInputs(new SupplierSearchInput()).start();
+		SupplierSearchInput supplierSearchInput = new SupplierSearchInput();
+		supplierSearchInput.setMax(-1);
+		supplierSearchService.setSearchInputs(supplierSearchInput).start();
 
 	}
 	@Override
