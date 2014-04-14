@@ -1173,6 +1173,12 @@ constraint NotNull --onProperty supplier;
 description add-notNull-message --onProperty supplier --title "The supplier  is required" --text "The supplier  is required";
 description add-notNull-message --onProperty supplier --title "Le fournisseur est réquis" --text "le fournisseur est requis" --locale fr;
 
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+display add-list-field --field poStatus;
+
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
 description add-field-description --onProperty agency --title "Agency" --text "L agence mentionné sur le bordereau de livraison des produits qui entrent en stock." --locale fr;

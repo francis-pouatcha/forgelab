@@ -3,11 +3,20 @@ package org.adorsys.adpharma.server.rest;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
+import org.adorsys.adpharma.server.jpa.StockMovement;
+import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.ProcurementOrderRepository;
+
 import java.util.Set;
+
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 
 @Stateless
@@ -113,4 +122,42 @@ public class ProcurementOrderEJB
 
       return entity;
    }
+   
+   public void handleStockMovementEvent(@Observes @DocumentProcessedEvent StockMovement stockMovement){
+	   StockMovementTerminal movementOrigin = stockMovement.getMovementOrigin();
+	   StockMovementTerminal movementDestination = stockMovement.getMovementDestination();
+	   StockMovementType movementType = stockMovement.getMovementType();
+	   // Sales
+	   if(StockMovementType.OUT.equals(movementType) && 
+			   StockMovementTerminal.WAREHOUSE.equals(movementOrigin) && 
+			   StockMovementTerminal.CUSTOMER.equals(movementDestination))
+		   handleSupplierIncreaseOrder(stockMovement);
+	   
+	   // Expired
+	   if(StockMovementType.OUT.equals(movementType) && 
+			   StockMovementTerminal.WAREHOUSE.equals(movementOrigin) && 
+			   StockMovementTerminal.TRASH.equals(movementDestination))
+		   handleSupplierIncreaseOrder(stockMovement);
+	   
+	   // return or canceled sales.
+	   if(StockMovementType.IN.equals(movementType) && 
+			   StockMovementTerminal.CUSTOMER.equals(movementOrigin) && 
+			   StockMovementTerminal.WAREHOUSE.equals(movementDestination))
+		   handleSupplierReduceOrder(stockMovement);
+   }
+
+	private void handleSupplierReduceOrder(StockMovement stockMovement) {
+	// TODO Auto-generated method stub
+	
+	}
+
+	private void handleSupplierIncreaseOrder(StockMovement stockMovement) {
+//		Article article = stockMovement.getArticle();
+//		ProcurementOrder procurementOrder = new ProcurementOrder();
+//		
+//		ProcurementOrderItem procurementOrderItem = new ProcurementOrderItem();
+//		procurementOrderItem.s
+//		new Pu
+		
+	}
 }

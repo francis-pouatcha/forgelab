@@ -26,6 +26,7 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import java.math.BigDecimal;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
@@ -35,6 +36,7 @@ import javafx.collections.FXCollections;
 import java.util.ArrayList;
 import java.util.List;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 
 public class ProcurementOrderListView
 {
@@ -64,12 +66,16 @@ public class ProcurementOrderListView
    })
    private ResourceBundle resourceBundle;
 
+   @Inject
+   private DocumentProcessingStateConverter documentProcessingStateConverter;
+
    @PostConstruct
    public void postConstruct()
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
       viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "ProcurementOrder_procurementOrderNumber_description.title", resourceBundle);
+      viewBuilder.addEnumColumn(dataList, "poStatus", "ProcurementOrder_poStatus_description.title", resourceBundle, documentProcessingStateConverter);
       viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
       viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);

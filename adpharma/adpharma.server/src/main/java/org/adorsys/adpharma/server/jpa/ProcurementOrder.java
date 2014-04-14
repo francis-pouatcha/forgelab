@@ -25,6 +25,7 @@ import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import javax.persistence.Enumerated;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderType;
 import org.adorsys.adpharma.server.jpa.Supplier;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Agency;
 import java.math.BigDecimal;
 import org.adorsys.javaext.format.NumberFormatType;
@@ -39,8 +40,9 @@ import javax.persistence.CascadeType;
 @Entity
 @Description("ProcurementOrder_description")
 @ToStringField("procurementOrderNumber")
-@ListField({ "procurementOrderNumber", "agency.name", "amountBeforeTax", "amountAfterTax",
-      "amountDiscount", "taxAmount", "netAmountToPay", "vat.rate" })
+@ListField({ "procurementOrderNumber", "poStatus", "agency.name", "amountBeforeTax",
+      "amountAfterTax", "amountDiscount", "taxAmount", "netAmountToPay",
+      "vat.rate" })
 public class ProcurementOrder implements Serializable
 {
 
@@ -88,6 +90,11 @@ public class ProcurementOrder implements Serializable
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    @NotNull(message = "ProcurementOrder_supplier_NotNull_validation")
    private Supplier supplier;
+
+   @Column
+   @Description("ProcurementOrder_poStatus_description")
+   @Enumerated
+   private DocumentProcessingState poStatus;
 
    @ManyToOne
    @Description("ProcurementOrder_agency_description")
@@ -252,6 +259,16 @@ public class ProcurementOrder implements Serializable
    public void setSupplier(final Supplier supplier)
    {
       this.supplier = supplier;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return this.poStatus;
+   }
+
+   public void setPoStatus(final DocumentProcessingState poStatus)
+   {
+      this.poStatus = poStatus;
    }
 
    public Agency getAgency()
