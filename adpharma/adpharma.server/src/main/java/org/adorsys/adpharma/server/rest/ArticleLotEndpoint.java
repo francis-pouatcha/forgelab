@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
@@ -118,7 +119,15 @@ public class ArticleLotEndpoint
 		return new ArticleLotSearchResult(count, detach(resultList),
 				detach(searchInput));
 	}
-
+	@POST
+	@Path("/processDetails")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager)
+	{
+			return	detach(ejb.processDetails(lotDetailsManager));
+	}
+	
 	@POST
 	@Path("/countBy")
 	@Consumes({ "application/json", "application/xml" })

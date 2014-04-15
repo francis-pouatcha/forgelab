@@ -2,6 +2,8 @@ package org.adorsys.adpharma.client.jpa.articlelot;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
+
 import javafx.beans.property.SimpleObjectProperty;
 
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
@@ -22,6 +24,50 @@ public class ArticleLotDetailsManager {
 	   @Description("ArtilceLotDetailsManager_lotQty_description")
 	   private SimpleObjectProperty<BigDecimal> lotQty;
 	   
+	   @Description("ArtilceLotDetailsManager_targetQty_description")
+	   private SimpleObjectProperty<BigDecimal> targetQty;
+	   
+	   @Description("ArtilceLotDetailsManager_targetPrice_description")
+	   private SimpleObjectProperty<BigDecimal> targetPrice;
+	   
+	   public SimpleObjectProperty<BigDecimal> targetQtyProperty()
+	   {
+	      if (targetQty == null)
+	      {
+	    	  targetQty = new SimpleObjectProperty<BigDecimal>();
+	      }
+	      return targetQty;
+	   }
+
+	   public BigDecimal getTargetQty()
+	   {
+	      return targetQtyProperty().get();
+	   }
+
+	   public final void setTargetQty(BigDecimal targetQty)
+	   {
+	      this.targetQtyProperty().set(targetQty);
+	   }
+	   
+	   public SimpleObjectProperty<BigDecimal> targetPriceProperty()
+	   {
+	      if (targetPrice == null)
+	      {
+	    	  targetPrice = new SimpleObjectProperty<BigDecimal>();
+	      }
+	      return targetPrice;
+	   }
+
+	   public BigDecimal getTargetPrice()
+	   {
+	      return targetPriceProperty().get();
+	   }
+
+	   public final void setTargetPrice(BigDecimal targetPrice)
+	   {
+	      this.targetPriceProperty().set(targetPrice);
+	   }
+	   
 	   public SimpleObjectProperty<ArticleLot> lotToDetailsProperty()
 	   {
 	      if (lotToDetails == null)
@@ -30,7 +76,8 @@ public class ArticleLotDetailsManager {
 	      }
 	      return lotToDetails;
 	   }
-
+	   
+	   @NotNull
 	   public ArticleLot getLotToDetails()
 	   {
 	      return lotToDetailsProperty().get();
@@ -50,6 +97,7 @@ public class ArticleLotDetailsManager {
 	      return detailConfig;
 	   }
 
+	   @NotNull
 	   public ProductDetailConfig getDetailConfig()
 	   {
 	      return detailConfigProperty().get();
@@ -88,6 +136,7 @@ public class ArticleLotDetailsManager {
 	      return detailsQty;
 	   }
 
+	   @NotNull
 	   public BigDecimal getDetailsQty()
 	   {
 	      return detailsQtyProperty().get();
