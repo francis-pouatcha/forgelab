@@ -22,7 +22,7 @@ public class ProductDetailConfigTargetCreateController extends ProductDetailConf
    public void handleNewModelEvent(@Observes @CreateModelEvent ProductDetailConfig model)
    {
       this.sourceEntity = model;
-      activateButton(createView.getView().getProductDetailConfigTargetSelection(), createView.getView().getProductDetailConfigTargetForm());
+      activateButton(createView.getView().getProductDetailConfigTargetSelection());
       bind(createView.getView().getProductDetailConfigTargetSelection(), createView.getView().getProductDetailConfigTargetForm());
    }
 }

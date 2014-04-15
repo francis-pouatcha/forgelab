@@ -44,7 +44,7 @@ public class ProductDetailConfigListController implements EntityController
 {
 
 	@Inject
-	private ProductDetailConfigFindByOriginAndTargetService configFindByOriginAndTargetService;
+	private ProductDetailConfigSearchService configSearchService;
 
 	@Inject
 	private ProductDetailConfigListView listView;
@@ -75,18 +75,18 @@ public class ProductDetailConfigListController implements EntityController
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 
-		listView.getDataList().getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<ProductDetailConfig>()
-				{
-			@Override
-			public void changed(
-					ObservableValue<? extends ProductDetailConfig> property,
-					ProductDetailConfig oldValue, ProductDetailConfig newValue)
-			{
-				if (newValue != null)
-					selectionEvent.fire(newValue);
-			}
-				});
+		//		listView.getDataList().getSelectionModel().selectedItemProperty()
+		//		.addListener(new ChangeListener<ProductDetailConfig>()
+		//				{
+		//			@Override
+		//			public void changed(
+		//					ObservableValue<? extends ProductDetailConfig> property,
+		//					ProductDetailConfig oldValue, ProductDetailConfig newValue)
+		//			{
+		//				if (newValue != null)
+		//					selectionEvent.fire(newValue);
+		//			}
+		//				});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -98,28 +98,28 @@ public class ProductDetailConfigListController implements EntityController
 			{
 				String sourceName = listView.getArticleOriginName().getText();
 				String targetName = listView.getArticleTargetName().getText();
-				configFindByOriginAndTargetService.setSourceName(sourceName).setTargetName(targetName).start();
+				configSearchService.setSearchInputs(new ProductDetailConfigSearchInput()).start();
 
 
 			}
 				});
-		configFindByOriginAndTargetService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		configSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				ProductDetailConfigFindByOriginAndTargetService s = (ProductDetailConfigFindByOriginAndTargetService) event.getSource();
-				List<ProductDetailConfig> result = s.getValue();
+				ProductDetailConfigSearchService s = (ProductDetailConfigSearchService) event.getSource();
+				ProductDetailConfigSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
-				listView.getDataList().getItems().setAll(result);
+				listView.getDataList().getItems().setAll(result.getResultList());
 
 			}
 		});
-		configFindByOriginAndTargetService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		configSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				ProductDetailConfigFindByOriginAndTargetService s = (ProductDetailConfigFindByOriginAndTargetService) event.getSource();
+				ProductDetailConfigSearchService s = (ProductDetailConfigSearchService) event.getSource();
 				s.reset();				
 			}
 		});
@@ -129,10 +129,18 @@ public class ProductDetailConfigListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
+				createRequestedEvent.fire(new ProductDetailConfig());
+			}
+				});
+
+		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
 				ProductDetailConfig selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if (selectedItem == null)
-					selectedItem = new ProductDetailConfig();
-				createRequestedEvent.fire(selectedItem);
+				if (selectedItem != null)
+					selectionEvent.fire(selectedItem);
 			}
 				});
 

@@ -1,21 +1,20 @@
 package org.adorsys.adpharma.client.jpa.productdetailconfig;
 
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
-import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
-import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -23,116 +22,113 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleLoadService;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
-
 public abstract class ProductDetailConfigTargetController
 {
 
-   protected ProductDetailConfig sourceEntity;
+	@Inject
+	   private ArticleSearchService searchService;
+	   @Inject
+	   private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
 
-   @Inject
-   private ArticleLoadService loadService;
-   @Inject
-   private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
+	   private ArticleSearchResult targetSearchResult;
 
-   @Inject
-   private ErrorMessageDialog loadErrorMessageDialog;
+	   @Inject
+	   @Bundle({ CrudKeys.class, ProductDetailConfig.class, Article.class })
+	   private ResourceBundle resourceBundle;
 
-   @Inject
-   @AssocSelectionRequestEvent
-   private Event<ProductDetailConfigTargetSelectionEventData> selectionRequestEvent;
+	   @Inject
+	   private ErrorMessageDialog errorMessageDialog;
 
-   private ProductDetailConfigTargetSelectionEventData pendingSelectionRequest;
+	   protected ProductDetailConfig sourceEntity;
 
-   @Inject
-   @ComponentSelectionRequestEvent
-   private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+	   protected void disableButton(final ProductDetailConfigTargetSelection selection)
+	   {
+	      selection.getTarget().setDisable(true);
+	   }
 
-   @Inject
-   @Bundle(CrudKeys.class)
-   private ResourceBundle resourceBundle;
+	   protected void activateButton(final ProductDetailConfigTargetSelection selection)
+	   {
+	   }
 
-   protected void disableButton(final ProductDetailConfigTargetSelection selection, final ProductDetailConfigTargetForm form)
-   {
-      selection.getSelectButton().setDisable(true);
-   }
+	   protected void bind(final ProductDetailConfigTargetSelection selection, final ProductDetailConfigTargetForm form)
+	   {
 
-   protected void activateButton(final ProductDetailConfigTargetSelection selection, final ProductDetailConfigTargetForm form)
-   {
-   }
+//	      selection.getSection().valueProperty().bindBidirectional(sourceEntity.sectionProperty());
 
-   protected void bind(final ProductDetailConfigTargetSelection selection, final ProductDetailConfigTargetForm form)
-   {
-      selection.getSelectButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  pendingSelectionRequest = new ProductDetailConfigTargetSelectionEventData(
-                        UUID.randomUUID().toString(), sourceEntity, null);
-                  selectionRequestEvent.fire(pendingSelectionRequest);
-               }
-            });
+	      // send search result event.
+	      searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+	      {
+	         @Override
+	         public void handle(WorkerStateEvent event)
+	         {
+	        	 ArticleSearchService s = (ArticleSearchService) event
+	                  .getSource();
+	            targetSearchResult = s.getValue();
+	            event.consume();
+	            s.reset();
+	            List<Article> entities = targetSearchResult.getResultList();
+	            selection.getTarget().getItems().clear();
+	            selection.getTarget().getItems().add(new ProductDetailConfigTarget());
+	            for (Article entity : entities)
+	            {
+	               selection.getTarget().getItems().add(new ProductDetailConfigTarget(entity));
+	            }
+	         }
+	      });
+	      searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+	      {
+	         @Override
+	         protected void showError(Throwable exception)
+	         {
+	            String message = exception.getMessage();
+	            errorMessageDialog.getTitleText().setText(
+	                  resourceBundle.getString("Entity_search_error.title"));
+	            if (!StringUtils.isBlank(message))
+	               errorMessageDialog.getDetailText().setText(message);
+	            errorMessageDialog.display();
+	         }
+	      });
+	      searchService.setOnFailed(searchServiceCallFailedEventHandler);
 
-      // Handle edit canceld, reloading entity
-      loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            ArticleLoadService s = (ArticleLoadService) event.getSource();
-            Article entity = s.getValue();
-            event.consume();
-            s.reset();
-            sourceEntity.setTarget(new ProductDetailConfigTarget(entity));
-         }
-      });
-      loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            loadErrorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_load_error.title"));
-            if (!StringUtils.isBlank(message))
-               loadErrorMessageDialog.getDetailText().setText(message);
-            loadErrorMessageDialog.display();
-         }
-      });
-      loadService.setOnFailed(loadServiceCallFailedEventHandler);
-      loadErrorMessageDialog.getOkButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  loadErrorMessageDialog.closeDialog();
-               }
-            });
+	      errorMessageDialog.getOkButton().setOnAction(
+	            new EventHandler<ActionEvent>()
+	            {
+	               @Override
+	               public void handle(ActionEvent event)
+	               {
+	                  errorMessageDialog.closeDialog();
+	               }
+	            });
 
-   }
+	      selection.getTarget().valueProperty().addListener(new ChangeListener<ProductDetailConfigTarget>()
+	      {
+	         @Override
+	         public void changed(ObservableValue<? extends ProductDetailConfigTarget> ov, ProductDetailConfigTarget oldValue,
+	        		 ProductDetailConfigTarget newValue)
+	         {
+	            if (sourceEntity != null)
+	               form.update(newValue);
+	            //                sourceEntity.setSection(newValue);
+	         }
+	      });
 
-   public void handleAssocSelectionResponseEvent(@Observes @AssocSelectionResponseEvent ProductDetailConfigTargetSelectionEventData eventData)
-   {
-      if (eventData != null && pendingSelectionRequest != null && eventData.getId().equals(pendingSelectionRequest.getId())
-            && eventData.getSourceEntity() == sourceEntity && eventData.getTargetEntity() != null)
-      {
-         if (sourceEntity != null)
-            sourceEntity.setTarget(new ProductDetailConfigTarget(eventData.getTargetEntity()));
-      }
-      componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(ProductDetailConfig.class.getName()));
-   }
+	      selection.getTarget().armedProperty().addListener(new ChangeListener<Boolean>()
+	      {
 
-   /*
-    * Only load if you need more fields than the one specified in the
-    * association
-    */
-   protected void loadAssociation()
-   {
-   }
+	         @Override
+	         public void changed(ObservableValue<? extends Boolean> observableValue,
+	               Boolean oldValue, Boolean newValue)
+	         {
+	            if (newValue)
+	               load();
+	         }
 
+	      });
+	   }
+
+	   public void load()
+	   {
+//		  if(searchService.isRunning()) return;
+	      searchService.setSearchInputs(new ArticleSearchInput()).start();
+	   }
 }

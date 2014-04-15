@@ -94,7 +94,7 @@ public class ProductDetailConfigSourceForm extends AbstractToOneAssociation<Prod
 
    public void update(ProductDetailConfigSource data)
    {
-//      articleName.textProperty().set(data.articleNameProperty().get());
+      articleName.textProperty().set(data.articleNameProperty().get());
 //      pic.textProperty().set(data.picProperty().get());
 //      manufacturer.textProperty().set(data.manufacturerProperty().get());
 //      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));

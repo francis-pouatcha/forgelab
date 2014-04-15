@@ -83,7 +83,7 @@ public class ModalArticleCreateController {
 				else
 				{
 					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
-					.nativeTitleBar().message(model.getArticleName()).showError();
+					.nativeTitleBar().message(model+"").showError();
 				}
 			}
 
