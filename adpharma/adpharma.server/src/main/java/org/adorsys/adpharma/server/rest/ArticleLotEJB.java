@@ -1,27 +1,35 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class ArticleLotEJB
@@ -109,6 +117,55 @@ public class ArticleLotEJB
 		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 
 		return entity;
+	}
+
+	@Inject
+	@DocumentProcessedEvent
+	private Event<ArticleLotDetailsManager> articleLotDetailsEvent ;
+
+	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager){
+		ArticleLot lot = null ;
+
+		Login login = securityUtil.getConnectedUser();
+		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
+		ProductDetailConfig detailConfig = lotDetailsManager.getDetailConfig();
+		BigDecimal detailsQty = lotDetailsManager.getDetailsQty();
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+		if(isManagedLot){
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setArticle(detailConfig.getTarget());
+			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article});
+			articleLot = found.iterator().next();
+			BigDecimal stockQuantity = articleLot.getStockQuantity();
+			stockQuantity =stockQuantity.add(detailsQty.multiply(detailConfig.getTargetQuantity()));
+			articleLot.setStockQuantity(stockQuantity);
+			articleLot.setSalesPricePU(detailConfig.getSalesPrice());
+			articleLot.calculateTotalAmout();
+			lot = update(articleLot);
+
+		}else {
+			ArticleLot al = new  ArticleLot();
+			al.setAgency(login.getAgency());
+			al.setArticle(detailConfig.getTarget());
+			al.setArticleName(al.getArticle().getArticleName());
+			al.setCreationDate(new Date());
+			al.setExpirationDate(lotToDetails.getExpirationDate());
+			al.setInternalPic(lotToDetails.getInternalPic()+"-"+RandomStringUtils.randomNumeric(2));
+			al.setMainPic(detailConfig.getTarget().getPic());
+			al.setSecondaryPic(lotToDetails.getSecondaryPic());
+			al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
+			al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(),2));
+			al.setSalesPricePU(detailConfig.getSalesPrice());
+			al.calculateTotalAmout();
+			lot = create(al);
+		}
+
+		lotToDetails.setStockQuantity(lotToDetails.getStockQuantity().subtract(detailsQty)); // remove details qty to lot stock
+		lotToDetails.calculateTotalAmout();
+		update(lotToDetails);
+		articleLotDetailsEvent.fire(lotDetailsManager);
+		return lot;
 	}
 
 	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){

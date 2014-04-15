@@ -11,7 +11,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -21,16 +20,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplier;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
-import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
@@ -38,6 +30,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,8 +52,10 @@ public class ArticleLotListController implements EntityController
 	private Event<ArticleLot> searchRequestedEvent;
 
 	@Inject
-	@EntityCreateRequestedEvent
-	private Event<ArticleLot> createRequestedEvent;
+	@ModalEntityCreateRequestedEvent
+	private Event<ArticleLotDetailsManager> createRequestedEvent;
+
+
 
 	@Inject
 	@EntityListPageIndexChangedEvent
@@ -149,7 +144,13 @@ public class ArticleLotListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				Dialogs.create().message("not yet implemented").showInformation();
+				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					ArticleLotDetailsManager lotDetailsManager = new ArticleLotDetailsManager();
+					lotDetailsManager.setLotToDetails(selectedItem);
+					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
+					createRequestedEvent.fire(lotDetailsManager);
+				}
 			}
 				});
 		listView.getMoveButton().setOnAction(new EventHandler<ActionEvent>()

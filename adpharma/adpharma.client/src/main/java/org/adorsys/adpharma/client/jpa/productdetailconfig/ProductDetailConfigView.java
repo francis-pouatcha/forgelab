@@ -70,10 +70,6 @@ public class ProductDetailConfigView extends AbstractForm<ProductDetailConfig>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      active = viewBuilder.addCheckBox("ProductDetailConfig_active_description.title", "active", resourceBundle);
-      targetQuantity = viewBuilder.addBigDecimalField("ProductDetailConfig_targetQuantity_description.title", "targetQuantity", resourceBundle, NumberType.INTEGER, locale);
-      salesPrice = viewBuilder.addBigDecimalField("ProductDetailConfig_salesPrice_description.title", "salesPrice", resourceBundle, NumberType.CURRENCY, locale);
-      recordingDate = viewBuilder.addCalendarTextField("ProductDetailConfig_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       viewBuilder.addTitlePane("ProductDetailConfig_source_description.title", resourceBundle);
       viewBuilder.addSubForm("ProductDetailConfig_source_description.title", "source", resourceBundle, productDetailConfigSourceForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ProductDetailConfig_source_description.title", "source", resourceBundle, productDetailConfigSourceSelection, ViewModel.READ_WRITE);
@@ -81,6 +77,10 @@ public class ProductDetailConfigView extends AbstractForm<ProductDetailConfig>
       viewBuilder.addSubForm("ProductDetailConfig_target_description.title", "target", resourceBundle, productDetailConfigTargetForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ProductDetailConfig_target_description.title", "target", resourceBundle, productDetailConfigTargetSelection, ViewModel.READ_WRITE);
 
+      targetQuantity = viewBuilder.addBigDecimalField("ProductDetailConfig_targetQuantity_description.title", "targetQuantity", resourceBundle, NumberType.INTEGER, locale);
+      salesPrice = viewBuilder.addBigDecimalField("ProductDetailConfig_salesPrice_description.title", "salesPrice", resourceBundle, NumberType.CURRENCY, locale);
+      active = viewBuilder.addCheckBox("ProductDetailConfig_active_description.title", "active", resourceBundle);
+      recordingDate = viewBuilder.addCalendarTextField("ProductDetailConfig_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale,ViewModel.READ_ONLY);
       gridRows = viewBuilder.toRows();
    }
 

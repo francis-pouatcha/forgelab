@@ -102,6 +102,18 @@ public class ArticleLotService
       return target.path(FIND_BY).request(media).post(
             searchInputEntity, ArticleLotSearchResult.class);
    }
+   
+   //	@POST
+   //	@Path("/processDetails")
+   //	@Consumes("application/xml")
+   public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager)
+   {
+      Entity<ArticleLotDetailsManager> articleLotDetailsManagerEntity = Entity.entity(
+            lotDetailsManager, media);
+      return target.path("processDetails").request()
+            .post(articleLotDetailsManagerEntity, ArticleLot.class);
+   }
+
 
    //	@POST
    //	@Path("/countBy")

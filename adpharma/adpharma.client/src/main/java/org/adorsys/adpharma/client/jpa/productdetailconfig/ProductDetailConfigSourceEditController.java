@@ -18,14 +18,14 @@ public class ProductDetailConfigSourceEditController extends ProductDetailConfig
    public void handleNewModelEvent(@Observes @SelectedModelEvent ProductDetailConfig model)
    {
       this.sourceEntity = model;
-      activateButton(editView.getView().getProductDetailConfigSourceSelection(), editView.getView().getProductDetailConfigSourceForm());
+      activateButton(editView.getView().getProductDetailConfigSourceSelection());
       bind(editView.getView().getProductDetailConfigSourceSelection(), editView.getView().getProductDetailConfigSourceForm());
    }
 
    public void handleEditRequestEvent(
          @Observes @EntityEditRequestedEvent ProductDetailConfig p)
    {
-      loadAssociation();
+//      loadAssociation();
    }
 
 }

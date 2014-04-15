@@ -156,6 +156,7 @@ public class ArticleLot implements Serializable
 		al.calculateTotalAmout();
 		return al;
 	}
+	
 	public Long getId()
 	{
 		return this.id;

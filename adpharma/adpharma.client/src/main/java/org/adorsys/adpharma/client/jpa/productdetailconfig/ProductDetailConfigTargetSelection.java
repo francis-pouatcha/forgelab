@@ -1,54 +1,57 @@
 package org.adorsys.adpharma.client.jpa.productdetailconfig;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.util.Callback;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
+import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
-
-public class ProductDetailConfigTargetSelection extends AbstractSelection<ProductDetailConfig, Article>
+public class ProductDetailConfigTargetSelection  extends AbstractSelection<ProductDetailConfig, Article>
 {
 
-   private Button selectButton;
+	   private ComboBox<ProductDetailConfigTarget> target;
 
-   @Inject
-   @Bundle({ CrudKeys.class, Article.class, ProductDetailConfig.class })
-   private ResourceBundle resourceBundle;
+	   @Inject
+	   @Bundle({ CrudKeys.class, ProductDetailConfig.class, Article.class })
+	   private ResourceBundle resourceBundle;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      selectButton = viewBuilder.addButton(
-            "ProductDetailConfig_target_description.title", "Entity_select.title",
-            "selectButton", resourceBundle);
-      gridRows = viewBuilder.toRows();
-   }
+	   @PostConstruct
+	   public void postConstruct()
+	   {
+	      LazyViewBuilder viewBuilder = new LazyViewBuilder();
 
-   public void bind(ProductDetailConfig model)
-   {
-   }
+	      target = viewBuilder.addComboBox("ProductDetailConfig_target_description.title", "target", resourceBundle, false);
 
-   public Button getSelectButton()
-   {
-      return selectButton;
-   }
+	      target.setCellFactory(new Callback<ListView<ProductDetailConfigTarget>, ListCell<ProductDetailConfigTarget>>()
+	      {
+	         @Override
+	         public ListCell<ProductDetailConfigTarget > call(ListView<ProductDetailConfigTarget> listView)
+	         {
+	            return new ProductDetailConfigTargetListCell();
+	         }
+	      });
+	      target.setButtonCell(new ProductDetailConfigTargetListCell());
 
-   public Button getTarget()
-   {
-      return selectButton; // select button required to mark invalid field.
-   }
+	      gridRows = viewBuilder.toRows();
+	   }
+
+	   public void bind(ProductDetailConfig model)
+	   {
+	      target.valueProperty().bindBidirectional(model.targetProperty());
+	   }
+
+	   public ComboBox<ProductDetailConfigTarget> getTarget()
+	   {
+	      return target;
+	   }
 }

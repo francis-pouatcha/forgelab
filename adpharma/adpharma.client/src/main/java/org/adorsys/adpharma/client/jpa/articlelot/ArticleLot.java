@@ -390,7 +390,7 @@ public class ArticleLot implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "articleName", "articleName");
+      return PropertyReader.buildToString(this, "articleName");
    }
 
    public void cleanIds()
