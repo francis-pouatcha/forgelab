@@ -157,4 +157,16 @@ public class SalesOrderService
             .request(media).put(ent, SalesOrder.class);
    }
    
+//    @PUT
+//	@Path("/processReturn")
+//	@Produces({ "application/json", "application/xml" })
+//	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder processReturn(SalesOrder entity)
+	{
+		Entity<SalesOrder> ent = Entity.entity(entity, media);
+	      return target().path("processReturn")
+	            .request(media).put(ent, SalesOrder.class);
+	}
+   
 }
+

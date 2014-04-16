@@ -86,6 +86,7 @@ import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -130,6 +131,9 @@ public class SalesOrderDisplayController implements EntityController
 	private VATSearchService vatSearchService;
 
 	@Inject
+	private SalesOrderReturnService orderReturnService;
+
+	@Inject
 	CashDrawerSearchService cashDrawerSearchService;
 
 	@Inject
@@ -149,7 +153,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderItemEditService salesOrderItemEditService;
-	
+
 	@Inject
 	private PrescriptionBookSearchService prescriptionBookSearchService;
 
@@ -171,11 +175,11 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private InsurranceSearchInput insurranceSearchInput;
-	
+
 	@Inject
 	@WorkingInformationEvent
 	private Event<String> workingInfosEvent;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -230,6 +234,28 @@ public class SalesOrderDisplayController implements EntityController
 				if(selectedItem!=null) {
 					PropertyReader.copy(selectedItem, salesOrderItem);
 					displayView.getDataList().getItems().remove(selectedItem);
+				}
+
+			}
+		});
+
+		/*
+		 * listen to edit menu Item.
+		 */
+		displayView.getReturnSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!= null){
+					BigDecimal oderedQty = selectedItem.getOrderedQty();
+					BigDecimal qtyToReturn = getQtyToReturn();
+					if(qtyToReturn.compareTo(oderedQty)>0){
+						Dialogs.create().nativeTitleBar().message("you can't return more than : "+oderedQty +" for this line !").showInformation();
+					}else {
+						selectedItem.setReturnedQty(qtyToReturn);
+						selectedItem.setDeliveredQty(selectedItem.getOrderedQty().subtract(qtyToReturn));
+					}
 				}
 
 			}
@@ -308,6 +334,34 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getSaveReturnButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				orderReturnService.setEntity(displayedEntity).start();
+			}
+		});
+
+		orderReturnService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderReturnService s = (SalesOrderReturnService) event.getSource();
+				SalesOrder so = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(so, displayedEntity);
+				Action showConfirm = Dialogs.create().nativeTitleBar().message("Would you like to Print Customer Voucher !").showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
+					Dialogs.create().nativeTitleBar().message("Not yet Implemented !").showInformation();
+				}
+				workingInfosEvent.fire("Article Returned   successfully !");
+
+			}
+		});
+
+		orderReturnService.setOnFailed(callFailedEventHandler);
+
 		displayView.getClient().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -319,7 +373,6 @@ public class SalesOrderDisplayController implements EntityController
 
 
 		});
-
 
 
 		insurranceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -348,7 +401,6 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
-
 		cashDrawerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -372,15 +424,15 @@ public class SalesOrderDisplayController implements EntityController
 
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
 
-		displayView.getTax().setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				vatSearchService.setSearchInputs(new VATSearchInput()).start();
-			}
-
-
-		});
+		//		disdplayView.getTax().setOnMouseClicked(new EventHandler<MouseEvent>() {
+		//
+		//			@Override
+		//			public void handle(MouseEvent event) {
+		//				vatSearchService.setSearchInputs(new VATSearchInput()).start();
+		//			}
+		//
+		//
+		//		});
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -454,25 +506,25 @@ public class SalesOrderDisplayController implements EntityController
 
 		closeService.setOnFailed(callFailedEventHandler);
 
-		vatSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				VATSearchService s = (VATSearchService) event.getSource();
-				VATSearchResult vsr = s.getValue();
-				event.consume();
-				s.reset();
-				List<VAT> resultList = vsr.getResultList();
-				ArrayList<SalesOrderVat> sov = new ArrayList<SalesOrderVat>();
-				for (VAT vat : resultList) {
-					sov.add(new SalesOrderVat(vat));
-				}
-				displayView.getTax().getItems().setAll(sov);
-				if(!resultList.isEmpty())
-					displayView.getTax().setValue(new SalesOrderVat(resultList.iterator().next()));
-			}
-		});
-		vatSearchService.setOnFailed(callFailedEventHandler);
+		//		vatSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		//
+		//			@Override
+		//			public void handle(WorkerStateEvent event) {
+		//				VATSearchService s = (VATSearchService) event.getSource();
+		//				VATSearchResult vsr = s.getValue();
+		//				event.consume();
+		//				s.reset();
+		//				List<VAT> resultList = vsr.getResultList();
+		//				ArrayList<SalesOrderVat> sov = new ArrayList<SalesOrderVat>();
+		//				for (VAT vat : resultList) {
+		//					sov.add(new SalesOrderVat(vat));
+		//				}
+		//				displayView.getTax().getItems().setAll(sov);
+		//				if(!resultList.isEmpty())
+		//					displayView.getTax().setValue(new SalesOrderVat(resultList.iterator().next()));
+		//			}
+		//		});
+		//		vatSearchService.setOnFailed(callFailedEventHandler);
 		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
 
 			@Override
@@ -551,10 +603,10 @@ public class SalesOrderDisplayController implements EntityController
 				searchInput.getEntity().setSalesOrder(new PrescriptionBookSalesOrder(displayedEntity));
 				searchInput.getFieldNames().add("salesOrder");
 				prescriptionBookSearchService.setSearchInputs(searchInput).start();
-				
+
 			}
 				});
-		
+
 		prescriptionBookSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -563,27 +615,27 @@ public class SalesOrderDisplayController implements EntityController
 				PrescriptionBookSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				
+
 				PrescriptionBook prescriptionBook ;
 				if(searchResult.getResultList().isEmpty()){
 					Login login = securityUtil.getConnectedUser();
 					prescriptionBook = new PrescriptionBook();
-					
+
 					PrescriptionBookAgency agency = new PrescriptionBookAgency();
 					PropertyReader.copy(login.getAgency(), agency);
 					prescriptionBook.setAgency(agency);
-					
+
 					prescriptionBook.setSalesOrder(new PrescriptionBookSalesOrder(displayedEntity));
-					
+
 					PrescriptionBookRecordingAgent recordingAgent = new PrescriptionBookRecordingAgent();
 					PropertyReader.copy(login, recordingAgent);
 					prescriptionBook.setRecordingAgent(recordingAgent);
 				}else {
 					prescriptionBook = searchResult.getResultList().iterator().next();
 				}
-				
+
 				modalPrescriptionBookCreateRequestEvent.fire(prescriptionBook);
-				
+
 			}
 		});
 		prescriptionBookSearchService.setOnFailed(callFailedEventHandler);
@@ -605,8 +657,6 @@ public class SalesOrderDisplayController implements EntityController
 
 		//      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
 		displayView.addValidators();
-		displayView.getSaleOrderItemBar().visibleProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-
 	}
 
 	public void display(Pane parent)
@@ -770,9 +820,9 @@ public class SalesOrderDisplayController implements EntityController
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			amountHT=amountHT.add(salesOrderItem.getTotalSalePrice());
 		}
-		SalesOrderVat salesOrderVat = displayView.getTax().getValue();
-		if(salesOrderVat!=null&&salesOrderVat.getId()!=null)
-			vatAmount = (amountHT.multiply(salesOrderVat.getRate())).divide(BigDecimal.ZERO,2);
+		//		SalesOrderVat salesOrderVat = displayView.getTax().getValue();
+		//		if(salesOrderVat!=null&&salesOrderVat.getId()!=null)
+		//			vatAmount = (amountHT.multiply(salesOrderVat.getRate())).divide(BigDecimal.ZERO,2);
 		displayedEntity.setAmountBeforeTax(amountHT);
 		displayedEntity.setAmountVAT(vatAmount);
 		displayedEntity.setAmountAfterTax(amountHT.add(vatAmount));
@@ -794,6 +844,18 @@ public class SalesOrderDisplayController implements EntityController
 		soItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
 		soItem.setInternalPic(al.getInternalPic());
 		return soItem;
+	}
+
+	public BigDecimal getQtyToReturn() {
+		String showTextInput = Dialogs.create().message("Retun Quantity : ").showTextInput("1");
+		BigDecimal qtyToReturn = BigDecimal.ONE;
+		try {
+			qtyToReturn = new BigDecimal(showTextInput);
+		} catch (Exception e) {
+			getQtyToReturn();
+		}
+
+		return qtyToReturn;
 	}
 
 }
