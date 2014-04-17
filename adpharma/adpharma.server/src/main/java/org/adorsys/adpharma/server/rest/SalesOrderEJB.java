@@ -14,6 +14,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -26,33 +27,33 @@ import org.adorsys.adpharma.server.security.SecurityUtil;
 public class SalesOrderEJB
 {
 
-   @Inject
-   private SalesOrderRepository repository;
+	@Inject
+	private SalesOrderRepository repository;
 
-   @Inject
-   private CustomerMerger customerMerger;
+	@Inject
+	private CustomerMerger customerMerger;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   @Inject
-   private CashDrawerMerger cashDrawerMerger;
+	@Inject
+	private CashDrawerMerger cashDrawerMerger;
 
-   @Inject
-   private VATMerger vATMerger;
+	@Inject
+	private VATMerger vATMerger;
 
-   @Inject
-   private InsurranceMerger insurranceMerger;
+	@Inject
+	private InsurranceMerger insurranceMerger;
 
-   @Inject
-   private SalesOrderItemMerger salesOrderItemMerger;
+	@Inject
+	private SalesOrderItemMerger salesOrderItemMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
 	@EJB
 	private SecurityUtil securityUtil;
-	
+
 	@EJB
 	private SalesOrderItemEJB salesOrderItemEJB;
 
@@ -67,97 +68,108 @@ public class SalesOrderEJB
 	@Inject
 	@DirectSalesClosedEvent
 	private Event<SalesOrder> directSalesClosedEvent;
-	
-   public SalesOrder create(SalesOrder entity)
-   {
-      return repository.save(attach(entity));
-   }
 
-   public SalesOrder deleteById(Long id)
-   {
-      SalesOrder entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	@Inject
+	@ReturnSalesEvent
+	private Event<SalesOrder> returnSalesEvent;
 
-   public SalesOrder update(SalesOrder entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public SalesOrder create(SalesOrder entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public SalesOrder findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public SalesOrder deleteById(Long id)
+	{
+		SalesOrder entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public List<SalesOrder> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public SalesOrder update(SalesOrder entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public SalesOrder findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public List<SalesOrder> findBy(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public List<SalesOrder> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public Long countBy(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public List<SalesOrder> findByLike(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
-   {
-	   SalesOrder salesOrder = attach(entity);
-      return repository.findByLike(salesOrder, start, max, attributes);
-   }
+	public List<SalesOrder> findBy(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public Long countByLike(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
-   {
-	   SalesOrder salesOrder = attach(entity);
-      return repository.countLike(salesOrder, attributes);
-   }
+	public Long countBy(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   private SalesOrder attach(SalesOrder entity)
-   {
-      if (entity == null)
-         return null;
+	public List<SalesOrder> findByLike(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
+	{
+		SalesOrder salesOrder = attach(entity);
+		return repository.findByLike(salesOrder, start, max, attributes);
+	}
 
-      // aggregated
-      entity.setCashDrawer(cashDrawerMerger.bindAggregated(entity.getCashDrawer()));
+	public Long countByLike(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
+	{
+		SalesOrder salesOrder = attach(entity);
+		return repository.countLike(salesOrder, attributes);
+	}
 
-      // aggregated
-      entity.setCustomer(customerMerger.bindAggregated(entity.getCustomer()));
+	private SalesOrder attach(SalesOrder entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setInsurance(insurranceMerger.bindAggregated(entity.getInsurance()));
+		// aggregated
+		entity.setCashDrawer(cashDrawerMerger.bindAggregated(entity.getCashDrawer()));
 
-      // aggregated
-      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
+		// aggregated
+		entity.setCustomer(customerMerger.bindAggregated(entity.getCustomer()));
 
-      // aggregated
-      entity.setSalesAgent(loginMerger.bindAggregated(entity.getSalesAgent()));
+		// aggregated
+		entity.setInsurance(insurranceMerger.bindAggregated(entity.getInsurance()));
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+		// aggregated
+		entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
-      // composed collections
-      Set<SalesOrderItem> salesOrderItems = entity.getSalesOrderItems();
-      for (SalesOrderItem salesOrderItem : salesOrderItems)
-      {
-         salesOrderItem.setSalesOrder(entity);
-      }
+		// aggregated
+		entity.setSalesAgent(loginMerger.bindAggregated(entity.getSalesAgent()));
 
-      return entity;
-   }
-	
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+
+		// composed collections
+		Set<SalesOrderItem> salesOrderItems = entity.getSalesOrderItems();
+		for (SalesOrderItem salesOrderItem : salesOrderItems)
+		{
+			salesOrderItem.setSalesOrder(entity);
+		}
+
+		return entity;
+	}
+
+	public SalesOrder processReturn(SalesOrder salesOrder){
+		salesOrder.setAlreadyReturned(Boolean.TRUE);
+		salesOrder.calculateTotalReturnAmount();
+		SalesOrder update = update(salesOrder);
+		returnSalesEvent.fire(update);
+		return update;
+	}
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
@@ -187,7 +199,7 @@ public class SalesOrderEJB
 		SalesOrder canceledSales = update(salesOrder);
 		return canceledSales;
 	}
-	
+
 	/**
 	 * Freeze the order of this customer with setCashed = true. Sales order can no
 	 * be canceled anymore.

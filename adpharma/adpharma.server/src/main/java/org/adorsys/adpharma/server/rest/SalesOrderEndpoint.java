@@ -109,6 +109,15 @@ public class SalesOrderEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
+	
+	@PUT
+	@Path("/processReturn")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder processReturn(SalesOrder entity)
+	{
+		return detach(ejb.processReturn(entity));
+	}
 
 	@PUT
 	@Path("/saveAndClose/{id:[0-9][0-9]*}")

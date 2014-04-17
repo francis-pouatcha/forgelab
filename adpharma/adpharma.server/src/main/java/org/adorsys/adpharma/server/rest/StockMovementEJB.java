@@ -14,6 +14,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
@@ -215,6 +216,40 @@ public class StockMovementEJB
 			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
 			sm = create(sm);
 			stockMovementEvent.fire(sm);
+		}
+	}
+
+	/**
+	 * Create corresponding stock movement.
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			if(salesOrderItem.hasReturnArticle()){
+				StockMovement sm = new StockMovement();
+				sm.setAgency(salesOrder.getAgency());
+				sm.setInternalPic(salesOrderItem.getInternalPic());
+				sm.setMovementType(StockMovementType.IN);
+				sm.setArticle(salesOrderItem.getArticle());
+				sm.setCreatingUser(creatingUser);
+				sm.setCreationDate(creationDate);
+				sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
+				BigDecimal movedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+				sm.setMovedQty(movedQty);
+				sm.setFinalQty(movedQty);//supposed to be qty in stock.
+				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+				sm.setOriginatedDocNumber(salesOrder.getSoNumber());
+				sm.setTotalSalesPrice(salesOrderItem.getSalesPricePU().multiply(movedQty));
+				sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
+				sm = create(sm);
+			}
+
 		}
 	}
 

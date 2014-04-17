@@ -16,6 +16,7 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
@@ -28,6 +29,9 @@ import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.StockMovement;
+import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -71,6 +75,10 @@ public class CustomerInvoiceEJB {
 	@Inject
 	@DocumentProcessedEvent
 	private Event<CustomerInvoice> customerInvoiceProcessedEvent;
+	
+	@Inject
+	@ReturnSalesEvent
+	private Event<CustomerInvoice> customerInvoiceReturnSalesEvent;
 
 	@Inject
 	@DirectSalesClosedEvent
@@ -204,6 +212,61 @@ public class CustomerInvoiceEJB {
 			ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
 			ciItem = customerInvoiceItemEJB.create(ciItem);
 		}
+	}
+	
+	/**
+	 *generate Customer invoice Of Type Voucher and voucher .
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+		CustomerInvoice ci = new CustomerInvoice();
+
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		ci.setCreatingUser(creatingUser);
+		ci.setCreationDate(creationDate);
+		ci.setAgency(salesOrder.getAgency());
+		ci.setAmountBeforeTax(salesOrder.getTotalReturnAmount().negate());
+		ci.setTaxAmount(BigDecimal.ZERO);
+		ci.setAmountAfterTax(salesOrder.getTotalReturnAmount().negate());
+		ci.setAmountDiscount(BigDecimal.ZERO);
+		ci.setNetToPay(salesOrder.getTotalReturnAmount().negate());
+		ci.setTotalRestToPay(ci.getNetToPay());
+		ci.setCustomer(salesOrder.getCustomer());
+		ci.setInsurance(salesOrder.getInsurance());
+		
+		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
+		BigDecimal customerCoverageRate = BigDecimal.ONE;
+		Insurrance insurance = salesOrder.getInsurance();
+		if(insurance!=null){
+			insuranceCoverageRate = (salesOrder.getInsurance().getCoverageRate()).divide(BigDecimal.valueOf(100));
+			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
+		}
+		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
+		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
+		
+
+		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
+		ci.setInvoiceType(InvoiceType.VOUCHER);
+		ci.setSalesOrder(salesOrder);
+		ci.setAdvancePayment(BigDecimal.ZERO);
+		
+		ci = create(ci);
+		
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
+			ciItem.setArticle(salesOrderItem.getArticle());
+			ciItem.setInternalPic(salesOrderItem.getInternalPic());
+			ciItem.setInvoice(ci);
+			ciItem.setPurchasedQty(salesOrderItem.getReturnedQty().negate());
+			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+			ciItem.setTotalSalesPrice(ciItem.getSalesPricePU().multiply(salesOrderItem.getReturnedQty()));
+			ciItem = customerInvoiceItemEJB.create(ciItem);
+		}
+		CustomerInvoice update = update(ci);
+		customerInvoiceReturnSalesEvent.fire(update);
 	}
 
 	/**

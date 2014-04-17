@@ -15,6 +15,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
@@ -25,6 +26,9 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.StockMovement;
+import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
@@ -204,6 +208,36 @@ public class ArticleLotEJB
 			}
 		}
 
+	}
+
+	/**
+	 * for each sales order item increase corresponding article lot quantity
+	 * according to return quantity
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			if(salesOrderItem.hasReturnArticle()){
+				ArticleLot articleLot = new ArticleLot();
+				articleLot.setInternalPic(salesOrderItem.getInternalPic());
+				articleLot.setArticle(salesOrderItem.getArticle());
+				@SuppressWarnings("unchecked")
+				List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+				if(!found.isEmpty()){
+					ArticleLot lot = found.iterator().next();
+					lot.setStockQuantity(lot.getStockQuantity().add(salesOrderItem.getReturnedQty()));
+					lot.calculateTotalAmout();
+					update(lot);
+				}
+
+			}
+
+		}
 	}
 
 	/**

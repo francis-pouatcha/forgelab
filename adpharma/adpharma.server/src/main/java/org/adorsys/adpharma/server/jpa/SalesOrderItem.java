@@ -113,6 +113,11 @@ public class SalesOrderItem implements Serializable
 		deliveredQty=orderedQty.subtract(returnedQty);
 
 	}
+	
+	public boolean hasReturnArticle(){
+		returnedQty = returnedQty!=null?returnedQty:BigDecimal.ZERO;
+		return BigDecimal.ZERO.compareTo(returnedQty)<0 ;
+	}
 
 	public Long getId()
 	{

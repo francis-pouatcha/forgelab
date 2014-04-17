@@ -6,31 +6,42 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0"
+	AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+	AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
+		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0"
+			prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Process Selection">
+				<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0"
+					mnemonicParsing="false" prefWidth="140.0" text="Advence Search" />
+				<Button fx:id="processButton" layoutX="23.0" layoutY="65.0"
+					mnemonicParsing="false" prefWidth="140.0" text="Process Selection">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="New Sale">
+				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0"
+					mnemonicParsing="false" prefWidth="140.0" text="New Sale">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Remove selection">
+				<Button fx:id="removeButton" mnemonicParsing="false"
+					prefWidth="140.0" text="Remove selection">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Print Invoice">
+				<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0"
+					mnemonicParsing="false" prefWidth="140.0" text="Print Invoice">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
-				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0"
+					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="50.0" left="5.0" />
 					</VBox.margin>
@@ -40,7 +51,7 @@
 				<Insets />
 			</BorderPane.margin>
 			<padding>
-				<Insets top="55.0" />
+				<Insets top="5.0" />
 			</padding>
 		</VBox>
 	</right>
@@ -52,7 +63,8 @@
 						<VBox>
 							<children>
 								<Separator prefWidth="200.0" />
-								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0"
+									layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 									<padding>
 										<Insets left="10.0" />
 									</padding>
@@ -61,7 +73,8 @@
 									</VBox.margin>
 								</HBox>
 								<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-								<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+								<TableView fx:id="dataList" prefHeight="535.0"
+									prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 									<columns>
 									</columns>
 									<VBox.margin>
@@ -70,7 +83,9 @@
 								</TableView>
 								<HBox alignment="CENTER" prefHeight="30.0" prefWidth="801.0">
 									<children>
-										<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+										<Pagination fx:id="pagination"
+											maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0"
+											prefWidth="174.0" />
 									</children>
 								</HBox>
 							</children>
@@ -81,18 +96,22 @@
 					<content>
 						<VBox prefHeight="200.0" prefWidth="100.0">
 							<children>
-								<HBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="801.0" spacing="5.0" VBox.vgrow="NEVER">
+								<HBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="801.0"
+									spacing="5.0" VBox.vgrow="NEVER">
 									<VBox.margin>
 										<Insets left="5.0" />
 									</VBox.margin>
 									<children>
-										<ComboBox prefHeight="42.0" prefWidth="232.0" promptText="Customer ">
+										<ComboBox prefHeight="42.0" prefWidth="232.0"
+											promptText="Customer ">
 											<HBox.margin>
 												<Insets left="5.0" />
 											</HBox.margin>
 										</ComboBox>
-										<ComboBox prefHeight="41.0" prefWidth="115.0" promptText="Years" />
-										<Button mnemonicParsing="false" prefHeight="42.0" prefWidth="89.0" text="Search" />
+										<ComboBox prefHeight="41.0" prefWidth="115.0"
+											promptText="Years" />
+										<Button mnemonicParsing="false" prefHeight="42.0"
+											prefWidth="89.0" text="Search" />
 									</children>
 								</HBox>
 								<Separator prefWidth="200.0" />
@@ -100,7 +119,8 @@
 									<children>
 										<StackedBarChart VBox.vgrow="ALWAYS">
 											<xAxis>
-												<CategoryAxis prefHeight="35.0" prefWidth="740.0" side="BOTTOM" />
+												<CategoryAxis prefHeight="35.0" prefWidth="740.0"
+													side="BOTTOM" />
 											</xAxis>
 											<yAxis>
 												<NumberAxis side="LEFT" />

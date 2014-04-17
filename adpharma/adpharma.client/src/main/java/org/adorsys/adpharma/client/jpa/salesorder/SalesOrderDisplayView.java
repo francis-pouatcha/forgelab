@@ -27,6 +27,7 @@ import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
@@ -60,9 +61,10 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private Button ordonnancierButton;
-
-	private HBox buttonBarLeft;
-
+	
+	@FXML
+	private Button saveReturnButton;
+	
 	@FXML
 	private GridPane saleOrderItemBar;
 
@@ -95,7 +97,7 @@ public class SalesOrderDisplayView
 	private TextField clientAdresse;
 
 	@FXML
-	private ComboBox<CustomerCustomerCategory> clientcategorie;
+	private ComboBox<DocumentProcessingState> salesStatus;
 
 	//	Rigth grid pane components
 	@FXML
@@ -125,8 +127,8 @@ public class SalesOrderDisplayView
 
 	private BigDecimalField discountRate;
 
-	@FXML
-	private ComboBox<SalesOrderVat> tax;
+//	@FXML
+//	private ComboBox<SalesOrderVat> tax;
 
 
 
@@ -157,6 +159,9 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private MenuItem editSOIMenu;
+	
+	@FXML
+	private MenuItem returnSOIMenu;
 
 	@Inject
 	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
@@ -184,6 +189,8 @@ public class SalesOrderDisplayView
 		viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "article", "SalesOrderItem_article_description.title", resourceBundle,400d);
 		viewBuilder.addBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
@@ -271,16 +278,23 @@ public class SalesOrderDisplayView
 		taxAmount.numberProperty().bindBidirectional(model.amountVATProperty());
 		discount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
-		tax.valueProperty().bindBidirectional(model.vatProperty());
+//		tax.valueProperty().bindBidirectional(model.vatProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
 		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
-		clientcategorie.valueProperty().bindBidirectional(model.getCustomer().customerCategoryProperty());
+		salesStatus.valueProperty().bindBidirectional(model.salesOrderStatusProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
+		
+		saleOrderItemBar.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		closeButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		returnSOIMenu.disableProperty().bindBidirectional(model.alreadyReturnedProperty());
 
 		//		view.bind(model);
 	}
@@ -323,9 +337,9 @@ public class SalesOrderDisplayView
 	//		return confirmSelectionButton;
 	//	}
 
-	public ComboBox<SalesOrderVat> getTax() {
-		return tax;
-	}
+//	public ComboBox<SalesOrderVat> getTax() {
+//		return tax;
+//	}
 
 	public TableView<SalesOrderItem> getDataList() {
 		return dataList;
@@ -338,11 +352,6 @@ public class SalesOrderDisplayView
 
 	public Button getInsurreurButton() {
 		return insurreurButton;
-	}
-
-
-	public HBox getButtonBarLeft() {
-		return buttonBarLeft;
 	}
 
 
@@ -380,6 +389,10 @@ public class SalesOrderDisplayView
 		return okButton;
 	}
 
+	public Button getSaveReturnButton() {
+		return saveReturnButton;
+	}
+
 
 	public ComboBox<SalesOrderCustomer> getClient() {
 		return client;
@@ -401,8 +414,8 @@ public class SalesOrderDisplayView
 	}
 
 
-	public ComboBox<CustomerCustomerCategory> getClientcategorie() {
-		return clientcategorie;
+	public ComboBox<DocumentProcessingState> getSalesStatus() {
+		return salesStatus;
 	}
 
 
@@ -464,7 +477,9 @@ public class SalesOrderDisplayView
 		return editSOIMenu;
 	}
 
-
+	public MenuItem getReturnSOIMenu() {
+		return returnSOIMenu;
+	}
 
 
 }
