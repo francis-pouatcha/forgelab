@@ -10,7 +10,11 @@ import javafx.concurrent.Service;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -32,6 +36,7 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
+import org.adorsys.javafx.crud.extensions.view.ModalPanelBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -134,6 +139,7 @@ public class DataLoadController {
 					}catch(IOException ioe){
 						throw new IllegalStateException(ioe);
 					}
+					openProgressbar();
 					companyLoader.setWorkbook(workbook).start();
 				}
 			}});
@@ -153,6 +159,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setCompanies(companies);
+				pi.setProgress(0.1);
 				// Agency Loader
 				agencyLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
@@ -166,6 +173,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setAgencies(agencies);
 				// Section Loader
+				pi.setProgress(0.2);
 				loginLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 				sectionLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 				
@@ -185,6 +193,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setSections(sections);
+				pi.setProgress(0.2);
 				// Product Family Loader
 				productFamilyLoader.setWorkbook(workbook).start();
 			}});
@@ -271,6 +280,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setProductFamilies(productFamilies);
+				pi.setProgress(0.3);
 				// Article Loader
 				articleLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
@@ -289,6 +299,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setArticles(articles);
+				pi.setProgress(0.4);
 				// Supplier Loader
 				supplierLoader.setWorkbook(workbook).start();
 			}});
@@ -343,6 +354,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setCurrencies(currencies);
+				pi.setProgress(0.75);
 				// Delivery Loader
 				deliveryLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
@@ -360,6 +372,8 @@ public class DataLoadController {
 				List<Delivery> deliveries = s.getValue();
 				s.reset();
 				event.consume();
+				pi.setProgress(1);
+				closeProgressbar();
 				dataMap.setDeliveries(deliveries);
 			}});
 		deliveryLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -398,6 +412,23 @@ public class DataLoadController {
 					.setText(text);
 		}
 
+		closeProgressbar();
 		errorMessageDialog.display();
+	}
+	
+	ProgressIndicator pi = new ProgressIndicator();
+	Stage dialog = new Stage();
+	private void openProgressbar(){
+		dialog.initModality(Modality.APPLICATION_MODAL);
+		// Stage
+		Scene scene = new Scene(pi);
+		scene.getStylesheets().add("/styles/application.css");
+		dialog.setScene(scene);
+		dialog.setWidth(100);
+		dialog.setHeight(100);
+		dialog.show();
+	}
+	private void closeProgressbar(){
+		dialog.close();
 	}
 }
