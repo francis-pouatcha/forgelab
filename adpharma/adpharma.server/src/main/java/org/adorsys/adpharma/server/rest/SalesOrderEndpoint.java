@@ -65,13 +65,6 @@ public class SalesOrderEndpoint
 	@Inject
 	private AgencyMerger agencyMerger;
 
-
-	@Inject
-	CustomerEJB customerEJB ;
-
-	@Inject
-	SecurityUtil securityUtilEJB;
-
 	@Inject 
 	private CustomerInvoiceEJB customerInvoiceEJB;
 
@@ -80,13 +73,6 @@ public class SalesOrderEndpoint
 	@Produces({ "application/json", "application/xml" })
 	public SalesOrder create(SalesOrder entity)
 	{
-		entity = new SalesOrder();
-		List<Customer> listAll = customerEJB.listAll(0, 2) ;
-		if(!listAll.isEmpty())
-			entity.setCustomer(listAll.iterator().next());
-		Login user = securityUtilEJB.getConnectedUser();
-		entity.setAgency(user.getAgency());
-		entity.setSalesAgent(user);
 		return detach(ejb.create(entity));
 	}
 

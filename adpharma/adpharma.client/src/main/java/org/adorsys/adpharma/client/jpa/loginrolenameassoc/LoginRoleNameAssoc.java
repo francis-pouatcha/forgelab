@@ -1,19 +1,18 @@
 package org.adorsys.adpharma.client.jpa.loginrolenameassoc;
 
-import org.adorsys.adpharma.client.jpa.login.Login;
 import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 import javafx.beans.property.SimpleStringProperty;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import javax.validation.constraints.NotNull;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 import org.adorsys.javaext.relation.RelationshipTable;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
