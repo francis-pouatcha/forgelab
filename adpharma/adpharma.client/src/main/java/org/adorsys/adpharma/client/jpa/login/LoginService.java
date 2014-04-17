@@ -1,47 +1,46 @@
 package org.adorsys.adpharma.client.jpa.login;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class LoginService
 {
-   private WebTarget target;
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
+
+   Client client = ClientBuilder.newClient();
+   String serverAddress = System.getProperty("server.address");
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
 
    public LoginService()
    {
-      Client client = ClientBuilder.newClient();
-      String serverAddress = System.getProperty("server.address");
       if (serverAddress == null)
          throw new IllegalStateException("Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-      this.target = client.target(serverAddress + "/rest/logins");
+   }
+   
+   private WebTarget target(){
+	   return client.target(serverAddress + "/rest/logins").register(clientCookieFilter);
    }
 
    @PostConstruct
    protected void postConstruct()
    {
-      this.target.register(clientCookieFilter);
    }
 
    public Login create(Login entity)
    {
       Entity<Login> eCopy = Entity.entity(entity, media);
-      return target.request(media).post(eCopy, Login.class);
+      return target().request(media).post(eCopy, Login.class);
    }
 
    // @DELETE
@@ -49,7 +48,7 @@ public class LoginService
    public Login deleteById(Long id)
    {//@PathParam("id")
       // TODO encode id
-      return target.path("" + id).request(media).delete(Login.class);
+      return target().path("" + id).request(media).delete(Login.class);
    }
 
    // @PUT
@@ -58,7 +57,7 @@ public class LoginService
    public Login update(Login entity)
    {
       Entity<Login> ent = Entity.entity(entity, media);
-      return target.path("" + entity.getId())
+      return target().path("" + entity.getId())
             .request(media).put(ent, Login.class);
    }
 
@@ -67,21 +66,21 @@ public class LoginService
    // @Produces("application/xml")
    public Login findById(Long id)
    {// @PathParam("id") 
-      return target.path("" + id).request(media).get(Login.class);
+      return target().path("" + id).request(media).get(Login.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public LoginSearchResult listAll()
    {
-      return target.request(media).get(LoginSearchResult.class);
+      return target().request(media).get(LoginSearchResult.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public LoginSearchResult listAll(int start, int max)
    {
-      return target.queryParam("start", start).queryParam("max", max)
+      return target().queryParam("start", start).queryParam("max", max)
             .request(media).get(LoginSearchResult.class);
    }
 
@@ -89,7 +88,7 @@ public class LoginService
    //	@Path("/count")
    public Long count()
    {
-      return target.path("count").request().get(Long.class);
+      return target().path("count").request().get(Long.class);
    }
 
    // @POST
@@ -99,7 +98,7 @@ public class LoginService
    {
       Entity<LoginSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY).request(media).post(
+      return target().path(FIND_BY).request(media).post(
             searchInputEntity, LoginSearchResult.class);
    }
 
@@ -110,7 +109,7 @@ public class LoginService
    {
       Entity<LoginSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countBy").request()
+      return target().path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
 
@@ -122,7 +121,7 @@ public class LoginService
    {
       Entity<LoginSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY_LIKE_PATH).request(media).post(
+      return target().path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, LoginSearchResult.class);
    }
 
@@ -133,7 +132,7 @@ public class LoginService
    {
       Entity<LoginSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countByLike").request()
+      return target().path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
 }

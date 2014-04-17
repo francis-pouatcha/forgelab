@@ -16,6 +16,10 @@ import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
 import org.adorsys.adpharma.client.jpa.agency.AgencyService;
 import org.adorsys.adpharma.client.jpa.company.Company;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
+import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -29,6 +33,9 @@ public class AgencyLoader extends Service<List<Agency>> {
 	
 	private HSSFWorkbook workbook;
 
+	@Inject
+	private LoginService loginService;
+	
 	public AgencyLoader setWorkbook(HSSFWorkbook workbook) {
 		this.workbook = workbook;
 		return this;
@@ -127,9 +134,21 @@ public class AgencyLoader extends Service<List<Agency>> {
 
 			result.add(remoteService.create(entity));
 		}
+		
+		Agency agency = result.iterator().next();
+		
+		// After loading the agencies, we could switch the agency of those users already in the database.
+		LoginSearchResult logins = loginService.listAll();
+		List<Login> resultList = logins.getResultList();
+		for (Login login : resultList) {
+			login.setAgency(new LoginAgency(agency));
+			loginService.update(login);
+		}
+		
 		return result;
+		
 	}
-
+	
 	@Override
 	protected Task<List<Agency>> createTask() {
 		return new Task<List<Agency>>() {

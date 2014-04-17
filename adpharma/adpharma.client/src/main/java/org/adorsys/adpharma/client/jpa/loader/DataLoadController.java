@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.loader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javafx.concurrent.Service;
@@ -31,6 +32,7 @@ import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.eval.ConcatEval;
 
 public class DataLoadController {
 
@@ -253,10 +255,22 @@ public class DataLoadController {
 			@Observes(notifyObserver = Reception.ALWAYS) @LoginSucceededEvent String loginName) throws IOException 
 	{
 		if(!"manager".equals(loginName)) return;
-		if(dataMap.getCompanies()!=null) return;// loading occured in a former login.
 		
-		InputStream resourceAsStream = this.getClass().getResourceAsStream("/adpharma_data.xls");
-		workbook = new HSSFWorkbook(resourceAsStream);
+		Properties properties = new Properties();
+		InputStream propStream = getClass().getResourceAsStream(getClass().getSimpleName()+".properties");
+		if(propStream==null) return;
+		properties.load(propStream);
+		
+		String loadData = properties.getProperty("load_data");
+		if(!"true".equalsIgnoreCase(loadData)) return;
+		
+		String dataFile = properties.getProperty("data_file");
+		if(dataFile==null)return;
+		InputStream dataStream = getClass().getResourceAsStream(dataFile);
+		if(dataStream==null) return;
+		
+		if(dataMap.getCompanies()!=null) return;
+		workbook = new HSSFWorkbook(dataStream);
 		companyLoader.setWorkbook(workbook).start();
 	}
 
