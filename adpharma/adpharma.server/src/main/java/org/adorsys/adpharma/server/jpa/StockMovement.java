@@ -123,7 +123,7 @@ public class StockMovement implements Serializable
 
    @Column
    @Description("StockMovement_internalPic_description")
-   @Size(min = 7, message = "StockMovement_internalPic_Size_validation")
+   @Size(min = 1, message = "StockMovement_internalPic_Size_validation")
    @NotNull(message = "StockMovement_internalPic_NotNull_validation")
    private String internalPic;
 

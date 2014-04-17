@@ -27,6 +27,7 @@ import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplier;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryVat;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
@@ -59,7 +60,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		return this;
 	}
 
-	private List<Delivery> loadAgencies() {
+	private List<Delivery> load() {
 		HSSFSheet sheet = workbook.getSheet("Delivery");
 		
 		Iterator<Row> rowIterator = sheet.rowIterator();
@@ -72,36 +73,38 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Cell cell = row.getCell(0);
-			if (cell != null && StringUtils.isBlank(cell.getStringCellValue())){
+			if (cell == null || StringUtils.isBlank(cell.getStringCellValue())){
 				// check if item row.
-				Cell itemCell = row.getCell(18);
-				if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue())){
+				Cell itemCell = row.getCell(17);
+				if (itemCell == null || StringUtils.isBlank(itemCell.getStringCellValue())){
 					continue;
 				} else {
+					if(DocumentProcessingState.CLOSED.equals(currentDelivery.getDeliveryProcessingState())) continue;					
 					DeliveryItem deliveryItem = new DeliveryItem();
 					// add item
 //					String deliveryNumber = itemCell.getStringCellValue();
-//					itemCell = row.getCell(19);
+					
+//					itemCell = row.getCell(18);
 					deliveryItem.setCreationDate(new GregorianCalendar());
 					
-					itemCell = row.getCell(20);
-					if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(19);
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setInternalPic(itemCell.getStringCellValue().trim());
 						
-					itemCell = row.getCell(21);
-					if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(20);
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setMainPic(itemCell.getStringCellValue().trim());
 					
-					itemCell = row.getCell(22);
-					if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(21);
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setSecondaryPic(itemCell.getStringCellValue().trim());
 
-					itemCell = row.getCell(23);
-					if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(22);
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setArticleName(itemCell.getStringCellValue().trim());
 
-					itemCell = row.getCell(24);
-					if (itemCell != null && StringUtils.isBlank(itemCell.getStringCellValue())){
+					itemCell = row.getCell(23);
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue())){
 						String articlePic = itemCell.getStringCellValue().trim();
 						List<Article> articles = dataMap.getArticles();
 						Article article = null;
@@ -112,10 +115,14 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						}
 						if(article!=null){
 							deliveryItem.setArticle(new DeliveryItemArticle(article));
+						} else {
+							throw new IllegalStateException("Missing article for delivery item with pic: " + articlePic);
 						}
+					} else {
+						throw new IllegalStateException("Missing article number for delivery item: " + deliveryItem.getMainPic());
 					}
 
-					itemCell = row.getCell(25);
+					itemCell = row.getCell(24);
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 					{
 						String date = itemCell.getStringCellValue().trim();
@@ -130,64 +137,58 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setExpirationDate(calendar);
 					}
 
-					itemCell = row.getCell(26);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(25);
+					if (itemCell != null)
 					{
-						String qtty = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(qtty);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setQtyOrdered(decimal);
 					}
 					
-					itemCell = row.getCell(27);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(26);
+					if (itemCell != null)
 					{
-						String qtty = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(qtty);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setAvailableQty(decimal);
 					}
 
-					itemCell = row.getCell(28);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(27);
+					if (itemCell != null)
 					{
-						String qtty = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(qtty);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setFreeQuantity(decimal);
 					}
 
-//					itemCell = row.getCell(30);
+//					itemCell = row.getCell(28);
 					
-					itemCell = row.getCell(31);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(29);
+					if (itemCell != null)
 					{
-						String qtty = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(qtty);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setStockQuantity(decimal);
 					}
 
-					itemCell = row.getCell(32);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(30);
+					if (itemCell != null)
 					{
-						String price = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(price);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setSalesPricePU(decimal);
 					}
 
-					itemCell = row.getCell(33);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(31);
+					if (itemCell != null)
 					{
-						String price = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(price);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setPurchasePricePU(decimal);
 					}
 				
-					itemCell = row.getCell(34);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					itemCell = row.getCell(32);
+					if (itemCell != null)
 					{
-						String price = itemCell.getStringCellValue().trim();
-						BigDecimal decimal = new BigDecimal(price);
+						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setTotalPurchasePrice(decimal);
 					}
 					
+					deliveryItem.setDelivery(new DeliveryItemDelivery(currentDelivery));
 					deliveryItem = deliveryItemService.create(deliveryItem);
 					currentDelivery.addToDeliveryItems(deliveryItem);
 				}
@@ -195,9 +196,13 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 			} else {
 				Delivery delivery = loadDelivery(row);
 				result.add(delivery);
-				if(currentDelivery!=null){
-					remoteService.saveAndClose(currentDelivery);
+				if(currentDelivery==null){
 					currentDelivery = delivery;
+				} else {
+					if(!DocumentProcessingState.CLOSED.equals(currentDelivery.getDeliveryProcessingState())){
+						remoteService.saveAndClose(currentDelivery);
+						currentDelivery = delivery;
+					}
 				}
 			}
 		}
@@ -207,7 +212,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		return result;
 	}
 	
-	public Delivery loadDelivery(Row row){
+	private Delivery loadDelivery(Row row){
 		Delivery entity = new Delivery();
 
 		Cell cell = row.getCell(0);
@@ -297,10 +302,9 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		}
 
 		cell = row.getCell(7);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setAmountBeforeTax(decimal);
 		}
 
@@ -322,42 +326,37 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		}
 
 		cell = row.getCell(9);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setAmountVat(decimal);
 		}
 
 		cell = row.getCell(10);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setAmountVat(decimal);
 		}
 
 		cell = row.getCell(11);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setAmountAfterTax(decimal);
 		}
 
 		cell = row.getCell(12);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setAmountDiscount(decimal);
 		}
 
 		cell = row.getCell(13);
-		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+		if (cell != null)
 		{
-			String qtty = cell.getStringCellValue().trim();
-			BigDecimal decimal = new BigDecimal(qtty);
+			BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 			entity.setNetAmountToPay(decimal);
 		}
 
@@ -420,7 +419,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		return new Task<List<Delivery>>() {
 			@Override
 			protected List<Delivery> call() throws Exception {
-				return loadAgencies();
+				return load();
 			}
 		};
 	}

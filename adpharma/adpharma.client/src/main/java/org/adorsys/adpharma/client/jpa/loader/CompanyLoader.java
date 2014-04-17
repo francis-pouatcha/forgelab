@@ -114,7 +114,11 @@ public class CompanyLoader extends Service<List<Company>> {
 		return new Task<List<Company>>() {
 			@Override
 			protected List<Company> call() throws Exception {
-				return loadCompanies();
+				try {
+					return loadCompanies();
+				} catch (Exception ex){
+					throw ex;
+				}
 			}
 		};
 	}

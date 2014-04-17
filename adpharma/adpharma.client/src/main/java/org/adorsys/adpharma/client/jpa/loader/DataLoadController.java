@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.company.Company;
+import org.adorsys.adpharma.client.jpa.currency.Currency;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.section.Section;
@@ -70,6 +72,7 @@ public class DataLoadController {
 	
 	private DataMap dataMap = new DataMap();
 
+	@PostConstruct
 	public void postConstruct() {
 		errorMessageDialog.getOkButton().setOnAction(
 				new EventHandler<ActionEvent>() {
@@ -99,7 +102,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setCompanies(companies);
 				// Agency Loader
-				agencyLoader.setWorkbook(workbook).start();
+				agencyLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
 
 		agencyLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
@@ -111,7 +114,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setAgencies(agencies);
 				// Section Loader
-				sectionLoader.setWorkbook(workbook).start();
+				sectionLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 				
 			}});
 		agencyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -148,7 +151,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setProductFamilies(productFamilies);
 				// Article Loader
-				articleLoader.setWorkbook(workbook).start();
+				articleLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
 		productFamilyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -214,13 +217,13 @@ public class DataLoadController {
 		currencyLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
 			@Override
 			public void handle(WorkerStateEvent event) {
-				VATLoader s = (VATLoader) event.getSource();
-				List<VAT> vats = s.getValue();
+				CurrencyLoader s = (CurrencyLoader) event.getSource();
+				List<Currency> currencies = s.getValue();
 				s.reset();
 				event.consume();
-				dataMap.setVats(vats);
+				dataMap.setCurrencies(currencies);
 				// Delivery Loader
-				deliveryLoader.setWorkbook(workbook).start();
+				deliveryLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
 		currencyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override

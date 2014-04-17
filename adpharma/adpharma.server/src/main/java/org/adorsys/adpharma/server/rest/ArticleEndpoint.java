@@ -66,7 +66,8 @@ public class ArticleEndpoint
    public Article create(Article entity)
    {
 	   entity.setRecordingDate(new Date());
-	   entity.setQtyInStock(BigDecimal.ZERO);
+	   if(entity.getQtyInStock()==null)
+		   entity.setQtyInStock(BigDecimal.ZERO);
       return detach(ejb.create(entity));
    }
 

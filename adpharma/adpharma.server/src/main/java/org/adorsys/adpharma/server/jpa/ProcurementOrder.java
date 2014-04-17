@@ -122,27 +122,27 @@ public class ProcurementOrder implements Serializable
    @Column
    @Description("ProcurementOrder_amountBeforeTax_description")
    @NotNull(message = "ProcurementOrder_amountBeforeTax_NotNull_validation")
-   private BigDecimal amountBeforeTax;
+   private BigDecimal amountBeforeTax = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrder_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax;
+   private BigDecimal amountAfterTax  = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrder_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount;
+   private BigDecimal amountDiscount = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrder_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal taxAmount;
+   private BigDecimal taxAmount = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrder_netAmountToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal netAmountToPay;
+   private BigDecimal netAmountToPay = BigDecimal.ZERO;
 
    @ManyToOne
    @Description("ProcurementOrder_vat_description")

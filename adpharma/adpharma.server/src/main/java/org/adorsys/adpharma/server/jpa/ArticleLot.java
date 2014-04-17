@@ -66,18 +66,18 @@ public class ArticleLot implements Serializable
 
 	@Column
 	@Description("ArticleLot_internalPic_description")
-	@Size(min = 7, message = "ArticleLot_internalPic_Size_validation")
+	@Size(min = 1, message = "ArticleLot_internalPic_Size_validation")
 	@NotNull(message = "ArticleLot_internalPic_NotNull_validation")
 	private String internalPic;
 
 	@Column
 	@Description("ArticleLot_mainPic_description")
-	@Size(min = 7, message = "ArticleLot_mainPic_Size_validation")
+	@Size(min = 1, message = "ArticleLot_mainPic_Size_validation")
 	private String mainPic;
 
 	@Column
 	@Description("ArticleLot_secondaryPic_description")
-	@Size(min = 7, message = "ArticleLot_secondaryPic_Size_validation")
+	@Size(min = 1, message = "ArticleLot_secondaryPic_Size_validation")
 	private String secondaryPic;
 
 	@Column

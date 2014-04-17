@@ -28,13 +28,13 @@ public class AgencyLoader extends Service<List<Agency>> {
 	private AgencyService remoteService;
 	
 	private HSSFWorkbook workbook;
-	private DataMap dataMap;
 
 	public AgencyLoader setWorkbook(HSSFWorkbook workbook) {
 		this.workbook = workbook;
 		return this;
 	}
 
+	private DataMap dataMap;
 	public AgencyLoader setDataMap(DataMap dataMap) {
 		this.dataMap = dataMap;
 		return this;
@@ -74,8 +74,8 @@ public class AgencyLoader extends Service<List<Agency>> {
 				entity.setName(cell.getStringCellValue().trim());
 
 			cell = row.getCell(2);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setActive("1".equals(cell.getStringCellValue().trim()));
+			if (cell != null)
+				entity.setActive(1==cell.getNumericCellValue());
 
 			cell = row.getCell(3);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))

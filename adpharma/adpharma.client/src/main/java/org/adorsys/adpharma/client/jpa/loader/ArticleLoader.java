@@ -19,7 +19,9 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.adpharma.client.jpa.article.ArticleService;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -83,58 +85,52 @@ public class ArticleLoader extends Service<List<Article>> {
 				entity.setManufacturer(cell.getStringCellValue().trim());
 
 			cell = row.getCell(3);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setActive("1".equals(cell.getStringCellValue().trim()));
+			if (cell != null)
+				entity.setActive(1==cell.getNumericCellValue());
 
 			cell = row.getCell(4);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setAuthorizedSale("1".equals(cell.getStringCellValue().trim()));
+			if (cell != null)
+				entity.setAuthorizedSale(1==cell.getNumericCellValue());
 
 			cell = row.getCell(5);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setMaxStockQty(decimal);
 			}
 
 			cell = row.getCell(6);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setQtyInStock(decimal);
 			}
 
 			cell = row.getCell(7);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setPppu(decimal);
 			}
 
 			cell = row.getCell(8);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setSppu(decimal);
 			}
 
 			cell = row.getCell(9);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setMaxDiscountRate(decimal);
 			}
 
 			cell = row.getCell(10);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String qtty = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(qtty);
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setTotalStockPrice(decimal);
 			}
 
@@ -172,6 +168,26 @@ public class ArticleLoader extends Service<List<Article>> {
 
 			cell = row.getCell(14);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+				String sectionCode = cell.getStringCellValue().trim();
+				List<Section> sections = dataMap.getSections();
+				Section section = null;
+				for (Section s : sections) {
+					if(sectionCode.equalsIgnoreCase(s.getSectionCode())){
+						section = s;
+						break;
+					}
+				}
+				if(section!=null){
+					entity.setSection(new ArticleSection(section));
+				} else {
+					throw new IllegalStateException("No section found with section code: " + sectionCode);
+				}
+			} else {
+				throw new IllegalStateException("No section code provided for article with pic: " + entity.getPic());
+			}
+
+			cell = row.getCell(18);
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				String agencyNumber = cell.getStringCellValue().trim();
 				List<Agency> agencies = dataMap.getAgencies();
 				Agency agency = null;
@@ -186,8 +202,10 @@ public class ArticleLoader extends Service<List<Article>> {
 				} else {
 					throw new IllegalStateException("No agency found with agency number: " + agencyNumber);
 				}
+			} else {
+				throw new IllegalStateException("No agency number provided for article with pic: " + entity.getPic());
 			}
-
+			
 			result.add(remoteService.create(entity));
 		}
 		return result;

@@ -66,12 +66,12 @@ public class ProcurementOrderItem implements Serializable
 
    @Column
    @Description("ProcurementOrderItem_mainPic_description")
-   @Size(min = 7, message = "ProcurementOrderItem_mainPic_Size_validation")
+   @Size(min = 1, message = "ProcurementOrderItem_mainPic_Size_validation")
    private String mainPic;
 
    @Column
    @Description("ProcurementOrderItem_secondaryPic_description")
-   @Size(min = 7, message = "ProcurementOrderItem_secondaryPic_Size_validation")
+   @Size(min = 1, message = "ProcurementOrderItem_secondaryPic_Size_validation")
    private String secondaryPic;
 
    @Column

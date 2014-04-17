@@ -51,18 +51,18 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_internalPic_description")
-	@Size(min = 7, message = "DeliveryItem_internalPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_internalPic_Size_validation")
 	@NotNull(message = "DeliveryItem_internalPic_NotNull_validation")
 	private String internalPic;
 
 	@Column
 	@Description("DeliveryItem_mainPic_description")
-	@Size(min = 7, message = "DeliveryItem_mainPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_mainPic_Size_validation")
 	private String mainPic;
 
 	@Column
 	@Description("DeliveryItem_secondaryPic_description")
-	@Size(min = 7, message = "DeliveryItem_secondaryPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_secondaryPic_Size_validation")
 	private String secondaryPic;
 
 	@Column

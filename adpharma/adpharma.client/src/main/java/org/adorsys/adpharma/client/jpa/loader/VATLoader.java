@@ -60,16 +60,16 @@ public class VATLoader extends Service<List<VAT>> {
 			}
 
 			cell = row.getCell(1);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null)
 			{
-				String rate = cell.getStringCellValue().trim();
-				BigDecimal decimal = new BigDecimal(rate);
+				double numericCellValue = cell.getNumericCellValue();
+				BigDecimal decimal = new BigDecimal(numericCellValue);
 				entity.setRate(decimal);
 			}
 
 			cell = row.getCell(2);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setActive("1".equals(cell.getStringCellValue().trim()));
+			if (cell != null)
+				entity.setActive(1==cell.getNumericCellValue());
 			
 			result.add(remoteService.create(entity));
 		}

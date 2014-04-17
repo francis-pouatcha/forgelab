@@ -12,17 +12,18 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem_;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderType;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder_;
 import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
 import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.jpa.Supplier;
 import org.adorsys.adpharma.server.repo.ProcurementOrderRepository;
@@ -154,10 +155,12 @@ public class ProcurementOrderEJB
 		List<ProcurementOrderItem> found = procurementOrderItemEJB.findBy(searchEntity, 0, 1, new SingularAttribute[]{ProcurementOrderItem_.article, ProcurementOrderItem_.poStatus});
 		ProcurementOrderItem procurementOrderItem = null;
 		if(found.isEmpty()){
+			Login user = securityUtil.getConnectedUser();
+			Agency agency = user.getAgency();
 			procurementOrderItem = new ProcurementOrderItem();
 			procurementOrderItem.setArticle(article);
 			procurementOrderItem.setArticleName(deliveryItem.getArticleName());
-			procurementOrderItem.setCreatingUser(securityUtil.getConnectedUser());
+			procurementOrderItem.setCreatingUser(user);
 			procurementOrderItem.setMainPic(article.getPic());
 			procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
 			procurementOrderItem.setProductRecCreated(new Date());
@@ -176,9 +179,9 @@ public class ProcurementOrderEJB
 				procurementOrder = foundPOs.iterator().next();
 			} else {
 				procurementOrder = new ProcurementOrder();
-				procurementOrder.setAgency(securityUtil.getConnectedUser().getAgency());
+				procurementOrder.setAgency(agency);
 				procurementOrder.setCreatedDate(new Date());
-				procurementOrder.setCreatingUser(searchEntity.getCreatingUser());
+				procurementOrder.setCreatingUser(user);
 				procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
 				procurementOrder.setProcurementOrderNumber("PO-"+RandomStringUtils.randomAlphanumeric(5).toUpperCase());
 				procurementOrder.setProcurementOrderType(ProcurementOrderType.ORDINARY);
