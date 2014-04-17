@@ -5,8 +5,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.Employer;
 import org.adorsys.adpharma.server.repo.EmployerRepository;
+import org.adorsys.adpharma.server.security.SecurityUtil;
 
 @Stateless
 public class EmployerEJB
@@ -17,9 +19,13 @@ public class EmployerEJB
 
    @Inject
    private LoginMerger loginMerger;
+   
+   @Inject
+   private SecurityUtil securityUtil;
 
    public Employer create(Employer entity)
    {
+	  entity.setCreatingUser(securityUtil.getConnectedUser());
       return repository.save(attach(entity));
    }
 

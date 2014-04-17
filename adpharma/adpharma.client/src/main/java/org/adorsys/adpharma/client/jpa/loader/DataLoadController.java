@@ -21,7 +21,9 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.adpharma.client.jpa.currency.Currency;
+import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.employer.Employer;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
@@ -32,7 +34,6 @@ import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.eval.ConcatEval;
 
 public class DataLoadController {
 
@@ -70,6 +71,21 @@ public class DataLoadController {
 	@Inject
 	private DeliveryLoader deliveryLoader;
 	
+	@Inject
+	private LoaderCheck loaderCheck;
+	
+	@Inject
+	private LoginLoader loginLoader;
+	
+	@Inject
+	private EmployerLoader employerLoader;
+	
+	@Inject
+	private CustomerCategoryLoader customerCategoryLoader;
+	
+	@Inject
+	private CustomerLoader customerLoader;
+	
 	private HSSFWorkbook workbook;
 	
 	private DataMap dataMap = new DataMap();
@@ -87,7 +103,41 @@ public class DataLoadController {
 		errorMessageDialog.getTitleText().setText(
 				resourceBundle.getString("Entity_create_error.title"));
 
+		loaderCheck.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+		
+		loaderCheck.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				LoaderCheck s = (LoaderCheck) event.getSource();
+				Long value = s.getValue();
+				s.reset();
+				event.consume();
+				if(value<=0l){
+					try {
+						Properties properties = new Properties();
+						InputStream propStream = DataLoadController.class.getResourceAsStream(DataLoadController.class.getSimpleName()+".properties");
+						if(propStream==null) return;
+						properties.load(propStream);
 
+						String dataFile = properties.getProperty("data_file");
+						if(dataFile==null)return;
+						InputStream dataStream = DataLoadController.class.getResourceAsStream(dataFile);
+						if(dataStream==null) return;
+						
+						if(dataMap.getCompanies()!=null) return;
+						workbook = new HSSFWorkbook(dataStream);
+					}catch(IOException ioe){
+						throw new IllegalStateException(ioe);
+					}
+					companyLoader.setWorkbook(workbook).start();
+				}
+			}});
+		
 		companyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -116,6 +166,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setAgencies(agencies);
 				// Section Loader
+				loginLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 				sectionLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 				
 			}});
@@ -144,6 +195,74 @@ public class DataLoadController {
 			}
 		});
 
+		loginLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				LoginLoader s = (LoginLoader) event.getSource();
+				s.reset();
+				event.consume();
+				// Employers
+				employerLoader.setWorkbook(workbook).start();
+			}});
+		loginLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+		
+		employerLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				EmployerLoader s = (EmployerLoader) event.getSource();
+				List<Employer> employers = s.getValue();
+				s.reset();
+				event.consume();
+				dataMap.setEmployers(employers);
+				// CustomerCategoryLoader
+				customerCategoryLoader.setWorkbook(workbook).start();
+			}});
+		employerLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+
+		customerCategoryLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerCategoryLoader s = (CustomerCategoryLoader) event.getSource();
+				List<CustomerCategory> customerCategories = s.getValue();
+				s.reset();
+				event.consume();
+				dataMap.setCustomerCategories(customerCategories);
+				// CustomerCategoryLoader
+				customerLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+			}});
+		customerCategoryLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+
+		customerLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerLoader s = (CustomerLoader) event.getSource();
+//				List<Customer> customers = s.getValue();
+				s.reset();
+				event.consume();
+//				dataMap.setCustomers(customerCategories);
+			}});
+		customerLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+		
 		productFamilyLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -256,22 +375,7 @@ public class DataLoadController {
 	{
 		if(!"manager".equals(loginName)) return;
 		
-		Properties properties = new Properties();
-		InputStream propStream = getClass().getResourceAsStream(getClass().getSimpleName()+".properties");
-		if(propStream==null) return;
-		properties.load(propStream);
-		
-		String loadData = properties.getProperty("load_data");
-		if(!"true".equalsIgnoreCase(loadData)) return;
-		
-		String dataFile = properties.getProperty("data_file");
-		if(dataFile==null)return;
-		InputStream dataStream = getClass().getResourceAsStream(dataFile);
-		if(dataStream==null) return;
-		
-		if(dataMap.getCompanies()!=null) return;
-		workbook = new HSSFWorkbook(dataStream);
-		companyLoader.setWorkbook(workbook).start();
+		loaderCheck.start();
 	}
 
 	private void handleFailure(WorkerStateEvent event) {

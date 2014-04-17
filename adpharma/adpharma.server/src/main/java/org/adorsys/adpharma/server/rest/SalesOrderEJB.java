@@ -15,6 +15,7 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -72,9 +73,23 @@ public class SalesOrderEJB
 	@Inject
 	@ReturnSalesEvent
 	private Event<SalesOrder> returnSalesEvent;
+	
+	@EJB
+	private CustomerEJB customerEJB;
+
+	@Inject
+	private SecurityUtil securityUtilEJB;
 
 	public SalesOrder create(SalesOrder entity)
 	{
+		Login user = securityUtilEJB.getConnectedUser();
+		entity.setAgency(user.getAgency());
+		entity.setSalesAgent(user);
+
+		if(entity.getCustomer()==null || entity.getCustomer().getId()==null){
+			Customer otherCustomers = customerEJB.otherCustomers();
+			entity.setCustomer(otherCustomers);
+		}
 		return repository.save(attach(entity));
 	}
 

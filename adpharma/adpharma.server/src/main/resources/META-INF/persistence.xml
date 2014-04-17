@@ -6,9 +6,15 @@
     <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
+<<<<<<< HEAD
       <property name="hibernate.hbm2ddl.auto" value="update"/>
       <property name="hibernate.show_sql" value="true"/>
       <property name="hibernate.format_sql" value="true"/>
+=======
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="false"/>
+>>>>>>> 72a77d0400028933a1a55f552ae1ac357eec82ad
       <property name="hibernate.transaction.flush_before_completion" value="true"/>
     </properties>
   </persistence-unit>

@@ -2,9 +2,11 @@ package org.adorsys.adpharma.server.rest;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.repo.CustomerRepository;
 
@@ -20,6 +22,9 @@ public class CustomerEJB
 
    @Inject
    private CustomerCategoryMerger customerCategoryMerger;
+   
+   @EJB
+   private CustomerEJB customerEJB;
 
    public Customer create(Customer entity)
    {
@@ -89,4 +94,12 @@ public class CustomerEJB
 
       return entity;
    }
+   
+   @SuppressWarnings("unchecked")
+   public Customer otherCustomers(){
+	   List<Customer> found = findBy(CustomerEJBOtherClientsHelper.searchInput, 0, 1, CustomerEJBOtherClientsHelper.attributes);
+	   if(found.isEmpty()) throw new IllegalStateException("Application not yet initialized.");
+	   return found.iterator().next();
+   }
+   
 }
