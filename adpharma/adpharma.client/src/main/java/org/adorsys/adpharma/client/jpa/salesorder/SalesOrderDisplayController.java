@@ -1,12 +1,10 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -29,8 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import jfxtras.animation.Timer;
-
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
@@ -41,14 +37,12 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookRecordingAgent;
@@ -62,9 +56,6 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateServic
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemEditService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemRemoveService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -582,10 +573,10 @@ public class SalesOrderDisplayController implements EntityController
 					String internalPic = displayView.getInternalPic().getText();
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();
-					entity.setArticleName(internalPic);
+					entity.setSecondaryPic(internalPic);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
-					asi.getFieldNames().add("internalPic");
+					asi.getFieldNames().add("secondaryPic");
 					modalArticleLotSearchEvent.fire(asi);
 				}
 			}

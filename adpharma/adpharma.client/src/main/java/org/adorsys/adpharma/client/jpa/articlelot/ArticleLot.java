@@ -36,7 +36,7 @@ import org.adorsys.javaext.display.ToStringField;
       "salesPricePU", "purchasePricePU", "totalPurchasePrice",
       "totalSalePrice", "vat.rate" })
 @ToStringField({ "articleName", "article.articleName" })
-public class ArticleLot implements Cloneable
+public class ArticleLot implements Cloneable, Comparable<ArticleLot>
 {
 
    private Long id;
@@ -449,4 +449,10 @@ public class ArticleLot implements Cloneable
       e.vat = vat;
       return e;
    }
+
+	@Override
+	public int compareTo(ArticleLot o) {
+		if(o==null) return -1;
+		return getInternalPic().compareTo(o.getInternalPic());
+	}
 }

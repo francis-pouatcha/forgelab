@@ -7,6 +7,8 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -16,8 +18,11 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
+import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -26,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
+import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -179,39 +185,26 @@ public class ArticleLotEJB
 	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
-		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		// generate Article lot for each delivery item
-		if(isManagedLot){
-			for (DeliveryItem deliveryItem : deliveryItems) {
-				ArticleLot al = new  ArticleLot();
-				al =ArticleLot.fromDeliveryItem(deliveryItem, creatingUser);
-				al = create(al);
-			}
-		}else {
-			for (DeliveryItem deliveryItem : deliveryItems) {
-				ArticleLot al = new  ArticleLot();
-				al.setArticle(deliveryItem.getArticle());
-				al.setAgency(deliveryItem.getDelivery().getReceivingAgency());
-				List<ArticleLot> found = findByLike(al, 0, 1, new SingularAttribute[]{ArticleLot_.article,ArticleLot_.agency});
-				if(!found.isEmpty()){
-					al = found.iterator().next();
-					if(deliveryItem.getArticle()!=null)
-						al.setArticleName(deliveryItem.getArticle().getArticleName());
-					al.setExpirationDate(deliveryItem.getExpirationDate());
-					al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-					al.setSalesPricePU(deliveryItem.getSalesPricePU());
-					al.setStockQuantity(al.getStockQuantity().add(deliveryItem.getStockQuantity()));
-					al.calculateTotalAmout();
-					al = update(al);
-				}else {
-					al = ArticleLot.fromDeliveryItem(deliveryItem, creatingUser);
-					al = create(al);
-				}
-
-			}
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			ArticleLot al = new  ArticleLot();
+			al.setAgency(creatingUser.getAgency());
+			Article article = deliveryItem.getArticle();
+			al.setArticle(article);
+			al.setArticleName(article.getArticleName());
+			al.setVat(article.getVat());
+			al.setCreationDate(new Date());
+			al.setExpirationDate(deliveryItem.getExpirationDate());
+			// The internal PIC is supposed to be provided by the article lot.
+			al.setInternalPic(deliveryItem.getInternalPic());
+			al.setMainPic(deliveryItem.getMainPic());
+			al.setSecondaryPic(deliveryItem.getSecondaryPic());
+			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+			al.setSalesPricePU(deliveryItem.getSalesPricePU());
+			al.setStockQuantity(deliveryItem.getStockQuantity());
+			al.calculateTotalAmout();
+			al = create(al);
 		}
-
 	}
 
 	/**
@@ -302,5 +295,26 @@ public class ArticleLotEJB
 			update(articleLot);
 		}
 	}
-	 */   
+	 */
+	
+	@Inject
+	private ArticleLotSequenceRepository articleLotSequenceRepository;
+	@SuppressWarnings("unchecked")
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public String newLotNumber(String mainPic){
+		ArticleLotSequence articleLotSequence = new ArticleLotSequence();
+		articleLotSequence.setMainPic(mainPic);
+		List<ArticleLotSequence> found = articleLotSequenceRepository.findBy(articleLotSequence, new SingularAttribute[]{ArticleLotSequence_.mainPic});
+		if(!found.isEmpty()){
+			articleLotSequence = found.iterator().next();
+			articleLotSequence.newLot();
+			articleLotSequence = articleLotSequenceRepository.saveAndFlushAndRefresh(articleLotSequence);
+		} else {
+			articleLotSequence = new ArticleLotSequence();
+			articleLotSequence.setMainPic(mainPic);
+			articleLotSequence.newLot();
+			articleLotSequence = articleLotSequenceRepository.saveAndFlushAndRefresh(articleLotSequence);
+		}
+		return articleLotSequence.getInternalPic();
+	}
 }

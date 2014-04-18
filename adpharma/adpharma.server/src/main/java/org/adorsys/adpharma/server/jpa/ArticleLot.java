@@ -355,21 +355,21 @@ public class ArticleLot implements Serializable
 
 	}
 
-	public static ArticleLot fromDeliveryItem(DeliveryItem deliveryItem,Login login){
-		ArticleLot al = new  ArticleLot();
-		al.setAgency(login.getAgency());
-		al.setArticle(deliveryItem.getArticle());
-		if(deliveryItem.getArticle()!=null)
-			al.setArticleName(deliveryItem.getArticle().getArticleName());
-		al.setCreationDate(new Date());
-		al.setExpirationDate(deliveryItem.getExpirationDate());
-		al.setInternalPic(deliveryItem.getInternalPic());
-		al.setMainPic(deliveryItem.getMainPic());
-		al.setSecondaryPic(deliveryItem.getSecondaryPic());
-		al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-		al.setSalesPricePU(deliveryItem.getSalesPricePU());
-		al.setStockQuantity(al.getStockQuantity().add(deliveryItem.getStockQuantity()));
-		al.calculateTotalAmout();
-		return al;
-	}
+//	public static ArticleLot fromDeliveryItem(DeliveryItem deliveryItem,Login login){
+//		ArticleLot al = new  ArticleLot();
+//		al.setAgency(login.getAgency());
+//		al.setArticle(deliveryItem.getArticle());
+//		if(deliveryItem.getArticle()!=null)
+//			al.setArticleName(deliveryItem.getArticle().getArticleName());
+//		al.setCreationDate(new Date());
+//		al.setExpirationDate(deliveryItem.getExpirationDate());
+//		al.setInternalPic(deliveryItem.getInternalPic());
+//		al.setMainPic(deliveryItem.getMainPic());
+//		al.setSecondaryPic(deliveryItem.getSecondaryPic());
+//		al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+//		al.setSalesPricePU(deliveryItem.getSalesPricePU());
+//		al.setStockQuantity(al.getStockQuantity().add(deliveryItem.getStockQuantity()));
+//		al.calculateTotalAmout();
+//		return al;
+//	}
 }

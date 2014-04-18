@@ -1,11 +1,16 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.collections.FXCollections;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,16 +21,11 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class ModalArticleLotSearchController  {
@@ -122,7 +122,38 @@ public class ModalArticleLotSearchController  {
 			view.closeDialog();
 			modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
-			view.getDataList().getItems().setAll(articleLotSearchResult.getResultList());
+			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
+			List<String> resultOrder = new ArrayList<String>();
+			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
+			// Group by secondary pic always taking the article
+			for (ArticleLot articleLot : resultList) {
+				String mainPic = articleLot.getMainPic();
+				if(!resultOrder.contains(mainPic)) resultOrder.add(mainPic);
+				// the main pic is unique per product.
+				Set<ArticleLot> set = lotMap.get(mainPic);
+				if(set==null){
+					set = new TreeSet<ArticleLot>();
+					lotMap.put(mainPic, set);
+				}
+				set.add(articleLot);
+			}
+			ArrayList<ArticleLot> lotList = new ArrayList<ArticleLot>(resultOrder.size());
+			for (String mainPic : resultOrder) {
+				Set<ArticleLot> set = lotMap.get(mainPic);
+				ArticleLot articleLot = null;
+				for (ArticleLot lot : set) {
+					if(articleLot==null) {
+						articleLot=lot;
+					} else if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0){
+						articleLot=lot;
+					} else {
+						break;
+					}
+				}
+				if(articleLot!=null)lotList.add(articleLot);
+			}
+			
+			view.getDataList().getItems().setAll(lotList);
 			view.showDiaLog();
 		}
 	}
@@ -135,6 +166,4 @@ public class ModalArticleLotSearchController  {
 	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
 		articleSearchService.setSearchInputs(lotSearchInput).start();
 	}
-	
-
 }

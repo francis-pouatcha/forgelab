@@ -22,10 +22,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 
 /**
  * 
@@ -226,4 +227,5 @@ public class ArticleLotEndpoint
       searchInput.setEntity(detach(searchInput.getEntity()));
       return searchInput;
    }
+
 }
