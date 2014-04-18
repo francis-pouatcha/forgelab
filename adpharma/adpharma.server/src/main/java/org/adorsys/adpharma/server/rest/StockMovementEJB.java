@@ -136,7 +136,7 @@ public class StockMovementEJB
 		sm.setCreatingUser(creatingUser);
 		sm.setCreationDate(creationDate);
 		sm.setInitialQty(BigDecimal.ZERO);
-		sm.setMovedQty(lotDetailsManager.getDetailsQty().negate());
+		sm.setMovedQty(lotDetailsManager.getDetailsQty());
 		sm.setFinalQty(lotToDetails.getStockQuantity());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
