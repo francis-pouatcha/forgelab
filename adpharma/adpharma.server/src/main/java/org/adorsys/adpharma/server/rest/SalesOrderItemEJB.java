@@ -16,10 +16,13 @@ public class SalesOrderItemEJB
    private SalesOrderItemRepository repository;
 
    @Inject
-   private SalesOrderMerger salesOrderMerger;
+   private ArticleMerger articleMerger;
 
    @Inject
-   private ArticleMerger articleMerger;
+   private VATMerger vATMerger;
+
+   @Inject
+   private SalesOrderMerger salesOrderMerger;
 
    public SalesOrderItem create(SalesOrderItem entity)
    {
@@ -85,6 +88,9 @@ public class SalesOrderItemEJB
 
       // aggregated
       entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+
+      // aggregated
+      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
       return entity;
    }

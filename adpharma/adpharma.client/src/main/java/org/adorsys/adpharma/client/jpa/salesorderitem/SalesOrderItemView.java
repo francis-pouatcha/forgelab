@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import java.util.Calendar;
 import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
@@ -58,6 +59,11 @@ public class SalesOrderItemView extends AbstractForm<SalesOrderItem>
    private SalesOrderItemArticleSelection salesOrderItemArticleSelection;
 
    @Inject
+   private SalesOrderItemVatForm salesOrderItemVatForm;
+   @Inject
+   private SalesOrderItemVatSelection salesOrderItemVatSelection;
+
+   @Inject
    @Bundle({ CrudKeys.class, SalesOrderItem.class })
    private ResourceBundle resourceBundle;
 
@@ -85,6 +91,9 @@ public class SalesOrderItemView extends AbstractForm<SalesOrderItem>
       viewBuilder.addTitlePane("SalesOrderItem_article_description.title", resourceBundle);
       viewBuilder.addSubForm("SalesOrderItem_article_description.title", "article", resourceBundle, salesOrderItemArticleForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("SalesOrderItem_article_description.title", "article", resourceBundle, salesOrderItemArticleSelection, ViewModel.READ_WRITE);
+      viewBuilder.addTitlePane("SalesOrderItem_vat_description.title", resourceBundle);
+      viewBuilder.addSubForm("SalesOrderItem_vat_description.title", "vat", resourceBundle, salesOrderItemVatForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("SalesOrderItem_vat_description.title", "vat", resourceBundle, salesOrderItemVatSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }
@@ -115,6 +124,8 @@ public class SalesOrderItemView extends AbstractForm<SalesOrderItem>
       salesOrderItemSalesOrderForm.bind(model);
       salesOrderItemArticleForm.bind(model);
       salesOrderItemArticleSelection.bind(model);
+      salesOrderItemVatForm.bind(model);
+      salesOrderItemVatSelection.bind(model);
    }
 
    public TextField getInternalPic()
@@ -165,5 +176,15 @@ public class SalesOrderItemView extends AbstractForm<SalesOrderItem>
    public SalesOrderItemArticleSelection getSalesOrderItemArticleSelection()
    {
       return salesOrderItemArticleSelection;
+   }
+
+   public SalesOrderItemVatForm getSalesOrderItemVatForm()
+   {
+      return salesOrderItemVatForm;
+   }
+
+   public SalesOrderItemVatSelection getSalesOrderItemVatSelection()
+   {
+      return salesOrderItemVatSelection;
    }
 }

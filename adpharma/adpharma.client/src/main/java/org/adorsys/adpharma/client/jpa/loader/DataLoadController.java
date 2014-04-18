@@ -281,10 +281,28 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setProductFamilies(productFamilies);
 				pi.setProgress(0.3);
+				// VAT Loader
+				vatLoader.setWorkbook(workbook).start();
+			}});
+		productFamilyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+
+		vatLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				VATLoader s = (VATLoader) event.getSource();
+				List<VAT> vats = s.getValue();
+				s.reset();
+				event.consume();
+				dataMap.setVats(vats);
 				// Article Loader
 				articleLoader.setDataMap(dataMap).setWorkbook(workbook).start();
 			}});
-		productFamilyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		vatLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				handleFailure(event);
@@ -318,28 +336,10 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				dataMap.setSuppliers(suppliers);
-				// VAT Loader
-				vatLoader.setWorkbook(workbook).start();
-			}});
-		supplierLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				handleFailure(event);
-			}
-		});
-
-		vatLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
-			@Override
-			public void handle(WorkerStateEvent event) {
-				VATLoader s = (VATLoader) event.getSource();
-				List<VAT> vats = s.getValue();
-				s.reset();
-				event.consume();
-				dataMap.setVats(vats);
 				// Currency Loader
 				currencyLoader.setWorkbook(workbook).start();
 			}});
-		vatLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		supplierLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				handleFailure(event);

@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import java.util.Calendar;
 import java.math.BigDecimal;
-
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
@@ -69,6 +69,11 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
    private ArticleLotArticleSelection articleLotArticleSelection;
 
    @Inject
+   private ArticleLotVatForm articleLotVatForm;
+   @Inject
+   private ArticleLotVatSelection articleLotVatSelection;
+
+   @Inject
    @Bundle({ CrudKeys.class, ArticleLot.class })
    private ResourceBundle resourceBundle;
 
@@ -101,6 +106,9 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
       viewBuilder.addTitlePane("ArticleLot_article_description.title", resourceBundle);
       viewBuilder.addSubForm("ArticleLot_article_description.title", "article", resourceBundle, articleLotArticleForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ArticleLot_article_description.title", "article", resourceBundle, articleLotArticleSelection, ViewModel.READ_WRITE);
+      viewBuilder.addTitlePane("ArticleLot_vat_description.title", resourceBundle);
+      viewBuilder.addSubForm("ArticleLot_vat_description.title", "vat", resourceBundle, articleLotVatForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("ArticleLot_vat_description.title", "vat", resourceBundle, articleLotVatSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }
@@ -144,6 +152,8 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
       articleLotAgencySelection.bind(model);
       articleLotArticleForm.bind(model);
       articleLotArticleSelection.bind(model);
+      articleLotVatForm.bind(model);
+      articleLotVatSelection.bind(model);
    }
 
    public TextField getInternalPic()
@@ -219,5 +229,15 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
    public ArticleLotArticleSelection getArticleLotArticleSelection()
    {
       return articleLotArticleSelection;
+   }
+
+   public ArticleLotVatForm getArticleLotVatForm()
+   {
+      return articleLotVatForm;
+   }
+
+   public ArticleLotVatSelection getArticleLotVatSelection()
+   {
+      return articleLotVatSelection;
    }
 }

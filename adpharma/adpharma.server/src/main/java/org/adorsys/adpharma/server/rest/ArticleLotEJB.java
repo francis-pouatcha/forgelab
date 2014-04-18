@@ -16,7 +16,6 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
-import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
@@ -26,102 +25,107 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
-import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class ArticleLotEJB
 {
 
-	@Inject
-	private ArticleLotRepository repository;
+   @Inject
+   private ArticleLotRepository repository;
+
+   @Inject
+   private AgencyMerger agencyMerger;
+
+   @Inject
+   private ArticleMerger articleMerger;
+
+   @Inject
+   private VATMerger vATMerger;
+
 
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
 
-	@Inject
-	private AgencyMerger agencyMerger;
-
-	@Inject
-	private ArticleMerger articleMerger;
 
 	@EJB
 	private SecurityUtil securityUtil;
+	
+   public ArticleLot create(ArticleLot entity)
+   {
+      return repository.save(attach(entity));
+   }
 
-	public ArticleLot create(ArticleLot entity)
-	{
-		return repository.save(attach(entity));
-	}
+   public ArticleLot deleteById(Long id)
+   {
+      ArticleLot entity = repository.findBy(id);
+      if (entity != null)
+      {
+         repository.remove(entity);
+      }
+      return entity;
+   }
 
-	public ArticleLot deleteById(Long id)
-	{
-		ArticleLot entity = repository.findBy(id);
-		if (entity != null)
-		{
-			repository.remove(entity);
-		}
-		return entity;
-	}
+   public ArticleLot update(ArticleLot entity)
+   {
+      return repository.save(attach(entity));
+   }
 
-	public ArticleLot update(ArticleLot entity)
-	{
-		return repository.save(attach(entity));
-	}
+   public ArticleLot findById(Long id)
+   {
+      return repository.findBy(id);
+   }
 
-	public ArticleLot findById(Long id)
-	{
-		return repository.findBy(id);
-	}
+   public List<ArticleLot> listAll(int start, int max)
+   {
+      return repository.findAll(start, max);
+   }
 
-	public List<ArticleLot> listAll(int start, int max)
-	{
-		return repository.findAll(start, max);
-	}
+   public Long count()
+   {
+      return repository.count();
+   }
 
-	public Long count()
-	{
-		return repository.count();
-	}
+   public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+   {
+      return repository.findBy(entity, start, max, attributes);
+   }
 
-	public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-	{
-		return repository.findBy(entity, start, max, attributes);
-	}
+   public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+   {
+      return repository.count(entity, attributes);
+   }
 
-	public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-	{
-		return repository.count(entity, attributes);
-	}
+   public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+   {
+      return repository.findByLike(entity, start, max, attributes);
+   }
 
-	public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-	{
-		return repository.findByLike(entity, start, max, attributes);
-	}
+   public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+   {
+      return repository.countLike(entity, attributes);
+   }
 
-	public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-	{
-		return repository.countLike(entity, attributes);
-	}
+   private ArticleLot attach(ArticleLot entity)
+   {
+      if (entity == null)
+         return null;
 
-	private ArticleLot attach(ArticleLot entity)
-	{
-		if (entity == null)
-			return null;
+      // aggregated
+      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-		// aggregated
-		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+      // aggregated
+      entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 
-		// aggregated
-		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+      // aggregated
+      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
-		return entity;
-	}
+      return entity;
+   }
+   
 
 	@Inject
 	@DocumentProcessedEvent
@@ -298,5 +302,5 @@ public class ArticleLotEJB
 			update(articleLot);
 		}
 	}
-	 */
+	 */   
 }

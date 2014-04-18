@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import java.util.Calendar;
 import java.math.BigDecimal;
-
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,7 +34,7 @@ import org.adorsys.javaext.display.ToStringField;
 @ListField({ "internalPic", "mainPic", "secondaryPic", "articleName",
       "article.articleName", "expirationDate", "stockQuantity",
       "salesPricePU", "purchasePricePU", "totalPurchasePrice",
-      "totalSalePrice" })
+      "totalSalePrice", "vat.rate" })
 @ToStringField({ "articleName", "article.articleName" })
 public class ArticleLot implements Cloneable
 {
@@ -76,6 +76,9 @@ public class ArticleLot implements Cloneable
    @Description("ArticleLot_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<ArticleLotArticle> article;
+   @Description("ArticleLot_vat_description")
+   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+   private SimpleObjectProperty<ArticleLotVat> vat;
 
    public Long getId()
    {
@@ -361,6 +364,30 @@ public class ArticleLot implements Cloneable
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
+   public SimpleObjectProperty<ArticleLotVat> vatProperty()
+   {
+      if (vat == null)
+      {
+         vat = new SimpleObjectProperty<ArticleLotVat>(new ArticleLotVat());
+      }
+      return vat;
+   }
+
+   public ArticleLotVat getVat()
+   {
+      return vatProperty().get();
+   }
+
+   public final void setVat(ArticleLotVat vat)
+   {
+      if (vat == null)
+      {
+         vat = new ArticleLotVat();
+      }
+      PropertyReader.copy(vat, getVat());
+      vatProperty().setValue(ObjectUtils.clone(getVat()));
+   }
+
    @Override
    public int hashCode()
    {
@@ -419,6 +446,7 @@ public class ArticleLot implements Cloneable
       e.creationDate = creationDate;
       e.agency = agency;
       e.article = article;
+      e.vat = vat;
       return e;
    }
 }

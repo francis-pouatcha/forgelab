@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
@@ -188,11 +190,32 @@ public class SalesOrderEJB
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
+		BigDecimal amountAfterTax = BigDecimal.ZERO;
+		BigDecimal amountBeforeTax = BigDecimal.ZERO;
+		BigDecimal amountVAT = BigDecimal.ZERO;
+		BigDecimal amountDiscount = BigDecimal.ZERO;
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			salesOrderItem.setRecordDate(new Date());
+			salesOrderItem.calucateDeliveryQty();
+			salesOrderItem.calculateAmount();
 			salesOrderItem = salesOrderItemEJB.update(salesOrderItem);
+			
+//			String internalPic = salesOrderItem.getInternalPic();
+//			
+//			Article article = salesOrderItem.getArticle();
+//			BigDecimal sppu = article.getSppu();
+//			amountAfterTax = amountAfterTax.add(salesOrderItem.getTotalSalePrice());
+//			
+//			// compute further sales order data.
+//			amountBeforeTax = amountBeforeTax.add(salesOrderItem.getTotalSalePrice());
+//			salesOrderItem.get
 		}
+		
+		salesOrder.setAmountAfterTax(amountAfterTax);
+		salesOrder.setAmountBeforeTax(amountBeforeTax);
+		salesOrder.setAmountVAT(amountVAT);
+		salesOrder.setAmountDiscount(amountDiscount);
 		salesOrder.setCreationDate(creationDate);
 		salesOrder.setSalesAgent(creatingUser);
 		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);

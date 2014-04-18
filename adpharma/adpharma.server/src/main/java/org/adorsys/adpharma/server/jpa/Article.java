@@ -1,35 +1,41 @@
 package org.adorsys.adpharma.server.jpa;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import java.io.Serializable;
+import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Column;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-
+import java.lang.Override;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.format.DateFormatPattern;
+import org.adorsys.javaext.list.ListField;
+import javax.validation.constraints.NotNull;
+import org.adorsys.adpharma.server.jpa.Section;
+import javax.persistence.ManyToOne;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.adpharma.server.jpa.ProductFamily;
+import java.math.BigDecimal;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javaext.list.ListField;
+import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.adorsys.javaext.format.DateFormatPattern;
+import org.adorsys.adpharma.server.jpa.SalesMargin;
+import org.adorsys.adpharma.server.jpa.PackagingMode;
+import org.adorsys.adpharma.server.jpa.Agency;
+import org.adorsys.adpharma.server.jpa.ClearanceConfig;
+import org.adorsys.adpharma.server.jpa.VAT;
 
 @Entity
 @Description("Article_description")
 @ToStringField({ "articleName", "pic" })
 @ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu",
-      "authorizedSale", "agency.name" })
+      "authorizedSale", "agency.name", "vat.rate" })
 public class Article implements Serializable
 {
 
@@ -134,7 +140,12 @@ public class Article implements Serializable
    @Description("Article_recordingDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private Date recordingDate;
-   
+
+   @ManyToOne
+   @Description("Article_vat_description")
+   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+   private VAT vat;
+
    public Long getId()
    {
       return this.id;
@@ -404,5 +415,14 @@ public class Article implements Serializable
       if (maxStockQty != null)
          result += ", maxStockQty: " + maxStockQty;
       return result;
+   }
+
+   public VAT getVat(){
+      return this.vat;
+   }
+
+   public void setVat(final VAT vat)
+   {
+      this.vat = vat;
    }
 }

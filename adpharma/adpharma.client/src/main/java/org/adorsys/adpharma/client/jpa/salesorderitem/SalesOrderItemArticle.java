@@ -18,6 +18,8 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfig;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.jpa.article.ArticleVat;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
