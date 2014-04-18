@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
+import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
@@ -50,6 +52,10 @@ public class ModalArticleLotSearchController  {
 	@Inject
 	ArticleLot articleLot;
 	
+	@Inject
+	@EntityListPageIndexChangedEvent
+	private Event<ArticleLotSearchResult> entityListPageIndexChangedEvent;
+
 	private ArticleLotSearchResult searchResult;
 
 
@@ -62,7 +68,7 @@ public class ModalArticleLotSearchController  {
 				view.closeDialog();
 			}
 		});
-		
+
 		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ArticleLot>() {
 
 			@Override
@@ -72,10 +78,10 @@ public class ModalArticleLotSearchController  {
 				if(newValue!=null){
 					modalArticleLotSearchDoneEvent.fire(newValue);
 					view.closeDialog();
-					
+
 				}
-					
-				
+
+
 			}
 		});
 		view.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -90,8 +96,9 @@ public class ModalArticleLotSearchController  {
 					entity.setArticleName(articleName);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
+					asi.setMax(-1);
 					asi.getFieldNames().add("articleName");
-					modalArticleLotSearchEvent.fire(asi);
+					articleSearchService.setSearchInputs(asi).start();
 				}
 			}
 		});
@@ -111,6 +118,51 @@ public class ModalArticleLotSearchController  {
 
 
 		});
+
+		view.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new ArticleLotSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				entityListPageIndexChangedEvent.fire(searchResult);
+
+			}
+				});
+
+	}
+
+	/**
+	 * Handle search results. But the switch of displays is centralized
+	 * in the main articleLot controller.
+	 * 
+	 * @param entities
+	 */
+	public void handleSearchResult(@Observes @EntitySearchDoneEvent ArticleLotSearchResult searchResult)
+	{
+		this.searchResult = searchResult;
+		List<ArticleLot> entities = searchResult.getResultList();
+		if (entities == null)
+			entities = new ArrayList<ArticleLot>();
+		view.getDataList().getItems().clear();
+		view.getDataList().getItems().addAll(entities);
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
+		view.getPagination().setPageCount(pageCount);
+		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
+		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
+		view.getPagination().setCurrentPageIndex(pageIndex);
+
 	}
 
 	public void handleArticleSearchResult(
@@ -122,7 +174,8 @@ public class ModalArticleLotSearchController  {
 			view.closeDialog();
 			modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
-			view.getDataList().getItems().setAll(articleLotSearchResult.getResultList());
+			//			view.getDataList().getItems().setAll(articleLotSearchResult.getResultList());
+			handleSearchResult(articleLotSearchResult);
 			view.showDiaLog();
 		}
 	}
@@ -135,6 +188,6 @@ public class ModalArticleLotSearchController  {
 	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
 		articleSearchService.setSearchInputs(lotSearchInput).start();
 	}
-	
+
 
 }
