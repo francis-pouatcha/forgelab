@@ -206,7 +206,7 @@ public class SalesOrderDisplayController implements EntityController
 				}
 			}
 		});
-		
+
 		/*
 		 * listen to Ok button.
 		 */
@@ -227,34 +227,34 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 * listen to delete menu Item.
 		 */
-//
-//		displayView.getDeleteSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent event) {
-//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-//				if(selectedItem!=null) {
-//					salesOrderItemRemoveService.setEntity(selectedItem).start();
-//				}
-//
-//			}
-//		});
+		//
+		//		displayView.getDeleteSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
+		//
+		//			@Override
+		//			public void handle(ActionEvent event) {
+		//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+		//				if(selectedItem!=null) {
+		//					salesOrderItemRemoveService.setEntity(selectedItem).start();
+		//				}
+		//
+		//			}
+		//		});
 
 		/*
 		 * listen to edit menu Item.
 		 */
-//		displayView.getEditSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-//
-//			@Override
-//			public void handle(ActionEvent event) {
-//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-//				if(selectedItem!=null) {
-//					PropertyReader.copy(selectedItem, salesOrderItem);
-////					displayView.getDataList().getItems().remove(selectedItem);
-//				}
-//
-//			}
-//		});
+		//		displayView.getEditSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
+		//
+		//			@Override
+		//			public void handle(ActionEvent event) {
+		//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+		//				if(selectedItem!=null) {
+		//					PropertyReader.copy(selectedItem, salesOrderItem);
+		////					displayView.getDataList().getItems().remove(selectedItem);
+		//				}
+		//
+		//			}
+		//		});
 
 		/*
 		 * listen to edit menu Item.
@@ -483,21 +483,21 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem editedItem = s.getValue();
 				event.consume();
 				s.reset();
-//				displayView.getDataList().getItems().add(editedItem);
-//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+				//				displayView.getDataList().getItems().add(editedItem);
+				//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				int index = displayView.getDataList().getItems().indexOf(editedItem);
 				if(index>-1){
 					SalesOrderItem displayed = displayView.getDataList().getItems().get(index);
 					PropertyReader.copy(editedItem, displayed);
-//					displayView.getDataList().getItems().remove(index);
-//					displayView.getDataList().getItems().add(index, editedItem);
+					//					displayView.getDataList().getItems().remove(index);
+					//					displayView.getDataList().getItems().add(index, editedItem);
 				}
-//				ObservableList<SalesOrderItem> items = displayView.getDataList().getItems().in;
-//				for (SalesOrderItem salesOrderItem : items) {
-//					if(editedItem.getId().equals(salesOrderItem.getId())){
-//						PropertyReader.copy(editedItem, salesOrderItem);
-//					}
-//				}
+				//				ObservableList<SalesOrderItem> items = displayView.getDataList().getItems().in;
+				//				for (SalesOrderItem salesOrderItem : items) {
+				//					if(editedItem.getId().equals(salesOrderItem.getId())){
+				//						PropertyReader.copy(editedItem, salesOrderItem);
+				//					}
+				//				}
 				updateSalesOrder(editedItem);
 
 			}
@@ -512,7 +512,7 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				displayView.getDataList().getItems().remove(removeddItem);
-//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+				//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(removeddItem);
 			}
 		});
@@ -556,33 +556,33 @@ public class SalesOrderDisplayController implements EntityController
 		//			}
 		//		});
 		//		vatSearchService.setOnFailed(callFailedEventHandler);
-//		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
-//
-//			@Override
-//			public void onChanged(
-//					javafx.collections.ListChangeListener.Change<? extends SalesOrderItem> c) {
-//				c.next();
-//				if(c.getAddedSize()!=0){
-//					List<? extends SalesOrderItem> addedSubList = c.getAddedSubList();
-//					for (SalesOrderItem item : addedSubList) {
-//						item.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
-//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().add(item.getTotalSalePrice()));
-//						displayedEntity.salesOrderItemsProperty().getValue().add(item);
-//					}
-//				}
-//
-//				if(c.getRemovedSize()!=0){
-//					List<? extends SalesOrderItem> removed = c.getRemoved();
-//					for (SalesOrderItem item : removed) {
-//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().subtract(item.getTotalSalePrice()));
-//						displayedEntity.salesOrderItemsProperty().getValue().remove(item);
-//					}
-//				}
-//
-//				displayedEntity.calculateAmount();
-//
-//			}
-//		});
+		//		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
+		//
+		//			@Override
+		//			public void onChanged(
+		//					javafx.collections.ListChangeListener.Change<? extends SalesOrderItem> c) {
+		//				c.next();
+		//				if(c.getAddedSize()!=0){
+		//					List<? extends SalesOrderItem> addedSubList = c.getAddedSubList();
+		//					for (SalesOrderItem item : addedSubList) {
+		//						item.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
+		//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().add(item.getTotalSalePrice()));
+		//						displayedEntity.salesOrderItemsProperty().getValue().add(item);
+		//					}
+		//				}
+		//
+		//				if(c.getRemovedSize()!=0){
+		//					List<? extends SalesOrderItem> removed = c.getRemoved();
+		//					for (SalesOrderItem item : removed) {
+		//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().subtract(item.getTotalSalePrice()));
+		//						displayedEntity.salesOrderItemsProperty().getValue().remove(item);
+		//					}
+		//				}
+		//
+		//				displayedEntity.calculateAmount();
+		//
+		//			}
+		//		});
 
 		//		
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -711,14 +711,14 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
-//		salesOrderItem.calculateTotalAmout();
+		//		salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
 			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity)); 
-//			if(salesOrderItem.getSalesOrder().getId()==null)
-//				salesOrderItem.getSalesOrder().setId(displayedEntity.getId());
+			//			if(salesOrderItem.getSalesOrder().getId()==null)
+			//				salesOrderItem.getSalesOrder().setId(displayedEntity.getId());
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
-//		}else {
-//			salesOrderItemEditService.setSalesOrderItem(salesOrderItem).start();
+			//		}else {
+			//			salesOrderItemEditService.setSalesOrderItem(salesOrderItem).start();
 		}
 	}
 
@@ -837,7 +837,7 @@ public class SalesOrderDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
-//	private static final BigDecimal HUNDRED = new BigDecimal(100); 
+	//	private static final BigDecimal HUNDRED = new BigDecimal(100); 
 	public void updateSalesOrder(SalesOrderItem salesOrderItem){
 		SalesOrderItemSalesOrder salesOrder = salesOrderItem.getSalesOrder();
 		PropertyReader.copy(salesOrder, displayedEntity);
@@ -855,7 +855,7 @@ public class SalesOrderDisplayController implements EntityController
 		soItem.setArticle(soia);
 		soItem.setOrderedQty(BigDecimal.ONE);
 		soItem.setSalesPricePU((al.getSalesPricePU()));
-//		soItem.setTotalSalePrice(al.getPurchasePricePU());
+		//		soItem.setTotalSalePrice(al.getPurchasePricePU());
 		soItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
 		soItem.setInternalPic(al.getInternalPic());
 		SalesOrderItemVat soiVat = new SalesOrderItemVat();
