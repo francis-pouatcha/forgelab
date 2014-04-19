@@ -15,7 +15,7 @@ public class WareHouseAgencyListCell extends AbstractToStringListCell<WareHouseA
       {
          return "";
       }
-      return PropertyReader.buildToString(item, "name", "agency");
+      return PropertyReader.buildToString(item, "name");
    }
 
 }
