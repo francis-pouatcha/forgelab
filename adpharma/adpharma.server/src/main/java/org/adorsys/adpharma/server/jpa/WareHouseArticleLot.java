@@ -1,26 +1,38 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
+
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.server.jpa.WareHouse;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.list.ListField;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.javaext.admin.PermissionTable;
 import org.adorsys.adpharma.server.jpa.AccessRoleEnum;
 
 @Entity
 @Description("WareHouseArticleLot_description")
+@ListField({ "internalPic", "mainPic", "secondaryPic", "articleName", "stockQuantity","wareHouse","articleLot" })
+@ToStringField({ "articleName", "article.articleName" })
 public class WareHouseArticleLot implements Serializable
 {
 
