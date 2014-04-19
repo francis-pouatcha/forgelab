@@ -3,8 +3,13 @@ package org.adorsys.adpharma.server.rest;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
+import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 
@@ -24,9 +29,24 @@ public class SalesOrderItemEJB
    @Inject
    private SalesOrderMerger salesOrderMerger;
 
-   public SalesOrderItem create(SalesOrderItem entity)
-   {
-      return repository.save(attach(entity));
+	@Inject
+	@DocumentProcessedEvent
+	private Event<SalesOrderItem> salesOrderItemProcessedEvent;
+   
+	@Inject
+	@DocumentDeletedEvent
+	private Event<SalesOrderItem> salesOrderItemDeletedEvent;
+
+	@Inject
+	@DocumentCreatedEvent
+	private Event<SalesOrderItem> salesOrderItemCreatedEvent;
+
+	public SalesOrderItem create(SalesOrderItem entity)
+    {
+		entity.updateTotalSalesPrice();
+      entity = repository.save(attach(entity));
+      salesOrderItemCreatedEvent.fire(entity);
+      return entity;
    }
 
    public SalesOrderItem deleteById(Long id)
@@ -35,13 +55,17 @@ public class SalesOrderItemEJB
       if (entity != null)
       {
          repository.remove(entity);
+         salesOrderItemDeletedEvent.fire(entity);
       }
       return entity;
    }
 
    public SalesOrderItem update(SalesOrderItem entity)
    {
-      return repository.save(attach(entity));
+	  entity.updateTotalSalesPrice();
+      entity = repository.save(attach(entity));
+      salesOrderItemProcessedEvent.fire(entity);
+      return entity;
    }
 
    public SalesOrderItem findById(Long id)

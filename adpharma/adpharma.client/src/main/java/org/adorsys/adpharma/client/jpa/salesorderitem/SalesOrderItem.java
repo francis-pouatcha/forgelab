@@ -15,6 +15,7 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.crypto.KeySelector.Purpose;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
@@ -76,10 +77,9 @@ public class SalesOrderItem implements Cloneable
    private SimpleObjectProperty<SalesOrderItemVat> vat;
    
    
-   public void calculateTotalAmout(){
-		BigDecimal pppu = salesPricePU.get();
-		pppu = pppu.multiply(orderedQty.get());
-		totalSalePrice.set(pppu);
+   public void updateTotalSalesPrice(){
+	   if(!totalSalePriceProperty().isBound())
+		   setTotalSalePrice(getOrderedQty().multiply(getSalesPricePU()));
 	}
   
 
@@ -215,6 +215,7 @@ public class SalesOrderItem implements Cloneable
 
    public final void setTotalSalePrice(BigDecimal totalSalePrice)
    {
+	   if(this.totalSalePriceProperty().isBound()) return;
       this.totalSalePriceProperty().set(totalSalePrice);
    }
 

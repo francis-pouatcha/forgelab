@@ -1,47 +1,30 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
-
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-
-import java.lang.Override;
-
-import org.adorsys.javaext.description.Description;
-
 import java.math.BigDecimal;
-
-import org.adorsys.javaext.list.ListField;
-
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-
-import javax.validation.constraints.Size;
-
-import org.adorsys.adpharma.server.jpa.Article;
-
-import javax.persistence.ManyToOne;
-
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.javaext.display.ToStringField;
-
-import javax.validation.constraints.NotNull;
-
-import org.adorsys.adpharma.server.jpa.VAT;
-import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("SalesOrderItem_description")
@@ -285,4 +268,7 @@ public class SalesOrderItem implements Serializable
 		return BigDecimal.ZERO.compareTo(returnedQty)<0 ;
 	}
    
+	public void updateTotalSalesPrice(){
+		setTotalSalePrice(getOrderedQty().multiply(getSalesPricePU()));
+	}
 }
