@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import java.util.Calendar;
 import java.math.BigDecimal;
-
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;

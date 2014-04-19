@@ -849,6 +849,13 @@ description add-field-description --onProperty recordingDate --title "Recording 
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
+
 
 cd ~~;
 
@@ -1611,6 +1618,14 @@ field temporal --type TIMESTAMP --named creationDate;
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this stock movement.";
 description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette movement de stock." --locale fr;
 format add-date-pattern --onProperty creationDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
+
 
 cd ~~;
 
@@ -2492,6 +2507,12 @@ constraint NotNull --onProperty article;
 description add-notNull-message --onProperty article --title "The article of this sales order item must be selected" --text "The article of this sales order item must be selected";
 description add-notNull-message --onProperty article --title "Le produit de cette ligne de commande client doit être sélectionné" --text "Le produit de cette ligne de commande client doit être sélectionné" --locale fr;
 
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
 
 cd ~~;
 

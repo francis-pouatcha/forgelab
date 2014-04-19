@@ -1,20 +1,22 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -29,11 +31,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import jfxtras.animation.Timer;
-
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
@@ -41,14 +42,12 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookRecordingAgent;
@@ -62,9 +61,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateServic
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemEditService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemRemoveService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemVat;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -183,6 +180,7 @@ public class SalesOrderDisplayController implements EntityController
 	@PostConstruct
 	public void postConstruct()
 	{
+
 		//		      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//		displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
 
@@ -190,6 +188,25 @@ public class SalesOrderDisplayController implements EntityController
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
 
+		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {
+				SalesOrderItem selectedItem = orderedQtyCell.getRowValue();
+				BigDecimal newValue = orderedQtyCell.getNewValue();
+				if(newValue==null){
+					// reset old value.
+				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+					// delete article
+					salesOrderItemRemoveService.setEntity(selectedItem).start();
+				} else {
+					selectedItem.setOrderedQty(newValue);
+					selectedItem.updateTotalSalesPrice();
+					// update article
+					salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+				}
+			}
+		});
+		
 		/*
 		 * listen to Ok button.
 		 */
@@ -210,34 +227,34 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 * listen to delete menu Item.
 		 */
-
-		displayView.getDeleteSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null) {
-					salesOrderItemRemoveService.setEntity(selectedItem).start();
-				}
-
-			}
-		});
+//
+//		displayView.getDeleteSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent event) {
+//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+//				if(selectedItem!=null) {
+//					salesOrderItemRemoveService.setEntity(selectedItem).start();
+//				}
+//
+//			}
+//		});
 
 		/*
 		 * listen to edit menu Item.
 		 */
-		displayView.getEditSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null) {
-					PropertyReader.copy(selectedItem, salesOrderItem);
-					displayView.getDataList().getItems().remove(selectedItem);
-				}
-
-			}
-		});
+//		displayView.getEditSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent event) {
+//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+//				if(selectedItem!=null) {
+//					PropertyReader.copy(selectedItem, salesOrderItem);
+////					displayView.getDataList().getItems().remove(selectedItem);
+//				}
+//
+//			}
+//		});
 
 		/*
 		 * listen to edit menu Item.
@@ -272,6 +289,7 @@ public class SalesOrderDisplayController implements EntityController
 					public void handle(ActionEvent e)
 					{
 						PropertyReader.copy(new SalesOrder(), displayedEntity);
+						PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 						searchRequestedEvent.fire(displayedEntity);
 					}
 				});
@@ -451,7 +469,7 @@ public class SalesOrderDisplayController implements EntityController
 				s.reset();
 				displayView.getDataList().getItems().add(createdItem);
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-				calculateProcessAmont();
+				updateSalesOrder(createdItem);
 
 			}
 		});
@@ -465,9 +483,22 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem editedItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().add(editedItem);
-				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-				calculateProcessAmont();
+//				displayView.getDataList().getItems().add(editedItem);
+//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+				int index = displayView.getDataList().getItems().indexOf(editedItem);
+				if(index>-1){
+					SalesOrderItem displayed = displayView.getDataList().getItems().get(index);
+					PropertyReader.copy(editedItem, displayed);
+//					displayView.getDataList().getItems().remove(index);
+//					displayView.getDataList().getItems().add(index, editedItem);
+				}
+//				ObservableList<SalesOrderItem> items = displayView.getDataList().getItems().in;
+//				for (SalesOrderItem salesOrderItem : items) {
+//					if(editedItem.getId().equals(salesOrderItem.getId())){
+//						PropertyReader.copy(editedItem, salesOrderItem);
+//					}
+//				}
+				updateSalesOrder(editedItem);
 
 			}
 		});
@@ -481,8 +512,8 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				displayView.getDataList().getItems().remove(removeddItem);
-				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-				calculateProcessAmont();
+//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+				updateSalesOrder(removeddItem);
 			}
 		});
 		salesOrderItemRemoveService.setOnFailed(callFailedEventHandler);
@@ -525,33 +556,33 @@ public class SalesOrderDisplayController implements EntityController
 		//			}
 		//		});
 		//		vatSearchService.setOnFailed(callFailedEventHandler);
-		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
-
-			@Override
-			public void onChanged(
-					javafx.collections.ListChangeListener.Change<? extends SalesOrderItem> c) {
-				c.next();
-				if(c.getAddedSize()!=0){
-					List<? extends SalesOrderItem> addedSubList = c.getAddedSubList();
-					for (SalesOrderItem item : addedSubList) {
-						item.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
-						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().add(item.getTotalSalePrice()));
-						displayedEntity.salesOrderItemsProperty().getValue().add(item);
-					}
-				}
-
-				if(c.getRemovedSize()!=0){
-					List<? extends SalesOrderItem> removed = c.getRemoved();
-					for (SalesOrderItem item : removed) {
-						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().subtract(item.getTotalSalePrice()));
-						displayedEntity.salesOrderItemsProperty().getValue().remove(item);
-					}
-				}
-
-				displayedEntity.calculateAmount();
-
-			}
-		});
+//		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
+//
+//			@Override
+//			public void onChanged(
+//					javafx.collections.ListChangeListener.Change<? extends SalesOrderItem> c) {
+//				c.next();
+//				if(c.getAddedSize()!=0){
+//					List<? extends SalesOrderItem> addedSubList = c.getAddedSubList();
+//					for (SalesOrderItem item : addedSubList) {
+//						item.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
+//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().add(item.getTotalSalePrice()));
+//						displayedEntity.salesOrderItemsProperty().getValue().add(item);
+//					}
+//				}
+//
+//				if(c.getRemovedSize()!=0){
+//					List<? extends SalesOrderItem> removed = c.getRemoved();
+//					for (SalesOrderItem item : removed) {
+//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().subtract(item.getTotalSalePrice()));
+//						displayedEntity.salesOrderItemsProperty().getValue().remove(item);
+//					}
+//				}
+//
+//				displayedEntity.calculateAmount();
+//
+//			}
+//		});
 
 		//		
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -584,11 +615,11 @@ public class SalesOrderDisplayController implements EntityController
 					String internalPic = displayView.getInternalPic().getText();
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();
-					entity.setArticleName(internalPic);
+					entity.setSecondaryPic(internalPic);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
 					asi.setMax(30);
-					asi.getFieldNames().add("internalPic");
+					asi.getFieldNames().add("secondaryPic");
 					modalArticleLotSearchEvent.fire(asi);
 				}
 			}
@@ -680,14 +711,14 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
-		salesOrderItem.calculateTotalAmout();
+//		salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
-			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder()); 
-			if(salesOrderItem.getSalesOrder().getId()==null)
-				salesOrderItem.getSalesOrder().setId(displayedEntity.getId());
+			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity)); 
+//			if(salesOrderItem.getSalesOrder().getId()==null)
+//				salesOrderItem.getSalesOrder().setId(displayedEntity.getId());
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
-		}else {
-			salesOrderItemEditService.setSalesOrderItem(salesOrderItem).start();
+//		}else {
+//			salesOrderItemEditService.setSalesOrderItem(salesOrderItem).start();
 		}
 	}
 
@@ -787,15 +818,6 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleNewInsurance(Insurrance model){
 		displayedEntity.setInsurance(new SalesOrderInsurance(model));
-		//		new SalesOrderInsurance(model);
-		//		Insurrance insurrance = new Insurrance();
-		//		insurrance.setCustomer(model.getCustomer());
-		//		InsurranceSearchInput isi = new InsurranceSearchInput();
-		//		isi.setEntity(insurrance);
-		//		isi.setMax(100);
-		//		isi.getFieldNames().add("customer");
-		//		insurranceSearchService.setSearchInputs(isi).start();
-
 	}
 
 
@@ -815,20 +837,10 @@ public class SalesOrderDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
-	public void calculateProcessAmont(){
-		List<SalesOrderItem> salesOrderItems = displayedEntity.getSalesOrderItems();
-		BigDecimal amountHT = BigDecimal.ZERO;
-		BigDecimal vatAmount = BigDecimal.ZERO;
-		BigDecimal discount = BigDecimal.ZERO;
-		for (SalesOrderItem salesOrderItem : salesOrderItems) {
-			amountHT=amountHT.add(salesOrderItem.getTotalSalePrice());
-		}
-		//		SalesOrderVat salesOrderVat = displayView.getTax().getValue();
-		//		if(salesOrderVat!=null&&salesOrderVat.getId()!=null)
-		//			vatAmount = (amountHT.multiply(salesOrderVat.getRate())).divide(BigDecimal.ZERO,2);
-		displayedEntity.setAmountBeforeTax(amountHT);
-		displayedEntity.setAmountVAT(vatAmount);
-		displayedEntity.setAmountAfterTax(amountHT.add(vatAmount));
+//	private static final BigDecimal HUNDRED = new BigDecimal(100); 
+	public void updateSalesOrder(SalesOrderItem salesOrderItem){
+		SalesOrderItemSalesOrder salesOrder = salesOrderItem.getSalesOrder();
+		PropertyReader.copy(salesOrder, displayedEntity);
 	}
 
 
@@ -843,9 +855,13 @@ public class SalesOrderDisplayController implements EntityController
 		soItem.setArticle(soia);
 		soItem.setOrderedQty(BigDecimal.ONE);
 		soItem.setSalesPricePU((al.getSalesPricePU()));
-		soItem.setTotalSalePrice(al.getPurchasePricePU());
+//		soItem.setTotalSalePrice(al.getPurchasePricePU());
 		soItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
 		soItem.setInternalPic(al.getInternalPic());
+		SalesOrderItemVat soiVat = new SalesOrderItemVat();
+		ArticleLotVat alVat = al.getVat();
+		PropertyReader.copy(alVat, soiVat);
+		soItem.setVat(soiVat);
 		return soItem;
 	}
 

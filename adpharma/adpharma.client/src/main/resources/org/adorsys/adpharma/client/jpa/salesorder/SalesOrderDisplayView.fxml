@@ -212,9 +212,11 @@
 							<contextMenu>
 								<ContextMenu fx:id="datalistContextMenu">
 									<items>
+										<!-- 
 										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit Line" />
 										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete Line" />
 										<SeparatorMenuItem mnemonicParsing="false" />
+										 -->
 										<MenuItem fx:id="returnSOIMenu" mnemonicParsing="false" text="Return Article" />
 									</items>
 								</ContextMenu>

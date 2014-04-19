@@ -148,4 +148,16 @@ public class ArticleLotService
       return target.path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
+
+   // @POST
+   // @Path("/findLots"
+   // @Produces("application/xml")
+   // @Consumes("application/xml")
+   public ArticleLotSearchResult findLots(ArticleLotSearchInput searchInput)
+   {
+      Entity<ArticleLotSearchInput> searchInputEntity = Entity.entity(
+            searchInput, media);
+      return target.path("/findLots").request(media).post(
+            searchInputEntity, ArticleLotSearchResult.class);
+   }
 }

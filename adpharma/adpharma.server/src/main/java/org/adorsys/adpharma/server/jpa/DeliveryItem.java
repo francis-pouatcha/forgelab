@@ -83,15 +83,15 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_qtyOrdered_description")
-	private BigDecimal qtyOrdered ;
+	private BigDecimal qtyOrdered = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_availableQty_description")
-	private BigDecimal availableQty;
+	private BigDecimal availableQty = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_freeQuantity_description")
-	private BigDecimal freeQuantity;
+	private BigDecimal freeQuantity = BigDecimal.ZERO;
 
 	@ManyToOne
 	@Description("DeliveryItem_creatingUser_description")
@@ -101,22 +101,22 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_stockQuantity_description")
-	private BigDecimal stockQuantity;
+	private BigDecimal stockQuantity = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_salesPricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal salesPricePU;
+	private BigDecimal salesPricePU = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_purchasePricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal purchasePricePU;
+	private BigDecimal purchasePricePU = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_totalPurchasePrice_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal totalPurchasePrice;
+	private BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 
 	@ManyToOne
 	@Description("DeliveryItem_delivery_description")

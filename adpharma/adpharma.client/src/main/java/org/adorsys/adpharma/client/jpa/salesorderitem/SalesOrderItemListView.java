@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import java.util.Calendar;
 import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 
@@ -51,6 +52,7 @@ public class SalesOrderItemListView
    @Bundle({ CrudKeys.class
          , SalesOrderItem.class
          , Article.class
+         , VAT.class
    })
    private ResourceBundle resourceBundle;
 
@@ -66,6 +68,7 @@ public class SalesOrderItemListView
       viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
+      viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

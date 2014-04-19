@@ -21,7 +21,9 @@ import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
 import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.adpharma.client.jpa.article.ArticleService;
+import org.adorsys.adpharma.client.jpa.article.ArticleVat;
 import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -204,6 +206,28 @@ public class ArticleLoader extends Service<List<Article>> {
 				}
 			} else {
 				throw new IllegalStateException("No agency number provided for article with pic: " + entity.getPic());
+			}
+			
+//			cell = row.getCell(19);
+			
+			cell = row.getCell(20);
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+				String vatNamme = cell.getStringCellValue().trim();
+				List<VAT> vats = dataMap.getVats();
+				VAT vat = null;
+				for (VAT v : vats) {
+					if(vatNamme.equals(v.getName())){
+						vat=v;
+						break;
+					}
+				}
+				if(vat!=null){
+					entity.setVat(new ArticleVat(vat));
+				} else {
+					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
+				}
+			} else {
+				throw new IllegalStateException("No vat name provided for article with pic: " + entity.getPic());
 			}
 			
 			result.add(remoteService.create(entity));

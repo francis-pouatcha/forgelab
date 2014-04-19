@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
-import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
@@ -24,107 +23,113 @@ import org.adorsys.adpharma.server.repo.ArticleRepository;
 public class ArticleEJB
 {
 
-	@Inject
-	private ArticleRepository repository;
+   @Inject
+   private ArticleRepository repository;
 
-	@Inject
-	private ClearanceConfigMerger clearanceConfigMerger;
+   @Inject
+   private ProductFamilyMerger productFamilyMerger;
 
-	@Inject
-	private SectionMerger sectionMerger;
+   @Inject
+   private AgencyMerger agencyMerger;
 
-	@Inject
-	private ProductFamilyMerger productFamilyMerger;
+   @Inject
+   private SalesMarginMerger salesMarginMerger;
 
-	@Inject
-	private SalesMarginMerger salesMarginMerger;
+   @Inject
+   private VATMerger vATMerger;
 
-	@Inject
-	private PackagingModeMerger packagingModeMerger;
+   @Inject
+   private PackagingModeMerger packagingModeMerger;
 
-	@Inject
-	private AgencyMerger agencyMerger;
+   @Inject
+   private SectionMerger sectionMerger;
 
-	public Article create(Article entity)
-	{
-		return repository.save(attach(entity));
-	}
+   @Inject
+   private ClearanceConfigMerger clearanceConfigMerger;
 
-	public Article deleteById(Long id)
-	{
-		Article entity = repository.findBy(id);
-		if (entity != null)
-		{
-			repository.remove(entity);
-		}
-		return entity;
-	}
+   public Article create(Article entity)
+   {
+      return repository.save(attach(entity));
+   }
 
-	public Article update(Article entity)
-	{
-		return repository.save(attach(entity));
-	}
+   public Article deleteById(Long id)
+   {
+      Article entity = repository.findBy(id);
+      if (entity != null)
+      {
+         repository.remove(entity);
+      }
+      return entity;
+   }
 
-	public Article findById(Long id)
-	{
-		return repository.findBy(id);
-	}
+   public Article update(Article entity)
+   {
+      return repository.save(attach(entity));
+   }
 
-	public List<Article> listAll(int start, int max)
-	{
-		return repository.findAll(start, max);
-	}
+   public Article findById(Long id)
+   {
+      return repository.findBy(id);
+   }
 
-	public Long count()
-	{
-		return repository.count();
-	}
+   public List<Article> listAll(int start, int max)
+   {
+      return repository.findAll(start, max);
+   }
 
-	public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
-	{
-		return repository.findBy(entity, start, max, attributes);
-	}
+   public Long count()
+   {
+      return repository.count();
+   }
 
-	public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
-	{
-		return repository.count(entity, attributes);
-	}
+   public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
+   {
+      return repository.findBy(entity, start, max, attributes);
+   }
 
-	public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
-	{
-		return repository.findByLike(entity, start, max, attributes);
-	}
+   public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
+   {
+      return repository.count(entity, attributes);
+   }
 
-	public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
-	{
-		return repository.countLike(entity, attributes);
-	}
+   public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
+   {
+      return repository.findByLike(entity, start, max, attributes);
+   }
 
-	private Article attach(Article entity)
-	{
-		if (entity == null)
-			return null;
+   public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
+   {
+      return repository.countLike(entity, attributes);
+   }
 
-		// aggregated
-		entity.setSection(sectionMerger.bindAggregated(entity.getSection()));
+   private Article attach(Article entity)
+   {
+      if (entity == null)
+         return null;
 
-		// aggregated
-		entity.setFamily(productFamilyMerger.bindAggregated(entity.getFamily()));
+      // aggregated
+      entity.setSection(sectionMerger.bindAggregated(entity.getSection()));
 
-		// aggregated
-		entity.setDefaultSalesMargin(salesMarginMerger.bindAggregated(entity.getDefaultSalesMargin()));
+      // aggregated
+      entity.setFamily(productFamilyMerger.bindAggregated(entity.getFamily()));
 
-		// aggregated
-		entity.setPackagingMode(packagingModeMerger.bindAggregated(entity.getPackagingMode()));
+      // aggregated
+      entity.setDefaultSalesMargin(salesMarginMerger.bindAggregated(entity.getDefaultSalesMargin()));
 
-		// aggregated
-		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+      // aggregated
+      entity.setPackagingMode(packagingModeMerger.bindAggregated(entity.getPackagingMode()));
 
-		// aggregated
-		entity.setClearanceConfig(clearanceConfigMerger.bindAggregated(entity.getClearanceConfig()));
+      // aggregated
+      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-		return entity;
-	}
+      // aggregated
+      entity.setClearanceConfig(clearanceConfigMerger.bindAggregated(entity.getClearanceConfig()));
+
+      // aggregated
+      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
+
+      return entity;
+   }
 
 	/**
 	 * Process a completed delivery.
@@ -194,7 +199,7 @@ public class ArticleEJB
 	 * Reset the stock quantity in case this sales has been canceled.
 	 * 
 	 * @param salesOrder
-   public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+  public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
@@ -213,6 +218,6 @@ public class ArticleEJB
 
 		   update(article);
 		}
-   }
+  }
 	 */
 }

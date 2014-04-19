@@ -1,8 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -11,18 +10,13 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
-import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
-
-import java.util.Set;
-
-import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class DeliveryEJB
@@ -55,6 +49,9 @@ public class DeliveryEJB
 
 	@Inject
 	private ArticleEJB articleEJB;
+	
+	@Inject
+	private ArticleLotEJB articleLotEJB;
 
 	@EJB
 	private SecurityUtil securityUtil;
@@ -88,13 +85,11 @@ public class DeliveryEJB
 
 	public Delivery saveAndClose(Delivery delivery) {
 		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = deliveryItem.getMainPic();
-			if(isManagedLot) internalPic=new SimpleDateFormat("DDMMYYHH").format(creationDate) + RandomStringUtils.randomNumeric(5);
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.update(deliveryItem);

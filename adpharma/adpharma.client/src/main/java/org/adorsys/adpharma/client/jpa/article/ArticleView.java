@@ -89,6 +89,11 @@ public class ArticleView extends AbstractForm<Article>
    private ArticleClearanceConfigSelection articleClearanceConfigSelection;
 
    @Inject
+   private ArticleVatForm articleVatForm;
+   @Inject
+   private ArticleVatSelection articleVatSelection;
+
+   @Inject
    @Bundle({ CrudKeys.class, Article.class })
    private ResourceBundle resourceBundle;
 
@@ -136,6 +141,9 @@ public class ArticleView extends AbstractForm<Article>
 //      viewBuilder.addTitlePane("Article_clearanceConfig_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Article_vat_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Article_vat_description.title", "vat", resourceBundle, articleVatForm, ViewModel.READ_ONLY);
+//      viewBuilder.addSubForm("Article_vat_description.title", "vat", resourceBundle, articleVatSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }
@@ -185,6 +193,8 @@ public class ArticleView extends AbstractForm<Article>
       articleAgencySelection.bind(model);
       articleClearanceConfigForm.bind(model);
       articleClearanceConfigSelection.bind(model);
+      articleVatForm.bind(model);
+      articleVatSelection.bind(model);
    }
 
    public TextField getArticleName()
@@ -315,5 +325,15 @@ public class ArticleView extends AbstractForm<Article>
    public ArticleClearanceConfigSelection getArticleClearanceConfigSelection()
    {
       return articleClearanceConfigSelection;
+   }
+
+   public ArticleVatForm getArticleVatForm()
+   {
+      return articleVatForm;
+   }
+
+   public ArticleVatSelection getArticleVatSelection()
+   {
+      return articleVatSelection;
    }
 }

@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import java.util.Calendar;
 import javafx.beans.property.SimpleStringProperty;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javaext.format.NumberType;
 import java.util.Locale;
