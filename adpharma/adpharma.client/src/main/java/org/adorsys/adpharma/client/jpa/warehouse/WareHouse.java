@@ -21,8 +21,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("WareHouse_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ToStringField({ "name", "documentLocation" })
-@ListField({ "name", "documentType", "documentLocation" })
+@ToStringField({ "name", "agency" })
+@ListField({ "name", "agency" })
 public class WareHouse implements Cloneable
 {
 
