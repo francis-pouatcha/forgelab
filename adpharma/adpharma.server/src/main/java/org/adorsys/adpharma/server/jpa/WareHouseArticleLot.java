@@ -16,6 +16,8 @@ import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.javaext.admin.PermissionTable;
+import org.adorsys.adpharma.server.jpa.AccessRoleEnum;
 
 @Entity
 @Description("WareHouseArticleLot_description")
