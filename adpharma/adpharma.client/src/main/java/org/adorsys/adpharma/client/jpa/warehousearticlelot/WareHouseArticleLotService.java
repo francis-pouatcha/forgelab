@@ -122,7 +122,7 @@ public class WareHouseArticleLotService
    {
       Entity<ArticleLotTransferManager> entity = Entity.entity(
             transferManager, media);
-      return target.path("{processTransfer").request()
+      return target.path("processTransfer").request()
             .post(entity, WareHouseArticleLot.class);
    }
    
