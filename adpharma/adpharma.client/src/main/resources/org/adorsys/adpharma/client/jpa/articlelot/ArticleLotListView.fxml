@@ -25,6 +25,8 @@
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
+				<Button fx:id="moveToWareHouseButton" layoutX="10.0" layoutY="44.0"
+					mnemonicParsing="false" prefWidth="140.0" text="Move to Store" />
 				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0"
 					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>

@@ -53,9 +53,11 @@ public class ArticleLotListController implements EntityController
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
-	private Event<ArticleLotDetailsManager> createRequestedEvent;
-
-
+	private Event<ArticleLotDetailsManager> detailscreateRequestedEvent;
+	
+	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<ArticleLotTransferManager> transferCreateRequestedEvent;
 
 	@Inject
 	@EntityListPageIndexChangedEvent
@@ -78,6 +80,7 @@ public class ArticleLotListController implements EntityController
 		//		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getDetailsButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
+		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
 		listView.bind(searchInput);
 
 		//		listView.getDataList().getSelectionModel().selectedItemProperty()
@@ -149,7 +152,21 @@ public class ArticleLotListController implements EntityController
 					ArticleLotDetailsManager lotDetailsManager = new ArticleLotDetailsManager();
 					lotDetailsManager.setLotToDetails(selectedItem);
 					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
-					createRequestedEvent.fire(lotDetailsManager);
+					detailscreateRequestedEvent.fire(lotDetailsManager);
+				}
+			}
+				});
+		listView.getMoveToWareHouseButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					ArticleLotTransferManager lotTransferManager = new ArticleLotTransferManager();
+					lotTransferManager.setLotToTransfer(selectedItem);
+					lotTransferManager.setLotQty(selectedItem.getStockQuantity());
+					transferCreateRequestedEvent.fire(lotTransferManager);
 				}
 			}
 				});

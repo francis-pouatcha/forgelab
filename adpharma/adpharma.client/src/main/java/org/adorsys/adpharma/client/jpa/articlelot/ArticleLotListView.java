@@ -40,6 +40,9 @@ public class ArticleLotListView
 	private TextField articleName ;
 
 	private Button searchButton;
+	
+	@FXML
+	private Button moveToWareHouseButton;
 
 	@FXML
 	private Button createButton;
@@ -135,6 +138,11 @@ public class ArticleLotListView
 	public Button getDetailsButton()
 	{
 		return detailsButton;
+	}
+	
+	public Button getMoveToWareHouseButton()
+	{
+		return moveToWareHouseButton;
 	}
 
 	public TableView<ArticleLot> getDataList()
