@@ -1,12 +1,23 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
+import org.adorsys.adpharma.server.jpa.WareHouse;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
+import org.adorsys.adpharma.server.jpa.WareHouseArticleLot_;
 import org.adorsys.adpharma.server.repo.WareHouseArticleLotRepository;
+import org.apache.commons.lang3.text.WordUtils;
 
 @Stateless
 public class WareHouseArticleLotEJB
@@ -25,6 +36,8 @@ public class WareHouseArticleLotEJB
    {
       return repository.save(attach(entity));
    }
+   
+   
 
    public WareHouseArticleLot deleteById(Long id)
    {
@@ -89,4 +102,35 @@ public class WareHouseArticleLotEJB
 
       return entity;
    }
+   
+   @Inject
+	@DocumentProcessedEvent
+	private Event<ArticleLotTransferManager> articleLotTransferEvent ;
+   
+   public WareHouseArticleLot processTransFer(ArticleLotTransferManager lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		WareHouse wareHouse = lotTransferManager.getWareHouse();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		if(articleLot.getStockQuantity().compareTo(qtyToTransfer)<=0) throw new IllegalStateException("qty to transfer must be Smaller than lot qty ");
+	
+		WareHouseArticleLot wareHouseArticleLot = new WareHouseArticleLot();
+		wareHouseArticleLot.setArticleLot(articleLot);
+		wareHouseArticleLot.setWareHouse(wareHouse);
+		@SuppressWarnings("unchecked")
+		List<WareHouseArticleLot> found = findByLike(wareHouseArticleLot, 0, 1, new SingularAttribute[]{WareHouseArticleLot_.articleLot,WareHouseArticleLot_.wareHouse});
+		WareHouseArticleLot wal = null ;
+		if(!found.isEmpty()){
+			 wal = found.iterator().next();
+			wal.setStockQuantity(wal.getStockQuantity().add(qtyToTransfer));
+			update(wal);
+		}else {
+			 wal = new WareHouseArticleLot(articleLot);
+			wal.setWareHouse(wareHouse);
+			wal.setStockQuantity(qtyToTransfer);
+			update(wal);
+		}
+		articleLotTransferEvent.fire(lotTransferManager);
+		
+		return wal ;
+	}
 }

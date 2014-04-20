@@ -31,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.WareHouse;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
@@ -134,10 +135,7 @@ public class ArticleLotEJB
 		return entity;
 	}
 
-	public WareHouseArticleLot processTransFer(ArticleLotTransferManager lotTransferManager){
-		//		TODO 
-		return null ;
-	}
+	
 
 	@Inject
 	@DocumentProcessedEvent
@@ -213,6 +211,14 @@ public class ArticleLotEJB
 			al.calculateTotalAmout();
 			al = create(al);
 		}
+	}
+	
+	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
+		
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		articleLot.setStockQuantity(articleLot.getStockQuantity().subtract(qtyToTransfer));
+		update(articleLot);
 	}
 
 	/**

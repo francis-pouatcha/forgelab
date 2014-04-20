@@ -84,6 +84,7 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	public void addValidators()
 	{
 		qtyToTransfer.focusedProperty().addListener(new TextInputControlFoccusChangedListener<ArticleLotTransferManager>(textInputControlValidator, qtyToTransfer, ArticleLotTransferManager.class, "qtyToTransfer", resourceBundle));
+		
 		// no active validator
 		// no active validator
 	}
@@ -92,7 +93,7 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	{
 		Set<ConstraintViolation<ArticleLotTransferManager>> violations = new HashSet<ConstraintViolation<ArticleLotTransferManager>>();
 		violations.addAll(textInputControlValidator.validate(qtyToTransfer, ArticleLotTransferManager.class, "qtyToTransfer", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(wareHouse, model.wareHouseProperty(), ArticleLotTransferManager.class, "wareHouse", resourceBundle));
+		violations.addAll(toOneAggreggationFieldValidator.validate(wareHouse, model.getWareHouse(), ArticleLotTransferManager.class, "wareHouse", resourceBundle));
 		return violations;
 	}
 

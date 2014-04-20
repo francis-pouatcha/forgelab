@@ -16,15 +16,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchResult;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchService;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSource;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchInput;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchResult;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchService;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
+import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLotTransferService;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -55,7 +52,7 @@ public class ModalArticleLotTransferCreateController {
 	private WareHouseSearchInput searchInput;
 
 	@Inject
-	private ArticleLotDetailsService articleLotDetailsService;
+	private WareHouseArticleLotTransferService articleLotTransferService;
 
 	@Inject
 	@EntityCreateDoneEvent
@@ -71,7 +68,7 @@ public class ModalArticleLotTransferCreateController {
 
 	@PostConstruct
 	public void postConstruct(){
-		lotTransferCreateView.bind(model);
+
 		searchInput.setMax(-1);
 
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
@@ -97,10 +94,11 @@ public class ModalArticleLotTransferCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				Set<ConstraintViolation<ArticleLotTransferManager>> validate = lotTransferCreateView.validate(model);
+				WareHouse wareHouse = lotTransferCreateView.getWareHouse().getSelectionModel().getSelectedItem();
 				if(validate.isEmpty()){
 					Action showConfirm = Dialogs.create().nativeTitleBar().message(resourceBundle.getString("ArticleLot_details_confirmation_description.title")).showConfirm();
 					if(Dialog.Actions.YES.equals(showConfirm)){
-//						articleLotDetailsService.setModel(model).start();
+						articleLotTransferService.setModel(model).start();
 					}else {
 						lotTransferCreateView.closeDialog();
 					}
@@ -108,21 +106,22 @@ public class ModalArticleLotTransferCreateController {
 
 			}
 		});
-		articleLotDetailsService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+		articleLotTransferService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				ArticleLotDetailsService s = (ArticleLotDetailsService) event.getSource();
-				ArticleLot ent = s.getValue();
+				WareHouseArticleLotTransferService s = (WareHouseArticleLotTransferService) event.getSource();
+				WareHouseArticleLot ent = s.getValue();
 				event.consume();
 				s.reset();
-//				articleLotCreateDoneEvent.fire(ent);
-				workingEvent.fire("Article details successfuly !");
+				wareHouseArticleLotCreateDoneEvent.fire(ent);
+				workingEvent.fire("Lot transfered successfuly !");
 				lotTransferCreateView.closeDialog();
 
 			}
 		});
-		articleLotDetailsService.setOnFailed(callFailedEventHandler);
+		articleLotTransferService.setOnFailed(callFailedEventHandler);
 
 		wareHouseSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -144,9 +143,10 @@ public class ModalArticleLotTransferCreateController {
 
 	public void handleModalArticleCreateEvent(@Observes @ModalEntityCreateRequestedEvent ArticleLotTransferManager lotTransferManager){
 		PropertyReader.copy(lotTransferManager, model);
-		ArticleLotArticle articleLot = model.getLotToTransfer().getArticle();
-		wareHouseSearchService.setSearchInputs(searchInput).start();
+		lotTransferCreateView.bind(model);
+
 		lotTransferCreateView.showDiaLog();
+		wareHouseSearchService.setSearchInputs(searchInput).start();
 	}
 
 }

@@ -73,6 +73,19 @@ public class WareHouseArticleLot implements Serializable
    @Column
    @Description("WareHouseArticleLot_articleName_description")
    private String articleName;
+   
+   public WareHouseArticleLot() {
+	// TODO Auto-generated constructor stub
+}
+   
+   public WareHouseArticleLot(ArticleLot articleLot) {
+		internalCip = articleLot.getInternalPic();
+		mainCip = articleLot.getMainPic();
+		secondaryCip = articleLot.getSecondaryPic();
+		articleName = articleLot.getArticleName();
+		this.articleLot = articleLot;
+		stockQuantity = BigDecimal.ZERO;
+	}
 
    public Long getId()
    {

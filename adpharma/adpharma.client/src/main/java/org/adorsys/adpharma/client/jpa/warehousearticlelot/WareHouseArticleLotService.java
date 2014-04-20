@@ -11,6 +11,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotTransferManager;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class WareHouseArticleLotService
@@ -113,6 +114,19 @@ public class WareHouseArticleLotService
       return target.path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
+   
+   //	@POST
+   //	@Path("/processTransfer")
+   //	@Consumes("application/xml")
+   public WareHouseArticleLot processTransfer(ArticleLotTransferManager transferManager)
+   {
+      Entity<ArticleLotTransferManager> entity = Entity.entity(
+            transferManager, media);
+      return target.path("{processTransfer").request()
+            .post(entity, WareHouseArticleLot.class);
+   }
+   
+   
 
    // @POST
    // @Path("/findByLike"

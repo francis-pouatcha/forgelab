@@ -9,8 +9,10 @@ import javax.validation.constraints.NotNull;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.javaext.description.Description;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
 
-public class ArticleLotTransferManager {
+public class ArticleLotTransferManager  {
 	
 	
 	   @Description("ArtilceLotDetailsManager_lotToTransfer_description")
@@ -57,7 +59,13 @@ public class ArticleLotTransferManager {
 
 	   public final void setLotToTransfer(ArticleLot lotToTransfer)
 	   {
-	      this.lotToTransferProperty().set(lotToTransfer);
+	      if (lotToTransfer == null)
+	      {
+	    	  lotToTransfer = new ArticleLot();
+	      }
+	      PropertyReader.copy(lotToTransfer, getLotToTransfer());
+	      lotToTransferProperty().setValue(ObjectUtils.clone(getLotToTransfer()));
+	
 	   }
 	   
 	   public SimpleObjectProperty<WareHouse> wareHouseProperty()
@@ -77,8 +85,15 @@ public class ArticleLotTransferManager {
 
 	   public final void setWareHouse(WareHouse wareHouse)
 	   {
-	      this.wareHouseProperty().set(wareHouse);
+	      if (wareHouse == null)
+	      {
+	    	  wareHouse = new WareHouse();
+	      }
+	      PropertyReader.copy(wareHouse, getWareHouse());
+	      wareHouseProperty().setValue(ObjectUtils.clone(wareHouse));
 	   }
+	   
+	   
 	   
 	   public SimpleObjectProperty<BigDecimal> lotQtyProperty()
 	   {
@@ -99,6 +114,14 @@ public class ArticleLotTransferManager {
 	      this.lotQtyProperty().set(lotQty);
 	   }
 	   
+	  
+
+	   public String toString()
+	   {
+	      return PropertyReader.buildToString(this, "lotToTransfer","wareHouse");
+	   }
+
+	 
 	   
 	   
 }

@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotAgency;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -15,6 +16,7 @@ import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -90,10 +92,14 @@ public class WareHouse implements Cloneable
    {
       return agencyProperty().get();
    }
-
    public final void setAgency(WareHouseAgency agency)
    {
-      this.agencyProperty().set(agency);
+      if (agency == null)
+      {
+         agency = new WareHouseAgency();
+      }
+      PropertyReader.copy(agency, getAgency());
+      agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
 
 

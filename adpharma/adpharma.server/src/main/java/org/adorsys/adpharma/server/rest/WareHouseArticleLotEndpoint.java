@@ -22,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot_;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLotSearchInput;
@@ -51,6 +53,15 @@ public class WareHouseArticleLotEndpoint
    public WareHouseArticleLot create(WareHouseArticleLot entity)
    {
       return detach(ejb.create(entity));
+   }
+   
+   @POST
+   @Path("/processTransfer")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json", "application/xml" })
+   public WareHouseArticleLot processTransfer(ArticleLotTransferManager entity)
+   {
+      return detach(ejb.processTransFer(entity));
    }
 
    @DELETE
