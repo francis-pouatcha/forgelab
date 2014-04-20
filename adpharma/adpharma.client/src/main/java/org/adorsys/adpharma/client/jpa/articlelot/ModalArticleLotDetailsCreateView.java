@@ -40,10 +40,7 @@ public class ModalArticleLotDetailsCreateView extends ApplicationModal{
 	private ComboBox<ProductDetailConfig> detailConfig;
 	private BigDecimalField detailsQty;
 	private BigDecimalField lotQty;
-	@Description("ArtilceLotDetailsManager_targetQty_description")
 	private BigDecimalField targetQty;
-
-	@Description("ArtilceLotDetailsManager_targetPrice_description")
 	private BigDecimalField targetPrice;
 	private Button saveButton ;
 	private Button cancelButton ;

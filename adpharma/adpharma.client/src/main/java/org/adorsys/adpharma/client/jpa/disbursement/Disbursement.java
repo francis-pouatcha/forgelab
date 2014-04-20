@@ -3,13 +3,27 @@ package org.adorsys.adpharma.client.jpa.disbursement;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.list.ListField;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@Description("Disbursement_description")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@ToStringField({ "cashier", "amount" ,"raison"})
+@ListField({ "cashier", "amount", "raison" })
 public class Disbursement implements Cloneable{
 	private Long id;
 	private int version;

@@ -14,6 +14,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
@@ -23,6 +24,7 @@ import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -30,6 +32,8 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.WareHouse;
+import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -40,17 +44,17 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class ArticleLotEJB
 {
 
-   @Inject
-   private ArticleLotRepository repository;
+	@Inject
+	private ArticleLotRepository repository;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private ArticleMerger articleMerger;
 
-   @Inject
-   private VATMerger vATMerger;
+	@Inject
+	private VATMerger vATMerger;
 
 
 	@Inject
@@ -59,79 +63,80 @@ public class ArticleLotEJB
 
 	@EJB
 	private SecurityUtil securityUtil;
-	
-   public ArticleLot create(ArticleLot entity)
-   {
-      return repository.save(attach(entity));
-   }
 
-   public ArticleLot deleteById(Long id)
-   {
-      ArticleLot entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	public ArticleLot create(ArticleLot entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public ArticleLot update(ArticleLot entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public ArticleLot deleteById(Long id)
+	{
+		ArticleLot entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public ArticleLot findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public ArticleLot update(ArticleLot entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public List<ArticleLot> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public ArticleLot findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<ArticleLot> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-   private ArticleLot attach(ArticleLot entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+	private ArticleLot attach(ArticleLot entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-      // aggregated
-      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
+		// aggregated
+		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 
-      return entity;
-   }
-   
+		// aggregated
+		entity.setVat(vATMerger.bindAggregated(entity.getVat()));
+
+		return entity;
+	}
+
+
 
 	@Inject
 	@DocumentProcessedEvent
@@ -175,6 +180,8 @@ public class ArticleLotEJB
 			lot = create(al);
 		}
 
+
+
 		lotToDetails.setStockQuantity(lotToDetails.getStockQuantity().subtract(detailsQty)); // remove details qty to lot stock
 		lotToDetails.calculateTotalAmout();
 		update(lotToDetails);
@@ -205,6 +212,22 @@ public class ArticleLotEJB
 			al.calculateTotalAmout();
 			al = create(al);
 		}
+	}
+
+	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
+
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		articleLot.setStockQuantity(articleLot.getStockQuantity().subtract(qtyToTransfer));
+		update(articleLot);
+	}
+
+	public void handleDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager lotTransferManager){
+
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		articleLot.setStockQuantity(articleLot.getStockQuantity().add(qtyToTransfer));
+		update(articleLot);
 	}
 
 	/**
@@ -296,7 +319,7 @@ public class ArticleLotEJB
 		}
 	}
 	 */
-	
+
 	@Inject
 	private ArticleLotSequenceRepository articleLotSequenceRepository;
 	@SuppressWarnings("unchecked")

@@ -11,12 +11,14 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -123,7 +125,7 @@ public class StockMovementEJB
 		return entity;
 	}
 
-	public void handleDelivery(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
+	public void handleArticleLotDetails(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
 		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
@@ -144,6 +146,54 @@ public class StockMovementEJB
 		sm.setTotalPurchasingPrice(lotToDetails.getPurchasePricePU().multiply(lotDetailsManager.getDetailsQty()));
 		if(lotToDetails.getSalesPricePU()!=null)
 			sm.setTotalSalesPrice(lotToDetails.getSalesPricePU().multiply(lotDetailsManager.getDetailsQty()));
+		sm = create(sm);
+	}
+	
+	public void handleArticleLotTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager  lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(articleLot.getInternalPic());
+		sm.setMovementType(StockMovementType.OUT);
+		sm.setArticle(articleLot.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		sm = create(sm);
+	}
+	
+	public void handleArticleLotDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager  lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(articleLot.getInternalPic());
+		sm.setMovementType(StockMovementType.IN);
+		sm.setArticle(articleLot.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
 		sm = create(sm);
 	}
 

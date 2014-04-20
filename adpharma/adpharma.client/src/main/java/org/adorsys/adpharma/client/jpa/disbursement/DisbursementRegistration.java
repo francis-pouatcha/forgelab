@@ -50,7 +50,7 @@ public class DisbursementRegistration extends DomainComponentRegistration
 	   @Override
 	   public String getComponentPermission()
 	   {
-	      return "org.adorsys.adpharma.server.jpa.CashOut";
+	      return "org.adorsys.adpharma.server.jpa.Disbursement";
 	   }
 
 
