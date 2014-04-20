@@ -30,54 +30,54 @@ import org.adorsys.adpharma.client.jpa.documentstore.DocumentStore;
 import org.adorsys.adpharma.client.jpa.documenttype.DocumentTypeConverter;
 import org.adorsys.adpharma.client.jpa.documenttype.DocumentTypeListCellFatory;
 
-public class WareHouseArticleLotViewSearchFields extends AbstractForm<DocumentStore>
+public class WareHouseArticleLotViewSearchFields extends AbstractForm<WareHouseArticleLot>
 {
 
-   private TextField documentNumber;
+	private TextField documentNumber;
 
-   private TextField documentLocation;
+	private TextField documentLocation;
 
-   @Inject
-   @Bundle({ CrudKeys.class, DocumentStore.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, DocumentStore.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   @Bundle(DocumentType.class)
-   private ResourceBundle documentTypeBundle;
+	@Inject
+	@Bundle(DocumentType.class)
+	private ResourceBundle documentTypeBundle;
 
-   @Inject
-   private DocumentTypeConverter documentTypeConverter;
+	@Inject
+	private DocumentTypeConverter documentTypeConverter;
 
-   @Inject
-   private DocumentTypeListCellFatory documentTypeListCellFatory;
+	@Inject
+	private DocumentTypeListCellFatory documentTypeListCellFatory;
 
-   @Inject
-   private Locale locale;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      documentNumber = viewBuilder.addTextField("DocumentStore_documentNumber_description.title", "documentNumber", resourceBundle);
-      documentLocation = viewBuilder.addTextField("DocumentStore_documentLocation_description.title", "documentLocation", resourceBundle);
+	@PostConstruct
+	public void postConstruct()
+	{
+		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		documentNumber = viewBuilder.addTextField("DocumentStore_documentNumber_description.title", "documentNumber", resourceBundle);
+		documentLocation = viewBuilder.addTextField("DocumentStore_documentLocation_description.title", "documentLocation", resourceBundle);
 
-      gridRows = viewBuilder.toRows();
-   }
+		gridRows = viewBuilder.toRows();
+	}
 
-   public void bind(DocumentStore model)
-   {
-      documentNumber.textProperty().bindBidirectional(model.documentNumberProperty());
-      documentLocation.textProperty().bindBidirectional(model.documentLocationProperty());
+	public void bind(WareHouseArticleLot model)
+	{
+		//      documentNumber.textProperty().bindBidirectional(model.documentNumberProperty());
+		//      documentLocation.textProperty().bindBidirectional(model.documentLocationProperty());
 
-   }
+	}
 
-   public TextField getDocumentNumber()
-   {
-      return documentNumber;
-   }
+	public TextField getDocumentNumber()
+	{
+		return documentNumber;
+	}
 
-   public TextField getDocumentLocation()
-   {
-      return documentLocation;
-   }
+	public TextField getDocumentLocation()
+	{
+		return documentLocation;
+	}
 }

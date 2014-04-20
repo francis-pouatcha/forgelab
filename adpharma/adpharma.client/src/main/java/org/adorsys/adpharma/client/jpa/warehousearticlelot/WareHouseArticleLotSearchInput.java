@@ -23,7 +23,7 @@ public class WareHouseArticleLotSearchInput
    /**
     * The entity holding search inputs.
     */
-   private DocumentStore entity;
+   private WareHouseArticleLot entity = new WareHouseArticleLot();
 
    /**
     * The start cursor
@@ -40,12 +40,12 @@ public class WareHouseArticleLotSearchInput
     */
    private List<String> fieldNames = new ArrayList<String>();
 
-   public DocumentStore getEntity()
+   public WareHouseArticleLot getEntity()
    {
       return entity;
    }
 
-   public void setEntity(DocumentStore entity)
+   public void setEntity(WareHouseArticleLot entity)
    {
       this.entity = entity;
    }

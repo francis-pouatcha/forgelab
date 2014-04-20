@@ -14,6 +14,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
@@ -135,7 +136,7 @@ public class ArticleLotEJB
 		return entity;
 	}
 
-	
+
 
 	@Inject
 	@DocumentProcessedEvent
@@ -212,12 +213,20 @@ public class ArticleLotEJB
 			al = create(al);
 		}
 	}
-	
+
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
-		
+
 		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
 		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
 		articleLot.setStockQuantity(articleLot.getStockQuantity().subtract(qtyToTransfer));
+		update(articleLot);
+	}
+
+	public void handleDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager lotTransferManager){
+
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		articleLot.setStockQuantity(articleLot.getStockQuantity().add(qtyToTransfer));
 		update(articleLot);
 	}
 

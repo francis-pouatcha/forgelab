@@ -8,6 +8,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
@@ -122,15 +123,38 @@ public class WareHouseArticleLotEJB
 		if(!found.isEmpty()){
 			wal = found.iterator().next();
 			wal.setStockQuantity(wal.getStockQuantity().add(qtyToTransfer));
-			update(wal);
+			wal =update(wal);
 		}else {
 			wal = new WareHouseArticleLot(articleLot);
 			wal.setWareHouse(wareHouse);
 			wal.setStockQuantity(qtyToTransfer);
-			update(wal);
+			wal=update(wal);
 		}
 		articleLotTransferEvent.fire(lotTransferManager);
 
 		return wal ;
+	}
+
+	@Inject
+	@DestockingProcessedEvent
+	private Event<ArticleLotTransferManager> articleLotDestockingEvent ;
+	
+	public WareHouseArticleLot processDestoking(ArticleLotTransferManager lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		WareHouse wareHouse = lotTransferManager.getWareHouse();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+
+		WareHouseArticleLot wareHouseArticleLot = new WareHouseArticleLot();
+		wareHouseArticleLot.setArticleLot(articleLot);
+		wareHouseArticleLot.setWareHouse(wareHouse);
+		@SuppressWarnings("unchecked")
+		List<WareHouseArticleLot> found = findBy(wareHouseArticleLot, 0, 1, new SingularAttribute[]{WareHouseArticleLot_.articleLot,WareHouseArticleLot_.wareHouse});
+		if(found.isEmpty()) throw new IllegalStateException("Unable to find this lot in this store ");
+		WareHouseArticleLot wal = found.iterator().next();
+		wal.setStockQuantity(wal.getStockQuantity().subtract(qtyToTransfer));
+
+		articleLotDestockingEvent.fire(lotTransferManager);
+
+		return update(wal) ;
 	}
 }

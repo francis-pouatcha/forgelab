@@ -11,6 +11,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
@@ -157,6 +158,30 @@ public class StockMovementEJB
 		sm.setAgency(creatingUser.getAgency());
 		sm.setInternalPic(articleLot.getInternalPic());
 		sm.setMovementType(StockMovementType.OUT);
+		sm.setArticle(articleLot.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		sm = create(sm);
+	}
+	
+	public void handleArticleLotDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager  lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(articleLot.getInternalPic());
+		sm.setMovementType(StockMovementType.IN);
 		sm.setArticle(articleLot.getArticle());
 		sm.setCreatingUser(creatingUser);
 		sm.setCreationDate(creationDate);

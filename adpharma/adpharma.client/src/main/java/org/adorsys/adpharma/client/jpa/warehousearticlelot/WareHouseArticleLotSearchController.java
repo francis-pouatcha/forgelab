@@ -49,7 +49,7 @@ public class WareHouseArticleLotSearchController implements EntityController {
 	@EntitySearchDoneEvent
 	private Event<WareHouseArticleLotSearchResult> searchDoneEvent;
 
-	private DocumentStore model;
+	private WareHouseArticleLot model;
 
 	@Inject
 	private ErrorMessageDialog errorMessageDialog;
@@ -180,7 +180,7 @@ public class WareHouseArticleLotSearchController implements EntityController {
 	}
 
 	public void handleNewModelEvent(
-			@Observes @SearchModelEvent DocumentStore model) {
+			@Observes @SearchModelEvent WareHouseArticleLot model) {
 		this.model = model;
 		searchView.bind(this.model);
 	}

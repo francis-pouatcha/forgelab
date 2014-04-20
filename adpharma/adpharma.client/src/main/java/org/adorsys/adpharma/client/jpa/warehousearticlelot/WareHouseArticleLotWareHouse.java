@@ -28,6 +28,7 @@ public class WareHouseArticleLotWareHouse implements Association<WareHouseArticl
 
 	   public WareHouseArticleLotWareHouse()
 	   {
+		  
 	   }
 
 	   public WareHouseArticleLotWareHouse(WareHouse entity)
@@ -61,7 +62,7 @@ public class WareHouseArticleLotWareHouse implements Association<WareHouseArticl
 	   {
 	      if (name == null)
 	      {
-	         name = new SimpleStringProperty();
+	         name = new SimpleStringProperty("ALL WAREHOUSE");
 	      }
 	      return name;
 	   }

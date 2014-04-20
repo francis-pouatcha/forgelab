@@ -63,6 +63,16 @@ public class WareHouseArticleLotEndpoint
    {
       return detach(ejb.processTransFer(entity));
    }
+   
+   
+   @POST
+   @Path("/processDestocking")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json", "application/xml" })
+   public WareHouseArticleLot processDestocking(ArticleLotTransferManager entity)
+   {
+      return detach(ejb.processDestoking(entity));
+   }
 
    @DELETE
    @Path("/{id:[0-9][0-9]*}")

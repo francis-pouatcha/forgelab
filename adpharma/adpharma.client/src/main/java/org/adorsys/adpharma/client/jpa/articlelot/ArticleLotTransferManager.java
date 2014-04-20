@@ -41,6 +41,11 @@ public class ArticleLotTransferManager  {
 	   {
 	      return qtyToTransferProperty().get();
 	   }
+	   
+	   public final void setQtyToTransfer(BigDecimal qtyToTransfer)
+	   {
+	      this.qtyToTransferProperty().set(qtyToTransfer);
+	   }
 
 	   public SimpleObjectProperty<ArticleLot> lotToTransferProperty()
 	   {

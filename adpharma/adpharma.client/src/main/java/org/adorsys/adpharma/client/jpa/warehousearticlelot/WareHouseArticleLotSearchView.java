@@ -60,7 +60,7 @@ public class WareHouseArticleLotSearchView
       searchButton.setDefaultButton(true);
    }
 
-   public void bind(DocumentStore model)
+   public void bind(WareHouseArticleLot model)
    {
       view.bind(model);
    }
