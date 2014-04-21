@@ -7,16 +7,12 @@ import java.util.Set;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -32,6 +28,8 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.SecurityUtil;
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
@@ -176,7 +174,11 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@WorkingInformationEvent
 	private Event<String> workingInfosEvent;
-
+	
+	@Inject
+	@PrintCustomerInvoiceRequestedEvent
+	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -527,6 +529,9 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				Action showConfirm = Dialogs.create().nativeTitleBar().message("would You Like to Print Invoice ?").showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
+					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
+				}
 				PropertyReader.copy(entity, displayedEntity);
 				salesOrderRequestEvent.fire(new SalesOrder());
 				workingInfosEvent.fire("Sales Number : "+entity.getSoNumber()+" Closed successfully!");
