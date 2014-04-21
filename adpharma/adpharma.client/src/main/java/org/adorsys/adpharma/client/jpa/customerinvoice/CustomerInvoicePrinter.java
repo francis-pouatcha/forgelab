@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.print.JobSettings;
+import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -17,10 +19,13 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
+import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -122,8 +127,15 @@ public class CustomerInvoicePrinter {
 	    			scene.getStylesheets().add("/styles/application.css");
 	    			dialog.setScene(scene);
 	    			dialog.setTitle(invoiceData.getCustomerInvoice().getInvoiceNumber());
+	    			dialog.show();
 
+	    			
 	    			PrinterJob job = PrinterJob.createPrinterJob();
+	    			job.showPrintDialog(dialog);
+					JobSettings jobSettings = job.getJobSettings();
+	    			int copies = jobSettings.getCopies();
+	    			@SuppressWarnings("unused")
+	    			Printer printer = job.getPrinter();
 	    			if (job != null) {
 	    				boolean success =  false;
 	    				for (VBox page : pages) {
@@ -134,7 +146,7 @@ public class CustomerInvoicePrinter {
 	    					job.endJob();
 	    				}
 	    			}
-	    			dialog.show();
+	    			
 	    		} else {
 	    			worker.addItems(invoiceData.getCustomerInvoiceItemSearchResult().getResultList());
 	    			invoiceItemSearchService.setCustomerInvoicePrintTemplateWorker(worker).setCustomerInvoicePrinterData(invoiceData).start();
@@ -162,5 +174,17 @@ public class CustomerInvoicePrinter {
 					}
 				});
 	}
-
+//
+//	public void handlePrintPaymentReceiptRequestedEvent(
+//			@Observes @PrintPaymentReceiptRequestedEvent PaymentId paymentId) {
+//		Payment payment = 
+//		CustomerInvoice customerInvoice = new CustomerInvoice();
+//		CustomerInvoiceSalesOrder salesOrder = new CustomerInvoiceSalesOrder();
+//		salesOrder.setId(salesOrderId.getId());
+//		customerInvoice.setSalesOrder(salesOrder);
+//		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
+//		searchInputs.setEntity(customerInvoice);
+//		searchInputs.getFieldNames().add("salesOrder");
+//		searchService.setPaymentId(paymentId).start();
+//	}
 }
