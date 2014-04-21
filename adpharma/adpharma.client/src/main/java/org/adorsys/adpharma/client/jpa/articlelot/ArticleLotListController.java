@@ -20,6 +20,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -54,7 +55,7 @@ public class ArticleLotListController implements EntityController
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ArticleLotDetailsManager> detailscreateRequestedEvent;
-	
+
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ArticleLotTransferManager> transferCreateRequestedEvent;
@@ -153,6 +154,7 @@ public class ArticleLotListController implements EntityController
 					lotDetailsManager.setLotToDetails(selectedItem);
 					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
 					detailscreateRequestedEvent.fire(lotDetailsManager);
+					
 				}
 			}
 				});
@@ -244,6 +246,12 @@ public class ArticleLotListController implements EntityController
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent ArticleLot createdEntity)
 	{
 		listView.getDataList().getItems().add(0, createdEntity);
+	}
+	
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent WareHouseArticleLot wareHouseArticleLot)
+	{
+		
+		PropertyReader.copy(wareHouseArticleLot.getArticleLot(), listView.getDataList().getSelectionModel().getSelectedItem());
 	}
 
 	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent ArticleLot removedEntity)

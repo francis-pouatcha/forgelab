@@ -204,9 +204,10 @@ public class WareHouseArticleLotEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> wareHouseFields = Arrays.asList("name");
+   private static final List<String> wareHouseFields = Arrays.asList("name","agency");
 
-   private static final List<String> articleLotFields = Arrays.asList("internalPic");
+   private static final List<String> articleLotFields = Arrays.asList("internalPic","mainPic","secondaryPic","articleName","expirationDate","stockQuantity","salesPricePU"
+		   ,"purchasePricePU","totalPurchasePrice","totalSalePrice","creationDate","vat");
 
    private WareHouseArticleLot detach(WareHouseArticleLot entity)
    {

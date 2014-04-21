@@ -80,9 +80,9 @@ public class LoginViewSearchFields extends AbstractForm<Login>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle);
-      email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
+//      email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
       fullName = viewBuilder.addTextField("Login_fullName_description.title", "fullName", resourceBundle);
-      password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);
+//      password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);
       disableLogin = viewBuilder.addCheckBox("Login_disableLogin_description.title", "disableLogin", resourceBundle);
       accountLocked = viewBuilder.addCheckBox("Login_accountLocked_description.title", "accountLocked", resourceBundle);
       saleKey = viewBuilder.addTextField("Login_saleKey_description.title", "saleKey", resourceBundle);
@@ -93,9 +93,9 @@ public class LoginViewSearchFields extends AbstractForm<Login>
    public void bind(Login model)
    {
       loginName.textProperty().bindBidirectional(model.loginNameProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
+//      email.textProperty().bindBidirectional(model.emailProperty());
       fullName.textProperty().bindBidirectional(model.fullNameProperty());
-      password.textProperty().bindBidirectional(model.passwordProperty());
+//      password.textProperty().bindBidirectional(model.passwordProperty());
       disableLogin.textProperty().bindBidirectional(model.disableLoginProperty(), new BooleanStringConverter());
       accountLocked.textProperty().bindBidirectional(model.accountLockedProperty(), new BooleanStringConverter());
       saleKey.textProperty().bindBidirectional(model.saleKeyProperty());
