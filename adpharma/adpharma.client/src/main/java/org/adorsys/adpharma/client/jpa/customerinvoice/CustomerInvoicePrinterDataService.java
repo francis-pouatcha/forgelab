@@ -52,12 +52,12 @@ public class CustomerInvoicePrinterDataService extends Service<CustomerInvoicePr
             CustomerInvoicePrinterData result = null;
             
             CustomerInvoice customerInvoice = searchInputs.getEntity();
-            customerInvoice = customerInvoiceService.findById(customerInvoice.getId());
-//            CustomerInvoiceSearchResult invoiceSearchResult = customerInvoiceService.findByLike(searchInputs);
-//            if (invoiceSearchResult.getResultList().isEmpty()) {
-//				return result;
-//			}
-//            CustomerInvoice customerInvoice = invoiceSearchResult.getResultList().iterator().next();
+//            customerInvoice = customerInvoiceService.findById(customerInvoice.getId());
+            CustomerInvoiceSearchResult invoiceSearchResult = customerInvoiceService.findByLike(searchInputs);
+            if (invoiceSearchResult.getResultList().isEmpty()) {
+				return result;
+			}
+            customerInvoice = invoiceSearchResult.getResultList().iterator().next();
             Agency agency = agencyService.findById(customerInvoice.getAgency().getId());
             Company company = companyService.findById(agency.getCompany().getId());
             Login login = loginService.findById(customerInvoice.getCreatingUser().getId());
