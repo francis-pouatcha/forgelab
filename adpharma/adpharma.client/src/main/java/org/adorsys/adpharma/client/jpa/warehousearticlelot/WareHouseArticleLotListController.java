@@ -37,6 +37,9 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +69,10 @@ public class WareHouseArticleLotListController implements EntityController
 	@EntityListPageIndexChangedEvent
 	private Event<WareHouseArticleLotSearchResult> entityListPageIndexChangedEvent;
 
+	@Inject
+	@WorkingInformationEvent
+	private Event<String> workingInformationEvent ;
+
 	private WareHouseArticleLotSearchResult searchResult;
 
 	@Inject
@@ -83,11 +90,18 @@ public class WareHouseArticleLotListController implements EntityController
 	@Inject
 	private WareHouseArticleLotRegistration registration;
 
+	@Inject
+	private ServiceCallFailedEventHandler callFailedEventHandler ;
+	
+	@Inject
+	private WareHouseArticleLot selectedItem ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
 		listView.getTransferToSaleButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
+		listView.getTransferToSaleButton().disableProperty().bind(articleLotDestockingService.runningProperty());
 		listView.bind(searchInput);
 
 		//      listView.getDataList().getSelectionModel().selectedItemProperty()
@@ -102,6 +116,27 @@ public class WareHouseArticleLotListController implements EntityController
 		//                     selectionEvent.fire(newValue);
 		//               }
 		//            });
+
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+		
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<WareHouseArticleLot>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends WareHouseArticleLot> observable,
+					WareHouseArticleLot oldValue, WareHouseArticleLot newValue) {
+				if(newValue!=null)
+					PropertyReader.copy(newValue, selectedItem);
+				
+			}
+		});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -185,7 +220,7 @@ public class WareHouseArticleLotListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				WareHouseArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+//				WareHouseArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if (selectedItem != null){
 					String showTextInput = Dialogs.create().nativeTitleBar().message("Qty to Transfer :").showTextInput("1");
 					BigDecimal transferdQty = BigDecimal.valueOf(NumberUtils.toDouble(showTextInput));
@@ -199,7 +234,10 @@ public class WareHouseArticleLotListController implements EntityController
 						PropertyReader.copy(selectedItem.getArticleLot(), articleLot);
 						PropertyReader.copy(selectedItem.getWareHouse(), wareHouse);
 						alm.setQtyToTransfer(transferdQty);
+						alm.setLotToTransfer(articleLot);
+						alm.setWareHouse(wareHouse);
 						articleLotDestockingService.setModel(alm ).start();
+
 					}
 				}
 			}
@@ -213,19 +251,14 @@ public class WareHouseArticleLotListController implements EntityController
 				WareHouseArticleLot result = s.getValue();
 				event.consume();
 				s.reset();
-				//                  TODO refresh selected item in the list
+				if(selectedItem!=null&&selectedItem.getId()!=null){
+					PropertyReader.copy(result, listView.getDataList().getSelectionModel().getSelectedItem());
+				}
+				workingInformationEvent.fire("destocking done successfuly !");
 
 			}
 		});
-		articleLotDestockingService.setOnFailed(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				WareHouseArticleLotDestockingService s = (WareHouseArticleLotDestockingService) event.getSource();
-				s.reset();				
-			}
-		});
-
+		articleLotDestockingService.setOnFailed(callFailedEventHandler) ;
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{
 			@Override

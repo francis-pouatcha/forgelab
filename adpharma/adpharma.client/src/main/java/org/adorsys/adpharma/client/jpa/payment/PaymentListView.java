@@ -87,7 +87,7 @@ public class PaymentListView
       viewBuilder.addStringColumn(dataList, "cashDrawer", "Payment_cashDrawer_description.title", resourceBundle);
       viewBuilder.addEnumColumn(dataList, "paymentMode", "Payment_paymentMode_description.title", resourceBundle, paymentModeConverter);
       // Field not displayed in table
-      viewBuilder.addStringColumn(dataList, "customer", "Payment_paidBy_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "paidBy", "Payment_paidBy_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

@@ -94,13 +94,13 @@ public class CustomerViewSearchFields extends AbstractForm<Customer>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
-      lastName = viewBuilder.addTextField("Customer_lastName_description.title", "lastName", resourceBundle);
+//      firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
+//      lastName = viewBuilder.addTextField("Customer_lastName_description.title", "lastName", resourceBundle);
       fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
-      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
-      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
-      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
-      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
+//      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
+//      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
+//      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
+//      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
       creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
       discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
       serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle);
@@ -110,16 +110,16 @@ public class CustomerViewSearchFields extends AbstractForm<Customer>
 
    public void bind(Customer model)
    {
-      firstName.textProperty().bindBidirectional(model.firstNameProperty());
-      lastName.textProperty().bindBidirectional(model.lastNameProperty());
+//      firstName.textProperty().bindBidirectional(model.firstNameProperty());
+//      lastName.textProperty().bindBidirectional(model.lastNameProperty());
       fullName.textProperty().bindBidirectional(model.fullNameProperty());
-      landLinePhone.textProperty().bindBidirectional(model.landLinePhoneProperty());
-      mobile.textProperty().bindBidirectional(model.mobileProperty());
-      fax.textProperty().bindBidirectional(model.faxProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
+//      landLinePhone.textProperty().bindBidirectional(model.landLinePhoneProperty());
+//      mobile.textProperty().bindBidirectional(model.mobileProperty());
+//      fax.textProperty().bindBidirectional(model.faxProperty());
+//      email.textProperty().bindBidirectional(model.emailProperty());
       creditAuthorized.textProperty().bindBidirectional(model.creditAuthorizedProperty(), new BooleanStringConverter());
       discountAuthorized.textProperty().bindBidirectional(model.discountAuthorizedProperty(), new BooleanStringConverter());
-      serialNumber.textProperty().bindBidirectional(model.serialNumberProperty());
+//      serialNumber.textProperty().bindBidirectional(model.serialNumberProperty());
 
    }
 

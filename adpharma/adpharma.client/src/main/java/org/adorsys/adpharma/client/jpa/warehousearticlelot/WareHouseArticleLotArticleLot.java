@@ -1,6 +1,9 @@
 package org.adorsys.adpharma.client.jpa.warehousearticlelot;
 
+import java.math.BigDecimal;
+
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +29,8 @@ public class WareHouseArticleLotArticleLot implements Association<WareHouseArtic
 	   private int version;
 
 	   private SimpleStringProperty articleName;
+	   
+	   private SimpleObjectProperty<BigDecimal> stockQuantity;
 
 	   public WareHouseArticleLotArticleLot()
 	   {
@@ -75,6 +80,25 @@ public class WareHouseArticleLotArticleLot implements Association<WareHouseArtic
 	   public final void setArticleName(String articleName)
 	   {
 	      this.articleNameProperty().set(articleName);
+	   }
+	   
+	   public SimpleObjectProperty<BigDecimal> stockQuantityProperty()
+	   {
+	      if (stockQuantity == null)
+	      {
+	         stockQuantity = new SimpleObjectProperty<BigDecimal>();
+	      }
+	      return stockQuantity;
+	   }
+
+	   public BigDecimal getStockQuantity()
+	   {
+	      return stockQuantityProperty().get();
+	   }
+
+	   public final void setStockQuantity(BigDecimal stockQuantity)
+	   {
+	      this.stockQuantityProperty().set(stockQuantity);
 	   }
 
 	   @Override

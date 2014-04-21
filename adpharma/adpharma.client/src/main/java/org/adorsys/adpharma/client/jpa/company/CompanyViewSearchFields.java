@@ -63,16 +63,16 @@ public class CompanyViewSearchFields extends AbstractForm<Company>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       displayName = viewBuilder.addTextField("Company_displayName_description.title", "displayName", resourceBundle);
-      phone = viewBuilder.addTextField("Company_phone_description.title", "phone", resourceBundle);
-      fax = viewBuilder.addTextField("Company_fax_description.title", "fax", resourceBundle);
+//      phone = viewBuilder.addTextField("Company_phone_description.title", "phone", resourceBundle);
+//      fax = viewBuilder.addTextField("Company_fax_description.title", "fax", resourceBundle);
       siteManager = viewBuilder.addTextField("Company_siteManager_description.title", "siteManager", resourceBundle);
-      email = viewBuilder.addTextField("Company_email_description.title", "email", resourceBundle);
-      street = viewBuilder.addTextField("Company_street_description.title", "street", resourceBundle);
-      zipCode = viewBuilder.addTextField("Company_zipCode_description.title", "zipCode", resourceBundle);
-      city = viewBuilder.addTextField("Company_city_description.title", "city", resourceBundle);
-      country = viewBuilder.addTextField("Company_country_description.title", "country", resourceBundle);
-      siteInternet = viewBuilder.addTextField("Company_siteInternet_description.title", "siteInternet", resourceBundle);
-      mobile = viewBuilder.addTextField("Company_mobile_description.title", "mobile", resourceBundle);
+//      email = viewBuilder.addTextField("Company_email_description.title", "email", resourceBundle);
+//      street = viewBuilder.addTextField("Company_street_description.title", "street", resourceBundle);
+//      zipCode = viewBuilder.addTextField("Company_zipCode_description.title", "zipCode", resourceBundle);
+//      city = viewBuilder.addTextField("Company_city_description.title", "city", resourceBundle);
+//      country = viewBuilder.addTextField("Company_country_description.title", "country", resourceBundle);
+//      siteInternet = viewBuilder.addTextField("Company_siteInternet_description.title", "siteInternet", resourceBundle);
+//      mobile = viewBuilder.addTextField("Company_mobile_description.title", "mobile", resourceBundle);
       registerNumber = viewBuilder.addTextField("Company_registerNumber_description.title", "registerNumber", resourceBundle);
 
       gridRows = viewBuilder.toRows();
@@ -81,16 +81,16 @@ public class CompanyViewSearchFields extends AbstractForm<Company>
    public void bind(Company model)
    {
       displayName.textProperty().bindBidirectional(model.displayNameProperty());
-      phone.textProperty().bindBidirectional(model.phoneProperty());
-      fax.textProperty().bindBidirectional(model.faxProperty());
+//      phone.textProperty().bindBidirectional(model.phoneProperty());
+//      fax.textProperty().bindBidirectional(model.faxProperty());
       siteManager.textProperty().bindBidirectional(model.siteManagerProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
-      street.textProperty().bindBidirectional(model.streetProperty());
-      zipCode.textProperty().bindBidirectional(model.zipCodeProperty());
-      city.textProperty().bindBidirectional(model.cityProperty());
-      country.textProperty().bindBidirectional(model.countryProperty());
-      siteInternet.textProperty().bindBidirectional(model.siteInternetProperty());
-      mobile.textProperty().bindBidirectional(model.mobileProperty());
+//      email.textProperty().bindBidirectional(model.emailProperty());
+//      street.textProperty().bindBidirectional(model.streetProperty());
+//      zipCode.textProperty().bindBidirectional(model.zipCodeProperty());
+//      city.textProperty().bindBidirectional(model.cityProperty());
+//      country.textProperty().bindBidirectional(model.countryProperty());
+//      siteInternet.textProperty().bindBidirectional(model.siteInternetProperty());
+//      mobile.textProperty().bindBidirectional(model.mobileProperty());
       registerNumber.textProperty().bindBidirectional(model.registerNumberProperty());
 
    }

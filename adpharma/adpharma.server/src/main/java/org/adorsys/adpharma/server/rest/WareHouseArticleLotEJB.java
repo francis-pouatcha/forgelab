@@ -109,7 +109,7 @@ public class WareHouseArticleLotEJB
 	private Event<ArticleLotTransferManager> articleLotTransferEvent ;
 
 	public WareHouseArticleLot processTransFer(ArticleLotTransferManager lotTransferManager){
-		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		ArticleLot articleLot = articleLotEJB.findById(lotTransferManager.getLotToTransfer().getId());
 		WareHouse wareHouse = lotTransferManager.getWareHouse();
 		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
 		if(articleLot.getStockQuantity().compareTo(qtyToTransfer)<0) throw new IllegalStateException("qty to transfer must be Smaller than lot qty ");
@@ -139,8 +139,11 @@ public class WareHouseArticleLotEJB
 	@DestockingProcessedEvent
 	private Event<ArticleLotTransferManager> articleLotDestockingEvent ;
 	
+	@Inject
+	private ArticleLotEJB articleLotEJB;
+	
 	public WareHouseArticleLot processDestoking(ArticleLotTransferManager lotTransferManager){
-		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		ArticleLot articleLot = articleLotEJB.findById(lotTransferManager.getLotToTransfer().getId());
 		WareHouse wareHouse = lotTransferManager.getWareHouse();
 		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
 
@@ -152,7 +155,8 @@ public class WareHouseArticleLotEJB
 		if(found.isEmpty()) throw new IllegalStateException("Unable to find this lot in this store ");
 		WareHouseArticleLot wal = found.iterator().next();
 		wal.setStockQuantity(wal.getStockQuantity().subtract(qtyToTransfer));
-
+        
+		lotTransferManager.setLotToTransfer(articleLot);
 		articleLotDestockingEvent.fire(lotTransferManager);
 
 		return update(wal) ;
