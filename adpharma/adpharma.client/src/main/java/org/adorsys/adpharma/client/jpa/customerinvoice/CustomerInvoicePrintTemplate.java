@@ -386,11 +386,21 @@ public class CustomerInvoicePrintTemplate {
 		rowIndex++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text email = new Text(
-				resourceBundle.getString("Company_registerNumber_description.title")
-						+ " " + company.getRegisterNumber());
+				resourceBundle.getString("Company_email_description.title")
+						+ " " + company.getEmail());
 		headerPane.add(email, 0, rowIndex, colCount, 1);
 		GridPane.setHalignment(email, HPos.LEFT);
 		GridPane.setValignment(email, VPos.BOTTOM);
+		
+		// ROW 6
+		rowIndex++;
+		headerPane.getRowConstraints().add(mainRowHeight);
+		Text registerNumber = new Text(
+				resourceBundle.getString("Company_registerNumber_description.title")
+						+ " " + company.getRegisterNumber());
+		headerPane.add(registerNumber, 0, rowIndex, colCount, 1);
+		GridPane.setHalignment(registerNumber, HPos.LEFT);
+		GridPane.setValignment(registerNumber, VPos.BOTTOM);
 
 		// ROW (7)
 		rowIndex++;
