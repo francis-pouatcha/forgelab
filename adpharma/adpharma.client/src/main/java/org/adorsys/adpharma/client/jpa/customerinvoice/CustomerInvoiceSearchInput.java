@@ -47,7 +47,7 @@ public class CustomerInvoiceSearchInput
 
    public void setEntity(CustomerInvoice entity)
    {
-      this.entity = entity;
+      this.entity = entity = new CustomerInvoice();
    }
 
    public List<String> getFieldNames()

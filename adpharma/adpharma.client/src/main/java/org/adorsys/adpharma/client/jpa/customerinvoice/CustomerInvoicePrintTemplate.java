@@ -42,12 +42,12 @@ public class CustomerInvoicePrintTemplate {
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	Font boldFont = boldFont();
-	Printer printer = Printer.getDefaultPrinter();
-	private PageLayout pageLayout = printer.createPageLayout(Paper.NA_LETTER,
-			PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
+//	Printer printer = Printer.getDefaultPrinter();
+//	private PageLayout pageLayout = printer.createPageLayout(Paper.NA_LETTER,
+//			PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
 
-	private double printableWidth = pageLayout.getPrintableWidth();
-	private double printableHeight = pageLayout.getPrintableHeight();
+	private double printableWidth = Paper.A4.getWidth() ;
+	private double printableHeight = Paper.A4.getHeight();
 	private double width = printableWidth;
 	private RowConstraints mainRowHeight = new RowConstraints();
 	private RowConstraints doubleRowHeight = new RowConstraints();
@@ -487,7 +487,6 @@ public class CustomerInvoicePrintTemplate {
 			sppuBox.setPadding(insets);
 			totalPriceBox.setAlignment(Pos.TOP_RIGHT);
 			totalPriceBox.setPadding(insets);
-
 		}
 
 		public VBox getCipBox() {
