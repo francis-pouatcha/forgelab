@@ -48,7 +48,7 @@ public class WareHouseArticleLotSearchController implements EntityController {
 	@Inject
 	@EntitySearchDoneEvent
 	private Event<WareHouseArticleLotSearchResult> searchDoneEvent;
-
+	@Inject
 	private WareHouseArticleLot model;
 
 	@Inject
@@ -67,7 +67,7 @@ public class WareHouseArticleLotSearchController implements EntityController {
 					@Override
 					public void handle(ActionEvent e) {
 						searchService.setSearchInputs(buildSearchInputs())
-								.start();
+						.start();
 					}
 				});
 
@@ -106,7 +106,7 @@ public class WareHouseArticleLotSearchController implements EntityController {
 
 		// Disable search button during search is running.
 		searchView.getSearchButton().disableProperty()
-				.bind(searchService.runningProperty());
+		.bind(searchService.runningProperty());
 
 		// Reset search fields on action
 		searchView.getResetButton().setOnAction(
