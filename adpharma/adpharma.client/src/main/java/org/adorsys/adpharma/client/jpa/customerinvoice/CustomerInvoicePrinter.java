@@ -36,19 +36,19 @@ import org.apache.commons.lang3.StringUtils;
 public class CustomerInvoicePrinter {
 
 	@Inject
-	private CustomerInvoicePrinterDataService searchService;
+	private CustomerInvoicePrinterDataService invoiceDataService;
 	@Inject
-	private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
+	private ServiceCallFailedEventHandler invoiceDataServiceCallFailedEventHandler;
 	@Inject
-	private ErrorMessageDialog errorMessageDialog;
+	private ErrorMessageDialog invoiceDataErrorMessageDialog;
 	
 	@Inject
-	private CustomerInvoiceItemFetchDataService invoiceItemSearchService;
+	private CustomerInvoiceItemFetchDataService invoiceItemDataService;
 	@Inject
-	private ServiceCallFailedEventHandler invoiceItemSearchServiceCallFailedEventHandler;
+	private ServiceCallFailedEventHandler invoiceItemDataServiceCallFailedEventHandler;
 	@Inject
 	private ErrorMessageDialog invoiceItemErrorMessageDialog;
-
+		
 	@Inject
 	@Bundle({ CrudKeys.class, CustomerInvoicePrintTemplate.class, CustomerInvoice.class,
 			CustomerInvoiceItem.class, Company.class })
@@ -66,12 +66,12 @@ public class CustomerInvoicePrinter {
 		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
 		searchInputs.setEntity(customerInvoice);
 		searchInputs.getFieldNames().add("salesOrder");
-		searchService.setSearchInputs(searchInputs).start();
+		invoiceDataService.setSearchInputs(searchInputs).start();
 	}
 
 	@PostConstruct
 	public void postConstruct() {
-		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		invoiceDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				CustomerInvoicePrinterDataService s = (CustomerInvoicePrinterDataService) event
@@ -83,32 +83,32 @@ public class CustomerInvoicePrinter {
 	    		if(invoiceData.getCustomerInvoiceItemSearchResult().getResultList().isEmpty()) return;
 	    		CustomerInvoicePrintTemplate worker = new CustomerInvoicePrintTemplate(invoiceData, resourceBundle, locale);
 	    		worker.addItems(invoiceData.getCustomerInvoiceItemSearchResult().getResultList());
-	    		invoiceItemSearchService.setCustomerInvoicePrintTemplateWorker(worker).setCustomerInvoicePrinterData(invoiceData).start();
+	    		invoiceItemDataService.setCustomerInvoicePrintTemplateWorker(worker).setCustomerInvoicePrinterData(invoiceData).start();
 			}
 		});
 
-		searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		invoiceDataServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 			@Override
 			protected void showError(Throwable exception) {
 				String message = exception.getMessage();
-				errorMessageDialog.getTitleText().setText(
+				invoiceDataErrorMessageDialog.getTitleText().setText(
 						resourceBundle.getString("Entity_search_error.title"));
 				if (!StringUtils.isBlank(message))
-					errorMessageDialog.getDetailText().setText(message);
-				errorMessageDialog.display();
+					invoiceDataErrorMessageDialog.getDetailText().setText(message);
+				invoiceDataErrorMessageDialog.display();
 			}
 		});
-		searchService.setOnFailed(searchServiceCallFailedEventHandler);
+		invoiceDataService.setOnFailed(invoiceDataServiceCallFailedEventHandler);
 
-		errorMessageDialog.getOkButton().setOnAction(
+		invoiceDataErrorMessageDialog.getOkButton().setOnAction(
 				new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						errorMessageDialog.closeDialog();
+						invoiceDataErrorMessageDialog.closeDialog();
 					}
 				});
 		
-		invoiceItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		invoiceItemDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				CustomerInvoiceItemFetchDataService s = (CustomerInvoiceItemFetchDataService) event.getSource();
@@ -124,7 +124,7 @@ public class CustomerInvoicePrinter {
 	    			dialog.initModality(Modality.APPLICATION_MODAL);
 	    			// Stage
 	    			Scene scene = new Scene(pages.iterator().next());
-	    			scene.getStylesheets().add("/styles/application.css");
+//	    			scene.getStylesheets().add("/styles/application.css");
 	    			dialog.setScene(scene);
 	    			dialog.setTitle(invoiceData.getCustomerInvoice().getInvoiceNumber());
 	    			dialog.show();
@@ -132,10 +132,9 @@ public class CustomerInvoicePrinter {
 	    			
 	    			PrinterJob job = PrinterJob.createPrinterJob();
 	    			job.showPrintDialog(dialog);
-					JobSettings jobSettings = job.getJobSettings();
-	    			int copies = jobSettings.getCopies();
-	    			@SuppressWarnings("unused")
-	    			Printer printer = job.getPrinter();
+//					JobSettings jobSettings = job.getJobSettings();
+//	    			@SuppressWarnings("unused")
+//	    			Printer printer = job.getPrinter();
 	    			if (job != null) {
 	    				boolean success =  false;
 	    				for (VBox page : pages) {
@@ -149,12 +148,12 @@ public class CustomerInvoicePrinter {
 	    			
 	    		} else {
 	    			worker.addItems(invoiceData.getCustomerInvoiceItemSearchResult().getResultList());
-	    			invoiceItemSearchService.setCustomerInvoicePrintTemplateWorker(worker).setCustomerInvoicePrinterData(invoiceData).start();
+	    			invoiceItemDataService.setCustomerInvoicePrintTemplateWorker(worker).setCustomerInvoicePrinterData(invoiceData).start();
 	    		}
 			}
 		});
 
-		invoiceItemSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		invoiceItemDataServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 			@Override
 			protected void showError(Throwable exception) {
 				String message = exception.getMessage();
@@ -165,7 +164,7 @@ public class CustomerInvoicePrinter {
 				invoiceItemErrorMessageDialog.display();
 			}
 		});
-		invoiceItemSearchService.setOnFailed(invoiceItemSearchServiceCallFailedEventHandler);
+		invoiceItemDataService.setOnFailed(invoiceItemDataServiceCallFailedEventHandler);
 		invoiceItemErrorMessageDialog.getOkButton().setOnAction(
 				new EventHandler<ActionEvent>() {
 					@Override
@@ -174,17 +173,9 @@ public class CustomerInvoicePrinter {
 					}
 				});
 	}
-//
-//	public void handlePrintPaymentReceiptRequestedEvent(
-//			@Observes @PrintPaymentReceiptRequestedEvent PaymentId paymentId) {
-//		Payment payment = 
-//		CustomerInvoice customerInvoice = new CustomerInvoice();
-//		CustomerInvoiceSalesOrder salesOrder = new CustomerInvoiceSalesOrder();
-//		salesOrder.setId(salesOrderId.getId());
-//		customerInvoice.setSalesOrder(salesOrder);
-//		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
-//		searchInputs.setEntity(customerInvoice);
-//		searchInputs.getFieldNames().add("salesOrder");
-//		searchService.setPaymentId(paymentId).start();
-//	}
+
+	public void handlePrintPaymentReceiptRequestedEvent(
+			@Observes @PrintPaymentReceiptRequestedEvent PaymentId paymentId) {
+
+	}
 }

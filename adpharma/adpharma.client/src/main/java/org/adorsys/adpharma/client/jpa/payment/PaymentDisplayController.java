@@ -16,6 +16,10 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.SecurityUtil;
+import org.adorsys.adpharma.client.events.PaymentId;
+import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -29,7 +33,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
 
 @Singleton
 public class PaymentDisplayController implements EntityController
@@ -65,6 +68,10 @@ public class PaymentDisplayController implements EntityController
    @Inject
    private PaymentRegistration registration;
 
+	@Inject
+	@PrintPaymentReceiptRequestedEvent
+	private Event<PaymentId> printPaymentReceiptRequestedEvent;
+   
    @PostConstruct
    public void postConstruct()
    {
@@ -116,8 +123,18 @@ public class PaymentDisplayController implements EntityController
       });
 
       displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
+      
+      displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+		@Override
+		public void handle(ActionEvent event) {
+			if(displayedEntity==null || displayedEntity.getId()==null) return;
+			printPaymentReceiptRequestedEvent.fire(new PaymentId(displayedEntity.getId()));
+		}
+      });
    }
 
+   @Inject
+   private SecurityUtil securityUtil;
    public void display(Pane parent)
    {
       AnchorPane rootPane = displayView.getRootPane();
@@ -125,6 +142,11 @@ public class PaymentDisplayController implements EntityController
       if (!children.contains(rootPane))
       {
          children.add(rootPane);
+      }
+      if(!securityUtil.hasRole(AccessRoleEnum.ADMIN.name())){
+    	  displayView.getPrintButton().setDisable(true);
+      } else {
+    	  displayView.getPrintButton().setDisable(false);
       }
    }
 
@@ -158,5 +180,4 @@ public class PaymentDisplayController implements EntityController
       this.displayedEntity = model;
       displayView.bind(this.displayedEntity);
    }
-
 }

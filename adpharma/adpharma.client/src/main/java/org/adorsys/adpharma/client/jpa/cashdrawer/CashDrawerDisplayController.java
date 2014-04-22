@@ -27,6 +27,8 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.PaymentId;
+import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
@@ -170,6 +172,10 @@ public class CashDrawerDisplayController implements EntityController
 	private ErrorMessageDialog customerVoucherErrorMessageDialog;
 	@Inject
 	private ErrorMessageDialog errorMessageDialog;
+	
+	@Inject
+	@PrintPaymentReceiptRequestedEvent
+	private Event<PaymentId> printPaymentReceiptRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -695,14 +701,17 @@ public class CashDrawerDisplayController implements EntityController
 			public void handle(WorkerStateEvent event) {
 				PaymentCreateService s = (PaymentCreateService) event.getSource();
 				Payment payment = s.getValue();
+				PaymentId paymentId = new PaymentId(payment.getId());
 				event.consume();
 				s.reset();
+				// Print receipt here.
+				printPaymentReceiptRequestedEvent.fire(paymentId);
 				displayView.getInvoicesDataList().getItems().remove(proccessingInvoice);
 				PropertyReader.copy(new Payment(), payment);
 				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
 
 				deactivate();
-				// Print receipt here.
+				
 			}
 		});
 	}
@@ -755,7 +764,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getReceivedAmount().setDisable(true);
 
 		displayView.getPaymentItemDataList().getItems().clear();
-		// print receipt
+		// print receipt???
 		displayView.getCashButon().setDisable(true);
 		displayView.getCashOutButton().setDisable(true);
 	}
@@ -773,7 +782,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getInvoiceItemDataList().setDisable(false);
 		displayView.getPaymentMode().setDisable(false);
 		displayView.getReceivedAmount().setDisable(false);
-		// print receipt
+		// print receipt???
 		displayView.getCashButon().setDisable(false);
 		displayView.getCashOutButton().setDisable(false);
 

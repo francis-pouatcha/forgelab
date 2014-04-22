@@ -21,6 +21,8 @@ public class CustomerInvoiceItemFetchDataService extends
 	private CustomerInvoicePrinterData customerInvoicePrinterData;
 	
 	private CustomerInvoicePrintTemplate customerInvoicePrintTemplateWorker;
+
+	private ReceiptPrintTemplate receiptPrintTemplateWorker;
 	
 	public CustomerInvoicePrintTemplate getCustomerInvoicePrintTemplateWorker() {
 		return customerInvoicePrintTemplateWorker;
@@ -40,6 +42,18 @@ public class CustomerInvoiceItemFetchDataService extends
 			CustomerInvoicePrinterData customerInvoicePrinterData) {
 		this.customerInvoicePrinterData = customerInvoicePrinterData;
 		return this;
+	}
+	
+	
+
+	public CustomerInvoiceItemFetchDataService setReceiptPrintTemplateWorker(
+			ReceiptPrintTemplate worker) {
+		this.receiptPrintTemplateWorker = worker;
+		return this;
+	}
+	
+	public ReceiptPrintTemplate getReceiptPrintTemplateWorker() {
+		return receiptPrintTemplateWorker;
 	}
 
 	@Override

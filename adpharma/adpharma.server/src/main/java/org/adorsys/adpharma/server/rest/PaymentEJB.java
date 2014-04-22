@@ -12,7 +12,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
@@ -96,12 +95,12 @@ public class PaymentEJB
 	   PaymentMode paymentMode = null;
 	   for (PaymentItem paymentItem : paymentItems) {
 		   amount = amount.add(paymentItem.getAmount());
-		   receivedAmount = receivedAmount.add(payment.getReceivedAmount());
+		   receivedAmount = receivedAmount.add(paymentItem.getReceivedAmount());
 		   paymentMode = paymentItem.getPaymentMode();
 	   }
 	   payment.setAmount(amount);
 	   payment.setReceivedAmount(receivedAmount);
-	   payment.setDifference(BigDecimal.ZERO);
+	   payment.setDifference(receivedAmount.subtract(amount));
 	   payment.setPaymentMode(paymentMode);
 
 	   

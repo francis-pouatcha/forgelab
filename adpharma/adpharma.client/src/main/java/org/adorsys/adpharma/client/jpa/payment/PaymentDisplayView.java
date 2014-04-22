@@ -7,29 +7,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.adorsys.javafx.crud.extensions.ViewType;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class PaymentDisplayView
@@ -47,6 +34,8 @@ public class PaymentDisplayView
 
    private Button confirmSelectionButton;
 
+   private Button printButton;
+   
    @Inject
    private PaymentView view;
 
@@ -67,6 +56,7 @@ public class PaymentDisplayView
       editButton = viewBuilder.addButton(buttonBarRight, "Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
       removeButton = viewBuilder.addButton(buttonBarRight, "Entity_remove.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
       searchButton = viewBuilder.addButton(buttonBarRight, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+      printButton = viewBuilder.addButton(buttonBarRight, "Entity_print.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
       rootPane = viewBuilder.toAnchorPane();
    }
 
@@ -104,4 +94,8 @@ public class PaymentDisplayView
    {
       return confirmSelectionButton;
    }
+
+	public Button getPrintButton() {
+		return printButton;
+	}
 }
