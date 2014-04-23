@@ -181,7 +181,7 @@ public class SalesOrder implements Serializable
 	@PrePersist
 	public void prePersist(){
 		creationDate = new Date();
-		soNumber = SequenceGenerator.SALE_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+		soNumber = SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE);
 	}
 
 	public void calculateTotalReturnAmount(){
