@@ -90,8 +90,8 @@ public class ProcurementOrderListView
 		viewBuilder.addStringColumn(dataList, "supplier", "ProcurementOrder_supplier_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "agency", "ProcurementOrder_agency_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "ProcurementOrder_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "ProcurementOrder_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
@@ -101,7 +101,7 @@ public class ProcurementOrderListView
 		ViewBuilderUtils.newStringColumn(dataListItem, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
 		viewBuilder.addDateColumn(dataListItem, "expirationDate", "ProcurementOrderItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-//		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -113,7 +113,7 @@ public class ProcurementOrderListView
 		//      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
 		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//      rootPane = viewBuilder.toAnchorPane();
-		
+
 		buildsearchBar();
 	}
 
@@ -129,7 +129,7 @@ public class ProcurementOrderListView
 
 		state = ViewBuilderUtils.newComboBox(null, "poStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		state.setPrefHeight(40d);
-		
+
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(procurementOrderNumber,supplier,state,searchButton);

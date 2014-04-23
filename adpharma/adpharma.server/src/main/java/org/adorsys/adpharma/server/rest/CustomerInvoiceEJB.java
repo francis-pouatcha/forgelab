@@ -324,6 +324,7 @@ public class CustomerInvoiceEJB {
 				if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
 					customerInvoice.setSettled(Boolean.TRUE);
 				}
+				customerInvoice.setAdvancePayment(customerInvoice.getNetToPay().subtract(customerInvoice.getTotalRestToPay()));
 				customerInvoice = update(customerInvoice);
 				
 				// Announce customer invoice processed.
