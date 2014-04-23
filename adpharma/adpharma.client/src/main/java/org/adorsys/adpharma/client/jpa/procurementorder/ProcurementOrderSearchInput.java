@@ -42,7 +42,7 @@ public class ProcurementOrderSearchInput
 
    public ProcurementOrder getEntity()
    {
-      return entity;
+      return entity = new ProcurementOrder();
    }
 
    public void setEntity(ProcurementOrder entity)

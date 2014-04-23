@@ -9,24 +9,16 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-<ToolBar orientation="VERTICAL" prefHeight="135.0" prefWidth="152.0" VBox.vgrow="NEVER">
-<items>
-				<Button fx:id="moveButton" mnemonicParsing="false" prefWidth="140.0" text="Move to Stock">
+				<ToolBar orientation="VERTICAL" prefHeight="103.0" prefWidth="175.0" VBox.vgrow="NEVER">
+					<items>
+						<Button mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Fusionner" />
+						<Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Imprimer" />
+						<Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Button" />
+					</items>
+				</ToolBar>
+				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="detailsButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Make Details">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="moveToWareHouseButton" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" prefWidth="140.0" text="Transfer to Store" />
-</items>
-</ToolBar>
-				<Pane fx:id="rigthpane" prefHeight="418.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-					<VBox.margin>
-						<Insets bottom="48.0" left="5.0" />
+						<Insets bottom="50.0" left="5.0" />
 					</VBox.margin>
 				</Pane>
 			</children>
@@ -39,9 +31,13 @@
 		</VBox>
 	</right>
 	<center>
-		<VBox>
+		<VBox spacing="3.0">
 			<children>
-				<Separator prefWidth="200.0" />
+				<Separator prefWidth="200.0">
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</Separator>
 				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 					<padding>
 						<Insets left="10.0" />
@@ -52,7 +48,20 @@
 					<columns>
 					</columns>
 					<VBox.margin>
-						<Insets left="10.0" />
+						<Insets left="5.0" />
+					</VBox.margin>
+				</TableView>
+				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0" text="untitled">
+					<content>
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+					</content>
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</TitledPane>
+				<TableView fx:id="dataListItem" prefHeight="400.0" prefWidth="200.0">
+					<VBox.margin>
+						<Insets left="5.0" />
 					</VBox.margin>
 				</TableView>
 				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
