@@ -173,9 +173,4 @@ public class CustomerInvoicePrinter {
 					}
 				});
 	}
-
-	public void handlePrintPaymentReceiptRequestedEvent(
-			@Observes @PrintPaymentReceiptRequestedEvent PaymentId paymentId) {
-
-	}
 }

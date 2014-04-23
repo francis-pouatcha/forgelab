@@ -111,22 +111,26 @@ public class CustomerInvoiceEJB {
 
 	public List<CustomerInvoice> findBy(CustomerInvoice entity, int start,
 			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
-		return repository.findBy(entity, start, max, attributes);
+		CustomerInvoice customerInvoice = attach(entity);
+		return repository.findBy(customerInvoice, start, max, attributes);
 	}
 
 	public Long countBy(CustomerInvoice entity,
 			SingularAttribute<CustomerInvoice, ?>[] attributes) {
-		return repository.count(entity, attributes);
+		CustomerInvoice customerInvoice = attach(entity);
+		return repository.count(customerInvoice, attributes);
 	}
 
 	public List<CustomerInvoice> findByLike(CustomerInvoice entity, int start,
 			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
-		return repository.findByLike(entity, start, max, attributes);
+		CustomerInvoice customerInvoice = attach(entity);
+		return repository.findByLike(customerInvoice, start, max, attributes);
 	}
 
 	public Long countByLike(CustomerInvoice entity,
 			SingularAttribute<CustomerInvoice, ?>[] attributes) {
-		return repository.countLike(entity, attributes);
+		CustomerInvoice customerInvoice = attach(entity);
+		return repository.countLike(customerInvoice, attributes);
 	}
 
 	private CustomerInvoice attach(CustomerInvoice entity) {

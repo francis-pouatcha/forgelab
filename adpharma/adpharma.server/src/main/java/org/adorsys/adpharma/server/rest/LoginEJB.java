@@ -58,22 +58,26 @@ public class LoginEJB
 
    public List<Login> findBy(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   Login login = attach(entity);
+      return repository.findBy(login, start, max, attributes);
    }
 
    public Long countBy(Login entity, SingularAttribute<Login, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   Login login = attach(entity);
+      return repository.count(login, attributes);
    }
 
    public List<Login> findByLike(Login entity, int start, int max, SingularAttribute<Login, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   Login login = attach(entity);
+      return repository.findByLike(login, start, max, attributes);
    }
 
    public Long countByLike(Login entity, SingularAttribute<Login, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   Login login = attach(entity);
+      return repository.countLike(login, attributes);
    }
 
    private Login attach(Login entity)

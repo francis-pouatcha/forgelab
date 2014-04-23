@@ -85,22 +85,26 @@ public class SalesOrderItemEJB
 
    public List<SalesOrderItem> findBy(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.findBy(salesOrderItem, start, max, attributes);
    }
 
    public Long countBy(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.count(salesOrderItem, attributes);
    }
 
    public List<SalesOrderItem> findByLike(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.findByLike(salesOrderItem, start, max, attributes);
    }
 
    public Long countByLike(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.countLike(salesOrderItem, attributes);
    }
 
    private SalesOrderItem attach(SalesOrderItem entity)

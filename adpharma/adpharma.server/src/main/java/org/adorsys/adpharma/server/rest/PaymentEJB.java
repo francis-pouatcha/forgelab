@@ -141,22 +141,26 @@ public class PaymentEJB
 
    public List<Payment> findBy(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   Payment payment = attach(entity);
+      return repository.findBy(payment, start, max, attributes);
    }
 
    public Long countBy(Payment entity, SingularAttribute<Payment, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   Payment payment = attach(entity);
+      return repository.count(payment, attributes);
    }
 
    public List<Payment> findByLike(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   Payment payment = attach(entity);
+      return repository.findByLike(payment, start, max, attributes);
    }
 
    public Long countByLike(Payment entity, SingularAttribute<Payment, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   Payment payment = attach(entity);
+      return repository.countLike(payment, attributes);
    }
 
    private Payment attach(Payment entity)

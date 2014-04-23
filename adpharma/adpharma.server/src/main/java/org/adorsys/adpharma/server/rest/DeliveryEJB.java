@@ -118,22 +118,26 @@ public class DeliveryEJB
 
 	public List<Delivery> findBy(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)
 	{
-		return repository.findBy(entity, start, max, attributes);
+		Delivery delivery = attach(entity);
+		return repository.findBy(delivery, start, max, attributes);
 	}
 
 	public Long countBy(Delivery entity, SingularAttribute<Delivery, ?>[] attributes)
 	{
-		return repository.count(entity, attributes);
+		Delivery delivery = attach(entity);
+		return repository.count(delivery, attributes);
 	}
 
 	public List<Delivery> findByLike(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)
 	{
-		return repository.findByLike(entity, start, max, attributes);
+		Delivery delivery = attach(entity);
+		return repository.findByLike(delivery, start, max, attributes);
 	}
 
 	public Long countByLike(Delivery entity, SingularAttribute<Delivery, ?>[] attributes)
 	{
-		return repository.countLike(entity, attributes);
+		Delivery delivery = attach(entity);
+		return repository.countLike(delivery, attributes);
 	}
 
 	private Delivery attach(Delivery entity)
