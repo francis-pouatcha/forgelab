@@ -21,7 +21,6 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrTokenizer;
 
 public class ReceiptPrintTemplate {
 	
@@ -411,7 +410,8 @@ public class ReceiptPrintTemplate {
 		amountReimbursedValueBox.setAlignment(Pos.TOP_RIGHT);
 //		amountReimbursedValueBox.setPadding(insets);
 		paymentPane.add(amountReimbursedValueBox, 1, rowIndex, 1, 1);
-		amountReimbursedValueBox.getChildren().add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getDifference())));
+		// TODO fix this.
+		amountReimbursedValueBox.getChildren().add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getReceivedAmount().subtract(totalAmountInvoices))));
 		
 		
 		GridPane greetingPane = new GridPane();
@@ -425,28 +425,37 @@ public class ReceiptPrintTemplate {
 		greetingPane.add(firstSeparator, 0, index++, 1, 1);
 		GridPane.setHalignment(firstSeparator, HPos.CENTER);
 
+		int chuncksize = 55;
 		String invoiceMessage = receiptPrinterData.getAgency().getInvoiceMessage();
-		invoiceMessage = invoiceMessage.toUpperCase();
-		String str1 = StringUtils.substring(invoiceMessage, 0, 60);
-		str1 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+		invoiceMessage = StringUtils.replace(invoiceMessage, "\n", " ");
+		String[] split = StringUtils.split(invoiceMessage, ",");
+		StringBuilder stringBuilder = new StringBuilder();
+		for (String string : split) {
+			if(stringBuilder.length()>0)
+				stringBuilder.append(", ");
+			stringBuilder.append(string);
+		}
+		invoiceMessage = stringBuilder.toString().toUpperCase();
+		String str1 = StringUtils.substring(invoiceMessage, 0, chuncksize);
+		str1 = StringUtils.substringBeforeLast(str1, " ");
 		greetingPane.getRowConstraints().add(mainRowHeight);
 		greetingPane.add(new StandardText(str1), 0,index++, 1, 1);
 		invoiceMessage = StringUtils.substringAfter(invoiceMessage,str1).trim();
 		if(StringUtils.isNotBlank(invoiceMessage)){
-			String str2 = StringUtils.substring(invoiceMessage, 0, 60);
-			str2 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+			String str2 = StringUtils.substring(invoiceMessage, 0, chuncksize);
+			str2 = StringUtils.substringBeforeLast(str2, " ");
 			greetingPane.getRowConstraints().add(mainRowHeight);
 			greetingPane.add(new StandardText(str2), 0,index++, 1, 1);
 			invoiceMessage = StringUtils.substringAfter(invoiceMessage,str2).trim();
 			if(StringUtils.isNotBlank(invoiceMessage)){
-				String str3 = StringUtils.substring(invoiceMessage, 0, 60);
-				str3 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+				String str3 = StringUtils.substring(invoiceMessage, 0, chuncksize);
+				str3 = StringUtils.substringBeforeLast(str3, " ");
 				greetingPane.getRowConstraints().add(mainRowHeight);
 				greetingPane.add(new StandardText(str3), 0,index++, 1, 1);
 				invoiceMessage = StringUtils.substringAfter(invoiceMessage,str3).trim();
 				if(StringUtils.isNotBlank(invoiceMessage)){
-					String str4 = StringUtils.substring(invoiceMessage, 0, 60);
-					str4 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+					String str4 = StringUtils.substring(invoiceMessage, 0, chuncksize);
+					str4 = StringUtils.substringBeforeLast(str4, " ");
 					greetingPane.getRowConstraints().add(mainRowHeight);
 					greetingPane.add(new StandardText(str4), 0,index++, 1, 1);
 				}
