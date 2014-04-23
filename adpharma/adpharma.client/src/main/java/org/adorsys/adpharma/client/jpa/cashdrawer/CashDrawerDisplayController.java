@@ -281,9 +281,9 @@ public class CashDrawerDisplayController implements EntityController
 					ciisi.getEntity().setInvoice(new CustomerInvoiceItemInvoice(selectedItem));
 					ciisi.getFieldNames().add("invoice");
 					ciisi.setMax(-1);
-					customerInvoiceItemSearchService.setSearchInputs(ciisi).start();
 					activate();
 					clearPaymentDataList();
+					customerInvoiceItemSearchService.setSearchInputs(ciisi).start();
 				}
 
 			}
@@ -773,6 +773,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getPaymentItemDataList().getItems().clear();
 		displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
 		displayView.getPaymentMode().setValue(PaymentMode.CASH);
+		paymentManager.newPayment();
 	}
 
 	private void activate(){

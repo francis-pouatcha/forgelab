@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -27,12 +28,10 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
-
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchInput;
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchResult;
@@ -398,6 +397,7 @@ public abstract class PaymentInvoicesController
                {
                   if (newValue != null)
                   {
+                	  
                      if (assocCache.containsKey(newValue))
                      {
                         selectedAssoc = assocCache.get(newValue);
@@ -477,7 +477,7 @@ public abstract class PaymentInvoicesController
             event.consume();
             s.reset();
 
-            selection.getAssocDataList().getItems().remove(removedAssoc);
+            selection.getAssocDataList().getItems().remove(removedAssoc.getTarget());
             selectedAssoc = null;
          }
       });
@@ -528,6 +528,7 @@ public abstract class PaymentInvoicesController
       assoc.setTargetQualifier("payments");
       searchInputs.getFieldNames().add("targetQualifier");
       searchInputs.setEntity(assoc);
+      assocCache.clear();
       assocSearchService.setSearchInputs(searchInputs).start();
    }
 
