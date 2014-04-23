@@ -10,7 +10,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.util.converter.BooleanStringConverter;
@@ -18,6 +17,11 @@ import javafx.util.converter.BooleanStringConverter;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -26,36 +30,6 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-
-import java.util.Calendar;
-
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-
-import javafx.beans.property.SimpleBooleanProperty;
-
-import java.math.BigDecimal;
-
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
-
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.adorsys.adpharma.client.jpa.payment.Payment;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 
 public class CustomerInvoiceListView
 {
@@ -188,5 +162,10 @@ public class CustomerInvoiceListView
 	{
 		return pagination;
 	}
+
+	public Button getShowButton() {
+		return showButton;
+	}
+	
 
 }

@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.awt.ScrollPane;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;

@@ -69,6 +69,14 @@ public class CustomerInvoicePrinter {
 		invoiceDataService.setSearchInputs(searchInputs).start();
 	}
 
+	public void handlePrintCustomerInvoiceRequestedEvent(
+			@Observes @PrintCustomerInvoiceRequestedEvent CustomerInvoice customerInvoice) {
+		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
+		searchInputs.setEntity(customerInvoice);
+		searchInputs.getFieldNames().add("salesOrder");
+		invoiceDataService.setSearchInputs(searchInputs).start();
+	}
+	
 	@PostConstruct
 	public void postConstruct() {
 		invoiceDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {

@@ -11,7 +11,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -21,9 +20,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -72,25 +69,24 @@ public class CustomerInvoiceListController implements EntityController
 
 	@Inject
 	private CustomerInvoiceSearchService customerInvoiceSearchService;
+	
+	@Inject
+	@PrintCustomerInvoiceRequestedEvent
+	private Event<CustomerInvoice> printCustomerInvoiceRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
 	{
 		listView.getPrintButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
+		listView.getShowButton().setOnAction(new EventHandler<ActionEvent>() {
 
-		//      listView.getDataList().getSelectionModel().selectedItemProperty()
-		//            .addListener(new ChangeListener<CustomerInvoice>()
-		//            {
-		//               @Override
-		//               public void changed(
-		//                     ObservableValue<? extends CustomerInvoice> property,
-		//                     CustomerInvoice oldValue, CustomerInvoice newValue)
-		//               {
-		//                  if (newValue != null)
-		//                     selectionEvent.fire(newValue);
-		//               }
-		//            });
+			@Override
+			public void handle(ActionEvent event) {
+				CustomerInvoice selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)selectionEvent.fire(selectedItem);
+			}
+		});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -133,9 +129,7 @@ public class CustomerInvoiceListController implements EntityController
 			public void handle(ActionEvent e)
 			{
 				CustomerInvoice selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if (selectedItem == null)
-					selectedItem = new CustomerInvoice();
-				createRequestedEvent.fire(selectedItem);
+				if(selectedItem!=null) printCustomerInvoiceRequestedEvent.fire(selectedItem);
 			}
 				});
 
