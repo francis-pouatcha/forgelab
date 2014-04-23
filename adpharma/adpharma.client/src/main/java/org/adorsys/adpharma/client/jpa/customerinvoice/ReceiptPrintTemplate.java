@@ -21,6 +21,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrTokenizer;
 
 public class ReceiptPrintTemplate {
 	
@@ -38,7 +39,7 @@ public class ReceiptPrintTemplate {
 	private double rowHeiht = 15;
 	private VBox page = new VBox();
 //	private Insets insets = new Insets(5);
-	private Insets lesftInsets = new Insets(0, 0, 0, 5);
+	private Insets lesftInsets = new Insets(0, 0, 0, 2);
 //	private Insets rightInsets = new Insets(0, 5, 0, 0);
 	private GridPane invoicePane = null;
 
@@ -85,6 +86,7 @@ public class ReceiptPrintTemplate {
 		int rowIndex = -1;
 
 		GridPane headerPane = new GridPane();
+		headerPane.getColumnConstraints().add(new ColumnConstraints(width));
 
 		// ROW 0
 		rowIndex++;
@@ -126,7 +128,7 @@ public class ReceiptPrintTemplate {
 
 		rowIndex++;
 		headerPane.getRowConstraints().add(mainRowHeight);
-		Text telFax = new StandardText("Tel: " + receiptPrinterData.getAgency().getPhone() + " Fax: "
+		Text telFax = new StandardText("TEL: " + receiptPrinterData.getAgency().getPhone() + " FAX: "
 				+ receiptPrinterData.getAgency().getFax());
 		headerPane.add(telFax, 0, rowIndex, 1, 1);
 		GridPane.setHalignment(telFax, HPos.LEFT);
@@ -135,8 +137,8 @@ public class ReceiptPrintTemplate {
 		rowIndex++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text email = new StandardText(
-				resourceBundle.getString("Company_email_description.title")
-						+ " " + receiptPrinterData.getCompany().getEmail());
+				resourceBundle.getString("ReceiptPrintTemplate_email.title")
+						+ ": " + receiptPrinterData.getCompany().getEmail());
 		headerPane.add(email, 0, rowIndex, 1, 1);
 		GridPane.setHalignment(email, HPos.LEFT);
 		GridPane.setValignment(email, VPos.BOTTOM);
@@ -144,8 +146,8 @@ public class ReceiptPrintTemplate {
 		rowIndex++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text registerNumber = new StandardText(
-				resourceBundle.getString("Company_registerNumber_description.title")
-						+ " " + receiptPrinterData.getCompany().getRegisterNumber());
+				resourceBundle.getString("ReceiptPrintTemplate_registerNumber.title")
+						+ ": " + receiptPrinterData.getCompany().getRegisterNumber());
 		headerPane.add(registerNumber, 0, rowIndex, 1, 1);
 		GridPane.setHalignment(registerNumber, HPos.LEFT);
 		GridPane.setValignment(registerNumber, VPos.BOTTOM);
@@ -410,6 +412,47 @@ public class ReceiptPrintTemplate {
 //		amountReimbursedValueBox.setPadding(insets);
 		paymentPane.add(amountReimbursedValueBox, 1, rowIndex, 1, 1);
 		amountReimbursedValueBox.getChildren().add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getDifference())));
+		
+		
+		GridPane greetingPane = new GridPane();
+		page.getChildren().add(greetingPane);
+		greetingPane.getColumnConstraints().add(new ColumnConstraints(width));
+
+
+		int index = 0;
+		greetingPane.getRowConstraints().add(mainRowHeight);
+		Text firstSeparator = new StandardText(separatorText);
+		greetingPane.add(firstSeparator, 0, index++, 1, 1);
+		GridPane.setHalignment(firstSeparator, HPos.CENTER);
+
+		String invoiceMessage = receiptPrinterData.getAgency().getInvoiceMessage();
+		invoiceMessage = invoiceMessage.toUpperCase();
+		String str1 = StringUtils.substring(invoiceMessage, 0, 60);
+		str1 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+		greetingPane.getRowConstraints().add(mainRowHeight);
+		greetingPane.add(new StandardText(str1), 0,index++, 1, 1);
+		invoiceMessage = StringUtils.substringAfter(invoiceMessage,str1).trim();
+		if(StringUtils.isNotBlank(invoiceMessage)){
+			String str2 = StringUtils.substring(invoiceMessage, 0, 60);
+			str2 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+			greetingPane.getRowConstraints().add(mainRowHeight);
+			greetingPane.add(new StandardText(str2), 0,index++, 1, 1);
+			invoiceMessage = StringUtils.substringAfter(invoiceMessage,str2).trim();
+			if(StringUtils.isNotBlank(invoiceMessage)){
+				String str3 = StringUtils.substring(invoiceMessage, 0, 60);
+				str3 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+				greetingPane.getRowConstraints().add(mainRowHeight);
+				greetingPane.add(new StandardText(str3), 0,index++, 1, 1);
+				invoiceMessage = StringUtils.substringAfter(invoiceMessage,str3).trim();
+				if(StringUtils.isNotBlank(invoiceMessage)){
+					String str4 = StringUtils.substring(invoiceMessage, 0, 60);
+					str4 = StringUtils.substringBeforeLast(invoiceMessage, " ");
+					greetingPane.getRowConstraints().add(mainRowHeight);
+					greetingPane.add(new StandardText(str4), 0,index++, 1, 1);
+				}
+			}
+		}
+		
 	}
 	
 	int invoiceIndex = 0;
