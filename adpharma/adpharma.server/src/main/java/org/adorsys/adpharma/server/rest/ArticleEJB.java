@@ -84,22 +84,26 @@ public class ArticleEJB
 
    public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   Article article = attach(entity);
+      return repository.findBy(article, start, max, attributes);
    }
 
    public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   Article article = attach(entity);
+      return repository.count(article, attributes);
    }
 
    public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   Article article = attach(entity);
+      return repository.findByLike(article, start, max, attributes);
    }
 
    public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   Article article = attach(entity);
+      return repository.countLike(article, attributes);
    }
 
    private Article attach(Article entity)

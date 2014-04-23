@@ -83,22 +83,26 @@ public class CashDrawerEJB
 
 	public List<CashDrawer> findBy(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
 	{
-		return repository.findBy(entity, start, max, attributes);
+		CashDrawer cashDrawer = attach(entity);
+		return repository.findBy(cashDrawer, start, max, attributes);
 	}
 
 	public Long countBy(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
 	{
-		return repository.count(entity, attributes);
+		CashDrawer cashDrawer = attach(entity);
+		return repository.count(cashDrawer, attributes);
 	}
 
 	public List<CashDrawer> findByLike(CashDrawer entity, int start, int max, SingularAttribute<CashDrawer, ?>[] attributes)
 	{
-		return repository.findByLike(entity, start, max, attributes);
+		CashDrawer cashDrawer = attach(entity);
+		return repository.findByLike(cashDrawer, start, max, attributes);
 	}
 
 	public Long countByLike(CashDrawer entity, SingularAttribute<CashDrawer, ?>[] attributes)
 	{
-		return repository.countLike(entity, attributes);
+		CashDrawer cashDrawer = attach(entity);
+		return repository.countLike(cashDrawer, attributes);
 	}
 
 	private CashDrawer attach(CashDrawer entity)

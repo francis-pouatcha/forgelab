@@ -148,36 +148,6 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>webstart-maven-plugin</artifactId>
-				<version>1.0-beta-3</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>jnlp</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<jnlpFiles>src/main/jnlp/template.vm</jnlpFiles>
-					<excludeTransitive>false</excludeTransitive>
-					<libPath>lib</libPath>
-					<resourcesDirectory>${project.basedir}/src/main/jnlp/resources</resourcesDirectory>
-					<codebase>${deployUrl}/${deployPath}</codebase>
-					<jnlp>
-						<outputFile>${jnlpFilename}</outputFile>
-						<mainClass>${appMainClass}</mainClass>
-						<offlineAllowed>true</offlineAllowed>
-					</jnlp>
-					<pack200>true</pack200>
-					<gzip>true</gzip>
-					<outputJarVersions>false</outputJarVersions>
-					<install>false</install>
-					<verbose>true</verbose>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>

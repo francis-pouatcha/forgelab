@@ -61,22 +61,26 @@ public class InventoryItemEJB
 
    public List<InventoryItem> findBy(InventoryItem entity, int start, int max, SingularAttribute<InventoryItem, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   InventoryItem inventoryItem = attach(entity);
+      return repository.findBy(inventoryItem, start, max, attributes);
    }
 
    public Long countBy(InventoryItem entity, SingularAttribute<InventoryItem, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   InventoryItem inventoryItem = attach(entity);
+      return repository.count(inventoryItem, attributes);
    }
 
    public List<InventoryItem> findByLike(InventoryItem entity, int start, int max, SingularAttribute<InventoryItem, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   InventoryItem inventoryItem = attach(entity);
+      return repository.findByLike(inventoryItem, start, max, attributes);
    }
 
    public Long countByLike(InventoryItem entity, SingularAttribute<InventoryItem, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   InventoryItem inventoryItem = attach(entity);
+      return repository.countLike(inventoryItem, attributes);
    }
 
    private InventoryItem attach(InventoryItem entity)
