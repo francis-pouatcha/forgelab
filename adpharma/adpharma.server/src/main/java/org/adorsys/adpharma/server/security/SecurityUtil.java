@@ -30,6 +30,7 @@ public class SecurityUtil {
 		Login login = new Login();
 		login.setLoginName(getUserName());
 		searchInput.setEntity(login);
+		searchInput.getFieldNames().add("loginName");
 		List<Login> resultList = loginEndpoint.findBy(searchInput).getResultList();
 		if(!resultList.isEmpty()) return resultList.iterator().next();
 		return null;

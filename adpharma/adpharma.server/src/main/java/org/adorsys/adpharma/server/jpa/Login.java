@@ -1,37 +1,36 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
-import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-import java.lang.Override;
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.admin.LoginTable;
-import javax.validation.constraints.NotNull;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-import java.util.Date;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.adorsys.javaext.format.DateFormatPattern;
-import java.math.BigDecimal;
-import org.adorsys.javaext.format.NumberFormatType;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.adpharma.server.jpa.Gender;
-import javax.persistence.Enumerated;
-import java.util.Set;
-import java.util.HashSet;
-import javax.persistence.OneToMany;
-import org.adorsys.javaext.relation.Relationship;
-import org.adorsys.javaext.relation.RelationshipEnd;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+
+import org.adorsys.javaext.admin.LoginTable;
+import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.adpharma.server.jpa.Agency;
-import javax.persistence.ManyToOne;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
+import org.adorsys.javaext.format.NumberFormatType;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javaext.list.ListField;
+import org.adorsys.javaext.relation.Relationship;
+import org.adorsys.javaext.relation.RelationshipEnd;
 
 @Entity
 @Description("Login_description")
@@ -49,7 +48,7 @@ public class Login implements Serializable
    @Column(name = "version")
    private int version = 0;
 
-   @Column
+   @Column(unique=true)
    @Description("Login_loginName_description")
    @NotNull(message = "Login_loginName_NotNull_validation")
    private String loginName;
