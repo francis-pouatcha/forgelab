@@ -1,14 +1,11 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
@@ -61,6 +58,19 @@ public class ProcurementOrderService
       return target.path("" + entity.getId())
             .request(media).put(ent, ProcurementOrder.class);
    }
+   
+
+//	@POST
+//	@Path("/proccessPreparation")
+//	@Consumes({ "application/json", "application/xml" })
+//	@Produces({ "application/json", "application/xml" })
+	public ProcurementOrder proccessPreparation(ProcurementOrderPreparationData entity)
+	{
+		Entity<ProcurementOrderPreparationData> ent = Entity.entity(entity, media);
+	      return target.path("proccessPreparation")
+	            .request(media).post(ent, ProcurementOrder.class);
+	}
+
 
    // @GET
    // @Path("/{id:[0-9][0-9]*}")

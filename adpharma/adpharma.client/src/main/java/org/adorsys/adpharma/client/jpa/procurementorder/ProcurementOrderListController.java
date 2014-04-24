@@ -41,6 +41,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,11 +86,15 @@ public class ProcurementOrderListController implements EntityController
 
 	@Inject
 	private ProcurementOrderRegistration registration;
+	
+	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<ProcurementOrderPreparationData> orderPreparationEventData;
 
 	@PostConstruct
 	public void postConstruct()
 	{
-		//      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+		      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
@@ -210,17 +215,14 @@ public class ProcurementOrderListController implements EntityController
 			}
 		});
 
-		//      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-		//      {
-		//         @Override
-		//         public void handle(ActionEvent e)
-		//         {
-		//            ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-		//            if (selectedItem == null)
-		//               selectedItem = new ProcurementOrder();
-		//            createRequestedEvent.fire(selectedItem);
-		//         }
-		//      });
+		      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+		      {
+		         @Override
+		         public void handle(ActionEvent e)
+		         {
+		        	 orderPreparationEventData.fire(new ProcurementOrderPreparationData());
+		         }
+		      });
 
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{

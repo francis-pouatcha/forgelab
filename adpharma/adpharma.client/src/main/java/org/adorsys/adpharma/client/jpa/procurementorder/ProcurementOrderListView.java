@@ -87,8 +87,8 @@ public class ProcurementOrderListView
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "ProcurementOrder_procurementOrderNumber_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "poStatus", "ProcurementOrder_poStatus_description.title", resourceBundle, documentProcessingStateConverter);
-		viewBuilder.addStringColumn(dataList, "supplier", "ProcurementOrder_supplier_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "agency", "ProcurementOrder_agency_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataList, "supplier", "ProcurementOrder_supplier_description.title", resourceBundle,250d);
+		ViewBuilderUtils.newDateColumn(dataList, "createdDate", "ProcurementOrder_createdDate_description.title", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
