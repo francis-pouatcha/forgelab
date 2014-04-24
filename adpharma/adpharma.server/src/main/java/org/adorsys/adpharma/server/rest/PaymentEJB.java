@@ -92,15 +92,19 @@ public class PaymentEJB
 	   Set<PaymentItem> paymentItems = payment.getPaymentItems();
 	   BigDecimal amount = BigDecimal.ZERO;
 	   BigDecimal receivedAmount = BigDecimal.ZERO;
+	   BigDecimal difference = BigDecimal.ZERO;
 	   PaymentMode paymentMode = null;
 	   for (PaymentItem paymentItem : paymentItems) {
-		   amount = amount.add(paymentItem.getAmount());
-		   receivedAmount = receivedAmount.add(paymentItem.getReceivedAmount());
+		   BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
+		   amount = amount.add(piAmount);
+		   BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
+		   receivedAmount = receivedAmount.add(piReceivedAmount);
+		   difference = difference.add(piReceivedAmount.subtract(piAmount));
 		   paymentMode = paymentItem.getPaymentMode();
 	   }
 	   payment.setAmount(amount);
 	   payment.setReceivedAmount(receivedAmount);
-	   payment.setDifference(receivedAmount.subtract(amount));
+	   payment.setDifference(difference);
 	   payment.setPaymentMode(paymentMode);
 
 	   

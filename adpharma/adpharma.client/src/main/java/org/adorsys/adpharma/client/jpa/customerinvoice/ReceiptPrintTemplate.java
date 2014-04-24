@@ -410,8 +410,7 @@ public class ReceiptPrintTemplate {
 		amountReimbursedValueBox.setAlignment(Pos.TOP_RIGHT);
 //		amountReimbursedValueBox.setPadding(insets);
 		paymentPane.add(amountReimbursedValueBox, 1, rowIndex, 1, 1);
-		// TODO fix this.
-		amountReimbursedValueBox.getChildren().add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getReceivedAmount().subtract(totalAmountInvoices))));
+		amountReimbursedValueBox.getChildren().add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getDifference())));
 		
 		
 		GridPane greetingPane = new GridPane();

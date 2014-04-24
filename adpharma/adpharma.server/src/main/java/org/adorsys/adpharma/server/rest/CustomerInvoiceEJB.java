@@ -287,7 +287,6 @@ public class CustomerInvoiceEJB {
 	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
 		Set<PaymentCustomerInvoiceAssoc> invoices = payment.getInvoices();
 		Set<PaymentItem> paymentItems = payment.getPaymentItems();
-		BigDecimal difference = BigDecimal.ZERO;
 		for (PaymentItem paymentItem : paymentItems) {
 			Customer payer = paymentItem.getPaidBy();
 			BigDecimal amount = paymentItem.getAmount();
@@ -334,11 +333,6 @@ public class CustomerInvoiceEJB {
 				// Announce customer invoice processed.
 				customerInvoiceProcessedEvent.fire(customerInvoice);
 			}
-			if(amount.compareTo(BigDecimal.ZERO)>=0){// payment item not exhausted
-				// Customer difference
-				difference = difference.add(amount);
-			}
 		}
-		payment.setDifference(difference);
 	}
 }
