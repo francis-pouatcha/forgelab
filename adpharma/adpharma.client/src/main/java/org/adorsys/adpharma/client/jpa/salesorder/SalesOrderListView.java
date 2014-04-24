@@ -1,12 +1,10 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
@@ -18,18 +16,11 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import jfxtras.scene.control.CalendarTextField;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -45,7 +36,6 @@ public class SalesOrderListView
 
 	@FXML
 	BorderPane rootPane;
-
 
 	private Button searchButton;
 
@@ -63,6 +53,9 @@ public class SalesOrderListView
 
 	@FXML
 	private TableView<SalesOrder> dataList;
+
+	@FXML
+	private TableView<SalesOrderItem> dataListItem;
 
 	@Inject
 	private Locale locale;
@@ -90,7 +83,7 @@ public class SalesOrderListView
 	private DocumentProcessingStateListCellFatory salesOrderStatusListCellFatory;
 
 	@Inject
-	@Bundle({ CrudKeys.class
+	@Bundle({ CrudKeys.class, SalesOrderItem.class
 		, SalesOrder.class
 	})
 	private ResourceBundle resourceBundle;
@@ -121,8 +114,9 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
-
+//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
+		viewBuilder.addStringColumn(dataList, "cashed", "SalesOrder_cashed_description.title", resourceBundle);
+		
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
 		//
@@ -133,6 +127,16 @@ public class SalesOrderListView
 
 		buildsearchBar();
 		ComboBoxInitializer.initialize(salesOrderStatus, salesOrderStatusConverter, salesOrderStatusListCellFatory, salesOrderStatusBundle);
+
+		// sales order item list view
+		viewBuilder.addStringColumn(dataListItem, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataListItem, "article", "SalesOrderItem_article_description.title", resourceBundle,400d);
+		viewBuilder.addBigDecimalColumn(dataListItem, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "SalesOrderItem", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
 
 
 	}
@@ -176,6 +180,10 @@ public class SalesOrderListView
 	public TableView<SalesOrder> getDataList()
 	{
 		return dataList;
+	}
+	public TableView<SalesOrderItem> getDataListItem()
+	{
+		return dataListItem;
 	}
 
 	public BorderPane getRootPane()

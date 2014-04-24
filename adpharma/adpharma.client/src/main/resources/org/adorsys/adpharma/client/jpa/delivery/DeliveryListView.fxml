@@ -36,9 +36,10 @@
 					</VBox.margin>
 				</Button>
 				<Pane prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-<VBox.margin>
-<Insets left="5.0" />
-</VBox.margin></Pane>
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</Pane>
 			</children>
 			<BorderPane.margin>
 				<Insets />
@@ -53,7 +54,7 @@
 			<tabs>
 				<Tab closable="false" text="Delivery List">
 					<content>
-						<VBox>
+						<VBox spacing="2.0">
 							<children>
 								<Separator prefWidth="200.0" />
 								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
@@ -69,7 +70,17 @@
 									<columns>
 									</columns>
 									<VBox.margin>
-										<Insets left="10.0" />
+										<Insets left="5.0" />
+									</VBox.margin>
+								</TableView>
+								<TitledPane animated="false" text="Details de la livraison">
+									<VBox.margin>
+										<Insets left="5.0" />
+									</VBox.margin>
+								</TitledPane>
+								<TableView fx:id="dataListItem" prefHeight="500.0" prefWidth="796.0" VBox.vgrow="NEVER">
+									<VBox.margin>
+										<Insets left="5.0" />
 									</VBox.margin>
 								</TableView>
 								<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">

@@ -2,7 +2,6 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -27,10 +26,12 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryRemoveService;
-import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplier;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -75,6 +76,9 @@ public class SalesOrderListController implements EntityController
 	private SalesOrderSearchService salesOrederSearchService;
 
 	@Inject
+	private SalesOrderItemSearchService salesOrederItemSearchService;
+
+	@Inject
 	private SalesOrderRemoveService salesOrderRemoveService ;
 
 	@Inject
@@ -93,7 +97,6 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@Bundle({ CrudKeys.class})
 	private ResourceBundle resourceBundle;
-
 
 	@Inject
 	private SalesOrderRegistration registration;
@@ -114,11 +117,29 @@ public class SalesOrderListController implements EntityController
 					listView.getPrintInvoiceButtonn().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-
+					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
+					sosi.setMax(-1);
+					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
+					sosi.getFieldNames().add("salesOrder");
+					salesOrederItemSearchService.setSearchInputs(sosi).start();
 				}
 
 			}
 		});
+		salesOrederItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderItemSearchService s = (SalesOrderItemSearchService) event.getSource();
+				SalesOrderItemSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				ArrayList<SalesOrderCustomer> soc = new ArrayList<SalesOrderCustomer>();
+				List<SalesOrderItem> resultList = result.getResultList();
+				listView.getDataListItem().getItems().setAll(resultList);
+			}
+		});
+		salesOrederItemSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
 
 		customerSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
