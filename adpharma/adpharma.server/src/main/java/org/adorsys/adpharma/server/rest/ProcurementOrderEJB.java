@@ -164,9 +164,11 @@ public class ProcurementOrderEJB
 		List<CustomerInvoiceItem> customerInvoiceItems = customerInvoiceItemEJB.findPreparationDataItem(data);
 		HashMap<Article, ProcurementOrderItem> cashedItem = new  HashMap<Article,ProcurementOrderItem>();
 		for (CustomerInvoiceItem item : customerInvoiceItems) {
+			BigDecimal totalPuschasePrice = BigDecimal.ZERO;
 			if(cashedItem.containsKey(item.getArticle())){
 				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();
 				cashedItem.get(item.getArticle()).setQtyOrdered(qtyOrdered.add(item.getPurchasedQty()));
+				totalPuschasePrice = cashedItem.get(item.getArticle()).calculTotalPuschasePrice();
 			}else {
 				ProcurementOrderItem procurementOrderItem = new ProcurementOrderItem();
 				procurementOrderItem.setArticle(item.getArticle());
@@ -181,11 +183,14 @@ public class ProcurementOrderEJB
 				procurementOrderItem.setSecondaryPic(item.getArticle().getPic());
 				procurementOrderItem.setStockQuantity(item.getArticle().getQtyInStock());
 				procurementOrderItem.setValid(Boolean.FALSE);
+				 totalPuschasePrice = procurementOrderItem.calculTotalPuschasePrice();
 				cashedItem.put(item.getArticle(), procurementOrderItem);
 			}
+			procurementOrder.setAmountAfterTax(procurementOrder.getAmountAfterTax().add(totalPuschasePrice));
 		}
 		Collection<ProcurementOrderItem> procurementOrderItems = cashedItem.values();
 		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);
+		procurementOrder.calculateAmount();
 		return procurementOrder = create(procurementOrder);
 	}
 
