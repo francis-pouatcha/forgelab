@@ -174,11 +174,11 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@WorkingInformationEvent
 	private Event<String> workingInfosEvent;
-	
+
 	@Inject
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -370,11 +370,6 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrder so = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(so, displayedEntity);
-				Action showConfirm = Dialogs.create().nativeTitleBar().message("Would you like to Print Customer Voucher !").showConfirm();
-				if(Dialog.Actions.YES.equals(showConfirm)){
-					Dialogs.create().nativeTitleBar().message("Not yet Implemented !").showInformation();
-				}
 				workingInfosEvent.fire("Article Returned   successfully !");
 
 			}

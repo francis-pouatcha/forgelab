@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
@@ -69,6 +70,9 @@ public class DeliveryListView
 
 	@FXML
 	private TableView<Delivery> dataList;
+	
+	@FXML
+	private TableView<DeliveryItem> dataListItem;
 
 	@FXML
 	private Pagination pagination;
@@ -87,7 +91,7 @@ public class DeliveryListView
 	private Locale locale;
 
 	@Inject
-	@Bundle({ CrudKeys.class
+	@Bundle({ CrudKeys.class,DeliveryItem.class
 		, Delivery.class
 		, VAT.class
 		, Agency.class
@@ -125,6 +129,21 @@ public class DeliveryListView
 		buildsearchBar();
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
+		
+		//deliveryitem
+		
+		 viewBuilder.addStringColumn(dataListItem, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
+	      viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+	      viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
+	      ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,300d);
+	      viewBuilder.addDateColumn(dataListItem, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	     
 	}
 
 	public void bind(DeliverySearchInput searchInput)
@@ -174,6 +193,11 @@ public class DeliveryListView
 	public TableView<Delivery> getDataList()
 	{
 		return dataList;
+	}
+	
+	public TableView<DeliveryItem> getDataListItem()
+	{
+		return dataListItem;
 	}
 
 	public BorderPane getRootPane()

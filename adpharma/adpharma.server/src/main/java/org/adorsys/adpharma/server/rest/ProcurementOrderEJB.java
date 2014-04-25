@@ -1,7 +1,9 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -14,13 +16,16 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem_;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderType;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder_;
 import org.adorsys.adpharma.server.jpa.StockMovement;
@@ -140,6 +145,48 @@ public class ProcurementOrderEJB
 		}
 
 		return entity;
+	}
+
+	@Inject
+	private CustomerInvoiceItemEJB customerInvoiceItemEJB;
+
+	public ProcurementOrder proccessPreparation(ProcurementOrderPreparationData data){
+		Login user = securityUtil.getConnectedUser();
+		ProcurementOrder procurementOrder = new ProcurementOrder();
+		procurementOrder.setAgency(user.getAgency());
+		procurementOrder.setCreatedDate(new Date());
+		procurementOrder.setCreatingUser(user);
+		procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
+		procurementOrder.setProcurementOrderNumber("PO-"+RandomStringUtils.randomAlphanumeric(5).toUpperCase());
+		procurementOrder.setProcurementOrderType(ProcurementOrderType.ORDINARY);
+		procurementOrder.setProcmtOrderTriggerMode(data.getProcmtOrderTriggerMode());
+		procurementOrder.setSupplier(data.getSupplier());
+		List<CustomerInvoiceItem> customerInvoiceItems = customerInvoiceItemEJB.findPreparationDataItem(data);
+		HashMap<Article, ProcurementOrderItem> cashedItem = new  HashMap<Article,ProcurementOrderItem>();
+		for (CustomerInvoiceItem item : customerInvoiceItems) {
+			if(cashedItem.containsKey(item.getArticle())){
+				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();
+				cashedItem.get(item.getArticle()).setQtyOrdered(qtyOrdered.add(item.getPurchasedQty()));
+			}else {
+				ProcurementOrderItem procurementOrderItem = new ProcurementOrderItem();
+				procurementOrderItem.setArticle(item.getArticle());
+				procurementOrderItem.setArticleName(item.getArticle().getArticleName());
+				procurementOrderItem.setCreatingUser(user);
+				procurementOrderItem.setMainPic(item.getArticle().getPic());
+				procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
+				procurementOrderItem.setProductRecCreated(new Date());
+				procurementOrderItem.setPurchasePricePU(item.getSalesPricePU());
+				procurementOrderItem.setQtyOrdered(item.getPurchasedQty());
+				procurementOrderItem.setSalesPricePU(item.getSalesPricePU());
+				procurementOrderItem.setSecondaryPic(item.getArticle().getPic());
+				procurementOrderItem.setStockQuantity(item.getArticle().getQtyInStock());
+				procurementOrderItem.setValid(Boolean.FALSE);
+				cashedItem.put(item.getArticle(), procurementOrderItem);
+			}
+		}
+		Collection<ProcurementOrderItem> procurementOrderItems = cashedItem.values();
+		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);
+		return procurementOrder = create(procurementOrder);
 	}
 
 	public void handleStockMovementEvent(@Observes @DocumentProcessedEvent StockMovement stockMovement){

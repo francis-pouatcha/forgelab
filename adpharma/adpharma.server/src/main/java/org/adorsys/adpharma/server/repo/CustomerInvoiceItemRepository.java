@@ -1,12 +1,16 @@
 package org.adorsys.adpharma.server.repo;
 
+import java.util.Date;
+import java.util.List;
+
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.apache.deltaspike.data.api.EntityRepository;
-import org.apache.deltaspike.data.api.Modifying;
 import org.apache.deltaspike.data.api.Query;
 import org.apache.deltaspike.data.api.Repository;
-import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 
 @Repository(forEntity = CustomerInvoiceItem.class)
 public interface CustomerInvoiceItemRepository extends EntityRepository<CustomerInvoiceItem, Long>
 {
+	@Query("SELECT c FROM CustomerInvoiceItem as c WHERE c.invoice.creationDate BETWEEN ?1 AND ?2 AND c.invoice.cashed = ?3")
+	public List<CustomerInvoiceItem> findPreparationDataItem(Date fromDate,Date toDate,Boolean cashed);
 }

@@ -2,7 +2,6 @@ package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -22,6 +21,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
@@ -70,6 +74,9 @@ public class DeliveryListController implements EntityController
 
 	@Inject
 	DeliverySearchService searchService;
+	
+	@Inject
+	DeliveryItemSearchService itemsearchService;
 
 	@Inject
 	private DeliveryRemoveService deliveryRemoveService;
@@ -109,9 +116,35 @@ public class DeliveryListController implements EntityController
 					listView.getUpdateButton().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-
+                     DeliveryItemSearchInput dsi = new DeliveryItemSearchInput();
+                     dsi.getEntity().setDelivery(new DeliveryItemDelivery(newValue));
+                     dsi.setMax(-1);
+                     dsi.getFieldNames().add("delivery");
+					itemsearchService.setSearchInputs(dsi).start();
 				}
 
+			}
+		});
+		
+		itemsearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				DeliveryItemSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<DeliveryItem> resultList = result.getResultList();
+				listView.getDataListItem().getItems().setAll(resultList);
+
+			}
+		});
+		itemsearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				s.reset();				
 			}
 		});
 		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {

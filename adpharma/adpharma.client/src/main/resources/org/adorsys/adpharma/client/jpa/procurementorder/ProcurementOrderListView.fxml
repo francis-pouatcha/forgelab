@@ -13,7 +13,7 @@
 					<items>
 						<Button mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Fusionner" />
 						<Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Imprimer" />
-						<Button layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Button" />
+						<Button fx:id="createButton" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Create" />
 					</items>
 				</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
@@ -51,7 +51,7 @@
 						<Insets left="5.0" />
 					</VBox.margin>
 				</TableView>
-				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0" text="untitled">
+				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0" text="Details">
 					<content>
 						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 					</content>
