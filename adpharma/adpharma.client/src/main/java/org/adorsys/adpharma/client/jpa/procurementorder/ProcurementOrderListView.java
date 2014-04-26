@@ -54,6 +54,12 @@ public class ProcurementOrderListView
 	private Button createButton;
 
 	@FXML
+	private Button editButton ;
+	
+	@FXML
+	private Button removeButton ;
+
+	@FXML
 	private TableView<ProcurementOrder> dataList;
 
 	@FXML
@@ -145,6 +151,16 @@ public class ProcurementOrderListView
 	public Button getCreateButton()
 	{
 		return createButton;
+	}
+
+	public Button getEditButton()
+	{
+		return editButton;
+	}
+	
+	public Button getRemoveButton()
+	{
+		return removeButton;
 	}
 
 	public Button getSearchButton()

@@ -10,6 +10,8 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<children>
+<ToolBar orientation="VERTICAL" prefHeight="197.0" prefWidth="152.0" VBox.vgrow="NEVER">
+<items>
 				<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="Advence Search" />
 				<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Process Selection">
 					<VBox.margin>
@@ -21,16 +23,18 @@
 						<Insets />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Remove selection">
-					<VBox.margin>
-						<Insets />
-					</VBox.margin>
-				</Button>
 				<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Print Invoice">
 					<VBox.margin>
 						<Insets />
 					</VBox.margin>
 				</Button>
+				<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Remove selection">
+					<VBox.margin>
+						<Insets />
+					</VBox.margin>
+				</Button>
+</items>
+</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="50.0" left="5.0" />
