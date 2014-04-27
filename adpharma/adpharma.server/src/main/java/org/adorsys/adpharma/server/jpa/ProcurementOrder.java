@@ -111,7 +111,7 @@ public class ProcurementOrder implements Serializable
    @Column
    @Description("ProcurementOrder_poStatus_description")
    @Enumerated(EnumType.STRING)
-   private DocumentProcessingState poStatus;
+   private DocumentProcessingState poStatus = DocumentProcessingState.ONGOING;
 
    @ManyToOne
    @Description("ProcurementOrder_agency_description")
@@ -153,6 +153,17 @@ public class ProcurementOrder implements Serializable
    @Description("ProcurementOrder_procurementOrderItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrderItem.class, selectionMode = SelectionMode.TABLE)
    private Set<ProcurementOrderItem> procurementOrderItems = new HashSet<ProcurementOrderItem>();
+   
+   public void calculateAmount(){
+	   BigDecimal vateRate = BigDecimal.ZERO;
+	   if(vat !=null && vat.getRate()!=null){
+		   BigDecimal ONDRED = BigDecimal.valueOf(100);
+		   vateRate = vat.getRate().divide(ONDRED);
+	   }
+	   taxAmount = amountBeforeTax.multiply(vateRate);
+	   amountAfterTax = amountBeforeTax.add(taxAmount);
+	   netAmountToPay = amountBeforeTax.subtract(amountDiscount);
+   }
 
    public Long getId()
    {

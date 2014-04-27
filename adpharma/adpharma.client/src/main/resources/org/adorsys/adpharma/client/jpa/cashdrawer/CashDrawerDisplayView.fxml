@@ -9,16 +9,6 @@
 <AnchorPane prefHeight="661.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-			<right>
-				<VBox prefHeight="661.0" prefWidth="150.0" BorderPane.alignment="CENTER">
-					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</BorderPane.margin>
-					<children>
-						<Pane prefHeight="673.0" prefWidth="150.0" styleClass="cash-gackgroun" VBox.vgrow="ALWAYS" />
-					</children>
-				</VBox>
-			</right>
 			<center>
 				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
 					<children>
@@ -54,43 +44,7 @@
 						</HBox>
 						<HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
 							<children>
-								<VBox prefHeight="77.0" prefWidth="421.0" HBox.hgrow="ALWAYS">
-									<children>
-										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1" />
-										<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
-											<columnConstraints>
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-											</columnConstraints>
-											<rowConstraints>
-												<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-											</rowConstraints>
-										</GridPane>
-										<TableView fx:id="invoiceItemDataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
-											<VBox.margin>
-												<Insets bottom="2.0" />
-											</VBox.margin>
-										</TableView>
-										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Payments" textFill="#1e0fa1" />
-										<TableView fx:id="paymentItemDataList" prefHeight="98.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
-											<VBox.margin>
-												<Insets bottom="2.0" />
-											</VBox.margin>
-<contextMenu><ContextMenu>
-  <items>
-    <MenuItem fx:id="removePaymentMenuItem" mnemonicParsing="false" text="Remove Payment" />
-  </items>
-</ContextMenu>
-</contextMenu>
-										</TableView>
-									</children>
-								</VBox>
-								<VBox prefHeight="203.0" prefWidth="344.0" spacing="5.0" VBox.vgrow="NEVER">
+								<VBox prefHeight="203.0" prefWidth="450.0" spacing="5.0" VBox.vgrow="NEVER">
 									<children>
 <VBox prefHeight="197.0" prefWidth="344.0" spacing="5.0" VBox.vgrow="ALWAYS">
 <children>
@@ -168,6 +122,42 @@
 <padding>
 <Insets top="5.0" />
 </padding></VBox>
+									</children>
+								</VBox>
+								<VBox prefHeight="77.0" prefWidth="421.0" HBox.hgrow="ALWAYS">
+									<children>
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1" />
+										<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
+											<columnConstraints>
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+											</columnConstraints>
+											<rowConstraints>
+												<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+											</rowConstraints>
+										</GridPane>
+										<TableView fx:id="invoiceItemDataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+										</TableView>
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Payments" textFill="#1e0fa1" />
+										<TableView fx:id="paymentItemDataList" prefHeight="98.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+<contextMenu><ContextMenu>
+  <items>
+    <MenuItem fx:id="removePaymentMenuItem" mnemonicParsing="false" text="Remove Payment" />
+  </items>
+</ContextMenu>
+</contextMenu>
+										</TableView>
 									</children>
 								</VBox>
 							</children>

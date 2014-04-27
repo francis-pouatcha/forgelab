@@ -38,6 +38,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
@@ -60,6 +61,10 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<ProcurementOrder> searchRequestedEvent;
+	
+	@Inject
+	@EntityRemoveRequestEvent
+	private Event<ProcurementOrder> removeRequest;
 
 	@Inject
 	@EntityCreateRequestedEvent
@@ -86,7 +91,7 @@ public class ProcurementOrderListController implements EntityController
 
 	@Inject
 	private ProcurementOrderRegistration registration;
-	
+
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ProcurementOrderPreparationData> orderPreparationEventData;
@@ -94,7 +99,7 @@ public class ProcurementOrderListController implements EntityController
 	@PostConstruct
 	public void postConstruct()
 	{
-		      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
@@ -151,8 +156,34 @@ public class ProcurementOrderListController implements EntityController
 
 			}
 		});
+		
+		/*
+		 * listen to remove  button and fire remove select event.
+		 */
+		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null && !DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus()))
+					removeRequest.fire(selectedItem);
+			}
+				});
 
-
+		/*
+		 * listen to edit button and fire search select event.
+		 */
+		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					selectionEvent.fire(selectedItem);
+			}
+				});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -215,14 +246,14 @@ public class ProcurementOrderListController implements EntityController
 			}
 		});
 
-		      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-		      {
-		         @Override
-		         public void handle(ActionEvent e)
-		         {
-		        	 orderPreparationEventData.fire(new ProcurementOrderPreparationData());
-		         }
-		      });
+		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				orderPreparationEventData.fire(new ProcurementOrderPreparationData());
+			}
+				});
 
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{

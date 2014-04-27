@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.sql.Time;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -27,6 +28,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 public class ReceiptPrinter {
 

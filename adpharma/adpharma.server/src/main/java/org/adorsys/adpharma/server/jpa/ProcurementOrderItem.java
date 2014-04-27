@@ -93,19 +93,19 @@ public class ProcurementOrderItem implements Serializable
    @Temporal(TemporalType.TIMESTAMP)
    @Description("ProcurementOrderItem_productRecCreated_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
-   private Date productRecCreated;
+   private Date productRecCreated = new Date();
 
    @Column
    @Description("ProcurementOrderItem_qtyOrdered_description")
-   private BigDecimal qtyOrdered;
+   private BigDecimal qtyOrdered =BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_availableQty_description")
-   private BigDecimal availableQty;
+   private BigDecimal availableQty = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_freeQuantity_description")
-   private BigDecimal freeQuantity;
+   private BigDecimal freeQuantity= BigDecimal.ZERO;
 
    @ManyToOne
    @Description("ProcurementOrderItem_creatingUser_description")
@@ -115,36 +115,43 @@ public class ProcurementOrderItem implements Serializable
 
    @Column
    @Description("ProcurementOrderItem_stockQuantity_description")
-   private BigDecimal stockQuantity;
+   private BigDecimal stockQuantity = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU;
+   private BigDecimal salesPricePU =BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_purchasePricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal purchasePricePU;
+   private BigDecimal purchasePricePU = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_totalPurchasePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalPurchasePrice;
+   private BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_valid_description")
-   private Boolean valid;
+   private Boolean valid= Boolean.FALSE;
 
    @Column
    @Description("ProcurementOrderItem_poStatus_description")
    @Enumerated(EnumType.STRING)
-   private DocumentProcessingState poStatus;
+   private DocumentProcessingState poStatus = DocumentProcessingState.ONGOING;
 
    @ManyToOne
    @Description("ProcurementOrderItem_procurementOrder_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrder.class)
    private ProcurementOrder procurementOrder;
+   
+   public BigDecimal calculTotalPuschasePrice(){
+	   purchasePricePU = purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO;
+	   qtyOrdered = qtyOrdered!=null?qtyOrdered:BigDecimal.ZERO;
+	   totalPurchasePrice = purchasePricePU.multiply(qtyOrdered);
+	   return totalPurchasePrice;
+   }
 
    public Long getId()
    {

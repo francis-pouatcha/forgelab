@@ -18,6 +18,10 @@ Description: MistSilver Skin for JavaFX
     -fx-spacing: 5;
 }
 
+.button{
+	-fx-text-fill: rgb(69,48,169)
+}
+
 
 .domainComponentView-background{
 	-fx-background-image: url("backgroun.jpg");

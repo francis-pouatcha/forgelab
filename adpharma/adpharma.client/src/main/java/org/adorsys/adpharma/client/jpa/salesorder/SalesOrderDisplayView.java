@@ -296,9 +296,8 @@ public class SalesOrderDisplayView
 //		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 //		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		orderQuantityColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		returnSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		returnSOIMenu.disableProperty().bindBidirectional(model.alreadyReturnedProperty());
-
 		//		view.bind(model);
 	}
 

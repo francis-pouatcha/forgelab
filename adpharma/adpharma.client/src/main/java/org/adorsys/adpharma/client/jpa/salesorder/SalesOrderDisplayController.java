@@ -189,6 +189,7 @@ public class SalesOrderDisplayController implements EntityController
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
+		
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -266,6 +267,7 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
+				if(!displayedEntity.getAlreadyReturned()){
 				if(selectedItem!= null){
 					BigDecimal oderedQty = selectedItem.getOrderedQty();
 					BigDecimal qtyToReturn = getQtyToReturn();
@@ -277,6 +279,9 @@ public class SalesOrderDisplayController implements EntityController
 					}
 				}
 
+			}else {
+				Dialogs.create().message("cette Commande a deja fais l objet d un retour !").showInformation();
+			}
 			}
 		});
 
@@ -358,7 +363,11 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				orderReturnService.setEntity(displayedEntity).start();
+				if(!displayedEntity.getAlreadyReturned()){
+					orderReturnService.setEntity(displayedEntity).start();
+				}else {
+					Dialogs.create().message("Cette commande adeja fais l abjet dun retour !").showInformation();
+				}
 			}
 		});
 
@@ -431,7 +440,7 @@ public class SalesOrderDisplayController implements EntityController
 						displayView.getCashDrawer().getItems().add(new SalesOrderCashDrawer(cashDrawer) );
 
 					}
-					displayedEntity.setCashDrawer(new SalesOrderCashDrawer(resultList.iterator().next()));
+				     displayView.getCashDrawer().getSelectionModel().select(0);
 				}
 
 			}
