@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.jpa.print.PrintDialog;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -48,6 +49,9 @@ public class DeliveryReportPrinter {
 	
 	@Inject
 	private Locale locale;
+	
+	@Inject
+	private PrintDialog printDialog;
 	
 	public void handlePrintRequestedEvent(
 			@Observes @PrintRequestedEvent DeliveryId deliveryId) {
@@ -106,31 +110,34 @@ public class DeliveryReportPrinter {
 	    		if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) {
 //	    			worker.closeInvoice();
 	    			List<VBox> pages = worker.getPages();
-	    			Stage dialog = new Stage();
-	    			dialog.initModality(Modality.APPLICATION_MODAL);
-	    			// Stage
-	    			Scene scene = new Scene(pages.iterator().next());
-//	    			scene.getStylesheets().add("/styles/application.css");
-	    			dialog.setScene(scene);
-	    			dialog.setTitle(deliveryData.getDelivery().getDeliveryNumber());
-	    			dialog.show();
+	    			printDialog.getPages().clear();
+	    			printDialog.getPages().addAll(pages);
+	    			printDialog.show();
+//	    			Stage dialog = new Stage();
+//	    			dialog.initModality(Modality.APPLICATION_MODAL);
+//	    			// Stage
+//	    			Scene scene = new Scene(pages.iterator().next());
+////	    			scene.getStylesheets().add("/styles/application.css");
+//	    			dialog.setScene(scene);
+//	    			dialog.setTitle(deliveryData.getDelivery().getDeliveryNumber());
+//	    			dialog.show();
 
 	    			
-	    			PrinterJob job = PrinterJob.createPrinterJob();
-	    			job.showPrintDialog(dialog);
-//					JobSettings jobSettings = job.getJobSettings();
-//	    			@SuppressWarnings("unused")
-//	    			Printer printer = job.getPrinter();
-	    			if (job != null) {
-	    				boolean success =  false;
-	    				for (VBox page : pages) {
-	    					success = job.printPage(page);
-	    					if(!success) break;
-	    				}
-	    				if (success) {
-	    					job.endJob();
-	    				}
-	    			}
+//	    			PrinterJob job = PrinterJob.createPrinterJob();
+//	    			job.showPrintDialog(dialog);
+////					JobSettings jobSettings = job.getJobSettings();
+////	    			@SuppressWarnings("unused")
+////	    			Printer printer = job.getPrinter();
+//	    			if (job != null) {
+//	    				boolean success =  false;
+//	    				for (VBox page : pages) {
+//	    					success = job.printPage(page);
+//	    					if(!success) break;
+//	    				}
+//	    				if (success) {
+//	    					job.endJob();
+//	    				}
+//	    			}
 	    			
 	    		} else {
 	    			worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());

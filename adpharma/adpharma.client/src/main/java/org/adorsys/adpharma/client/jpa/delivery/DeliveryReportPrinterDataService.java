@@ -35,7 +35,7 @@ public class DeliveryReportPrinterDataService extends
 		return new Task<DeliveryReportPrinterData>() {
 			@Override
 			protected DeliveryReportPrinterData call() throws Exception {
-				if (delivery == null || delivery.getId()!=null)
+				if (delivery == null || delivery.getId()==null)
 					return null;
 				DeliveryReportPrinterData result = null;
 				delivery = deliveryService.findById(delivery.getId());

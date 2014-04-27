@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -24,7 +20,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.events.DeliveryId;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -37,13 +34,9 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
-import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
@@ -59,11 +52,8 @@ import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.dialog.Dialogs;
-
-import com.sun.org.apache.bcel.internal.generic.DALOAD;
 
 @Singleton
 public class DeliveryDisplayController implements EntityController
@@ -130,6 +120,10 @@ public class DeliveryDisplayController implements EntityController
 
 	@Inject
 	private DeliveryRegistration registration;
+	
+	@Inject
+	@PrintRequestedEvent
+	private Event<DeliveryId> printRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -405,6 +399,14 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
+		
+		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity==null || displayedEntity.getId()==null) return;
+				printRequestedEvent.fire(new DeliveryId(displayedEntity.getId()));
+			}
+		});
 
 		displayView.getView().addValidators();
 

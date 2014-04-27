@@ -7,16 +7,24 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.print.Paper;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -31,8 +39,10 @@ public class DeliveryReportPrintTemplate {
 	
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
-	private double printableWidth = Paper.A4.getWidth() ;
-	private double printableHeight = Paper.A4.getHeight();
+//	private double printableWidth = Paper.A4.getWidth() ;
+//	private double printableHeight = Paper.A4.getHeight();
+	private double printableWidth = Paper.NA_LETTER.getWidth() ;
+	private double printableHeight = Paper.NA_LETTER.getHeight();
 	private double width = printableWidth;
 	private RowConstraints mainRowHeight = new RowConstraints();
 	private RowConstraints doubleRowHeight = new RowConstraints();
@@ -70,8 +80,7 @@ public class DeliveryReportPrintTemplate {
 		pages.add(firstPage);
 		GridPane headerPane = printReportHeader();
 		firstPage.getChildren().add(headerPane);
-		deliveryTable = fillTableHaeder(width, mainRowHeight);
-		firstPage.getChildren().add(deliveryTable);
+		fillTableHaeder(firstPage);
 		computeRowLeft(firstPage);
 	}
 	
@@ -85,7 +94,7 @@ public class DeliveryReportPrintTemplate {
 
 		double currentPageHeight = page.getBoundsInParent().getHeight();
 		double spaceLeft = printableHeight - currentPageHeight;
-		numberOfItemsAvailable = (int)(spaceLeft / (realRowHeiht / .72)); // DPI 
+		numberOfItemsAvailable = ((int)(spaceLeft / (realRowHeiht / .72)))-1; // DPI 
 		pageNumber = pages.size();
 	}
 
@@ -93,8 +102,7 @@ public class DeliveryReportPrintTemplate {
 	private void newPage() {
 		VBox page = new VBox();
 		pages.add(page);
-		deliveryTable = fillTableHaeder(width, mainRowHeight);
-		page.getChildren().add(deliveryTable);
+		fillTableHaeder(page);
 		computeRowLeft(page);
 	}
 	
@@ -129,19 +137,21 @@ public class DeliveryReportPrintTemplate {
 			BigDecimal salesPricePU,
 			BigDecimal totalPurchasePrice) {
 		deliveryTable.getRowConstraints().add(mainRowHeight);
-		deliveryTable.add(new StandardText(internalPic), 0, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(articleName), 1, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(stockQuantity)), 2, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(purchasePricePU)), 3, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(qtyOrdered)), 4, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesPricePU)), 5, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalPurchasePrice)), 6, 1, rowIndex, 1);
+		rowIndex++;
+		deliveryTable.add(new StandardText(internalPic), 0, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(articleName), 1, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(stockQuantity)), 2, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(purchasePricePU)), 3, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(qtyOrdered)), 4, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesPricePU)), 5, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalPurchasePrice)), 6, rowIndex, 1,  1);
 	}
 	
 	private void newSeparator(){
+		rowIndex++;
 		Separator separator = new Separator();
 		deliveryTable.getRowConstraints().add(separatorRowConstraint);
-		deliveryTable.add(separator, 0, 7, rowIndex, 1);
+		deliveryTable.add(separator, 0, rowIndex, 7, 1);
 	}
 
 //	public void closePage(){
@@ -159,11 +169,17 @@ public class DeliveryReportPrintTemplate {
 //	}
 
 	int rowIndex = -1;
-	private GridPane fillTableHaeder(double width, RowConstraints mainRowHeight) {
-		rowIndex++;
+	BorderStroke borderStroke = new BorderStroke(Paint.valueOf("green"), BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT, Insets.EMPTY);
+	Border dashedGreenBorder = new Border(borderStroke);
+	private void fillTableHaeder(VBox page) {
 		deliveryTable = new GridPane();
-		deliveryTable.getRowConstraints().add(mainRowHeight);
+		deliveryTable.setBorder(dashedGreenBorder);
+		deliveryTable.setAlignment(Pos.TOP_CENTER);
+		page.getChildren().add(deliveryTable);
+		newSeparator();
 
+		rowIndex++;
+		deliveryTable.getRowConstraints().add(mainRowHeight);
 		deliveryTable.getColumnConstraints().add(new ColumnConstraints(width * .15));
 		deliveryTable.getColumnConstraints().add(new ColumnConstraints(width * .49));
 		deliveryTable.getColumnConstraints().add(new ColumnConstraints(width * .03));
@@ -172,20 +188,23 @@ public class DeliveryReportPrintTemplate {
 		deliveryTable.getColumnConstraints().add(new ColumnConstraints(width * .1));
 		deliveryTable.getColumnConstraints().add(new ColumnConstraints(width * .1));
 
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_internalPic.title")), 0, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_articleName.title")), 1, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_stockQuantity.title")), 2, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_purchasePricePU.title")), 3, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title")), 4, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title")), 5, 1, rowIndex, 1);
-		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title")), 6, 1, rowIndex, 1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_internalPic.title")), 0, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_articleName.title")), 1, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_stockQuantity.title")), 2, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_purchasePricePU.title")), 3, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title")), 4, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title")), 5, rowIndex, 1,  1);
+		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title")), 6, rowIndex, 1,  1);
+		
+		newSeparator();
 
-		return deliveryTable;
+		
+//		return deliveryTable;
 	}
 
 	private GridPane printReportHeader() {
 
-		int rowIndex = -1;
+		int row = -1;
 
 		GridPane headerPane = new GridPane();
 
@@ -195,51 +214,51 @@ public class DeliveryReportPrintTemplate {
 		headerPane.getColumnConstraints().add(new ColumnConstraints(width * .3));
 		
 		// ROW 0
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text documentName = new BoldText(resourceBundle.getString("DeliveryReportPrintTemplate_header.title")
 						+ " " + delivery.getDeliveryNumber());
-		headerPane.add(documentName, 0, rowIndex, 2, 1);
+		headerPane.add(documentName, 0, row, 2, 1);
 		GridPane.setHalignment(documentName, HPos.CENTER);
 
 		// ROW 1
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Separator separator = new Separator(Orientation.HORIZONTAL);
-		headerPane.add(separator, 0, rowIndex, 2, 1);
+		headerPane.add(separator, 0, row, 2, 1);
 		GridPane.setHgrow(separator, Priority.ALWAYS);
 
 		// ROW 2
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(doubleRowHeight);
 		Text companyName = new BoldText(delivery.getReceivingAgency().getName());
-		headerPane.add(companyName, 0, rowIndex, 1, 1);
+		headerPane.add(companyName, 0, row, 1, 1);
 		GridPane.setHalignment(companyName, HPos.LEFT);
 		GridPane.setValignment(companyName, VPos.BOTTOM);
 
 		// ROW 3
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text Tel = new StandardText("Tel: " + delivery.getReceivingAgency().getPhone());
-		headerPane.add(Tel, 0, rowIndex, 1, 1);
+		headerPane.add(Tel, 0, row, 1, 1);
 		GridPane.setHalignment(Tel, HPos.LEFT);
 		GridPane.setValignment(Tel, VPos.BOTTOM);
 
 		// ROW 4
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text supplier = new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_supplier.title") 
 				+ " " + delivery.getSupplier().getName());
-		headerPane.add(supplier, 0, rowIndex, 1, 1);
+		headerPane.add(supplier, 0, row, 1, 1);
 		GridPane.setHalignment(supplier, HPos.LEFT);
 		GridPane.setValignment(supplier, VPos.BOTTOM);
 
 		// ROW 5
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		Text agent = new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_agent.title") 
 				+ " " + stockAgent.getFullName());
-		headerPane.add(agent, 0, rowIndex, 1, 1);
+		headerPane.add(agent, 0, row, 1, 1);
 		GridPane.setHalignment(agent, HPos.LEFT);
 		GridPane.setValignment(agent, VPos.BOTTOM);
 
@@ -247,14 +266,14 @@ public class DeliveryReportPrintTemplate {
 		Text invoiceDateLabel = new StandardText(
 				resourceBundle.getString("DeliveryReportPrintTemplate_deliveryDate.title")
 				+ " " + calendarFormat.format(delivery.getDeliveryDate(), "dd-MM-yyyy HH:mm", locale));
-		headerPane.add(invoiceDateLabel, 1, rowIndex, 1, 1);
+		headerPane.add(invoiceDateLabel, 1, row, 1, 1);
 		GridPane.setHalignment(invoiceDateLabel, HPos.LEFT);
 		GridPane.setValignment(invoiceDateLabel, VPos.BOTTOM);
 
 		// ROW (6)
-		rowIndex++;
+		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
-		headerPane.add(new Label(), 0, rowIndex, 2, 1);
+		headerPane.add(new Label(), 0, row, 2, 1);
 
 		return headerPane;
 	}
