@@ -301,7 +301,10 @@ public class CashDrawerDisplayView
 	{
 		return cashButon;
 	}
-	
+	public Button getCancelButton()
+	{
+		return cancelButton;
+	}
 	public CashDrawerView getView()
 	{
 		return view;
