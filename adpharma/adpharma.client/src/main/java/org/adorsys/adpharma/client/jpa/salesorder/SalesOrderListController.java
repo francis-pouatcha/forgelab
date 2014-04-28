@@ -22,6 +22,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
@@ -106,6 +108,12 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	private SalesOrderRegistration registration;
 
+	@Inject
+	@PrintCustomerInvoiceRequestedEvent
+	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
+	
+	private SalesOrderId selectedSalesOrderId;
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -119,6 +127,7 @@ public class SalesOrderListController implements EntityController
 			public void changed(ObservableValue<? extends SalesOrder> observable,
 					SalesOrder oldValue, SalesOrder newValue) {
 				if(newValue!=null){
+					selectedSalesOrderId = new SalesOrderId(newValue.getId());
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getPrintInvoiceButtonn().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
@@ -140,7 +149,6 @@ public class SalesOrderListController implements EntityController
 				SalesOrderItemSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
-				ArrayList<SalesOrderCustomer> soc = new ArrayList<SalesOrderCustomer>();
 				List<SalesOrderItem> resultList = result.getResultList();
 				listView.getDataListItem().getItems().setAll(resultList);
 			}
@@ -329,6 +337,14 @@ public class SalesOrderListController implements EntityController
 
 			}
 				});
+		
+		listView.getPrintInvoiceButtonn().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
+			}
+		});
 	}
 
 	@Override

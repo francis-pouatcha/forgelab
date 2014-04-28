@@ -39,11 +39,8 @@ public class CustomerInvoicePrintTemplate {
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	Font boldFont = boldFont();
-//	Printer printer = Printer.getDefaultPrinter();
-//	private PageLayout pageLayout = printer.createPageLayout(Paper.NA_LETTER,
-//			PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
 
-	private double printableWidth = Paper.A4.getWidth() ;
+	private double printableWidth = Paper.A4.getWidth();
 	private double printableHeight = Paper.A4.getHeight();
 	private double width = printableWidth;
 	private RowConstraints mainRowHeight = new RowConstraints();
@@ -51,7 +48,7 @@ public class CustomerInvoicePrintTemplate {
 
 	private double rowHeiht = 15;
 	private List<VBox> pages = new ArrayList<VBox>();
-	private Insets insets = new Insets(5);
+	private Insets insets = new Insets(2);
 
 	private GridPane invoiceTable = null;
 
