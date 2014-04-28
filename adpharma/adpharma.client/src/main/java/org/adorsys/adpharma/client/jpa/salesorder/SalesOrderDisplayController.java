@@ -189,7 +189,7 @@ public class SalesOrderDisplayController implements EntityController
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
-		
+
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -243,21 +243,7 @@ public class SalesOrderDisplayController implements EntityController
 		//			}
 		//		});
 
-		/*
-		 * listen to edit menu Item.
-		 */
-		//		displayView.getEditSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-		//
-		//			@Override
-		//			public void handle(ActionEvent event) {
-		//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-		//				if(selectedItem!=null) {
-		//					PropertyReader.copy(selectedItem, salesOrderItem);
-		////					displayView.getDataList().getItems().remove(selectedItem);
-		//				}
-		//
-		//			}
-		//		});
+
 
 		/*
 		 * listen to edit menu Item.
@@ -268,20 +254,20 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(ActionEvent event) {
 				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
 				if(!displayedEntity.getAlreadyReturned()){
-				if(selectedItem!= null){
-					BigDecimal oderedQty = selectedItem.getOrderedQty();
-					BigDecimal qtyToReturn = getQtyToReturn();
-					if(qtyToReturn.compareTo(oderedQty)>0){
-						Dialogs.create().nativeTitleBar().message("you can't return more than : "+oderedQty +" for this line !").showInformation();
-					}else {
-						selectedItem.setReturnedQty(qtyToReturn);
-						selectedItem.setDeliveredQty(selectedItem.getOrderedQty().subtract(qtyToReturn));
+					if(selectedItem!= null){
+						BigDecimal oderedQty = selectedItem.getOrderedQty();
+						BigDecimal qtyToReturn = getQtyToReturn();
+						if(qtyToReturn.compareTo(oderedQty)>0){
+							Dialogs.create().nativeTitleBar().message("you can't return more than : "+oderedQty +" for this line !").showInformation();
+						}else {
+							selectedItem.setReturnedQty(qtyToReturn);
+							selectedItem.setDeliveredQty(selectedItem.getOrderedQty().subtract(qtyToReturn));
+						}
 					}
-				}
 
-			}else {
-				Dialogs.create().message("cette Commande a deja fais l objet d un retour !").showInformation();
-			}
+				}else {
+					Dialogs.create().message("cette Commande a deja fais l objet d un retour !").showInformation();
+				}
 			}
 		});
 
@@ -440,7 +426,7 @@ public class SalesOrderDisplayController implements EntityController
 						displayView.getCashDrawer().getItems().add(new SalesOrderCashDrawer(cashDrawer) );
 
 					}
-				     displayView.getCashDrawer().getSelectionModel().select(0);
+					displayView.getCashDrawer().getSelectionModel().select(0);
 				}
 
 			}
@@ -448,15 +434,7 @@ public class SalesOrderDisplayController implements EntityController
 
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
 
-		//		disdplayView.getTax().setOnMouseClicked(new EventHandler<MouseEvent>() {
-		//
-		//			@Override
-		//			public void handle(MouseEvent event) {
-		//				vatSearchService.setSearchInputs(new VATSearchInput()).start();
-		//			}
-		//
-		//
-		//		});
+
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -489,21 +467,11 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem editedItem = s.getValue();
 				event.consume();
 				s.reset();
-				//				displayView.getDataList().getItems().add(editedItem);
-				//				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				int index = displayView.getDataList().getItems().indexOf(editedItem);
 				if(index>-1){
 					SalesOrderItem displayed = displayView.getDataList().getItems().get(index);
 					PropertyReader.copy(editedItem, displayed);
-					//					displayView.getDataList().getItems().remove(index);
-					//					displayView.getDataList().getItems().add(index, editedItem);
 				}
-				//				ObservableList<SalesOrderItem> items = displayView.getDataList().getItems().in;
-				//				for (SalesOrderItem salesOrderItem : items) {
-				//					if(editedItem.getId().equals(salesOrderItem.getId())){
-				//						PropertyReader.copy(editedItem, salesOrderItem);
-				//					}
-				//				}
 				updateSalesOrder(editedItem);
 
 			}
@@ -546,54 +514,7 @@ public class SalesOrderDisplayController implements EntityController
 
 		closeService.setOnFailed(callFailedEventHandler);
 
-		//		vatSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-		//
-		//			@Override
-		//			public void handle(WorkerStateEvent event) {
-		//				VATSearchService s = (VATSearchService) event.getSource();
-		//				VATSearchResult vsr = s.getValue();
-		//				event.consume();
-		//				s.reset();
-		//				List<VAT> resultList = vsr.getResultList();
-		//				ArrayList<SalesOrderVat> sov = new ArrayList<SalesOrderVat>();
-		//				for (VAT vat : resultList) {
-		//					sov.add(new SalesOrderVat(vat));
-		//				}
-		//				displayView.getTax().getItems().setAll(sov);
-		//				if(!resultList.isEmpty())
-		//					displayView.getTax().setValue(new SalesOrderVat(resultList.iterator().next()));
-		//			}
-		//		});
-		//		vatSearchService.setOnFailed(callFailedEventHandler);
-		//		displayView.getDataList().getItems().addListener(new ListChangeListener<SalesOrderItem>() {
-		//
-		//			@Override
-		//			public void onChanged(
-		//					javafx.collections.ListChangeListener.Change<? extends SalesOrderItem> c) {
-		//				c.next();
-		//				if(c.getAddedSize()!=0){
-		//					List<? extends SalesOrderItem> addedSubList = c.getAddedSubList();
-		//					for (SalesOrderItem item : addedSubList) {
-		//						item.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
-		//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().add(item.getTotalSalePrice()));
-		//						displayedEntity.salesOrderItemsProperty().getValue().add(item);
-		//					}
-		//				}
-		//
-		//				if(c.getRemovedSize()!=0){
-		//					List<? extends SalesOrderItem> removed = c.getRemoved();
-		//					for (SalesOrderItem item : removed) {
-		//						displayedEntity.setAmountBeforeTax(displayedEntity.getAmountBeforeTax().subtract(item.getTotalSalePrice()));
-		//						displayedEntity.salesOrderItemsProperty().getValue().remove(item);
-		//					}
-		//				}
-		//
-		//				displayedEntity.calculateAmount();
-		//
-		//			}
-		//		});
 
-		//		
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -683,22 +604,6 @@ public class SalesOrderDisplayController implements EntityController
 		});
 		prescriptionBookSearchService.setOnFailed(callFailedEventHandler);
 
-
-		//      displayView.getConfirmSelectionButton().setOnAction(new EventHandler<ActionEvent>()
-		//      {
-		//         @Override
-		//         public void handle(ActionEvent e)
-		//         {
-		//            final AssocSelectionEventData<SalesOrder> pendingSelectionRequest = pendingSelectionRequestProperty.get();
-		//            if (pendingSelectionRequest == null)
-		//               return;
-		//            pendingSelectionRequestProperty.set(null);
-		//            pendingSelectionRequest.setTargetEntity(displayedEntity);
-		//            selectionResponseEvent.fire(pendingSelectionRequest);
-		//         				}
-		//      });
-
-		//      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
 		displayView.addValidators();
 	}
 

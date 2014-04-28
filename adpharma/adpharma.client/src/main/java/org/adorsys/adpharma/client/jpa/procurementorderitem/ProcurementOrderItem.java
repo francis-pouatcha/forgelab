@@ -1,14 +1,23 @@
 package org.adorsys.adpharma.client.jpa.procurementorderitem;
 
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.article.Article;
+
 import javafx.beans.property.SimpleObjectProperty;
+
 import java.util.Calendar;
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.client.jpa.login.Login;
+
 import javafx.beans.property.SimpleBooleanProperty;
+
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,10 +25,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
 import org.apache.commons.lang3.ObjectUtils;
+
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
@@ -86,6 +96,25 @@ public class ProcurementOrderItem implements Cloneable
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<ProcurementOrderItemCreatingUser> creatingUser;
 
+   
+   public static ProcurementOrderItem fromArticle(Article article){
+	   ProcurementOrderItem item = new ProcurementOrderItem();	
+		item.setMainPic(article.getPic());
+		item.setSecondaryPic(article.getPic());
+		item.setArticle(new ProcurementOrderItemArticle(article));
+		item.setArticleName(article.getArticleName());
+		item.setPurchasePricePU(article.getPppu());
+		item.setSalesPricePU(article.getSppu());
+		item.setSalesPricePU(article.getSppu());
+		item.setQtyOrdered(BigDecimal.ZERO);
+		return item;
+	}
+   
+   public void calculateTotalAmout(){
+		BigDecimal pppu = purchasePricePU.get();
+		pppu = pppu.multiply(qtyOrdered.get());
+		totalPurchasePrice.set(pppu);
+	}
    public Long getId()
    {
       return id;
@@ -210,7 +239,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (qtyOrdered == null)
       {
-         qtyOrdered = new SimpleObjectProperty<BigDecimal>();
+         qtyOrdered = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return qtyOrdered;
    }
@@ -229,7 +258,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (availableQty == null)
       {
-         availableQty = new SimpleObjectProperty<BigDecimal>();
+         availableQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return availableQty;
    }
@@ -248,7 +277,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (freeQuantity == null)
       {
-         freeQuantity = new SimpleObjectProperty<BigDecimal>();
+         freeQuantity = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return freeQuantity;
    }
@@ -267,7 +296,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (stockQuantity == null)
       {
-         stockQuantity = new SimpleObjectProperty<BigDecimal>();
+         stockQuantity = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return stockQuantity;
    }
@@ -286,7 +315,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (salesPricePU == null)
       {
-         salesPricePU = new SimpleObjectProperty<BigDecimal>();
+         salesPricePU = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return salesPricePU;
    }
@@ -305,7 +334,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (purchasePricePU == null)
       {
-         purchasePricePU = new SimpleObjectProperty<BigDecimal>();
+         purchasePricePU = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return purchasePricePU;
    }
@@ -324,7 +353,7 @@ public class ProcurementOrderItem implements Cloneable
    {
       if (totalPurchasePrice == null)
       {
-         totalPurchasePrice = new SimpleObjectProperty<BigDecimal>();
+         totalPurchasePrice = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return totalPurchasePrice;
    }

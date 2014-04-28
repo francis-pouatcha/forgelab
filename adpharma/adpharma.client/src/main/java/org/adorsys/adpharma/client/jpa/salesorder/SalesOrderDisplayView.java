@@ -63,10 +63,10 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private Button ordonnancierButton;
-	
+
 	@FXML
 	private Button saveReturnButton;
-	
+
 	@FXML
 	private GridPane saleOrderItemBar;
 
@@ -129,8 +129,8 @@ public class SalesOrderDisplayView
 
 	private BigDecimalField discountRate;
 
-//	@FXML
-//	private ComboBox<SalesOrderVat> tax;
+	//	@FXML
+	//	private ComboBox<SalesOrderVat> tax;
 
 
 
@@ -156,12 +156,12 @@ public class SalesOrderDisplayView
 	@FXML
 	private ContextMenu datalistContextMenu;
 
-//	@FXML
-//	private MenuItem deleteSOIMenu;
-//
-//	@FXML
-//	private MenuItem editSOIMenu;
-	
+	//	@FXML
+	//	private MenuItem deleteSOIMenu;
+	//
+	//	@FXML
+	//	private MenuItem editSOIMenu;
+
 	@FXML
 	private MenuItem returnSOIMenu;
 
@@ -212,7 +212,7 @@ public class SalesOrderDisplayView
 	{
 		Set<ConstraintViolation<SalesOrder>> violations = new HashSet<ConstraintViolation<SalesOrder>>();
 		violations.addAll(toOneAggreggationFieldValidator.validate(client, model.getCustomer(), SalesOrder.class, "customer", resourceBundle));
-//		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
+		//		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
 
 		return violations;
 	}
@@ -280,7 +280,7 @@ public class SalesOrderDisplayView
 		taxAmount.numberProperty().bindBidirectional(model.amountVATProperty());
 		discount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
-//		tax.valueProperty().bindBidirectional(model.vatProperty());
+		//		tax.valueProperty().bindBidirectional(model.vatProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
@@ -290,11 +290,11 @@ public class SalesOrderDisplayView
 		salesStatus.valueProperty().bindBidirectional(model.salesOrderStatusProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
-		
+
 		saleOrderItemBar.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		closeButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-//		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-//		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		//		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		//		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		orderQuantityColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		returnSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
@@ -307,15 +307,15 @@ public class SalesOrderDisplayView
 		orderedQty.numberProperty().bindBidirectional(soi.orderedQtyProperty());
 		salesPricePU.numberProperty().bindBidirectional(soi.salesPricePUProperty());
 		soi.totalSalePriceProperty().bind(totalSalePrice.numberProperty());
-//		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
-		orderedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
-			@Override
-			public void changed(ObservableValue<? extends BigDecimal> obs,
-					BigDecimal oldVal, BigDecimal newVal) {
-				if(newVal==null)orderedQty.setNumber(BigDecimal.ZERO);
-				totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
-				
-			}});
+		//		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
+		//		orderedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
+		//			@Override
+		//			public void changed(ObservableValue<? extends BigDecimal> obs,
+		//					BigDecimal oldVal, BigDecimal newVal) {
+		//				if(newVal==null)orderedQty.setNumber(BigDecimal.ZERO);
+		//				totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
+		//				
+		//			}});
 		orderedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
 			@Override
 			public void changed(ObservableValue<? extends BigDecimal> obs,
@@ -325,7 +325,7 @@ public class SalesOrderDisplayView
 				} else {
 					totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
 				}
-				
+
 			}});
 		salesPricePU.numberProperty().addListener(new ChangeListener<BigDecimal>() {
 			@Override
@@ -336,7 +336,7 @@ public class SalesOrderDisplayView
 				} else {
 					totalSalePrice.setNumber(newVal.multiply(orderedQty.getNumber()));
 				}
-				
+
 			}});
 	}
 
@@ -370,9 +370,9 @@ public class SalesOrderDisplayView
 	//		return confirmSelectionButton;
 	//	}
 
-//	public ComboBox<SalesOrderVat> getTax() {
-//		return tax;
-//	}
+	//	public ComboBox<SalesOrderVat> getTax() {
+	//		return tax;
+	//	}
 
 	public TableView<SalesOrderItem> getDataList() {
 		return dataList;
@@ -501,14 +501,14 @@ public class SalesOrderDisplayView
 	public ContextMenu getDatalistContextMenu() {
 		return datalistContextMenu;
 	}
-//
-//	public MenuItem getDeleteSOIMenu() {
-//		return deleteSOIMenu;
-//	}
-//
-//	public MenuItem getEditSOIMenu() {
-//		return editSOIMenu;
-//	}
+	//
+	//	public MenuItem getDeleteSOIMenu() {
+	//		return deleteSOIMenu;
+	//	}
+	//
+	//	public MenuItem getEditSOIMenu() {
+	//		return editSOIMenu;
+	//	}
 
 	public MenuItem getReturnSOIMenu() {
 		return returnSOIMenu;
@@ -518,5 +518,5 @@ public class SalesOrderDisplayView
 		return orderQuantityColumn;
 	}
 
-	
+
 }

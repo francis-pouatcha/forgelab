@@ -49,10 +49,6 @@ public class ArticleLotListController implements EntityController
 	private Event<ArticleLot> selectionEvent;
 
 	@Inject
-	@EntitySearchRequestedEvent
-	private Event<ArticleLot> searchRequestedEvent;
-
-	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ArticleLotDetailsManager> detailscreateRequestedEvent;
 

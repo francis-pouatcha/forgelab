@@ -40,7 +40,7 @@
 										<Label text="Montant HT :" />
 										<Label layoutX="10.0" layoutY="17.0" text="Taxes :" GridPane.rowIndex="1" />
 										<Label layoutX="10.0" layoutY="47.0" text="Remises :" GridPane.rowIndex="2" />
-										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Amount TTC" GridPane.rowIndex="3" />
+										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Montant TTC" GridPane.rowIndex="3" />
 										<TextField fx:id="amountHT" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" />
 										<TextField fx:id="taxAmount" editable="false" layoutX="125.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 										<TextField fx:id="discount" editable="false" layoutX="125.0" layoutY="42.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -94,17 +94,17 @@
 												<RowConstraints maxHeight="27.0" minHeight="10.0" prefHeight="26.0" valignment="CENTER" vgrow="SOMETIMES" />
 											</rowConstraints>
 											<children>
-												<Label text="Client">
+												<Label text="Client :">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Telephone" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="Telephone :" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="71.0" prefHeight="16.0" prefWidth="143.0" text="Sales Status :" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="71.0" prefHeight="16.0" prefWidth="143.0" text="Etat de la Vente :" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -115,7 +115,7 @@
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientPhone" editable="false" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-												<Label layoutX="15.0" layoutY="62.0" text="Adresse" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Adresse :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -130,17 +130,17 @@
 										</GridPane>
 										<GridPane fx:id="rigthGrid" hgap="5.0" layoutX="10.0" layoutY="10.0" prefHeight="220.0" prefWidth="392.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
 											<children>
-												<Label text="Assurreur">
+												<Label text="Assurreur :">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="numBon" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="Num. Bon :" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="discountRate" GridPane.rowIndex="3">
+												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="Taux de remise :" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -150,7 +150,7 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="15.0" layoutY="62.0" text="numcmd" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Num. Cmd :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -159,6 +159,7 @@
 												<TextField fx:id="numBon" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 												<TextField fx:id="numcmd" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 												<TextField fx:id="discountRate" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+<Label layoutX="15.0" layoutY="91.0" text=" :" />
 											</children>
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />

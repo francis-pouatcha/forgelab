@@ -1,13 +1,16 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.math.BigInteger;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -16,11 +19,13 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
+import org.adorsys.adpharma.client.utils.ChartData;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -47,6 +52,21 @@ public class SalesOrderListView
 
 	@FXML
 	private Button printInvoiceButton;
+	
+	@FXML
+	private Button computeButton;
+	
+	@FXML
+	private PieChart pieChart;
+	
+	@FXML
+	private TableView<ChartData> pieChartData;
+	
+	@FXML 
+	private ComboBox<Customer> chartClientList;
+	
+	@FXML 
+	private ComboBox<BigInteger> yearList;
 
 	@FXML
 	private Button processButton;
@@ -67,6 +87,9 @@ public class SalesOrderListView
 	HBox searchBar;
 
 	private TextField soNumber ;
+	
+	@FXML
+	private Tab turnoverTab ;
 
 	private ComboBox<SalesOrderCustomer> customer;
 
@@ -83,7 +106,7 @@ public class SalesOrderListView
 	private DocumentProcessingStateListCellFatory salesOrderStatusListCellFatory;
 
 	@Inject
-	@Bundle({ CrudKeys.class, SalesOrderItem.class
+	@Bundle({ CrudKeys.class, SalesOrderItem.class,ChartData.class
 		, SalesOrder.class
 	})
 	private ResourceBundle resourceBundle;
@@ -137,6 +160,10 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "SalesOrderItem", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+
+		// pie Chart table view
+				viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
+				viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
 	}
@@ -232,7 +259,26 @@ public class SalesOrderListView
 		return salesOrderStatus;
 	}
 
+	public PieChart getPieChart(){
+		return pieChart;
+	}
+	public TableView<ChartData> getPieChartData(){
+		return pieChartData;
+	}
+	public Button getComputeButton(){
+		return computeButton;
+	}
+	
+	public ComboBox<Customer> getChartClientList(){
+		return chartClientList ;
+	}
+	
+	public ComboBox<BigInteger> getYearList(){
+		return yearList ;
+	}
 
-
+    public Tab getTurnoverTab(){
+    	return turnoverTab ;
+    }
 
 }

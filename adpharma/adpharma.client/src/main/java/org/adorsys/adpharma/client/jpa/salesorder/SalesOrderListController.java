@@ -32,6 +32,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
+import org.adorsys.adpharma.client.utils.ChartData;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -93,6 +94,10 @@ public class SalesOrderListController implements EntityController
 
 	@Inject 
 	SalesOrderSearchInput searchInput;
+	
+	@Inject
+	CustomerSearchInput customerSearchInput ;
+	
 
 	@Inject
 	@Bundle({ CrudKeys.class})
@@ -104,6 +109,7 @@ public class SalesOrderListController implements EntityController
 	@PostConstruct
 	public void postConstruct()
 	{
+		customerSearchInput.setMax(-1);
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 		searchInput.setMax(100);
@@ -157,6 +163,17 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+		
+		listView.getComputeButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+			List<ChartData> testData = ChartData.getTestData();
+			listView.getPieChart().getData().setAll(ChartData.toPieChartData(testData));
+			listView.getPieChartData().getItems().setAll(testData);
+				
+			}
+		});
 
 		/*
 		 * listen to remove button .
@@ -181,11 +198,20 @@ public class SalesOrderListController implements EntityController
 
 				});
 
+		
 		listView.getCustomer().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				customerSearchService.setSearchInputs(new CustomerSearchInput()).start();
+				customerSearchService.setSearchInputs(customerSearchInput).start();
+
+			}
+		});
+		listView.getChartClientList().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				customerSearchService.setSearchInputs(customerSearchInput).start();
 
 			}
 		});
@@ -252,6 +278,7 @@ public class SalesOrderListController implements EntityController
 				soc.add(0, null);
 				listView.getCustomer().getItems().setAll(soc);
 				listView.getCustomer().getSelectionModel().select(0);
+				listView.getChartClientList().getItems().setAll(resultList);
 
 			}
 		});

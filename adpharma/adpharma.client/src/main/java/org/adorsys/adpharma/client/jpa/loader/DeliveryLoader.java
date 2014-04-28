@@ -141,6 +141,8 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 					if (itemCell != null)
 					{
 						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+						if(BigDecimal.ZERO.equals(decimal))
+							continue;
 						deliveryItem.setQtyOrdered(decimal);
 					}
 					
@@ -164,6 +166,8 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 					if (itemCell != null)
 					{
 						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+						if(BigDecimal.ZERO.equals(decimal))
+							continue;
 						deliveryItem.setStockQuantity(decimal);
 					}
 

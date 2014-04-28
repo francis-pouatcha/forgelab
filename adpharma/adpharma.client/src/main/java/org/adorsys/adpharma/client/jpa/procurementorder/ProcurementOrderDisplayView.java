@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -10,6 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -34,6 +37,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeConverter;
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderTypeListCellFatory;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
@@ -63,7 +67,8 @@ public class ProcurementOrderDisplayView
 
 	private Button cancelButton;
 
-	private Button addArticleButton ;
+	@FXML
+	private MenuItem deleteItemMenu;
 
 	@FXML
 	TableView<ProcurementOrderItem> dataList;
@@ -82,7 +87,7 @@ public class ProcurementOrderDisplayView
 
 	@FXML
 	private GridPane leftGrid;
-	
+
 	private TextField articleName;
 
 	private TextField mainPic;
@@ -94,13 +99,13 @@ public class ProcurementOrderDisplayView
 	private BigDecimalField salesPricePU;
 
 	private BigDecimalField totalPurchasePrice;
-	
+
 	private BigDecimalField amountBeforeTax ;
-	
+
 	private BigDecimalField amountNetToPay ;
 
 	private Button okButton ;
-	
+
 	private CalendarTextField recordingDate;
 
 	@Inject
@@ -116,11 +121,6 @@ public class ProcurementOrderDisplayView
 	@Bundle(ProcurementOrderType.class)
 	private ResourceBundle procurementOrderTypeBundle;
 
-	@Inject
-	private ProcurementOrderTypeConverter procurementOrderTypeConverter;
-
-	@Inject
-	private ProcurementOrderTypeListCellFatory procurementOrderTypeListCellFatory;
 	@Inject
 	@Bundle(DocumentProcessingState.class)
 	private ResourceBundle poStatusBundle;
@@ -147,6 +147,8 @@ public class ProcurementOrderDisplayView
 	@FXML
 	private ComboBox<DocumentProcessingState> poStatus;
 
+	private TableColumn<ProcurementOrderItem, BigDecimal> orderQuantityColumn;
+
 	@Inject
 	@Bundle({ CrudKeys.class, ProcurementOrder.class ,ProcurementOrderItem.class,Delivery.class})
 	private ResourceBundle resourceBundle;
@@ -160,8 +162,8 @@ public class ProcurementOrderDisplayView
 		viewBuilder.addStringColumn(dataList, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
-		viewBuilder.addBigDecimalColumn(dataList, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		orderQuantityColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -181,7 +183,6 @@ public class ProcurementOrderDisplayView
 		buildActionBar();
 		buildLeftGrid();
 
-
 		ComboBoxInitializer.initialize(procmtOrderTriggerMode, procmtOrderTriggerModeConverter, procmtOrderTriggerModeListCellFatory, procmtOrderTriggerModeBundle);
 		ComboBoxInitializer.initialize(poStatus, poStatusConverter, poStatusListCellFatory, poStatusBundle);
 
@@ -196,9 +197,10 @@ public class ProcurementOrderDisplayView
 		procmtOrderTriggerMode.valueProperty().bindBidirectional(model.procmtOrderTriggerModeProperty());
 		dataList.itemsProperty().bindBidirectional(model.procurementOrderItemsProperty());
 		creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty() );
-        recordingDate.calendarProperty().bindBidirectional(model.createdDateProperty());
-        amountNetToPay.numberProperty().bindBidirectional(model.netAmountToPayProperty());
-        amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
+		recordingDate.calendarProperty().bindBidirectional(model.createdDateProperty());
+		amountNetToPay.numberProperty().bindBidirectional(model.netAmountToPayProperty());
+		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
+		orderQuantityColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	public void bind(ProcurementOrderItem model) {
@@ -219,7 +221,7 @@ public class ProcurementOrderDisplayView
 		amountBeforeTax.setPrefWidth(180d);
 		amountBeforeTax.setEditable(false);
 		leftGrid.add(amountBeforeTax, 1, 2);
-		
+
 		amountNetToPay =ViewBuilderUtils.newBigDecimalField("amountNetToPay", NumberType.CURRENCY, locale,false);
 		amountNetToPay.setPrefWidth(180d);
 		amountNetToPay.setEditable(false);
@@ -227,7 +229,7 @@ public class ProcurementOrderDisplayView
 
 
 	}
-	
+
 	public void buildActionBar(){
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		saveButton.setPrefWidth(150d);
@@ -268,13 +270,13 @@ public class ProcurementOrderDisplayView
 		purchasePricePU.setPrefWidth(100d);
 
 		totalPurchasePrice = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
-		totalPurchasePrice.setPromptText("MMYY");
 		totalPurchasePrice.setTooltip(new Tooltip("expiration Date"));
 		totalPurchasePrice.setPrefWidth(100d);
+		totalPurchasePrice.setEditable(false);
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
-		itemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("P.V"),new Label("P.A"),new Label("Prix TOTAL"));
+		itemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("P.V"),new Label("P.A"),new Label("Prix .T"));
 		itemBar.addRow(1,mainPic,articleName,qtyOrdered,salesPricePU,purchasePricePU,totalPurchasePrice,okButton);
 
 	}
@@ -285,19 +287,39 @@ public class ProcurementOrderDisplayView
 		return rootPane;
 	}
 
-//		public Button getEditButton()
-//		{
-//			return editButton;
-//		}
-	
-		public Button getCancelButton()
-		{
-			return cancelButton;
-		}
-	
+	//		public Button getEditButton()
+	//		{
+	//			return editButton;
+	//		}
+
+	public Button getCancelButton()
+	{
+		return cancelButton;
+	}
+
+	public Button getOkButton(){
+		return okButton ;
+	}
+
+	public TextField getArticleName(){
+		return articleName ;
+	}
+
 	public ProcurementOrderView getView()
 	{
 		return view;
+	}
+	public TableView<ProcurementOrderItem> getDataList(){
+		return dataList ;
+	}
+
+	public MenuItem getDeleteItemMenu() {
+		return deleteItemMenu;
+	}
+
+
+	public TableColumn<ProcurementOrderItem, BigDecimal> getOrderQuantityColumn() {
+		return orderQuantityColumn;
 	}
 	//
 	//	public Button getConfirmSelectionButton()

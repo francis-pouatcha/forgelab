@@ -145,8 +145,7 @@
 							<contextMenu>
 								<ContextMenu fx:id="datalistContextMenu">
 									<items>
-										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
-										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
+										<MenuItem fx:id="deleteItemMenu" mnemonicParsing="false" text="Delete" />
 									</items>
 								</ContextMenu>
 							</contextMenu>

@@ -112,10 +112,11 @@ public class ProcurementOrderListController implements EntityController
 					ProcurementOrder oldValue, ProcurementOrder newValue)
 			{
 				if (newValue != null){
-					ProcurementOrderItemSearchInput poi = new ProcurementOrderItemSearchInput();
-					poi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
-					poi.setMax(-1);
-					itemSearchService.setSearchInputs(poi).start();
+					ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
+					poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
+					poisi.getFieldNames().add("procurementOrder");
+					poisi.setMax(-1);
+					itemSearchService.setSearchInputs(poisi).start();
 				}
 			}
 				});
