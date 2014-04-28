@@ -210,6 +210,7 @@ public class SalesOrderEJB
 	}
 
 	public SalesOrder cancelSalesOrder(SalesOrder salesOrder) {
+		salesOrder = findById(salesOrder.getId());
 		if(Boolean.TRUE.equals(salesOrder.getCashed())){
 			throw new IllegalStateException("Can not cancel frozen sales order.");
 		}

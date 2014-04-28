@@ -188,7 +188,7 @@ public class CustomerInvoiceEJB {
 		BigDecimal customerCoverageRate = BigDecimal.ONE;
 		Insurrance insurance = salesOrder.getInsurance();
 		if(insurance!=null){
-			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate();
+			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
 			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
 		}
 		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));

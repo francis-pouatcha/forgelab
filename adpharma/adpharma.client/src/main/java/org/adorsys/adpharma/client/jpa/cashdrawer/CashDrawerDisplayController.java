@@ -54,6 +54,8 @@ import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustom
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPaidBy;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCancelService;
 import org.adorsys.javafx.crud.extensions.DomainComponent;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -77,6 +79,8 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -139,6 +143,9 @@ public class CashDrawerDisplayController implements EntityController
 	private ServiceCallFailedEventHandler paymentCreateServiceFailedHandler;
 
 	@Inject
+	private ServiceCallFailedEventHandler salesOrderCancelServiceFailedHandler;
+
+	@Inject
 	@AssocSelectionResponseEvent
 	private Event<AssocSelectionEventData<CashDrawer>> selectionResponseEvent;
 
@@ -160,6 +167,8 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	private CustomerInvoice proccessingInvoice;
 
+	@Inject
+	private SalesOrderCancelService orderCancelService;
 
 	@Inject
 	private CashDrawerRegistration registration;
@@ -172,7 +181,7 @@ public class CashDrawerDisplayController implements EntityController
 	private ErrorMessageDialog customerVoucherErrorMessageDialog;
 	@Inject
 	private ErrorMessageDialog errorMessageDialog;
-	
+
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
 	private Event<PaymentId> printPaymentReceiptRequestedEvent;
@@ -193,6 +202,49 @@ public class CashDrawerDisplayController implements EntityController
 		handleReceivedAmountChanged();
 		handlePaymentModeChanged();
 		handlePaymentCreateService();
+
+		displayView.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					SalesOrder salesOrder = new SalesOrder() ;
+					PropertyReader.copy(selectedItem.getSalesOrder(), salesOrder);
+					Action showConfirm = Dialogs.create().message("etes vous sure de vouloir annuler cette facture ? ").showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm))
+						orderCancelService.setSalesOrder(salesOrder).start();
+
+				}
+
+			}
+		});
+
+		orderCancelService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderCancelService s = (SalesOrderCancelService) event.getSource();
+				SalesOrder so = s.getValue();
+				event.consume();
+				s.reset();
+				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
+				displayView.getInvoiceItemDataList().getItems().remove(selectedItem);
+				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
+				displayView.getPaymentItemDataList().getItems().clear();
+			}
+		});
+
+		orderCancelService.setOnFailed(salesOrderCancelServiceFailedHandler);
+		salesOrderCancelServiceFailedHandler.setErrorDisplay(new ErrorDisplay() 
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				Dialogs.create().showException(exception);
+			}
+		});
 
 		/*
 		 * handle open cash drawer action
@@ -661,6 +713,9 @@ public class CashDrawerDisplayController implements EntityController
 	}
 
 
+
+
+
 	private void handlePaymentCreateService(){
 		paymentCreateService.setOnFailed(paymentCreateServiceFailedHandler);
 		paymentCreateServiceFailedHandler.setErrorDisplay(new ErrorDisplay()
@@ -711,7 +766,7 @@ public class CashDrawerDisplayController implements EntityController
 				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
 
 				deactivate();
-				
+
 			}
 		});
 	}

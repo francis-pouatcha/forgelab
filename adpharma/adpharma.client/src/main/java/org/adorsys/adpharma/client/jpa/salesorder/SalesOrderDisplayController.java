@@ -127,6 +127,9 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderReturnService orderReturnService;
+	
+	@Inject
+	private SalesOrderCancelService orderCancelService;
 
 	@Inject
 	CashDrawerSearchService cashDrawerSearchService;
@@ -226,7 +229,8 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
-
+		
+		
 		/*
 		 * listen to delete menu Item.
 		 */
