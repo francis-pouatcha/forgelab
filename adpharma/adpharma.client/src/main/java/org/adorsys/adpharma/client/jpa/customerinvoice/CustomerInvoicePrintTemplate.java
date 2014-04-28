@@ -11,6 +11,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.print.Paper;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.Background;
@@ -40,20 +41,18 @@ public class CustomerInvoicePrintTemplate {
 
 	Font boldFont = boldFont();
 
-	private double printableWidth = Paper.A4.getWidth();
-	private double printableHeight = Paper.A4.getHeight();
+	private double printableWidth = Paper.A4.getWidth() - (2*72);
+	private double printableHeight = Paper.A4.getHeight()- (2*72);
 	private double width = printableWidth;
 	private RowConstraints mainRowHeight = new RowConstraints();
 	private RowConstraints doubleRowHeight = new RowConstraints();
 
 	private double rowHeiht = 15;
 	private List<VBox> pages = new ArrayList<VBox>();
-	private Insets insets = new Insets(2);
+	private Insets insets = new Insets(5);
+	private double spaceUsed = -1;
 
 	private GridPane invoiceTable = null;
-
-
-	double currentPageHeight = 0l;
 
 	private final CustomerInvoice customerInvoice;
 	private final Company company;
@@ -76,154 +75,79 @@ public class CustomerInvoicePrintTemplate {
 		this.locale = locale;
 		mainRowHeight.setPrefHeight(rowHeiht);
 		doubleRowHeight.setPrefHeight(rowHeiht * 2);
+		newPage();
 	}
-
-	int rowsAvailableForPage = 0;
-	int pageNumber = 0;
-	private GridPane newPage() {
+	
+	private void newPage() {
 		VBox page = new VBox();
 		pages.add(page);
-		GridPane headerPane = printInvoiceHeader(width, mainRowHeight,
-				doubleRowHeight);
+		GridPane headerPane = printInvoiceHeader();
 		page.getChildren().add(headerPane);
-		GridPane invoiceTable = fillTableHaeder(width, mainRowHeight);
-		page.getChildren().add(invoiceTable);
-
-		if (page.getBoundsInParent().getHeight() + (7 * rowHeiht) >= printableHeight)
-			throw new IllegalStateException("Invoice haeder: "
-					+ page.getBoundsInParent().getHeight() + (7 * rowHeiht)
-					+ "bigger than default page size: " + printableHeight);
-
-		currentPageHeight = page.getBoundsInParent().getHeight();
-		double spaceLeft = printableHeight - currentPageHeight;
-		rowsAvailableForPage = (int)(spaceLeft / (rowHeiht / .75));
-		pageNumber = pages.size();
-		currentRowSpan = 0;
-		tableRow = new TableRow();
-		return invoiceTable;
+		fillTableHaeder(page);
 	}
 	
-	int currentRowSpan = 0;
-	TableRow tableRow = null;
+	TableRow tableRow = new TableRow();
+	final int blockSize = 26;
 	public void addItems(List<CustomerInvoiceItem> invoiceItems) {
-		if (invoiceTable == null)
-			invoiceTable = newPage();
 		for (CustomerInvoiceItem customerInvoiceItem : invoiceItems) {
 			String articleName = customerInvoiceItem.getArticle().getArticleName();
-			Text articleNameText = new Text(articleName);
+			
+			String[] splitArticleName = splitArticleName(articleName);
+			Text articleNameText = new Text(splitArticleName[0]);
 			Text articleNameText2 = null;
-			
-			double articleTextWidth = articleNameText.getLayoutBounds().getWidth();
-			if(articleTextWidth>width){
-				double ratio = (articleName.length()+1)/articleTextWidth;
-				int blockSize = (int) (articleName.length()*ratio);
-				String[] split = StringUtils.split(articleName);
-				String firstBlockString = "";
-				String secondBlockString = "";
-				int i = 0;
-				while(firstBlockString.length()<blockSize){
-					if(StringUtils.isBlank(firstBlockString)) {
-						firstBlockString = split[i];
-					} else {
-						firstBlockString+= " " + split[i];
-					}
-					i+=1;
-					if(split.length==i) break;
-				}
-				if(split.length>i){
-					while(secondBlockString.length()<blockSize){
-						if(StringUtils.isBlank(secondBlockString)) {
-							secondBlockString = split[i];
-						} else {
-							secondBlockString+= " " + split[i];
-						}
-						i+=1;
-						if(split.length==i) break;
-					}
-				}
-				if(firstBlockString.length()>blockSize){
-					firstBlockString = articleName.substring(0, blockSize-1);
-					secondBlockString= articleName.substring(blockSize-1, blockSize);
-				}
-				if(StringUtils.isNotBlank(firstBlockString)){
-					articleNameText = new Text(firstBlockString);
-				}
-				if(StringUtils.isNotBlank(secondBlockString)){
-					articleNameText2 = new Text(secondBlockString);
-				}
-			}
-			int targetSpan =articleNameText2==null?currentRowSpan+1:currentRowSpan+2;
+			if(StringUtils.isNotBlank(splitArticleName[1]))articleNameText2 = new Text(splitArticleName[1]);
+
+			int targetSpan =articleNameText2==null?1:2;
+			double requiredSpace = spaceUsed + mainRowHeight.getPercentHeight()*targetSpan;
 			// if the target span > rowsAvailableForPage then new page.
-			if(targetSpan>rowsAvailableForPage){
+			if(requiredSpace>=printableHeight){
 				closePage();
-				invoiceTable = newPage();
 			}
+			spaceUsed =requiredSpace;
 			
-			currentRowSpan=articleNameText2==null?currentRowSpan+1:currentRowSpan+2;
-			tableRow.getCipBox().getChildren().add(new Text(customerInvoiceItem.getInternalPic()));
-			tableRow.getDesignationBox().getChildren().add(articleNameText);
-			tableRow.getQtyBox().getChildren().add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getPurchasedQty())));
-			tableRow.getSppuBox().getChildren().add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getSalesPricePU())));
-			tableRow.getTotalPriceBox().getChildren().add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getTotalSalesPrice())));
+			tableRow.add(new Text(customerInvoiceItem.getInternalPic()), 
+					articleNameText, 
+					new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getPurchasedQty())), 
+					new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getSalesPricePU())), 
+					new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoiceItem.getTotalSalesPrice())), 
+					mainRowHeight);
+
 			if(articleNameText2!=null){
-				tableRow.getCipBox().getChildren().add(new Text(""));
-				tableRow.getDesignationBox().getChildren().add(articleNameText2);
-				tableRow.getQtyBox().getChildren().add(new Text(""));
-				tableRow.getSppuBox().getChildren().add(new Text(""));
-				tableRow.getTotalPriceBox().getChildren().add(new Text(""));
+				tableRow.add(new Text(""), articleNameText2, new Text(""), new Text(""), new Text(""), mainRowHeight);
 			}
 			
 		}
 	}
 	
-	private final int sumarryRows = 6;	
+	private final int sumarryRows = 5;	
 	public void closeInvoice() {
-		int targetSpan =currentRowSpan+sumarryRows;
+		double requiredSpace = spaceUsed + mainRowHeight.getPercentHeight()*sumarryRows;
 		// if the target span > rowsAvailableForPage then new page.
-		if(targetSpan>rowsAvailableForPage){
+		if(requiredSpace>=printableHeight){
 			closePage();
-			invoiceTable = newPage();
 		}
+		spaceUsed =requiredSpace;
 		
-		tableRow.getDesignationBox().getChildren()
-			.add(new Text(resourceBundle.getString("CustomerInvoice_amountAfterTax_description.title")));
-		tableRow.getTotalPriceBox().getChildren()
-				.add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAmountAfterTax())));
+		tableRow.add(new Text(""), new Text(""), new Text(""), new Text(""), new Separator(), mainRowHeight);
+		tableRow.add(new Text(""), new Text(resourceBundle.getString("CustomerInvoice_amountAfterTax_description.title")), new Text(""), new Text(""), new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAmountAfterTax())), mainRowHeight);
+		tableRow.add(new Text(""), new Text(resourceBundle.getString("CustomerInvoice_amountDiscount_description.title")), new Text(""), new Text(""), new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAmountDiscount())), mainRowHeight);
+		tableRow.add(new Text(""), new Text(resourceBundle.getString("CustomerInvoice_advancePayment_description.title")), new Text(""), new Text(""), new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAdvancePayment())), mainRowHeight);
+		tableRow.add(new Text(""), new Text(resourceBundle.getString("CustomerInvoice_totalRestToPay_description.title")), new Text(""), new Text(""), new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getTotalRestToPay())), mainRowHeight);
 
-		tableRow.getDesignationBox().getChildren()
-			.add(new Text(resourceBundle.getString("CustomerInvoice_amountDiscount_description.title")));
-		tableRow.getTotalPriceBox().getChildren().add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAmountDiscount())));
-
-		tableRow.getDesignationBox().getChildren()
-			.add(new Text(resourceBundle.getString("CustomerInvoice_advancePayment_description.title")));
-		tableRow.getTotalPriceBox().getChildren()
-				.add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getAdvancePayment())));
-
-		tableRow.getDesignationBox().getChildren()
-			.add(new Text(resourceBundle.getString("CustomerInvoice_totalRestToPay_description.title")));
-		tableRow.getTotalPriceBox().getChildren().add(new Text(DefaultBigDecimalFormatCM.getinstance().format(customerInvoice.getTotalRestToPay())));
-		currentRowSpan += sumarryRows;
 		closePage();
 	}
 	
 	public void closePage(){
-		// ROW (1)
-		// ROW (1-0) cip
-		invoiceTable.add(tableRow.getCipBox(), 0, 1, 1, currentRowSpan);
-		// ROW (1-1) articleName
-		invoiceTable.add(tableRow.getDesignationBox(), 1, 1, 1, currentRowSpan);
-		// ROW (1-3) qtyOrdered
-		invoiceTable.add(tableRow.getQtyBox(), 2, 1, 1, currentRowSpan);
-		// ROW (1-4) sppu
-		invoiceTable.add(tableRow.getSppuBox(), 3, 1, 1, currentRowSpan);
-		// ROW (1-5) total
-		invoiceTable.add(tableRow.getTotalPriceBox(), 4, 1, 1, currentRowSpan);
+		tableRow.into(invoiceTable, 1);
+		newPage();		
 	}
 
 	double designationRowWidth = 0;
-	private GridPane fillTableHaeder(double width, RowConstraints mainRowHeight) {
-		GridPane invoiceTable = new GridPane();
+	private void fillTableHaeder(VBox page) {
+		invoiceTable = new GridPane();
+		page.getChildren().add(invoiceTable);
 		invoiceTable.getRowConstraints().add(mainRowHeight);
+		spaceUsed+=mainRowHeight.getPrefHeight();
 		invoiceTable.setGridLinesVisible(true);
 
 		// ROW -1: comlumn dimentions
@@ -288,12 +212,9 @@ public class CustomerInvoicePrintTemplate {
 		Text totalPrice = new Text("Prix Total");
 		totalPrice.setFont(boldFont);
 		totalPriceHeaderBox.getChildren().add(totalPrice);
-
-		return invoiceTable;
 	}
 
-	private GridPane printInvoiceHeader(double width,
-			RowConstraints mainRowHeight, RowConstraints doubleRowHeight) {
+	private GridPane printInvoiceHeader() {
 
 		Text text = new Text();
 		Font font = text.getFont();
@@ -323,6 +244,7 @@ public class CustomerInvoicePrintTemplate {
 		// ROW 0
 		rowIndex++;
 		headerPane.getRowConstraints().add(mainRowHeight);
+		
 		Text documentName = new Text(
 				resourceBundle
 						.getString("CustomerInvoicePrintTemplate_invoice.title")
@@ -475,48 +397,111 @@ public class CustomerInvoicePrintTemplate {
 	}
 
 	static class TableRow {
-		final VBox cipBox = new VBox();
-		final VBox designationBox = new VBox();
-		final VBox qtyBox = new VBox();
-		final VBox sppuBox = new VBox();
-		final VBox totalPriceBox = new VBox();
-		final Insets insets = new Insets(5);
+		final GridPane cipBox = new GridPane();
+		final GridPane designationBox = new GridPane();
+		final GridPane qtyBox = new GridPane();
+		final GridPane sppuBox = new GridPane();
+		final GridPane totalPriceBox = new GridPane();
+		final Insets insets = new Insets(2);
+		
+		private int rowIndex=-1;
+		private double spaceUsed = 0;
 
 		TableRow() {
 			cipBox.setPadding(insets);
 			designationBox.setPadding(insets);
-			qtyBox.setAlignment(Pos.TOP_RIGHT);
+//			qtyBox.setAlignment(Pos.TOP_RIGHT);
 			qtyBox.setPadding(insets);
-			sppuBox.setAlignment(Pos.TOP_RIGHT);
+//			sppuBox.setAlignment(Pos.TOP_RIGHT);
 			sppuBox.setPadding(insets);
-			totalPriceBox.setAlignment(Pos.TOP_RIGHT);
+//			totalPriceBox.setAlignment(Pos.TOP_RIGHT);
 			totalPriceBox.setPadding(insets);
 		}
-
-		public VBox getCipBox() {
-			return cipBox;
+		
+		public void add(Node cip,Node designation, Node qty, Node sppu, Node total, RowConstraints rh){
+			rowIndex+=1;
+			addRowConstraints(rh);
+			cipBox.add(cip, 0, rowIndex, 1, 1);
+			cipBox.setAlignment(Pos.CENTER_LEFT);
+			designationBox.add(designation, 0, rowIndex, 1, 1);
+			designationBox.setAlignment(Pos.CENTER_LEFT);
+			qtyBox.add(qty, 0, rowIndex, 1, 1);
+			qtyBox.setAlignment(Pos.CENTER_RIGHT);
+			GridPane.setHalignment(qty, HPos.RIGHT);
+			sppuBox.add(sppu, 0, rowIndex, 1, 1);
+			sppuBox.setAlignment(Pos.CENTER_RIGHT);
+			GridPane.setHalignment(sppu, HPos.RIGHT);
+			totalPriceBox.add(total, 0, rowIndex, 1, 1);
+			totalPriceBox.setAlignment(Pos.CENTER_RIGHT);
+			GridPane.setHalignment(total, HPos.RIGHT);
+			
 		}
-
-		public VBox getDesignationBox() {
-			return designationBox;
+		
+		private void addRowConstraints(RowConstraints rc){
+			spaceUsed+=rc.getPrefHeight();
+			cipBox.getRowConstraints().add(rc);
+			designationBox.getRowConstraints().add(rc);
+			qtyBox.getRowConstraints().add(rc);
+			sppuBox.getRowConstraints().add(rc);
+			totalPriceBox.getRowConstraints().add(rc);
 		}
-
-		public VBox getQtyBox() {
-			return qtyBox;
+		
+		public double getSpaceUsed(){
+			return spaceUsed;
 		}
-
-		public VBox getSppuBox() {
-			return sppuBox;
+		
+		public void into(GridPane parent, int row){
+			RowConstraints rowConstraints = new RowConstraints();
+			rowConstraints.setPrefHeight(spaceUsed);
+			parent.getRowConstraints().add(rowConstraints);
+			// ROW (1)
+			// ROW (1-0) cip
+			parent.add(cipBox, 0, row, 1, 1);
+			// ROW (1-1) articleName
+			parent.add(designationBox, row, 1, 1, 1);
+			// ROW (1-3) qtyOrdered
+			parent.add(qtyBox, 2, row, 1, 1);
+			// ROW (1-4) sppu
+			parent.add(sppuBox, 3, row, 1, 1);
+			// ROW (1-5) total
+			parent.add(totalPriceBox, 4, row, 1, 1);
 		}
-
-		public VBox getTotalPriceBox() {
-			return totalPriceBox;
-		}
-
-		public Insets getInsets() {
-			return insets;
-		}
-
 	}
 
+	private String[] splitArticleName(String articleName){
+		String firstBlockString = "";
+		String secondBlockString = "";
+		if(articleName.length()>blockSize){
+			String[] split = StringUtils.split(articleName);
+			int i = 0;
+			while(firstBlockString.length()<blockSize){
+				if(StringUtils.isBlank(firstBlockString)) {
+					firstBlockString = split[i];
+				} else {
+					firstBlockString+= " " + split[i];
+				}
+				i+=1;
+				if(split.length==i) break;
+			}
+			if(split.length>i){
+				while(secondBlockString.length()<blockSize){
+					if(StringUtils.isBlank(secondBlockString)) {
+						secondBlockString = split[i];
+					} else {
+						secondBlockString+= " " + split[i];
+					}
+					i+=1;
+					if(split.length==i) break;
+				}
+			}
+			if(firstBlockString.length()>blockSize){
+				firstBlockString = articleName.substring(0, blockSize-1);
+				secondBlockString=  StringUtils.substring(articleName, blockSize, blockSize + blockSize-1);
+			}
+		} else {
+			firstBlockString = articleName;
+		}
+		return new String[]{firstBlockString, secondBlockString};
+		
+	}
 }
