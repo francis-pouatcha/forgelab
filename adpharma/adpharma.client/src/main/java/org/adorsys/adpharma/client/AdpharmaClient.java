@@ -1,6 +1,9 @@
 package org.adorsys.adpharma.client;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
+import java.util.Properties;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -8,6 +11,7 @@ import javafx.stage.Stage;
 import org.adorsys.javafx.crud.extensions.MainController;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.exceptions.IllegalStateException;
 
 public final class AdpharmaClient extends Application
 {
@@ -40,9 +44,33 @@ public final class AdpharmaClient extends Application
                }
             }
          }
+         
+         if(StringUtils.equalsIgnoreCase(arg, "server.address") || StringUtils.equals(arg, "s")){
+             if (args.length > i + 1){
+            	 System.setProperty("server.address", args[i + 1]);
+             }
+         }
       }
       if (locale == null)
          locale = Locale.getDefault();
+      
+      
+      if(System.getProperty("server.address")==null){
+    	  Properties properties = new Properties();
+    	  InputStream resourceAsStream = AdpharmaClient.class.getResourceAsStream("/server-address.properties");
+    	  if(resourceAsStream!=null){
+			try {
+				properties.load(resourceAsStream);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+			String sa = properties.getProperty("server.address");
+			if(StringUtils.isNotBlank(sa))
+           	 System.setProperty("server.address", sa);
+		}
+    	  
+      }
+      
       launch(args);
    }
 
