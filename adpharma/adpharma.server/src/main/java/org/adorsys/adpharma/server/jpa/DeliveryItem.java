@@ -1,32 +1,30 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
 import java.io.Serializable;
-import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-import java.lang.Override;
-import org.adorsys.javaext.description.Description;
-import java.util.Date;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.adorsys.javaext.format.DateFormatPattern;
-import javax.validation.constraints.Size;
-import org.adorsys.javaext.list.ListField;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.adpharma.server.jpa.Article;
-import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
+
+import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.adpharma.server.jpa.Delivery;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("DeliveryItem_description")
@@ -53,18 +51,18 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_internalPic_description")
-	@Size(min = 7, message = "DeliveryItem_internalPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_internalPic_Size_validation")
 	@NotNull(message = "DeliveryItem_internalPic_NotNull_validation")
 	private String internalPic;
 
 	@Column
 	@Description("DeliveryItem_mainPic_description")
-	@Size(min = 7, message = "DeliveryItem_mainPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_mainPic_Size_validation")
 	private String mainPic;
 
 	@Column
 	@Description("DeliveryItem_secondaryPic_description")
-	@Size(min = 7, message = "DeliveryItem_secondaryPic_Size_validation")
+	@Size(min = 1, message = "DeliveryItem_secondaryPic_Size_validation")
 	private String secondaryPic;
 
 	@Column
@@ -85,15 +83,15 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_qtyOrdered_description")
-	private BigDecimal qtyOrdered ;
+	private BigDecimal qtyOrdered = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_availableQty_description")
-	private BigDecimal availableQty;
+	private BigDecimal availableQty = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_freeQuantity_description")
-	private BigDecimal freeQuantity;
+	private BigDecimal freeQuantity = BigDecimal.ZERO;
 
 	@ManyToOne
 	@Description("DeliveryItem_creatingUser_description")
@@ -103,22 +101,22 @@ public class DeliveryItem implements Serializable
 
 	@Column
 	@Description("DeliveryItem_stockQuantity_description")
-	private BigDecimal stockQuantity;
+	private BigDecimal stockQuantity = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_salesPricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal salesPricePU;
+	private BigDecimal salesPricePU = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_purchasePricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal purchasePricePU;
+	private BigDecimal purchasePricePU = BigDecimal.ZERO;
 
 	@Column
 	@Description("DeliveryItem_totalPurchasePrice_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal totalPurchasePrice;
+	private BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 
 	@ManyToOne
 	@Description("DeliveryItem_delivery_description")

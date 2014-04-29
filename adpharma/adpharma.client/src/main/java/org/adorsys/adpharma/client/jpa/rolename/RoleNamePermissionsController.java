@@ -477,7 +477,7 @@ public abstract class RoleNamePermissionsController
             event.consume();
             s.reset();
 
-            selection.getAssocDataList().getItems().remove(removedAssoc);
+            selection.getAssocDataList().getItems().remove(removedAssoc.getTarget());
             selectedAssoc = null;
          }
       });
@@ -528,6 +528,7 @@ public abstract class RoleNamePermissionsController
       assoc.setTargetQualifier("source");
       searchInputs.getFieldNames().add("targetQualifier");
       searchInputs.setEntity(assoc);
+      assocCache.clear();
       assocSearchService.setSearchInputs(searchInputs).start();
    }
 

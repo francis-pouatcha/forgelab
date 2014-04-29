@@ -52,15 +52,15 @@ public class SupplierViewSearchFields extends AbstractForm<Supplier>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       name = viewBuilder.addTextField("Supplier_name_description.title", "name", resourceBundle);
-      mobile = viewBuilder.addTextField("Supplier_mobile_description.title", "mobile", resourceBundle);
-      fax = viewBuilder.addTextField("Supplier_fax_description.title", "fax", resourceBundle);
-      email = viewBuilder.addTextField("Supplier_email_description.title", "email", resourceBundle);
-      zipCode = viewBuilder.addTextField("Supplier_zipCode_description.title", "zipCode", resourceBundle);
-      country = viewBuilder.addTextField("Supplier_country_description.title", "country", resourceBundle);
-      internetSite = viewBuilder.addTextField("Supplier_internetSite_description.title", "internetSite", resourceBundle);
-      responsable = viewBuilder.addTextField("Supplier_responsable_description.title", "responsable", resourceBundle);
-      revenue = viewBuilder.addTextField("Supplier_revenue_description.title", "revenue", resourceBundle);
-      taxIdNumber = viewBuilder.addTextField("Supplier_taxIdNumber_description.title", "taxIdNumber", resourceBundle);
+//      mobile = viewBuilder.addTextField("Supplier_mobile_description.title", "mobile", resourceBundle);
+//      fax = viewBuilder.addTextField("Supplier_fax_description.title", "fax", resourceBundle);
+//      email = viewBuilder.addTextField("Supplier_email_description.title", "email", resourceBundle);
+//      zipCode = viewBuilder.addTextField("Supplier_zipCode_description.title", "zipCode", resourceBundle);
+//      country = viewBuilder.addTextField("Supplier_country_description.title", "country", resourceBundle);
+//      internetSite = viewBuilder.addTextField("Supplier_internetSite_description.title", "internetSite", resourceBundle);
+//      responsable = viewBuilder.addTextField("Supplier_responsable_description.title", "responsable", resourceBundle);
+//      revenue = viewBuilder.addTextField("Supplier_revenue_description.title", "revenue", resourceBundle);
+//      taxIdNumber = viewBuilder.addTextField("Supplier_taxIdNumber_description.title", "taxIdNumber", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -68,15 +68,15 @@ public class SupplierViewSearchFields extends AbstractForm<Supplier>
    public void bind(Supplier model)
    {
       name.textProperty().bindBidirectional(model.nameProperty());
-      mobile.textProperty().bindBidirectional(model.mobileProperty());
-      fax.textProperty().bindBidirectional(model.faxProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
-      zipCode.textProperty().bindBidirectional(model.zipCodeProperty());
-      country.textProperty().bindBidirectional(model.countryProperty());
-      internetSite.textProperty().bindBidirectional(model.internetSiteProperty());
-      responsable.textProperty().bindBidirectional(model.responsableProperty());
-      revenue.textProperty().bindBidirectional(model.revenueProperty());
-      taxIdNumber.textProperty().bindBidirectional(model.taxIdNumberProperty());
+//      mobile.textProperty().bindBidirectional(model.mobileProperty());
+//      fax.textProperty().bindBidirectional(model.faxProperty());
+//      email.textProperty().bindBidirectional(model.emailProperty());
+//      zipCode.textProperty().bindBidirectional(model.zipCodeProperty());
+//      country.textProperty().bindBidirectional(model.countryProperty());
+//      internetSite.textProperty().bindBidirectional(model.internetSiteProperty());
+//      responsable.textProperty().bindBidirectional(model.responsableProperty());
+//      revenue.textProperty().bindBidirectional(model.revenueProperty());
+//      taxIdNumber.textProperty().bindBidirectional(model.taxIdNumberProperty());
    }
 
    public TextField getName()

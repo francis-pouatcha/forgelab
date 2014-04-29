@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -112,22 +113,27 @@ public class Delivery implements Serializable
 	@Column
 	@Description("Delivery_amountBeforeTax_description")
 	@NotNull(message = "Delivery_amountBeforeTax_NotNull_validation")
-	private BigDecimal amountBeforeTax;
+	private BigDecimal amountBeforeTax = BigDecimal.ZERO;
 
 	@Column
 	@Description("Delivery_amountAfterTax_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal amountAfterTax;
+	private BigDecimal amountAfterTax = BigDecimal.ZERO;
 
 	@Column
 	@Description("Delivery_amountDiscount_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal amountDiscount;
+	private BigDecimal amountDiscount = BigDecimal.ZERO;
+	
+	@Column
+	@Description("Delivery_amountVat_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountVat = BigDecimal.ZERO;
 
 	@Column
 	@Description("Delivery_netAmountToPay_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal netAmountToPay;
+	private BigDecimal netAmountToPay = BigDecimal.ZERO;
 
 	@ManyToOne
 	@Description("Delivery_vat_description")
@@ -367,6 +373,15 @@ public class Delivery implements Serializable
 			final DocumentProcessingState deliveryProcessingState)
 	{
 		this.deliveryProcessingState = deliveryProcessingState;
+	}
+
+	
+	public BigDecimal getAmountVat() {
+		return amountVat;
+	}
+
+	public void setAmountVat(BigDecimal amountVat) {
+		this.amountVat = amountVat;
 	}
 
 	@Override

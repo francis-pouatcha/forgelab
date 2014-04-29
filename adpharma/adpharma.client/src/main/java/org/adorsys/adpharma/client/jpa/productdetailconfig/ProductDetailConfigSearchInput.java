@@ -23,7 +23,7 @@ public class ProductDetailConfigSearchInput
    /**
     * The entity holding search inputs.
     */
-   private ProductDetailConfig entity;
+   private ProductDetailConfig entity = new ProductDetailConfig();
 
    /**
     * The start cursor

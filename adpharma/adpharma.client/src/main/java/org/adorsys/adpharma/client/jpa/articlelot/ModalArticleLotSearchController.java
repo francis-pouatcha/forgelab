@@ -1,8 +1,15 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,15 +20,16 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 
-@Singleton
 public class ModalArticleLotSearchController  {
 
 	@Inject
@@ -43,6 +51,12 @@ public class ModalArticleLotSearchController  {
 
 	@Inject
 	ArticleLot articleLot;
+	
+	@Inject
+	@EntityListPageIndexChangedEvent
+	private Event<ArticleLotSearchResult> entityListPageIndexChangedEvent;
+
+	private ArticleLotSearchResult searchResult;
 
 
 	@PostConstruct
@@ -54,7 +68,7 @@ public class ModalArticleLotSearchController  {
 				view.closeDialog();
 			}
 		});
-		
+
 		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ArticleLot>() {
 
 			@Override
@@ -64,10 +78,10 @@ public class ModalArticleLotSearchController  {
 				if(newValue!=null){
 					modalArticleLotSearchDoneEvent.fire(newValue);
 					view.closeDialog();
-					
+
 				}
-					
-				
+
+
 			}
 		});
 		view.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -82,8 +96,9 @@ public class ModalArticleLotSearchController  {
 					entity.setArticleName(articleName);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
+					asi.setMax(-1);
 					asi.getFieldNames().add("articleName");
-					modalArticleLotSearchEvent.fire(asi);
+					articleSearchService.setSearchInputs(asi).start();
 				}
 			}
 		});
@@ -103,6 +118,51 @@ public class ModalArticleLotSearchController  {
 
 
 		});
+
+		view.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new ArticleLotSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				entityListPageIndexChangedEvent.fire(searchResult);
+
+			}
+				});
+
+	}
+
+	/**
+	 * Handle search results. But the switch of displays is centralized
+	 * in the main articleLot controller.
+	 * 
+	 * @param entities
+	 */
+	public void handleSearchResult(@Observes @EntitySearchDoneEvent ArticleLotSearchResult searchResult)
+	{
+		this.searchResult = searchResult;
+		List<ArticleLot> entities = searchResult.getResultList();
+		if (entities == null)
+			entities = new ArrayList<ArticleLot>();
+		view.getDataList().getItems().clear();
+		view.getDataList().getItems().addAll(entities);
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
+		view.getPagination().setPageCount(pageCount);
+		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
+		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
+		view.getPagination().setCurrentPageIndex(pageIndex);
+
 	}
 
 	public void handleArticleSearchResult(
@@ -114,7 +174,38 @@ public class ModalArticleLotSearchController  {
 			view.closeDialog();
 			modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
-			view.getDataList().getItems().setAll(articleLotSearchResult.getResultList());
+			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
+			List<String> resultOrder = new ArrayList<String>();
+			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
+			// Group by secondary pic always taking the article
+			for (ArticleLot articleLot : resultList) {
+				String mainPic = articleLot.getMainPic();
+				if(!resultOrder.contains(mainPic)) resultOrder.add(mainPic);
+				// the main pic is unique per product.
+				Set<ArticleLot> set = lotMap.get(mainPic);
+				if(set==null){
+					set = new TreeSet<ArticleLot>();
+					lotMap.put(mainPic, set);
+				}
+				set.add(articleLot);
+			}
+			ArrayList<ArticleLot> lotList = new ArrayList<ArticleLot>(resultOrder.size());
+			for (String mainPic : resultOrder) {
+				Set<ArticleLot> set = lotMap.get(mainPic);
+				ArticleLot articleLot = null;
+				for (ArticleLot lot : set) {
+					if(articleLot==null) {
+						articleLot=lot;
+					} else if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0){
+						articleLot=lot;
+					} else {
+						break;
+					}
+				}
+				if(articleLot!=null)lotList.add(articleLot);
+			}
+			
+			view.getDataList().getItems().setAll(lotList);
 			view.showDiaLog();
 		}
 	}
@@ -127,7 +218,4 @@ public class ModalArticleLotSearchController  {
 	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
 		articleSearchService.setSearchInputs(lotSearchInput).start();
 	}
-
-
-
 }

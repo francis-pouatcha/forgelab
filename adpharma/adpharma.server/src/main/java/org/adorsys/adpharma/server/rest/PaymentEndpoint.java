@@ -22,10 +22,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Payment;
-import org.adorsys.adpharma.server.jpa.Payment_;
 import org.adorsys.adpharma.server.jpa.PaymentSearchInput;
 import org.adorsys.adpharma.server.jpa.PaymentSearchResult;
+import org.adorsys.adpharma.server.jpa.Payment_;
 
 /**
  * 
@@ -47,6 +48,9 @@ public class PaymentEndpoint
 
    @Inject
    private CashDrawerMerger cashDrawerMerger;
+
+   @Inject
+   private PaymentItemMerger paymentItemMerger;
 
    @Inject
    private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
@@ -200,6 +204,8 @@ public class PaymentEndpoint
 
    private static final List<String> paidByFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized");
 
+   private static final List<String> paymentItemsFields = Arrays.asList("paymentMode", "documentNumber", "amount", "receivedAmount", "paidBy.fullName");
+
    private static final List<String> invoicesFields = emptyList;
 
    private Payment detach(Payment entity)
@@ -218,6 +224,9 @@ public class PaymentEndpoint
 
       // aggregated
       entity.setPaidBy(customerMerger.unbind(entity.getPaidBy(), paidByFields));
+
+      // composed collections
+      entity.setPaymentItems(paymentItemMerger.unbind(entity.getPaymentItems(), paymentItemsFields));
 
       // aggregated collection
       entity.setInvoices(paymentCustomerInvoiceAssocMerger.unbind(entity.getInvoices(), invoicesFields));

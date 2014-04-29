@@ -125,6 +125,7 @@ public class InitUserAccountService
 			createPermission("org.adorsys.adpharma.server.jpa.CustomerInvoiceItem");
 			createPermission("org.adorsys.adpharma.server.jpa.PermissionName");
 			createPermission("org.adorsys.adpharma.server.jpa.Employer");
+		    createPermission("org.adorsys.adpharma.server.jpa.PaymentItem");
 			createPermission("org.adorsys.adpharma.server.jpa.PackagingMode");
 			createPermission("org.adorsys.adpharma.server.jpa.ProcurementOrder");
 			createPermission("org.adorsys.adpharma.server.jpa.PrescriptionBook");
@@ -147,6 +148,11 @@ public class InitUserAccountService
 			createPermission("org.adorsys.adpharma.server.jpa.CustomerVoucher");
 			createPermission("org.adorsys.adpharma.server.jpa.InventoryItem");
 			createPermission("org.adorsys.adpharma.server.jpa.Insurrance");
+		    createPermission("org.adorsys.adpharma.server.jpa.DocumentStore");
+		    createPermission("org.adorsys.adpharma.server.jpa.DocumentArchive");
+		    createPermission("org.adorsys.adpharma.server.jpa.WareHouseArticleLot");
+		    createPermission("org.adorsys.adpharma.server.jpa.WareHouse");
+		    createPermission("org.adorsys.adpharma.server.jpa.Disbursement");
 
 			AccessRoleEnum[] roleEnums = AccessRoleEnum.values();
 			for (AccessRoleEnum roleEnum : roleEnums)

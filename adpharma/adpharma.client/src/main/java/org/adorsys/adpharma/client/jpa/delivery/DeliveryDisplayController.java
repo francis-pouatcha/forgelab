@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -24,10 +20,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.events.DeliveryId;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemCreateService;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemEditService;
@@ -38,10 +36,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
-import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
@@ -57,11 +52,8 @@ import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.dialog.Dialogs;
-
-import com.sun.org.apache.bcel.internal.generic.DALOAD;
 
 @Singleton
 public class DeliveryDisplayController implements EntityController
@@ -128,6 +120,10 @@ public class DeliveryDisplayController implements EntityController
 
 	@Inject
 	private DeliveryRegistration registration;
+	
+	@Inject
+	@PrintRequestedEvent
+	private Event<DeliveryId> printRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -156,7 +152,7 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 
-		
+
 		/*
 		 * listen to Ok button.
 		 */
@@ -166,9 +162,8 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
+				if(isValidDeliveryItem())
 					handleAddDeliveryItem(deliveryItem);
-				}
 			}
 
 		});
@@ -177,7 +172,8 @@ public class DeliveryDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				handleAddDeliveryItem(deliveryItem);
+				if(isValidDeliveryItem())
+					handleAddDeliveryItem(deliveryItem);
 			}
 
 		});
@@ -307,13 +303,15 @@ public class DeliveryDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
-						BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
-						if(amountBeforeTax.compareTo(processAmount)!=0){
-							handleDeliveryClosedEvent(displayedEntity);
-						}else {
-							Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
-							.nativeTitleBar().showError();
+						if(isValideDelivery()){
+							BigDecimal processAmount = displayView.getProcessAmont().numberProperty().get();
+							BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
+							if(amountBeforeTax.compareTo(processAmount)==0){
+								handleDeliveryClosedEvent(displayedEntity);
+							}else {
+								Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
+								.nativeTitleBar().showError();
+							}
 						}
 					}
 				});
@@ -329,7 +327,7 @@ public class DeliveryDisplayController implements EntityController
 				s.reset();
 				PropertyReader.copy(entity, displayedEntity);
 				deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(entity)).start();
-				
+
 
 			}
 		});
@@ -401,10 +399,23 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
+		
+		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity==null || displayedEntity.getId()==null) return;
+				printRequestedEvent.fire(new DeliveryId(displayedEntity.getId()));
+			}
+		});
 
 		displayView.getView().addValidators();
-		
+
 		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getDeleteButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getEditButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getAddArticleButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getSaveButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		displayView.getPrintButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	@Override
@@ -416,6 +427,30 @@ public class DeliveryDisplayController implements EntityController
 		{
 			children.add(rootPane);
 		}
+	}
+
+	public boolean isValidDeliveryItem(){
+		BigDecimal orderedQty = deliveryItem.getStockQuantity();
+		DeliveryItemArticle article = deliveryItem.getArticle();
+		if(article==null || article.getId()==null){
+			Dialogs.create().nativeTitleBar().message("you need to specified article ").showError();
+			return false;
+		}
+		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
+			Dialogs.create().nativeTitleBar().message("orderedQty is required ").showError();
+			return false;
+		}
+
+		return true;
+
+	}
+
+	public boolean isValideDelivery(){
+		if(displayedEntity.getDeliveryItems().isEmpty()){
+			Dialogs.create().nativeTitleBar().message("DELIVERY  need to have at least one item").showError();
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -474,7 +509,7 @@ public class DeliveryDisplayController implements EntityController
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
-		
+
 		closeService.setDelivery(displayedEntity).start();
 
 	}

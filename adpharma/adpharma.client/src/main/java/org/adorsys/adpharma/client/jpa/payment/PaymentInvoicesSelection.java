@@ -15,23 +15,18 @@ import javafx.stage.Stage;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 
 public class PaymentInvoicesSelection extends AbstractSelection<Payment, CustomerInvoice>
 {

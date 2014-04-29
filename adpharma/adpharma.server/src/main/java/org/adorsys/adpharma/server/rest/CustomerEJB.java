@@ -2,9 +2,11 @@ package org.adorsys.adpharma.server.rest;
 
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.repo.CustomerRepository;
 
@@ -20,6 +22,9 @@ public class CustomerEJB
 
    @Inject
    private CustomerCategoryMerger customerCategoryMerger;
+   
+   @EJB
+   private CustomerEJB customerEJB;
 
    public Customer create(Customer entity)
    {
@@ -58,22 +63,26 @@ public class CustomerEJB
 
    public List<Customer> findBy(Customer entity, int start, int max, SingularAttribute<Customer, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   Customer customer = attach(entity);
+      return repository.findBy(customer, start, max, attributes);
    }
 
    public Long countBy(Customer entity, SingularAttribute<Customer, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   Customer customer = attach(entity);
+      return repository.count(customer, attributes);
    }
 
    public List<Customer> findByLike(Customer entity, int start, int max, SingularAttribute<Customer, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   Customer customer = attach(entity);
+      return repository.findByLike(customer, start, max, attributes);
    }
 
    public Long countByLike(Customer entity, SingularAttribute<Customer, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   Customer customer = attach(entity);
+      return repository.countLike(customer, attributes);
    }
 
    private Customer attach(Customer entity)
@@ -89,4 +98,12 @@ public class CustomerEJB
 
       return entity;
    }
+   
+   @SuppressWarnings("unchecked")
+   public Customer otherCustomers(){
+	   List<Customer> found = findBy(CustomerEJBOtherClientsHelper.searchInput, 0, 1, CustomerEJBOtherClientsHelper.attributes);
+	   if(found.isEmpty()) throw new IllegalStateException("Application not yet initialized.");
+	   return found.iterator().next();
+   }
+   
 }

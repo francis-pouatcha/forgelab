@@ -1,31 +1,51 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
+
 import javax.validation.constraints.Size;
+
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.display.ToStringField;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.adpharma.server.jpa.Article;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.format.DateFormatPattern;
+
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+
+import javax.persistence.Enumerated;
+
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 
 @Entity
@@ -36,7 +56,6 @@ import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 @ToStringField({ "articleName", "article.articleName", "qtyOrdered" })
 public class ProcurementOrderItem implements Serializable
 {
-
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
@@ -47,12 +66,12 @@ public class ProcurementOrderItem implements Serializable
 
    @Column
    @Description("ProcurementOrderItem_mainPic_description")
-   @Size(min = 7, message = "ProcurementOrderItem_mainPic_Size_validation")
+   @Size(min = 1, message = "ProcurementOrderItem_mainPic_Size_validation")
    private String mainPic;
 
    @Column
    @Description("ProcurementOrderItem_secondaryPic_description")
-   @Size(min = 7, message = "ProcurementOrderItem_secondaryPic_Size_validation")
+   @Size(min = 1, message = "ProcurementOrderItem_secondaryPic_Size_validation")
    private String secondaryPic;
 
    @Column
@@ -74,19 +93,19 @@ public class ProcurementOrderItem implements Serializable
    @Temporal(TemporalType.TIMESTAMP)
    @Description("ProcurementOrderItem_productRecCreated_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
-   private Date productRecCreated;
+   private Date productRecCreated = new Date();
 
    @Column
    @Description("ProcurementOrderItem_qtyOrdered_description")
-   private BigDecimal qtyOrdered;
+   private BigDecimal qtyOrdered =BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_availableQty_description")
-   private BigDecimal availableQty;
+   private BigDecimal availableQty = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_freeQuantity_description")
-   private BigDecimal freeQuantity;
+   private BigDecimal freeQuantity= BigDecimal.ZERO;
 
    @ManyToOne
    @Description("ProcurementOrderItem_creatingUser_description")
@@ -96,31 +115,43 @@ public class ProcurementOrderItem implements Serializable
 
    @Column
    @Description("ProcurementOrderItem_stockQuantity_description")
-   private BigDecimal stockQuantity;
+   private BigDecimal stockQuantity = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU;
+   private BigDecimal salesPricePU =BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_purchasePricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal purchasePricePU;
+   private BigDecimal purchasePricePU = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_totalPurchasePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalPurchasePrice;
+   private BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 
    @Column
    @Description("ProcurementOrderItem_valid_description")
-   private Boolean valid;
+   private Boolean valid= Boolean.FALSE;
+
+   @Column
+   @Description("ProcurementOrderItem_poStatus_description")
+   @Enumerated(EnumType.STRING)
+   private DocumentProcessingState poStatus = DocumentProcessingState.ONGOING;
 
    @ManyToOne
    @Description("ProcurementOrderItem_procurementOrder_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrder.class)
    private ProcurementOrder procurementOrder;
+   
+   public BigDecimal calculTotalPuschasePrice(){
+	   purchasePricePU = purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO;
+	   qtyOrdered = qtyOrdered!=null?qtyOrdered:BigDecimal.ZERO;
+	   totalPurchasePrice = purchasePricePU.multiply(qtyOrdered);
+	   return totalPurchasePrice;
+   }
 
    public Long getId()
    {
@@ -322,6 +353,16 @@ public class ProcurementOrderItem implements Serializable
    public void setValid(final Boolean valid)
    {
       this.valid = valid;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return this.poStatus;
+   }
+
+   public void setPoStatus(final DocumentProcessingState poStatus)
+   {
+      this.poStatus = poStatus;
    }
 
    @Override

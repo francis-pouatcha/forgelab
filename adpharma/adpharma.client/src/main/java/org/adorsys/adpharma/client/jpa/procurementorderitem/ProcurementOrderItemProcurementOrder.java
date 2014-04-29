@@ -9,6 +9,7 @@ import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTrigger
 import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderSupplier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderAgency;
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
    private int version;
 
    private SimpleStringProperty procurementOrderNumber;
+   private SimpleObjectProperty<DocumentProcessingState> poStatus;
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
    private SimpleObjectProperty<BigDecimal> amountDiscount;
@@ -93,6 +95,25 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
    public final void setProcurementOrderNumber(String procurementOrderNumber)
    {
       this.procurementOrderNumberProperty().set(procurementOrderNumber);
+   }
+
+   public SimpleObjectProperty<DocumentProcessingState> poStatusProperty()
+   {
+      if (poStatus == null)
+      {
+         poStatus = new SimpleObjectProperty<DocumentProcessingState>();
+      }
+      return poStatus;
+   }
+
+   public DocumentProcessingState getPoStatus()
+   {
+      return poStatusProperty().get();
+   }
+
+   public final void setPoStatus(DocumentProcessingState poStatus)
+   {
+      this.poStatusProperty().set(poStatus);
    }
 
    public SimpleObjectProperty<BigDecimal> amountBeforeTaxProperty()
@@ -227,6 +248,7 @@ public class ProcurementOrderItemProcurementOrder implements Association<Procure
       a.version = version;
 
       a.procurementOrderNumber = procurementOrderNumber;
+      a.poStatus = poStatus;
       a.amountBeforeTax = amountBeforeTax;
       a.amountAfterTax = amountAfterTax;
       a.amountDiscount = amountDiscount;

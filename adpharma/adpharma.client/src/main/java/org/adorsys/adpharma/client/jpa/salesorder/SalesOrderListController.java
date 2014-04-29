@@ -2,8 +2,8 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,10 +22,19 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
+import org.adorsys.adpharma.client.utils.ChartData;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -36,10 +45,15 @@ import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -54,38 +68,94 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private CustomerSearchService customerSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler customerSearchServiceCallFailedEventHandler;
 
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderRequestEvent;
 
 	@Inject
-	SalesOrderSearchService salesOrederSearchService;
+	private SalesOrderSearchService salesOrederSearchService;
+
+	@Inject
+	private SalesOrderItemSearchService salesOrederItemSearchService;
+
+	@Inject
+	private SalesOrderRemoveService salesOrderRemoveService ;
+
+	@Inject
+	private ServiceCallFailedEventHandler salesOrederSearchServiceCallFailedEventHandler;
 
 
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<SalesOrderSearchResult> entityListPageIndexChangedEvent;
 
-	@Inject
-	private ServiceCallFailedEventHandler callFailedEventHandler;
-
 	private SalesOrderSearchResult searchResult;
 
 	@Inject 
 	SalesOrderSearchInput searchInput;
+	
+	@Inject
+	CustomerSearchInput customerSearchInput ;
+	
+
+	@Inject
+	@Bundle({ CrudKeys.class})
+	private ResourceBundle resourceBundle;
 
 	@Inject
 	private SalesOrderRegistration registration;
 
+	@Inject
+	@PrintCustomerInvoiceRequestedEvent
+	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
+	
+	private SalesOrderId selectedSalesOrderId;
+	
 	@PostConstruct
 	public void postConstruct()
 	{
+		customerSearchInput.setMax(-1);
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 		searchInput.setMax(100);
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 
-		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+			@Override
+			public void changed(ObservableValue<? extends SalesOrder> observable,
+					SalesOrder oldValue, SalesOrder newValue) {
+				if(newValue!=null){
+					selectedSalesOrderId = new SalesOrderId(newValue.getId());
+					listView.getRemoveButton().disableProperty().unbind();
+					listView.getPrintInvoiceButtonn().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
+					sosi.setMax(-1);
+					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
+					sosi.getFieldNames().add("salesOrder");
+					salesOrederItemSearchService.setSearchInputs(sosi).start();
+				}
+
+			}
+		});
+		salesOrederItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderItemSearchService s = (SalesOrderItemSearchService) event.getSource();
+				SalesOrderItemSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<SalesOrderItem> resultList = result.getResultList();
+				listView.getDataListItem().getItems().setAll(resultList);
+			}
+		});
+		salesOrederItemSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
+
+		customerSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
 			protected void showError(Throwable exception) {
@@ -93,11 +163,63 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+		salesOrederSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+		
+		listView.getComputeButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+			List<ChartData> testData = ChartData.getTestData();
+			listView.getPieChart().getData().setAll(ChartData.toPieChartData(testData));
+			listView.getPieChartData().getItems().setAll(testData);
+				
+			}
+		});
+
+		/*
+		 * listen to remove button .
+		 */
+		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{							
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					Action showConfirm = Dialogs.create().
+							nativeTitleBar().
+							message(resourceBundle.getString("Entity_confirm_remove.title")).showConfirm();
+					if(showConfirm==Dialog.Actions.YES){
+						salesOrderRemoveService.setEntity(selectedItem).start();
+					}
+				}
+
+			}
+
+
+				});
+
+		
 		listView.getCustomer().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				customerSearchService.setSearchInputs(new CustomerSearchInput()).start();
+				customerSearchService.setSearchInputs(customerSearchInput).start();
+
+			}
+		});
+		listView.getChartClientList().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				customerSearchService.setSearchInputs(customerSearchInput).start();
 
 			}
 		});
@@ -119,13 +241,35 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{						
-				searchInput.setFieldNames(Arrays.asList("salesOrderStatus","customer"));
+				searchInput.setFieldNames(readSearchAttributes());
+				searchInput.setMax(27);
 				salesOrederSearchService.setSearchInputs(searchInput).start();
 
 			}
 
 				});
-		
+
+		salesOrderRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderRemoveService s = (SalesOrderRemoveService) event.getSource();
+				SalesOrder result = s.getValue();
+				event.consume();
+				s.reset();
+				listView.getDataList().getItems().remove(result);
+
+			}
+		});
+		salesOrderRemoveService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderRemoveService s = (SalesOrderRemoveService) event.getSource();
+				s.reset();				
+			}
+		});
+
 		customerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -139,12 +283,15 @@ public class SalesOrderListController implements EntityController
 				for (Customer customer : resultList) {
 					soc.add(new SalesOrderCustomer(customer));
 				}
+				soc.add(0, null);
 				listView.getCustomer().getItems().setAll(soc);
-				listView.getCustomer().getItems().add(0, new SalesOrderCustomer());
+				listView.getCustomer().getSelectionModel().select(0);
+				listView.getChartClientList().getItems().setAll(resultList);
 
 			}
 		});
-		customerSearchService.setOnFailed(callFailedEventHandler);
+		customerSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
+
 		salesOrederSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -153,13 +300,12 @@ public class SalesOrderListController implements EntityController
 				searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<SalesOrder> resultList = searchResult.getResultList();
-				listView.getDataList().getItems().setAll(resultList);
+				handleSearchResult(searchResult);
 
 			}
 		});
 
-		salesOrederSearchService.setOnFailed(callFailedEventHandler);
+		salesOrederSearchService.setOnFailed(salesOrederSearchServiceCallFailedEventHandler);
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -191,6 +337,14 @@ public class SalesOrderListController implements EntityController
 
 			}
 				});
+		
+		listView.getPrintInvoiceButtonn().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
+			}
+		});
 	}
 
 	@Override
@@ -269,5 +423,18 @@ public class SalesOrderListController implements EntityController
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(arrayList);
 		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public List<String> readSearchAttributes(){
+		ArrayList<String> seachAttributes = new ArrayList<String>() ;
+		String soNumber = searchInput.getEntity().getSoNumber();
+		SalesOrderCustomer customer = searchInput.getEntity().getCustomer();
+		DocumentProcessingState state = searchInput.getEntity().getSalesOrderStatus();
+
+		if(StringUtils.isNotBlank(soNumber)) seachAttributes.add("soNumber");
+		if(customer!=null && customer.getId()!=null) seachAttributes.add("customer");
+		if(state!=null) seachAttributes.add("salesOrderStatus") ;
+		return seachAttributes;
+
 	}
 }

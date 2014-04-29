@@ -3,8 +3,13 @@ package org.adorsys.adpharma.server.rest;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
+import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
+import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 
@@ -16,14 +21,32 @@ public class SalesOrderItemEJB
    private SalesOrderItemRepository repository;
 
    @Inject
-   private SalesOrderMerger salesOrderMerger;
-
-   @Inject
    private ArticleMerger articleMerger;
 
-   public SalesOrderItem create(SalesOrderItem entity)
-   {
-      return repository.save(attach(entity));
+   @Inject
+   private VATMerger vATMerger;
+
+   @Inject
+   private SalesOrderMerger salesOrderMerger;
+
+	@Inject
+	@DocumentProcessedEvent
+	private Event<SalesOrderItem> salesOrderItemProcessedEvent;
+   
+	@Inject
+	@DocumentDeletedEvent
+	private Event<SalesOrderItem> salesOrderItemDeletedEvent;
+
+	@Inject
+	@DocumentCreatedEvent
+	private Event<SalesOrderItem> salesOrderItemCreatedEvent;
+
+	public SalesOrderItem create(SalesOrderItem entity)
+    {
+		entity.updateTotalSalesPrice();
+      entity = repository.save(attach(entity));
+      salesOrderItemCreatedEvent.fire(entity);
+      return entity;
    }
 
    public SalesOrderItem deleteById(Long id)
@@ -32,13 +55,17 @@ public class SalesOrderItemEJB
       if (entity != null)
       {
          repository.remove(entity);
+         salesOrderItemDeletedEvent.fire(entity);
       }
       return entity;
    }
 
    public SalesOrderItem update(SalesOrderItem entity)
    {
-      return repository.save(attach(entity));
+	  entity.updateTotalSalesPrice();
+      entity = repository.save(attach(entity));
+      salesOrderItemProcessedEvent.fire(entity);
+      return entity;
    }
 
    public SalesOrderItem findById(Long id)
@@ -58,22 +85,26 @@ public class SalesOrderItemEJB
 
    public List<SalesOrderItem> findBy(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.findBy(salesOrderItem, start, max, attributes);
    }
 
    public Long countBy(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.count(salesOrderItem, attributes);
    }
 
    public List<SalesOrderItem> findByLike(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.findByLike(salesOrderItem, start, max, attributes);
    }
 
    public Long countByLike(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   SalesOrderItem salesOrderItem = attach(entity);
+      return repository.countLike(salesOrderItem, attributes);
    }
 
    private SalesOrderItem attach(SalesOrderItem entity)
@@ -85,6 +116,9 @@ public class SalesOrderItemEJB
 
       // aggregated
       entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+
+      // aggregated
+      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
       return entity;
    }

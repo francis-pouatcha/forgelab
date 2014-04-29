@@ -23,7 +23,7 @@ public class ArticleLotSearchInput
    /**
     * The entity holding search inputs.
     */
-   private ArticleLot entity;
+   private ArticleLot entity = new ArticleLot();
 
    /**
     * The start cursor

@@ -23,7 +23,7 @@ public class ProcurementOrderSearchInput
    /**
     * The entity holding search inputs.
     */
-   private ProcurementOrder entity;
+   private ProcurementOrder entity = new ProcurementOrder();
 
    /**
     * The start cursor
@@ -42,7 +42,7 @@ public class ProcurementOrderSearchInput
 
    public ProcurementOrder getEntity()
    {
-      return entity;
+      return this.entity ;
    }
 
    public void setEntity(ProcurementOrder entity)

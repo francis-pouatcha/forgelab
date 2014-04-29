@@ -1,11 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceItemRepository;
 
 @Stateless
@@ -17,9 +20,13 @@ public class CustomerInvoiceItemEJB
 
    @Inject
    private CustomerInvoiceMerger customerInvoiceMerger;
-
+   
    @Inject
    private ArticleMerger articleMerger;
+   
+   public List<CustomerInvoiceItem> findPreparationDataItem(ProcurementOrderPreparationData data){
+	   return repository.findPreparationDataItem(data.getFromDate(), data.getToDate(), true);
+   }
 
    public CustomerInvoiceItem create(CustomerInvoiceItem entity)
    {

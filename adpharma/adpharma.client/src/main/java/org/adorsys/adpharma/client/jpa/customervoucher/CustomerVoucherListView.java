@@ -65,14 +65,16 @@ public class CustomerVoucherListView
       dataList = viewBuilder.addTable("dataList");
       viewBuilder.addStringColumn(dataList, "voucherNumber", "CustomerVoucher_voucherNumber_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "amount", "CustomerVoucher_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+      viewBuilder.addBigDecimalColumn(dataList, "amountUsed", "CustomerVoucher_amountUsed_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addBigDecimalColumn(dataList, "restAmount", "CustomerVoucher_restAmount_description.title", resourceBundle, NumberType.INTEGER, locale);
+      viewBuilder.addStringColumn(dataList, "customer", "CustomerVoucher_customer_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "agency", "CustomerVoucher_agency_description.title", resourceBundle);
       // Field not displayed in table
       // Field not displayed in table
       viewBuilder.addDateColumn(dataList, "modifiedDate", "CustomerVoucher_modifiedDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      viewBuilder.addBigDecimalColumn(dataList, "amountUsed", "CustomerVoucher_amountUsed_description.title", resourceBundle, NumberType.CURRENCY, locale);
+      viewBuilder.addStringColumn(dataList, "settled", "CustomerVoucher_settled_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "voucherPrinted", "CustomerVoucher_voucherPrinted_description.title", resourceBundle);
       // Field not displayed in table
-      viewBuilder.addBigDecimalColumn(dataList, "restAmount", "CustomerVoucher_restAmount_description.title", resourceBundle, NumberType.INTEGER, locale);
       // Field not displayed in table
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();

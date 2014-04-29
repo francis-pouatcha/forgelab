@@ -65,12 +65,12 @@ public class PrescriptionBookListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
-      viewBuilder.addStringColumn(dataList, "name", "Prescriber_name_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Hospital_name_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "fullName", "Login_fullName_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "prescriber", "PrescriptionBook_prescriber_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "hospital", "PrescriptionBook_hospital_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "agency", "PrescriptionBook_agency_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "recordingAgent", "PrescriptionBook_recordingAgent_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "prescriptionNumber", "PrescriptionBook_prescriptionNumber_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "salesOrder", "PrescriptionBook_salesOrder_description.title", resourceBundle);
       viewBuilder.addDateColumn(dataList, "prescriptionDate", "PrescriptionBook_prescriptionDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       viewBuilder.addDateColumn(dataList, "recordingDate", "PrescriptionBook_recordingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       pagination = viewBuilder.addPagination();

@@ -9,13 +9,13 @@ import java.util.Calendar;
 import javafx.beans.property.SimpleStringProperty;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.crypto.KeySelector.Purpose;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
@@ -41,7 +41,7 @@ import org.adorsys.javaext.display.ToStringField;
 @Description("SalesOrderItem_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ListField({ "orderedQty", "returnedQty", "deliveredQty", "salesPricePU",
-      "totalSalePrice", "internalPic", "article.articleName" })
+      "totalSalePrice", "internalPic", "article.articleName", "vat.rate" })
 @ToStringField("article.articleName")
 public class SalesOrderItem implements Cloneable
 {
@@ -72,11 +72,14 @@ public class SalesOrderItem implements Cloneable
    @Description("SalesOrderItem_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<SalesOrderItemArticle> article;
+   @Description("SalesOrderItem_vat_description")
+   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+   private SimpleObjectProperty<SalesOrderItemVat> vat;
    
-   public void calculateTotalAmout(){
-		BigDecimal pppu = salesPricePU.get();
-		pppu = pppu.multiply(orderedQty.get());
-		totalSalePrice.set(pppu);
+   
+   public void updateTotalSalesPrice(){
+	   if(!totalSalePriceProperty().isBound())
+		   setTotalSalePrice(getOrderedQty().multiply(getSalesPricePU()));
 	}
   
 
@@ -212,6 +215,7 @@ public class SalesOrderItem implements Cloneable
 
    public final void setTotalSalePrice(BigDecimal totalSalePrice)
    {
+	   if(this.totalSalePriceProperty().isBound()) return;
       this.totalSalePriceProperty().set(totalSalePrice);
    }
 
@@ -283,6 +287,30 @@ public class SalesOrderItem implements Cloneable
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
    }
 
+   public SimpleObjectProperty<SalesOrderItemVat> vatProperty()
+   {
+      if (vat == null)
+      {
+         vat = new SimpleObjectProperty<SalesOrderItemVat>(new SalesOrderItemVat());
+      }
+      return vat;
+   }
+
+   public SalesOrderItemVat getVat()
+   {
+      return vatProperty().get();
+   }
+
+   public final void setVat(SalesOrderItemVat vat)
+   {
+      if (vat == null)
+      {
+         vat = new SalesOrderItemVat();
+      }
+      PropertyReader.copy(vat, getVat());
+      vatProperty().setValue(ObjectUtils.clone(getVat()));
+   }
+
    @Override
    public int hashCode()
    {
@@ -340,6 +368,7 @@ public class SalesOrderItem implements Cloneable
       e.recordDate = recordDate;
       e.salesOrder = salesOrder;
       e.article = article;
+      e.vat = vat;
       return e;
    }
 }

@@ -2,6 +2,7 @@
 
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -34,7 +35,11 @@
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Pane prefHeight="219.0" prefWidth="165.0" styleClass="application-Backgroun" VBox.vgrow="ALWAYS" />
+				<Pane prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</Pane>
 			</children>
 			<BorderPane.margin>
 				<Insets />
@@ -45,28 +50,84 @@
 		</VBox>
 	</right>
 	<center>
-		<VBox>
-			<children>
-				<Separator prefWidth="200.0" />
-				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
-					<padding>
-						<Insets left="10.0" />
-					</padding>
-				</HBox>
-				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-					<columns>
-					</columns>
-					<VBox.margin>
-						<Insets left="10.0" />
-					</VBox.margin>
-				</TableView>
-				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
-					<children>
-						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
-					</children>
-				</HBox>
-			</children>
-		</VBox>
+		<TabPane>
+			<tabs>
+				<Tab closable="false" text="Delivery List">
+					<content>
+						<VBox spacing="2.0">
+							<children>
+								<Separator prefWidth="200.0" />
+								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+									<padding>
+										<Insets left="10.0" />
+									</padding>
+									<VBox.margin>
+										<Insets left="10.0" />
+									</VBox.margin>
+								</HBox>
+								<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
+								<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+									<columns>
+									</columns>
+									<VBox.margin>
+										<Insets left="5.0" />
+									</VBox.margin>
+								</TableView>
+								<TitledPane animated="false" text="Details de la livraison">
+									<VBox.margin>
+										<Insets left="5.0" />
+									</VBox.margin>
+								</TitledPane>
+								<TableView fx:id="dataListItem" prefHeight="500.0" prefWidth="796.0" VBox.vgrow="NEVER">
+									<VBox.margin>
+										<Insets left="5.0" />
+									</VBox.margin>
+								</TableView>
+								<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
+									<children>
+										<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+									</children>
+								</HBox>
+							</children>
+						</VBox>
+					</content>
+				</Tab>
+				<Tab closable="false" text="Delivery Statistics / Supplier">
+					<content>
+						<VBox prefHeight="200.0" prefWidth="100.0">
+							<children>
+								<HBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="796.0" spacing="10.0" VBox.vgrow="NEVER">
+									<VBox.margin>
+										<Insets left="5.0" />
+									</VBox.margin>
+									<children>
+										<ComboBox prefHeight="36.0" prefWidth="282.0" promptText="Supplier">
+											<HBox.margin>
+												<Insets left="5.0" />
+											</HBox.margin>
+										</ComboBox>
+										<ComboBox prefHeight="37.0" prefWidth="124.0" promptText="Years" />
+										<Button mnemonicParsing="false" prefHeight="36.0" prefWidth="106.0" text="Sarch" />
+									</children>
+								</HBox>
+								<Separator prefWidth="200.0" />
+								<VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+									<children>
+										<StackedBarChart VBox.vgrow="ALWAYS">
+											<xAxis>
+												<CategoryAxis prefHeight="29.0" prefWidth="740.0" side="BOTTOM" />
+											</xAxis>
+											<yAxis>
+												<NumberAxis side="LEFT" />
+											</yAxis>
+										</StackedBarChart>
+									</children>
+								</VBox>
+							</children>
+						</VBox>
+					</content>
+				</Tab>
+			</tabs>
+		</TabPane>
 	</center>
 </BorderPane>

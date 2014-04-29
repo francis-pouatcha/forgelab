@@ -27,7 +27,10 @@ import org.adorsys.adpharma.client.jpa.article.ArticleAgencyForm;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgencySelection;
 import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfigForm;
 import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfigSelection;
+import org.adorsys.adpharma.client.jpa.article.ArticleVatForm;
+import org.adorsys.adpharma.client.jpa.article.ArticleVatSelection;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
+import org.adorsys.adpharma.client.jpa.article.ArticleVat;
 
 import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;

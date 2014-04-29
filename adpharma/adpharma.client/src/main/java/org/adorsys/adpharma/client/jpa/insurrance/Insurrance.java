@@ -211,7 +211,7 @@ public class Insurrance implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "fullName", "fullName", "coverageRate");
+      return PropertyReader.buildToString(this, "insurer", "coverageRate");
    }
 
    public void cleanIds()

@@ -1,10 +1,13 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -13,12 +16,12 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -26,6 +29,7 @@ import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
@@ -60,7 +64,8 @@ public class SalesOrderDisplayView
 	@FXML
 	private Button ordonnancierButton;
 
-	private HBox buttonBarLeft;
+	@FXML
+	private Button saveReturnButton;
 
 	@FXML
 	private GridPane saleOrderItemBar;
@@ -94,7 +99,7 @@ public class SalesOrderDisplayView
 	private TextField clientAdresse;
 
 	@FXML
-	private TextField clientcategorie;
+	private ComboBox<DocumentProcessingState> salesStatus;
 
 	//	Rigth grid pane components
 	@FXML
@@ -124,8 +129,8 @@ public class SalesOrderDisplayView
 
 	private BigDecimalField discountRate;
 
-	@FXML
-	private ComboBox<SalesOrderVat> tax;
+	//	@FXML
+	//	private ComboBox<SalesOrderVat> tax;
 
 
 
@@ -151,16 +156,19 @@ public class SalesOrderDisplayView
 	@FXML
 	private ContextMenu datalistContextMenu;
 
-	@FXML
-	private MenuItem deleteSOIMenu;
+	//	@FXML
+	//	private MenuItem deleteSOIMenu;
+	//
+	//	@FXML
+	//	private MenuItem editSOIMenu;
 
 	@FXML
-	private MenuItem editSOIMenu;
+	private MenuItem returnSOIMenu;
 
 	@Inject
 	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
-
+	private TableColumn<SalesOrderItem, BigDecimal> orderQuantityColumn;
 
 	@PostConstruct
 	public void postConstruct()
@@ -182,7 +190,9 @@ public class SalesOrderDisplayView
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "article", "SalesOrderItem_article_description.title", resourceBundle,400d);
-		viewBuilder.addBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		orderQuantityColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
@@ -202,7 +212,7 @@ public class SalesOrderDisplayView
 	{
 		Set<ConstraintViolation<SalesOrder>> violations = new HashSet<ConstraintViolation<SalesOrder>>();
 		violations.addAll(toOneAggreggationFieldValidator.validate(client, model.getCustomer(), SalesOrder.class, "customer", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
+		//		violations.addAll(toOneAggreggationFieldValidator.validate(cashDrawer, model.getCashDrawer(), SalesOrder.class, "cashDrawer", resourceBundle));
 
 		return violations;
 	}
@@ -270,18 +280,24 @@ public class SalesOrderDisplayView
 		taxAmount.numberProperty().bindBidirectional(model.amountVATProperty());
 		discount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
-		tax.valueProperty().bindBidirectional(model.vatProperty());
+		//		tax.valueProperty().bindBidirectional(model.vatProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
 		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
-		clientcategorie.textProperty().bindBidirectional(model.getCustomer().getCustomerCategory().nameProperty());
+		salesStatus.valueProperty().bindBidirectional(model.salesOrderStatusProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
 
-
+		saleOrderItemBar.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		closeButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		//		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		//		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		orderQuantityColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		returnSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		//		view.bind(model);
 	}
 
@@ -290,7 +306,38 @@ public class SalesOrderDisplayView
 		articleName.textProperty().bindBidirectional(soi.getArticle().articleNameProperty());
 		orderedQty.numberProperty().bindBidirectional(soi.orderedQtyProperty());
 		salesPricePU.numberProperty().bindBidirectional(soi.salesPricePUProperty());
-		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
+		soi.totalSalePriceProperty().bind(totalSalePrice.numberProperty());
+		//		totalSalePrice.numberProperty().bindBidirectional(soi.totalSalePriceProperty());
+		//		orderedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
+		//			@Override
+		//			public void changed(ObservableValue<? extends BigDecimal> obs,
+		//					BigDecimal oldVal, BigDecimal newVal) {
+		//				if(newVal==null)orderedQty.setNumber(BigDecimal.ZERO);
+		//				totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
+		//				
+		//			}});
+		orderedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> obs,
+					BigDecimal oldVal, BigDecimal newVal) {
+				if(newVal==null){
+					orderedQty.setNumber(BigDecimal.ZERO);
+				} else {
+					totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
+				}
+
+			}});
+		salesPricePU.numberProperty().addListener(new ChangeListener<BigDecimal>() {
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> obs,
+					BigDecimal oldVal, BigDecimal newVal) {
+				if(newVal==null){
+					salesPricePU.setNumber(BigDecimal.ZERO);
+				} else {
+					totalSalePrice.setNumber(newVal.multiply(orderedQty.getNumber()));
+				}
+
+			}});
 	}
 
 	public BorderPane getRootPane()
@@ -323,9 +370,9 @@ public class SalesOrderDisplayView
 	//		return confirmSelectionButton;
 	//	}
 
-	public ComboBox<SalesOrderVat> getTax() {
-		return tax;
-	}
+	//	public ComboBox<SalesOrderVat> getTax() {
+	//		return tax;
+	//	}
 
 	public TableView<SalesOrderItem> getDataList() {
 		return dataList;
@@ -338,11 +385,6 @@ public class SalesOrderDisplayView
 
 	public Button getInsurreurButton() {
 		return insurreurButton;
-	}
-
-
-	public HBox getButtonBarLeft() {
-		return buttonBarLeft;
 	}
 
 
@@ -380,6 +422,10 @@ public class SalesOrderDisplayView
 		return okButton;
 	}
 
+	public Button getSaveReturnButton() {
+		return saveReturnButton;
+	}
+
 
 	public ComboBox<SalesOrderCustomer> getClient() {
 		return client;
@@ -401,8 +447,8 @@ public class SalesOrderDisplayView
 	}
 
 
-	public TextField getClientcategorie() {
-		return clientcategorie;
+	public ComboBox<DocumentProcessingState> getSalesStatus() {
+		return salesStatus;
 	}
 
 
@@ -455,16 +501,22 @@ public class SalesOrderDisplayView
 	public ContextMenu getDatalistContextMenu() {
 		return datalistContextMenu;
 	}
+	//
+	//	public MenuItem getDeleteSOIMenu() {
+	//		return deleteSOIMenu;
+	//	}
+	//
+	//	public MenuItem getEditSOIMenu() {
+	//		return editSOIMenu;
+	//	}
 
-	public MenuItem getDeleteSOIMenu() {
-		return deleteSOIMenu;
+	public MenuItem getReturnSOIMenu() {
+		return returnSOIMenu;
 	}
 
-	public MenuItem getEditSOIMenu() {
-		return editSOIMenu;
+	public TableColumn<SalesOrderItem, BigDecimal> getOrderQuantityColumn() {
+		return orderQuantityColumn;
 	}
-
-
 
 
 }

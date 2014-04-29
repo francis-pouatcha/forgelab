@@ -207,5 +207,5 @@ public class ProductDetailConfigCreateController implements EntityController
       this.model = model;
       createView.bind(this.model);
    }
-
+   
 }

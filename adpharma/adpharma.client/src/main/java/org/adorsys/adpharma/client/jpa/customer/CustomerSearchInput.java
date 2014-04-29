@@ -23,7 +23,7 @@ public class CustomerSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Customer entity;
+   private Customer entity = new Customer();
 
    /**
     * The start cursor

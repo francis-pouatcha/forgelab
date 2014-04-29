@@ -23,7 +23,7 @@ public class StockMovementSearchInput
    /**
     * The entity holding search inputs.
     */
-   private StockMovement entity;
+   private StockMovement entity = new StockMovement();
 
    /**
     * The start cursor

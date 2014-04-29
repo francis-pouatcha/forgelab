@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class ProcurementOrderItemRegistration extends DomainComponentRegistration
 {

@@ -44,6 +44,7 @@ public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
    private SimpleObjectProperty<BigDecimal> totalClientVoucher;
    private SimpleObjectProperty<Calendar> openingDate;
    private SimpleObjectProperty<Calendar> closingDate;
+   private SimpleObjectProperty<CashDrawerCashier> cashier;
 
    public SalesOrderCashDrawer()
    {
@@ -303,6 +304,25 @@ public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
    {
       this.closingDateProperty().set(closingDate);
    }
+   
+   public SimpleObjectProperty<CashDrawerCashier> cashierProperty()
+   {
+      if (cashier == null)
+      {
+    	  cashier = new SimpleObjectProperty<CashDrawerCashier>();
+      }
+      return cashier;
+   }
+
+   public CashDrawerCashier getCashier()
+   {
+      return cashierProperty().get();
+   }
+
+   public final void setCashier(CashDrawerCashier cashier)
+   {
+      this.cashierProperty().set(cashier);
+   }
 
    @Override
    public int hashCode()
@@ -330,7 +350,7 @@ public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "cashDrawerNumber");
+      return PropertyReader.buildToString(this, "cashDrawerNumber","cashier");
    }
 
    @Override

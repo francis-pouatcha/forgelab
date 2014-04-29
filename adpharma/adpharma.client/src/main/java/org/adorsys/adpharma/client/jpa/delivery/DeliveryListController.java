@@ -2,7 +2,6 @@ package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -13,7 +12,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -23,6 +21,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
@@ -37,15 +40,15 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -61,7 +64,7 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@EntitySelectionEvent
 	private Event<Delivery> precessDeliveryRequestedEvent;
-	
+
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Delivery> deliveryEditEvent;
@@ -71,6 +74,12 @@ public class DeliveryListController implements EntityController
 
 	@Inject
 	DeliverySearchService searchService;
+	
+	@Inject
+	DeliveryItemSearchService itemsearchService;
+
+	@Inject
+	private DeliveryRemoveService deliveryRemoveService;
 
 
 
@@ -86,6 +95,10 @@ public class DeliveryListController implements EntityController
 	@Inject
 	private DeliveryRegistration registration;
 
+	@Inject
+	@Bundle({ CrudKeys.class})
+	private ResourceBundle resourceBundle;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -93,7 +106,47 @@ public class DeliveryListController implements EntityController
 
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Delivery>() {
 
+			@Override
+			public void changed(ObservableValue<? extends Delivery> observable,
+					Delivery oldValue, Delivery newValue) {
+				if(newValue!=null){
+					listView.getRemoveButton().disableProperty().unbind();
+					listView.getUpdateButton().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+                     DeliveryItemSearchInput dsi = new DeliveryItemSearchInput();
+                     dsi.getEntity().setDelivery(new DeliveryItemDelivery(newValue));
+                     dsi.setMax(-1);
+                     dsi.getFieldNames().add("delivery");
+					itemsearchService.setSearchInputs(dsi).start();
+				}
+
+			}
+		});
+		
+		itemsearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				DeliveryItemSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<DeliveryItem> resultList = result.getResultList();
+				listView.getDataListItem().getItems().setAll(resultList);
+
+			}
+		});
+		itemsearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				s.reset();				
+			}
+		});
 		listView.getProcessButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -112,8 +165,31 @@ public class DeliveryListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{							
-				searchInput.setFieldNames(Arrays.asList("deliveryProcessingState","supplier"));
+				searchInput.setFieldNames(readSearchAttributes());
+				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
+
+			}
+
+
+				});
+		/*
+		 * listen to remove button .
+		 */
+		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{							
+				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					Action showConfirm = Dialogs.create().
+							nativeTitleBar().
+							message(resourceBundle.getString("Entity_confirm_remove.title")).showConfirm();
+					if(showConfirm==Dialog.Actions.YES){
+						deliveryRemoveService.setEntity(selectedItem).start();
+					}
+				}
 
 			}
 
@@ -132,8 +208,9 @@ public class DeliveryListController implements EntityController
 				for (Supplier supplier : resultList) {
 					ds.add(new DeliverySupplier(supplier));
 				}
+				ds.add(0, null);
 				listView.getSupplier().getItems().setAll(ds);
-				listView.getSupplier().getSelectionModel().clearSelection();
+				listView.getSupplier().getSelectionModel().select(0);
 
 			}
 		});
@@ -145,6 +222,26 @@ public class DeliveryListController implements EntityController
 				s.reset();				
 			}
 		});
+		deliveryRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryRemoveService s = (DeliveryRemoveService) event.getSource();
+				Delivery result = s.getValue();
+				event.consume();
+				s.reset();
+				listView.getDataList().getItems().remove(result);
+
+			}
+		});
+		deliveryRemoveService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryRemoveService s = (DeliveryRemoveService) event.getSource();
+				s.reset();				
+			}
+		});
 		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -153,8 +250,7 @@ public class DeliveryListController implements EntityController
 				searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<Delivery> resultList = searchResult.getResultList();
-				listView.getDataList().getItems().setAll(resultList);
+				handleSearchResult(searchResult);
 
 			}
 		});
@@ -211,7 +307,9 @@ public class DeliveryListController implements EntityController
 	}
 
 	public void onDisplayed(){
-		supplierSearchService.setSearchInputs(new SupplierSearchInput()).start();
+		SupplierSearchInput supplierSearchInput = new SupplierSearchInput();
+		supplierSearchInput.setMax(-1);
+		supplierSearchService.setSearchInputs(supplierSearchInput).start();
 
 	}
 	@Override
@@ -256,7 +354,7 @@ public class DeliveryListController implements EntityController
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
-     
+
 	}
 
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Delivery createdEntity)
@@ -295,6 +393,19 @@ public class DeliveryListController implements EntityController
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(arrayList);
 		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public List<String> readSearchAttributes(){
+		ArrayList<String> seachAttributes = new ArrayList<String>() ;
+		String deliveryNumber = searchInput.getEntity().getDeliveryNumber();
+		DeliverySupplier supplier = searchInput.getEntity().getSupplier();
+		DocumentProcessingState state = searchInput.getEntity().getDeliveryProcessingState();
+		
+		if(StringUtils.isNotBlank(deliveryNumber)) seachAttributes.add("deliveryNumber");
+		if(supplier!=null && supplier.getId()!=null) seachAttributes.add("supplier");
+		if(state!=null) seachAttributes.add("deliveryProcessingState") ;
+		return seachAttributes;
+
 	}
 
 }

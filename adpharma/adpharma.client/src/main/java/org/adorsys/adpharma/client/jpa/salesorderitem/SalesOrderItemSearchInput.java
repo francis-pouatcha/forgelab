@@ -23,7 +23,7 @@ public class SalesOrderItemSearchInput
    /**
     * The entity holding search inputs.
     */
-   private SalesOrderItem entity;
+   private SalesOrderItem entity = new SalesOrderItem();
 
    /**
     * The start cursor

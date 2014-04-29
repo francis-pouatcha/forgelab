@@ -6,16 +6,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
-
+@Singleton
 public class CustomerEmployerCreateController extends CustomerEmployerController
 {
 
    @Inject
    CustomerCreateView createView;
-   
-   @Inject
-   ModalCustomerCreateView modalCustomerCreateView;
-   
    
 
    @PostConstruct
@@ -27,7 +23,6 @@ public class CustomerEmployerCreateController extends CustomerEmployerController
    {
       this.sourceEntity = model;
       bind(createView.getView().getCustomerEmployerSelection(), createView.getView().getCustomerEmployerForm());
-      bind(modalCustomerCreateView.getView().getCustomerEmployerSelection(), modalCustomerCreateView.getView().getCustomerEmployerForm());
       activateButton(createView.getView().getCustomerEmployerSelection());
    }
 }

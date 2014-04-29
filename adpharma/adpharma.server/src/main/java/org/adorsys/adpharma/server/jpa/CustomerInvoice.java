@@ -102,7 +102,7 @@ public class CustomerInvoice implements Serializable
 
    @Column
    @Description("CustomerInvoice_settled_description")
-   private Boolean settled;
+   private Boolean settled = Boolean.FALSE;
 
    @Column
    @Description("CustomerInvoice_amountBeforeTax_description")
@@ -116,41 +116,41 @@ public class CustomerInvoice implements Serializable
    @Column
    @Description("CustomerInvoice_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount;
+   private BigDecimal amountDiscount = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax;
+   private BigDecimal amountAfterTax = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_netToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal netToPay;
+   private BigDecimal netToPay = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_customerRestTopay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal customerRestTopay;
+   private BigDecimal customerRestTopay = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_insurranceRestTopay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal insurranceRestTopay;
+   private BigDecimal insurranceRestTopay = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_cashed_description")
-   private Boolean cashed;
+   private Boolean cashed = Boolean.FALSE;
 
    @Column
    @Description("CustomerInvoice_advancePayment_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal advancePayment;
+   private BigDecimal advancePayment = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoice_totalRestToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalRestToPay;
+   private BigDecimal totalRestToPay = BigDecimal.ZERO;
 
    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
    @Description("CustomerInvoice_invoiceItems_description")

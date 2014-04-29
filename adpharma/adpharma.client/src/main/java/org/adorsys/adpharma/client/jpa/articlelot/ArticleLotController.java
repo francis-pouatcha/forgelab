@@ -104,7 +104,7 @@ public class ArticleLotController extends DomainComponentController
       // else display list of articleLots.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();
@@ -120,7 +120,7 @@ public class ArticleLotController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(searchController);
+//      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -135,7 +135,7 @@ public class ArticleLotController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -147,7 +147,7 @@ public class ArticleLotController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(editController);
+//      displayedViews.add(editController);
       displayComponent();
    }
 
@@ -155,7 +155,7 @@ public class ArticleLotController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();

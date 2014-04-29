@@ -849,6 +849,13 @@ description add-field-description --onProperty recordingDate --title "Recording 
 description add-field-description --onProperty recordingDate --title "Date de Saisie" --text "La date de saisie ." --locale fr;
 format add-date-pattern --onProperty recordingDate --pattern "dd-MM-yyyy HH:mm"; 
 
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
+
 
 cd ~~;
 
@@ -1108,6 +1115,11 @@ description add-field-description --onProperty valid --title "Valid" --text "Det
 description add-field-description --onProperty valid --title "Valide" --text "Détermine si la ligne de commande est valide ou pas selon les attentes du fournisseur." --locale fr;
 display add-list-field --field valid;
 
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+
 
 cd ~~
 
@@ -1172,6 +1184,12 @@ association set-type --onProperty supplier --type AGGREGATION --targetEntity ~.j
 constraint NotNull --onProperty supplier;
 description add-notNull-message --onProperty supplier --title "The supplier  is required" --text "The supplier  is required";
 description add-notNull-message --onProperty supplier --title "Le fournisseur est réquis" --text "le fournisseur est requis" --locale fr;
+
+field custom --named poStatus --type ~.jpa.DocumentProcessingState.java;
+description add-field-description --onProperty poStatus --title "Status" --text "The status of this purchase order.";
+description add-field-description --onProperty poStatus --title "Statut" --text "État de cette commande fournisseur." --locale fr;
+enum enumerated-field --onProperty poStatus ;
+display add-list-field --field poStatus;
 
 field manyToOne --named agency --fieldType ~.jpa.Agency;
 description add-field-description --onProperty agency --title "Agency" --text "The Agency mentioned on the delivery slip while products are being delivered.";
@@ -1600,6 +1618,14 @@ field temporal --type TIMESTAMP --named creationDate;
 description add-field-description --onProperty creationDate --title "Creation Date" --text "The creation date of this stock movement.";
 description add-field-description --onProperty creationDate --title "Date de Création" --text "La date de création de cette movement de stock." --locale fr;
 format add-date-pattern --onProperty creationDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
+
 
 cd ~~;
 
@@ -2481,6 +2507,12 @@ constraint NotNull --onProperty article;
 description add-notNull-message --onProperty article --title "The article of this sales order item must be selected" --text "The article of this sales order item must be selected";
 description add-notNull-message --onProperty article --title "Le produit de cette ligne de commande client doit être sélectionné" --text "Le produit de cette ligne de commande client doit être sélectionné" --locale fr;
 
+field manyToOne --named vat --fieldType ~.jpa.VAT;
+description add-field-description --onProperty vat --title "VAT" --text "The value added tax";
+description add-field-description --onProperty vat --title "TVA" --text "La taxe sur la valeur ajoute" --locale fr;
+association set-selection-mode --onProperty vat --selectionMode  COMBOBOX;
+association set-type --onProperty vat --type AGGREGATION --targetEntity ~.jpa.VAT;
+display add-list-field --field vat.rate;
 
 cd ~~;
 
@@ -3063,6 +3095,53 @@ enum add-enum-constant-description --locale fr --onConstant VOUCHER --title "Avo
 
 cd ~~;
 
+@/* Entite Ligne Payement */;
+entity --named PaymentItem --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Payment Item" --text "A payment item.";
+description add-class-description  --locale fr --title "Ligne de Paiement" --text "Une ligne de paiement";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole SALES;
+
+field custom --named paymentMode --type ~.jpa.PaymentMode;
+description add-field-description --onProperty paymentMode --title "Payment Mode" --text "The Mode of this payment.";
+description add-field-description --onProperty paymentMode --title "Mode de Paiement" --text "Le Mode de paiement." --locale fr;
+enum enumerated-field --onProperty paymentMode;
+display add-list-field --field paymentMode;
+
+field string --named documentNumber;
+description add-field-description --onProperty documentNumber --title "Document Number" --text "The document number.";
+description add-field-description --onProperty documentNumber --title "Numéro du document" --text "Le numéro du document." --locale fr;
+display add-toString-field --field documentNumber;
+display add-list-field --field documentNumber;
+
+field string --named documentDetails;
+description add-field-description --onProperty documentDetails --title "Document Details" --text "The document details.";
+description add-field-description --onProperty documentDetails --title "Details du Document" --text "Les details du document." --locale fr;
+
+field number --named amount --type java.math.BigDecimal;
+description add-field-description --onProperty amount --title "Payment Amount" --text "The payment amount.";
+description add-field-description --onProperty amount --title "Montant du Paiement" --text "Le montant du paiement." --locale fr;
+format add-number-type --onProperty amount --type CURRENCY;
+display add-list-field --field amount;
+
+field number --named receivedAmount --type java.math.BigDecimal;
+description add-field-description --onProperty receivedAmount --title "Received Amount" --text "The amount received from the payment.";
+description add-field-description --onProperty receivedAmount --title "Montant Reçue" --text "Le montant reçue du paiement." --locale fr;
+format add-number-type --onProperty receivedAmount --type CURRENCY;
+display add-list-field --field receivedAmount;
+
+field manyToOne --named paidBy --fieldType ~.jpa.Customer;
+description add-field-description --onProperty paidBy --title "Paid By" --text "Paid By.";
+description add-field-description --onProperty paidBy --title "Payer Par" --text "Payer Par." --locale fr;
+association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
+association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa.Customer;
+display add-list-field --field paidBy.fullName;
+
+
+cd ~~;
+
 
 @/* Entité  paiement */;
 entity --named Payment --package ~.jpa --idStrategy AUTO;
@@ -3172,6 +3251,16 @@ association set-selection-mode --onProperty paidBy --selectionMode FORWARD;
 association set-type --onProperty paidBy --type AGGREGATION --targetEntity ~.jpa.Customer;
 display add-list-field --field paidBy.fullName;
 
+field oneToMany --named paymentItems --fieldType ~.jpa.PaymentItem --inverseFieldName payment;
+description add-field-description --onProperty paymentItems --title "Payment Items" --text "The payment items";
+description add-field-description --onProperty paymentItems --title "Lignes Paiement" --text "Les lignes de paiement" --locale fr;
+association set-type --onProperty paymentItems --type COMPOSITION --targetEntity ~.jpa.PaymentItem;
+association set-selection-mode --onProperty paymentItems --selectionMode TABLE;
+
+cd ../PaymentItem.java;
+description add-field-description --onProperty payment --title "Payment" --text "The payment containing this item";
+description add-field-description --onProperty payment --title "Paiement" --text "Paiement contenant cette ligne" --locale fr;
+association set-type --onProperty payment --type COMPOSITION --targetEntity ~.jpa.Payment;
 
 cd ~~;
 
@@ -3179,7 +3268,7 @@ cd ~~;
 @/* Entité EtatCredits */;
 entity --named DebtStatement --package ~.jpa --idStrategy AUTO;
 description add-class-description --title "Debt Statement" --text "The sum of all the debts of a client";
-description add-class-description  --locale fr --title "Etat Credits" --text "Le cumul de toutes les dettes d un client";
+description add-class-description  --locale fr --title "État Credits" --text "Le cumul de toutes les dettes d un client";
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
 access add-permission --actionEnum ~.jpa.PermissionActionEnum --action ALL --roleEnum ~.jpa.AccessRoleEnum --toRole CASHIER;
@@ -3515,6 +3604,202 @@ description add-field-description --onProperty voucherPrinted --title "Imprimé"
 @/* default=false */;
 display add-list-field --field voucherPrinted;
 
+
+cd ~~;
+
+@/* Enum type DocumentType State */;
+java new-enum-type --named DocumentType --package ~.jpa ;
+enum add-enum-class-description --title "Document Type" --text "The type of a document";
+enum add-enum-class-description --title "Type du Document" --text "Type du document" --locale fr;
+java new-enum-const CUSTUMER_INVOICE;
+enum add-enum-constant-description --onConstant CUSTUMER_INVOICE --title "Customer Invoice" --text "Customer invoice";
+enum add-enum-constant-description --onConstant CUSTUMER_INVOICE --title "Facture Client" --text "Facture client" --locale fr ;
+java new-enum-const SUPPLIER_INVOICE;
+enum add-enum-constant-description --onConstant SUPPLIER_INVOICE --title "Supplier Invoice" --text "Supplier invoice";
+enum add-enum-constant-description --onConstant SUPPLIER_INVOICE --title "Facture Achat" --text "Facture achat" --locale fr ;
+java new-enum-const DELIVERY_SLIP;
+enum add-enum-constant-description --onConstant DELIVERY_SLIP --title "Delivery Slip" --text "Delivery slip";
+enum add-enum-constant-description --onConstant DELIVERY_SLIP --title "Bordereau de Livraison" --text "Bordereau de livraison" --locale fr ;
+java new-enum-const CASH_RECEIPT ;
+enum add-enum-constant-description --onConstant CASH_RECEIPT --title "Cash Receipt" --text "Cash receipt";
+enum add-enum-constant-description --onConstant CASH_RECEIPT --title "Reçu de Caisse" --text "Reçu de caisse" --locale fr ;
+java new-enum-const CUSTUMER_VOUCHER;
+enum add-enum-constant-description --onConstant CUSTUMER_VOUCHER --title "Customer Voucher" --text "Customer voucher";
+enum add-enum-constant-description --onConstant CUSTUMER_VOUCHER --title "Avoir Client" --text "Avoir client" --locale fr ;
+java new-enum-const BARCODE_REPORT;
+enum add-enum-constant-description --onConstant BARCODE_REPORT --title "Barcode Report" --text "Barcode report";
+enum add-enum-constant-description --onConstant BARCODE_REPORT --title "Listing des Codes Barres" --text "Listing des codes barres" --locale fr;
+java new-enum-const ARTICLE_PCMT_REPORT;
+enum add-enum-constant-description --onConstant ARTICLE_PCMT_REPORT --title "Periodical Article Procurement Report" --text "Periodical article procurement report";
+enum add-enum-constant-description --onConstant ARTICLE_PCMT_REPORT --title "Rapport Périodique des Achats Articles" --text "Rapport périodique des achats articles" --locale fr;
+java new-enum-const ARTICLE_SALES_REPORT;
+enum add-enum-constant-description --onConstant ARTICLE_SALES_REPORT --title "Periodical Article Sales Report" --text "Periodical article sales report";
+enum add-enum-constant-description --onConstant ARTICLE_SALES_REPORT --title "Rapport Périodique des Ventes Articles" --text "Rapport périodique des ventes articles" --locale fr;
+java new-enum-const SECTION_SALES_REPORT;
+enum add-enum-constant-description --onConstant SECTION_SALES_REPORT --title "Periodical Section Sales Report" --text "Periodical section sales report";
+enum add-enum-constant-description --onConstant SECTION_SALES_REPORT --title "Rapport Périodique des Ventes par Rayon" --text "Rapport périodique des ventes par rayon" --locale fr;
+java new-enum-const ARTICLE_PCMT_SALES_REPORT;
+enum add-enum-constant-description --onConstant ARTICLE_PCMT_SALES_REPORT --title "Periodical Article Procurement and Sales Report" --text "Periodical article procurement and sales order";
+enum add-enum-constant-description --onConstant ARTICLE_PCMT_SALES_REPORT --title "Rapport Périodique des Achats et Ventes Articles" --text "Rapport périodique des achats et ventes articles" --locale fr;
+java new-enum-const CUSTOMER_SALES_REPORT;
+enum add-enum-constant-description --onConstant CUSTOMER_SALES_REPORT --title "Periodical Customer Sales Report" --text "Periodical customer sales report";
+enum add-enum-constant-description --onConstant CUSTOMER_SALES_REPORT --title "Rapport Périodique des Ventes Client" --text "Rapport périodique des ventes client" --locale fr;
+java new-enum-const SUPPLIER_PCMT_REPORT;
+enum add-enum-constant-description --onConstant SUPPLIER_PCMT_REPORT --title "Periodical Supplier Procurement Report" --text "Periodical supplier procurement report";
+enum add-enum-constant-description --onConstant SUPPLIER_PCMT_REPORT --title "Rapport Périodique des Achats Fournisseur" --text "Rapport périodique des achats fournisseurs" --locale fr;
+java new-enum-const STOCK_MVMT_REPORT;
+enum add-enum-constant-description --onConstant STOCK_MVMT_REPORT --title "Periodical Stock Movement Report" --text "Periodical stock movement report";
+enum add-enum-constant-description --onConstant STOCK_MVMT_REPORT --title "Rapport Périodique des Mouvements de Stock" --text "Rapport périodique des mouvements de stock" --locale fr;
+java new-enum-const STOCK_MVMT_BY_ARTICLE;
+enum add-enum-constant-description --onConstant STOCK_MVMT_BY_ARTICLE --title "Periodical Stock Movement Report by Article" --text "Periodical stock movement report by article";
+enum add-enum-constant-description --onConstant STOCK_MVMT_BY_ARTICLE --title "Rapport Périodique des Mouvements de Stock par Article" --text "Rapport périodique des mouvements de stock par article" --locale fr;
+java new-enum-const ARTICLE_REPORT;
+enum add-enum-constant-description --onConstant ARTICLE_REPORT --title "Article Report" --text "Article report";
+enum add-enum-constant-description --onConstant ARTICLE_REPORT --title "Listing des Articles" --text "Listing des articles" --locale fr;
+java new-enum-const ARTICLE_REPORT_BY_SECTION;
+enum add-enum-constant-description --onConstant ARTICLE_REPORT_BY_SECTION --title "Article Report by Section" --text "Article report by section";
+enum add-enum-constant-description --onConstant ARTICLE_REPORT_BY_SECTION --title "Listing des Articles par Rayon" --text "Listing des articles par rayon" --locale fr;
+java new-enum-const ARTICLE_WITH_VAT_REPORT;
+enum add-enum-constant-description --onConstant ARTICLE_WITH_VAT_REPORT --title "Article with VAT Report" --text "Article with VAT report";
+enum add-enum-constant-description --onConstant ARTICLE_WITH_VAT_REPORT --title "Listing des Articles à TVA" --text "Listing des articles à TVA" --locale fr;
+java new-enum-const REVENUE_REPORT;
+enum add-enum-constant-description --onConstant REVENUE_REPORT --title "Periodical Revenue Report" --text "Periodical revenue report";
+enum add-enum-constant-description --onConstant REVENUE_REPORT --title "Rapport Périodique du Chiffre d Affaires" --text "Rapport périodique du chiffre d affaires" --locale fr;
+java new-enum-const REVENUE_REPORT_BY_SALES_AGENT;
+enum add-enum-constant-description --onConstant REVENUE_REPORT_BY_SALES_AGENT --title "Periodical Revenue Report by Sales Agent" --text "Periodical revenue report by sales agent";
+enum add-enum-constant-description --onConstant REVENUE_REPORT_BY_SALES_AGENT --title "Rapport Périodique du Chiffre d Affaires par Vendeur" --text "Rapport périodique du chiffre d affaires par vendeur" --locale fr;
+java new-enum-const CASH_STMT;
+enum add-enum-constant-description --onConstant CASH_STMT --title "Periodical Cash Statement" --text "Periodical sash statement";
+enum add-enum-constant-description --onConstant CASH_STMT --title "Rapport Périodique de Caisse" --text "Rapport périodique de caisse" --locale fr ;
+java new-enum-const PRODUCT_DETAIL_REPORT;
+enum add-enum-constant-description --onConstant PRODUCT_DETAIL_REPORT --title "Product Detail Configuration Report" --text "Product detail configuration report";
+enum add-enum-constant-description --onConstant PRODUCT_DETAIL_REPORT --title "Listing des Relations de Décomposition" --text "Listing des relation de décomposition" --locale fr;
+java new-enum-const OUT_OF_ORDER_REPORT;
+enum add-enum-constant-description --onConstant OUT_OF_ORDER_REPORT --title "Out of Order Report" --text "Out of order report";
+enum add-enum-constant-description --onConstant OUT_OF_ORDER_REPORT --title "Rapport des Produits en Rupture de Stock" --text "Rapport des produits en rupture de stock" --locale fr;
+java new-enum-const DEBT_STMT;
+enum add-enum-constant-description --onConstant DEBT_STMT --title "Debt Statement" --text "Customer debt statement";
+enum add-enum-constant-description --onConstant DEBT_STMT --title "État Crédits" --text "État credit du client" --locale fr;
+java new-enum-const DEBT_STMT_BY_CUSTOMER;
+enum add-enum-constant-description --onConstant DEBT_STMT_BY_CUSTOMER --title "Debt Statement by Customer" --text "Debt statement by customer";
+enum add-enum-constant-description --onConstant DEBT_STMT_BY_CUSTOMER --title "État Crédits par Client" --text "État credit par client" --locale fr;
+java new-enum-const STOCK_APPRECIATION;
+enum add-enum-constant-description --onConstant STOCK_APPRECIATION --title "Stock Appreciation" --text "Stock appreciation";
+enum add-enum-constant-description --onConstant STOCK_APPRECIATION --title "Valorisation du Stock" --text "Valorisation du stock" --locale fr ;
+java new-enum-const SECTION_REPORT;
+enum add-enum-constant-description --onConstant SECTION_REPORT --title "Section Report" --text "Section report";
+enum add-enum-constant-description --onConstant SECTION_REPORT --title "Listing des Rayons" --text "Listing des rayons" --locale fr ;
+java new-enum-const CUSTOMER_REPORT;
+enum add-enum-constant-description --onConstant CUSTOMER_REPORT --title "Customer Report" --text "Customer report";
+enum add-enum-constant-description --onConstant CUSTOMER_REPORT --title "Listing des Clients" --text "Listing des clients" --locale fr ;
+java new-enum-const INVENTORY_LIST;
+enum add-enum-constant-description --onConstant INVENTORY_LIST --title "Periodical Inventory List" --text "Periodical inventory list";
+enum add-enum-constant-description --onConstant INVENTORY_LIST --title "Listing Périodique des Inventaire" --text "Listing périodique des inventaires" --locale fr ;
+java new-enum-const ALPHA_INVENTORY_STMT;
+enum add-enum-constant-description --onConstant ALPHA_INVENTORY_STMT --title "Alphabetical Inventory Statements by Section by Agency" --text "Alphabetical inventory statements by section by agency";
+enum add-enum-constant-description --onConstant ALPHA_INVENTORY_STMT --title "Fiche Alphabétique des Inventaires par Rayon par Agence" --text "Fiche alphabétique des inventaires par rayon par agence" --locale fr ;
+java new-enum-const INVENTORY_REPORT;
+enum add-enum-constant-description --onConstant INVENTORY_REPORT --title "Periodical Inventory Report" --text "Periodical inventory report";
+enum add-enum-constant-description --onConstant INVENTORY_REPORT --title "Rapport Périodique des Inventaire" --text "Rapport périodique des inventaires" --locale fr ;
+java new-enum-const PROCUREMENT_ORDER;
+enum add-enum-constant-description --onConstant PROCUREMENT_ORDER --title "Procurement Order" --text "Procurement order";
+enum add-enum-constant-description --onConstant PROCUREMENT_ORDER --title "Bon de Commande Achat" --text "Bon de commande achat" --locale fr ;
+
+@/* Output Management */;
+
+@/* Document */;
+entity --named DocumentStore --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Documents" --text "Documents";
+description add-class-description  --locale fr --title "Documents" --text "Documents";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole LOGIN;
+
+field string --named documentNumber;
+description add-field-description --onProperty documentNumber --title "Document Number" --text "The document number.";
+description add-field-description --onProperty documentNumber --title "Numéro du Document" --text "Le numéro du document." --locale fr;
+display add-toString-field --field documentNumber;
+display add-list-field --field documentNumber;
+
+field custom --named documentType --type ~.jpa.DocumentType.java;
+description add-field-description --onProperty documentType --title "Document Type" --text "The type of this document.";
+description add-field-description --onProperty documentType --title "Type du Document" --text "Le type de ce document." --locale fr;
+enum enumerated-field --onProperty documentType;
+display add-list-field --field documentType;
+
+field string --named documentLocation;
+description add-field-description --onProperty documentLocation --title "Document Location" --text "The document location.";
+description add-field-description --onProperty documentLocation --title "Lieu du Document" --text "Le lieu du document." --locale fr;
+display add-toString-field --field documentLocation;
+display add-list-field --field documentLocation;
+
+field manyToOne --named recordingUser --fieldType ~.jpa.Login;
+description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this document.";
+description add-field-description --onProperty recordingUser --title "Agent" --text "Agent de saisie ayant édité ce document." --locale fr;
+association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
+association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Login;
+
+field temporal --type TIMESTAMP --named modifiedDate; 
+description add-field-description --onProperty modifiedDate --title "Last Modified" --text "The last modification date.";
+description add-field-description --onProperty modifiedDate --title "Derniere Edition" --text "La data de derniere edition" --locale fr;
+format add-date-pattern --onProperty modifiedDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field temporal --type TIMESTAMP --named priodFrom; 
+description add-field-description --onProperty priodFrom --title "Start Target Period" --text "The start of the target period.";
+description add-field-description --onProperty priodFrom --title "Début Période Cible" --text "Le début de la période cible." --locale fr;
+format add-date-pattern --onProperty priodFrom --pattern "dd-MM-yyyy HH:mm"; 
+
+field temporal --type TIMESTAMP --named periodTo; 
+description add-field-description --onProperty periodTo --title "End Target Period" --text "The ent of the target period.";
+description add-field-description --onProperty periodTo --title "Fin Période Cible" --text "La fin de la période cible." --locale fr;
+format add-date-pattern --onProperty periodTo --pattern "dd-MM-yyyy HH:mm"; 
+
+cd ~~;
+
+@/* Document */;
+entity --named DocumentArchive --package ~.jpa --idStrategy AUTO;
+description add-class-description --title "Document Archive" --text "Document Archive";
+description add-class-description  --locale fr --title "Archive des Documents" --text "Archive des Documents";
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action NAV --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+access add-permission --actionEnum ~.jpa.PermissionActionEnum --action READ --roleEnum ~.jpa.AccessRoleEnum --toRole MANAGER;
+
+field string --named documentNumber;
+description add-field-description --onProperty documentNumber --title "Document Number" --text "The document number.";
+description add-field-description --onProperty documentNumber --title "Numéro du Document" --text "Le numéro du document." --locale fr;
+display add-toString-field --field documentNumber;
+display add-list-field --field documentNumber;
+
+field custom --named documentType --type ~.jpa.DocumentType.java;
+description add-field-description --onProperty documentType --title "Document Type" --text "The type of this document.";
+description add-field-description --onProperty documentType --title "Type du Document" --text "Le type de ce document." --locale fr;
+enum enumerated-field --onProperty documentType;
+display add-list-field --field documentType;
+
+field string --named documentLocation;
+description add-field-description --onProperty documentLocation --title "Document Location" --text "The document location.";
+description add-field-description --onProperty documentLocation --title "Lieu du Document" --text "Le lieu du document." --locale fr;
+display add-toString-field --field documentLocation;
+display add-list-field --field documentLocation;
+
+field manyToOne --named recordingUser --fieldType ~.jpa.Login;
+description add-field-description --onProperty recordingUser --title "User" --text "The user modifying this document.";
+description add-field-description --onProperty recordingUser --title "Agent" --text "Agent de saisie ayant édité ce document." --locale fr;
+association set-selection-mode --onProperty recordingUser --selectionMode COMBOBOX;
+association set-type --onProperty recordingUser --type AGGREGATION --targetEntity ~.jpa.Login;
+
+field temporal --type TIMESTAMP --named modifiedDate; 
+description add-field-description --onProperty modifiedDate --title "Last Modified" --text "The last modification date.";
+description add-field-description --onProperty modifiedDate --title "Derniere Edition" --text "La data de derniere edition" --locale fr;
+format add-date-pattern --onProperty modifiedDate --pattern "dd-MM-yyyy HH:mm"; 
+
+field temporal --type TIMESTAMP --named priodFrom; 
+description add-field-description --onProperty priodFrom --title "Start Target Period" --text "The start of the target period.";
+description add-field-description --onProperty priodFrom --title "Début Période Cible" --text "Le début de la période cible." --locale fr;
+format add-date-pattern --onProperty priodFrom --pattern "dd-MM-yyyy HH:mm"; 
+
+field temporal --type TIMESTAMP --named periodTo; 
+description add-field-description --onProperty periodTo --title "End Target Period" --text "The ent of the target period.";
+description add-field-description --onProperty periodTo --title "Fin Période Cible" --text "La fin de la période cible." --locale fr;
+format add-date-pattern --onProperty periodTo --pattern "dd-MM-yyyy HH:mm"; 
 
 cd ~~;
 

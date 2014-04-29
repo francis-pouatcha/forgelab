@@ -48,22 +48,24 @@ public class CustomerInvoiceItem implements Serializable
 
    @Column
    @Description("CustomerInvoiceItem_purchasedQty_description")
-   private BigDecimal purchasedQty;
+   private BigDecimal purchasedQty = BigDecimal.ZERO;
 
    @Column
    @Description("CustomerInvoiceItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU;
+   private BigDecimal salesPricePU = BigDecimal.ZERO ;
 
    @Column
    @Description("CustomerInvoiceItem_totalSalesPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalSalesPrice;
+   private BigDecimal totalSalesPrice =  BigDecimal.ZERO;
 
    @ManyToOne
    @Description("CustomerInvoiceItem_invoice_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
    private CustomerInvoice invoice;
+   
+  
 
    public Long getId()
    {

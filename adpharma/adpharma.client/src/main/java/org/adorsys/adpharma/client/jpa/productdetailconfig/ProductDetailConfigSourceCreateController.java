@@ -5,6 +5,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleCreateView;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 
 @Singleton
@@ -22,7 +24,9 @@ public class ProductDetailConfigSourceCreateController extends ProductDetailConf
    public void handleNewModelEvent(@Observes @CreateModelEvent ProductDetailConfig model)
    {
       this.sourceEntity = model;
-      activateButton(createView.getView().getProductDetailConfigSourceSelection(), createView.getView().getProductDetailConfigSourceForm());
+      activateButton(createView.getView().getProductDetailConfigSourceSelection());
       bind(createView.getView().getProductDetailConfigSourceSelection(), createView.getView().getProductDetailConfigSourceForm());
    }
+   
+   
 }

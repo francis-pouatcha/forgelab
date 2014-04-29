@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -21,6 +23,7 @@ import javax.inject.Inject;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
@@ -58,7 +61,7 @@ public class DeliveryListView
 
 	@FXML
 	private Button updateButton;
-	
+
 	@FXML
 	private Button removeButton;
 
@@ -67,6 +70,9 @@ public class DeliveryListView
 
 	@FXML
 	private TableView<Delivery> dataList;
+	
+	@FXML
+	private TableView<DeliveryItem> dataListItem;
 
 	@FXML
 	private Pagination pagination;
@@ -85,7 +91,7 @@ public class DeliveryListView
 	private Locale locale;
 
 	@Inject
-	@Bundle({ CrudKeys.class
+	@Bundle({ CrudKeys.class,DeliveryItem.class
 		, Delivery.class
 		, VAT.class
 		, Agency.class
@@ -123,13 +129,28 @@ public class DeliveryListView
 		buildsearchBar();
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
+		
+		//deliveryitem
+		
+		 viewBuilder.addStringColumn(dataListItem, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
+	      viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+	      viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
+	      ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,300d);
+	      viewBuilder.addDateColumn(dataListItem, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	      viewBuilder.addBigDecimalColumn(dataListItem, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+	     
 	}
-	
+
 	public void bind(DeliverySearchInput searchInput)
 	{
-		
+
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
-		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
+		//		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
 		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
 		deliveryProcessingState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
 	}
@@ -137,21 +158,26 @@ public class DeliveryListView
 	public void buildsearchBar(){
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
 		deliveryNumber.setPromptText("delivery Number");
+		deliveryNumber.setPrefHeight(40d);
 
-		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
-		deliveryDateFrom.setPromptText("date From");
-		deliveryDateFrom.setPrefWidth(160d);
-		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
+		//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
+		//		deliveryDateFrom.setPromptText("date From");
+		//		deliveryDateFrom.setPrefWidth(160d);
+		//		HBox.setMargin(deliveryDateFrom, new Insets(15, 0, 0, 0));
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
-		supplier.setPromptText("Supplier");
+		supplier.setPromptText("All Suppliers");
 		supplier.setPrefWidth(200d);
+		supplier.setPrefHeight(40d);
 
-		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(), false);
+
+		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		deliveryProcessingState.setPromptText("state");
+		deliveryProcessingState.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchBar.getChildren().addAll(deliveryNumber,deliveryDateFrom,supplier,deliveryProcessingState,searchButton);
+		searchButton.setPrefHeight(40d);
+		searchBar.getChildren().addAll(deliveryNumber,supplier,deliveryProcessingState,searchButton);
 	}
 
 	public Button getCreateButton()
@@ -168,6 +194,11 @@ public class DeliveryListView
 	{
 		return dataList;
 	}
+	
+	public TableView<DeliveryItem> getDataListItem()
+	{
+		return dataListItem;
+	}
 
 	public BorderPane getRootPane()
 	{
@@ -183,9 +214,9 @@ public class DeliveryListView
 		return deliveryNumber;
 	}
 
-	public CalendarTextField getDeliveryDateFrom() {
-		return deliveryDateFrom;
-	}
+	//	public CalendarTextField getDeliveryDateFrom() {
+	//		return deliveryDateFrom;
+	//	}
 
 	public ComboBox<DeliverySupplier> getSupplier() {
 		return supplier;

@@ -6,11 +6,19 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -26,94 +34,170 @@ import org.adorsys.adpharma.server.security.SecurityUtil;
 public class StockMovementEJB
 {
 
-   @Inject
-   private StockMovementRepository repository;
+	@Inject
+	private StockMovementRepository repository;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private ArticleMerger articleMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   @Inject
-   private SecurityUtil securityUtil ;
-   
-   public StockMovement create(StockMovement entity)
-   {
-      return repository.save(attach(entity));
-   }
+	@Inject
+	private SecurityUtil securityUtil;
 
-   public StockMovement deleteById(Long id)
-   {
-      StockMovement entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+	@Inject
+	@DocumentProcessedEvent
+	private Event<StockMovement> stockMovementEvent;
 
-   public StockMovement update(StockMovement entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public StockMovement create(StockMovement entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public StockMovement findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public StockMovement deleteById(Long id)
+	{
+		StockMovement entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public List<StockMovement> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public StockMovement update(StockMovement entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public StockMovement findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public List<StockMovement> findBy(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
+	public List<StockMovement> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public Long countBy(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public List<StockMovement> findByLike(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
+	public List<StockMovement> findBy(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
 
-   public Long countByLike(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
+	public Long countBy(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
 
-   private StockMovement attach(StockMovement entity)
-   {
-      if (entity == null)
-         return null;
+	public List<StockMovement> findByLike(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
 
-      // aggregated
-      entity.setCreatingUser(loginMerger.bindAggregated(entity.getCreatingUser()));
+	public Long countByLike(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
 
-      // aggregated
-      entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+	private StockMovement attach(StockMovement entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+		// aggregated
+		entity.setCreatingUser(loginMerger.bindAggregated(entity.getCreatingUser()));
 
-      return entity;
-   }
-   
-   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+		// aggregated
+		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
+
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+
+		return entity;
+	}
+
+	public void handleArticleLotDetails(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
+		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(lotToDetails.getInternalPic());
+		sm.setMovementType(StockMovementType.OUT);
+		sm.setArticle(lotToDetails.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotDetailsManager.getDetailsQty());
+		sm.setFinalQty(lotToDetails.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("DETAILS");
+		sm.setTotalPurchasingPrice(lotToDetails.getPurchasePricePU().multiply(lotDetailsManager.getDetailsQty()));
+		if(lotToDetails.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(lotToDetails.getSalesPricePU().multiply(lotDetailsManager.getDetailsQty()));
+		sm = create(sm);
+	}
+	
+	public void handleArticleLotTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager  lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(articleLot.getInternalPic());
+		sm.setMovementType(StockMovementType.OUT);
+		sm.setArticle(articleLot.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		sm = create(sm);
+	}
+	
+	public void handleArticleLotDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager  lotTransferManager){
+		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(articleLot.getInternalPic());
+		sm.setMovementType(StockMovementType.IN);
+		sm.setArticle(articleLot.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
+		sm = create(sm);
+	}
+
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
@@ -137,10 +221,16 @@ public class StockMovementEJB
 			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
 				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
 			sm = create(sm);
+			stockMovementEvent.fire(sm);
 		}
 	}
 
-   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	/**
+	 * Create corresponding stock movement.
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
@@ -159,7 +249,7 @@ public class StockMovementEJB
 			BigDecimal movedQty = releasedQty.subtract(returnedQty);
 			sm.setMovedQty(movedQty);
 			sm.setFinalQty(movedQty);//supposed to be qty in stock.
-			
+
 			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
 				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
@@ -175,7 +265,88 @@ public class StockMovementEJB
 			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
 			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
 			sm = create(sm);
+			stockMovementEvent.fire(sm);
 		}
 	}
-   
+
+	/**
+	 * Create corresponding stock movement.
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			if(salesOrderItem.hasReturnArticle()){
+				StockMovement sm = new StockMovement();
+				sm.setAgency(salesOrder.getAgency());
+				sm.setInternalPic(salesOrderItem.getInternalPic());
+				sm.setMovementType(StockMovementType.IN);
+				sm.setArticle(salesOrderItem.getArticle());
+				sm.setCreatingUser(creatingUser);
+				sm.setCreationDate(creationDate);
+				sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
+				BigDecimal movedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+				sm.setMovedQty(movedQty);
+				sm.setFinalQty(movedQty);//supposed to be qty in stock.
+				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+				sm.setOriginatedDocNumber(salesOrder.getSoNumber());
+				sm.setTotalSalesPrice(salesOrderItem.getSalesPricePU().multiply(movedQty));
+				sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on salesorder item
+				sm = create(sm);
+			}
+
+		}
+	}
+
+	/**
+	 * Sales order canceled, create corresponding stock movement.
+	 * 
+	 * Canceling will not delete the original stock movement, but create a new one
+	 * to neutralize the effect of the old one.
+	 * 
+	 * @param salesOrder
+   public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			StockMovement sm = new StockMovement();
+			sm.setAgency(salesOrder.getAgency());
+			sm.setInternalPic(salesOrderItem.getInternalPic());
+			sm.setMovementType(StockMovementType.IN);// return article in the stock.
+			sm.setArticle(salesOrderItem.getArticle());
+			sm.setCreatingUser(creatingUser);
+			sm.setCreationDate(creationDate);
+			sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
+			BigDecimal releasedQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+			BigDecimal movedQty = returnedQty.subtract(releasedQty);// Return minus release. inverse of sales operation.
+			sm.setMovedQty(movedQty);
+			sm.setFinalQty(movedQty);//supposed to be qty in stock.
+
+			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			} else if (returnedQty.compareTo(BigDecimal.ZERO)>0){
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
+			} else {
+				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+			}
+
+			sm.setOriginatedDocNumber(salesOrder.getSoNumber());
+			sm.setTotalSalesPrice(salesOrder.getAmountBeforeTax());
+			sm.setTotalPurchasingPrice(BigDecimal.ZERO);//TODO ADD purchase price field on sales order item
+			sm = create(sm);
+			stockMovementEvent.fire(sm);
+		}
+	}
+	 */
 }

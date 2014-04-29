@@ -27,12 +27,12 @@ public class ProductDetailConfigTargetDisplayController extends ProductDetailCon
    public void handleNewModelEvent(@Observes @SelectedModelEvent ProductDetailConfig model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getProductDetailConfigTargetSelection(), displayView.getView().getProductDetailConfigTargetForm());
+      disableButton(displayView.getView().getProductDetailConfigTargetSelection());
       bind(displayView.getView().getProductDetailConfigTargetSelection(), displayView.getView().getProductDetailConfigTargetForm());
    }
 
    public void handleSelectionEvent(@Observes @EntitySelectionEvent ProductDetailConfig selectedEntity)
    {
-      loadAssociation();
+//      loadAssociation();
    }
 }

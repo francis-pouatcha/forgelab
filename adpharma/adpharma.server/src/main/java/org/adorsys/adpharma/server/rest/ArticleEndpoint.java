@@ -1,11 +1,9 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -24,7 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Article_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
@@ -34,7 +31,7 @@ import org.adorsys.adpharma.server.jpa.ArticleSearchResult;
  * 
  */
 @Stateless
-//@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Path("/articles")
 public class ArticleEndpoint
 {
@@ -43,30 +40,31 @@ public class ArticleEndpoint
    private ArticleEJB ejb;
 
    @Inject
-   private ClearanceConfigMerger clearanceConfigMerger;
-
-   @Inject
-   private SectionMerger sectionMerger;
-
-   @Inject
    private ProductFamilyMerger productFamilyMerger;
+
+   @Inject
+   private AgencyMerger agencyMerger;
 
    @Inject
    private SalesMarginMerger salesMarginMerger;
 
    @Inject
+   private VATMerger vATMerger;
+
+   @Inject
    private PackagingModeMerger packagingModeMerger;
 
    @Inject
-   private AgencyMerger agencyMerger;
+   private SectionMerger sectionMerger;
+
+   @Inject
+   private ClearanceConfigMerger clearanceConfigMerger;
 
    @POST
    @Consumes({ "application/json", "application/xml" })
    @Produces({ "application/json", "application/xml" })
    public Article create(Article entity)
    {
-	   entity.setRecordingDate(new Date());
-	   entity.setQtyInStock(BigDecimal.ZERO);
       return detach(ejb.create(entity));
    }
 
@@ -212,6 +210,8 @@ public class ArticleEndpoint
 
    private static final List<String> clearanceConfigFields = Arrays.asList("startDate", "endDate", "discountRate", "clearanceState", "active");
 
+   private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
+
    private Article detach(Article entity)
    {
       if (entity == null)
@@ -234,6 +234,9 @@ public class ArticleEndpoint
 
       // aggregated
       entity.setClearanceConfig(clearanceConfigMerger.unbind(entity.getClearanceConfig(), clearanceConfigFields));
+
+      // aggregated
+      entity.setVat(vATMerger.unbind(entity.getVat(), vatFields));
 
       return entity;
    }

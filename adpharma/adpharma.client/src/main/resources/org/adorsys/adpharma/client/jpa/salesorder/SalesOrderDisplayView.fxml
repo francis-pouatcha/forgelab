@@ -15,7 +15,7 @@
 						<Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
 					</BorderPane.margin>
 					<children>
-						<VBox prefHeight="202.0" prefWidth="267.0" VBox.vgrow="NEVER">
+						<VBox prefHeight="166.0" prefWidth="267.0" VBox.vgrow="NEVER">
 							<children>
 								<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="Information Montant" textFill="#3711dd">
 									<content>
@@ -32,7 +32,6 @@
 										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 									</rowConstraints>
 									<VBox.margin>
 										<Insets top="10.0" />
@@ -41,13 +40,11 @@
 										<Label text="Montant HT :" />
 										<Label layoutX="10.0" layoutY="17.0" text="Taxes :" GridPane.rowIndex="1" />
 										<Label layoutX="10.0" layoutY="47.0" text="Remises :" GridPane.rowIndex="2" />
-										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Amount TTC" GridPane.rowIndex="3" />
-										<Label layoutX="10.0" layoutY="107.0" text="Taxes ?" GridPane.rowIndex="4" />
+										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Montant TTC" GridPane.rowIndex="3" />
 										<TextField fx:id="amountHT" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" />
 										<TextField fx:id="taxAmount" editable="false" layoutX="125.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 										<TextField fx:id="discount" editable="false" layoutX="125.0" layoutY="42.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 										<TextField fx:id="netopay" editable="false" layoutX="125.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-										<ComboBox fx:id="tax" layoutX="168.0" layoutY="21.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 									</children>
 								</GridPane>
 							</children>
@@ -60,10 +57,11 @@
 								<Insets top="10.0" />
 							</padding>
 							<children>
-								<Pane prefHeight="445.0" prefWidth="267.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-<VBox.margin>
-<Insets bottom="39.0" />
-</VBox.margin></Pane>
+								<Pane prefHeight="463.0" prefWidth="267.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+									<VBox.margin>
+										<Insets bottom="39.0" />
+									</VBox.margin>
+								</Pane>
 							</children>
 						</VBox>
 					</children>
@@ -96,17 +94,17 @@
 												<RowConstraints maxHeight="27.0" minHeight="10.0" prefHeight="26.0" valignment="CENTER" vgrow="SOMETIMES" />
 											</rowConstraints>
 											<children>
-												<Label text="Client">
+												<Label text="Client :">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Telephone" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="Telephone :" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="71.0" text="categorie" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="71.0" prefHeight="16.0" prefWidth="143.0" text="Etat de la Vente :" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -117,14 +115,14 @@
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientPhone" editable="false" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-												<Label layoutX="15.0" layoutY="62.0" text="Adresse" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Adresse :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientAdresse" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-												<TextField fx:id="clientcategorie" editable="false" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 												<ComboBox fx:id="client" layoutX="168.0" layoutY="21.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" />
+												<ComboBox fx:id="salesStatus" prefHeight="26.0" prefWidth="215.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 											</children>
 											<padding>
 												<Insets top="10.0" />
@@ -132,17 +130,17 @@
 										</GridPane>
 										<GridPane fx:id="rigthGrid" hgap="5.0" layoutX="10.0" layoutY="10.0" prefHeight="220.0" prefWidth="392.0" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
 											<children>
-												<Label text="Assurreur">
+												<Label text="Assurreur :">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="numBon" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="Num. Bon :" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="discountRate" GridPane.rowIndex="3">
+												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="Taux de remise :" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -152,15 +150,16 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="15.0" layoutY="62.0" text="numcmd" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Num. Cmd :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
 												<ComboBox fx:id="insurrer" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" />
 												<TextField fx:id="numBon" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-												<TextField fx:id="numcmd" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-												<TextField fx:id="numcmd" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+												<TextField fx:id="numcmd" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+												<TextField fx:id="discountRate" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+<Label layoutX="15.0" layoutY="91.0" text=" :" />
 											</children>
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />
@@ -214,8 +213,12 @@
 							<contextMenu>
 								<ContextMenu fx:id="datalistContextMenu">
 									<items>
-										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit" />
-										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete" />
+										<!-- 
+										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit Line" />
+										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete Line" />
+										<SeparatorMenuItem mnemonicParsing="false" />
+										 -->
+										<MenuItem fx:id="returnSOIMenu" mnemonicParsing="false" text="Return Article" />
 									</items>
 								</ContextMenu>
 							</contextMenu>
@@ -242,6 +245,7 @@
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
+								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" prefWidth="150.0" text="Enrg. Le retour" />
 							</children>
 							<padding>
 								<Insets bottom="2.0" />

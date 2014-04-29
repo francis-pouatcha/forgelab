@@ -10,7 +10,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedDoneEvent;
+import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -26,22 +27,25 @@ public class ArticleEJB
    private ArticleRepository repository;
 
    @Inject
-   private ClearanceConfigMerger clearanceConfigMerger;
-
-   @Inject
-   private SectionMerger sectionMerger;
-
-   @Inject
    private ProductFamilyMerger productFamilyMerger;
+
+   @Inject
+   private AgencyMerger agencyMerger;
 
    @Inject
    private SalesMarginMerger salesMarginMerger;
 
    @Inject
+   private VATMerger vATMerger;
+
+   @Inject
    private PackagingModeMerger packagingModeMerger;
 
    @Inject
-   private AgencyMerger agencyMerger;
+   private SectionMerger sectionMerger;
+
+   @Inject
+   private ClearanceConfigMerger clearanceConfigMerger;
 
    public Article create(Article entity)
    {
@@ -80,22 +84,26 @@ public class ArticleEJB
 
    public List<Article> findBy(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.findBy(entity, start, max, attributes);
+	   Article article = attach(entity);
+      return repository.findBy(article, start, max, attributes);
    }
 
    public Long countBy(Article entity, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.count(entity, attributes);
+	   Article article = attach(entity);
+      return repository.count(article, attributes);
    }
 
    public List<Article> findByLike(Article entity, int start, int max, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.findByLike(entity, start, max, attributes);
+	   Article article = attach(entity);
+      return repository.findByLike(article, start, max, attributes);
    }
 
    public Long countByLike(Article entity, SingularAttribute<Article, ?>[] attributes)
    {
-      return repository.countLike(entity, attributes);
+	   Article article = attach(entity);
+      return repository.countLike(article, attributes);
    }
 
    private Article attach(Article entity)
@@ -121,15 +129,18 @@ public class ArticleEJB
       // aggregated
       entity.setClearanceConfig(clearanceConfigMerger.bindAggregated(entity.getClearanceConfig()));
 
+      // aggregated
+      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
+
       return entity;
    }
-   
-   /**
-    * Process a completed delivery.
-    * 	- 
-    * @param closedDelivery
-    */
-   public void handleDelivery(@Observes @DocumentClosedDoneEvent Delivery closedDelivery){
+
+	/**
+	 * Process a completed delivery.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
 		// generate Article lot for each delivery item
@@ -141,51 +152,76 @@ public class ArticleEJB
 			BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
 			article.setQtyInStock(qtyInStock);
 			article.setLastStockEntry(new Date());
-			
+
 			BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
-			BigDecimal purchasePricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
-			
+			BigDecimal enteringPricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
+
 			// average pppu
-			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(purchasePricePU)).divide(qtyInStock);
-			article.setPppu(newPppu);
-			
+			//			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(enteringPricePU)).divide(qtyInStock);
+			article.setPppu(enteringPricePU); // just use last Price because qtyInstock could be zero
+
 			BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
 			BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
-			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
-			article.setSppu(newSppu);
-			
-			article.setTotalStockPrice(qtyInStock.multiply(newSppu));
+			//			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
+			article.setSppu(enteringSppu); // just use last Price because qtyInstock could be zero
+
+			article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
 
 			article.setRecordingDate(new Date());
 
 			update(article);
 		}
-   }
+	}
 
-   /**
-    * Process a completed sales.
-    * 	- 
-    * @param closedDelivery
-    */
-   public void handleSales(@Observes @DocumentClosedDoneEvent SalesOrder salesOrder){
+	/**
+	 * Process a completed sales. Update the quantity of this article in stock.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+	public void handleSalesClosed(@Observes @DirectSalesClosedEvent SalesOrder salesOrder){
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			Article article = salesOrderItem.getArticle();
+			BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+			BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
+			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+
+			BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
+			article.setQtyInStock(qtyInStock);
+			article.setLastOutOfStock(new Date());
+
+			article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
+
+			article.setRecordingDate(new Date());
+
+			update(article);
+		}
+	}
+
+	/**
+	 * Reset the stock quantity in case this sales has been canceled.
+	 * 
+	 * @param salesOrder
+  public void handleSalesCanceled(@Observes @DocumentCanceledEvent SalesOrder salesOrder){
 	   Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
-	   
+
 	   for (SalesOrderItem salesOrderItem : salesOrderItems) {
 		   Article article = salesOrderItem.getArticle();
 		   BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
 		   BigDecimal releasingQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
 		   BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
 
-		   BigDecimal qtyInStock = currenQtyInStock.subtract(releasingQty).add(returnedQty);
+		   BigDecimal qtyInStock = currenQtyInStock.add(releasingQty).subtract(returnedQty);
 		   article.setQtyInStock(qtyInStock);
 		   article.setLastOutOfStock(new Date());
-						
+
 		   article.setTotalStockPrice(qtyInStock.multiply(article.getSppu()));
 
 		   article.setRecordingDate(new Date());
 
 		   update(article);
 		}
-   }
-
+  }
+	 */
 }

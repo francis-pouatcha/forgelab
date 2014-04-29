@@ -1,67 +1,132 @@
 package org.adorsys.adpharma.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Locale;
+import java.util.Properties;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import javax.enterprise.inject.Instance;
+
 import org.adorsys.javafx.crud.extensions.MainController;
+import org.adorsys.javafx.crud.extensions.address.ServerAddress;
+import org.adorsys.javafx.crud.extensions.locale.LocaleFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.exceptions.IllegalStateException;
 
-public final class AdpharmaClient extends Application
-{
+public final class AdpharmaClient extends Application {
 
-   private Weld weld;
+	private Weld weld;
 
-   private static Locale locale;
+	private static Locale locale;
+//	private static ServerAddress serverAddress;
 
-   public static void main(String[] args)
-   {
-      // parse locale
-      for (int i = 0; i < args.length; i++)
-      {
-         String arg = args[i];
-         if (StringUtils.isBlank(arg))
-            continue;
+	public static void main(String[] args) {
+		// parse locale
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			if (StringUtils.isBlank(arg))
+				continue;
 
-         if (StringUtils.equalsIgnoreCase(arg, "-L") || StringUtils.equalsIgnoreCase(arg, "--locale"))
-         {
-            if (args.length > i + 1)
-            {
-               try
-               {
-                  locale = new Locale(args[i + 1]);
-                  Locale.setDefault(locale);
-               }
-               catch (Exception ex)
-               {
-                  locale = Locale.getDefault();
-               }
-            }
-         }
-      }
-      if (locale == null)
-         locale = Locale.getDefault();
-      launch(args);
-   }
+			if (StringUtils.equalsIgnoreCase(arg, "-L")
+					|| StringUtils.equalsIgnoreCase(arg, "--locale")) {
+				if (args.length > i + 1) {
+					try {
+						locale = new Locale(args[i + 1]);
+						Locale.setDefault(locale);
+					} catch (Exception ex) {
+						locale = Locale.getDefault();
+						if (locale == null) {
+							locale = new Locale("fr");
+							Locale.setDefault(locale);
+						}
+					}
+				}
+			}
 
-   @Override
-   public void init()
-   {
-      weld = new Weld();
-   }
+			if (StringUtils.equalsIgnoreCase(arg, "-S")
+					|| StringUtils.equalsIgnoreCase(arg, "-server.address")) {
+				if (args.length > i + 1) {
+					try {
+						URL url = new URL(args[i + 1]);
+						ServerAddress.serverUrl = url;
+					} catch (MalformedURLException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+			}
+		}
+		if (locale == null) {
+			locale = Locale.getDefault();
+		}
+		if (locale == null) {
+			locale = new Locale("fr");
+			Locale.setDefault(locale);
+		}
+		String propertySa = System.getProperty("server.address");
+		if (ServerAddress.serverUrl == null
+				&& StringUtils.isNotBlank(propertySa)) {
+			try {
+				URL url = new URL(propertySa);
+				ServerAddress.serverUrl = url;
+			} catch (MalformedURLException e) {
+				throw new IllegalStateException(e);
+			}
+		}
 
-   @Override
-   public void start(Stage stage)
-   {
-      weld.initialize().instance().select(MainController.class).get()
-            .start(stage, locale, "styles/application.css");
-   }
+		if (ServerAddress.serverUrl == null) {
+			Properties properties = new Properties();
+			InputStream resourceAsStream = AdpharmaClient.class
+					.getResourceAsStream("/server-address.properties");
+			if (resourceAsStream != null) {
+				try {
+					properties.load(resourceAsStream);
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+				String sa = properties.getProperty("server.address");
+				if (StringUtils.isNotBlank(sa))
+					try {
+						URL url = new URL(sa);
+						ServerAddress.serverUrl = url;
+					} catch (MalformedURLException e) {
+						throw new IllegalStateException(e);
+					}
+			}
+		}
 
-   @Override
-   public void stop()
-   {
-      weld.shutdown();
-   }
+		if (ServerAddress.serverUrl == null)
+			try {
+				URL url = new URL("http://localhost:8080/adpharma.server");
+				ServerAddress.serverUrl = url;
+			} catch (MalformedURLException e) {
+				throw new IllegalStateException(e);
+			}
+
+		launch(args);
+	}
+
+	@Override
+	public void init() {
+		weld = new Weld();
+	}
+
+	@Override
+	public void start(Stage stage) {
+		Instance<Object> instance = weld.initialize().instance();
+		instance.select(LocaleFactory.class).get().setLocale(locale);
+//		instance.select(ServerAddressProducer.class).get().setServerAddress(serverAddress);
+		instance.select(MainController.class).get()
+				.start(stage, locale, "styles/application.css");
+	}
+
+	@Override
+	public void stop() {
+		weld.shutdown();
+	}
 }

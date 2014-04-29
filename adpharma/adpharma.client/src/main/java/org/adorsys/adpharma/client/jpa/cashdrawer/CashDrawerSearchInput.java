@@ -23,7 +23,7 @@ public class CashDrawerSearchInput
    /**
     * The entity holding search inputs.
     */
-   private CashDrawer entity;
+   private CashDrawer entity = new CashDrawer();
 
    /**
     * The start cursor

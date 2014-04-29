@@ -38,6 +38,7 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.controlsfx.dialog.Dialogs;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
+
 @Singleton
 public class ModalArticleCreateView extends ApplicationModal{
 
@@ -92,9 +93,7 @@ public class ModalArticleCreateView extends ApplicationModal{
 		view.bind(this.article);
 		
 	}
-	public ArticleView getArticleView() {
-		return view;
-	}
+	
 	public Button getSaveButton() {
 		return saveButton;
 	}

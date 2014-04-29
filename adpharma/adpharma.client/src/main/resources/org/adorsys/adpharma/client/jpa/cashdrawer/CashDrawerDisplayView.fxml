@@ -6,33 +6,27 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="661.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="661.0" prefWidth="1011.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-			<right>
-				<VBox prefHeight="661.0" prefWidth="230.0" BorderPane.alignment="CENTER">
-					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</BorderPane.margin>
-					<children>
-						<Pane prefHeight="673.0" prefWidth="230.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS" />
-					</children>
-				</VBox>
-			</right>
+		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0"
+			prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0"
+			AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+			AnchorPane.topAnchor="0.0">
 			<center>
-				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+				<VBox prefHeight="200.0" prefWidth="100.0"
+					BorderPane.alignment="CENTER">
 					<children>
-						<VBox maxWidth="900.0" prefHeight="45.0" prefWidth="724.0" VBox.vgrow="NEVER">
+						<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0"
+							prefWidth="167.0" />
+						<VBox maxWidth="900.0" prefHeight="45.0" prefWidth="724.0"
+							spacing="5.0" VBox.vgrow="NEVER">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 							<children>
-								<HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
-									<children>
-										<TextField prefHeight="40.0" promptText="invoice ID" />
-										<ComboBox prefHeight="40.0" prefWidth="227.0" promptText="cash drawer" />
-										<Button mnemonicParsing="false" prefHeight="40.0" text="Search" />
-									</children>
+								<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT"
+									prefHeight="43.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
 									<VBox.margin>
 										<Insets />
 									</VBox.margin>
@@ -41,131 +35,182 @@
 									</padding>
 								</HBox>
 							</children>
+							<padding>
+								<Insets top="10.0" />
+							</padding>
 						</VBox>
-						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
-						<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT" prefHeight="183.0" prefWidth="724.0" spacing="4.0" VBox.vgrow="NEVER">
+						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0"
+							prefWidth="167.0" />
+						<TitledPane animated="false" text="Invoices waiting for paiement"
+							textFill="#230b9a" />
+						<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT"
+							prefHeight="222.0" prefWidth="841.0" spacing="4.0" VBox.vgrow="NEVER">
 							<children>
-								<TableView prefHeight="212.0" prefWidth="724.0" HBox.hgrow="ALWAYS">
-									<columns>
-										<TableColumn prefWidth="75.0" text="C1" />
-										<TableColumn prefWidth="75.0" text="C2" />
-									</columns>
+								<TableView fx:id="invoicesDataList" prefHeight="212.0"
+									prefWidth="724.0" HBox.hgrow="ALWAYS">
 									<HBox.margin>
 										<Insets bottom="3.0" />
 									</HBox.margin>
 								</TableView>
 							</children>
 						</HBox>
-						<Separator layoutX="10.0" layoutY="288.0" prefHeight="0.0" prefWidth="167.0" />
-						<HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
+						<HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0"
+							VBox.vgrow="ALWAYS">
 							<children>
-								<TextField editable="false" prefHeight="30.0" prefWidth="151.0" text="Invoice ID" />
-								<TextField editable="false" layoutX="10.0" layoutY="19.0" prefHeight="30.0" prefWidth="151.0" text="CLIENT" />
-								<TextField editable="false" layoutX="166.0" layoutY="16.0" prefHeight="30.0" prefWidth="151.0" text="VENDEUR" />
-								<TextField editable="false" layoutX="322.0" layoutY="16.0" prefHeight="30.0" prefWidth="151.0" text="Amount HT" />
-								<TextField editable="false" layoutX="478.0" layoutY="16.0" prefHeight="30.0" prefWidth="151.0" text="REDUCTION" />
-								<TextField editable="false" layoutX="594.0" layoutY="16.0" prefHeight="30.0" prefWidth="151.0" text="TVA" />
-								<TextField editable="false" layoutX="617.0" layoutY="16.0" prefHeight="30.0" prefWidth="151.0" text="Amount TTC" />
-							</children>
-						</HBox>
-						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0" prefWidth="167.0" />
-						<TableView fx:id="dataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
-							<contextMenu>
-								<ContextMenu>
-									<items>
-										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
-										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
-									</items>
-								</ContextMenu>
-							</contextMenu>
-							<VBox.margin>
-								<Insets bottom="2.0" />
-							</VBox.margin>
-							<columns>
-								<TableColumn prefWidth="75.0" text="Column X" />
-								<TableColumn prefWidth="75.0" text="Column X" />
-								<TableColumn prefWidth="75.0" text="Column X" />
-							</columns>
-						</TableView>
-						<HBox alignment="CENTER_RIGHT" prefHeight="183.0" prefWidth="724.0" spacing="10.0" VBox.vgrow="NEVER">
-							<children>
-								<Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="FERMER" textFill="#d70d0d">
-									<font>
-										<Font size="24.0" />
-									</font>
-								</Button>
-								<Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="Deccaisser" textFill="#d70d0d">
-									<font>
-										<Font size="24.0" />
-									</font>
-								</Button>
-								<Button mnemonicParsing="false" prefHeight="183.0" prefWidth="202.0" text="Annuler " textFill="#287c4a">
-									<font>
-										<Font size="24.0" />
-									</font>
-								</Button>
-								<Button fx:id="cashButon" layoutX="178.0" layoutY="10.0" mnemonicParsing="false" prefHeight="180.0" prefWidth="200.0" text="Enccaisser" textFill="#132f83">
-									<font>
-										<Font size="24.0" />
-									</font>
-								</Button>
-								<Separator orientation="VERTICAL" prefHeight="200.0" />
-								<VBox prefHeight="203.0" prefWidth="344.0" VBox.vgrow="NEVER">
+								<VBox prefHeight="203.0" prefWidth="450.0" spacing="5.0"
+									VBox.vgrow="NEVER">
 									<children>
-										<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="Information Montant" textFill="#3711dd">
-											<content>
-												<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-											</content>
-										</TitledPane>
-										<GridPane fx:id="amountPane" prefHeight="164.0" prefWidth="343.0" vgap="3.0">
+										<VBox prefHeight="197.0" prefWidth="344.0" spacing="5.0"
+											VBox.vgrow="ALWAYS">
+											<children>
+												<TitledPane animated="false" prefHeight="27.0"
+													prefWidth="267.0" text="Information Montant" textFill="#3711dd" />
+												<GridPane fx:id="paymentGrid" prefHeight="164.0"
+													prefWidth="343.0" vgap="3.0" VBox.vgrow="ALWAYS">
+													<columnConstraints>
+														<ColumnConstraints hgrow="SOMETIMES"
+															maxWidth="149.0" minWidth="10.0" percentWidth="50.0"
+															prefWidth="149.0" />
+														<ColumnConstraints halignment="CENTER"
+															maxWidth="235.79999999999995" minWidth="10.0"
+															percentWidth="50.0" prefWidth="195.79999999999995" />
+													</columnConstraints>
+													<rowConstraints>
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints />
+													</rowConstraints>
+													<VBox.margin>
+														<Insets bottom="5.0" />
+													</VBox.margin>
+													<children>
+														<Label text="Amoun to pay :">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label layoutX="10.0" layoutY="17.0" text="Payment Mode :"
+															GridPane.rowIndex="1">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label layoutX="10.0" layoutY="47.0" text="Receive Amount :"
+															GridPane.rowIndex="2">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0"
+															text="Difference :" textFill="#1919b2" GridPane.rowIndex="3">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label fx:id="documentNumber" layoutX="10.0"
+															layoutY="77.0" text="Reference :" textFill="#1919b2"
+															GridPane.rowIndex="4">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+													</children>
+												</GridPane>
+											</children>
+										</VBox>
+										<Separator prefWidth="200.0" />
+										<VBox alignment="CENTER" prefHeight="128.0" prefWidth="344.0"
+											spacing="10.0" VBox.vgrow="NEVER">
+											<children>
+												<HBox>
+													<Button fx:id="cashButon" layoutX="178.0" layoutY="10.0"
+														mnemonicParsing="false" prefHeight="20.0" prefWidth="300.0"
+														text="Enccaisser" textFill="#132f83">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+													<Button fx:id="cashOutButton" layoutX="10.0"
+														layoutY="10.0" mnemonicParsing="false" prefHeight="20.0"
+														prefWidth="300.0" text="Deccaisser" textFill="#d70d0d">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+												</HBox>
+												<HBox>
+													<Button fx:id="openCashDrawerButton" layoutX="10.0"
+														layoutY="10.0" mnemonicParsing="false" prefHeight="20.0"
+														prefWidth="300.0" text="OUVRIR" textFill="#1e8334">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+													<Button fx:id="closeCashDrawerButton"
+														mnemonicParsing="false" prefHeight="20.0" prefWidth="300.0"
+														text="FERMER" textFill="#c61b1b">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+												</HBox>
+											</children>
+											<padding>
+												<Insets top="5.0" />
+											</padding>
+										</VBox>
+									</children>
+								</VBox>
+								<VBox prefHeight="77.0" prefWidth="421.0" HBox.hgrow="ALWAYS">
+									<children>
+										<TitledPane animated="false" prefHeight="26.0"
+											prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1" />
+										<GridPane fx:id="invoiceHeadGrid" hgap="2.0"
+											styleClass="colored-text">
 											<columnConstraints>
-												<ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" prefWidth="149.0" />
-												<ColumnConstraints halignment="CENTER" maxWidth="235.79999999999995" minWidth="10.0" percentWidth="65.0" prefWidth="195.79999999999995" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER"
+													hgrow="SOMETIMES" minWidth="10.0" />
 											</columnConstraints>
 											<rowConstraints>
-												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" valignment="CENTER"
+													vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
 											</rowConstraints>
-											<VBox.margin>
-												<Insets top="10.0" />
-											</VBox.margin>
-											<children>
-												<Label text="Net A Payer" />
-												<Label layoutX="10.0" layoutY="17.0" text="Mode Paiement" GridPane.rowIndex="1">
-													<font>
-														<Font size="14.0" />
-													</font>
-												</Label>
-												<Label layoutX="10.0" layoutY="47.0" text="Montant Recu :" GridPane.rowIndex="2">
-													<font>
-														<Font size="14.0" />
-													</font>
-												</Label>
-												<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Solde :" textFill="#1919b2" GridPane.rowIndex="3">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</Label>
-												<TextField fx:id="amountHT" editable="false" layoutX="168.0" layoutY="54.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<TextField fx:id="discount" layoutX="125.0" layoutY="42.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<TextField fx:id="netopay" editable="false" layoutX="125.0" layoutY="72.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-													<font>
-														<Font size="18.0" />
-													</font>
-												</TextField>
-												<ComboBox fx:id="tax" layoutX="168.0" layoutY="21.0" prefHeight="50.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-											</children>
 										</GridPane>
+										<TableView fx:id="invoiceItemDataList" prefHeight="168.0"
+											prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+										</TableView>
+										<TitledPane animated="false" prefHeight="26.0"
+											prefWidth="761.0" text="Payments" textFill="#1e0fa1" />
+										<TableView fx:id="paymentItemDataList" prefHeight="98.0"
+											prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+											<contextMenu>
+												<ContextMenu>
+													<items>
+														<MenuItem fx:id="removePaymentMenuItem"
+															mnemonicParsing="false" text="Remove Payment" />
+													</items>
+												</ContextMenu>
+											</contextMenu>
+										</TableView>
 									</children>
 								</VBox>
 							</children>

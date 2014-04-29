@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 
 import java.io.Serializable;
 
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,374 +61,396 @@ import javax.persistence.CascadeType;
 @Entity
 @Description("SalesOrder_description")
 @ListField({ "cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName",
-      "insurance.customer.fullName", "insurance.insurer.fullName",
-      "vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus",
-      "cashed", "amountBeforeTax", "amountVAT", "amountDiscount",
-      "totalReturnAmount", "amountAfterTax", "salesOrderType" })
+	"insurance.customer.fullName", "insurance.insurer.fullName",
+	"vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus",
+	"cashed", "amountBeforeTax", "amountVAT", "amountDiscount",
+	"totalReturnAmount", "amountAfterTax", "salesOrderType" })
 @ToStringField("soNumber")
 public class SalesOrder implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @ManyToOne
-   @Description("SalesOrder_cashDrawer_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
-   private CashDrawer cashDrawer;
+	@ManyToOne
+	@Description("SalesOrder_cashDrawer_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
+	private CashDrawer cashDrawer;
 
-   @Column
-   @Description("SalesOrder_soNumber_description")
-   private String soNumber;
+	@Column
+	@Description("SalesOrder_soNumber_description")
+	private String soNumber;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("SalesOrder_creationDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date creationDate = new Date();
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("SalesOrder_creationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date creationDate = new Date();
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("SalesOrder_cancelationDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date cancelationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("SalesOrder_cancelationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date cancelationDate;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("SalesOrder_restorationDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date restorationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("SalesOrder_restorationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date restorationDate;
 
-   @ManyToOne
-   @Description("SalesOrder_customer_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
-   @NotNull(message = "SalesOrder_customer_NotNull_validation")
-   private Customer customer;
+	@ManyToOne
+	@Description("SalesOrder_customer_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+	@NotNull(message = "SalesOrder_customer_NotNull_validation")
+	private Customer customer;
 
-   @ManyToOne
-   @Description("SalesOrder_insurance_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
-   private Insurrance insurance;
+	@ManyToOne
+	@Description("SalesOrder_insurance_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
+	private Insurrance insurance;
 
-   @ManyToOne
-   @Description("SalesOrder_vat_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
-   private VAT vat;
+	@ManyToOne
+	@Description("SalesOrder_vat_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+	private VAT vat;
 
-   @ManyToOne
-   @Description("SalesOrder_salesAgent_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
-   @NotNull(message = "SalesOrder_salesAgent_NotNull_validation")
-   private Login salesAgent;
+	@ManyToOne
+	@Description("SalesOrder_salesAgent_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
+	@NotNull(message = "SalesOrder_salesAgent_NotNull_validation")
+	private Login salesAgent;
 
-   @ManyToOne
-   @Description("SalesOrder_agency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   @NotNull(message = "SalesOrder_agency_NotNull_validation")
-   private Agency agency;
+	@ManyToOne
+	@Description("SalesOrder_agency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	@NotNull(message = "SalesOrder_agency_NotNull_validation")
+	private Agency agency;
 
-   @Column
-   @Description("SalesOrder_salesOrderStatus_description")
-   @Enumerated
-   private DocumentProcessingState salesOrderStatus = DocumentProcessingState.ONGOING;
+	@Column
+	@Description("SalesOrder_salesOrderStatus_description")
+	@Enumerated
+	private DocumentProcessingState salesOrderStatus = DocumentProcessingState.ONGOING;
 
-   @Column
-   @Description("SalesOrder_cashed_description")
-   private Boolean cashed =Boolean.FALSE;
+	@Column
+	@Description("SalesOrder_cashed_description")
+	private Boolean cashed =Boolean.FALSE;
 
-   @Column
-   @Description("SalesOrder_amountBeforeTax_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountBeforeTax =BigDecimal.ZERO;
+	@Column
+	@Description("SalesOrder_amountBeforeTax_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountBeforeTax =BigDecimal.ZERO;
 
-   @Column
-   @Description("SalesOrder_amountVAT_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountVAT =BigDecimal.ZERO;
+	@Column
+	@Description("SalesOrder_amountVAT_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountVAT =BigDecimal.ZERO;
 
-   @Column
-   @Description("SalesOrder_amountDiscount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountDiscount =BigDecimal.ZERO;
+	@Column
+	@Description("SalesOrder_amountDiscount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountDiscount =BigDecimal.ZERO;
 
-   @Column
-   @Description("SalesOrder_totalReturnAmount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalReturnAmount =BigDecimal.ZERO;
+	@Column
+	@Description("SalesOrder_totalReturnAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal totalReturnAmount =BigDecimal.ZERO;
 
-   @Column
-   @Description("SalesOrder_amountAfterTax_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountAfterTax =BigDecimal.ZERO;
+	@Column
+	@Description("SalesOrder_amountAfterTax_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountAfterTax =BigDecimal.ZERO;
 
-   @Column
-   @Description("SalesOrder_salesOrderType_description")
-   @Enumerated
-   private SalesOrderType salesOrderType=SalesOrderType.CASH_SALE;
+	@Column
+	@Description("SalesOrder_salesOrderType_description")
+	@Enumerated
+	private SalesOrderType salesOrderType=SalesOrderType.CASH_SALE;
 
-   @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
-   @Description("SalesOrder_salesOrderItems_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
-   private Set<SalesOrderItem> salesOrderItems = new HashSet<SalesOrderItem>();
-   
-   @PrePersist
+	@OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL)
+	@Description("SalesOrder_salesOrderItems_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
+	private Set<SalesOrderItem> salesOrderItems = new HashSet<SalesOrderItem>();
+
+	@Column
+	@Description("SalesOrder_alreadyReturned_description")
+	private Boolean alreadyReturned = Boolean.FALSE;
+
+
+	@PrePersist
 	public void prePersist(){
 		creationDate = new Date();
-		soNumber = SequenceGenerator.SALE_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+		soNumber = SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE);
 	}
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	public void calculateTotalReturnAmount(){
+		totalReturnAmount =BigDecimal.ZERO;
+		for (SalesOrderItem item : salesOrderItems) {
+			if(item.hasReturnArticle()){
+				totalReturnAmount = totalReturnAmount.add(item.getReturnedQty().multiply(item.getSalesPricePU()));
+			}
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+		}
+	}
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((SalesOrder) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((SalesOrder) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public CashDrawer getCashDrawer()
-   {
-      return this.cashDrawer;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setCashDrawer(final CashDrawer cashDrawer)
-   {
-      this.cashDrawer = cashDrawer;
-   }
+	public CashDrawer getCashDrawer()
+	{
+		return this.cashDrawer;
+	}
 
-   public String getSoNumber()
-   {
-      return this.soNumber;
-   }
+	public void setCashDrawer(final CashDrawer cashDrawer)
+	{
+		this.cashDrawer = cashDrawer;
+	}
 
-   public void setSoNumber(final String soNumber)
-   {
-      this.soNumber = soNumber;
-   }
+	public String getSoNumber()
+	{
+		return this.soNumber;
+	}
 
-   public Date getCreationDate()
-   {
-      return this.creationDate;
-   }
+	public void setSoNumber(final String soNumber)
+	{
+		this.soNumber = soNumber;
+	}
 
-   public void setCreationDate(final Date creationDate)
-   {
-      this.creationDate = creationDate;
-   }
+	public Date getCreationDate()
+	{
+		return this.creationDate;
+	}
 
-   public Date getCancelationDate()
-   {
-      return this.cancelationDate;
-   }
+	public void setCreationDate(final Date creationDate)
+	{
+		this.creationDate = creationDate;
+	}
 
-   public void setCancelationDate(final Date cancelationDate)
-   {
-      this.cancelationDate = cancelationDate;
-   }
+	public Date getCancelationDate()
+	{
+		return this.cancelationDate;
+	}
 
-   public Date getRestorationDate()
-   {
-      return this.restorationDate;
-   }
+	public void setCancelationDate(final Date cancelationDate)
+	{
+		this.cancelationDate = cancelationDate;
+	}
 
-   public void setRestorationDate(final Date restorationDate)
-   {
-      this.restorationDate = restorationDate;
-   }
+	public Date getRestorationDate()
+	{
+		return this.restorationDate;
+	}
 
-   public Customer getCustomer()
-   {
-      return this.customer;
-   }
+	public void setRestorationDate(final Date restorationDate)
+	{
+		this.restorationDate = restorationDate;
+	}
 
-   public void setCustomer(final Customer customer)
-   {
-      this.customer = customer;
-   }
+	public Customer getCustomer()
+	{
+		return this.customer;
+	}
 
-   public Insurrance getInsurance()
-   {
-      return this.insurance;
-   }
+	public void setCustomer(final Customer customer)
+	{
+		this.customer = customer;
+	}
 
-   public void setInsurance(final Insurrance insurance)
-   {
-      this.insurance = insurance;
-   }
+	public Insurrance getInsurance()
+	{
+		return this.insurance;
+	}
 
-   public VAT getVat()
-   {
-      return this.vat;
-   }
+	public void setInsurance(final Insurrance insurance)
+	{
+		this.insurance = insurance;
+	}
 
-   public void setVat(final VAT vat)
-   {
-      this.vat = vat;
-   }
+	public VAT getVat()
+	{
+		return this.vat;
+	}
 
-   public Login getSalesAgent()
-   {
-      return this.salesAgent;
-   }
+	public void setVat(final VAT vat)
+	{
+		this.vat = vat;
+	}
 
-   public void setSalesAgent(final Login salesAgent)
-   {
-      this.salesAgent = salesAgent;
-   }
+	public Login getSalesAgent()
+	{
+		return this.salesAgent;
+	}
 
-   public Agency getAgency()
-   {
-      return this.agency;
-   }
+	public void setSalesAgent(final Login salesAgent)
+	{
+		this.salesAgent = salesAgent;
+	}
 
-   public void setAgency(final Agency agency)
-   {
-      this.agency = agency;
-   }
+	public Agency getAgency()
+	{
+		return this.agency;
+	}
 
-   public DocumentProcessingState getSalesOrderStatus()
-   {
-      return this.salesOrderStatus;
-   }
+	public void setAgency(final Agency agency)
+	{
+		this.agency = agency;
+	}
 
-   public void setSalesOrderStatus(final DocumentProcessingState salesOrderStatus)
-   {
-      this.salesOrderStatus = salesOrderStatus;
-   }
+	public DocumentProcessingState getSalesOrderStatus()
+	{
+		return this.salesOrderStatus;
+	}
 
-   public Boolean getCashed()
-   {
-      return this.cashed;
-   }
+	public void setSalesOrderStatus(final DocumentProcessingState salesOrderStatus)
+	{
+		this.salesOrderStatus = salesOrderStatus;
+	}
 
-   public void setCashed(final Boolean cashed)
-   {
-      this.cashed = cashed;
-   }
+	public Boolean getCashed()
+	{
+		return this.cashed;
+	}
 
-   public BigDecimal getAmountBeforeTax()
-   {
-      return this.amountBeforeTax;
-   }
+	public void setCashed(final Boolean cashed)
+	{
+		this.cashed = cashed;
+	}
 
-   public void setAmountBeforeTax(final BigDecimal amountBeforeTax)
-   {
-      this.amountBeforeTax = amountBeforeTax;
-   }
+	public BigDecimal getAmountBeforeTax()
+	{
+		return this.amountBeforeTax;
+	}
 
-   public BigDecimal getAmountVAT()
-   {
-      return this.amountVAT;
-   }
+	public void setAmountBeforeTax(final BigDecimal amountBeforeTax)
+	{
+		this.amountBeforeTax = amountBeforeTax;
+	}
 
-   public void setAmountVAT(final BigDecimal amountVAT)
-   {
-      this.amountVAT = amountVAT;
-   }
+	public BigDecimal getAmountVAT()
+	{
+		return this.amountVAT;
+	}
 
-   public BigDecimal getAmountDiscount()
-   {
-      return this.amountDiscount;
-   }
+	public void setAmountVAT(final BigDecimal amountVAT)
+	{
+		this.amountVAT = amountVAT;
+	}
 
-   public void setAmountDiscount(final BigDecimal amountDiscount)
-   {
-      this.amountDiscount = amountDiscount;
-   }
+	public BigDecimal getAmountDiscount()
+	{
+		return this.amountDiscount;
+	}
 
-   public BigDecimal getTotalReturnAmount()
-   {
-      return this.totalReturnAmount;
-   }
+	public void setAmountDiscount(final BigDecimal amountDiscount)
+	{
+		this.amountDiscount = amountDiscount;
+	}
 
-   public void setTotalReturnAmount(final BigDecimal totalReturnAmount)
-   {
-      this.totalReturnAmount = totalReturnAmount;
-   }
+	public BigDecimal getTotalReturnAmount()
+	{
+		return this.totalReturnAmount;
+	}
 
-   public BigDecimal getAmountAfterTax()
-   {
-      return this.amountAfterTax;
-   }
+	public void setTotalReturnAmount(final BigDecimal totalReturnAmount)
+	{
+		this.totalReturnAmount = totalReturnAmount;
+	}
 
-   public void setAmountAfterTax(final BigDecimal amountAfterTax)
-   {
-      this.amountAfterTax = amountAfterTax;
-   }
+	public BigDecimal getAmountAfterTax()
+	{
+		return this.amountAfterTax;
+	}
 
-   public SalesOrderType getSalesOrderType()
-   {
-      return this.salesOrderType;
-   }
+	public void setAmountAfterTax(final BigDecimal amountAfterTax)
+	{
+		this.amountAfterTax = amountAfterTax;
+	}
 
-   public void setSalesOrderType(final SalesOrderType salesOrderType)
-   {
-      this.salesOrderType = salesOrderType;
-   }
+	public SalesOrderType getSalesOrderType()
+	{
+		return this.salesOrderType;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (soNumber != null && !soNumber.trim().isEmpty())
-         result += "soNumber: " + soNumber;
-      if (cashed != null)
-         result += ", cashed: " + cashed;
-      return result;
-   }
+	public void setSalesOrderType(final SalesOrderType salesOrderType)
+	{
+		this.salesOrderType = salesOrderType;
+	}
 
-   public Set<SalesOrderItem> getSalesOrderItems()
-   {
-      return this.salesOrderItems;
-   }
+	public Boolean getAlreadyReturned() {
+		return alreadyReturned;
+	}
 
-   public void setSalesOrderItems(final Set<SalesOrderItem> salesOrderItems)
-   {
-      this.salesOrderItems = salesOrderItems;
-   }
+	public void setAlreadyReturned(Boolean alreadyReturned) {
+		this.alreadyReturned = alreadyReturned;
+	}
+
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (soNumber != null && !soNumber.trim().isEmpty())
+			result += "soNumber: " + soNumber;
+		if (cashed != null)
+			result += ", cashed: " + cashed;
+		return result;
+	}
+
+	public Set<SalesOrderItem> getSalesOrderItems()
+	{
+		return this.salesOrderItems;
+	}
+
+	public void setSalesOrderItems(final Set<SalesOrderItem> salesOrderItems)
+	{
+		this.salesOrderItems = salesOrderItems;
+	}
 }

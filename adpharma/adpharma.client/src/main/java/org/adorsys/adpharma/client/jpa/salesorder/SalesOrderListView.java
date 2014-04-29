@@ -1,14 +1,16 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.math.BigInteger;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -17,18 +19,13 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import jfxtras.scene.control.CalendarTextField;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.utils.ChartData;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -45,7 +42,6 @@ public class SalesOrderListView
 	@FXML
 	BorderPane rootPane;
 
-	
 	private Button searchButton;
 
 	@FXML
@@ -55,26 +51,50 @@ public class SalesOrderListView
 	private Button removeButton;
 
 	@FXML
+	private Button printInvoiceButton;
+	
+	@FXML
+	private Button computeButton;
+	
+	@FXML
+	private PieChart pieChart;
+	
+	@FXML
+	private TableView<ChartData> pieChartData;
+	
+	@FXML 
+	private ComboBox<Customer> chartClientList;
+	
+	@FXML 
+	private ComboBox<BigInteger> yearList;
+
+	@FXML
 	private Button processButton;
 
 	@FXML
 	private TableView<SalesOrder> dataList;
+
+	@FXML
+	private TableView<SalesOrderItem> dataListItem;
 
 	@Inject
 	private Locale locale;
 
 	@FXML
 	private Pagination pagination;
-	
+
 	@FXML
 	HBox searchBar;
 
 	private TextField soNumber ;
+	
+	@FXML
+	private Tab turnoverTab ;
 
 	private ComboBox<SalesOrderCustomer> customer;
-	
+
 	private ComboBox<DocumentProcessingState> salesOrderStatus;
-	
+
 	@Inject
 	@Bundle(DocumentProcessingState.class)
 	private ResourceBundle salesOrderStatusBundle;
@@ -86,12 +106,8 @@ public class SalesOrderListView
 	private DocumentProcessingStateListCellFatory salesOrderStatusListCellFatory;
 
 	@Inject
-	@Bundle({ CrudKeys.class
+	@Bundle({ CrudKeys.class, SalesOrderItem.class,ChartData.class
 		, SalesOrder.class
-		, Customer.class
-		, VAT.class
-		, Login.class
-		, Agency.class
 	})
 	private ResourceBundle resourceBundle;
 
@@ -100,7 +116,7 @@ public class SalesOrderListView
 
 	@Inject
 	private SalesOrderTypeConverter salesOrderTypeConverter;
-	
+
 	@Inject
 	private FXMLLoader fxmlLoader;
 
@@ -121,8 +137,9 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
-
+//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
+		viewBuilder.addStringColumn(dataList, "cashed", "SalesOrder_cashed_description.title", resourceBundle);
+		
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
 		//
@@ -130,33 +147,51 @@ public class SalesOrderListView
 		//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
 		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//		rootPane = viewBuilder.toAnchorPane();
-		
+
 		buildsearchBar();
 		ComboBoxInitializer.initialize(salesOrderStatus, salesOrderStatusConverter, salesOrderStatusListCellFatory, salesOrderStatusBundle);
+
+		// sales order item list view
+		viewBuilder.addStringColumn(dataListItem, "internalPic", "SalesOrderItem_internalPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataListItem, "article", "SalesOrderItem_article_description.title", resourceBundle,400d);
+		viewBuilder.addBigDecimalColumn(dataListItem, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "SalesOrderItem", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+
+		// pie Chart table view
+				viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
+				viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
 	}
 	public void bind(SalesOrderSearchInput searchInput)
 	{
-		
+
 		soNumber.textProperty().bindBidirectional(searchInput.getEntity().soNumberProperty());
 		customer.valueProperty().bindBidirectional(searchInput.getEntity().customerProperty());
 		salesOrderStatus.valueProperty().bindBidirectional(searchInput.getEntity().salesOrderStatusProperty());
 	}
-	
+
 	public void buildsearchBar(){
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
 		soNumber.setPromptText("so Number");
+		soNumber.setPrefHeight(40d);
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
-		customer.setPromptText("customer");
+		customer.setPromptText("ALL COSTUMERS");
 		customer.setPrefWidth(300d);
+		customer.setPrefHeight(40d);
 
-		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.values(), false);
+		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		salesOrderStatus.setPromptText("state");
+		salesOrderStatus.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(soNumber,customer,salesOrderStatus,searchButton);
 	}
 	public Button getCreateButton()
@@ -173,6 +208,10 @@ public class SalesOrderListView
 	{
 		return dataList;
 	}
+	public TableView<SalesOrderItem> getDataListItem()
+	{
+		return dataListItem;
+	}
 
 	public BorderPane getRootPane()
 	{
@@ -186,6 +225,10 @@ public class SalesOrderListView
 
 	public Button getRemoveButton() {
 		return removeButton;
+	}
+
+	public Button getPrintInvoiceButtonn() {
+		return printInvoiceButton;
 	}
 	public void setRemoveButton(Button removeButton) {
 		this.removeButton = removeButton;
@@ -202,7 +245,7 @@ public class SalesOrderListView
 	public void setCreateButton(Button createButton) {
 		this.createButton = createButton;
 	}
-	
+
 	public HBox getSearchBar() {
 		return searchBar;
 	}
@@ -215,6 +258,27 @@ public class SalesOrderListView
 	public ComboBox<DocumentProcessingState> getSalesOrderStatus() {
 		return salesOrderStatus;
 	}
+
+	public PieChart getPieChart(){
+		return pieChart;
+	}
+	public TableView<ChartData> getPieChartData(){
+		return pieChartData;
+	}
+	public Button getComputeButton(){
+		return computeButton;
+	}
 	
+	public ComboBox<Customer> getChartClientList(){
+		return chartClientList ;
+	}
+	
+	public ComboBox<BigInteger> getYearList(){
+		return yearList ;
+	}
+
+    public Tab getTurnoverTab(){
+    	return turnoverTab ;
+    }
 
 }

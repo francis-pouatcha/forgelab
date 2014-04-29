@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.stockmovementterminal;
 
+import java.util.Arrays;
+
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.javaext.description.Description;
 
 @Description("StockMovementTerminal_description")
@@ -9,5 +12,12 @@ public enum StockMovementTerminal
    WAREHOUSE, @Description("StockMovementTerminal_SUPPLIER_description")
    SUPPLIER, @Description("StockMovementTerminal_CUSTOMER_description")
    CUSTOMER, @Description("StockMovementTerminal_TRASH_description")
-   TRASH
+   TRASH;
+   
+   public static StockMovementTerminal[] valuesWithNull(){
+	   StockMovementTerminal[] values = StockMovementTerminal.values();
+	   StockMovementTerminal[] copyOf = Arrays.copyOf(values, values.length+1);
+		return copyOf;
+
+	}
 }

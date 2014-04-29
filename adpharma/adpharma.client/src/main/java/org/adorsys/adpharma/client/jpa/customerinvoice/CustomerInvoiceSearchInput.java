@@ -23,7 +23,7 @@ public class CustomerInvoiceSearchInput
    /**
     * The entity holding search inputs.
     */
-   private CustomerInvoice entity;
+   private CustomerInvoice entity = new CustomerInvoice();
 
    /**
     * The start cursor
@@ -48,6 +48,7 @@ public class CustomerInvoiceSearchInput
    public void setEntity(CustomerInvoice entity)
    {
       this.entity = entity;
+      if(this.entity==null) this.entity = new CustomerInvoice();
    }
 
    public List<String> getFieldNames()

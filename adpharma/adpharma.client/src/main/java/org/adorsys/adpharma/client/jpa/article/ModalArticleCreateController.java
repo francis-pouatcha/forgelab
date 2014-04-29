@@ -23,7 +23,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
-@Singleton
+
 public class ModalArticleCreateController {
 
 	@Inject
@@ -68,7 +68,6 @@ public class ModalArticleCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				PropertyReader.copy(new Article(), model);
-				modalArticleCreateView.closeDialog();
 			}
 		});
 		//  handle save action
@@ -84,7 +83,7 @@ public class ModalArticleCreateController {
 				else
 				{
 					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
-					.nativeTitleBar().message(model.getArticleName()).showError();
+					.nativeTitleBar().message(model+"").showError();
 				}
 			}
 

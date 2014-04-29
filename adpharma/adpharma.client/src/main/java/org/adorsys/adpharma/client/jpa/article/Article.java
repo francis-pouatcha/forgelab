@@ -20,7 +20,7 @@ import javafx.beans.property.SimpleLongProperty;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,7 +47,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "articleName", "pic" })
 @ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock",
-      "sppu", "authorizedSale", "agency.name" })
+      "sppu", "authorizedSale", "agency.name", "vat.rate" })
 public class Article implements Cloneable
 {
 
@@ -106,6 +106,9 @@ public class Article implements Cloneable
    @Description("Article_clearanceConfig_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = ClearanceConfig.class)
    private SimpleObjectProperty<ArticleClearanceConfig> clearanceConfig;
+   @Description("Article_vat_description")
+   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+   private SimpleObjectProperty<ArticleVat> vat;
 
    public Long getId()
    {
@@ -552,6 +555,30 @@ public class Article implements Cloneable
       clearanceConfigProperty().setValue(ObjectUtils.clone(getClearanceConfig()));
    }
 
+   public SimpleObjectProperty<ArticleVat> vatProperty()
+   {
+      if (vat == null)
+      {
+         vat = new SimpleObjectProperty<ArticleVat>(new ArticleVat());
+      }
+      return vat;
+   }
+
+   public ArticleVat getVat()
+   {
+      return vatProperty().get();
+   }
+
+   public final void setVat(ArticleVat vat)
+   {
+      if (vat == null)
+      {
+         vat = new ArticleVat();
+      }
+      PropertyReader.copy(vat, getVat());
+      vatProperty().setValue(ObjectUtils.clone(getVat()));
+   }
+
    @Override
    public int hashCode()
    {
@@ -617,6 +644,7 @@ public class Article implements Cloneable
       e.packagingMode = packagingMode;
       e.agency = agency;
       e.clearanceConfig = clearanceConfig;
+      e.vat = vat;
       return e;
    }
 }

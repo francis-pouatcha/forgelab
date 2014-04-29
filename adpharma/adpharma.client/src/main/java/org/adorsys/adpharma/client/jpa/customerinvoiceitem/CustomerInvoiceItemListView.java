@@ -63,6 +63,7 @@ public class CustomerInvoiceItemListView
       viewBuilder.addBigDecimalColumn(dataList, "purchasedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
       viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "CustomerInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+     
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

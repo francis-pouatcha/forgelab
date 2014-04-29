@@ -1,11 +1,16 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import org.adorsys.adpharma.client.jpa.gender.Gender;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+
 import java.util.Calendar;
+
 import javafx.beans.property.SimpleBooleanProperty;
+
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.client.jpa.employer.Employer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerEmployer;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
@@ -20,8 +25,8 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.apache.commons.lang3.ObjectUtils;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -72,28 +77,30 @@ public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cl
 		this.version = version;
 	}
 
-	public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
-	{
-		if (customerCategory == null)
-		{
-			customerCategory = new SimpleObjectProperty<CustomerCustomerCategory>(new CustomerCustomerCategory());
-		}
-		return customerCategory;
-	}
+	 public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
+	   {
+	      if (customerCategory == null)
+	      {
+	         customerCategory = new SimpleObjectProperty<CustomerCustomerCategory>(new CustomerCustomerCategory());
+	      }
+	      return customerCategory;
+	   }
 
-	public CustomerCustomerCategory getCustomerCategory()
-	{
-		return customerCategoryProperty().get();
-	}
+	   public CustomerCustomerCategory getCustomerCategory()
+	   {
+	      return customerCategoryProperty().get();
+	   }
 
-	public final void setCustomerCategory(CustomerCustomerCategory customerCategory)
-	{
-		if (customerCategory == null)
-		{
-			customerCategory = new CustomerCustomerCategory();
-		}
-		PropertyReader.copy(customerCategory, getCustomerCategory());
-	}
+	   public final void setCustomerCategory(CustomerCustomerCategory customerCategory)
+	   {
+	      if (customerCategory == null)
+	      {
+	         customerCategory = new CustomerCustomerCategory();
+	      }
+	      PropertyReader.copy(customerCategory, getCustomerCategory());
+	      customerCategoryProperty().setValue(ObjectUtils.clone(getCustomerCategory()));
+	   }
+
 
 
 	public SimpleStringProperty fullNameProperty()

@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class SalesOrderItemRegistration extends DomainComponentRegistration
 {

@@ -23,7 +23,7 @@ public class LoginSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Login entity;
+   private Login entity = new Login();
 
    /**
     * The start cursor

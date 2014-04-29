@@ -4,9 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -25,17 +23,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.Customer;
-import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
-import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
-import org.adorsys.adpharma.server.jpa.SalesOrderType;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
@@ -72,13 +65,6 @@ public class SalesOrderEndpoint
 	@Inject
 	private AgencyMerger agencyMerger;
 
-
-	@Inject
-	CustomerEJB customerEJB ;
-
-	@Inject
-	SecurityUtil securityUtilEJB;
-
 	@Inject 
 	private CustomerInvoiceEJB customerInvoiceEJB;
 
@@ -87,13 +73,6 @@ public class SalesOrderEndpoint
 	@Produces({ "application/json", "application/xml" })
 	public SalesOrder create(SalesOrder entity)
 	{
-		entity = new SalesOrder();
-		List<Customer> listAll = customerEJB.listAll(0, 2) ;
-		if(!listAll.isEmpty())
-			entity.setCustomer(listAll.iterator().next());
-		Login user = securityUtilEJB.getConnectedUser();
-		entity.setAgency(user.getAgency());
-		entity.setSalesAgent(user);
 		return detach(ejb.create(entity));
 	}
 
@@ -116,9 +95,18 @@ public class SalesOrderEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
+	
+	@PUT
+	@Path("/processReturn")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder processReturn(SalesOrder entity)
+	{
+		return detach(ejb.processReturn(entity));
+	}
 
 	@PUT
-	@Path("/saveAndClose")
+	@Path("/saveAndClose/{id:[0-9][0-9]*}")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
@@ -242,7 +230,7 @@ public class SalesOrderEndpoint
 
 	private static final List<String> cashDrawerFields = Arrays.asList("cashDrawerNumber", "agency.name", "openingDate", "closingDate", "initialAmount", "totalCashIn", "totalCashOut", "totalCash", "totalCheck", "totalCreditCard", "totalCompanyVoucher", "totalClientVoucher", "opened");
 
-	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized");
+	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","customerCategory");
 
 	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.fullName", "insurer.fullName", "coverageRate");
 
@@ -300,4 +288,18 @@ public class SalesOrderEndpoint
 		searchInput.setEntity(detach(searchInput.getEntity()));
 		return searchInput;
 	}
+	
+	@PUT
+	@Path("/cancel/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder cancel(SalesOrder salesOrder) {
+		if(salesOrder.getSalesOrderStatus()!=DocumentProcessingState.CLOSED)
+			return salesOrder;
+		
+		SalesOrder closedOrder = ejb.cancelSalesOrder(salesOrder);
+
+		return detach(closedOrder);
+	}
+	
 }

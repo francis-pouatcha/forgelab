@@ -4,111 +4,203 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
+import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
-import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
-import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class ProcurementOrderListView
 {
 
-   @FXML
-   AnchorPane rootPane;
 
-   @FXML
-   private Button searchButton;
+	@FXML
+	BorderPane rootPane;
 
-   @FXML
-   private Button createButton;
+	@FXML
+	HBox searchBar;
 
-   @FXML
-   private TableView<ProcurementOrder> dataList;
+	private TextField procurementOrderNumber ;
 
-   @Inject
-   private Locale locale;
+	private ComboBox<ProcurementOrderSupplier> supplier ;
 
-   private Pagination pagination;
+	private ComboBox<DocumentProcessingState> state ;
 
-   @Inject
-   @Bundle({ CrudKeys.class
-         , ProcurementOrder.class
-         , Agency.class
-         , VAT.class
-   })
-   private ResourceBundle resourceBundle;
+	@FXML
+	private Button searchButton;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      ViewBuilder viewBuilder = new ViewBuilder();
-      dataList = viewBuilder.addTable("dataList");
-      viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "ProcurementOrder_procurementOrderNumber_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
-      viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "ProcurementOrder_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "ProcurementOrder_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
-      pagination = viewBuilder.addPagination();
-      viewBuilder.addSeparator();
+	@FXML
+	private Button createButton;
 
-      HBox buttonBar = viewBuilder.addButtonBar();
-      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-      rootPane = viewBuilder.toAnchorPane();
-   }
+	@FXML
+	private Button editButton ;
+	
+	@FXML
+	private Button removeButton ;
 
-   public Button getCreateButton()
-   {
-      return createButton;
-   }
+	@FXML
+	private TableView<ProcurementOrder> dataList;
 
-   public Button getSearchButton()
-   {
-      return searchButton;
-   }
+	@FXML
+	private TableView<ProcurementOrderItem> dataListItem;
 
-   public TableView<ProcurementOrder> getDataList()
-   {
-      return dataList;
-   }
+	@Inject
+	private Locale locale;
 
-   public AnchorPane getRootPane()
-   {
-      return rootPane;
-   }
+	@FXML
+	private Pagination pagination;
 
-   public Pagination getPagination()
-   {
-      return pagination;
-   }
+	@Inject
+	@Bundle({ CrudKeys.class
+		, ProcurementOrder.class,ProcurementOrderItem.class
+		, Agency.class
+		, VAT.class
+	})
+	private ResourceBundle resourceBundle;
+
+	@Inject
+	private DocumentProcessingStateConverter documentProcessingStateConverter;
+
+	@Inject
+	private FXMLLoader fxmlLoader ;
+
+	@PostConstruct
+	public void postConstruct()
+	{
+		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
+		ViewBuilder viewBuilder = new ViewBuilder();
+		//      dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "ProcurementOrder_procurementOrderNumber_description.title", resourceBundle);
+		viewBuilder.addEnumColumn(dataList, "poStatus", "ProcurementOrder_poStatus_description.title", resourceBundle, documentProcessingStateConverter);
+		ViewBuilderUtils.newStringColumn(dataList, "supplier", "ProcurementOrder_supplier_description.title", resourceBundle,250d);
+		ViewBuilderUtils.newDateColumn(dataList, "createdDate", "ProcurementOrder_createdDate_description.title", resourceBundle,"dd-MM-yyyy HH:mm",locale);
+		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "ProcurementOrder_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "ProcurementOrder_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+		//		datalistitem columns
+		viewBuilder.addStringColumn(dataListItem, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataListItem, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
+		viewBuilder.addDateColumn(dataListItem, "expirationDate", "ProcurementOrderItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+
+
+		//      pagination = viewBuilder.addPagination();
+		//      viewBuilder.addSeparator();
+		//      HBox buttonBar = viewBuilder.addButtonBar();
+		//      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//      rootPane = viewBuilder.toAnchorPane();
+
+		buildsearchBar();
+	}
+
+	public void buildsearchBar(){
+		procurementOrderNumber =ViewBuilderUtils.newTextField("procurementOrderNumber", false);
+		procurementOrderNumber.setPromptText("internal Pic");
+		procurementOrderNumber.setPrefHeight(40d);
+
+		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
+		supplier.setPromptText("ALL SUPPLIER");
+		supplier.setPrefHeight(40d);
+		supplier.setPrefWidth(300d);
+
+		state = ViewBuilderUtils.newComboBox(null, "poStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
+		state.setPrefHeight(40d);
+
+		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
+		searchBar.getChildren().addAll(procurementOrderNumber,supplier,state,searchButton);
+	}
+
+	public void bind(ProcurementOrderSearchInput searchInput)
+	{
+		procurementOrderNumber.textProperty().bindBidirectional(searchInput.getEntity().procurementOrderNumberProperty());
+		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
+		state.valueProperty().bindBidirectional(searchInput.getEntity().poStatusProperty());
+	}
+
+	public Button getCreateButton()
+	{
+		return createButton;
+	}
+
+	public Button getEditButton()
+	{
+		return editButton;
+	}
+	
+	public Button getRemoveButton()
+	{
+		return removeButton;
+	}
+
+	public Button getSearchButton()
+	{
+		return searchButton;
+	}
+
+	public TableView<ProcurementOrderItem> getDataListItem()
+	{
+		return dataListItem;
+	}
+
+	public TableView<ProcurementOrder> getDataList()
+	{
+		return dataList;
+	}
+
+	public BorderPane getRootPane()
+	{
+		return rootPane;
+	}
+
+	public ComboBox<ProcurementOrderSupplier> getSupplier()
+	{
+		return supplier;
+	}
+
+	public ComboBox<DocumentProcessingState> getState()
+	{
+		return state;
+	}
+
+	public TextField getProcurementOrderNumber()
+	{
+		return procurementOrderNumber;
+	}
+
+	public Pagination getPagination()
+	{
+		return pagination;
+	}
 
 }
