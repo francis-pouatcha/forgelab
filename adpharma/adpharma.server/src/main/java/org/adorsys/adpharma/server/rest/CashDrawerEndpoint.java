@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -27,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchInput;
 import org.adorsys.adpharma.server.jpa.CashDrawerSearchResult;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
+import org.adorsys.adpharma.server.utils.AdTimeFrameBasedSearchInput;
 
 /**
  * 
@@ -269,5 +271,16 @@ public class CashDrawerEndpoint
 	{
 		return detach(ejb.close(entity));
 	}
-	
+
+	@POST
+	@Path("/findByClosingDateBetween")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CashDrawerSearchResult findByClosingDateBetween(AdTimeFrameBasedSearchInput searchInput)
+	{
+		Long count = ejb.countByClosingDateBetween(searchInput.getTimeFrame().getStartTime(), searchInput.getTimeFrame().getEndTime());
+		List<CashDrawer> resultList = ejb.findByClosingDateBetween(searchInput.getTimeFrame().getStartTime(), 
+				searchInput.getTimeFrame().getEndTime(), searchInput.getStart(), searchInput.getMax());
+		return new CashDrawerSearchResult(count, detach(resultList),null);
+	}
 }

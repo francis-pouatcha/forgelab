@@ -1,47 +1,35 @@
 package org.adorsys.adpharma.client.jpa.inventoryitem;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class InventoryItemService
 {
-   private WebTarget target;
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
-
-   public InventoryItemService()
+	@Inject
+	private ServerAddress serverAddress;
+	Client client = ClientBuilder.newClient();
+   private WebTarget target()
    {
-      Client client = ClientBuilder.newClient();
-      String serverAddress = System.getProperty("server.address");
-      if (serverAddress == null)
-         throw new IllegalStateException("Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-      this.target = client.target(serverAddress + "/rest/inventoryitems");
-   }
-
-   @PostConstruct
-   protected void postConstruct()
-   {
-      this.target.register(clientCookieFilter);
+      return client.target(serverAddress + "/rest/inventoryitems").register(clientCookieFilter);
    }
 
    public InventoryItem create(InventoryItem entity)
    {
       Entity<InventoryItem> eCopy = Entity.entity(entity, media);
-      return target.request(media).post(eCopy, InventoryItem.class);
+      return target().request(media).post(eCopy, InventoryItem.class);
    }
 
    // @DELETE
@@ -49,7 +37,7 @@ public class InventoryItemService
    public InventoryItem deleteById(Long id)
    {//@PathParam("id")
       // TODO encode id
-      return target.path("" + id).request(media).delete(InventoryItem.class);
+      return target().path("" + id).request(media).delete(InventoryItem.class);
    }
 
    // @PUT
@@ -58,7 +46,7 @@ public class InventoryItemService
    public InventoryItem update(InventoryItem entity)
    {
       Entity<InventoryItem> ent = Entity.entity(entity, media);
-      return target.path("" + entity.getId())
+      return target().path("" + entity.getId())
             .request(media).put(ent, InventoryItem.class);
    }
 
@@ -67,21 +55,21 @@ public class InventoryItemService
    // @Produces("application/xml")
    public InventoryItem findById(Long id)
    {// @PathParam("id") 
-      return target.path("" + id).request(media).get(InventoryItem.class);
+      return target().path("" + id).request(media).get(InventoryItem.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public InventoryItemSearchResult listAll()
    {
-      return target.request(media).get(InventoryItemSearchResult.class);
+      return target().request(media).get(InventoryItemSearchResult.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public InventoryItemSearchResult listAll(int start, int max)
    {
-      return target.queryParam("start", start).queryParam("max", max)
+      return target().queryParam("start", start).queryParam("max", max)
             .request(media).get(InventoryItemSearchResult.class);
    }
 
@@ -89,7 +77,7 @@ public class InventoryItemService
    //	@Path("/count")
    public Long count()
    {
-      return target.path("count").request().get(Long.class);
+      return target().path("count").request().get(Long.class);
    }
 
    // @POST
@@ -99,7 +87,7 @@ public class InventoryItemService
    {
       Entity<InventoryItemSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY).request(media).post(
+      return target().path(FIND_BY).request(media).post(
             searchInputEntity, InventoryItemSearchResult.class);
    }
 
@@ -110,7 +98,7 @@ public class InventoryItemService
    {
       Entity<InventoryItemSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countBy").request()
+      return target().path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
 
@@ -122,7 +110,7 @@ public class InventoryItemService
    {
       Entity<InventoryItemSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY_LIKE_PATH).request(media).post(
+      return target().path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, InventoryItemSearchResult.class);
    }
 
@@ -133,7 +121,7 @@ public class InventoryItemService
    {
       Entity<InventoryItemSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countByLike").request()
+      return target().path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
 }

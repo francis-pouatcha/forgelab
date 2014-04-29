@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.section;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -8,29 +7,19 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class SectionService {
-	// private WebTarget target;
 	private String media = MediaType.APPLICATION_JSON;
 	private static final String FIND_BY = "findBy";
 	private static final String FIND_BY_LIKE_PATH = "findByLike";
 
 	@Inject
 	private ClientCookieFilter clientCookieFilter;
-
+	@Inject
+	private ServerAddress serverAddress;
 	Client client = ClientBuilder.newClient();
-	String serverAddress = System.getProperty("server.address");
-
-	public SectionService() {
-		if (serverAddress == null)
-			throw new IllegalStateException(
-					"Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-	}
-
-	@PostConstruct
-	protected void postConstruct() {
-	}
 
 	private WebTarget target() {
 		WebTarget target = client.target(serverAddress + "/rest/sections");

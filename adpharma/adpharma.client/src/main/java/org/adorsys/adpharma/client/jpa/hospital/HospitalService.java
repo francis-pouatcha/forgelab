@@ -1,47 +1,36 @@
 package org.adorsys.adpharma.client.jpa.hospital;
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class HospitalService
 {
-   private WebTarget target;
    private String media = MediaType.APPLICATION_JSON;
    private static final String FIND_BY = "findBy";
    private static final String FIND_BY_LIKE_PATH = "findByLike";
 
    @Inject
    private ClientCookieFilter clientCookieFilter;
-
-   public HospitalService()
+   Client client = ClientBuilder.newClient();
+	@Inject
+	private ServerAddress serverAddress;
+	
+	private WebTarget target()
    {
-      Client client = ClientBuilder.newClient();
-      String serverAddress = System.getProperty("server.address");
-      if (serverAddress == null)
-         throw new IllegalStateException("Set system property server address before calling this service. Like: http://localhost:8080/<ContextRoot>");
-      this.target = client.target(serverAddress + "/rest/hospitals");
-   }
-
-   @PostConstruct
-   protected void postConstruct()
-   {
-      this.target.register(clientCookieFilter);
+      return client.target(serverAddress + "/rest/hospitals").register(clientCookieFilter);
    }
 
    public Hospital create(Hospital entity)
    {
       Entity<Hospital> eCopy = Entity.entity(entity, media);
-      return target.request(media).post(eCopy, Hospital.class);
+      return target().request(media).post(eCopy, Hospital.class);
    }
 
    // @DELETE
@@ -49,7 +38,7 @@ public class HospitalService
    public Hospital deleteById(Long id)
    {//@PathParam("id")
       // TODO encode id
-      return target.path("" + id).request(media).delete(Hospital.class);
+      return target().path("" + id).request(media).delete(Hospital.class);
    }
 
    // @PUT
@@ -58,7 +47,7 @@ public class HospitalService
    public Hospital update(Hospital entity)
    {
       Entity<Hospital> ent = Entity.entity(entity, media);
-      return target.path("" + entity.getId())
+      return target().path("" + entity.getId())
             .request(media).put(ent, Hospital.class);
    }
 
@@ -67,21 +56,21 @@ public class HospitalService
    // @Produces("application/xml")
    public Hospital findById(Long id)
    {// @PathParam("id") 
-      return target.path("" + id).request(media).get(Hospital.class);
+      return target().path("" + id).request(media).get(Hospital.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public HospitalSearchResult listAll()
    {
-      return target.request(media).get(HospitalSearchResult.class);
+      return target().request(media).get(HospitalSearchResult.class);
    }
 
    // @GET
    // @Produces("application/xml")
    public HospitalSearchResult listAll(int start, int max)
    {
-      return target.queryParam("start", start).queryParam("max", max)
+      return target().queryParam("start", start).queryParam("max", max)
             .request(media).get(HospitalSearchResult.class);
    }
 
@@ -89,7 +78,7 @@ public class HospitalService
    //	@Path("/count")
    public Long count()
    {
-      return target.path("count").request().get(Long.class);
+      return target().path("count").request().get(Long.class);
    }
 
    // @POST
@@ -99,7 +88,7 @@ public class HospitalService
    {
       Entity<HospitalSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY).request(media).post(
+      return target().path(FIND_BY).request(media).post(
             searchInputEntity, HospitalSearchResult.class);
    }
 
@@ -110,7 +99,7 @@ public class HospitalService
    {
       Entity<HospitalSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countBy").request()
+      return target().path("countBy").request()
             .post(searchInputEntity, Long.class);
    }
 
@@ -122,7 +111,7 @@ public class HospitalService
    {
       Entity<HospitalSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path(FIND_BY_LIKE_PATH).request(media).post(
+      return target().path(FIND_BY_LIKE_PATH).request(media).post(
             searchInputEntity, HospitalSearchResult.class);
    }
 
@@ -133,7 +122,7 @@ public class HospitalService
    {
       Entity<HospitalSearchInput> searchInputEntity = Entity.entity(
             searchInput, media);
-      return target.path("countByLike").request()
+      return target().path("countByLike").request()
             .post(searchInputEntity, Long.class);
    }
 }

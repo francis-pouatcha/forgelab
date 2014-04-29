@@ -23,6 +23,8 @@ import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.apache.deltaspike.data.api.FirstResult;
+import org.apache.deltaspike.data.api.MaxResults;
 
 @Stateless
 public class CashDrawerEJB
@@ -186,5 +188,13 @@ public class CashDrawerEJB
 		cashDrawer.setClosedBy(cashier);
 		cashDrawer.setClosingDate(new Date());
 		return update(cashDrawer);
+	}
+	
+	public List<CashDrawer> findByClosingDateBetween(Date startClosingDate, Date endClosingDate, int start, int max){
+		return repository.findByClosingDateBetween(startClosingDate, endClosingDate, start, max);
+	}
+	
+	public Long countByClosingDateBetween(Date startClosingDate, Date endClosingDate){
+		return repository.countByClosingDateBetween(startClosingDate, endClosingDate);
 	}
 }
