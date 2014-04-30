@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -40,11 +43,7 @@ public final class AdpharmaClient extends Application {
 						locale = new Locale(args[i + 1]);
 						Locale.setDefault(locale);
 					} catch (Exception ex) {
-						locale = Locale.getDefault();
-						if (locale == null) {
-							locale = new Locale("fr");
-							Locale.setDefault(locale);
-						}
+						throw new IllegalStateException(ex);
 					}
 				}
 			}
@@ -61,6 +60,28 @@ public final class AdpharmaClient extends Application {
 				}
 			}
 		}
+		
+		if(locale==null || ServerAddress.serverUrl==null){
+			File file = new File("appconfig.properties");
+			if(file.exists()){
+				Properties properties = new Properties();
+				try {
+					properties.load(new FileInputStream(file));
+					String localeProperty = properties.getProperty("locale");
+					String serverAddressProperty = properties.getProperty("server.address");
+					if(locale==null){
+						locale = new Locale(localeProperty);
+						Locale.setDefault(locale);
+					}
+					if(ServerAddress.serverUrl==null)ServerAddress.serverUrl=new URL(serverAddressProperty);
+				} catch (FileNotFoundException e) {
+					throw new IllegalStateException(e);
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+		}
+
 		if (locale == null) {
 			locale = Locale.getDefault();
 		}
@@ -76,27 +97,6 @@ public final class AdpharmaClient extends Application {
 				ServerAddress.serverUrl = url;
 			} catch (MalformedURLException e) {
 				throw new IllegalStateException(e);
-			}
-		}
-
-		if (ServerAddress.serverUrl == null) {
-			Properties properties = new Properties();
-			InputStream resourceAsStream = AdpharmaClient.class
-					.getResourceAsStream("/server-address.properties");
-			if (resourceAsStream != null) {
-				try {
-					properties.load(resourceAsStream);
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
-				String sa = properties.getProperty("server.address");
-				if (StringUtils.isNotBlank(sa))
-					try {
-						URL url = new URL(sa);
-						ServerAddress.serverUrl = url;
-					} catch (MalformedURLException e) {
-						throw new IllegalStateException(e);
-					}
 			}
 		}
 
@@ -120,7 +120,6 @@ public final class AdpharmaClient extends Application {
 	public void start(Stage stage) {
 		Instance<Object> instance = weld.initialize().instance();
 		instance.select(LocaleFactory.class).get().setLocale(locale);
-//		instance.select(ServerAddressProducer.class).get().setServerAddress(serverAddress);
 		instance.select(MainController.class).get()
 				.start(stage, locale, "styles/application.css");
 	}
