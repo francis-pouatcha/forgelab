@@ -134,9 +134,9 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
+		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
-		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
+		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(),ViewModel.READ_ONLY);
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.CURRENCY, locale);
 		amountVat = viewBuilder.addBigDecimalField("Delivery_amountVat_description.title", "amountVat", resourceBundle, NumberType.CURRENCY, locale);
 		amountDiscount = viewBuilder.addBigDecimalField("Delivery_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);

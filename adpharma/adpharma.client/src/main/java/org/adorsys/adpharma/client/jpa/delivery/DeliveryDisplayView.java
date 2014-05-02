@@ -306,6 +306,15 @@ public class DeliveryDisplayView
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 		taxAmount.numberProperty().bindBidirectional(model.amountVatProperty());
 		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
+		
+		deliveryItemBar.visibleProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		saveButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		editDeliveryMenu.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		deleteDeliveryMenu.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		deleteButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		editButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		addArticleButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		printButton.disableProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 	}
 

@@ -35,7 +35,7 @@ import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.apache.commons.lang3.StringUtils;
 
 public class DeliveryReportPrintTemplate {
-	
+
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private double printableWidth = Paper.A4.getWidth() -(72*2);
@@ -46,7 +46,7 @@ public class DeliveryReportPrintTemplate {
 	private RowConstraints separatorRowConstraint = new RowConstraints();
 
 	private VBox currentPage = null;
-	
+
 	private List<VBox> pages = new ArrayList<VBox>();
 
 	private GridPane deliveryTable = null;
@@ -55,7 +55,7 @@ public class DeliveryReportPrintTemplate {
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
 	private final Delivery delivery;
-	
+
 	public List<VBox> getPages() {
 		return pages;
 	}
@@ -71,7 +71,7 @@ public class DeliveryReportPrintTemplate {
 		mainRowHeight.setPrefHeight(rowHeiht);
 		doubleRowHeight.setPrefHeight(rowHeiht * 2);
 		separatorRowConstraint.setPrefHeight(separatorRowHeight);
-		
+
 		// FIrst page
 		currentPage = new VBox();
 		pages.add(currentPage);
@@ -86,17 +86,17 @@ public class DeliveryReportPrintTemplate {
 		currentPageHeight=rowHeiht+separatorRowHeight;
 		fillTableHaeder();
 	}
-	
+
 	double currentPageHeight = rowHeiht+separatorRowHeight;
 	public void addItems(List<DeliveryItem> deliveryItems) {
-		
+
 		for (DeliveryItem deliveryItem : deliveryItems) {
 			if(currentPageHeight>=printableHeight){
 				newPage();
 			}
 			String articleName = deliveryItem.getArticleName();
 			if(articleName.length()>60) articleName = StringUtils.substring(articleName, 0, 60);
-			
+
 			newTableRow(deliveryItem.getInternalPic(), 
 					articleName, 
 					deliveryItem.getStockQuantity(), 
@@ -126,7 +126,7 @@ public class DeliveryReportPrintTemplate {
 		deliveryTable.add(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalPurchasePrice)), 6, rowIndex, 1,  1);
 		currentPageHeight+=rowHeiht;
 	}
-	
+
 	private void newSeparator(){
 		rowIndex++;
 		deliveryTable.getRowConstraints().add(separatorRowConstraint);
@@ -163,7 +163,7 @@ public class DeliveryReportPrintTemplate {
 		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title")), 4, rowIndex, 1,  1);
 		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title")), 5, rowIndex, 1,  1);
 		deliveryTable.add(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title")), 6, rowIndex, 1,  1);
-		
+
 		newSeparator();
 	}
 
@@ -173,16 +173,16 @@ public class DeliveryReportPrintTemplate {
 
 		GridPane headerPane = new GridPane();
 		page.getChildren().add(headerPane);
-		
+
 		headerPane.getColumnConstraints().add(new ColumnConstraints(width * .7));
 		headerPane.getColumnConstraints().add(new ColumnConstraints(width * .3));
-		
+
 		// ROW 0
 		row++;
 		headerPane.getRowConstraints().add(mainRowHeight);
 		currentPageHeight+=rowHeiht;
 		Text documentName = new BoldText(resourceBundle.getString("DeliveryReportPrintTemplate_header.title")
-						+ " " + delivery.getDeliveryNumber());
+				+ " " + delivery.getDeliveryNumber());
 		headerPane.add(documentName, 0, row, 2, 1);
 		GridPane.setHalignment(documentName, HPos.CENTER);
 
@@ -256,7 +256,7 @@ public class DeliveryReportPrintTemplate {
 		double size = font.getSize()-5;
 		return Font.font(null, FontWeight.EXTRA_BOLD, size);
 	}
-	
+
 	private static Font font() {
 		Text text = new Text();
 		Font font = text.getFont();
@@ -275,7 +275,7 @@ public class DeliveryReportPrintTemplate {
 			setFont(font);
 		}
 	}
-	
+
 	static class BoldText extends Text{
 		BoldText() {
 			super();

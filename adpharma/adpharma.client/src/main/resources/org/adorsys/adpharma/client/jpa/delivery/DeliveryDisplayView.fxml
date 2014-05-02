@@ -5,33 +5,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="661.0" prefWidth="1011.0"
-	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="661.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0"
-			prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0"
-			AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-			AnchorPane.topAnchor="0.0">
+		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<right>
-				<VBox prefHeight="661.0" prefWidth="180.0"
-					BorderPane.alignment="CENTER">
+				<VBox prefHeight="661.0" prefWidth="180.0" BorderPane.alignment="CENTER">
 					<BorderPane.margin>
 						<Insets bottom="5.0" left="5.0" top="5.0" />
 					</BorderPane.margin>
 					<children>
-						<VBox fx:id="actionbar" alignment="TOP_CENTER" layoutX="10.0"
-							layoutY="10.0" prefHeight="217.0" prefWidth="180.0" spacing="10.0"
-							VBox.vgrow="NEVER">
+						<VBox fx:id="actionbar" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="217.0" prefWidth="180.0" spacing="10.0" VBox.vgrow="NEVER">
 							<VBox.margin>
-								<Insets />
+								<Insets bottom="10.0" />
 							</VBox.margin>
 							<padding>
 								<Insets top="10.0" />
 							</padding>
 						</VBox>
-						<VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0"
-							prefHeight="386.0" prefWidth="180.0" spacing="10.0"
-							styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+						<VBox alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" prefHeight="386.0" prefWidth="180.0" spacing="10.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 							<padding>
 								<Insets top="10.0" />
 							</padding>
@@ -40,54 +31,36 @@
 				</VBox>
 			</right>
 			<center>
-				<VBox prefHeight="200.0" prefWidth="100.0"
-					BorderPane.alignment="CENTER">
+				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
 					<children>
-						<TitledPane animated="false" prefHeight="19.0"
-							prefWidth="739.0" text="Delivery Information :" textFill="#122899">
+						<TitledPane animated="false" prefHeight="19.0" prefWidth="739.0" text=" Information de la livraison:" textFill="#122899">
 							<content>
-								<AnchorPane minHeight="0.0" minWidth="0.0"
-									prefHeight="180.0" prefWidth="200.0" />
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 							</content>
 						</TitledPane>
-						<VBox maxWidth="900.0" prefHeight="160.0" prefWidth="724.0"
-							VBox.vgrow="NEVER">
+						<VBox maxWidth="900.0" prefHeight="160.0" prefWidth="724.0" VBox.vgrow="NEVER">
 							<children>
 								<HBox spacing="40.0">
 									<children>
-										<GridPane hgap="40.0" prefHeight="545.0" prefWidth="690.0"
-											AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-											AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+										<GridPane hgap="40.0" prefHeight="545.0" prefWidth="690.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 											<columnConstraints>
-												<ColumnConstraints hgrow="SOMETIMES"
-													minWidth="10.0" prefWidth="100.0" />
-												<ColumnConstraints hgrow="SOMETIMES"
-													minWidth="10.0" prefWidth="100.0" />
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
 											</columnConstraints>
 											<rowConstraints>
-												<RowConstraints minHeight="10.0" prefHeight="30.0"
-													vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 											</rowConstraints>
 											<children>
-												<GridPane fx:id="leftGride" prefHeight="170.0"
-													prefWidth="357.0" vgap="5.0" GridPane.halignment="CENTER"
-													GridPane.valignment="CENTER">
+												<GridPane fx:id="leftGride" prefHeight="170.0" prefWidth="357.0" vgap="5.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
 													<columnConstraints>
-														<ColumnConstraints halignment="LEFT"
-															hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0"
-															prefWidth="158.0" />
-														<ColumnConstraints hgrow="SOMETIMES"
-															maxWidth="199.0" minWidth="10.0" prefWidth="194.0" />
+														<ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="158.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="194.0" />
 													</columnConstraints>
 													<rowConstraints>
-														<RowConstraints minHeight="10.0"
-															prefHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
 													</rowConstraints>
 													<children>
 														<Label text="%Delivery_deliveryNumber_description.title">
@@ -95,34 +68,24 @@
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="25.0"
-															text="%Delivery_deliverySlipNumber_description.title"
-															GridPane.rowIndex="1">
+														<Label layoutX="10.0" layoutY="25.0" text="%Delivery_deliverySlipNumber_description.title" GridPane.rowIndex="1">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="71.0"
-															text="%Delivery_deliveryDate_description.title"
-															GridPane.rowIndex="3">
+														<Label layoutX="10.0" layoutY="71.0" text="%Delivery_deliveryDate_description.title" GridPane.rowIndex="3">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="117.0"
-															GridPane.rowIndex="3">
+														<Label layoutX="10.0" layoutY="117.0" GridPane.rowIndex="3">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<TextField fx:id="deliveryNumber" editable="false"
-															GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-														<TextField fx:id="deliverySlipNumber" editable="false"
-															layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1"
-															GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-														<Label layoutX="15.0" layoutY="62.0"
-															text="%Delivery_recordingDate_description.title"
-															GridPane.rowIndex="2">
+														<TextField fx:id="deliveryNumber" editable="false" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+														<TextField fx:id="deliverySlipNumber" editable="false" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+														<Label layoutX="15.0" layoutY="62.0" text="%Delivery_recordingDate_description.title" GridPane.rowIndex="2">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
@@ -132,69 +95,47 @@
 														<Insets top="10.0" />
 													</padding>
 												</GridPane>
-												<GridPane fx:id="rigthGrid" layoutX="10.0" layoutY="10.0"
-													prefHeight="220.0" prefWidth="392.0" vgap="5.0"
-													GridPane.columnIndex="1">
+												<GridPane fx:id="rigthGrid" layoutX="10.0" layoutY="10.0" prefHeight="220.0" prefWidth="392.0" vgap="5.0" GridPane.columnIndex="1">
 													<children>
 														<Label text="%Delivery_supplier_description.title">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="25.0"
-															text="%Delivery_deliveryProcessingState_description.title"
-															GridPane.rowIndex="1">
+														<Label layoutX="10.0" layoutY="25.0" text="%Delivery_deliveryProcessingState_description.title" GridPane.rowIndex="1">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="71.0"
-															text="%Delivery_creatingUser_description.title"
-															GridPane.rowIndex="3">
+														<Label layoutX="10.0" layoutY="71.0" text="%Delivery_creatingUser_description.title" GridPane.rowIndex="3">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="10.0" layoutY="117.0"
-															GridPane.rowIndex="3">
+														<Label layoutX="10.0" layoutY="117.0" GridPane.rowIndex="3">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label layoutX="15.0" layoutY="62.0"
-															text="%Delivery_receivingAgency_description.title"
-															GridPane.rowIndex="2">
+														<Label layoutX="15.0" layoutY="62.0" text="%Delivery_receivingAgency_description.title" GridPane.rowIndex="2">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<ComboBox fx:id="supplier" prefHeight="26.0"
-															prefWidth="236.0" GridPane.columnIndex="1" />
-														<ComboBox fx:id="state" layoutX="168.0" layoutY="24.0"
-															prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1"
-															GridPane.rowIndex="1" />
-														<ComboBox fx:id="agency" layoutX="168.0" layoutY="63.0"
-															prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1"
-															GridPane.rowIndex="2" />
-														<ComboBox fx:id="login" layoutX="168.0" layoutY="102.0"
-															prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1"
-															GridPane.rowIndex="3" />
+														<ComboBox fx:id="supplier" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" />
+														<ComboBox fx:id="state" layoutX="168.0" layoutY="24.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+														<ComboBox fx:id="agency" layoutX="168.0" layoutY="63.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+														<ComboBox fx:id="login" layoutX="168.0" layoutY="102.0" prefHeight="26.0" prefWidth="236.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 													</children>
 													<columnConstraints>
-														<ColumnConstraints hgrow="SOMETIMES"
-															maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />
-														<ColumnConstraints hgrow="SOMETIMES"
-															maxWidth="199.0" minWidth="10.0" prefWidth="199.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="199.0" />
 													</columnConstraints>
 													<rowConstraints>
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
 													</rowConstraints>
 													<padding>
 														<Insets top="10.0" />
@@ -202,40 +143,29 @@
 												</GridPane>
 											</children>
 										</GridPane>
-										<VBox prefHeight="220.0" prefWidth="267.0" VBox.vgrow="NEVER">
+										<VBox prefHeight="155.0" prefWidth="402.0" VBox.vgrow="NEVER">
 											<children>
-												<GridPane fx:id="amountPane">
+												<GridPane fx:id="amountPane" prefWidth="250.0">
 													<columnConstraints>
-														<ColumnConstraints hgrow="SOMETIMES"
-															maxWidth="127.0" minWidth="10.0" prefWidth="115.0" />
-														<ColumnConstraints hgrow="SOMETIMES"
-															maxWidth="152.0" minWidth="10.0" prefWidth="152.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" percentWidth="50.0" prefWidth="115.0" />
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="152.0" minWidth="10.0" percentWidth="50.0" prefWidth="152.0" />
 													</columnConstraints>
 													<rowConstraints>
-														<RowConstraints minHeight="10.0"
-															prefHeight="30.0" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="30.0" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="30.0" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="30.0" vgrow="SOMETIMES" />
-														<RowConstraints minHeight="10.0"
-															prefHeight="30.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 													</rowConstraints>
 													<VBox.margin>
 														<Insets top="10.0" />
 													</VBox.margin>
 													<children>
 														<Label text="Montant HT :" />
-														<Label layoutX="10.0" layoutY="17.0" text="Taxes :"
-															GridPane.rowIndex="1" />
-														<Label layoutX="10.0" layoutY="47.0" text="Remises :"
-															GridPane.rowIndex="2" />
-														<Label layoutX="10.0" layoutY="77.0" text="Montant TTC :"
-															GridPane.rowIndex="3" />
-														<Label layoutX="10.0" layoutY="107.0" text="Montant Saisie :"
-															GridPane.rowIndex="4" />
+														<Label layoutX="10.0" layoutY="17.0" text="Taxes :" GridPane.rowIndex="1" />
+														<Label layoutX="10.0" layoutY="47.0" text="Remises :" GridPane.rowIndex="2" />
+														<Label layoutX="10.0" layoutY="77.0" text="Montant TTC :" GridPane.rowIndex="3" />
+														<Label layoutX="10.0" layoutY="107.0" text="Montant Saisie :" GridPane.rowIndex="4" />
 													</children>
 												</GridPane>
 											</children>
@@ -250,42 +180,30 @@
 								<Insets bottom="2.0" />
 							</VBox.margin>
 						</VBox>
-						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0"
-							prefWidth="167.0" />
+						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
 						<GridPane fx:id="deliveryItemBar" hgap="2.0" styleClass="colored-text">
 							<columnConstraints>
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
-								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
-									minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+								<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
 							</columnConstraints>
 							<rowConstraints>
-								<RowConstraints minHeight="10.0" valignment="CENTER"
-									vgrow="SOMETIMES" />
+								<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
 								<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
 							</rowConstraints>
 						</GridPane>
-						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0"
-							prefWidth="167.0" />
-						<TableView fx:id="dataList" prefHeight="246.0"
-							prefWidth="724.0" VBox.vgrow="ALWAYS">
+						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0" prefWidth="167.0" />
+						<TableView fx:id="dataList" prefHeight="246.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
 							<columns>
 							</columns>
 							<contextMenu>
 								<ContextMenu fx:id="datalistContextMenu">
 									<items>
-										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false"
-											text="Edit" />
-										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false"
-											text="Delete" />
+										<MenuItem fx:id="editDeliveryMenu" mnemonicParsing="false" text="Edit" />
+										<MenuItem fx:id="deleteDeliveryMenu" mnemonicParsing="false" text="Delete" />
 									</items>
 								</ContextMenu>
 							</contextMenu>

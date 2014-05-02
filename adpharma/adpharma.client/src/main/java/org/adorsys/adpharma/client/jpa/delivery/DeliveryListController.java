@@ -114,8 +114,8 @@ public class DeliveryListController implements EntityController
 				if(newValue!=null){
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getUpdateButton().disableProperty().unbind();
-					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
+					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
                      DeliveryItemSearchInput dsi = new DeliveryItemSearchInput();
                      dsi.getEntity().setDelivery(new DeliveryItemDelivery(newValue));
                      dsi.setMax(-1);
