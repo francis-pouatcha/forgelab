@@ -79,19 +79,16 @@ public class ArticleLotListController implements EntityController
 		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
 		listView.bind(searchInput);
-
-		//		listView.getDataList().getSelectionModel().selectedItemProperty()
-		//		.addListener(new ChangeListener<ArticleLot>()
-		//				{
-		//			@Override
-		//			public void changed(
-		//					ObservableValue<? extends ArticleLot> property,
-		//					ArticleLot oldValue, ArticleLot newValue)
-		//			{
-		//				if (newValue != null)
-		//					selectionEvent.fire(newValue);
-		//			}
-		//				});
+				
+		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					selectionEvent.fire(selectedItem);
+			}
+		});
 
 		/*
 		 * listen to search button and fire search activated event.

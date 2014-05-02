@@ -49,6 +49,9 @@ public class ArticleLotListView
 
 	@FXML
 	private Button moveButton;
+	
+	@FXML
+	private Button updateLotButton;
 
 	@FXML
 	private Button detailsButton;
@@ -123,6 +126,11 @@ public class ArticleLotListView
 	public Button getCreateButton()
 	{
 		return createButton;
+	}
+	
+	public Button getUpdateLotButton()
+	{
+		return updateLotButton;
 	}
 
 	public Button getSearchButton()

@@ -89,17 +89,17 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      internalPic = viewBuilder.addTextField("ArticleLot_internalPic_description.title", "internalPic", resourceBundle);
-      mainPic = viewBuilder.addTextField("ArticleLot_mainPic_description.title", "mainPic", resourceBundle);
-      secondaryPic = viewBuilder.addTextField("ArticleLot_secondaryPic_description.title", "secondaryPic", resourceBundle);
-      articleName = viewBuilder.addTextField("ArticleLot_articleName_description.title", "articleName", resourceBundle);
-      stockQuantity = viewBuilder.addBigDecimalField("ArticleLot_stockQuantity_description.title", "stockQuantity", resourceBundle, NumberType.INTEGER, locale);
+      internalPic = viewBuilder.addTextField("ArticleLot_internalPic_description.title", "internalPic", resourceBundle,ViewModel.READ_ONLY);
+      mainPic = viewBuilder.addTextField("ArticleLot_mainPic_description.title", "mainPic", resourceBundle,ViewModel.READ_ONLY);
+      secondaryPic = viewBuilder.addTextField("ArticleLot_secondaryPic_description.title", "secondaryPic", resourceBundle,ViewModel.READ_ONLY);
+      articleName = viewBuilder.addTextField("ArticleLot_articleName_description.title", "articleName", resourceBundle,ViewModel.READ_ONLY);
+      stockQuantity = viewBuilder.addBigDecimalField("ArticleLot_stockQuantity_description.title", "stockQuantity", resourceBundle, NumberType.INTEGER, locale,ViewModel.READ_ONLY);
       salesPricePU = viewBuilder.addBigDecimalField("ArticleLot_salesPricePU_description.title", "salesPricePU", resourceBundle, NumberType.CURRENCY, locale);
       purchasePricePU = viewBuilder.addBigDecimalField("ArticleLot_purchasePricePU_description.title", "purchasePricePU", resourceBundle, NumberType.CURRENCY, locale);
       totalPurchasePrice = viewBuilder.addBigDecimalField("ArticleLot_totalPurchasePrice_description.title", "totalPurchasePrice", resourceBundle, NumberType.CURRENCY, locale);
       totalSalePrice = viewBuilder.addBigDecimalField("ArticleLot_totalSalePrice_description.title", "totalSalePrice", resourceBundle, NumberType.CURRENCY, locale);
       expirationDate = viewBuilder.addCalendarTextField("ArticleLot_expirationDate_description.title", "expirationDate", resourceBundle, "dd-MM-yyyy", locale);
-      creationDate = viewBuilder.addCalendarTextField("ArticleLot_creationDate_description.title", "creationDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      creationDate = viewBuilder.addCalendarTextField("ArticleLot_creationDate_description.title", "creationDate", resourceBundle, "dd-MM-yyyy HH:mm", locale,ViewModel.READ_ONLY);
       viewBuilder.addTitlePane("ArticleLot_agency_description.title", resourceBundle);
       viewBuilder.addSubForm("ArticleLot_agency_description.title", "agency", resourceBundle, articleLotAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ArticleLot_agency_description.title", "agency", resourceBundle, articleLotAgencySelection, ViewModel.READ_WRITE);
