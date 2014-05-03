@@ -5,8 +5,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleCreateView;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 
 @Singleton

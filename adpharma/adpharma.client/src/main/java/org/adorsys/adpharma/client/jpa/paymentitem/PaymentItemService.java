@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.paymentitem;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

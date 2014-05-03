@@ -794,5 +794,8 @@ public class SalesOrderDisplayController implements EntityController
 
 		return qtyToReturn;
 	}
+	public void reset() {
+	     PropertyReader.copy(new SalesOrder(), displayedEntity);
+	}
 
 }

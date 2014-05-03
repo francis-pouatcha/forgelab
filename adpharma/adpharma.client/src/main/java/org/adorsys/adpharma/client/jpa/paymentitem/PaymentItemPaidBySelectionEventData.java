@@ -1,8 +1,7 @@
 package org.adorsys.adpharma.client.jpa.paymentitem;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
-
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 
 public class PaymentItemPaidBySelectionEventData extends
       AssocSelectionEventData<Customer>

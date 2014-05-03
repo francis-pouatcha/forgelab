@@ -1,59 +1,30 @@
 package org.adorsys.adpharma.client.jpa.salesorderitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawerForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawerSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomerForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomerSelection;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsuranceForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsuranceSelection;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderVatForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderVatSelection;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgentForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgentSelection;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderAgencyForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderAgencySelection;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesOrderItemsForm;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesOrderItemsSelection;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsurance;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderVat;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgent;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderAgency;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeListCellFatory;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class SalesOrderItemSalesOrderForm extends AbstractToOneAssociation<SalesOrderItem, SalesOrder>
 {

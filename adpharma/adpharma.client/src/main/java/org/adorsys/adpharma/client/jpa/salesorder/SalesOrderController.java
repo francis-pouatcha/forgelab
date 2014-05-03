@@ -12,7 +12,6 @@ import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
@@ -21,7 +20,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SearchModelEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
 @Singleton
 public class SalesOrderController extends DomainComponentController
@@ -187,4 +185,13 @@ public class SalesOrderController extends DomainComponentController
 			 throw new IllegalStateException("Missing search and display component.");
 		 }
 	 }
+	 
+		@Override
+		public void reset() {
+			displayController.reset();
+			editController.reset();
+			searchController.reset();
+			listController.reset();
+		}
+	 
 }

@@ -9,13 +9,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -24,18 +24,6 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
-import java.util.Calendar;
-
-import javafx.beans.property.SimpleObjectProperty;
-
-import org.adorsys.adpharma.client.jpa.article.Article;
-
-import java.math.BigDecimal;
-
-import javafx.beans.property.SimpleBooleanProperty;
-
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 
 public class ProductDetailConfigListView
 {

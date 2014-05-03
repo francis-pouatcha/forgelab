@@ -206,4 +206,7 @@ public class WareHouseListController implements EntityController
       listView.getDataList().getSelectionModel().select(selectedEntity);
    }
 
+	public void reset() {
+		   listView.getDataList().getItems().clear();
+		}
 }

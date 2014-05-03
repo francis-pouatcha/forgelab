@@ -23,7 +23,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SearchModelEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 
 @Singleton
 public class DeliveryController extends DomainComponentController
@@ -209,5 +208,13 @@ public class DeliveryController extends DomainComponentController
 		{
 			throw new IllegalStateException("Missing search and display component.");
 		}
+	}
+
+	@Override
+	public void reset() {
+		displayController.reset();
+		editController.reset();
+		searchController.reset();
+		listController.reset();
 	}
 }

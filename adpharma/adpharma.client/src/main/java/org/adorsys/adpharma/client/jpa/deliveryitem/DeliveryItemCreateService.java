@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 
 @Singleton
 public class DeliveryItemCreateService extends Service<DeliveryItem>

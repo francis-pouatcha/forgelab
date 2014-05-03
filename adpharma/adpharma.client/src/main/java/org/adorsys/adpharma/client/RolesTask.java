@@ -38,6 +38,8 @@ public class RolesTask extends Service<LoginRoleNameAssocSearchResult>
 			loginRoleNameAssoc.setSource(login);
 			loginRoleNameAssoc.setSourceQualifier("roleNames");
 			loginRoleNameAssocSearchInput.setEntity(loginRoleNameAssoc);
+			loginRoleNameAssocSearchInput.getFieldNames().add("source");
+			loginRoleNameAssocSearchInput.getFieldNames().add("sourceQualifier");
             return loginRoleNameAssocService.findBy(loginRoleNameAssocSearchInput);
          }
       };

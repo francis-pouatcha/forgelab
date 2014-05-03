@@ -21,7 +21,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SearchModelEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
-import org.adorsys.adpharma.client.jpa.employer.Employer;
 
 @Singleton
 public class EmployerController extends DomainComponentController
@@ -187,4 +186,12 @@ public class EmployerController extends DomainComponentController
          throw new IllegalStateException("Missing search and display component.");
       }
    }
+
+	@Override
+	public void reset() {
+		displayController.reset();
+		editController.reset();
+		searchController.reset();
+		listController.reset();
+	}
 }

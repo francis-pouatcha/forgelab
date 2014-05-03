@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.currency.Currency;
+import org.adorsys.adpharma.client.jpa.currency.CurrencySearchInput;
+import org.adorsys.adpharma.client.jpa.currency.CurrencySearchResult;
+import org.adorsys.adpharma.client.jpa.currency.CurrencySearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.currency.Currency;
-import org.adorsys.adpharma.client.jpa.currency.CurrencySearchInput;
-import org.adorsys.adpharma.client.jpa.currency.CurrencySearchResult;
-import org.adorsys.adpharma.client.jpa.currency.CurrencySearchService;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 
 public abstract class DeliveryCurrencyController
 {

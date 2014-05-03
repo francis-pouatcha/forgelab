@@ -224,4 +224,7 @@ public class ArticleLotEditController implements EntityController
       editView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new ArticleLot(), displayedEntity);
+	}
 }

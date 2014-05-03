@@ -1,37 +1,24 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javafx.scene.control.TextField;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerCashierForm;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerCashierSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerClosedByForm;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerClosedBySelection;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgencyForm;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgencySelection;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
+import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class SalesOrderCashDrawerForm extends AbstractToOneAssociation<SalesOrder, CashDrawer>
 {

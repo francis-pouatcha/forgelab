@@ -1,29 +1,20 @@
 package org.adorsys.adpharma.client.jpa.inventoryitem;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryRecordingUser;
-import javafx.beans.property.SimpleObjectProperty;
 import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryAgency;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

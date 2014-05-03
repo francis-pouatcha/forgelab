@@ -224,4 +224,7 @@ public class ArticleEquivalenceEditController implements EntityController
       editView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new ArticleEquivalence(), displayedEntity);
+	}
 }

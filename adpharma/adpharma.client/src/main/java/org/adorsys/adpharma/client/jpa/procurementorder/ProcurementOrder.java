@@ -1,40 +1,40 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
-import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
-import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
 import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
+import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
+import org.adorsys.adpharma.client.jpa.procurementordertype.ProcurementOrderType;
+import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
-import javax.validation.constraints.NotNull;
-import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

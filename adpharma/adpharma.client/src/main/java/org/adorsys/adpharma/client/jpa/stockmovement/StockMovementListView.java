@@ -10,13 +10,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminal;
+import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminalConverter;
+import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementType;
+import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementTypeConverter;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -25,27 +30,6 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
-import java.util.Calendar;
-
-import javafx.beans.property.SimpleObjectProperty;
-
-import org.adorsys.adpharma.client.jpa.login.Login;
-
-import java.math.BigDecimal;
-
-import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementType;
-import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminal;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ArticleSection;
-
-import javafx.beans.property.SimpleStringProperty;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.stockmovement.StockMovement;
-import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementTypeConverter;
-import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminalConverter;
 
 public class StockMovementListView
 {

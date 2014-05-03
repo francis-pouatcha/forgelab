@@ -1,24 +1,17 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 
 public class DeliverySupplierForm extends AbstractToOneAssociation<Delivery, Supplier>
 {

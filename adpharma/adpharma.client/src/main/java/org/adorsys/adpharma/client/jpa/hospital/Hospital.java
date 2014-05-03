@@ -2,18 +2,16 @@ package org.adorsys.adpharma.client.jpa.hospital;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
-import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

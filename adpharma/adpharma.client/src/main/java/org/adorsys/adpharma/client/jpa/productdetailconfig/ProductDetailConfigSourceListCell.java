@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.productdetailconfig;
 
-import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 

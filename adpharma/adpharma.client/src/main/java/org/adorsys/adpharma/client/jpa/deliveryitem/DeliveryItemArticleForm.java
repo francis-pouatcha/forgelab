@@ -1,46 +1,22 @@
 package org.adorsys.adpharma.client.jpa.deliveryitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
-import org.adorsys.adpharma.client.jpa.article.ArticleSectionForm;
-import org.adorsys.adpharma.client.jpa.article.ArticleSectionSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.adpharma.client.jpa.article.ArticleFamilyForm;
-import org.adorsys.adpharma.client.jpa.article.ArticleFamilySelection;
-import org.adorsys.javaext.format.NumberType;
-import java.util.Locale;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMarginForm;
-import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMarginSelection;
-import org.adorsys.adpharma.client.jpa.article.ArticlePackagingModeForm;
-import org.adorsys.adpharma.client.jpa.article.ArticlePackagingModeSelection;
-import java.text.NumberFormat;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgencyForm;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgencySelection;
-import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfigForm;
-import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfigSelection;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.article.Article;
 
 public class DeliveryItemArticleForm extends AbstractToOneAssociation<DeliveryItem, Article>
 {

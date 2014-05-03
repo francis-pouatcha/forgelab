@@ -1,27 +1,28 @@
 package org.adorsys.adpharma.client.jpa.paymentitem;
 
-import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
+import java.math.BigDecimal;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.adorsys.javaext.format.NumberFormatType;
-import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.NumberFormatType;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javaext.list.ListField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

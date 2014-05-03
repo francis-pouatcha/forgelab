@@ -1,9 +1,7 @@
 package org.adorsys.adpharma.client.jpa.procurementorderitem;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 
 public class ProcurementOrderItemCreatingUserListCell extends AbstractToStringListCell<ProcurementOrderItemCreatingUser>
 {

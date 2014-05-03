@@ -13,19 +13,12 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.client.jpa.documenttype.DocumentTypeConverter;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.documenttype.DocumentType;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.documentarchive.DocumentArchive;
-import org.adorsys.adpharma.client.jpa.documenttype.DocumentTypeConverter;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class DocumentArchiveListView
 {

@@ -1,8 +1,5 @@
 package org.adorsys.adpharma.client.jpa.hospital;
 
-import java.util.Collections;
-import java.util.List;
-
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 

@@ -1,13 +1,9 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import javax.inject.Inject;
-
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCloseService;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryService;
+import javax.inject.Inject;
 
 public class SalesOrderCloseService extends Service<SalesOrder> {
 	@Inject

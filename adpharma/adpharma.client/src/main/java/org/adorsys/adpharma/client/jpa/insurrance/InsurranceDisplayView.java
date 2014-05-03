@@ -7,25 +7,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javafx.crud.extensions.validation.CalendarTextFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.CalendarTextFieldFoccusChangedListener;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.adorsys.javafx.crud.extensions.ViewType;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class InsurranceDisplayView

@@ -1,36 +1,28 @@
 package org.adorsys.adpharma.client.jpa.permissionname;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnum;
-import javafx.beans.property.SimpleObjectProperty;
-
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
-import org.adorsys.javafx.crud.extensions.validation.ComboBoxValidator;
-import org.adorsys.javafx.crud.extensions.validation.ComboBoxFoccusChangedListener;
+import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
+import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnum;
 import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnumConverter;
 import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnumListCellFatory;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.ComboBoxFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.ComboBoxValidator;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.view.AbstractForm;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class PermissionNameView extends AbstractForm<PermissionName>
 {

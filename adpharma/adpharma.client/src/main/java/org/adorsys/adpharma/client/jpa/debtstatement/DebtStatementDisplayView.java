@@ -7,26 +7,16 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.adorsys.javafx.crud.extensions.ViewType;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class DebtStatementDisplayView

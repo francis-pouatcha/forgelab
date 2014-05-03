@@ -13,21 +13,16 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.hospital.Hospital;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.hospital.Hospital;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class PrescriptionBookListView
 {

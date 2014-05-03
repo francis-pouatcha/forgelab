@@ -31,7 +31,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 
 @Singleton
 public class SupplierInvoiceEditController implements EntityController
@@ -223,5 +222,10 @@ public class SupplierInvoiceEditController implements EntityController
       this.displayedEntity = model;
       editView.bind(this.displayedEntity);
    }
+   
+	public void reset() {
+	     PropertyReader.copy(new SupplierInvoice(), displayedEntity);
+	}
+
 
 }

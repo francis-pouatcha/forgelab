@@ -1,9 +1,9 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
-import javax.inject.Inject;
-
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+
+import javax.inject.Inject;
 
 public class DeliveryCloseService extends Service<Delivery> {
 	@Inject

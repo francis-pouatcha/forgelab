@@ -408,4 +408,7 @@ public class DeliveryListController implements EntityController
 
 	}
 
+	public void reset() {
+		   listView.getDataList().getItems().clear();
+		}
 }

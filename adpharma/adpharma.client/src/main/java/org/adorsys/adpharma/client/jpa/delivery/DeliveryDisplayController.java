@@ -531,4 +531,7 @@ public class DeliveryDisplayController implements EntityController
 		deliveryItemSearchInput.setEntity(deliveryItem2);
 		return deliveryItemSearchInput;
 	}
+	public void reset() {
+	     PropertyReader.copy(new Delivery(), displayedEntity);
+	}
 }

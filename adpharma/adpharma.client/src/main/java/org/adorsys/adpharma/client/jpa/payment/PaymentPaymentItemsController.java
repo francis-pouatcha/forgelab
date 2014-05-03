@@ -14,23 +14,21 @@ import javafx.scene.control.TableView;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPayment;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemRemoveService;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchInput;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchResult;
+import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchInput;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemRemoveService;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchResult;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemSearchService;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPayment;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
 
 public abstract class PaymentPaymentItemsController
 {

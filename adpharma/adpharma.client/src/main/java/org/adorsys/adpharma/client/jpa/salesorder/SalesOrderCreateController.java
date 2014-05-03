@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
 @Singleton
 public class SalesOrderCreateController implements EntityController

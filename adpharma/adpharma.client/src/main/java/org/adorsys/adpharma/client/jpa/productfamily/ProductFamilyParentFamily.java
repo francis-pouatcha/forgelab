@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.client.jpa.productfamily;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

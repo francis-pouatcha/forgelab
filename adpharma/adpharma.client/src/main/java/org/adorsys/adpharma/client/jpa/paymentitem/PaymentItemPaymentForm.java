@@ -1,52 +1,29 @@
 package org.adorsys.adpharma.client.jpa.paymentitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.adpharma.client.jpa.payment.PaymentAgencyForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentAgencySelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashierForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashierSelection;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawerForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawerSelection;
-import org.adorsys.adpharma.client.jpa.payment.PaymentInvoicesForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentInvoicesSelection;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.adpharma.client.jpa.payment.PaymentPaidByForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentPaidBySelection;
-import org.adorsys.adpharma.client.jpa.payment.PaymentPaymentItemsForm;
-import org.adorsys.adpharma.client.jpa.payment.PaymentPaymentItemsSelection;
-import org.adorsys.adpharma.client.jpa.payment.PaymentAgency;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
-import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
-import org.adorsys.adpharma.client.jpa.payment.PaymentPaidBy;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
+import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeListCellFatory;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class PaymentItemPaymentForm extends AbstractToOneAssociation<PaymentItem, Payment>
 {

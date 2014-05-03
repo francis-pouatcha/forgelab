@@ -1,23 +1,17 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.Button;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
+import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 
 public class PrescriptionBookSalesOrderSelection extends AbstractSelection<PrescriptionBook, SalesOrder>
 {

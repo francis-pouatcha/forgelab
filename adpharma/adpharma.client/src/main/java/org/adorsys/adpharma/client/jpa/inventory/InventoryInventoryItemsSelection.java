@@ -13,19 +13,14 @@ import javafx.stage.Stage;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemView;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemView;
-import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 
 public class InventoryInventoryItemsSelection extends AbstractSelection<Inventory, InventoryItem>
 {

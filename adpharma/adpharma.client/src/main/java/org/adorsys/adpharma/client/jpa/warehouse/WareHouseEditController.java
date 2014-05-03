@@ -222,5 +222,10 @@ public class WareHouseEditController implements EntityController
       this.displayedEntity = model;
       editView.bind(this.displayedEntity);
    }
+   
+	public void reset() {
+	     PropertyReader.copy(new WareHouse(), displayedEntity);
+	}
+
 
 }

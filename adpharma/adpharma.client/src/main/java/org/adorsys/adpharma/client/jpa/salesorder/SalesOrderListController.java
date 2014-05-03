@@ -437,4 +437,8 @@ public class SalesOrderListController implements EntityController
 		return seachAttributes;
 
 	}
+	public void reset() {
+		   listView.getDataList().getItems().clear();
+		   listView.getDataListItem().getItems().clear();
+	}
 }

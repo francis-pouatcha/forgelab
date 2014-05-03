@@ -1,38 +1,21 @@
 package org.adorsys.adpharma.client.jpa.insurrance;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
 import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.adpharma.client.jpa.customer.CustomerEmployerForm;
-import org.adorsys.adpharma.client.jpa.customer.CustomerEmployerSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategoryForm;
-import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategorySelection;
+import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
+import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class InsurranceCustomerForm extends AbstractToOneAssociation<Insurrance, Customer>
 {

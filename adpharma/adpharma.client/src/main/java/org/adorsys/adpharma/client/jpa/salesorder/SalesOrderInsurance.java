@@ -1,26 +1,21 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javafx.beans.property.SimpleObjectProperty;
 
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
-import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
-
-import java.math.BigDecimal;
-
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

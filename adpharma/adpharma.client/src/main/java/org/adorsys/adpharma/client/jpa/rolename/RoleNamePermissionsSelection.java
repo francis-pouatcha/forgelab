@@ -15,19 +15,13 @@ import javafx.stage.Stage;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.ViewType;
+import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnumConverter;
+import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
-import org.adorsys.adpharma.client.jpa.permissionactionenum.PermissionActionEnumConverter;
 
 public class RoleNamePermissionsSelection extends AbstractSelection<RoleName, PermissionName>
 {

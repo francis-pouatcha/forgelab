@@ -1,11 +1,7 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
-import java.awt.Dialog;
-import java.util.ArrayList;
 import java.util.List;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,15 +12,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
-import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
-import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
