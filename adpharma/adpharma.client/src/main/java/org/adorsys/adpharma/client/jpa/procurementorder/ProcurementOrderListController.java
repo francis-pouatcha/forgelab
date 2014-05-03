@@ -61,7 +61,7 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<ProcurementOrder> searchRequestedEvent;
-	
+
 	@Inject
 	@EntityRemoveRequestEvent
 	private Event<ProcurementOrder> removeRequest;
@@ -112,6 +112,9 @@ public class ProcurementOrderListController implements EntityController
 					ProcurementOrder oldValue, ProcurementOrder newValue)
 			{
 				if (newValue != null){
+					listView.getRemoveButton().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+                   
 					ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
 					poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
 					poisi.getFieldNames().add("procurementOrder");
@@ -157,7 +160,7 @@ public class ProcurementOrderListController implements EntityController
 
 			}
 		});
-		
+
 		/*
 		 * listen to remove  button and fire remove select event.
 		 */

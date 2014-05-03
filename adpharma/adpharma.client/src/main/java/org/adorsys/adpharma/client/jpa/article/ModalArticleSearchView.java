@@ -63,12 +63,13 @@ public class ModalArticleSearchView extends ApplicationModal{
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
 //		dataList = viewBuilder.addTable("dataList");
-		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,350d);
 		viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,350d);
 		viewBuilder.addStringColumn(dataList, "manufacturer", "Article_manufacturer_description.title", resourceBundle,150d);
 		// Field not displayed in table
 		viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "pppu", "Article_pppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 	}
 

@@ -10,27 +10,27 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="processButton" mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">
+				<Button fx:id="processButton" mnemonicParsing="false" prefWidth="140.0" text="%Entity_Process.title">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Nouvelle Livraison">
+				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_New.title">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="updateButton" layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="Modifier la Liv.">
+				<Button fx:id="updateButton" layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_edit.title">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="removeButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Remove">
+				<Button fx:id="removeButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_remove.title">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button layoutX="58.0" layoutY="154.0" mnemonicParsing="false" prefWidth="140.0" text="Editer code barre">
+				<Button layoutX="58.0" layoutY="154.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_barecode.title">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>

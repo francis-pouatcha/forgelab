@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -154,6 +155,7 @@ public class DeliveryListView
 	public void buildsearchBar(){
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
 		deliveryNumber.setPromptText("delivery Number");
+		deliveryNumber.setTooltip(new Tooltip("Num Livraison"));
 		deliveryNumber.setPrefHeight(40d);
 
 		//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
@@ -163,6 +165,7 @@ public class DeliveryListView
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("All Suppliers");
+		supplier.setTooltip(new Tooltip("Fournisseurs"));
 		supplier.setPrefWidth(200d);
 		supplier.setPrefHeight(40d);
 
@@ -170,7 +173,8 @@ public class DeliveryListView
 		deliveryProcessingState =ViewBuilderUtils.newComboBox(null, "deliveryProcessingState", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		deliveryProcessingState.setPromptText("state");
 		deliveryProcessingState.setPrefHeight(40d);
-
+		deliveryProcessingState.setTooltip(new Tooltip("Status"));
+		
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(deliveryNumber,supplier,deliveryProcessingState,searchButton);

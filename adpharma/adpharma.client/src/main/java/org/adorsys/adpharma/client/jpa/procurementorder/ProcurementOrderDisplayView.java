@@ -296,6 +296,10 @@ public class ProcurementOrderDisplayView
 	public Button getOkButton(){
 		return okButton ;
 	}
+	
+	public Button getPrintButton(){
+		return printButton ;
+	}
 
 	public TextField getArticleName(){
 		return articleName ;

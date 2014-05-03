@@ -20,6 +20,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.DeliveryId;
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.events.ProcurementOrderId;
+import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
@@ -109,6 +114,10 @@ public class ProcurementOrderDisplayController implements EntityController
 
 	@Inject
 	private ProcurementOrderItem item ;
+	
+	@Inject
+	@PrintRequestedEvent
+	private Event<ProcurementOrderId> printRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -178,6 +187,17 @@ public class ProcurementOrderDisplayController implements EntityController
 					asi.getFieldNames().add("articleName");
 					modalArticleSearchEvent.fire(asi);
 				}
+			}
+		});
+		
+		/*
+		 * listen to Print button.
+		 */
+		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity==null || displayedEntity.getId()==null) return;
+				printRequestedEvent.fire(new ProcurementOrderId(displayedEntity.getId()));
 			}
 		});
 

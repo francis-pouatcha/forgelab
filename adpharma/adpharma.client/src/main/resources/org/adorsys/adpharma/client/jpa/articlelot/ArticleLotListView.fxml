@@ -5,26 +5,39 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0"
+	AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+	AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
+		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0"
+			prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-<ToolBar orientation="VERTICAL" prefHeight="135.0" prefWidth="152.0" VBox.vgrow="NEVER">
-<items>
-				<Button fx:id="moveButton" mnemonicParsing="false" prefWidth="140.0" text="Move to Stock">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="detailsButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Make Details">
-					<VBox.margin>
-						<Insets bottom="10.0" />
-					</VBox.margin>
-				</Button>
-				<Button fx:id="moveToWareHouseButton" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" prefWidth="140.0" text="Transfer to Store" />
-</items>
-</ToolBar>
-				<Pane fx:id="rigthpane" prefHeight="418.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+				<ToolBar orientation="VERTICAL" prefHeight="170.0"
+					prefWidth="152.0" VBox.vgrow="NEVER">
+					<items>
+						<Button fx:id="moveButton" mnemonicParsing="false"
+							prefWidth="140.0" text="Move to Stock">
+							<VBox.margin>
+								<Insets bottom="10.0" />
+							</VBox.margin>
+						</Button>
+						<Button fx:id="detailsButton" layoutX="58.0" layoutY="102.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Make Details">
+							<VBox.margin>
+								<Insets bottom="10.0" />
+							</VBox.margin>
+						</Button>
+						<Button fx:id="moveToWareHouseButton" layoutX="10.0"
+							layoutY="44.0" mnemonicParsing="false" prefWidth="140.0"
+							text="Transfer to Store" />
+						<Button fx:id="updateLotButton" layoutX="10.0" layoutY="90.0"
+							mnemonicParsing="false" prefHeight="26.0" prefWidth="140.0"
+							text="Modifier Lot" />
+					</items>
+				</ToolBar>
+				<Pane fx:id="rigthpane" prefHeight="396.0" prefWidth="160.0"
+					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="48.0" left="5.0" />
 					</VBox.margin>
@@ -42,13 +55,15 @@
 		<VBox>
 			<children>
 				<Separator prefWidth="200.0" />
-				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0"
+					layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 					<padding>
 						<Insets left="10.0" />
 					</padding>
 				</HBox>
 				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0"
+					BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>
 					<VBox.margin>
@@ -57,7 +72,8 @@
 				</TableView>
 				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
 					<children>
-						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+						<Pagination fx:id="pagination" maxPageIndicatorCount="5"
+							pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 					</children>
 				</HBox>
 			</children>

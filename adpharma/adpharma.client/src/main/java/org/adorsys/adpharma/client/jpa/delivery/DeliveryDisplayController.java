@@ -226,7 +226,30 @@ public class DeliveryDisplayController implements EntityController
 					entity.setArticleName(articleName);
 					ArticleSearchInput asi = new ArticleSearchInput();
 					asi.setEntity(entity);
+					asi.setMax(200);
 					asi.getFieldNames().add("articleName");
+					modalArticleSearchEvent.fire(asi);
+				}
+			}
+		});
+		
+		/*
+		 * listen to mainPic textfied.
+		 */
+		displayView.getMainPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					String mainPic = displayView.getMainPic().getText();
+					if(StringUtils.isBlank( mainPic)) return;
+					Article entity = new Article();
+					entity.setPic( mainPic);
+					ArticleSearchInput asi = new ArticleSearchInput();
+					asi.setEntity(entity);
+					asi.setMax(200);
+					asi.getFieldNames().add("pic");
 					modalArticleSearchEvent.fire(asi);
 				}
 			}
@@ -409,13 +432,6 @@ public class DeliveryDisplayController implements EntityController
 		});
 
 		displayView.getView().addValidators();
-
-		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getDeleteButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getEditButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getAddArticleButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getSaveButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getPrintButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	@Override

@@ -6,8 +6,9 @@ Author : Farrukh Obaid
 Description: MistSilver Skin for JavaFX
 
 */
-
-
+.root {
+	-fx-font-weight: 22px;
+}
 
 .domainComponentView {
     
