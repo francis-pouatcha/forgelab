@@ -7,24 +7,34 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
 import java.util.Locale;
+
 import jfxtras.scene.control.CalendarTextField;
+
 import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+
 import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
+
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.ViewType;
+
 import de.jensd.fx.fontawesome.AwesomeIcon;
+
 import javax.inject.Singleton;
+
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 
 @Singleton
@@ -41,6 +51,9 @@ public class ProductDetailConfigCreateView
 
    @Inject
    private ProductDetailConfigView view;
+   
+
+	
 
    @Inject
    @Bundle({ CrudKeys.class, ProductDetailConfig.class })

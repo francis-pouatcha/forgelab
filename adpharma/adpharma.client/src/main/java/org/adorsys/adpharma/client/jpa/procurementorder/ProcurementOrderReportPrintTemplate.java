@@ -236,7 +236,7 @@ public class ProcurementOrderReportPrintTemplate {
 		headerPane.getRowConstraints().add(mainRowHeight);
 		currentPageHeight+=rowHeiht;
 		Text invoiceDateLabel = new StandardText(
-				resourceBundle.getString("ProcurementOrderReportPrintTemplate_deliveryDate.title")
+				resourceBundle.getString("ProcurementOrderReportPrintTemplate_createdDate.title")
 				+ " " + calendarFormat.format(procurementOrder.getCreatedDate(), "dd-MM-yyyy HH:mm", locale));
 		headerPane.add(invoiceDateLabel, 1, row, 1, 1);
 		GridPane.setHalignment(invoiceDateLabel, HPos.LEFT);
