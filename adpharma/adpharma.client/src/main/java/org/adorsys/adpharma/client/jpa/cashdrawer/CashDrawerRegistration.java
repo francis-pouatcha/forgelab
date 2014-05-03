@@ -84,6 +84,7 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    
    @PostConstruct
    public void postConstruct(){
+	   super.postConstruct();
 	   cashDrawerReportMenuItem = new MenuItem(resourceBundle.getString("CashDrawerReportPrintTemplate_menuItem.title"));
 	   cashDrawerReportMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 		@Override
