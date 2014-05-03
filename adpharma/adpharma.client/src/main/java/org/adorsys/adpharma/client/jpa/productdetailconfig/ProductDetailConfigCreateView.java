@@ -6,26 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
-<<<<<<< HEAD
-import java.util.Locale;
-
-import jfxtras.scene.control.CalendarTextField;
-
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
-
-import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
-
-=======
->>>>>>> branch 'master' of https://github.com/francis-pouatcha/forgelab.git
-import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -33,18 +13,10 @@ import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-<<<<<<< HEAD
-import org.adorsys.javafx.crud.extensions.ViewType;
-=======
->>>>>>> branch 'master' of https://github.com/francis-pouatcha/forgelab.git
-
+//github.com/francis-pouatcha/forgelab.git
+import javax.annotation.PostConstruct;
+//github.com/francis-pouatcha/forgelab.git
 import de.jensd.fx.fontawesome.AwesomeIcon;
-<<<<<<< HEAD
-
-import javax.inject.Singleton;
-
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 @Singleton
 public class ProductDetailConfigCreateView
 {

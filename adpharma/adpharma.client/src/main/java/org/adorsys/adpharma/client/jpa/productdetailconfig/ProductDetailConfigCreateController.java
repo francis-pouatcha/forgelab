@@ -24,7 +24,6 @@ import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
-import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -32,9 +31,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-<<<<<<< HEAD
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 @Singleton
 public class ProductDetailConfigCreateController implements EntityController
 {
