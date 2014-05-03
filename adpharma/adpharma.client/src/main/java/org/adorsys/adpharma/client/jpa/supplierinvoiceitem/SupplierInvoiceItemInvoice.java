@@ -1,34 +1,22 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoiceitem;
 
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
+import java.math.BigDecimal;
+import java.util.Calendar;
+
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceSupplier;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceCreatingUser;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceAgency;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceDelivery;
-import javafx.beans.property.SimpleBooleanProperty;
-import java.math.BigDecimal;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
+import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

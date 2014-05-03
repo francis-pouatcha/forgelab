@@ -10,9 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
-import org.adorsys.adpharma.client.jpa.gender.Gender;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;

@@ -186,4 +186,12 @@ public class WareHouseController extends DomainComponentController
          throw new IllegalStateException("Missing search and display component.");
       }
    }
+
+	@Override
+	public void reset() {
+		displayController.reset();
+		editController.reset();
+		searchController.reset();
+		listController.reset();
+	}
 }

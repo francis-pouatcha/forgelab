@@ -1,8 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
-
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 
 public class CustomerInvoiceInsuranceSelectionEventData extends
       AssocSelectionEventData<Insurrance>

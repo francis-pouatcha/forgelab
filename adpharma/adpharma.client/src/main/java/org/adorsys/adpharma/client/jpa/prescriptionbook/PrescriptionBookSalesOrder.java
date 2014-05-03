@@ -1,40 +1,22 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawer;
+import java.math.BigDecimal;
+
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsurance;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderVat;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgent;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderAgency;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import javafx.beans.property.SimpleBooleanProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

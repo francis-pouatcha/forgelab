@@ -1,49 +1,22 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoice;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCreatingUserForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCreatingUserSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplierForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplierSelection;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryVatForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryVatSelection;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCurrencyForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryCurrencySelection;
-import javafx.scene.control.ComboBox;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReceivingAgencyForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReceivingAgencySelection;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryDeliveryItemsForm;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryDeliveryItemsSelection;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryVat;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReceivingAgency;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
+import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class SupplierInvoiceDeliveryForm extends AbstractToOneAssociation<SupplierInvoice, Delivery>
 {

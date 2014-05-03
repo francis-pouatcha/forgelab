@@ -1,26 +1,26 @@
 package org.adorsys.adpharma.client.jpa.documentstore;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.documenttype.DocumentType;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
 import java.util.Calendar;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.documenttype.DocumentType;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.list.ListField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

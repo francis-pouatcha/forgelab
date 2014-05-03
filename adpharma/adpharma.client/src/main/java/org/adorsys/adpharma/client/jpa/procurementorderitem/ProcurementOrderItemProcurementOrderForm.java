@@ -1,50 +1,25 @@
 package org.adorsys.adpharma.client.jpa.procurementorderitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderCreatingUserForm;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderCreatingUserSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javafx.scene.control.ComboBox;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderSupplierForm;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderSupplierSelection;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderAgencyForm;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderAgencySelection;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderVatForm;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderVatSelection;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderProcurementOrderItemsForm;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderProcurementOrderItemsSelection;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderAgency;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderVat;
+import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
+import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class ProcurementOrderItemProcurementOrderForm extends AbstractToOneAssociation<ProcurementOrderItem, ProcurementOrder>
 {

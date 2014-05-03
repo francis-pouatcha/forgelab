@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;

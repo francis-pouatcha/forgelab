@@ -29,4 +29,5 @@ public class SalesOrderAgencyDisplayController extends SalesOrderAgencyControlle
       disableButton(displayView.getView().getSalesOrderAgencySelection());
       bind(displayView.getView().getSalesOrderAgencySelection(), displayView.getView().getSalesOrderAgencyForm());
    }
+
 }

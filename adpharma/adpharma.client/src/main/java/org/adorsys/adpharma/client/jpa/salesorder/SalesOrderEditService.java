@@ -4,7 +4,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 
 public class SalesOrderEditService extends Service<SalesOrder>
 {

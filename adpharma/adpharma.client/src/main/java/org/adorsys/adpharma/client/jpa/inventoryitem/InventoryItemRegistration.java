@@ -8,9 +8,7 @@ import javax.inject.Singleton;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.DomainComponentRegistration;
-import org.adorsys.javafx.crud.extensions.cdiextention.Eager;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 
 /**
  * Mark this component eager to enable registration of this component with the component list.

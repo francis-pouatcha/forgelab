@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;

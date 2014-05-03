@@ -1,30 +1,30 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.hospital.Hospital;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import java.util.Calendar;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.hospital.Hospital;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-import javax.validation.constraints.NotNull;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

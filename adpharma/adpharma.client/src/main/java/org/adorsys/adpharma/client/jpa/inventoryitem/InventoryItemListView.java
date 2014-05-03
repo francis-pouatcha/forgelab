@@ -13,21 +13,13 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import java.math.BigDecimal;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleLongProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import java.util.Calendar;
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.inventory.Inventory;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class InventoryItemListView
 {

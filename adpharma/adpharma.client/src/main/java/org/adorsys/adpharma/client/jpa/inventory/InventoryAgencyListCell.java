@@ -1,9 +1,7 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 
 public class InventoryAgencyListCell extends AbstractToStringListCell<InventoryAgency>
 {

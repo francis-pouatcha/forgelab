@@ -1,19 +1,19 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
-import javafx.beans.property.SimpleStringProperty;
 import java.math.BigDecimal;
+
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.currency.Currency;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.currency.Currency;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

@@ -2,12 +2,12 @@ package org.adorsys.adpharma.client.jpa.payment;
 
 import java.util.List;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 
 public class PaymentCustomerService extends Service<Payment> {
 

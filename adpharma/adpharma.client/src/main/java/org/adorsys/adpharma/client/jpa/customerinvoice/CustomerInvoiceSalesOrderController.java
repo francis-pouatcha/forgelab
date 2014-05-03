@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchService;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 
 public abstract class CustomerInvoiceSalesOrderController
 {

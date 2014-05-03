@@ -1,50 +1,29 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoiceitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceSupplierForm;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceSupplierSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceCreatingUserForm;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceCreatingUserSelection;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceAgencyForm;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceAgencySelection;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceDeliveryForm;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceDeliverySelection;
-import javafx.scene.control.CheckBox;
 import javafx.util.converter.BooleanStringConverter;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceInvoiceItemsForm;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceInvoiceItemsSelection;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceSupplier;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceCreatingUser;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceAgency;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoiceDelivery;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
+import jfxtras.scene.control.CalendarTextField;
 
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeListCellFatory;
+import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class SupplierInvoiceItemInvoiceForm extends AbstractToOneAssociation<SupplierInvoiceItem, SupplierInvoice>
 {

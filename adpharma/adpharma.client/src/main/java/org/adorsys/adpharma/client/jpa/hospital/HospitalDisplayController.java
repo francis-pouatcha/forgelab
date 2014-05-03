@@ -29,7 +29,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.adpharma.client.jpa.hospital.Hospital;
 
 @Singleton
 public class HospitalDisplayController implements EntityController
@@ -161,4 +160,7 @@ public class HospitalDisplayController implements EntityController
       displayView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new Hospital(), displayedEntity);
+	}
 }

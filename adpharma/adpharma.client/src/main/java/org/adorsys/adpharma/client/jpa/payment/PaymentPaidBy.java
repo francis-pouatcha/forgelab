@@ -1,27 +1,20 @@
 package org.adorsys.adpharma.client.jpa.payment;
 
-import org.adorsys.adpharma.client.jpa.gender.Gender;
+import java.util.Calendar;
+
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import javafx.beans.property.SimpleBooleanProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.employer.Employer;
-import org.adorsys.adpharma.client.jpa.customer.CustomerEmployer;
-import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
-import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
-import org.adorsys.adpharma.client.jpa.customertype.CustomerType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.customer.Customer;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

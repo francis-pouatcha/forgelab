@@ -13,25 +13,14 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import java.util.Calendar;
-import java.math.BigDecimal;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
-import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class DebtStatementListView
 {

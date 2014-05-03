@@ -32,7 +32,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 
 @Singleton
 public class SalesMarginSearchController implements EntityController
@@ -198,4 +197,9 @@ public class SalesMarginSearchController implements EntityController
    {
       searchService.setSearchInputs(searchResult.getSearchInput()).start();
    }
+   
+	public void reset() {
+	     PropertyReader.copy(new SalesMargin(), model);
+	}
+
 }

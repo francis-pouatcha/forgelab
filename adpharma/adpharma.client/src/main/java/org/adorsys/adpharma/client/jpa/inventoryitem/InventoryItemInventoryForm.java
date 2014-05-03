@@ -1,44 +1,25 @@
 package org.adorsys.adpharma.client.jpa.inventoryitem;
 
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import javafx.scene.control.TextField;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryRecordingUserForm;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryRecordingUserSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.javaext.format.NumberType;
-import java.util.Locale;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.ComboBox;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextArea;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryAgencyForm;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryAgencySelection;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryInventoryItemsForm;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryInventoryItemsSelection;
-import org.adorsys.adpharma.client.jpa.inventory.InventoryAgency;
+import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
+import org.adorsys.adpharma.client.jpa.inventory.Inventory;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class InventoryItemInventoryForm extends AbstractToOneAssociation<InventoryItem, Inventory>
 {

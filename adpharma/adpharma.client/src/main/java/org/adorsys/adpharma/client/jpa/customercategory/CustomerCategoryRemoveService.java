@@ -4,7 +4,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
-import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 
 public class CustomerCategoryRemoveService extends Service<CustomerCategory>
 {

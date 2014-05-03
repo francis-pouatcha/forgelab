@@ -309,4 +309,8 @@ public class ArticleListController implements EntityController
 
 	}
 
+
+	public void reset() {
+		listView.getDataList().getItems().clear();
+	}
 }

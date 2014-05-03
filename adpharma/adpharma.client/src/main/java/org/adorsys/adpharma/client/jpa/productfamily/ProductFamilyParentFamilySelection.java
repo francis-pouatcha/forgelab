@@ -1,17 +1,13 @@
 package org.adorsys.adpharma.client.jpa.productfamily;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -20,12 +16,8 @@ import javafx.stage.Stage;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;

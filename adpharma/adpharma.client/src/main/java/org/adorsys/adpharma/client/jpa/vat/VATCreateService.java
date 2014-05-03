@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
 
 @Singleton
 public class VATCreateService extends Service<VAT>

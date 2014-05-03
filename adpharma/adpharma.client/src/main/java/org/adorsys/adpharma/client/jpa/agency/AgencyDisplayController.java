@@ -161,4 +161,8 @@ public class AgencyDisplayController implements EntityController
       displayView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new Agency(), displayedEntity);
+	}
+
 }

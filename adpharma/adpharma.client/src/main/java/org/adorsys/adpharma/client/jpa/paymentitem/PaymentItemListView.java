@@ -13,20 +13,14 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
-import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class PaymentItemListView
 {

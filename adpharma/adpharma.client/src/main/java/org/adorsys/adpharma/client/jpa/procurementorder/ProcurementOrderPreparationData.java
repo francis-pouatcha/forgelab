@@ -2,16 +2,13 @@ package org.adorsys.adpharma.client.jpa.procurementorder;
 
 import java.util.Calendar;
 
-import javax.validation.constraints.NotNull;
-
 import javafx.beans.property.SimpleObjectProperty;
+
+import javax.validation.constraints.NotNull;
 
 import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;

@@ -19,6 +19,14 @@ import javafx.scene.control.TableView;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssoc;
+import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocSearchInput;
+import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocSearchResult;
+import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocService;
+import org.adorsys.adpharma.client.jpa.rolename.RoleName;
+import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchInput;
+import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchResult;
+import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -27,17 +35,6 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
-import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchInput;
-import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchResult;
-import org.adorsys.adpharma.client.jpa.rolename.RoleNameSearchService;
-
-import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssoc;
-import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocSearchInput;
-import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocSearchResult;
-import org.adorsys.adpharma.client.jpa.loginrolenameassoc.LoginRoleNameAssocService;
-import org.adorsys.adpharma.client.jpa.login.Login;
 
 public abstract class LoginRoleNamesController
 {
