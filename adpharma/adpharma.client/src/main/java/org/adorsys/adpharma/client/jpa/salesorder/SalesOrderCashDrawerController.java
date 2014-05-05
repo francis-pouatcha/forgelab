@@ -19,6 +19,7 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,7 +107,8 @@ public abstract class SalesOrderCashDrawerController
                SalesOrderCashDrawer newValue)
          {
             if (sourceEntity != null)
-               form.update(newValue);
+//               form.update(newValue);
+            	PropertyReader.copy(newValue, sourceEntity.getCashDrawer());
             //                sourceEntity.setCashDrawer(newValue);
          }
       });

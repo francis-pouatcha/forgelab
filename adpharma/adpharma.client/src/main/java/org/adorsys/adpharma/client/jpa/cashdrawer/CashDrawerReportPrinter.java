@@ -87,9 +87,7 @@ public class CashDrawerReportPrinter {
 	    			printDialog.show();
 	    		} else {
 		    		worker.addItems(reportData.getCashDrawerSearchResult().getResultList());
-		    		int start = reportData.getCashDrawerSearchResult().getSearchInput().getStart();
-		    		int currentSize = reportData.getCashDrawerSearchResult().getResultList().size();
-		    		reportData.getCashDrawerSearchResult().getSearchInput().setStart(start+currentSize);
+		    		reportData.setStart(reportData.getStart() + reportData.getMax());
 		    		dataService.setWorker(worker).seReportData(reportData).start();
 	    		}
 			}

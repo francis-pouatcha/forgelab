@@ -66,8 +66,8 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	@EntitySelectionEvent
-	private Event<SalesOrder> precessSalesOrderRequestedEvent;
-
+	private Event<SalesOrder> processSalesOrderRequestedEvent;
+	
 	@Inject
 	private CustomerSearchService customerSearchService;
 	@Inject
@@ -75,23 +75,25 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	@EntityCreateRequestedEvent
-	private Event<SalesOrder> salesOrderRequestEvent;
+	private Event<SalesOrder> salesOrderCreateRequestEvent;
 
 	@Inject
-	private SalesOrderSearchService salesOrederSearchService;
+	private SalesOrderSearchService salesOrderSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler salesOrderSearchServiceCallFailedEventHandler;
 
 	@Inject
-	private SalesOrderItemSearchService salesOrederItemSearchService;
+	private SalesOrderItemSearchService salesOrderItemSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler salesOrderItemSearchServiceCallFailedEventHandler;
 
 	@Inject
 	private SalesOrderRemoveService salesOrderRemoveService ;
-
-	@Inject
-	private ServiceCallFailedEventHandler salesOrederSearchServiceCallFailedEventHandler;
 	
 	@Inject
 	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
+	private ServiceCallFailedEventHandler salesOrderRemoveServiceCallFailedEventHandler;
 
 	@Inject
 	@EntityListPageIndexChangedEvent
@@ -146,12 +148,13 @@ public class SalesOrderListController implements EntityController
 					sosi.setMax(-1);
 					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
 					sosi.getFieldNames().add("salesOrder");
-					salesOrederItemSearchService.setSearchInputs(sosi).start();
+					salesOrderItemSearchService.setSearchInputs(sosi).start();
 				}
 
 			}
 		});
-		salesOrederItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		
+		salesOrderItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -163,10 +166,8 @@ public class SalesOrderListController implements EntityController
 				listView.getDataListItem().getItems().setAll(resultList);
 			}
 		});
-		salesOrederItemSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
-
-		customerSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
+		salesOrderItemSearchService.setOnFailed(salesOrderItemSearchServiceCallFailedEventHandler);
+		salesOrderItemSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().nativeTitleBar().showException(exception);
@@ -183,15 +184,7 @@ public class SalesOrderListController implements EntityController
 			}
 		});
 		
-		salesOrederSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
-			@Override
-			protected void showError(Throwable exception) {
-				Dialogs.create().nativeTitleBar().showException(exception);
-
-			}
-		});
-		
 		listView.getComputeButton().setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -263,7 +256,7 @@ public class SalesOrderListController implements EntityController
 			public void handle(ActionEvent event) {
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem== null) return ;
-				precessSalesOrderRequestedEvent.fire(selectedItem);
+				processSalesOrderRequestedEvent.fire(selectedItem);
 			}
 		});
 
@@ -277,7 +270,7 @@ public class SalesOrderListController implements EntityController
 			{						
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(27);
-				salesOrederSearchService.setSearchInputs(searchInput).start();
+				salesOrderSearchService.setSearchInputs(searchInput).start();
 
 			}
 
@@ -295,12 +288,13 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		salesOrderRemoveService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		salesOrderRemoveService.setOnFailed(salesOrderRemoveServiceCallFailedEventHandler);
+		salesOrderRemoveServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
-			public void handle(WorkerStateEvent event) {
-				SalesOrderRemoveService s = (SalesOrderRemoveService) event.getSource();
-				s.reset();				
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
 			}
 		});
 
@@ -325,8 +319,16 @@ public class SalesOrderListController implements EntityController
 			}
 		});
 		customerSearchService.setOnFailed(customerSearchServiceCallFailedEventHandler);
+		customerSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
-		salesOrederSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+
+		salesOrderSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -338,15 +340,23 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+		salesOrderSearchService.setOnFailed(salesOrderSearchServiceCallFailedEventHandler);
+		salesOrderSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
-		salesOrederSearchService.setOnFailed(salesOrederSearchServiceCallFailedEventHandler);
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+		
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
 			public void handle(ActionEvent e)
 			{
-				salesOrderRequestEvent.fire(new SalesOrder());
+				salesOrderCreateRequestEvent.fire(new SalesOrder());
 			}
 				});
 

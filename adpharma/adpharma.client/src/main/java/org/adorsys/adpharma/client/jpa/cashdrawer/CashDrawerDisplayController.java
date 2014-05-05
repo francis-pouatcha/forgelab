@@ -394,7 +394,7 @@ public class CashDrawerDisplayController implements EntityController
 		return ViewType.DISPLAY;
 	}
 
-	public BigDecimal getCashDrawerInitialAmount(){
+	private BigDecimal getCashDrawerInitialAmount(){
 		String showTextInput = Dialogs.create().message(resourceBundle.getString("CashDrawer_initialAmount_description.title")).showTextInput("0");
 		BigDecimal initialAmount = BigDecimal.ZERO ;
 		try {
@@ -771,12 +771,11 @@ public class CashDrawerDisplayController implements EntityController
 		paymentCustomerInvoiceAssoc.setSource(payment);
 		paymentCustomerInvoiceAssoc.setTarget(proccessingInvoice);
 		payment.addToInvoices(paymentCustomerInvoiceAssoc);
-		int size3 = payment.getInvoices().size();
 
 		ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().getItems();
-		int size = list.size();
+
 		ArrayList<PaymentItem> arrayList = new ArrayList<PaymentItem>(list);
-		int size2 = arrayList.size();
+
 		BigDecimal receivedAmount2 = BigDecimal.ZERO;
 		BigDecimal amount2 = BigDecimal.ZERO;
 		for (PaymentItem paymentItem : arrayList) {
@@ -793,9 +792,11 @@ public class CashDrawerDisplayController implements EntityController
 			paymentItem.setPaymentMode(PaymentMode.CASH);
 			paymentItem.setReceivedAmount(BigDecimal.ZERO);
 			paymentItem.setDocumentNumber("");
+			PaymentItemPaidBy paymentItemPaidBy = new PaymentItemPaidBy();
+			PropertyReader.copy(paymentCustomerInvoiceAssoc.getTarget().getCustomer(), paymentItemPaidBy);
+			paymentItem.setPaidBy(paymentItemPaidBy);
 			displayView.getPaymentItemDataList().getItems().add(paymentItem);
 		}
-		int size4 = payment.getInvoices().size();
 		paymentCreateService.setModel(payment).start();
 
 	}

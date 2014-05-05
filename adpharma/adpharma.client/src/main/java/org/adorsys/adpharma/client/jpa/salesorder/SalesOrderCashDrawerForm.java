@@ -17,6 +17,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
@@ -90,21 +91,21 @@ public class SalesOrderCashDrawerForm extends AbstractToOneAssociation<SalesOrde
       closingDate.calendarProperty().bindBidirectional(model.getCashDrawer().closingDateProperty());
    }
 
-   public void update(SalesOrderCashDrawer data)
-   {
-      cashDrawerNumber.textProperty().set(data.cashDrawerNumberProperty().get());
-      opened.textProperty().set(new BooleanStringConverter().toString(data.openedProperty().get()));
-      initialAmount.numberProperty().set(data.initialAmountProperty().get());
-      totalCashIn.numberProperty().set(data.totalCashInProperty().get());
-      totalCashOut.numberProperty().set(data.totalCashOutProperty().get());
-      totalCash.numberProperty().set(data.totalCashProperty().get());
-      totalCheck.numberProperty().set(data.totalCheckProperty().get());
-      totalCreditCard.numberProperty().set(data.totalCreditCardProperty().get());
-      totalCompanyVoucher.numberProperty().set(data.totalCompanyVoucherProperty().get());
-      totalClientVoucher.numberProperty().set(data.totalClientVoucherProperty().get());
-      openingDate.calendarProperty().set(data.openingDateProperty().get());
-      closingDate.calendarProperty().set(data.closingDateProperty().get());
-   }
+//   public void update(SalesOrderCashDrawer data)
+//   {
+//      cashDrawerNumber.textProperty().set(data.cashDrawerNumberProperty().get());
+//      opened.textProperty().set(new BooleanStringConverter().toString(data.openedProperty().get()));
+//      initialAmount.numberProperty().set(data.initialAmountProperty().get());
+//      totalCashIn.numberProperty().set(data.totalCashInProperty().get());
+//      totalCashOut.numberProperty().set(data.totalCashOutProperty().get());
+//      totalCash.numberProperty().set(data.totalCashProperty().get());
+//      totalCheck.numberProperty().set(data.totalCheckProperty().get());
+//      totalCreditCard.numberProperty().set(data.totalCreditCardProperty().get());
+//      totalCompanyVoucher.numberProperty().set(data.totalCompanyVoucherProperty().get());
+//      totalClientVoucher.numberProperty().set(data.totalClientVoucherProperty().get());
+//      openingDate.calendarProperty().set(data.openingDateProperty().get());
+//      closingDate.calendarProperty().set(data.closingDateProperty().get());
+//   }
 
    public TextField getCashDrawerNumber()
    {
