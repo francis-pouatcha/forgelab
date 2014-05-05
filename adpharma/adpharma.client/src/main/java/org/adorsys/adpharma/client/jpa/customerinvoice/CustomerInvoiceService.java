@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -7,6 +9,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.utils.ChartData;
+import org.adorsys.adpharma.client.utils.ChartDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -34,7 +38,7 @@ public class CustomerInvoiceService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public CustomerInvoice deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(CustomerInvoice.class);
 	}
@@ -46,6 +50,16 @@ public class CustomerInvoiceService {
 		Entity<CustomerInvoice> ent = Entity.entity(entity, media);
 		return target().path("" + entity.getId()).request(media)
 				.put(ent, CustomerInvoice.class);
+	}
+
+	//	@GET
+	//	@Path("/findSalesStatistics")
+	//	@Produces({ "application/json", "application/xml" })
+	public List<ChartData> findSalesStatistics(ChartDataSearchInput entity)
+	{
+		Entity<ChartDataSearchInput> ent = Entity.entity(entity, media);
+		return target().path("findSalesStatistics").request(media)
+				.post(ent, List.class);
 	}
 
 	// @GET

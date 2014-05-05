@@ -28,6 +28,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceChartDataService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
@@ -35,6 +36,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
 import org.adorsys.adpharma.client.utils.ChartData;
+import org.adorsys.adpharma.client.utils.ChartDataSearchInput;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -86,6 +88,9 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private ServiceCallFailedEventHandler salesOrederSearchServiceCallFailedEventHandler;
+	
+	@Inject
+	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
 
 	@Inject
@@ -114,6 +119,9 @@ public class SalesOrderListController implements EntityController
 	
 	private SalesOrderId selectedSalesOrderId;
 	
+	@Inject
+	private CustomerInvoiceChartDataService customerInvoiceChartDataService ;
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -121,6 +129,8 @@ public class SalesOrderListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 		searchInput.setMax(100);
+		
+		listView.getYearList().getItems().setAll(ChartDataSearchInput.getYearList());
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 
 			@Override
@@ -163,6 +173,16 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+
+		chartDataSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+		
 		salesOrederSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -176,12 +196,28 @@ public class SalesOrderListController implements EntityController
 			
 			@Override
 			public void handle(ActionEvent event) {
-			List<ChartData> testData = ChartData.getTestData();
-			listView.getPieChart().getData().setAll(ChartData.toPieChartData(testData));
-			listView.getPieChartData().getItems().setAll(testData);
+				Integer selectedItem = listView.getYearList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					ChartDataSearchInput chartDataSearchInput = new ChartDataSearchInput();
+					chartDataSearchInput.setYears(selectedItem);
+					customerInvoiceChartDataService.setModel(chartDataSearchInput).start();
+				}
 				
 			}
 		});
+		customerInvoiceChartDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceChartDataService s = (CustomerInvoiceChartDataService) event.getSource();
+				List<ChartData> result = s.getValue();
+				event.consume();
+				s.reset();
+				listView.getPieChart().getData().setAll(ChartData.toPieChartData(result));
+				listView.getPieChartData().getItems().setAll(result);
+			}
+		});
+		customerInvoiceChartDataService.setOnFailed(chartDataSearchServiceCallFailedEventHandler);
 
 		/*
 		 * listen to remove button .
@@ -202,8 +238,6 @@ public class SalesOrderListController implements EntityController
 				}
 
 			}
-
-
 				});
 
 		

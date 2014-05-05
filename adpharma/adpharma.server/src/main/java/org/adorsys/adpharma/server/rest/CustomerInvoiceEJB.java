@@ -1,6 +1,8 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.time.Month;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
@@ -31,6 +35,8 @@ import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.ChartData;
+import org.adorsys.adpharma.server.utils.ChartDataSearchInput;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
@@ -84,6 +90,31 @@ public class CustomerInvoiceEJB {
 	public CustomerInvoice create(CustomerInvoice entity) {
 		return repository.save(attach(entity));
 	}
+	
+
+	@Inject
+	private EntityManager em ;
+	
+	public List<ChartData> findSalesStatistics(ChartDataSearchInput dataSearchInput){
+		List<ChartData> chartDataSearchResult = new ArrayList<ChartData>();
+		Query query = em.createNativeQuery("SELECT SUM(c.netToPay) AS NET , MONTH(c.creationDate) AS SALES_MONTH FROM CustomerInvoice AS c WHERE YEAR(c.creationDate) = :creationDate "
+				+ " AND (c.cashed = :cashed OR c.invoiceType = :invoiceType) GROUP BY SALES_MONTH ") ;
+		query.setParameter("creationDate", dataSearchInput.getYears());
+		query.setParameter("cashed", Boolean.TRUE);
+		query.setParameter("invoiceType", InvoiceType.VOUCHER);
+		List<Object[]> resultList = query.getResultList();
+		for (Object[] objects : resultList) {
+			BigDecimal netTopay = (BigDecimal) objects[0];
+			int month =  (int) objects[1];
+			ChartData chartData = new ChartData(month+"", netTopay);
+			chartDataSearchResult.add(chartData);
+		}
+		
+		
+		return chartDataSearchResult ;
+		
+	}
+
 
 	public CustomerInvoice deleteById(Long id) {
 		CustomerInvoice entity = repository.findBy(id);

@@ -22,10 +22,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.server.utils.ChartDataSearchInput;
 
 /**
  * 
@@ -98,6 +100,17 @@ public class CustomerInvoiceEndpoint
          return Response.status(Status.NOT_FOUND).build();
       return Response.ok(detach(found)).build();
    }
+   
+   @POST
+   @Path("/findSalesStatistics")
+   @Produces({ "application/json", "application/xml" })
+   public Response findSalesStatistics(ChartDataSearchInput chartDataSearchInput)
+   {
+      return Response.ok(ejb.findSalesStatistics(chartDataSearchInput)).build();
+   }
+   
+   
+   
 
    @GET
    @Produces({ "application/json", "application/xml" })

@@ -1,18 +1,16 @@
-package org.adorsys.adpharma.client.utils;
+package org.adorsys.adpharma.server.utils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.PieChart.Data;
 
 public class ChartData {
 
 	private String name ;
 
 	private BigDecimal value;
+	
+	
+
+	
 
 	public String getName() {
 		return name;
@@ -38,14 +36,6 @@ public class ChartData {
 		super();
 		this.name = name;
 		this.value = value;
-	}
-	
-	public static List<PieChart.Data> toPieChartData(List<ChartData>  chartDatas){
-		List<Data> arrayList = new ArrayList<PieChart.Data>();
-		for (ChartData chartData : chartDatas) {
-			arrayList.add(new PieChart.Data(chartData.getName(),chartData.getValue().doubleValue()));
-		}
-		return arrayList;
 	}
 	
 	

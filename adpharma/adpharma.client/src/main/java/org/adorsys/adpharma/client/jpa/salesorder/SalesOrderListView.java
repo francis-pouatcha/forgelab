@@ -66,7 +66,7 @@ public class SalesOrderListView
 	private ComboBox<Customer> chartClientList;
 	
 	@FXML 
-	private ComboBox<BigInteger> yearList;
+	private ComboBox<Integer> yearList;
 
 	@FXML
 	private Button processButton;
@@ -273,7 +273,7 @@ public class SalesOrderListView
 		return chartClientList ;
 	}
 	
-	public ComboBox<BigInteger> getYearList(){
+	public ComboBox<Integer> getYearList(){
 		return yearList ;
 	}
 
