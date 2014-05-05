@@ -394,7 +394,7 @@ public class CashDrawerDisplayController implements EntityController
 		return ViewType.DISPLAY;
 	}
 
-	public BigDecimal getCashDrawerInitialAmount(){
+	private BigDecimal getCashDrawerInitialAmount(){
 		String showTextInput = Dialogs.create().message(resourceBundle.getString("CashDrawer_initialAmount_description.title")).showTextInput("0");
 		BigDecimal initialAmount = BigDecimal.ZERO ;
 		try {

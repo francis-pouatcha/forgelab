@@ -194,4 +194,40 @@ public class CashDrawerEJB
 	public Long countByClosingDateBetween(Date startClosingDate, Date endClosingDate){
 		return repository.countByClosingDateBetween(startClosingDate, endClosingDate);
 	}
+
+	/**
+	 * Listens to payments and updates the cash drawer.
+	 * 
+	 * @param payment
+	 */
+	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
+		CashDrawer cashDrawer = payment.getCashDrawer();
+		cashDrawer = findById(cashDrawer.getId());
+		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+		for (PaymentItem paymentItem : paymentItems) {
+			BigDecimal amount = paymentItem.getAmount();
+			switch (paymentItem.getPaymentMode()) {
+			case CASH:
+				cashDrawer.setTotalCash(cashDrawer.getTotalCash().add(amount));
+				cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
+				break;
+			case CREDIT_CARD:
+				cashDrawer.setTotalCreditCard(cashDrawer.getTotalCreditCard().add(amount));
+				break;
+			case VOUCHER:
+				paymentItem.getPaidBy();
+				cashDrawer.setTotalClientVoucher(cashDrawer.getTotalClientVoucher().add(amount));
+				break;
+			case COMP_VOUCHER:
+				cashDrawer.setTotalCompanyVoucher(cashDrawer.getTotalCompanyVoucher().add(amount));
+				break;
+			case CHECK:
+				cashDrawer.setTotalCheck(cashDrawer.getTotalCheck().add(amount));
+				break;
+			default:
+				break;
+			}
+		}
+		update(cashDrawer);
+	}
 }

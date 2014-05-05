@@ -103,7 +103,7 @@ public class PrescriptionBook implements Serializable
    @PrePersist
 	public void prePersist(){
 		recordingDate = new Date();
-		prescriptionNumber = SequenceGenerator.PRESCRIPTIONBOOK_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+		prescriptionNumber = SequenceGenerator.getSequence(SequenceGenerator.PRESCRIPTIONBOOK_SEQUENCE_PREFIXE);
 	}
 
    public Long getId()

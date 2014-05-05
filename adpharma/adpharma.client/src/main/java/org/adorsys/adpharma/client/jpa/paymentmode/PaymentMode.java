@@ -9,5 +9,6 @@ public enum PaymentMode
    CASH, @Description("PaymentMode_CHECK_description")
    CHECK, @Description("PaymentMode_CREDIT_CARD_description")
    CREDIT_CARD, @Description("PaymentMode_VOUCHER_description")
-   VOUCHER
+   VOUCHER, @Description("PaymentMode_COMP_VOUCHER_description")
+   COMP_VOUCHER
 }
