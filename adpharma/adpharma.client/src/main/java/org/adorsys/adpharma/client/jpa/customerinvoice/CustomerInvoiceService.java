@@ -9,8 +9,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import org.adorsys.adpharma.client.utils.ChartData;
-import org.adorsys.adpharma.client.utils.ChartDataSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStatisticsDataSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -55,11 +55,12 @@ public class CustomerInvoiceService {
 	//	@GET
 	//	@Path("/findSalesStatistics")
 	//	@Produces({ "application/json", "application/xml" })
-	public List<ChartData> findSalesStatistics(ChartDataSearchInput entity)
+	@SuppressWarnings("unchecked")
+	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStattisticsDataSearchInput entity)
 	{
-		Entity<ChartDataSearchInput> ent = Entity.entity(entity, media);
+		Entity<SalesStattisticsDataSearchInput> ent = Entity.entity(entity, media);
 		return target().path("findSalesStatistics").request(media)
-				.post(ent, List.class);
+				.post(ent, SalesStatisticsDataSearchResult.class);
 	}
 
 	// @GET

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -12,6 +13,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.PieChart.Data;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -36,7 +39,6 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
 import org.adorsys.adpharma.client.utils.ChartData;
-import org.adorsys.adpharma.client.utils.ChartDataSearchInput;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -67,7 +69,7 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@EntitySelectionEvent
 	private Event<SalesOrder> processSalesOrderRequestedEvent;
-	
+
 	@Inject
 	private CustomerSearchService customerSearchService;
 	@Inject
@@ -89,7 +91,7 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private SalesOrderRemoveService salesOrderRemoveService ;
-	
+
 	@Inject
 	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
@@ -104,10 +106,10 @@ public class SalesOrderListController implements EntityController
 
 	@Inject 
 	SalesOrderSearchInput searchInput;
-	
+
 	@Inject
 	CustomerSearchInput customerSearchInput ;
-	
+
 
 	@Inject
 	@Bundle({ CrudKeys.class})
@@ -119,12 +121,12 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
-	
+
 	private SalesOrderId selectedSalesOrderId;
-	
+
 	@Inject
 	private CustomerInvoiceChartDataService customerInvoiceChartDataService ;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -132,8 +134,8 @@ public class SalesOrderListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 		searchInput.setMax(100);
-		
-		listView.getYearList().getItems().setAll(ChartDataSearchInput.getYearList());
+
+		listView.getYearList().getItems().setAll(SalesStattisticsDataSearchInput.getYearList());
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 
 			@Override
@@ -154,7 +156,7 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		
+
 		salesOrderItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -184,19 +186,21 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		
+
 
 		listView.getComputeButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
-				Integer selectedItem = listView.getYearList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null){
-					ChartDataSearchInput chartDataSearchInput = new ChartDataSearchInput();
-					chartDataSearchInput.setYears(selectedItem);
+				Integer selectedYears = listView.getYearList().getSelectionModel().getSelectedItem();
+				Customer selectedCustomer = listView.getChartClientList().getSelectionModel().getSelectedItem();
+				if(selectedYears!=null){
+					SalesStattisticsDataSearchInput chartDataSearchInput = new SalesStattisticsDataSearchInput();
+					chartDataSearchInput.setYears(selectedYears);
+					chartDataSearchInput.setCustomer(selectedCustomer);
 					customerInvoiceChartDataService.setModel(chartDataSearchInput).start();
 				}
-				
+
 			}
 		});
 		customerInvoiceChartDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -204,11 +208,13 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(WorkerStateEvent event) {
 				CustomerInvoiceChartDataService s = (CustomerInvoiceChartDataService) event.getSource();
-				List<ChartData> result = s.getValue();
+				SalesStatisticsDataSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
-				listView.getPieChart().getData().setAll(ChartData.toPieChartData(result));
-				listView.getPieChartData().getItems().setAll(result);
+				Iterator<ChartData> iterator = result.getChartData().iterator();
+				List<Data> pieChartData = ChartData.toPieChartData( result.getChartData());
+				listView.getPieChart().getData().setAll(pieChartData);
+				listView.getPieChartData().getItems().setAll( result.getChartData());
 			}
 		});
 		customerInvoiceChartDataService.setOnFailed(chartDataSearchServiceCallFailedEventHandler);
@@ -234,7 +240,7 @@ public class SalesOrderListController implements EntityController
 			}
 				});
 
-		
+
 		listView.getCustomer().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
@@ -350,7 +356,7 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		
+
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -382,7 +388,7 @@ public class SalesOrderListController implements EntityController
 
 			}
 				});
-		
+
 		listView.getPrintInvoiceButtonn().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -483,7 +489,7 @@ public class SalesOrderListController implements EntityController
 
 	}
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		   listView.getDataListItem().getItems().clear();
+		listView.getDataList().getItems().clear();
+		listView.getDataListItem().getItems().clear();
 	}
 }

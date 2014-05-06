@@ -2,7 +2,6 @@ package org.adorsys.adpharma.client.utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javafx.scene.chart.PieChart;
@@ -35,7 +34,6 @@ public class ChartData {
 	}
 
 	public ChartData(String name, BigDecimal value) {
-		super();
 		this.name = name;
 		this.value = value;
 	}

@@ -8,35 +8,36 @@ import javafx.concurrent.Task;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStatisticsDataSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInput;
 import org.adorsys.adpharma.client.utils.ChartData;
-import org.adorsys.adpharma.client.utils.ChartDataSearchInput;
 
 @Singleton
-public class CustomerInvoiceChartDataService extends Service<List<ChartData>>
+public class CustomerInvoiceChartDataService extends Service<SalesStatisticsDataSearchResult>
 {
 
-   private ChartDataSearchInput model;
+   private SalesStattisticsDataSearchInput model;
 
    @Inject
    private CustomerInvoiceService remoteService;
 
-   public CustomerInvoiceChartDataService setModel(ChartDataSearchInput model)
+   public CustomerInvoiceChartDataService setModel(SalesStattisticsDataSearchInput model)
    {
       this.model = model;
       return this;
    }
 
    @Override
-   protected Task<List<ChartData>> createTask()
+   protected Task<SalesStatisticsDataSearchResult> createTask()
    {
-      return new Task<List<ChartData>>()
+      return new Task<SalesStatisticsDataSearchResult>()
       {
          @Override
-         protected List<ChartData> call() throws Exception
+         protected SalesStatisticsDataSearchResult call() throws Exception
          {
             if (model == null)
                return null;
-            return remoteService.findSalesStatistics (model);
+            return remoteService.findSalesStatistics(model);
          }
       };
    }
