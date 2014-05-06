@@ -7,8 +7,7 @@ Description: MistSilver Skin for JavaFX
 
 */
 .root{
-     -fx-font: 14px Vivaldi;
-     -fx-base: rgb(250,249,241);
+   -fx-font: 14px Vivaldi;
 }
 
 .domainComponentView {

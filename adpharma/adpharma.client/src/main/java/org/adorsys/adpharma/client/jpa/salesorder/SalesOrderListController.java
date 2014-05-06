@@ -93,6 +93,7 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
+	@Inject
 	private ServiceCallFailedEventHandler salesOrderRemoveServiceCallFailedEventHandler;
 
 	@Inject
