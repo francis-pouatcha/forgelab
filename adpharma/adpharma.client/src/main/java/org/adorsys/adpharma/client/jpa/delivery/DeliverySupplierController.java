@@ -127,7 +127,9 @@ public abstract class DeliverySupplierController
 
    public void load()
    {
-      searchService.setSearchInputs(new SupplierSearchInput()).start();
+	   SupplierSearchInput supplierSearchInput = new SupplierSearchInput();
+	   supplierSearchInput.setMax(-1);
+      searchService.setSearchInputs(supplierSearchInput).start();
    }
 
 }

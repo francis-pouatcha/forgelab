@@ -26,12 +26,15 @@ import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
@@ -87,6 +90,17 @@ public class DeliveryDisplayView
 
 	@FXML
 	private ComboBox<DocumentProcessingState> state;
+	
+	@Inject
+	@Bundle(DocumentProcessingState.class)
+	private ResourceBundle deliveryProcessingStateBundle;
+	
+	@Inject
+	private DocumentProcessingStateConverter deliveryProcessingStateConverter;
+
+	@Inject
+	private DocumentProcessingStateListCellFatory deliveryProcessingStateListCellFatory;
+
 
 	private BigDecimalField amountBeforeTax;
 
@@ -170,6 +184,7 @@ public class DeliveryDisplayView
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		ComboBoxInitializer.initialize(state, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 		buildDeliveryItemBar();
 		buildAmountPane();

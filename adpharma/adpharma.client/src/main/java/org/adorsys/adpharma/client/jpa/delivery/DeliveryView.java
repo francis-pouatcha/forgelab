@@ -28,6 +28,7 @@ import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChang
 import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class DeliveryView extends AbstractForm<Delivery>
@@ -115,9 +116,11 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierSelection, ViewModel.READ_WRITE);
 		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
 		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(),ViewModel.READ_ONLY);
+		viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencySelection, ViewModel.READ_WRITE);
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.CURRENCY, locale);
 		amountVat = viewBuilder.addBigDecimalField("Delivery_amountVat_description.title", "amountVat", resourceBundle, NumberType.CURRENCY, locale);
 		amountDiscount = viewBuilder.addBigDecimalField("Delivery_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
@@ -135,17 +138,15 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//      viewBuilder.addSubForm("Delivery_creatingUser_description.title", "creatingUser", resourceBundle, deliveryCreatingUserSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_supplier_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_vat_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_currency_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencyForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencySelection, ViewModel.READ_WRITE);
 		//         viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencyForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencySelection, ViewModel.READ_WRITE);
 
-		//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
+				ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 		gridRows = viewBuilder.toRows();
 	}

@@ -52,7 +52,7 @@
 	<center>
 		<TabPane>
 			<tabs>
-				<Tab closable="false" text="Delivery List">
+				<Tab closable="false" text="LIste des Livraisons">
 					<content>
 						<VBox spacing="2.0">
 							<children>
@@ -92,7 +92,7 @@
 						</VBox>
 					</content>
 				</Tab>
-				<Tab closable="false" text="Delivery Statistics / Supplier">
+				<Tab closable="false" text="Statistiques des livraisons">
 					<content>
 						<VBox prefHeight="200.0" prefWidth="100.0">
 							<children>
@@ -101,13 +101,13 @@
 										<Insets left="5.0" />
 									</VBox.margin>
 									<children>
-										<ComboBox prefHeight="36.0" prefWidth="282.0" promptText="Supplier">
+										<ComboBox prefHeight="36.0" prefWidth="282.0" promptText="Fournisseurs">
 											<HBox.margin>
 												<Insets left="5.0" />
 											</HBox.margin>
 										</ComboBox>
-										<ComboBox prefHeight="37.0" prefWidth="124.0" promptText="Years" />
-										<Button mnemonicParsing="false" prefHeight="36.0" prefWidth="106.0" text="Sarch" />
+										<ComboBox prefHeight="37.0" prefWidth="124.0" promptText="Annees" />
+										<Button mnemonicParsing="false" prefHeight="36.0" prefWidth="106.0" text="Rechercher" />
 									</children>
 								</HBox>
 								<Separator prefWidth="200.0" />

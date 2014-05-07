@@ -145,7 +145,7 @@
 										</GridPane>
 										<VBox prefHeight="155.0" prefWidth="402.0" VBox.vgrow="NEVER">
 											<children>
-												<GridPane fx:id="amountPane" prefWidth="250.0">
+												<GridPane fx:id="amountPane" prefWidth="300.0">
 													<columnConstraints>
 														<ColumnConstraints hgrow="SOMETIMES" maxWidth="127.0" minWidth="10.0" percentWidth="50.0" prefWidth="115.0" />
 														<ColumnConstraints hgrow="SOMETIMES" maxWidth="152.0" minWidth="10.0" percentWidth="50.0" prefWidth="152.0" />

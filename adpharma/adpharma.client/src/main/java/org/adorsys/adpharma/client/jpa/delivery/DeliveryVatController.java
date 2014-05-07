@@ -127,7 +127,9 @@ public abstract class DeliveryVatController
 
    public void load()
    {
-      searchService.setSearchInputs(new VATSearchInput()).start();
+	   VATSearchInput vatSearchInput = new VATSearchInput();
+	   vatSearchInput.setMax(-1);
+      searchService.setSearchInputs(vatSearchInput).start();
    }
 
 }

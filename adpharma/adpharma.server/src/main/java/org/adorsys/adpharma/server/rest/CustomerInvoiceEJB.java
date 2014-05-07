@@ -97,19 +97,19 @@ public class CustomerInvoiceEJB {
 
 	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput dataSearchInput){
 		List<ChartData> chartDataSearchResult = new ArrayList<ChartData>();
-		String query ="SELECT SUM(c.netToPay) AS NET , MONTHNAME(c.creationDate) AS SALES_MONTH FROM CustomerInvoice AS c WHERE YEAR(c.creationDate) = :creationDate " ;
+		String query ="SELECT SUM(c.netToPay) , MONTHNAME(c.creationDate) FROM CustomerInvoice AS c WHERE YEAR(c.creationDate) = :creationDate " ;
 		if(dataSearchInput.getCustomer()!=null)
 			query = query+" AND c.customer  = :customer " ;
-		query = query+" AND (c.cashed = :cashed OR c.invoiceType = :invoiceType) GROUP BY SALES_MONTH " ;
-		Query nativeQuery = em.createNativeQuery(query) ;
+		query = query+" AND (c.cashed = :cashed OR c.invoiceType = :invoiceType) GROUP BY MONTHNAME(c.creationDate) " ;
+		Query querys = em.createQuery(query) ;
 
 		if(dataSearchInput.getCustomer()!=null)
-			nativeQuery.setParameter("customer", dataSearchInput.getCustomer());
+			querys.setParameter("customer", dataSearchInput.getCustomer());
 		
-		nativeQuery.setParameter("creationDate", dataSearchInput.getYears());
-		nativeQuery.setParameter("cashed", Boolean.TRUE);
-		nativeQuery.setParameter("invoiceType", InvoiceType.VOUCHER);
-		List<Object[]> resultList = nativeQuery.getResultList();
+		querys.setParameter("creationDate", dataSearchInput.getYears());
+		querys.setParameter("cashed", Boolean.TRUE);
+		querys.setParameter("invoiceType", InvoiceType.VOUCHER);
+		List<Object[]> resultList = querys.getResultList();
 		for (Object[] objects : resultList) {
 			BigDecimal netTopay = (BigDecimal) objects[0];
 			String month =  (String) objects[1];

@@ -151,6 +151,7 @@ public class ArticleView extends AbstractForm<Article>
    public void addValidators()
    {
       articleName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Article>(textInputControlValidator, articleName, Article.class, "articleName", resourceBundle));
+      pic.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Article>(textInputControlValidator, pic, Article.class, "pic", resourceBundle));
       // no active validator
       // no active validator
    }
@@ -158,6 +159,7 @@ public class ArticleView extends AbstractForm<Article>
    public Set<ConstraintViolation<Article>> validate(Article model)
    {
       Set<ConstraintViolation<Article>> violations = new HashSet<ConstraintViolation<Article>>();
+      violations.addAll(textInputControlValidator.validate(pic, Article.class, "pic", resourceBundle));
       violations.addAll(textInputControlValidator.validate(articleName, Article.class, "articleName", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(articleSectionSelection.getSection(), model.getSection(), Article.class, "section", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(articleAgencySelection.getAgency(), model.getAgency(), Article.class, "agency", resourceBundle));

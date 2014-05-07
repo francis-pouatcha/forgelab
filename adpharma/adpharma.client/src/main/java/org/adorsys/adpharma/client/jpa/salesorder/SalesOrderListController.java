@@ -197,7 +197,8 @@ public class SalesOrderListController implements EntityController
 				if(selectedYears!=null){
 					SalesStattisticsDataSearchInput chartDataSearchInput = new SalesStattisticsDataSearchInput();
 					chartDataSearchInput.setYears(selectedYears);
-					chartDataSearchInput.setCustomer(selectedCustomer);
+					if(selectedCustomer!=null&&selectedCustomer.getId()!=null)
+						chartDataSearchInput.setCustomer(selectedCustomer);
 					customerInvoiceChartDataService.setModel(chartDataSearchInput).start();
 				}
 
@@ -319,6 +320,7 @@ public class SalesOrderListController implements EntityController
 					soc.add(new SalesOrderCustomer(customer));
 				}
 				soc.add(0, null);
+				resultList.add(new Customer());
 				listView.getCustomer().getItems().setAll(soc);
 				listView.getCustomer().getSelectionModel().select(0);
 				listView.getChartClientList().getItems().setAll(resultList);
