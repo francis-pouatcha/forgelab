@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.deliveryitem;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +27,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -357,7 +359,9 @@ public class DeliveryItem implements Cloneable
 	{
 		if (expirationDate == null)
 		{
-			expirationDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
+			Calendar instance = Calendar.getInstance();
+			instance.setTime(DateUtils.addYears(new Date(), 10));
+			expirationDate = new SimpleObjectProperty<Calendar>(instance);
 		}
 		return expirationDate;
 	}

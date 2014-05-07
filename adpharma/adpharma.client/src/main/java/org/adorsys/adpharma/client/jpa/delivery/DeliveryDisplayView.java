@@ -32,6 +32,7 @@ import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.control.TextFieldFormatter;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
@@ -90,11 +91,11 @@ public class DeliveryDisplayView
 
 	@FXML
 	private ComboBox<DocumentProcessingState> state;
-	
+
 	@Inject
 	@Bundle(DocumentProcessingState.class)
 	private ResourceBundle deliveryProcessingStateBundle;
-	
+
 	@Inject
 	private DocumentProcessingStateConverter deliveryProcessingStateConverter;
 
@@ -133,6 +134,8 @@ public class DeliveryDisplayView
 	private BigDecimalField freeQuantity;
 
 	private BigDecimalField purchasePricePU;
+
+	private BigDecimalField mulRate ;;
 
 	private BigDecimalField salesPricePU;
 
@@ -180,7 +183,7 @@ public class DeliveryDisplayView
 		viewBuilder.addStringColumn(dataList, "articleName", "DeliveryItem_articleName_description.title", resourceBundle,300d);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
-		//		viewBuilder.addDateColumn(dataList, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addDateColumn(dataList, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -229,7 +232,7 @@ public class DeliveryDisplayView
 		addButton = ViewBuilderUtils.newButton( "Delivery_New.title", "addButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
 		addButton.setPrefWidth(150d);
 		addButton.setAlignment(Pos.CENTER_LEFT);
-		
+
 		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
 		printButton.setPrefWidth(150d);
 		printButton.setAlignment(Pos.CENTER_LEFT);
@@ -250,10 +253,12 @@ public class DeliveryDisplayView
 		freeQuantity = ViewBuilderUtils.newBigDecimalField( "freeQuantity", NumberType.INTEGER,locale,false);
 		freeQuantity.setTooltip(new Tooltip("Unite gratuite"));
 		freeQuantity.setPrefWidth(75d);
+		freeQuantity.setAlignment(Pos.CENTER);
 
 		stockQuantity = ViewBuilderUtils.newBigDecimalField( "stockQuantity", NumberType.INTEGER, locale,false);
 		stockQuantity.setTooltip(new Tooltip("Quantite livree"));
 		stockQuantity.setPrefWidth(75d);
+		stockQuantity.setAlignment(Pos.CENTER);
 
 		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
 		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
@@ -263,16 +268,23 @@ public class DeliveryDisplayView
 		purchasePricePU.setTooltip(new Tooltip("Prix d achat unitaire"));
 		purchasePricePU.setPrefWidth(110d);
 
+		mulRate = ViewBuilderUtils.newBigDecimalField( "mulRate", NumberType.INTEGER, locale,false);
+		mulRate.setTooltip(new Tooltip("Taux Multiplicateur"));
+		mulRate.setPrefWidth(50d);
+		mulRate.setAlignment(Pos.CENTER);
+
 		expirationDate = ViewBuilderUtils.newTextField( "expirationDate", false);
-		expirationDate.setPromptText("MMYY");
+		expirationDate.setPromptText("MM-YY");
 		expirationDate.setTooltip(new Tooltip("expiration Date"));
 		expirationDate.setPrefWidth(60d);
+		expirationDate.setAlignment(Pos.CENTER);
+		TextFieldFormatter.addMask(expirationDate, "  /  ");
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
 		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente")
-		,new Label("Prix d\'achat"),new Label("Exp Date"));
-		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,expirationDate,okButton);
+		,new Label("Prix d\'achat"),new Label("T.Mul"),new Label("Exp Date"));
+		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,mulRate,expirationDate,okButton);
 		//		deliveryItemBar.getChildren().addAll(
 		//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
 
@@ -317,7 +329,7 @@ public class DeliveryDisplayView
 		deliveryDate.calendarProperty().bindBidirectional(model.deliveryDateProperty());
 		taxAmount.numberProperty().bindBidirectional(model.amountVatProperty());
 		dataList.itemsProperty().bindBidirectional(model.deliveryItemsProperty());
-		
+
 		deliveryItemBar.visibleProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		editDeliveryMenu.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
@@ -429,6 +441,10 @@ public class DeliveryDisplayView
 
 	public BigDecimalField getSalesPricePU() {
 		return salesPricePU;
+	}
+
+	public BigDecimalField getMulRate() {
+		return mulRate;
 	}
 
 	public TextField getExpirationDate() {
