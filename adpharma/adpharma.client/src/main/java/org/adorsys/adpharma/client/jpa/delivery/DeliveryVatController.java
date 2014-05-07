@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
+import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
+import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
-import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 
 public abstract class DeliveryVatController
 {
@@ -129,7 +127,9 @@ public abstract class DeliveryVatController
 
    public void load()
    {
-      searchService.setSearchInputs(new VATSearchInput()).start();
+	   VATSearchInput vatSearchInput = new VATSearchInput();
+	   vatSearchInput.setMax(-1);
+      searchService.setSearchInputs(vatSearchInput).start();
    }
 
 }

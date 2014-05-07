@@ -1,9 +1,7 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 
 public class PrescriptionBookAgencyListCell extends AbstractToStringListCell<PrescriptionBookAgency>
 {

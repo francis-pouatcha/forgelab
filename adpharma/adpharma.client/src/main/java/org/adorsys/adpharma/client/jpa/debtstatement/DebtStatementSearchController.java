@@ -32,7 +32,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
 
 @Singleton
 public class DebtStatementSearchController implements EntityController
@@ -198,4 +197,9 @@ public class DebtStatementSearchController implements EntityController
    {
       searchService.setSearchInputs(searchResult.getSearchInput()).start();
    }
+   
+	public void reset() {
+	     PropertyReader.copy(new DebtStatement(), model);
+	}
+
 }

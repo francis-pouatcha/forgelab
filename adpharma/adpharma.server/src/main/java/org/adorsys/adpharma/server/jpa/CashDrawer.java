@@ -1,46 +1,31 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
-
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.PrePersist;
-import javax.persistence.Version;
-
-import java.lang.Override;
-
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-import org.adorsys.adpharma.server.jpa.Login;
-
-import javax.persistence.ManyToOne;
-
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-
-import javax.validation.constraints.NotNull;
-
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
-
+import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
-
-import java.math.BigDecimal;
-
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("CashDrawer_description")
@@ -139,7 +124,7 @@ public class CashDrawer implements Serializable
 		initialAmount=initialAmount !=null ?initialAmount : BigDecimal.ZERO;
 		totalCashIn = BigDecimal.ZERO;
 		totalCashOut = BigDecimal.ZERO;
-		totalCash= BigDecimal.ZERO;
+		totalCash= initialAmount;// initial amount shall be added to the total cash right away.
 		totalCheck= BigDecimal.ZERO;
 		totalCreditCard= BigDecimal.ZERO;
 		totalCompanyVoucher= BigDecimal.ZERO;
@@ -149,7 +134,7 @@ public class CashDrawer implements Serializable
 	public void prePersist(){
 		openingDate = new Date();
 		closingDate=null;
-		cashDrawerNumber = SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+		cashDrawerNumber = SequenceGenerator.getSequence(SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE);
 	}
 	
 	public Boolean isOpen(){

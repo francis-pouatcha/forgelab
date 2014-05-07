@@ -1,48 +1,31 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
-
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.PrePersist;
-import javax.persistence.Version;
-
-import java.lang.Override;
-
-import org.adorsys.javaext.description.Description;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-
-import javax.persistence.ManyToOne;
-
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-
 import java.math.BigDecimal;
-
-import org.adorsys.javaext.format.NumberFormatType;
-import org.adorsys.javaext.format.NumberType;
-
-import javax.validation.constraints.NotNull;
-
-import org.adorsys.adpharma.server.jpa.Customer;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
-
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.format.DateFormatPattern;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.adorsys.javaext.format.NumberFormatType;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("CustomerVoucher_description")
@@ -120,7 +103,7 @@ public class CustomerVoucher implements Serializable
    @PrePersist
 	public void prePersist(){
 		modifiedDate = new Date();
-		voucherNumber = SequenceGenerator.CUSTOMER_VOUCHER_SEQUENCE_PREFIXE +RandomStringUtils.randomNumeric(6);
+		voucherNumber = SequenceGenerator.getSequence(SequenceGenerator.CUSTOMER_VOUCHER_SEQUENCE_PREFIXE);
 	}
 
    public Long getId()

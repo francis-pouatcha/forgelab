@@ -6,12 +6,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

@@ -159,6 +159,7 @@ public class Article implements Cloneable
       return pic;
    }
 
+   @NotNull(message = "Article_pic_NotNull_validation")
    public String getPic()
    {
       return picProperty().get();

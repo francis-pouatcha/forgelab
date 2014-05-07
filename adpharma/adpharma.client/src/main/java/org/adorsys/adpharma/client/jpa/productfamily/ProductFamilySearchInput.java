@@ -6,7 +6,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 
 /**
  * Holds an entity and corresponding field descriptions for a search by example
@@ -33,7 +32,7 @@ public class ProductFamilySearchInput
    /**
     * The max number of records to return.
     */
-   private int max = 5;
+   private int max = -1;
 
    /**
     * The field names to be included in the search.

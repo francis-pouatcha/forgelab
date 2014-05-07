@@ -4,8 +4,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 
 public class InsurranceCreateService extends Service<Insurrance>
 {

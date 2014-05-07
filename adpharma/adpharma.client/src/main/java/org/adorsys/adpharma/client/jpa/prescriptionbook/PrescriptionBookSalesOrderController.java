@@ -11,7 +11,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderLoadService;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
@@ -22,10 +23,6 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderLoadService;
-import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 
 public abstract class PrescriptionBookSalesOrderController
 {

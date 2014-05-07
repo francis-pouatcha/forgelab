@@ -1,22 +1,15 @@
 package org.adorsys.adpharma.client.jpa.productfamily;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
 import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class ProductFamilyParentFamilyForm extends AbstractToOneAssociation<ProductFamily, ProductFamily>

@@ -1,41 +1,22 @@
 package org.adorsys.adpharma.client.jpa.stockmovement;
 
-import java.util.List;
 import java.util.ResourceBundle;
 
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
-import javafx.util.converter.BooleanStringConverter;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import javafx.scene.control.ComboBox;
-import org.adorsys.adpharma.client.jpa.login.LoginRoleNamesForm;
-import org.adorsys.adpharma.client.jpa.login.LoginRoleNamesSelection;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.adpharma.client.jpa.login.LoginAgencyForm;
-import org.adorsys.adpharma.client.jpa.login.LoginAgencySelection;
+import javafx.scene.control.TextField;
 
-import javafx.beans.property.ObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.gender.Gender;
 import org.adorsys.adpharma.client.jpa.gender.GenderConverter;
 import org.adorsys.adpharma.client.jpa.gender.GenderListCellFatory;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.AbstractToOneAssociation;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class StockMovementCreatingUserForm extends AbstractToOneAssociation<StockMovement, Login>
 {

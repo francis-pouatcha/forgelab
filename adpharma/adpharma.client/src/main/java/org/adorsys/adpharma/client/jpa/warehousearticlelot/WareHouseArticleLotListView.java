@@ -16,8 +16,6 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;

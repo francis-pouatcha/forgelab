@@ -160,4 +160,7 @@ public class WareHouseDisplayController implements EntityController
       displayView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new WareHouse(), displayedEntity);
+	}
 }

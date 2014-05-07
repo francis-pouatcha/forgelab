@@ -56,7 +56,6 @@ import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPaidBy;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCancelService;
-import org.adorsys.javafx.crud.extensions.DomainComponent;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -74,7 +73,6 @@ import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
-import org.adorsys.javafx.crud.extensions.login.PermissionsEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
@@ -110,10 +108,6 @@ public class CashDrawerDisplayController implements EntityController
 	private CustomerInvoiceSearchService customerInvoiceSearchService;
 	@Inject
 	private ServiceCallFailedEventHandler customerInvoiceSearchServiceFailedHandler;
-
-	@Inject
-	@PermissionsEvent
-	private Event<DomainComponent> permissionEvent;
 
 	@Inject
 	private CashDrawerCreateService cashDrawerCreateService ;
@@ -400,7 +394,7 @@ public class CashDrawerDisplayController implements EntityController
 		return ViewType.DISPLAY;
 	}
 
-	public BigDecimal getCashDrawerInitialAmount(){
+	private BigDecimal getCashDrawerInitialAmount(){
 		String showTextInput = Dialogs.create().message(resourceBundle.getString("CashDrawer_initialAmount_description.title")).showTextInput("0");
 		BigDecimal initialAmount = BigDecimal.ZERO ;
 		try {
@@ -777,12 +771,11 @@ public class CashDrawerDisplayController implements EntityController
 		paymentCustomerInvoiceAssoc.setSource(payment);
 		paymentCustomerInvoiceAssoc.setTarget(proccessingInvoice);
 		payment.addToInvoices(paymentCustomerInvoiceAssoc);
-		int size3 = payment.getInvoices().size();
 
 		ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().getItems();
-		int size = list.size();
+
 		ArrayList<PaymentItem> arrayList = new ArrayList<PaymentItem>(list);
-		int size2 = arrayList.size();
+
 		BigDecimal receivedAmount2 = BigDecimal.ZERO;
 		BigDecimal amount2 = BigDecimal.ZERO;
 		for (PaymentItem paymentItem : arrayList) {
@@ -799,9 +792,11 @@ public class CashDrawerDisplayController implements EntityController
 			paymentItem.setPaymentMode(PaymentMode.CASH);
 			paymentItem.setReceivedAmount(BigDecimal.ZERO);
 			paymentItem.setDocumentNumber("");
+			PaymentItemPaidBy paymentItemPaidBy = new PaymentItemPaidBy();
+			PropertyReader.copy(paymentCustomerInvoiceAssoc.getTarget().getCustomer(), paymentItemPaidBy);
+			paymentItem.setPaidBy(paymentItemPaidBy);
 			displayView.getPaymentItemDataList().getItems().add(paymentItem);
 		}
-		int size4 = payment.getInvoices().size();
 		paymentCreateService.setModel(payment).start();
 
 	}
@@ -842,5 +837,8 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashButon().setDisable(false);
 		displayView.getCashOutButton().setDisable(false);
 
+	}
+	public void reset() {
+	     PropertyReader.copy(new CashDrawer(), displayedEntity);
 	}
 }

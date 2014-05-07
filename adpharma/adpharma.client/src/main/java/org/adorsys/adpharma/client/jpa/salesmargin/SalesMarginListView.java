@@ -17,13 +17,8 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javafx.beans.property.SimpleStringProperty;
-import java.math.BigDecimal;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class SalesMarginListView
 {

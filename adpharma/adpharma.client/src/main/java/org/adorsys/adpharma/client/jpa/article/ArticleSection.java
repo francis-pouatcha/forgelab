@@ -126,23 +126,23 @@ public class ArticleSection implements Association<Article, Section>, Cloneable
       return result;
    }
 
-   //	@Override
-   //	public boolean equals(Object obj) {
-   //		if (this == obj)
-   //			return true;
-   //		if (obj == null)
-   //			return false;
-   //		if (getClass() != obj.getClass())
-   //			return false;
-   //		ArticleSection other = (ArticleSection) obj;
-   //      if(id==other.id) return true;
-   //      if (id== null) return other.id==null;
-   //      return id.equals(other.id);
-   //	}
+   	@Override
+   	public boolean equals(Object obj) {
+   		if (this == obj)
+   			return true;
+   		if (obj == null)
+   			return false;
+   		if (getClass() != obj.getClass())
+   			return false;
+   		ArticleSection other = (ArticleSection) obj;
+         if(id==other.id) return true;
+         if (id== null) return other.id==null;
+         return id.equals(other.id);
+   	}
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "sectionCode");
+      return PropertyReader.buildToString(this, "name");
    }
 
    @Override

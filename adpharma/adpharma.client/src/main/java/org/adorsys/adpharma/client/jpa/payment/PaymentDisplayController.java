@@ -180,4 +180,7 @@ public class PaymentDisplayController implements EntityController
       this.displayedEntity = model;
       displayView.bind(this.displayedEntity);
    }
+	public void reset() {
+	     PropertyReader.copy(new Payment(), displayedEntity);
+	}
 }

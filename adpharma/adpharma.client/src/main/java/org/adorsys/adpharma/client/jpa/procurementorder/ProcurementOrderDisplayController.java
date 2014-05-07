@@ -20,6 +20,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.DeliveryId;
+import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.events.ProcurementOrderId;
+import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
@@ -31,7 +36,6 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -110,6 +114,10 @@ public class ProcurementOrderDisplayController implements EntityController
 
 	@Inject
 	private ProcurementOrderItem item ;
+	
+	@Inject
+	@PrintRequestedEvent
+	private Event<ProcurementOrderId> printRequestedEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -179,6 +187,17 @@ public class ProcurementOrderDisplayController implements EntityController
 					asi.getFieldNames().add("articleName");
 					modalArticleSearchEvent.fire(asi);
 				}
+			}
+		});
+		
+		/*
+		 * listen to Print button.
+		 */
+		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity==null || displayedEntity.getId()==null) return;
+				printRequestedEvent.fire(new ProcurementOrderId(displayedEntity.getId()));
 			}
 		});
 
@@ -397,4 +416,7 @@ public class ProcurementOrderDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
+	public void reset() {
+	     PropertyReader.copy(new ProcurementOrder(), displayedEntity);
+	}
 }

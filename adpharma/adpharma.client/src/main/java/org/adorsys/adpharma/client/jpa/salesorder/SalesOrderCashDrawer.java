@@ -1,26 +1,22 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerCashier;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerClosedBy;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
-import java.util.Calendar;
 import java.math.BigDecimal;
+import java.util.Calendar;
+
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerCashier;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

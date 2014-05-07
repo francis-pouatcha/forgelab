@@ -8,7 +8,6 @@ import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -20,14 +19,6 @@ import javafx.scene.control.TableView;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
-import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
-import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
-import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
-import org.apache.commons.lang3.StringUtils;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
@@ -36,7 +27,14 @@ import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustom
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchInput;
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchResult;
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocService;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
+import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class PaymentInvoicesController
 {

@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
 
 @Singleton
 public class PermissionNameCreateService extends Service<PermissionName>

@@ -14,17 +14,17 @@ public class CashDrawerReportPrinterData {
 	private final Map<Long, Login> logins;
 	private final Calendar endDate;
 	private final Calendar startDate;
+	private int start = 0;
+	private final int max = 100;
 
 	public CashDrawerReportPrinterData(Agency agency,
-			Login login, Map<Long, Login> logins, Calendar endDate, Calendar startDate,
-			CashDrawerSearchResult cashDrawerSearchResult) {
+			Login login, Map<Long, Login> logins, Calendar endDate, Calendar startDate) {
 		super();
 		this.agency = agency;
 		this.login = login;
 		this.logins = logins;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.cashDrawerSearchResult = cashDrawerSearchResult;
 	}
 
 	public Login getLogin() {
@@ -56,4 +56,16 @@ public class CashDrawerReportPrinterData {
 		this.cashDrawerSearchResult = cashDrawerSearchResult;
 	}
 
+
+	public int getStart() {
+		return start;
+	}
+
+	public void setStart(int start) {
+		this.start = start;
+	}
+
+	public int getMax() {
+		return max;
+	}
 }

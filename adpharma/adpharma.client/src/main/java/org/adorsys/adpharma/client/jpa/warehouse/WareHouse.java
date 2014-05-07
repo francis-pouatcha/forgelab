@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotAgency;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;

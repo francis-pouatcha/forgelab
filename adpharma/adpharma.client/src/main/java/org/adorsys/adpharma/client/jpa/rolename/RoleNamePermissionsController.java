@@ -19,6 +19,14 @@ import javafx.scene.control.TableView;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
+import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchInput;
+import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchResult;
+import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchService;
+import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssoc;
+import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocSearchInput;
+import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocSearchResult;
+import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -27,17 +35,6 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionName;
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchInput;
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchResult;
-import org.adorsys.adpharma.client.jpa.permissionname.PermissionNameSearchService;
-
-import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssoc;
-import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocSearchInput;
-import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocSearchResult;
-import org.adorsys.adpharma.client.jpa.rolenamepermissionnameassoc.RoleNamePermissionNameAssocService;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 
 public abstract class RoleNamePermissionsController
 {

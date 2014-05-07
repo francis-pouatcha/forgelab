@@ -1,8 +1,7 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoice;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
-
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 
 public class SupplierInvoiceSupplierSelectionEventData extends
       AssocSelectionEventData<Supplier>

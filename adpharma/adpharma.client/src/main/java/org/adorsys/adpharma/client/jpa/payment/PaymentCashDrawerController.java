@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
 
 public abstract class PaymentCashDrawerController
 {

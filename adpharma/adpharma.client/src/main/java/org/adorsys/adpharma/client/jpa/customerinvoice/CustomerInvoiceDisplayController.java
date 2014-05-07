@@ -1,7 +1,5 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
-import java.awt.ScrollPane;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -31,7 +29,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 
 @Singleton
 public class CustomerInvoiceDisplayController implements EntityController
@@ -163,4 +160,7 @@ public class CustomerInvoiceDisplayController implements EntityController
       displayView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new CustomerInvoice(), displayedEntity);
+	}
 }

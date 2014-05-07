@@ -6,7 +6,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 
 /**
  * Holds an entity and corresponding field descriptions for a search by example

@@ -1,30 +1,23 @@
 package org.adorsys.adpharma.client.jpa.section;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import javafx.beans.property.SimpleObjectProperty;
-
 import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import javafx.beans.property.ObjectProperty;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-import org.adorsys.adpharma.client.jpa.section.Section;
 
 public class SectionView extends AbstractForm<Section>
 {

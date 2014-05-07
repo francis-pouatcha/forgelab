@@ -4,7 +4,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
-import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
 
 public class PrescriberRemoveService extends Service<Prescriber>
 {

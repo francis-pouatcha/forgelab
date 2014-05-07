@@ -14,23 +14,21 @@ import javafx.scene.control.TableView;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemRemoveService;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemRemoveService;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchService;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
-import org.adorsys.adpharma.client.jpa.inventory.Inventory;
 
 public abstract class InventoryInventoryItemsController
 {

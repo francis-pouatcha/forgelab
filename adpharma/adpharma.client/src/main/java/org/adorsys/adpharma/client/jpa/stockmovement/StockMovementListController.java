@@ -11,7 +11,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -21,9 +20,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
-import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminal;
 import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementType;
 import org.adorsys.javafx.crud.extensions.EntityController;
@@ -39,7 +35,6 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Singleton
 public class StockMovementListController implements EntityController
@@ -257,4 +252,7 @@ public class StockMovementListController implements EntityController
 
 	}
 
+	public void reset() {
+		   listView.getDataList().getItems().clear();
+		}
 }

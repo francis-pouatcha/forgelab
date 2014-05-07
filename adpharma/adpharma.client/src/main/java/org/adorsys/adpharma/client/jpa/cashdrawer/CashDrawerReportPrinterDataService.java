@@ -67,23 +67,27 @@ public class CashDrawerReportPrinterDataService extends
 			protected CashDrawerReportPrinterData call() throws Exception {
 				if (startDate == null || endDate==null)
 					return null;
+				if(reportData==null){
+					Login login = securityUtil.getConnectedUser();
+					Agency agency = agencyService.findById(login.getAgency().getId());
+					LoginSearchResult loginList = loginService.listAll(0, 500);
+					List<Login> resultList = loginList.getResultList();
+					HashMap<Long, Login> logins = new HashMap<Long, Login>(resultList.size());
+					for (Login l : resultList) {
+						logins.put(l.getId(), l);
+					}
+					reportData = new CashDrawerReportPrinterData(agency, login, logins, endDate, startDate);
+				}
 				AdTimeFrame adTimeFrame = new AdTimeFrame();
 				adTimeFrame.setStartTime(startDate);
 				adTimeFrame.setEndTime(endDate);
 				AdTimeFrameBasedSearchInput adTimeFrameBasedSearchInput = new AdTimeFrameBasedSearchInput();
 				adTimeFrameBasedSearchInput.setTimeFrame(adTimeFrame);
-				adTimeFrameBasedSearchInput.setStart(0);
-				adTimeFrameBasedSearchInput.setMax(100);
+				adTimeFrameBasedSearchInput.setStart(reportData.getStart());
+				adTimeFrameBasedSearchInput.setMax(reportData.getMax());
 				CashDrawerSearchResult cashDrawerSearchResult = cashDrawerService.findByClosingDateBetween(adTimeFrameBasedSearchInput);
-				Login login = securityUtil.getConnectedUser();
-				Agency agency = agencyService.findById(login.getAgency().getId());
-				LoginSearchResult loginList = loginService.listAll(0, 500);
-				List<Login> resultList = loginList.getResultList();
-				HashMap<Long, Login> logins = new HashMap<Long, Login>(resultList.size());
-				for (Login l : resultList) {
-					logins.put(l.getId(), l);
-				}
-				return new CashDrawerReportPrinterData(agency, login, logins, endDate, startDate, cashDrawerSearchResult);
+				reportData.setCashDrawerSearchResult(cashDrawerSearchResult);	
+				return reportData;
 			}
 		};
 	}

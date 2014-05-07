@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
@@ -25,9 +27,11 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
+import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.ChartData;
 
 @Stateless
 public class SalesOrderEJB
@@ -35,6 +39,7 @@ public class SalesOrderEJB
 
 	@Inject
 	private SalesOrderRepository repository;
+	
 
 	@Inject
 	private CustomerMerger customerMerger;
@@ -84,7 +89,8 @@ public class SalesOrderEJB
 
 	@Inject
 	private SecurityUtil securityUtilEJB;
-
+	
+	
 	public SalesOrder create(SalesOrder entity)
 	{
 		Login user = securityUtilEJB.getConnectedUser();

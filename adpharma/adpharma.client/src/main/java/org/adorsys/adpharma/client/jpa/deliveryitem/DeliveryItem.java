@@ -1,31 +1,34 @@
 package org.adorsys.adpharma.client.jpa.deliveryitem;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.javaext.description.Description;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.adorsys.javaext.format.DateFormatPattern;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotNull;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -356,7 +359,9 @@ public class DeliveryItem implements Cloneable
 	{
 		if (expirationDate == null)
 		{
-			expirationDate = new SimpleObjectProperty<Calendar>(Calendar.getInstance());
+			Calendar instance = Calendar.getInstance();
+			instance.setTime(DateUtils.addYears(new Date(), 10));
+			expirationDate = new SimpleObjectProperty<Calendar>(instance);
 		}
 		return expirationDate;
 	}

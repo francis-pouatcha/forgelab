@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
@@ -29,8 +32,11 @@ import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
+import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.ChartData;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
@@ -62,17 +68,17 @@ public class CustomerInvoiceEJB {
 
 	@Inject
 	private SecurityUtil securityUtil;
-	
+
 	@Inject
 	private CustomerInvoiceItemEJB customerInvoiceItemEJB;
 
 	@EJB
 	private PaymentCustomerInvoiceAssocEJB paymentCustomerInvoiceAssocEJB;
-	
+
 	@Inject
 	@DocumentProcessedEvent
 	private Event<CustomerInvoice> customerInvoiceProcessedEvent;
-	
+
 	@Inject
 	@ReturnSalesEvent
 	private Event<CustomerInvoice> customerInvoiceReturnSalesEvent;
@@ -80,10 +86,44 @@ public class CustomerInvoiceEJB {
 	@Inject
 	@DirectSalesClosedEvent
 	private Event<CustomerInvoice> customerInvoiceClosedEvent;
-	
+
 	public CustomerInvoice create(CustomerInvoice entity) {
 		return repository.save(attach(entity));
 	}
+
+
+	@Inject
+	private EntityManager em ;
+
+	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput dataSearchInput){
+		List<ChartData> chartDataSearchResult = new ArrayList<ChartData>();
+		String query ="SELECT SUM(c.netToPay) , MONTHNAME(c.creationDate) FROM CustomerInvoice AS c WHERE YEAR(c.creationDate) = :creationDate " ;
+		if(dataSearchInput.getCustomer()!=null)
+			query = query+" AND c.customer  = :customer " ;
+		query = query+" AND (c.cashed = :cashed OR c.invoiceType = :invoiceType) GROUP BY MONTHNAME(c.creationDate) " ;
+		Query querys = em.createQuery(query) ;
+
+		if(dataSearchInput.getCustomer()!=null)
+			querys.setParameter("customer", dataSearchInput.getCustomer());
+		
+		querys.setParameter("creationDate", dataSearchInput.getYears());
+		querys.setParameter("cashed", Boolean.TRUE);
+		querys.setParameter("invoiceType", InvoiceType.VOUCHER);
+		List<Object[]> resultList = querys.getResultList();
+		for (Object[] objects : resultList) {
+			BigDecimal netTopay = (BigDecimal) objects[0];
+			String month =  (String) objects[1];
+			ChartData chartData = new ChartData(month, netTopay);
+			chartDataSearchResult.add(chartData);
+		}
+
+		SalesStatisticsDataSearchResult searchResult = new SalesStatisticsDataSearchResult();
+		searchResult.setChartData(chartDataSearchResult);
+
+		return searchResult ;
+
+	}
+
 
 	public CustomerInvoice deleteById(Long id) {
 		CustomerInvoice entity = repository.findBy(id);
@@ -183,7 +223,7 @@ public class CustomerInvoiceEJB {
 		ci.setTotalRestToPay(ci.getNetToPay());
 		ci.setCustomer(salesOrder.getCustomer());
 		ci.setInsurance(salesOrder.getInsurance());
-		
+
 		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
 		BigDecimal customerCoverageRate = BigDecimal.ONE;
 		Insurrance insurance = salesOrder.getInsurance();
@@ -193,15 +233,15 @@ public class CustomerInvoiceEJB {
 		}
 		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
 		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
-		
+
 
 		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
 		ci.setInvoiceType(InvoiceType.CASHDRAWER);
 		ci.setSalesOrder(salesOrder);
 		ci.setAdvancePayment(BigDecimal.ZERO);
-		
+
 		ci = create(ci);
-		
+
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
@@ -214,7 +254,7 @@ public class CustomerInvoiceEJB {
 			ciItem = customerInvoiceItemEJB.create(ciItem);
 		}
 	}
-	
+
 	/**
 	 *generate Customer invoice Of Type Voucher and voucher .
 	 * 
@@ -236,7 +276,7 @@ public class CustomerInvoiceEJB {
 		ci.setTotalRestToPay(ci.getNetToPay());
 		ci.setCustomer(salesOrder.getCustomer());
 		ci.setInsurance(salesOrder.getInsurance());
-		
+
 		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
 		BigDecimal customerCoverageRate = BigDecimal.ONE;
 		Insurrance insurance = salesOrder.getInsurance();
@@ -246,15 +286,15 @@ public class CustomerInvoiceEJB {
 		}
 		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
 		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
-		
+
 
 		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
 		ci.setInvoiceType(InvoiceType.VOUCHER);
 		ci.setSalesOrder(salesOrder);
 		ci.setAdvancePayment(BigDecimal.ZERO);
-		
+
 		ci = create(ci);
-		
+
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
@@ -296,18 +336,18 @@ public class CustomerInvoiceEJB {
 					customerInvoiceClosedEvent.fire(customerInvoice);
 					customerInvoice.setCashed(Boolean.TRUE);
 				}
-				
+
 				if(Boolean.TRUE.equals(customerInvoice.getSettled())) continue;
 				if(amount.compareTo(BigDecimal.ZERO)<=0) continue;
-				
+
 				boolean customer = true;// paid by the client
 				if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getCustomer().equals(payer))customer=false;// paid by the insurance.
 
-				
+
 				BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
 				BigDecimal payerRestTopay = customer?customerInvoice.getCustomerRestTopay():customerInvoice.getInsurranceRestTopay();
 				if(payerRestTopay.compareTo(BigDecimal.ZERO)<=0) continue;
-				
+
 				BigDecimal amountForThisInvoice = null;
 				if(amount.compareTo(payerRestTopay)>0){
 					amountForThisInvoice = amount.subtract(payerRestTopay);
@@ -321,7 +361,7 @@ public class CustomerInvoiceEJB {
 					customerInvoice.setCustomerRestTopay(payerRestTopay);
 				else 
 					customerInvoice.setInsurranceRestTopay(payerRestTopay);
-				
+
 				totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
 				customerInvoice.setTotalRestToPay(totalRestToPay);
 				if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){
@@ -329,7 +369,7 @@ public class CustomerInvoiceEJB {
 				}
 				customerInvoice.setAdvancePayment(customerInvoice.getNetToPay().subtract(customerInvoice.getTotalRestToPay()));
 				customerInvoice = update(customerInvoice);
-				
+
 				// Announce customer invoice processed.
 				customerInvoiceProcessedEvent.fire(customerInvoice);
 			}

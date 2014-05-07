@@ -1,53 +1,35 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.supplier.Supplier;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.currency.Currency;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
-
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
-import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
-import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
-import org.adorsys.javaext.format.NumberType;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
-import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
 import javafx.scene.control.ComboBox;
-import javafx.beans.property.ObjectProperty;
+import javafx.scene.control.TextField;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
-import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import jfxtras.scene.control.CalendarTextField;
+
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.ViewModel;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.TextInputControlValidator;
+import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
+import org.adorsys.javafx.crud.extensions.view.AbstractForm;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
+import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
 public class DeliveryView extends AbstractForm<Delivery>
 {
@@ -134,9 +116,11 @@ public class DeliveryView extends AbstractForm<Delivery>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle);
+		viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierSelection, ViewModel.READ_WRITE);
+		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
-		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values());
+		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(),ViewModel.READ_ONLY);
+		viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencySelection, ViewModel.READ_WRITE);
 		amountBeforeTax = viewBuilder.addBigDecimalField("Delivery_amountBeforeTax_description.title", "amountBeforeTax", resourceBundle, NumberType.CURRENCY, locale);
 		amountVat = viewBuilder.addBigDecimalField("Delivery_amountVat_description.title", "amountVat", resourceBundle, NumberType.CURRENCY, locale);
 		amountDiscount = viewBuilder.addBigDecimalField("Delivery_amountDiscount_description.title", "amountDiscount", resourceBundle, NumberType.CURRENCY, locale);
@@ -154,17 +138,15 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//      viewBuilder.addSubForm("Delivery_creatingUser_description.title", "creatingUser", resourceBundle, deliveryCreatingUserSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_supplier_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_vat_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_currency_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencyForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencySelection, ViewModel.READ_WRITE);
 		//         viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencyForm, ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencySelection, ViewModel.READ_WRITE);
 
-		//		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
+				ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
 		gridRows = viewBuilder.toRows();
 	}

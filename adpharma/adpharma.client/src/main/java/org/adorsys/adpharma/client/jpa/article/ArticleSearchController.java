@@ -198,4 +198,9 @@ public class ArticleSearchController implements EntityController
    {
       searchService.setSearchInputs(searchResult.getSearchInput()).start();
    }
+
+
+	public void reset() {
+	     PropertyReader.copy(new Article(), model);
+	}
 }

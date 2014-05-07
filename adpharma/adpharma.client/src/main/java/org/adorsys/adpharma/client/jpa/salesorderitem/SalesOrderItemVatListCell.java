@@ -1,9 +1,7 @@
 package org.adorsys.adpharma.client.jpa.salesorderitem;
 
-import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
-import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.javafx.crud.extensions.view.AbstractToStringListCell;
 
 public class SalesOrderItemVatListCell extends AbstractToStringListCell<SalesOrderItemVat>
 {

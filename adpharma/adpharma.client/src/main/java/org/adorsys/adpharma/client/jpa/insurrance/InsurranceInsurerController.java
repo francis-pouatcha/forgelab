@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
+import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
+import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 
 public abstract class InsurranceInsurerController
 {

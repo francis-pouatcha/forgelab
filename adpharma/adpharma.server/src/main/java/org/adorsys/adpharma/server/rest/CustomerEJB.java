@@ -10,6 +10,8 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.repo.CustomerRepository;
 
+
+
 @Stateless
 public class CustomerEJB
 {

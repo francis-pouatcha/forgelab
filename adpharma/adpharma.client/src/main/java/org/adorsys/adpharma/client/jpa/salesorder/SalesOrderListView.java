@@ -52,21 +52,21 @@ public class SalesOrderListView
 
 	@FXML
 	private Button printInvoiceButton;
-	
+
 	@FXML
 	private Button computeButton;
-	
+
 	@FXML
 	private PieChart pieChart;
-	
+
 	@FXML
 	private TableView<ChartData> pieChartData;
-	
+
 	@FXML 
 	private ComboBox<Customer> chartClientList;
-	
+
 	@FXML 
-	private ComboBox<BigInteger> yearList;
+	private ComboBox<Integer> yearList;
 
 	@FXML
 	private Button processButton;
@@ -87,7 +87,7 @@ public class SalesOrderListView
 	HBox searchBar;
 
 	private TextField soNumber ;
-	
+
 	@FXML
 	private Tab turnoverTab ;
 
@@ -137,9 +137,9 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
+		//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
 		viewBuilder.addStringColumn(dataList, "cashed", "SalesOrder_cashed_description.title", resourceBundle);
-		
+
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
 		//
@@ -162,8 +162,8 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "SalesOrderItem", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
 
 		// pie Chart table view
-				viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
-				viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
+		viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
 	}
@@ -268,17 +268,17 @@ public class SalesOrderListView
 	public Button getComputeButton(){
 		return computeButton;
 	}
-	
+
 	public ComboBox<Customer> getChartClientList(){
 		return chartClientList ;
 	}
-	
-	public ComboBox<BigInteger> getYearList(){
+
+	public ComboBox<Integer> getYearList(){
 		return yearList ;
 	}
 
-    public Tab getTurnoverTab(){
-    	return turnoverTab ;
-    }
+	public Tab getTurnoverTab(){
+		return turnoverTab ;
+	}
 
 }

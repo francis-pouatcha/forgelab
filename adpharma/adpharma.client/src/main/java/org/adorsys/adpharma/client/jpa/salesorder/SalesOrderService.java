@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -20,7 +22,7 @@ public class SalesOrderService {
 
 	@Inject
 	private ClientCookieFilter clientCookieFilter;
-
+	
 	Client client = ClientBuilder.newClient();
 	@Inject
 	private ServerAddress serverAddress;
@@ -34,7 +36,7 @@ public class SalesOrderService {
 		Entity<SalesOrder> eCopy = Entity.entity(entity, media);
 		return target().request(media).post(eCopy, SalesOrder.class);
 	}
-
+	
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public SalesOrder deleteById(Long id) {// @PathParam("id")

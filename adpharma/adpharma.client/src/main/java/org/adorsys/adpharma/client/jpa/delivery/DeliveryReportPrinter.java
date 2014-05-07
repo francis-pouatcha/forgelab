@@ -7,11 +7,7 @@ import java.util.ResourceBundle;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.print.PrinterJob;
-import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;

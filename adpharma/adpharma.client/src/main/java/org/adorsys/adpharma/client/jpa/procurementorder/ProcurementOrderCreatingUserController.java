@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 
 public abstract class ProcurementOrderCreatingUserController
 {

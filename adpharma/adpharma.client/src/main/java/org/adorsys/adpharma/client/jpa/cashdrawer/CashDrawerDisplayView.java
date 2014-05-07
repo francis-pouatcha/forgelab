@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -191,45 +192,51 @@ public class CashDrawerDisplayView
 
 	public void BuildPaymentGrid(){
 //		paymentMode = ViewBuilderUtils.newComboBox(null, "paymentMode", resourceBundle, PaymentMode.values(), false);
-	    paymentMode = ViewBuilderUtils.newComboBox("Payment_paymentMode_description.title", "paymentMode", paymentResourceBundle, PaymentMode.values(), false);
-		paymentMode.setPrefHeight(50d);
+	  Font font = new Font("latin", 18D);
+		paymentMode = ViewBuilderUtils.newComboBox("Payment_paymentMode_description.title", "paymentMode", paymentResourceBundle, PaymentMode.values(), false);
+		paymentMode.setPrefHeight(40d);
 		paymentMode.setPrefWidth(230d);
 	    ComboBoxInitializer.initialize(paymentMode, paymentModeConverter, paymentModeListCellFatory, paymentModeBundle);
 	    paymentMode.setValue(PaymentMode.CASH);
 
 		amount = ViewBuilderUtils.newBigDecimalField("amount", NumberType.CURRENCY, locale, false);
-		amount.setPrefHeight(50d);
+		amount.setPrefHeight(40d);
 		amount.setPrefWidth(200d);
+		amount.setFont(font);
 		amount.setEditable(false);
 
 		receivedAmount = ViewBuilderUtils.newBigDecimalField("receivedAmount", NumberType.CURRENCY, locale, false);
-		receivedAmount.setPrefHeight(50d);
+		receivedAmount.setPrefHeight(40d);
+		receivedAmount.setFont(font);
 		receivedAmount.setPrefWidth(200d);
 
 		difference = ViewBuilderUtils.newBigDecimalField("difference", NumberType.CURRENCY, locale, false);
-		difference.setPrefHeight(50d);
+		difference.setPrefHeight(40d);
 		difference.setPrefWidth(200d);
 		difference.setEditable(false);
+		difference.setFont(font);
+
 		
 		docNumber = ViewBuilderUtils.newTextField("docNumber", false);
 		docNumber.setPromptText("Doc Number");
-		docNumber.setPrefHeight(50d);
+		docNumber.setPrefHeight(40d);
 		docNumber.setPrefWidth(200d);
+		docNumber.setFont(font);
 
 		paymentGrid.addColumn(1, amount,paymentMode,receivedAmount,difference, docNumber);
 	}
 	public void buildinvoiceSearchGrid(){
 		invoiceNumberToSearch = ViewBuilderUtils.newTextField( "invoiceNumberToSearch", false);
-		invoiceNumberToSearch.setPrefHeight(50d);
+		invoiceNumberToSearch.setPrefHeight(40d);
 		invoiceNumberToSearch.setPromptText("Invoice ID");
 
 		openCashDrawer = ViewBuilderUtils.newComboBox(null,"openCashDrawer", false);
 		openCashDrawer.setPrefWidth(200d);
-		openCashDrawer.setPrefHeight(50d);
+		openCashDrawer.setPrefHeight(40d);
 		openCashDrawer.setPromptText("Cash Drawer");
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
-		searchButton.setPrefHeight(50d);
+		searchButton.setPrefHeight(40d);
 
 		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton);
 	}

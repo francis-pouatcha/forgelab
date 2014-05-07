@@ -31,7 +31,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 
 @Singleton
 public class CashDrawerEditController implements EntityController
@@ -224,4 +223,7 @@ public class CashDrawerEditController implements EntityController
       editView.bind(this.displayedEntity);
    }
 
+	public void reset() {
+	     PropertyReader.copy(new CashDrawer(), displayedEntity);
+	}
 }

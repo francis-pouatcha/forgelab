@@ -198,4 +198,8 @@ public class ArticleEquivalenceSearchController implements EntityController
    {
       searchService.setSearchInputs(searchResult.getSearchInput()).start();
    }
+
+	public void reset() {
+	     PropertyReader.copy(new ArticleEquivalence(), model);
+	}
 }

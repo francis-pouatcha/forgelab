@@ -1,31 +1,23 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoiceitem;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import javafx.beans.property.SimpleObjectProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.supplierinvoice.SupplierInvoice;
 import javafx.scene.control.TextField;
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javaext.format.NumberType;
-import java.util.Locale;
-import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
-import javafx.beans.property.ObjectProperty;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.ViewModel;
+import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-import org.adorsys.adpharma.client.jpa.supplierinvoiceitem.SupplierInvoiceItem;
 
 public class SupplierInvoiceItemView extends AbstractForm<SupplierInvoiceItem>
 {

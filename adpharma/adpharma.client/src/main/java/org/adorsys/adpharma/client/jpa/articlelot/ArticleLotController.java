@@ -105,7 +105,7 @@ public class ArticleLotController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
 //      displayedViews.add(listController);
-      displayedViews.add(displayController);
+      displayedViews.add(editController);
 
       displayComponent();
    }
@@ -146,8 +146,8 @@ public class ArticleLotController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
-//      displayedViews.add(editController);
+//      displayedViews.add(listController);
+      displayedViews.add(editController);
       displayComponent();
    }
 
@@ -155,8 +155,8 @@ public class ArticleLotController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
-      displayedViews.add(displayController);
+      displayedViews.add(listController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -166,7 +166,7 @@ public class ArticleLotController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -187,4 +187,12 @@ public class ArticleLotController extends DomainComponentController
          throw new IllegalStateException("Missing search and display component.");
       }
    }
+
+	@Override
+	public void reset() {
+		displayController.reset();
+		editController.reset();
+		searchController.reset();
+		listController.reset();
+	}
 }

@@ -1,37 +1,22 @@
 package org.adorsys.adpharma.client.jpa.customerinvoiceitem;
 
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
+import java.math.BigDecimal;
+import java.util.Calendar;
+
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceCustomer;
-import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceInsurance;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceCreatingUser;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceAgency;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSalesOrder;
-import javafx.beans.property.SimpleBooleanProperty;
-import java.math.BigDecimal;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import java.util.ArrayList;
-import java.util.List;
-import org.adorsys.adpharma.client.jpa.payment.Payment;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

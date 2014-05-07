@@ -78,8 +78,9 @@ public class ModalArticleSearchControler {
 				entity.setArticleName(articleName);
 				ArticleSearchInput asi = new ArticleSearchInput();
 				asi.setEntity(entity);
+				asi.setMax(150);
 				asi.getFieldNames().add("articleName");
-				modalArticleSearchEvent.fire(asi);
+				articleSearchService.setSearchInputs(asi).start();
 			}
 		}
 	});
@@ -115,7 +116,8 @@ public class ModalArticleSearchControler {
 			modalArticleSearchDoneEvent.fire(article2);
 		}else {
 			view.getDataList().getItems().setAll(articleSearchResult.getResultList());
-			view.showDiaLog();
+			if(!view.isDisplayed())
+				view.showDiaLog();
 		}
 	}
 

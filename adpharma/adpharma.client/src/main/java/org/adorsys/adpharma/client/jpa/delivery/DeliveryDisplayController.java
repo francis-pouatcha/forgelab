@@ -1,14 +1,20 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -34,6 +40,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
@@ -53,6 +60,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -120,7 +128,7 @@ public class DeliveryDisplayController implements EntityController
 
 	@Inject
 	private DeliveryRegistration registration;
-	
+
 	@Inject
 	@PrintRequestedEvent
 	private Event<DeliveryId> printRequestedEvent;
@@ -143,6 +151,25 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
+		displayView.getMulRate().textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
+				BigDecimal number = new BigDecimal(newValue);
+				if(number!=null&& !BigDecimal.ZERO.equals(number)) {
+					BigDecimal pppu = displayView.getPurchasePricePU().getNumber();
+					if(pppu!=null){
+						long longValue = (pppu.multiply(number)).longValue();
+						deliveryItem.setSalesPricePU(BigDecimal.valueOf(longValue));
+					}
+				}
+
+
+			}
+		});
+
+
 		displayView.getAddArticleButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -226,7 +253,30 @@ public class DeliveryDisplayController implements EntityController
 					entity.setArticleName(articleName);
 					ArticleSearchInput asi = new ArticleSearchInput();
 					asi.setEntity(entity);
+					asi.setMax(200);
 					asi.getFieldNames().add("articleName");
+					modalArticleSearchEvent.fire(asi);
+				}
+			}
+		});
+
+		/*
+		 * listen to mainPic textfied.
+		 */
+		displayView.getMainPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					String mainPic = displayView.getMainPic().getText();
+					if(StringUtils.isBlank( mainPic)) return;
+					Article entity = new Article();
+					entity.setPic( mainPic);
+					ArticleSearchInput asi = new ArticleSearchInput();
+					asi.setEntity(entity);
+					asi.setMax(200);
+					asi.getFieldNames().add("pic");
 					modalArticleSearchEvent.fire(asi);
 				}
 			}
@@ -399,7 +449,7 @@ public class DeliveryDisplayController implements EntityController
 			}
 		});
 		deliveryItemRemoveService.setOnFailed(serviceCallFailedEventHandler);
-		
+
 		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -409,13 +459,6 @@ public class DeliveryDisplayController implements EntityController
 		});
 
 		displayView.getView().addValidators();
-
-		displayView.getDeliveryItemBar().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getDeleteButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getEditButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getAddArticleButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getSaveButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		displayView.getPrintButton().visibleProperty().bind(displayedEntity.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	@Override
@@ -486,6 +529,7 @@ public class DeliveryDisplayController implements EntityController
 		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
 		fromArticle.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		PropertyReader.copy(fromArticle, deliveryItem);
+		displayView.getMulRate().setNumber(BigDecimal.ZERO);
 	}
 
 	private void handleModalArticleCreateDone(@Observes @ModalEntityCreateDoneEvent Article article) {
@@ -499,6 +543,15 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
+		String[] split = displayView.getExpirationDate().getText().split("/");
+		String expDate = "01/"+split[0]+"/20"+split[1];
+		Date parse = DateHelper.parse(expDate, "dd/MM/yyyy");
+		
+		if(parse!=null){
+			Calendar instance = Calendar.getInstance();
+			instance.setTime(parse);
+			deliveryItem.setExpirationDate(instance);
+		}
 		deliveryItem.calculateTotalAmout();
 		if(deliveryItem.getId()==null){
 			deliveryItemCreateService.setModel(deliveryItem).start();
@@ -530,5 +583,8 @@ public class DeliveryDisplayController implements EntityController
 		deliveryItem2.setDelivery(new DeliveryItemDelivery(delivery));
 		deliveryItemSearchInput.setEntity(deliveryItem2);
 		return deliveryItemSearchInput;
+	}
+	public void reset() {
+		PropertyReader.copy(new Delivery(), displayedEntity);
 	}
 }

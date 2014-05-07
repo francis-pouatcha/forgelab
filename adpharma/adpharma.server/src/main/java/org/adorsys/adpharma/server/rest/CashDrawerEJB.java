@@ -11,7 +11,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
@@ -23,8 +22,6 @@ import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
-import org.apache.deltaspike.data.api.FirstResult;
-import org.apache.deltaspike.data.api.MaxResults;
 
 @Stateless
 public class CashDrawerEJB
@@ -196,5 +193,41 @@ public class CashDrawerEJB
 	
 	public Long countByClosingDateBetween(Date startClosingDate, Date endClosingDate){
 		return repository.countByClosingDateBetween(startClosingDate, endClosingDate);
+	}
+
+	/**
+	 * Listens to payments and updates the cash drawer.
+	 * 
+	 * @param payment
+	 */
+	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
+		CashDrawer cashDrawer = payment.getCashDrawer();
+		cashDrawer = findById(cashDrawer.getId());
+		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+		for (PaymentItem paymentItem : paymentItems) {
+			BigDecimal amount = paymentItem.getAmount();
+			switch (paymentItem.getPaymentMode()) {
+			case CASH:
+				cashDrawer.setTotalCash(cashDrawer.getTotalCash().add(amount));
+				cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
+				break;
+			case CREDIT_CARD:
+				cashDrawer.setTotalCreditCard(cashDrawer.getTotalCreditCard().add(amount));
+				break;
+			case VOUCHER:
+				paymentItem.getPaidBy();
+				cashDrawer.setTotalClientVoucher(cashDrawer.getTotalClientVoucher().add(amount));
+				break;
+			case COMP_VOUCHER:
+				cashDrawer.setTotalCompanyVoucher(cashDrawer.getTotalCompanyVoucher().add(amount));
+				break;
+			case CHECK:
+				cashDrawer.setTotalCheck(cashDrawer.getTotalCheck().add(amount));
+				break;
+			default:
+				break;
+			}
+		}
+		update(cashDrawer);
 	}
 }

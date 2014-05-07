@@ -1,22 +1,17 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import org.adorsys.adpharma.client.jpa.company.Company;
-import org.adorsys.adpharma.client.jpa.agency.AgencyCompany;
-import javafx.beans.property.SimpleObjectProperty;
-import java.util.Calendar;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

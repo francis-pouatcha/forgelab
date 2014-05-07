@@ -13,22 +13,14 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import javafx.beans.property.SimpleObjectProperty;
-import java.math.BigDecimal;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
+import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class CustomerVoucherListView
 {

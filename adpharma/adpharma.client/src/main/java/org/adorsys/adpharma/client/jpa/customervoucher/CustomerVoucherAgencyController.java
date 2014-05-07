@@ -11,18 +11,16 @@ import javafx.event.EventHandler;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
+import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
-import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 
 public abstract class CustomerVoucherAgencyController
 {

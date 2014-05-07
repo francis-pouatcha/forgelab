@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 
 @Singleton
 public class ProcurementOrderCreateService extends Service<ProcurementOrder>

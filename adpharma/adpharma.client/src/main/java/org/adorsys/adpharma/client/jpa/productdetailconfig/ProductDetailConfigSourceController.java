@@ -15,7 +15,6 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
-import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;

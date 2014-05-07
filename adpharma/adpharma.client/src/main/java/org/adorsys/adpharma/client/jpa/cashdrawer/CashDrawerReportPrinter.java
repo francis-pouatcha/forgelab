@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -7,18 +9,13 @@ import java.util.ResourceBundle;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.print.PrinterJob;
-import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.events.CashDrawerPrintRequest;
-import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.print.PrintDialog;
 import org.adorsys.adpharma.client.utils.AdTimeFrame;
@@ -28,6 +25,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 public class CashDrawerReportPrinter {
 
@@ -48,11 +46,25 @@ public class CashDrawerReportPrinter {
 	@Inject
 	private PrintDialog printDialog;
 	
+	@Inject
+	private CashDrawerReportTimeFrameDialog timeFrameDialog;
+	
 	public void handlePrintRequestedEvent(
 			@Observes @PrintRequestedEvent CashDrawerPrintRequest request) {
 		AdTimeFrame timeFrame = request.getTimeFrame();
-		if(timeFrame==null || timeFrame.getStartTime()==null || timeFrame.getEndTime()==null) return;
-		dataService.setStartDate(timeFrame.getStartTime()).setEndDate(timeFrame.getEndTime()).start();
+		if(timeFrame==null) timeFrame = new AdTimeFrame();
+		if(timeFrame.getStartTime()==null || timeFrame.getEndTime()==null) {
+			Date todayDate = new Date();
+			Date tomorrowDate = DateUtils.addDays(todayDate, 1);
+			tomorrowDate = DateUtils.addMilliseconds(tomorrowDate, -1);
+			Calendar startTime = DateUtils.truncate(DateUtils.toCalendar(todayDate), Calendar.DATE);
+			Calendar endTime = DateUtils.truncate(DateUtils.toCalendar(tomorrowDate), Calendar.DATE);
+			timeFrameDialog.getStartTime().setCalendar(startTime);
+			timeFrameDialog.getEndTime().setCalendar(endTime);
+			timeFrameDialog.display();
+		} else {
+			dataService.setStartDate(timeFrame.getStartTime()).setEndDate(timeFrame.getEndTime()).start();
+		}
 	}
 
 	@PostConstruct
@@ -65,7 +77,9 @@ public class CashDrawerReportPrinter {
 	            event.consume();
 	            s.reset();
 	    		if(reportData==null) return;
-	    		CashDrawerReportPrintTemplate worker = new CashDrawerReportPrintTemplate(reportData, resourceBundle, locale);
+	    		CashDrawerReportPrintTemplate worker = s.getWorker();
+	    		if(worker==null)
+	    			worker = new CashDrawerReportPrintTemplate(reportData, resourceBundle, locale);
 	    		if(reportData.getCashDrawerSearchResult().getResultList().isEmpty()) {
 	    			List<VBox> pages = worker.getPages();
 	    			printDialog.getPages().clear();
@@ -73,6 +87,7 @@ public class CashDrawerReportPrinter {
 	    			printDialog.show();
 	    		} else {
 		    		worker.addItems(reportData.getCashDrawerSearchResult().getResultList());
+		    		reportData.setStart(reportData.getStart() + reportData.getMax());
 		    		dataService.setWorker(worker).seReportData(reportData).start();
 	    		}
 			}
@@ -98,5 +113,24 @@ public class CashDrawerReportPrinter {
 						dataErrorMessageDialog.closeDialog();
 					}
 				});
+		
+		timeFrameDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Calendar startTime = timeFrameDialog.getStartTime().getCalendar();
+				Calendar endTime = timeFrameDialog.getEndTime().getCalendar();
+				timeFrameDialog.closeDialog();
+				dataService.setStartDate(startTime).setEndDate(endTime).start();
+			}
+		});
+		
+		timeFrameDialog.getOkButton().disableProperty().bind(timeFrameDialog.getStartTime().calendarProperty().isNull().or(timeFrameDialog.getStartTime().calendarProperty().isNull()));
+		
+		timeFrameDialog.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				timeFrameDialog.closeDialog();
+			}
+		});
 	}
 }

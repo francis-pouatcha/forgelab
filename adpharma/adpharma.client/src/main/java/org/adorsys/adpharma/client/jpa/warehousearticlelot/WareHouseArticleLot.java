@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotArticle;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;

@@ -1,8 +1,7 @@
 package org.adorsys.adpharma.client.jpa.stockmovement;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
-
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 
 public class StockMovementArticleSelectionEventData extends
       AssocSelectionEventData<Article>

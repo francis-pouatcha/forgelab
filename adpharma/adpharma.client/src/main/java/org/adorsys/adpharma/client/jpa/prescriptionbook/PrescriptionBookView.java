@@ -1,35 +1,24 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.adorsys.adpharma.client.jpa.prescriber.Prescriber;
-import javafx.beans.property.SimpleObjectProperty;
-import org.adorsys.adpharma.client.jpa.hospital.Hospital;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import java.util.Calendar;
-
-import org.adorsys.javafx.crud.extensions.ViewModel;
-import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import javafx.scene.control.TextField;
-import java.util.Locale;
-import jfxtras.scene.control.CalendarTextField;
-import javafx.beans.property.ObjectProperty;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
+import jfxtras.scene.control.CalendarTextField;
+
+import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
-import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 
 public class PrescriptionBookView extends AbstractForm<PrescriptionBook>
 {

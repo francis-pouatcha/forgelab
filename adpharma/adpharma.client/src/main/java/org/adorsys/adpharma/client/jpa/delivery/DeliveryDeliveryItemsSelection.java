@@ -13,19 +13,14 @@ import javafx.stage.Stage;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.adorsys.javaext.format.NumberType;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemView;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.view.AbstractForm;
-import org.adorsys.javafx.crud.extensions.view.GridRow;
 import org.adorsys.javafx.crud.extensions.view.AbstractSelection;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemView;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 
 public class DeliveryDeliveryItemsSelection extends AbstractSelection<Delivery, DeliveryItem>
 {

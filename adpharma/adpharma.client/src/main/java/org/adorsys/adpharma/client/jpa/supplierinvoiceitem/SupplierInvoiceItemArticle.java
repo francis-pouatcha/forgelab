@@ -1,34 +1,20 @@
 package org.adorsys.adpharma.client.jpa.supplierinvoiceitem;
 
-import javafx.beans.property.SimpleStringProperty;
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.article.ArticleSection;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-import org.adorsys.adpharma.client.jpa.article.ArticleFamily;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
-import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMargin;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
-import org.adorsys.adpharma.client.jpa.article.ArticlePackagingMode;
-import javafx.beans.property.SimpleLongProperty;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfig;
+
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-import org.adorsys.adpharma.client.jpa.article.Article;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)

@@ -11,7 +11,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customer.CustomerLoadService;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
@@ -22,10 +23,6 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customer.CustomerLoadService;
-import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 
 public abstract class PaymentItemPaidByController
 {

@@ -19,6 +19,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.documentstore.DocumentStore;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
@@ -32,7 +33,6 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
-import org.adorsys.adpharma.client.jpa.documentstore.DocumentStore;
 
 @Singleton
 public class WareHouseSearchController implements EntityController {
@@ -189,4 +189,9 @@ public class WareHouseSearchController implements EntityController {
 			@Observes @EntityListPageIndexChangedEvent WareHouseSearchResult searchResult) {
 		searchService.setSearchInputs(searchResult.getSearchInput()).start();
 	}
+	
+	public void reset() {
+	     PropertyReader.copy(new WareHouse(), model);
+	}
+
 }
