@@ -10,15 +10,17 @@
 	<children>
 		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
+<SplitPane orientation="VERTICAL">
+<items>
 				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
 					<children>
 						<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0" prefWidth="167.0" />
-						<VBox maxWidth="900.0" prefHeight="45.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
+						<VBox maxWidth="999.0" prefHeight="37.0" prefWidth="999.0" spacing="5.0" VBox.vgrow="NEVER">
 							<VBox.margin>
 								<Insets bottom="5.0" />
 							</VBox.margin>
 							<children>
-								<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="724.0" spacing="5.0" VBox.vgrow="NEVER">
+								<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="27.0" prefWidth="984.0" spacing="5.0" VBox.vgrow="NEVER">
 									<VBox.margin>
 										<Insets />
 									</VBox.margin>
@@ -32,7 +34,7 @@
 							</padding>
 						</VBox>
 						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
-						<TitledPane animated="false" text="Invoices waiting for paiement" textFill="#230b9a" />
+						<TitledPane animated="false" text="Factures en attente de payement" textFill="#230b9a" />
 						<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="841.0" spacing="4.0" VBox.vgrow="NEVER">
 							<children>
 								<TableView fx:id="invoicesDataList" prefHeight="265.0" prefWidth="800.0" HBox.hgrow="ALWAYS">
@@ -42,6 +44,11 @@
 								</TableView>
 							</children>
 						</HBox>
+					</children>
+					<BorderPane.margin>
+						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+					</BorderPane.margin>
+				</VBox>
 						<HBox prefHeight="293.0" prefWidth="800.0" spacing="10.0" VBox.vgrow="ALWAYS">
 							<children>
 								<VBox prefHeight="203.0" prefWidth="450.0" spacing="5.0" HBox.hgrow="NEVER" VBox.vgrow="NEVER">
@@ -65,17 +72,17 @@
 														<Insets bottom="5.0" />
 													</VBox.margin>
 													<children>
-														<Label text="Amoun to pay :">
+														<Label text="Net a payer :">
 															<font>
 																<Font size="18.0" />
 															</font>
 														</Label>
-														<Label layoutX="10.0" layoutY="17.0" text="Payment Mode :" GridPane.rowIndex="1">
+														<Label layoutX="10.0" layoutY="17.0" text="Mode Paiement :" GridPane.rowIndex="1">
 															<font>
 																<Font size="18.0" />
 															</font>
 														</Label>
-														<Label layoutX="10.0" layoutY="47.0" text="Receive Amount :" GridPane.rowIndex="2">
+														<Label layoutX="10.0" layoutY="47.0" text="Montant recu :" GridPane.rowIndex="2">
 															<font>
 																<Font size="18.0" />
 															</font>
@@ -85,7 +92,7 @@
 																<Font size="18.0" />
 															</font>
 														</Label>
-														<Label fx:id="documentNumber" layoutX="10.0" layoutY="77.0" text="Reference :" textFill="#1919b2" GridPane.rowIndex="4">
+														<Label fx:id="documentNumber" layoutX="10.0" layoutY="77.0" text="Num Bon :" textFill="#1919b2" GridPane.rowIndex="4">
 															<font>
 																<Font size="18.0" />
 															</font>
@@ -130,7 +137,7 @@
 								</VBox>
 								<VBox prefHeight="77.0" prefWidth="421.0" HBox.hgrow="ALWAYS">
 									<children>
-										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Selected Invoice" textFill="#1e0fa1" />
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Facture selectionee" textFill="#1e0fa1" />
 										<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
 											<columnConstraints>
 												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
@@ -150,7 +157,7 @@
 												<Insets bottom="2.0" />
 											</VBox.margin>
 										</TableView>
-										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Payments" textFill="#1e0fa1" />
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Paiements" textFill="#1e0fa1" />
 										<TableView fx:id="paymentItemDataList" prefHeight="98.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
 											<VBox.margin>
 												<Insets bottom="2.0" />
@@ -167,11 +174,8 @@
 								</VBox>
 							</children>
 						</HBox>
-					</children>
-					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</BorderPane.margin>
-				</VBox>
+</items>
+</SplitPane>
 			</center>
 		</BorderPane>
 	</children>

@@ -31,7 +31,7 @@ public class SequenceGenerator {
 				Thread.currentThread().sleep(20);
 			} catch (InterruptedException e) {
 			}
-			return prefixe+"-"+Long.toString(System.currentTimeMillis()-time, 36).toUpperCase();
+			return prefixe+Long.toString(System.currentTimeMillis()-time, 36).toUpperCase();
 		}
 	}
 

@@ -166,7 +166,7 @@
 					<keyStorePassword>example-password</keyStorePassword>
 					<allPermissions>true</allPermissions>
 						-->
-
+       
 				</configuration>
 			</plugin>
 		</plugins>
