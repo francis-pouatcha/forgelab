@@ -245,7 +245,7 @@ public class CashDrawerDisplayView
 		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", true);
 
 		creatingUser = ViewBuilderUtils.newComboBox(null,"creatingUser", false);
-		creatingUser.setPrefWidth(130d);
+		creatingUser.setPrefWidth(200d);
 
 		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
 

@@ -147,6 +147,18 @@ public class Delivery implements Serializable
 		recordingDate = new Date();
 		deliveryNumber = SequenceGenerator.getSequence(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE);
 	}
+	
+	public void computeAmount(){
+		amountBeforeTax = amountBeforeTax!=BigDecimal.ZERO?amountBeforeTax:BigDecimal.ZERO;
+		amountDiscount = amountDiscount!=BigDecimal.ZERO?amountDiscount:BigDecimal.ZERO;
+		amountVat = BigDecimal.ZERO;
+		
+		if(vat!=null && vat.getRate()!=null)
+			amountVat =amountBeforeTax.multiply(vat.getRate().divide(BigDecimal.valueOf(100)));
+		amountAfterTax = amountBeforeTax.add(amountVat);
+		netAmountToPay = amountBeforeTax.subtract(amountDiscount);
+		
+	}
 
 	public Long getId()
 	{

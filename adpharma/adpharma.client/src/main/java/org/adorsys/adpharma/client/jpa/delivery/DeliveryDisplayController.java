@@ -430,6 +430,7 @@ public class DeliveryDisplayController implements EntityController
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
 
+
 			}
 		});
 		deliveryItemEditService.setOnFailed(serviceCallFailedEventHandler);
@@ -543,10 +544,15 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
-		String[] split = displayView.getExpirationDate().getText().split("/");
-		String expDate = "01/"+split[0]+"/20"+split[1];
-		Date parse = DateHelper.parse(expDate, "dd/MM/yyyy");
-		
+		Date parse = null ;
+		try {
+			String[] split = displayView.getExpirationDate().getText().split("/");
+			String expDate = "01/"+split[0]+"/20"+split[1];
+			parse = DateHelper.parse(expDate, "dd/MM/yyyy");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if(parse!=null){
 			Calendar instance = Calendar.getInstance();
 			instance.setTime(parse);
@@ -574,6 +580,8 @@ public class DeliveryDisplayController implements EntityController
 			processAmount=processAmount.add(deliveryItem.getTotalPurchasePrice());
 		}
 		displayView.getProcessAmont().setNumber(processAmount);
+		displayView.getExpirationDate().setText(null);
+		displayView.getMulRate().setNumber(BigDecimal.ZERO);
 	}
 
 	public DeliveryItemSearchInput getDeliveryItemSearchInput(Delivery delivery){

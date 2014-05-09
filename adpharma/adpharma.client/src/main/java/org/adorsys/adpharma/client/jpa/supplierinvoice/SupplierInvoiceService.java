@@ -7,6 +7,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryStatisticsDataSearchResult;
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryStattisticsDataSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStatisticsDataSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -34,7 +38,7 @@ public class SupplierInvoiceService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public SupplierInvoice deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(SupplierInvoice.class);
 	}
@@ -116,4 +120,17 @@ public class SupplierInvoiceService {
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
 	}
+
+	//	@GET
+	//	@Path("/findSalesStatistics")
+	//	@Produces({ "application/json", "application/xml" })
+	@SuppressWarnings("unchecked")
+	public DeliveryStatisticsDataSearchResult findSalesStatistics(
+			DeliveryStattisticsDataSearchInput entity) {
+		Entity<DeliveryStattisticsDataSearchInput> ent = Entity.entity(entity, media);
+		return target().path("findDeliveryStatistics").request(media)
+				.post(ent, DeliveryStatisticsDataSearchResult.class);
+	}
+
+
 }

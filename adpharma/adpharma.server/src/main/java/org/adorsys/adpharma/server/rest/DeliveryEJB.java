@@ -95,6 +95,7 @@ public class DeliveryEJB
 			deliveryItem = deliveryItemEJB.update(deliveryItem);
 		}
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
+		delivery.computeAmount();
 		Delivery closedDelivery = update(delivery);
 		deliveryClosedDoneEvent.fire(closedDelivery);
 		return closedDelivery;
