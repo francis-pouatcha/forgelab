@@ -27,9 +27,12 @@ import javax.ws.rs.core.Response.Status;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
+import org.adorsys.adpharma.server.jpa.DeliveryStatisticsDataSearchResult;
+import org.adorsys.adpharma.server.jpa.DeliveryStattisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
 /**
@@ -76,6 +79,7 @@ public class DeliveryEndpoint
 		entity.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		return detach(ejb.create(entity));
 	}
+	
 
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")

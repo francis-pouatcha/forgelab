@@ -39,6 +39,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
 import org.adorsys.adpharma.client.utils.ChartData;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -135,7 +136,7 @@ public class SalesOrderListController implements EntityController
 		listView.bind(searchInput);
 		searchInput.setMax(100);
 
-		listView.getYearList().getItems().setAll(SalesStattisticsDataSearchInput.getYearList());
+		listView.getYearList().getItems().setAll(DateHelper.getYears());
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 
 			@Override

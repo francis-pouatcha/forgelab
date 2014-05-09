@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
@@ -20,11 +21,13 @@ import javax.inject.Inject;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.utils.ChartData;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -52,12 +55,31 @@ public class DeliveryListView
 	private ComboBox<DocumentProcessingState> deliveryProcessingState;
 
 	private Button searchButton;
+	
+	@FXML
+	private Button computeButton;
+
+	@FXML
+	private PieChart pieChart;
+
+	@FXML
+	private TableView<ChartData> pieChartData;
+
+	@FXML 
+	private ComboBox<DeliverySupplier> chartSupplierList;
+
+	@FXML 
+	private ComboBox<Integer> yearList;
+	
 
 	@FXML
 	private Button createButton;
 
 	@FXML
 	private Button updateButton;
+	
+	@FXML
+	private Button exportToXlsButton;
 
 	@FXML
 	private Button removeButton;
@@ -88,7 +110,7 @@ public class DeliveryListView
 	private Locale locale;
 
 	@Inject
-	@Bundle({ CrudKeys.class,DeliveryItem.class
+	@Bundle({ CrudKeys.class,DeliveryItem.class,ChartData.class
 		, Delivery.class
 		, VAT.class
 		, Agency.class
@@ -142,6 +164,10 @@ public class DeliveryListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+
+		// pie Chart table view
+				viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
+				viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 	}
 
@@ -240,9 +266,61 @@ public class DeliveryListView
 	public Button getUpdateButton() {
 		return updateButton;
 	}
+	
+	public Button getExportToXlsButton() {
+		return exportToXlsButton;
+	}
 
 	public Button getRemoveButton() {
 		return removeButton;
+	}
+
+	public CalendarTextField getDeliveryDateFrom() {
+		return deliveryDateFrom;
+	}
+
+	public Button getComputeButton() {
+		return computeButton;
+	}
+
+	public PieChart getPieChart() {
+		return pieChart;
+	}
+
+	public TableView<ChartData> getPieChartData() {
+		return pieChartData;
+	}
+
+	public ComboBox<DeliverySupplier> getChartSupplierList() {
+		return chartSupplierList;
+	}
+
+	public ComboBox<Integer> getYearList() {
+		return yearList;
+	}
+
+	public ResourceBundle getDeliveryProcessingStateBundle() {
+		return deliveryProcessingStateBundle;
+	}
+
+	public DocumentProcessingStateConverter getDeliveryProcessingStateConverter() {
+		return deliveryProcessingStateConverter;
+	}
+
+	public DocumentProcessingStateListCellFatory getDeliveryProcessingStateListCellFatory() {
+		return deliveryProcessingStateListCellFatory;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
 	}
 
 }
