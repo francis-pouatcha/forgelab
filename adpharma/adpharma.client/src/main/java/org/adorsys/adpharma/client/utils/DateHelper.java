@@ -66,6 +66,7 @@ public class DateHelper {
 		
 	}
 	
+	
 	public static boolean isWEEK(Date date){
 		LocalDate localDate = DateHelper.dateToLacalDate(date);
 		DayOfWeek dayOfWeek = localDate.getDayOfWeek();

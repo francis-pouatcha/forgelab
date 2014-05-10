@@ -8,8 +8,8 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 
 
 public class SalesStattisticsDataSearchInput {
-private Integer years ;
-	
+	private Integer years ;
+
 	private Customer customer ;
 
 	public Integer getYears() {
@@ -27,16 +27,7 @@ private Integer years ;
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+
+
 	
-	
-	public static List<Integer> getYearList(){
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		List<Integer> years = new ArrayList<Integer>();
-		for (int i = year; i > year-10; i--) {
-			years.add(Integer.valueOf(i));
-		}
-		years.add(0, null);
-		return years;
-		
-	}
 }

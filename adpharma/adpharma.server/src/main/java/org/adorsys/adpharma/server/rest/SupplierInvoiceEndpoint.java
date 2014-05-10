@@ -23,6 +23,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.adorsys.adpharma.server.jpa.DeliveryStatisticsDataSearchResult;
+import org.adorsys.adpharma.server.jpa.DeliveryStattisticsDataSearchInput;
+import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice_;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceSearchInput;
@@ -63,6 +66,13 @@ public class SupplierInvoiceEndpoint
 		return detach(ejb.create(entity));
 	}
 
+	@POST
+	@Path("/findDeliveryStatistics")
+	@Produces({ "application/json", "application/xml" })
+	public DeliveryStatisticsDataSearchResult findDeliveryStatistics(DeliveryStattisticsDataSearchInput chartDataSearchInput)
+	{
+		return ejb.findDeliveryStatistics(chartDataSearchInput);
+	}
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id)

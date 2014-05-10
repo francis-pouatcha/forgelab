@@ -1,7 +1,13 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.report;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -12,6 +18,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart.Data;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -20,6 +27,8 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import net.sf.dynamicreports.report.exception.DRException;
 
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
@@ -31,6 +40,8 @@ import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
+import org.adorsys.adpharma.client.utils.ChartData;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -44,12 +55,16 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.google.common.collect.Lists;
 
 @Singleton
 public class DeliveryListController implements EntityController
@@ -74,7 +89,7 @@ public class DeliveryListController implements EntityController
 
 	@Inject
 	DeliverySearchService searchService;
-	
+
 	@Inject
 	DeliveryItemSearchService itemsearchService;
 
@@ -91,6 +106,10 @@ public class DeliveryListController implements EntityController
 
 	@Inject 
 	DeliverySearchInput searchInput;
+	
+	@Inject
+	private SupplierInvoiceChartDataService supplierInvoiceChartDataService;
+	
 
 	@Inject
 	private DeliveryRegistration registration;
@@ -98,6 +117,10 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@Bundle({ CrudKeys.class})
 	private ResourceBundle resourceBundle;
+	
+	@Inject
+	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
+
 
 
 	@PostConstruct
@@ -106,8 +129,27 @@ public class DeliveryListController implements EntityController
 
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
-		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Delivery>() {
+		listView.getYearList().getItems().setAll(DateHelper.getYears());
+		
+		chartDataSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().nativeTitleBar().showException(exception);
+
+			}
+		});
+		
+		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				exportDeliveryToXls();
+				
+			}
+		});
+		
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Delivery>() {
 			@Override
 			public void changed(ObservableValue<? extends Delivery> observable,
 					Delivery oldValue, Delivery newValue) {
@@ -116,16 +158,16 @@ public class DeliveryListController implements EntityController
 					listView.getUpdateButton().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					listView.getUpdateButton().disableProperty().bind(newValue.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
-                     DeliveryItemSearchInput dsi = new DeliveryItemSearchInput();
-                     dsi.getEntity().setDelivery(new DeliveryItemDelivery(newValue));
-                     dsi.setMax(-1);
-                     dsi.getFieldNames().add("delivery");
+					DeliveryItemSearchInput dsi = new DeliveryItemSearchInput();
+					dsi.getEntity().setDelivery(new DeliveryItemDelivery(newValue));
+					dsi.setMax(-1);
+					dsi.getFieldNames().add("delivery");
 					itemsearchService.setSearchInputs(dsi).start();
 				}
 
 			}
 		});
-		
+
 		itemsearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -139,6 +181,38 @@ public class DeliveryListController implements EntityController
 
 			}
 		});
+		listView.getComputeButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Integer selectedYears = listView.getYearList().getSelectionModel().getSelectedItem();
+				DeliverySupplier selectedSupplier = listView.getChartSupplierList().getSelectionModel().getSelectedItem();
+				if(selectedYears!=null){
+					DeliveryStattisticsDataSearchInput chartDataSearchInput = new DeliveryStattisticsDataSearchInput();
+					chartDataSearchInput.setYears(selectedYears);
+					if(selectedSupplier!=null&&selectedSupplier.getId()!=null)
+						chartDataSearchInput.setDeliverySupplier(selectedSupplier);
+					supplierInvoiceChartDataService.setModel(chartDataSearchInput).start();
+				}
+
+			}
+		});
+		
+		supplierInvoiceChartDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SupplierInvoiceChartDataService s = (SupplierInvoiceChartDataService) event.getSource();
+				DeliveryStatisticsDataSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				Iterator<ChartData> iterator = result.getChartData().iterator();
+				List<Data> pieChartData = ChartData.toPieChartData( result.getChartData());
+				listView.getPieChart().getData().setAll(pieChartData);
+				listView.getPieChartData().getItems().setAll( result.getChartData());
+			}
+		});
+		supplierInvoiceChartDataService.setOnFailed(chartDataSearchServiceCallFailedEventHandler);
 		itemsearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -211,6 +285,7 @@ public class DeliveryListController implements EntityController
 				ds.add(0, null);
 				listView.getSupplier().getItems().setAll(ds);
 				listView.getSupplier().getSelectionModel().select(0);
+				listView.getChartSupplierList().getItems().setAll(ds);
 
 			}
 		});
@@ -400,7 +475,7 @@ public class DeliveryListController implements EntityController
 		String deliveryNumber = searchInput.getEntity().getDeliveryNumber();
 		DeliverySupplier supplier = searchInput.getEntity().getSupplier();
 		DocumentProcessingState state = searchInput.getEntity().getDeliveryProcessingState();
-		
+
 		if(StringUtils.isNotBlank(deliveryNumber)) seachAttributes.add("deliveryNumber");
 		if(supplier!=null && supplier.getId()!=null) seachAttributes.add("supplier");
 		if(state!=null) seachAttributes.add("deliveryProcessingState") ;
@@ -409,6 +484,30 @@ public class DeliveryListController implements EntityController
 	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().clear();
+	}
+	
+	public void exportDeliveryToXls(){
+		Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+		if( selectedItem!=null){
+		Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
+		List<DeliveryItem> items = Lists.newArrayList(iterator);
+		try {
+			report()
+			.columns(
+					col.column("CIPM", "internalPic", type.stringType()), 
+					col.column("CIP", "mainPic", type.stringType()),
+					col.column("Designation", "articleName", type.stringType()),
+					col.column("Qte", "stockQuantity", type.bigDecimalType()),
+					col.column("P.V", "salesPricePU", type.bigDecimalType())
+					
+					) 
+					.setDataSource(items)
+					.show();
+		} catch (DRException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		}
+	}
 }

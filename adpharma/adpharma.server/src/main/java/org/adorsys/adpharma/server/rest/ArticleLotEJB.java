@@ -326,6 +326,7 @@ public class ArticleLotEJB
 
 	@Inject
 	private ArticleLotSequenceRepository articleLotSequenceRepository;
+	
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String newLotNumber(String mainPic){
