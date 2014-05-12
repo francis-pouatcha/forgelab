@@ -196,7 +196,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject 
 	private LoginService loginService ;
-	
+
 	@Inject
 	private SalesKeyReciever salesKeyRecieverView;
 
@@ -320,16 +320,15 @@ public class SalesOrderDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						String salesKey = salesKeyRecieverView.show();
-						if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
-							displayedEntity.setSalesKey(salesKey);
 						if(isValideSale()){
 							Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
 							if (violations.isEmpty())
 							{
-								Login login = new Login();
-//								login.setSaleKey(saleKey);
-								closeService.setSalesOrder(displayedEntity).start();
+								String salesKey = salesKeyRecieverView.show();
+								if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
+									displayedEntity.setSalesKey(salesKey);
+									closeService.setSalesOrder(displayedEntity).start();
+								}
 							}
 							else
 							{
@@ -338,7 +337,7 @@ public class SalesOrderDisplayController implements EntityController
 							}
 						}
 					}
-					}	
+
 				});
 
 		displayView.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -497,6 +496,7 @@ public class SalesOrderDisplayController implements EntityController
 				displayView.getDataList().getItems().add(createdItem);
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
+				displayView.getInternalPic().requestFocus();
 
 			}
 		});
@@ -706,6 +706,7 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
 			Dialogs.create().nativeTitleBar().message("la Qte est Requis ").showError();
+			displayView.getOrderedQty().requestFocus();
 			return false;
 		}
 
@@ -745,6 +746,7 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
+		displayView.getOrderedQty().requestFocus();
 	}
 
 

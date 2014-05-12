@@ -51,16 +51,6 @@ public class SalesKeyReciever  extends VBox{
 
 	private Label salesKeyError ;
 
-	@Inject
-	private LoginSearchService loginSearchService ;
-
-	@Inject
-	private ServiceCallFailedEventHandler callFailedEventHandler;
-
-	@Inject
-	@Bundle({ CrudKeys.class, Agency.class })
-	private ResourceBundle resourceBundle;
-
 	public SalesKeyReciever() {
 		super();
 		salesKeyError = new Label();
@@ -89,31 +79,6 @@ public class SalesKeyReciever  extends VBox{
 
 	@PostConstruct
 	public void postConstruct(){
-		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
-			@Override
-			protected void showError(Throwable exception) {
-				Dialogs.create().showException(exception);
-			}
-		});
-		loginSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				LoginSearchService s = (LoginSearchService) event.getSource();
-				LoginSearchResult sr = s.getValue();
-				event.consume();
-				s.reset();
-				if(sr.getResultList().isEmpty()){
-					showKeyError();
-					passwordField.setText(null);
-				}else {
-					hideKeyError();
-				}
-
-			}
-		});
-		loginSearchService.setOnFailed(callFailedEventHandler);
 		okButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -142,6 +107,8 @@ public class SalesKeyReciever  extends VBox{
 	public String show(){
 		passwordField.setText(null);
 		this.userAction = Actions.CANCEL;
+		hideKeyError();
+		passwordField.requestFocus();
 		dialog.show();
 		return getUserSalesKey();
 
@@ -175,9 +142,6 @@ public class SalesKeyReciever  extends VBox{
 		return userAction;
 	}
 
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
 	public void showKeyError(){
 		salesKeyError.setText("Cle de vente Incorrect ");
 		salesKeyError.setStyle("-fx-text-fill: red ");

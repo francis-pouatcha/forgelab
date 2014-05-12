@@ -91,13 +91,13 @@ public class LoginView extends AbstractForm<Login>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle);
+      loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle,ViewModel.READ_ONLY);
       email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
       fullName = viewBuilder.addTextField("Login_fullName_description.title", "fullName", resourceBundle);
       password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);
       disableLogin = viewBuilder.addCheckBox("Login_disableLogin_description.title", "disableLogin", resourceBundle);
       accountLocked = viewBuilder.addCheckBox("Login_accountLocked_description.title", "accountLocked", resourceBundle);
-      saleKey = viewBuilder.addTextField("Login_saleKey_description.title", "saleKey", resourceBundle);
+      saleKey = viewBuilder.addTextField("Login_saleKey_description.title", "saleKey", resourceBundle,ViewModel.READ_ONLY);
       gender = viewBuilder.addComboBox("Login_gender_description.title", "gender", resourceBundle, Gender.values());
       discountRate = viewBuilder.addBigDecimalField("Login_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
       credentialExpiration = viewBuilder.addCalendarTextField("Login_credentialExpiration_description.title", "credentialExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
