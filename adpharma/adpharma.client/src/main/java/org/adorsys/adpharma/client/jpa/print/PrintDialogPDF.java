@@ -1,40 +1,28 @@
 package org.adorsys.adpharma.client.jpa.print;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.print.Paper;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -50,17 +38,13 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.print.SMTPSender;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jboss.weld.exceptions.IllegalStateException;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfWriter;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 
-public class PrintDialog {
+public class PrintDialogPDF {
 	public static double printableWidth = Paper.A4.getWidth() - (40 * 2);
 	public static double printableHeight = Paper.A4.getHeight() - (40 * 2);
 	public static int printableWidthInt = new Double(printableWidth).intValue();
@@ -79,9 +63,12 @@ public class PrintDialog {
 
 	private Stage dialog = new Stage();
 
-	private final List<Parent> pages = new ArrayList<Parent>();
-	private VBox rootPane;
-	private int pageNumber = 1;
+//	private final List<String> pages = new ArrayList<String>();
+	private String fileName;
+	private Map<Integer, Image> images = new HashMap<Integer, Image>();
+	private PDDocument pdDocument;
+
+	private int pageNumber = 0;
 
 	@Inject
 	@Bundle({ CrudKeys.class })
@@ -90,14 +77,15 @@ public class PrintDialog {
 	@Inject
 	private SMTPSender smtpSender;
 
+	private VBox rootPane;
+	private ImageView imageView=new ImageView();
+	
 	private String receiver;
 	private String sender;
 	private String username;
 	private String password;
 	private String subject;
 	private String messageText;
-	private String fileName = UUID.randomUUID().toString();
-	private File file;
 
 	@PostConstruct
 	public void postConstruct() {
@@ -118,19 +106,15 @@ public class PrintDialog {
 		printButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (file == null) {
-					createDocument();
-				}
 				PrintService printService = PrintServiceLookup
 						.lookupDefaultPrintService();
 				if (printService == null) {
-					// no printer installed.
-					return;
+					throw new IllegalStateException("No print service available.");
 				}
 				DocPrintJob printJob = printService.createPrintJob();
 
 				try {
-					FileInputStream fis = new FileInputStream(file);
+					FileInputStream fis = new FileInputStream(fileName);
 					Doc doc = new SimpleDoc(fis, DocFlavor.INPUT_STREAM.PDF,
 							null);
 					printJob.print(doc, null);
@@ -168,50 +152,47 @@ public class PrintDialog {
 		sendMailButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (file == null || !file.exists()) {
-					createDocument();
-				}
 				smtpSender.sendMail(receiver, sender, username, password,
 						subject, fileName, messageText);
 			}
 		});
+
+		rootPane = new VBox();
+		HBox hBox = new HBox();
+		Scene scene = new Scene(rootPane);
+		hBox = new HBox();
+		hBox.add(printButton);
+		hBox.add(previousButton);
+		hBox.add(nextButton);
+		hBox.add(closeButton);
+		javafx.scene.control.ScrollPane scrollPane = new javafx.scene.control.ScrollPane();
+		scrollPane.setContent(imageView);
+		scrollPane.setPrefHeight(Paper.A4.getHeight());
+		rootPane.getChildren().add(scrollPane);
+		VBox.setVgrow(scrollPane, Priority.ALWAYS);
+		hBox.setPrefHeight(50);
+		hBox.setPrefWidth(Paper.A4.getWidth()+20);
+		rootPane.getChildren().add(hBox);
+		dialog.setScene(scene);
 	}
 
-	HBox hBox = new HBox();
-	BorderStroke borderStroke = new BorderStroke(Paint.valueOf("black"),
-			BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT,
-			Insets.EMPTY);
-	Border dashedBlackBorder = new Border(borderStroke);
-
 	public void show() {
-		if (pageNumber > pages.size())
-			pageNumber = 1;
-		if (pageNumber <= 0)
-			pageNumber = pages.size();
-		Parent node = pages.get(pageNumber - 1);
-		if (rootPane == null) {
-			rootPane = new VBox();
-			rootPane.setBorder(dashedBlackBorder);
-
-			Scene scene = new Scene(rootPane);
-			hBox = new HBox();
-			hBox.add(printButton);
-			hBox.add(previousButton);
-			hBox.add(nextButton);
-			hBox.add(closeButton);
-
-			dialog.setScene(scene);
-			dialog.setTitle("Page: " + pageNumber);
-			rootPane.getChildren().clear();
-			rootPane.getChildren().add(node);
-			rootPane.getChildren().add(hBox);
+		createImage();
+		
+		Image image = images.get(pageNumber);
+//		String s = pages.get(pageNumber);
+//		FileInputStream fis;
+//		try {
+//			fis = new FileInputStream(s);
+//		} catch (FileNotFoundException e) {
+//			throw new IllegalStateException(e);
+//		}
+//		Image image = new Image(fis);
+//		IOUtils.closeQuietly(fis);
+		imageView.setImage(image);
+		dialog.setTitle("Page: " + pageNumber+1);
+		if(!dialog.isShowing())
 			dialog.show();
-		} else {
-			dialog.setTitle("Page: " + pageNumber);
-			rootPane.getChildren().clear();
-			rootPane.getChildren().add(node);
-			rootPane.getChildren().add(hBox);
-		}
 	}
 
 	public Button getPrintButton() {
@@ -230,12 +211,39 @@ public class PrintDialog {
 		return previousButton;
 	}
 
-	public List<Parent> getPages() {
-		return pages;
-	}
-
+//	public List<String> getPages() {
+//		return pages;
+//	}
+//
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	private void createImage() {
+				
+		if(pdDocument==null){
+			try {
+				pdDocument = PDDocument.load(fileName);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+
+		if(pageNumber<0) pageNumber=pdDocument.getNumberOfPages()-1;
+		if(pageNumber>=pdDocument.getNumberOfPages())pageNumber=0;
+		
+		if(images.containsKey(pageNumber)) return;
+
+		List<PDPage> allPages = pdDocument.getDocumentCatalog().getAllPages();
+		PDPage page = allPages.get(pageNumber);
+		BufferedImage img;
+		try {
+			img = page.convertToImage(BufferedImage.TYPE_BYTE_BINARY, 72);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+		WritableImage fxImage = SwingFXUtils.toFXImage(img, null);
+		images.put(pageNumber, fxImage);
 	}
 
 	public void setReceiver(String receiver) {
@@ -261,57 +269,5 @@ public class PrintDialog {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	private void createDocument() {
-		if(file!=null) return;
-		file = new File(fileName + ".pdf");
-		try {
-			Document doc = new Document();
-			FileOutputStream documentOut = new FileOutputStream(file);
-			PdfWriter.getInstance(doc, documentOut);
-			doc.open();
-			int i = 0;
-			for (Parent page : pages) {
-				String pageFile = fileName + "-" + i + ".jpg";
-				if(i>0) doc.newPage();
-
-				BufferedImage bi = generate_png_from_container(page, pageFile);
-//				FileInputStream fis = new FileInputStream(pageFile);
-//				BufferedImage bi2 = ImageIO.read(fis);
-				com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(pageFile);
-//				IOUtils.closeQuietly(fis);
-				doc.add(image);
-				i += 1;
-			}
-			doc.close();
-		} catch (IOException ioe) {
-			throw new IllegalStateException(ioe);
-		} catch (DocumentException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	public static BufferedImage generate_png_from_container(Node node, String fileName) {
-		SnapshotParameters param = new SnapshotParameters();
-		param.setDepthBuffer(true);
-		WritableImage snapshot = node.snapshot(param, null);
-		BufferedImage bufferedImage = new BufferedImage(printableWidthInt, printableHeightInt, BufferedImage.TYPE_INT_ARGB);
-		BufferedImage tempImg = SwingFXUtils.fromFXImage(snapshot, bufferedImage);
-		BufferedImage img = null;
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(tempImg, "png", baos);
-			baos.flush();
-			byte[] imageInByte = baos.toByteArray();
-			baos.close();
-			InputStream in = new ByteArrayInputStream(imageInByte);
-			img = ImageIO.read(in);
-			FileOutputStream fos = new FileOutputStream(fileName);
-			IOUtils.write(imageInByte, fos);
-			IOUtils.closeQuietly(fos);
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-		return img;
-	}
+	
 }
