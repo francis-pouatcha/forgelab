@@ -4,6 +4,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.exception.DRException;
 
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -500,10 +503,10 @@ public class DeliveryListController implements EntityController
 					col.column("Designation", "articleName", type.stringType()),
 					col.column("Qte", "stockQuantity", type.bigDecimalType()),
 					col.column("P.V", "salesPricePU", type.bigDecimalType())
-					
-					) 
+					)
+
 					.setDataSource(items)
-					.show();
+					.print();
 		} catch (DRException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
