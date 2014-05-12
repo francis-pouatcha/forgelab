@@ -79,7 +79,7 @@ public class LoginEJB
 	   Login login = attach(entity);
       return repository.countLike(login, attributes);
    }
-
+   
    private Login attach(Login entity)
    {
       if (entity == null)

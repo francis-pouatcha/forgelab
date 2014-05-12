@@ -28,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -158,7 +159,7 @@ public class ArticleLotEJB
 		if(isManagedLot){
 			ArticleLot articleLot = new ArticleLot();
 			articleLot.setArticle(detailConfig.getTarget());
-			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article});
+			List<ArticleLot> found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article});
 			articleLot = found.iterator().next();
 			BigDecimal stockQuantity = articleLot.getStockQuantity();
 			stockQuantity =stockQuantity.add(detailsQty.multiply(detailConfig.getTargetQuantity()));
@@ -196,28 +197,58 @@ public class ArticleLotEJB
 	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+
 		// generate Article lot for each delivery item
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			ArticleLot al = new  ArticleLot();
-			al.setAgency(creatingUser.getAgency());
-			Article article = deliveryItem.getArticle();
-			al.setArticle(article);
-			al.setArticleName(article.getArticleName());
-			al.setVat(article.getVat());
-			al.setCreationDate(new Date());
-			al.setExpirationDate(deliveryItem.getExpirationDate());
-			// The internal PIC is supposed to be provided by the article lot.
-			al.setInternalPic(deliveryItem.getInternalPic());
-			al.setMainPic(deliveryItem.getMainPic());
-			al.setSecondaryPic(deliveryItem.getSecondaryPic());
-			al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			al.setSalesPricePU(deliveryItem.getSalesPricePU());
-			al.setStockQuantity(deliveryItem.getStockQuantity());
-			al.calculateTotalAmout();
-			al = create(al);
+			if(isManagedLot){
+				createArticleLot(creatingUser, deliveryItem);
+			}else {
+				upgradeArticleLotQtyOrCreate(deliveryItem, creatingUser);
+			}
 		}
 	}
 
+	public void createArticleLot(Login creatingUser ,DeliveryItem deliveryItem){
+		ArticleLot al = new  ArticleLot();
+		al.setAgency(creatingUser.getAgency());
+		Article article = deliveryItem.getArticle();
+		al.setArticle(article);
+		al.setArticleName(article.getArticleName());
+		al.setVat(article.getVat());
+		al.setCreationDate(new Date());
+		al.setExpirationDate(deliveryItem.getExpirationDate());
+		// The internal PIC is supposed to be provided by the article lot.
+		al.setInternalPic(deliveryItem.getInternalPic());
+		al.setMainPic(deliveryItem.getMainPic());
+		al.setSecondaryPic(deliveryItem.getSecondaryPic());
+		al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+		al.setSalesPricePU(deliveryItem.getSalesPricePU());
+		al.setStockQuantity(deliveryItem.getStockQuantity());
+		al.calculateTotalAmout();
+		al = create(al);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void upgradeArticleLotQtyOrCreate(DeliveryItem deliveryItem ,Login creatingUser ){
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setArticle(deliveryItem.getArticle());
+		articleLot.setInternalPic(deliveryItem.getInternalPic());
+		List<ArticleLot> found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+		if(!found.isEmpty()){
+			ArticleLot next = found.iterator().next();
+			next.setMainPic(deliveryItem.getMainPic());
+			next.setSecondaryPic(deliveryItem.getSecondaryPic());
+			next.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+			next.setSalesPricePU(deliveryItem.getSalesPricePU());
+			next.setStockQuantity(next.getStockQuantity().add(deliveryItem.getStockQuantity()));
+			next.calculateTotalAmout();
+			update(next);
+		}else {
+			createArticleLot(creatingUser, deliveryItem);
+		}
+	}
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
 
 		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
@@ -326,7 +357,7 @@ public class ArticleLotEJB
 
 	@Inject
 	private ArticleLotSequenceRepository articleLotSequenceRepository;
-	
+
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String newLotNumber(String mainPic){

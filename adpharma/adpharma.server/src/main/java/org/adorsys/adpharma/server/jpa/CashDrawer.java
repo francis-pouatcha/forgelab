@@ -134,7 +134,6 @@ public class CashDrawer implements Serializable
 	public void prePersist(){
 		openingDate = new Date();
 		closingDate=null;
-		cashDrawerNumber = SequenceGenerator.getSequence(SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE);
 	}
 	
 	public Boolean isOpen(){

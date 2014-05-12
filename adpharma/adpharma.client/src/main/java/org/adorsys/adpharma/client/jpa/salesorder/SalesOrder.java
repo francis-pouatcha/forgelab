@@ -56,6 +56,10 @@ public class SalesOrder implements Cloneable
 
 	@Description("SalesOrder_soNumber_description")
 	private SimpleStringProperty soNumber;
+	
+	@Description("SalesOrder_salesKey_description")
+	private SimpleStringProperty salesKey;
+	
 	@Description("SalesOrder_cashed_description")
 	private SimpleBooleanProperty cashed;
 	@Description("SalesOrder_alreadyReturned_description")
@@ -148,6 +152,25 @@ public class SalesOrder implements Cloneable
 	public final void setSoNumber(String soNumber)
 	{
 		this.soNumberProperty().set(soNumber);
+	}
+	
+	public SimpleStringProperty salesKeyProperty()
+	{
+		if (salesKey == null)
+		{
+			salesKey = new SimpleStringProperty();
+		}
+		return salesKey;
+	}
+
+	public String getSalesKey()
+	{
+		return salesKeyProperty().get();
+	}
+
+	public final void setSalesKey(String salesKey)
+	{
+		this.salesKeyProperty().set(salesKey);
 	}
 
 	public SimpleBooleanProperty cashedProperty()
