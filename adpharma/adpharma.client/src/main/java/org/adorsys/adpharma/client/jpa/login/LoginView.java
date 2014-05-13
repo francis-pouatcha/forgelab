@@ -91,7 +91,7 @@ public class LoginView extends AbstractForm<Login>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle,ViewModel.READ_ONLY);
+      loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle);
       email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
       fullName = viewBuilder.addTextField("Login_fullName_description.title", "fullName", resourceBundle);
       password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);

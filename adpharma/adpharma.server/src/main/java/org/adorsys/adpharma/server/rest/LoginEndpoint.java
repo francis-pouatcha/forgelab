@@ -72,6 +72,15 @@ public class LoginEndpoint
    {
       return detach(ejb.update(entity));
    }
+   
+   @PUT
+   @Path("/resetUserSalesKey")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public Login resetUserSalesKey(Login entity)
+   {
+      return detach(ejb.resetUserSalesKey(entity));
+   }
 
    @GET
    @Path("/{id:[0-9][0-9]*}")

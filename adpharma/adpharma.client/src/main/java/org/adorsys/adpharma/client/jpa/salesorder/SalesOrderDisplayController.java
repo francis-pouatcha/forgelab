@@ -584,7 +584,7 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
+				if(code== KeyCode.ENTER|| code==KeyCode.TAB){
 					String internalPic = displayView.getInternalPic().getText();
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();

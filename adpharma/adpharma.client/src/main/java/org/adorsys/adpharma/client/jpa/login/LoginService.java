@@ -34,7 +34,7 @@ public class LoginService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public Login deleteById(Long id) {// @PathParam("id")
-										// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media).delete(Login.class);
 	}
 
@@ -46,6 +46,18 @@ public class LoginService {
 		return target().path("" + entity.getId()).request(media)
 				.put(ent, Login.class);
 	}
+
+//	@PUT
+//	@Path("/resetUserSalesKey")
+//	@Produces({ "application/json", "application/xml" })
+//	@Consumes({ "application/json", "application/xml" })
+	public Login resetUserSalesKey(Login entity)
+	{
+		Entity<Login> ent = Entity.entity(entity, media);
+		return target().path("resetUserSalesKey").request(media)
+				.put(ent, Login.class);
+	}
+
 
 	// @GET
 	// @Path("/{id:[0-9][0-9]*}")
