@@ -7,11 +7,18 @@ import java.util.Set;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -26,6 +33,9 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
+
+import jfxtras.scene.layout.HBox;
+import jfxtras.scene.layout.VBox;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
@@ -46,6 +56,7 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookRecordingAgent;
@@ -61,6 +72,7 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemRemoveServic
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemVat;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
+import org.adorsys.adpharma.client.utils.SalesKeyReciever;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -127,7 +139,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesOrderReturnService orderReturnService;
-	
+
 	@Inject
 	private SalesOrderCancelService orderCancelService;
 
@@ -182,6 +194,12 @@ public class SalesOrderDisplayController implements EntityController
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
 
+	@Inject 
+	private LoginService loginService ;
+
+	@Inject
+	private SalesKeyReciever salesKeyRecieverView;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -229,8 +247,8 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
-		
-		
+
+
 		/*
 		 * listen to delete menu Item.
 		 */
@@ -262,7 +280,7 @@ public class SalesOrderDisplayController implements EntityController
 						BigDecimal oderedQty = selectedItem.getOrderedQty();
 						BigDecimal qtyToReturn = getQtyToReturn();
 						if(qtyToReturn.compareTo(oderedQty)>0){
-							Dialogs.create().nativeTitleBar().message("you can't return more than : "+oderedQty +" for this line !").showInformation();
+							Dialogs.create().nativeTitleBar().message("Vous ne pouvez retourner plus de : "+oderedQty +" pour cette ligne !").showInformation();
 						}else {
 							selectedItem.setReturnedQty(qtyToReturn);
 							selectedItem.setDeliveredQty(selectedItem.getOrderedQty().subtract(qtyToReturn));
@@ -306,7 +324,11 @@ public class SalesOrderDisplayController implements EntityController
 							Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
 							if (violations.isEmpty())
 							{
-								closeService.setSalesOrder(displayedEntity).start();
+								String salesKey = salesKeyRecieverView.show();
+								if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
+									displayedEntity.setSalesKey(salesKey);
+									closeService.setSalesOrder(displayedEntity).start();
+								}
 							}
 							else
 							{
@@ -315,6 +337,7 @@ public class SalesOrderDisplayController implements EntityController
 							}
 						}
 					}
+
 				});
 
 		displayView.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -354,6 +377,8 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(!displayedEntity.getAlreadyReturned()){
+
+
 					orderReturnService.setEntity(displayedEntity).start();
 				}else {
 					Dialogs.create().message("Cette commande adeja fais l abjet dun retour !").showInformation();
@@ -388,7 +413,20 @@ public class SalesOrderDisplayController implements EntityController
 
 		});
 
+		displayView.getDiscountRate().numberProperty().addListener(new ChangeListener<BigDecimal>() {
 
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> observable,
+					BigDecimal oldValue, BigDecimal newValue) {
+				if(newValue!=null){
+					BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
+					BigDecimal discount = amountAfterTax.multiply(newValue);
+					displayedEntity.setAmountDiscount(discount);
+
+				}
+
+			}
+		});
 		insurranceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -458,6 +496,7 @@ public class SalesOrderDisplayController implements EntityController
 				displayView.getDataList().getItems().add(createdItem);
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
+				displayView.getInternalPic().requestFocus();
 
 			}
 		});
@@ -504,7 +543,7 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrder entity = s.getValue();
 				event.consume();
 				s.reset();
-				Action showConfirm = Dialogs.create().nativeTitleBar().message("would You Like to Print Invoice ?").showConfirm();
+				Action showConfirm = Dialogs.create().nativeTitleBar().message("Voulez vous imprimer la facture ?").showConfirm();
 				if(Dialog.Actions.YES.equals(showConfirm)){
 					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
 				}
@@ -662,11 +701,12 @@ public class SalesOrderDisplayController implements EntityController
 		BigDecimal orderedQty = salesOrderItem.getOrderedQty();
 		SalesOrderItemArticle article = salesOrderItem.getArticle();
 		if(article==null || article.getId()==null){
-			Dialogs.create().nativeTitleBar().message("you need to specified article ").showError();
+			Dialogs.create().nativeTitleBar().message("vous devez selection un article ").showError();
 			return false;
 		}
 		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
-			Dialogs.create().nativeTitleBar().message("orderedQty is required ").showError();
+			Dialogs.create().nativeTitleBar().message("la Qte est Requis ").showError();
+			displayView.getOrderedQty().requestFocus();
 			return false;
 		}
 
@@ -676,8 +716,22 @@ public class SalesOrderDisplayController implements EntityController
 
 	public boolean isValideSale(){
 		if(displayedEntity.getSalesOrderItems().isEmpty()){
-			Dialogs.create().nativeTitleBar().message("Sales Order need to have at least one item").showError();
+			Dialogs.create().nativeTitleBar().message("la vente dois avoir au moins un produit ").showError();
 			return false;
+		}
+		if(displayedEntity.getCustomer().getCustomerCategory()!=null){
+			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
+			if(discountRate!=null){
+				BigDecimal amountDiscount = displayedEntity.getAmountDiscount()!=null?displayedEntity.getAmountDiscount():BigDecimal.ZERO;
+				BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
+				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100)));
+				if(realDiscount.compareTo(realDiscount)<0){
+					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
+					return false ;
+				}
+			}else {
+				displayedEntity.setAmountDiscount(BigDecimal.ZERO);
+			}
 		}
 		return true;
 	}
@@ -692,6 +746,7 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
+		displayView.getOrderedQty().requestFocus();
 	}
 
 
@@ -780,7 +835,7 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public BigDecimal getQtyToReturn() {
-		String showTextInput = Dialogs.create().message("Retun Quantity : ").showTextInput("1");
+		String showTextInput = Dialogs.create().message("Qte retounee : ").showTextInput("1");
 		BigDecimal qtyToReturn = BigDecimal.ONE;
 		try {
 			qtyToReturn = new BigDecimal(showTextInput);
@@ -791,7 +846,7 @@ public class SalesOrderDisplayController implements EntityController
 		return qtyToReturn;
 	}
 	public void reset() {
-	     PropertyReader.copy(new SalesOrder(), displayedEntity);
+		PropertyReader.copy(new SalesOrder(), displayedEntity);
 	}
 
 }

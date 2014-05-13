@@ -20,10 +20,12 @@ import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
@@ -32,6 +34,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
 public class SalesOrderEJB
@@ -39,7 +42,7 @@ public class SalesOrderEJB
 
 	@Inject
 	private SalesOrderRepository repository;
-	
+
 
 	@Inject
 	private CustomerMerger customerMerger;
@@ -52,6 +55,9 @@ public class SalesOrderEJB
 
 	@Inject
 	private VATMerger vATMerger;
+	
+	@Inject
+	private LoginEJB loginEJB ;
 
 	@Inject
 	private InsurranceMerger insurranceMerger;
@@ -83,14 +89,14 @@ public class SalesOrderEJB
 	@Inject
 	@ReturnSalesEvent
 	private Event<SalesOrder> returnSalesEvent;
-	
+
 	@EJB
 	private CustomerEJB customerEJB;
 
 	@Inject
 	private SecurityUtil securityUtilEJB;
-	
-	
+
+
 	public SalesOrder create(SalesOrder entity)
 	{
 		Login user = securityUtilEJB.getConnectedUser();
@@ -102,7 +108,9 @@ public class SalesOrderEJB
 			Customer otherCustomers = customerEJB.otherCustomers();
 			entity.setCustomer(otherCustomers);
 		}
-		return repository.save(attach(entity));
+		SalesOrder save = repository.save(attach(entity)); 
+		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
+		return repository.save(save);
 	}
 
 	public SalesOrder deleteById(Long id)
@@ -120,7 +128,7 @@ public class SalesOrderEJB
 		return repository.save(attach(entity));
 	}
 
-	public SalesOrder findById(Long id)
+	public SalesOrder findById(Long id)						
 	{
 		return repository.findBy(id);
 	}
@@ -183,11 +191,11 @@ public class SalesOrderEJB
 		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
 		// composed collections. No composition
-//		Set<SalesOrderItem> salesOrderItems = entity.getSalesOrderItems();
-//		for (SalesOrderItem salesOrderItem : salesOrderItems)
-//		{
-//			salesOrderItem.setSalesOrder(entity);
-//		}
+		//		Set<SalesOrderItem> salesOrderItems = entity.getSalesOrderItems();
+		//		for (SalesOrderItem salesOrderItem : salesOrderItems)
+		//		{
+		//			salesOrderItem.setSalesOrder(entity);
+		//		}
 
 		return entity;
 	}
@@ -201,6 +209,8 @@ public class SalesOrderEJB
 	}
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+		Login realSaller = getRealSaller(salesOrder.getSalesKey());
+		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
 		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
@@ -210,6 +220,7 @@ public class SalesOrderEJB
 			salesOrder.setAmountDiscount(BigDecimal.ZERO);
 
 		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
+		salesOrder.setSalesAgent(realSaller);
 		SalesOrder closedSales = update(salesOrder);
 		salesOrderClosedEvent.fire(closedSales);
 		return closedSales;
@@ -242,7 +253,7 @@ public class SalesOrderEJB
 		salesOrder = update(salesOrder);
 		directSalesClosedEvent.fire(salesOrder);
 	}
-	
+
 	public void handleSalesOrderItemCreatedEvent(@Observes @DocumentCreatedEvent SalesOrderItem salesOrderItem){
 		updateSalesOrder(salesOrderItem, false);
 	}
@@ -252,18 +263,18 @@ public class SalesOrderEJB
 	public void handleSalesOrderItemDeletedEvent(@Observes @DocumentDeletedEvent SalesOrderItem salesOrderItem){
 		updateSalesOrder(salesOrderItem, true);
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private void updateSalesOrder(SalesOrderItem updatingSalesOrderItem, boolean deleted) {
-		
+
 		SalesOrderItem searchInput = new SalesOrderItem();
 		SalesOrder salesOrder = updatingSalesOrderItem.getSalesOrder();
 		salesOrder = findById(salesOrder.getId());
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			throw new IllegalStateException("Sales order closed.");
 		searchInput.setSalesOrder(salesOrder);
-		
+
 		@SuppressWarnings("rawtypes")
 		SingularAttribute[] attributes = new SingularAttribute[]{SalesOrderItem_.salesOrder};
 		Long count = salesOrderItemEJB.countBy(searchInput, attributes );
@@ -275,15 +286,15 @@ public class SalesOrderEJB
 		while(start<=count){
 			List<SalesOrderItem> found = salesOrderItemEJB.findBy(searchInput, start , max, attributes);
 			start +=max;
-			
+
 			for (SalesOrderItem salesOrderItem : found) {
-				
+
 				// use the current event object. Not sure about transactional behavior here.
 				if(updatingSalesOrderItem.getId().equals(salesOrderItem.getId())){
 					if(deleted) continue;// do not account for the deleted item. In case it appears here.
 					salesOrderItem = updatingSalesOrderItem;
 				}
-				
+
 				amountAfterTax=amountAfterTax.add(salesOrderItem.getTotalSalePrice());
 				VAT vat = salesOrderItem.getVat();
 				if(vat!=null){
@@ -291,7 +302,7 @@ public class SalesOrderEJB
 				}
 				amountBeforeTax = amountAfterTax.subtract(amountVAT);
 			}
-			
+
 		}
 		salesOrder.setAmountAfterTax(amountAfterTax);
 		salesOrder.setAmountBeforeTax(amountBeforeTax);
@@ -300,4 +311,16 @@ public class SalesOrderEJB
 		updatingSalesOrderItem.setSalesOrder(salesOrder);
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	private Login getRealSaller(String saleKey){
+		Login login = new Login();
+		login.setSaleKey(saleKey);
+		List<Login> findBy = loginEJB.findBy(login, 0, 1, new SingularAttribute[]{Login_.saleKey});
+		if(!findBy.isEmpty())
+			return findBy.iterator().next();
+			
+		return null;
+	}
+
 }

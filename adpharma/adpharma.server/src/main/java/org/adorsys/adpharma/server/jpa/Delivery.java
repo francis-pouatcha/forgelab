@@ -51,7 +51,6 @@ public class Delivery implements Serializable
 
 	@Column
 	@Description("Delivery_deliveryNumber_description")
-	@NotNull(message = "Delivery_deliveryNumber_NotNull_validation")
 	private String deliveryNumber;
 
 	@Column
@@ -145,7 +144,6 @@ public class Delivery implements Serializable
 	@PrePersist
 	public void prePersist(){
 		recordingDate = new Date();
-		deliveryNumber = SequenceGenerator.getSequence(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE);
 	}
 	
 	public void computeAmount(){

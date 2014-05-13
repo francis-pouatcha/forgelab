@@ -22,6 +22,7 @@ import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
 public class CashDrawerEJB
@@ -47,7 +48,9 @@ public class CashDrawerEJB
 	entity.setCashier(connectedUser);
 	entity.setAgency(connectedUser.getAgency());
 	entity.initAmount();
-	return repository.save(attach(entity));
+	CashDrawer save = repository.save(attach(entity));
+	save.setCashDrawerNumber(SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE+save.getId());
+	return repository.save(save);
 	}
 	
 	public CashDrawer deleteById(Long id)

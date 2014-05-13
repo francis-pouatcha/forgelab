@@ -9,7 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
+import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import java.lang.Override;
@@ -85,6 +87,10 @@ public class SalesOrder implements Serializable
 	@Column
 	@Description("SalesOrder_soNumber_description")
 	private String soNumber;
+
+	@Transient
+	@Description("SalesOrder_salesKey_description")
+	private String salesKey;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Description("SalesOrder_creationDate_description")
@@ -178,10 +184,9 @@ public class SalesOrder implements Serializable
 	private Boolean alreadyReturned = Boolean.FALSE;
 
 
-	@PrePersist
+	@PostPersist
 	public void prePersist(){
 		creationDate = new Date();
-		soNumber = SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE);
 	}
 
 	public void calculateTotalReturnAmount(){
@@ -343,6 +348,14 @@ public class SalesOrder implements Serializable
 	public void setAgency(final Agency agency)
 	{
 		this.agency = agency;
+	}
+
+	public String getSalesKey() {
+		return salesKey;
+	}
+
+	public void setSalesKey(String salesKey) {
+		this.salesKey = salesKey;
 	}
 
 	public DocumentProcessingState getSalesOrderStatus()

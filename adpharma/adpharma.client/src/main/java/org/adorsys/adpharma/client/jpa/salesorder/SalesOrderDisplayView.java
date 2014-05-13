@@ -221,7 +221,7 @@ public class SalesOrderDisplayView
 		amountHT.setEditable(false);
 
 		discount = ViewBuilderUtils.newBigDecimalField( "discount", NumberType.CURRENCY,locale,false);
-		discount.setEditable(false);
+		discount.setEditable(true);
 
 		amountTTC = ViewBuilderUtils.newBigDecimalField( "amountTTC", NumberType.CURRENCY,locale,false);
 		amountTTC.setEditable(false);
@@ -292,12 +292,18 @@ public class SalesOrderDisplayView
 		cashDrawer.valueProperty().bindBidirectional(model.cashDrawerProperty());
 
 		saleOrderItemBar.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		clientButton.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		insurreurButton.visibleProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		closeButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		client.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		insurrer.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		discountRate.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		//		editSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		//		deleteSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		orderQuantityColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		returnSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		
 		//		view.bind(model);
 	}
 

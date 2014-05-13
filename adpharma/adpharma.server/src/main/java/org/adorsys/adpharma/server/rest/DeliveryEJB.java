@@ -17,6 +17,7 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
 public class DeliveryEJB
@@ -49,7 +50,7 @@ public class DeliveryEJB
 
 	@Inject
 	private ArticleEJB articleEJB;
-	
+
 	@Inject
 	private ArticleLotEJB articleLotEJB;
 
@@ -65,7 +66,10 @@ public class DeliveryEJB
 
 	public Delivery create(Delivery entity)
 	{
-		return repository.save(attach(entity));
+
+		Delivery save = repository.save(attach(entity));
+		save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
+		return repository.save(save);
 	}
 
 	public Delivery deleteById(Long id)
@@ -88,8 +92,12 @@ public class DeliveryEJB
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
+			String internalPic = deliveryItem.getMainPic();
+			if(isManagedLot){
+				internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
+			}
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			deliveryItem = deliveryItemEJB.update(deliveryItem);

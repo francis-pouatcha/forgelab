@@ -31,7 +31,6 @@ public class ProductDetailConfigSourceSelection extends AbstractSelection<Produc
 	      LazyViewBuilder viewBuilder = new LazyViewBuilder();
 
 	      source = viewBuilder.addComboBox("ProductDetailConfig_source_description.title", "source", resourceBundle, false);
-
 	      source.setCellFactory(new Callback<ListView<ProductDetailConfigSource>, ListCell<ProductDetailConfigSource>>()
 	      {
 	         @Override

@@ -127,14 +127,14 @@ public class SalesOrderListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle); 
-		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_customer_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_customer_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "cashDrawer", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "salesAgent", "SalesOrder_salesAgent_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
 
 		// Field not displayed in table
-		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "SalesOrder_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
@@ -177,17 +177,17 @@ public class SalesOrderListView
 
 	public void buildsearchBar(){
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
-		soNumber.setPromptText("so Number");
+		soNumber.setPromptText(resourceBundle.getString("SalesOrder_soNumber_description.title"));
 		soNumber.setPrefHeight(40d);
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
-		customer.setPromptText("ALL COSTUMERS");
+		customer.setPromptText(resourceBundle.getString("SalesOrder_all_supplier_description.title"));
 		customer.setPrefWidth(300d);
 		customer.setPrefHeight(40d);
 
 		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
-		salesOrderStatus.setPromptText("state");
+		salesOrderStatus.setPromptText(resourceBundle.getString("SalesOrder_salesOrderStatus_description.title"));
 		salesOrderStatus.setPrefHeight(40d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
