@@ -118,23 +118,19 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		pdfPCell.addElement(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher)));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		pdfPCell.addElement(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCompanyVoucher)));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCompanyVoucher))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		pdfPCell.addElement(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCash)));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCash))));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		pdfPCell.addElement(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCreditCard)));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCreditCard))));
 		reportTable.addCell(pdfPCell);
 	}
 
@@ -182,33 +178,25 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		
 		document.add(Chunk.NEWLINE);
 		document.add(Chunk.NEWLINE);
-		
-		PdfPTable table = new PdfPTable(new float[]{.7f,.3f});
-		table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-		table.setWidthPercentage(100);
-		
-		// 2 Cols
-		PdfPCell agencyNameCell = new PdfPCell();
-		agencyNameCell.addElement(new Paragraph(new BoldText(agency.getName())));
-		agencyNameCell.setColspan(2);
-		table.addCell(agencyNameCell);
-		
-		// 2 Cols
-		PdfPCell telCell = new PdfPCell();
-		telCell.addElement(new StandardText("Tel: " + agency.getPhone()));
-		telCell.setColspan(2);
-		table.addCell(telCell);
 
-		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(agency.getStreet()));
-		table.addCell(pdfPCell);
+		paragraph = new Paragraph(new BoldText(agency.getName()));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
 		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_agent.title") 
+		paragraph = new Paragraph(new StandardText("Tel: " + agency.getPhone()));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
+
+		paragraph = new Paragraph(new StandardText(agency.getStreet()));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
+		
+		paragraph = new Paragraph(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_agent.title") 
 				+ " " + reportPrinter.getFullName()));
-		table.addCell(pdfPCell);
+		paragraph.setAlignment(Element.ALIGN_RIGHT);
+		document.add(paragraph);
 
-		document.add(table);
+		document.add(Chunk.NEWLINE);
 		
 		document.add(new LineSeparator());
 
@@ -217,7 +205,6 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
-		document.add(Chunk.NEWLINE);
 		document.add(Chunk.NEWLINE);
 	}
 	
@@ -231,7 +218,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		}
 		StandardText(String text) {
 			super(text);
-//			setFont(font);
+			setFont(font);
 		}
 	}
 	
@@ -243,8 +230,23 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		}
 		BoldText(String text) {
 			super(text);
-//			setFont(boldFont);
+			setFont(boldFont);
 		}
+	}
+	
+	static class RightParagraph extends Paragraph {
+		private static final long serialVersionUID = 986392503142787342L;
+
+		public RightParagraph(Phrase phrase) {
+			super(phrase);
+			setAlignment(Element.ALIGN_RIGHT);
+		}
+
+		public RightParagraph(String string) {
+			this(new Phrase(string));
+		}
+		
+		
 	}
 
 	public void closeDocument() {

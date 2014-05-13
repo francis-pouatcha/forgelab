@@ -31,6 +31,8 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.event.PrintJobEvent;
+import javax.print.event.PrintJobListener;
 
 import jfxtras.scene.layout.HBox;
 
@@ -63,7 +65,6 @@ public class PrintDialogPDF {
 
 	private Stage dialog = new Stage();
 
-//	private final List<String> pages = new ArrayList<String>();
 	private String fileName;
 	private Map<Integer, Image> images = new HashMap<Integer, Image>();
 	private PDDocument pdDocument;
@@ -112,12 +113,45 @@ public class PrintDialogPDF {
 					throw new IllegalStateException("No print service available.");
 				}
 				DocPrintJob printJob = printService.createPrintJob();
+				printJob.addPrintJobListener(new PrintJobListener(){
+					@Override
+					public void printDataTransferCompleted(PrintJobEvent pje) {
+						// noop
+					}
 
+					@Override
+					public void printJobCompleted(PrintJobEvent pje) {
+						printButton.setDisable(false);
+					}
+
+					@Override
+					public void printJobFailed(PrintJobEvent pje) {
+						// todo: show error
+						printButton.setDisable(false);
+					}
+
+					@Override
+					public void printJobCanceled(PrintJobEvent pje) {
+						// todo: show error
+						printButton.setDisable(false);
+					}
+
+					@Override
+					public void printJobNoMoreEvents(PrintJobEvent pje) {
+						printButton.setDisable(false);
+					}
+
+					@Override
+					public void printJobRequiresAttention(PrintJobEvent pje) {
+						// todo: show error
+					}});
 				try {
 					FileInputStream fis = new FileInputStream(fileName);
 					Doc doc = new SimpleDoc(fis, DocFlavor.INPUT_STREAM.PDF,
 							null);
+					printButton.setDisable(true);
 					printJob.print(doc, null);
+					
 				} catch (IOException ioe) {
 					throw new IllegalStateException(ioe);
 				} catch (PrintException e) {
