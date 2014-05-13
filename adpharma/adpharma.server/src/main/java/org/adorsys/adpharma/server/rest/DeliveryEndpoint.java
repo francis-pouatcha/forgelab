@@ -151,7 +151,7 @@ public class DeliveryEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public DeliverySearchResult findBy(DeliverySearchInput searchInput)
 	{
-		SingularAttribute<Delivery, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<Delivery, Object>[] attributes = readSeachAttributes(searchInput);
 		Long count = ejb.countBy(searchInput.getEntity(), attributes);
 		List<Delivery> resultList = ejb.findBy(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -174,7 +174,7 @@ public class DeliveryEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public DeliverySearchResult findByLike(DeliverySearchInput searchInput)
 	{
-		SingularAttribute<Delivery, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<Delivery, Object>[] attributes = readSeachAttributes(searchInput);
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<Delivery> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -196,7 +196,7 @@ public class DeliveryEndpoint
 
 
 	@SuppressWarnings("unchecked")
-	private SingularAttribute<Delivery, ?>[] readSeachAttributes(
+	private SingularAttribute<Delivery, Object>[] readSeachAttributes(
 			DeliverySearchInput searchInput)
 			{
 		List<String> fieldNames = searchInput.getFieldNames();

@@ -211,7 +211,6 @@ public class SalesOrderDisplayController implements EntityController
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
 
-
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
 			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {

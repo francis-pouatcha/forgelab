@@ -6,7 +6,6 @@ import org.apache.deltaspike.data.api.Repository;
 import org.apache.deltaspike.data.api.criteria.CriteriaSupport;
 
 @Repository(forEntity = Delivery.class)
-public interface  DeliveryRepository  extends EntityRepository<Delivery, Long> 
+public  abstract class  DeliveryRepository  extends AdpharmaEntityRepository<Delivery, Long> 
 {
-	
 }

@@ -155,7 +155,7 @@ public class SalesOrderEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrderSearchResult findBy(SalesOrderSearchInput searchInput)
 	{
-		SingularAttribute<SalesOrder, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<SalesOrder, Object>[] attributes = readSeachAttributes(searchInput);
 		Long count = ejb.countBy(searchInput.getEntity(), attributes);
 		List<SalesOrder> resultList = ejb.findBy(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -178,7 +178,7 @@ public class SalesOrderEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrderSearchResult findByLike(SalesOrderSearchInput searchInput)
 	{
-		SingularAttribute<SalesOrder, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<SalesOrder, Object>[] attributes = readSeachAttributes(searchInput);
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<SalesOrder> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -196,7 +196,7 @@ public class SalesOrderEndpoint
 	}
 
 	@SuppressWarnings("unchecked")
-	private SingularAttribute<SalesOrder, ?>[] readSeachAttributes(
+	private SingularAttribute<SalesOrder, Object>[] readSeachAttributes(
 			SalesOrderSearchInput searchInput)
 			{
 		List<String> fieldNames = searchInput.getFieldNames();

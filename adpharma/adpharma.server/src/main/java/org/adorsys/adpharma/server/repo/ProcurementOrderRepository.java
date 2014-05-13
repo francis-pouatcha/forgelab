@@ -7,6 +7,6 @@ import org.apache.deltaspike.data.api.Repository;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 
 @Repository(forEntity = ProcurementOrder.class)
-public interface ProcurementOrderRepository extends EntityRepository<ProcurementOrder, Long>
+public abstract class ProcurementOrderRepository extends AdpharmaEntityRepository<ProcurementOrder, Long>
 {
 }

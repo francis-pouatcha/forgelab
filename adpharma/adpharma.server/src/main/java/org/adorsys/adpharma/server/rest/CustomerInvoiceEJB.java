@@ -24,6 +24,7 @@ import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
+import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.Insurrance;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -37,6 +38,7 @@ import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
@@ -88,7 +90,9 @@ public class CustomerInvoiceEJB {
 	private Event<CustomerInvoice> customerInvoiceClosedEvent;
 
 	public CustomerInvoice create(CustomerInvoice entity) {
-		return repository.save(attach(entity));
+		CustomerInvoice save = repository.save(attach(entity)); 
+		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
+		return repository.save(save);
 	}
 
 
@@ -150,9 +154,9 @@ public class CustomerInvoiceEJB {
 	}
 
 	public List<CustomerInvoice> findBy(CustomerInvoice entity, int start,
-			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
+			int max, SingularAttribute<CustomerInvoice, Object>[] attributes) {
 		CustomerInvoice customerInvoice = attach(entity);
-		return repository.findBy(customerInvoice, start, max, attributes);
+		return repository.criteriafindBy(entity, attributes).orderDesc(CustomerInvoice_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countBy(CustomerInvoice entity,
@@ -162,9 +166,9 @@ public class CustomerInvoiceEJB {
 	}
 
 	public List<CustomerInvoice> findByLike(CustomerInvoice entity, int start,
-			int max, SingularAttribute<CustomerInvoice, ?>[] attributes) {
+			int max, SingularAttribute<CustomerInvoice, Object>[] attributes) {
 		CustomerInvoice customerInvoice = attach(entity);
-		return repository.findByLike(customerInvoice, start, max, attributes);
+		return repository.criteriafindBy(entity, attributes).orderDesc(CustomerInvoice_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countByLike(CustomerInvoice entity,

@@ -12,6 +12,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
@@ -125,10 +126,11 @@ public class DeliveryEJB
 		return repository.count();
 	}
 
-	public List<Delivery> findBy(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)
+	public List<Delivery> findBy(Delivery entity, int start, int max, SingularAttribute<Delivery, Object>[] attributes)
 	{
 		Delivery delivery = attach(entity);
-		return repository.findBy(delivery, start, max, attributes);
+		return repository.criteriafindBy(delivery, attributes).orderDesc(Delivery_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
+
 	}
 
 	public Long countBy(Delivery entity, SingularAttribute<Delivery, ?>[] attributes)
@@ -137,10 +139,10 @@ public class DeliveryEJB
 		return repository.count(delivery, attributes);
 	}
 
-	public List<Delivery> findByLike(Delivery entity, int start, int max, SingularAttribute<Delivery, ?>[] attributes)
+	public List<Delivery> findByLike(Delivery entity, int start, int max, SingularAttribute<Delivery, Object>[] attributes)
 	{
 		Delivery delivery = attach(entity);
-		return repository.findByLike(delivery, start, max, attributes);
+		return repository.criteriafindBy(delivery, attributes).orderDesc(Delivery_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countByLike(Delivery entity, SingularAttribute<Delivery, ?>[] attributes)

@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
@@ -20,7 +18,6 @@ import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
@@ -29,11 +26,10 @@ import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
-import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
+import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
-import org.adorsys.adpharma.server.utils.ChartData;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
@@ -42,7 +38,6 @@ public class SalesOrderEJB
 
 	@Inject
 	private SalesOrderRepository repository;
-
 
 	@Inject
 	private CustomerMerger customerMerger;
@@ -55,7 +50,7 @@ public class SalesOrderEJB
 
 	@Inject
 	private VATMerger vATMerger;
-	
+
 	@Inject
 	private LoginEJB loginEJB ;
 
@@ -143,10 +138,10 @@ public class SalesOrderEJB
 		return repository.count();
 	}
 
-	public List<SalesOrder> findBy(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
+	public List<SalesOrder> findBy(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, Object>[] attributes)
 	{
 		SalesOrder salesOrder = attach(entity);
-		return repository.findBy(salesOrder, start, max, attributes);
+		return repository.criteriafindBy(salesOrder, attributes).orderDesc(SalesOrder_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countBy(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
@@ -155,10 +150,10 @@ public class SalesOrderEJB
 		return repository.count(salesOrder, attributes);
 	}
 
-	public List<SalesOrder> findByLike(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, ?>[] attributes)
+	public List<SalesOrder> findByLike(SalesOrder entity, int start, int max, SingularAttribute<SalesOrder, Object>[] attributes)
 	{
 		SalesOrder salesOrder = attach(entity);
-		return repository.findByLike(salesOrder, start, max, attributes);
+		return repository.criteriafindBy(salesOrder, attributes).orderDesc(SalesOrder_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countByLike(SalesOrder entity, SingularAttribute<SalesOrder, ?>[] attributes)
@@ -310,8 +305,8 @@ public class SalesOrderEJB
 		salesOrder = update(salesOrder);
 		updatingSalesOrderItem.setSalesOrder(salesOrder);
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	private Login getRealSaller(String saleKey){
 		Login login = new Login();
@@ -319,7 +314,7 @@ public class SalesOrderEJB
 		List<Login> findBy = loginEJB.findBy(login, 0, 1, new SingularAttribute[]{Login_.saleKey});
 		if(!findBy.isEmpty())
 			return findBy.iterator().next();
-			
+
 		return null;
 	}
 

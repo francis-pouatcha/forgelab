@@ -130,7 +130,7 @@ public class ProcurementOrderEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public ProcurementOrderSearchResult findBy(ProcurementOrderSearchInput searchInput)
 	{
-		SingularAttribute<ProcurementOrder, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<ProcurementOrder, Object>[] attributes = readSeachAttributes(searchInput);
 		Long count = ejb.countBy(searchInput.getEntity(), attributes);
 		List<ProcurementOrder> resultList = ejb.findBy(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -153,7 +153,7 @@ public class ProcurementOrderEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public ProcurementOrderSearchResult findByLike(ProcurementOrderSearchInput searchInput)
 	{
-		SingularAttribute<ProcurementOrder, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<ProcurementOrder, Object>[] attributes = readSeachAttributes(searchInput);
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<ProcurementOrder> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -171,7 +171,7 @@ public class ProcurementOrderEndpoint
 	}
 
 	@SuppressWarnings("unchecked")
-	private SingularAttribute<ProcurementOrder, ?>[] readSeachAttributes(
+	private SingularAttribute<ProcurementOrder, Object>[] readSeachAttributes(
 			ProcurementOrderSearchInput searchInput)
 			{
 		List<String> fieldNames = searchInput.getFieldNames();

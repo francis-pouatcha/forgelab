@@ -19,6 +19,7 @@ import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
+import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
@@ -100,9 +101,9 @@ public class ProcurementOrderEJB
 		return repository.count();
 	}
 
-	public List<ProcurementOrder> findBy(ProcurementOrder entity, int start, int max, SingularAttribute<ProcurementOrder, ?>[] attributes)
+	public List<ProcurementOrder> findBy(ProcurementOrder entity, int start, int max, SingularAttribute<ProcurementOrder, Object>[] attributes)
 	{
-		return repository.findBy(entity, start, max, attributes);
+		return repository.criteriafindBy(entity, attributes).orderDesc(ProcurementOrder_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countBy(ProcurementOrder entity, SingularAttribute<ProcurementOrder, ?>[] attributes)
@@ -110,9 +111,9 @@ public class ProcurementOrderEJB
 		return repository.count(entity, attributes);
 	}
 
-	public List<ProcurementOrder> findByLike(ProcurementOrder entity, int start, int max, SingularAttribute<ProcurementOrder, ?>[] attributes)
+	public List<ProcurementOrder> findByLike(ProcurementOrder entity, int start, int max, SingularAttribute<ProcurementOrder, Object>[] attributes)
 	{
-		return repository.findByLike(entity, start, max, attributes);
+		return repository.criteriafindBy(entity, attributes).orderDesc(ProcurementOrder_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countByLike(ProcurementOrder entity, SingularAttribute<ProcurementOrder, ?>[] attributes)

@@ -139,7 +139,7 @@ public class CustomerInvoiceEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public CustomerInvoiceSearchResult findBy(CustomerInvoiceSearchInput searchInput)
 	{
-		SingularAttribute<CustomerInvoice, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<CustomerInvoice, Object>[] attributes = readSeachAttributes(searchInput);
 		Long count = ejb.countBy(searchInput.getEntity(), attributes);
 		List<CustomerInvoice> resultList = ejb.findBy(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -162,7 +162,7 @@ public class CustomerInvoiceEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public CustomerInvoiceSearchResult findByLike(CustomerInvoiceSearchInput searchInput)
 	{
-		SingularAttribute<CustomerInvoice, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<CustomerInvoice, Object>[] attributes = readSeachAttributes(searchInput);
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<CustomerInvoice> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -180,7 +180,7 @@ public class CustomerInvoiceEndpoint
 	}
 
 	@SuppressWarnings("unchecked")
-	private SingularAttribute<CustomerInvoice, ?>[] readSeachAttributes(
+	private SingularAttribute<CustomerInvoice, Object>[] readSeachAttributes(
 			CustomerInvoiceSearchInput searchInput)
 			{
 		List<String> fieldNames = searchInput.getFieldNames();
