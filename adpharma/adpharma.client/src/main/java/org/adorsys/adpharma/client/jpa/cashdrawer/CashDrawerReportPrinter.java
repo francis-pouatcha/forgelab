@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
+import java.awt.Desktop;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;

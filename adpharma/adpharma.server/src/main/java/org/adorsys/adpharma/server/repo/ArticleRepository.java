@@ -9,6 +9,6 @@ import org.apache.deltaspike.data.api.Repository;
 import org.adorsys.adpharma.server.jpa.Article;
 
 @Repository(forEntity = Article.class)
-public interface ArticleRepository extends EntityRepository<Article, Long>
+public abstract class ArticleRepository extends AdpharmaEntityRepository<Article, Long>
 {
 }

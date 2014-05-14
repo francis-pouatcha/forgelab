@@ -10,45 +10,41 @@
 	<children>
 		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 			<center>
-<SplitPane orientation="VERTICAL">
-<items>
-				<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-					<children>
-						<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0" prefWidth="167.0" />
-						<VBox maxWidth="999.0" prefHeight="37.0" prefWidth="999.0" spacing="5.0" VBox.vgrow="NEVER">
-							<VBox.margin>
-								<Insets bottom="5.0" />
-							</VBox.margin>
+				<SplitPane orientation="VERTICAL">
+					<items>
+						<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
 							<children>
-								<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="27.0" prefWidth="984.0" spacing="5.0" VBox.vgrow="NEVER">
+								<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0" prefWidth="167.0" />
+								<VBox maxWidth="999.0" prefHeight="37.0" prefWidth="999.0" spacing="5.0" VBox.vgrow="NEVER">
 									<VBox.margin>
-										<Insets />
+										<Insets bottom="5.0" />
 									</VBox.margin>
+									<children>
+										<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="27.0" prefWidth="984.0" spacing="5.0" VBox.vgrow="NEVER">
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+											<padding>
+												<Insets left="5.0" />
+											</padding>
+										</HBox>
+									</children>
 									<padding>
-										<Insets left="5.0" />
+										<Insets top="10.0" />
 									</padding>
-								</HBox>
+								</VBox>
+								<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
+								<TitledPane animated="false" text="Factures en attente de payement" textFill="#230b9a" />
+										<TableView fx:id="invoicesDataList" prefWidth="800.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+											<HBox.margin>
+												<Insets bottom="3.0" />
+											</HBox.margin>
+										</TableView>
 							</children>
-							<padding>
-								<Insets top="10.0" />
-							</padding>
+							<BorderPane.margin>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</BorderPane.margin>
 						</VBox>
-						<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
-						<TitledPane animated="false" text="Factures en attente de payement" textFill="#230b9a" />
-						<HBox fx:id="saleOrderItemBar" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="841.0" spacing="4.0" VBox.vgrow="NEVER">
-							<children>
-								<TableView fx:id="invoicesDataList" prefHeight="265.0" prefWidth="800.0" HBox.hgrow="ALWAYS">
-									<HBox.margin>
-										<Insets bottom="3.0" />
-									</HBox.margin>
-								</TableView>
-							</children>
-						</HBox>
-					</children>
-					<BorderPane.margin>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-					</BorderPane.margin>
-				</VBox>
 						<HBox prefHeight="293.0" prefWidth="800.0" spacing="10.0" VBox.vgrow="ALWAYS">
 							<children>
 								<VBox prefHeight="203.0" prefWidth="450.0" spacing="5.0" HBox.hgrow="NEVER" VBox.vgrow="NEVER">
@@ -174,8 +170,8 @@
 								</VBox>
 							</children>
 						</HBox>
-</items>
-</SplitPane>
+					</items>
+				</SplitPane>
 			</center>
 		</BorderPane>
 	</children>

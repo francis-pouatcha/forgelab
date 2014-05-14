@@ -54,10 +54,12 @@
 			<tabs>
 				<Tab closable="false" text="Liste des ventes">
 					<content>
+<SplitPane orientation="VERTICAL">
+<items>
 						<VBox spacing="2.0">
 							<children>
 								<Separator prefWidth="200.0" />
-								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="50.0" prefWidth="801.0" spacing="5.0" VBox.vgrow="NEVER">
 									<padding>
 										<Insets left="10.0" />
 									</padding>
@@ -78,18 +80,24 @@
 										<Insets left="5.0" />
 									</VBox.margin>
 								</TitledPane>
-								<TableView fx:id="dataListItem" prefHeight="389.0" prefWidth="796.0" VBox.vgrow="NEVER">
+							</children>
+						</VBox>
+<VBox>
+<children>
+								<TableView fx:id="dataListItem" prefHeight="389.0" prefWidth="796.0" VBox.vgrow="ALWAYS">
 									<VBox.margin>
 										<Insets left="5.0" />
 									</VBox.margin>
 								</TableView>
-								<HBox alignment="CENTER" prefHeight="30.0" prefWidth="801.0">
+								<HBox alignment="CENTER" prefHeight="30.0" prefWidth="801.0" VBox.vgrow="NEVER">
 									<children>
 										<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 									</children>
 								</HBox>
-							</children>
-						</VBox>
+</children>
+</VBox>
+</items>
+</SplitPane>
 					</content>
 				</Tab>
 				<Tab fx:id="turnoverTab" closable="false" text="Chiffre d 'affaire">

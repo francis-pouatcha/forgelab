@@ -377,7 +377,6 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(ActionEvent event) {
 				if(!displayedEntity.getAlreadyReturned()){
 
-
 					orderReturnService.setEntity(displayedEntity).start();
 				}else {
 					Dialogs.create().message("Cette commande adeja fais l abjet dun retour !").showInformation();

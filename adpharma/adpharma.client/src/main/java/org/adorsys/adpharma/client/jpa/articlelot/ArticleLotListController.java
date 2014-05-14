@@ -31,6 +31,8 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,9 @@ public class ArticleLotListController implements EntityController
 
 	@Inject
 	private ArticleLotSearchService searchService;
+	
+	@Inject 
+	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
 	@Inject
 	private ArticleLotRegistration registration;
@@ -78,6 +83,15 @@ public class ArticleLotListController implements EntityController
 		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
 		listView.bind(searchInput);
+		
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+			
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+				
+			}
+		});
 				
 		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -115,14 +129,7 @@ public class ArticleLotListController implements EntityController
 
 			}
 		});
-		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				ArticleLotSearchService s = (ArticleLotSearchService) event.getSource();
-				s.reset();				
-			}
-		});
+		searchService.setOnFailed(callFailedEventHandler);
 
 		//		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 		//				{

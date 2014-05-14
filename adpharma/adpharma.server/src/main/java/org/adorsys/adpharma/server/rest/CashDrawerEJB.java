@@ -181,8 +181,8 @@ public class CashDrawerEJB
 	}
 
 	public CashDrawer close(CashDrawer entity) {
-		CashDrawer cashDrawer = attach(entity);
 		Login cashier = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = findById(entity.getId());
 		if(!cashier.equals(cashDrawer.getCashier())) throw new IllegalStateException("Cash drawer can only be closed by owing cashier.");
 		cashDrawer.setOpened(false);
 		cashDrawer.setClosedBy(cashier);

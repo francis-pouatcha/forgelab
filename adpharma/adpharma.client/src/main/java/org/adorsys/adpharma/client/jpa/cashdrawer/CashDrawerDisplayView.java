@@ -242,17 +242,20 @@ public class CashDrawerDisplayView
 	}
 
 	public void buildinvoiceHeadGrid(){
-		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", true);
-
+		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", false);
+		invoiceNumber.setEditable(false);
+		
 		creatingUser = ViewBuilderUtils.newComboBox(null,"creatingUser", false);
 		creatingUser.setPrefWidth(200d);
 
 		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
-
+        amountDiscount.setEditable(false);
+        
 		customerRestTopay = ViewBuilderUtils.newBigDecimalField( "customerRestTopay", NumberType.CURRENCY, locale,false);
-
+		customerRestTopay.setEditable(false);
+		
 		insurranceRestTopay = ViewBuilderUtils.newBigDecimalField( "insurranceRestTopay", NumberType.CURRENCY, locale,false);
-
+		insurranceRestTopay.setEditable(false);
 
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
 

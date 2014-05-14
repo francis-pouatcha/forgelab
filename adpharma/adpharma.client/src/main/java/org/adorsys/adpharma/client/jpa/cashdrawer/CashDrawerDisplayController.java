@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.cashdrawer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -61,6 +62,7 @@ import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
+import org.adorsys.javafx.crud.extensions.events.CloseOpenTabRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
@@ -179,13 +181,17 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
 	private Event<PaymentId> printPaymentReceiptRequestedEvent;
+	
+	@Inject
+	@CloseOpenTabRequestEvent
+	private Event<Object> closeOpenTabRequestEvent ;
 
 	@PostConstruct
 	public void postConstruct()
 	{
 
-		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
-		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
+//		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
+//		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.bindInvoice(proccessingInvoice);
 		//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
 		displayView.bindPayment(paymentManager.getPayment());
@@ -299,7 +305,7 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(displayedEntity.getId()!=null)
-					cashDrawerCloseService.setCashDrawer(displayedEntity).start();
+					cashDrawerCloseService.setCashDrawer(displayedEntity).restart();
 
 			}
 		});
@@ -334,8 +340,29 @@ public class CashDrawerDisplayController implements EntityController
 
 			}
 		});
+				cashDrawerCloseServiceFailedHandler.setErrorDisplay(new ErrorDisplay() {
+					
+					@Override
+					protected void showError(Throwable exception) {
+						Dialogs.create().showException(exception);
+						
+					}
+				});
 
 		cashDrawerCloseService.setOnFailed(cashDrawerCloseServiceFailedHandler);
+		cashDrawerCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CashDrawerCloseService s = (CashDrawerCloseService) event.getSource();
+				CashDrawer searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				closeOpenTabRequestEvent.fire(this);
+
+			}
+		});
+
 
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -363,6 +390,7 @@ public class CashDrawerDisplayController implements EntityController
 				List<CustomerInvoiceItem> resultList = searchResult.getResultList();
 				proccessingInvoice.setInvoiceItems(resultList);
 				displayView.getAmount().setNumber(proccessingInvoice.getCustomerRestTopay());
+				displayView.getReceivedAmount().requestFocus();
 			}
 		});
 		customerInvoiceItemSearchService.setOnFailed(customerInvoiceItemSearchServiceFailedHandler);
@@ -437,7 +465,7 @@ public class CashDrawerDisplayController implements EntityController
 		CustomerInvoiceSearchInput csi = new CustomerInvoiceSearchInput();
 		csi.getEntity().setCashed(Boolean.FALSE);
 		csi.getFieldNames().add("cashed");
-		csi.setMax(-1);
+		csi.setMax(100);
 		customerInvoiceSearchService.setSearchInputs(csi).start();
 	}
 
@@ -577,28 +605,38 @@ public class CashDrawerDisplayController implements EntityController
 				s.reset();
 				List<CashDrawer> resultList = result.getResultList();
 				if(resultList==null || resultList.isEmpty()){
-					// Display error to user.
-					noCashDrawerErrorMessageDialog.getTitleText().setText(
-							resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
-					noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
-					noCashDrawerErrorMessageDialog.display();
+					//					// Display error to user.
+					//					noCashDrawerErrorMessageDialog.getTitleText().setText(
+					//							resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
+					//					noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
+					//					noCashDrawerErrorMessageDialog.display();
+					Action showConfirm = Dialogs.create().title(resourceBundle.getString("CashDrawer_no_opened_for_user.title"))
+							.message(resourceBundle.getString("CashDrawer_no_opened_for_user.text")).showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						createCashDrawer();
+					}else {
+						closeOpenTabRequestEvent.fire(this);
+					}
+
+
 				} else {
 					CashDrawer cashDrawer = resultList.iterator().next();
 					PropertyReader.copy(cashDrawer, displayedEntity);
+					displayView.getOpenCashDrawerButton().setDisable(true);
 				}
 
 			}
 		});
-		noCashDrawerErrorMessageDialog.getOkButton().setOnAction(
-				new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent event)
-					{
-						noCashDrawerErrorMessageDialog.closeDialog();
-						createCashDrawer();
-					}
-				});
+		//		noCashDrawerErrorMessageDialog.getOkButton().setOnAction(
+		//				new EventHandler<ActionEvent>()
+		//				{
+		//					@Override
+		//					public void handle(ActionEvent event)
+		//					{
+		//						noCashDrawerErrorMessageDialog.closeDialog();
+		//						createCashDrawer();
+		//					}
+		//				});
 
 		cashDrawerLoadService.setOnFailed(cashDrawerLoadServiceFailedHandler);
 		cashDrawerLoadServiceFailedHandler.setErrorDisplay(new ErrorDisplay()
@@ -730,7 +768,13 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashButon().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				BigDecimal payAmount = getPayAmount();
+				BigDecimal customerRestTopay = proccessingInvoice.getCustomerRestTopay();
+				if(customerRestTopay.compareTo(payAmount)<=0){
 				processPayment();
+				}else {
+					Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
+				}
 			}
 		});
 		displayView.getCashButon().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -839,6 +883,19 @@ public class CashDrawerDisplayController implements EntityController
 
 	}
 	public void reset() {
-	     PropertyReader.copy(new CashDrawer(), displayedEntity);
+		PropertyReader.copy(new CashDrawer(), displayedEntity);
+	}
+	
+	public BigDecimal getPayAmount(){
+		BigDecimal payAmount = BigDecimal.ZERO;
+		Iterator<PaymentItem> iterator = displayView.getPaymentItemDataList().getItems().iterator();
+	while (iterator.hasNext()) {
+		PaymentItem paymentItem = (PaymentItem) iterator.next();
+		BigDecimal amount = paymentItem.getAmount();
+		if(amount!=null)
+			payAmount = payAmount.add(amount);
+		
+	}
+	return payAmount ;
 	}
 }

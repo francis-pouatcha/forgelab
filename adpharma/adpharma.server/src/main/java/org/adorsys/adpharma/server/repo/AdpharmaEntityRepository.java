@@ -20,6 +20,7 @@ public abstract class AdpharmaEntityRepository<T, PK extends Serializable>    im
 		}
 		return criteria;
 	}
-
+	
+	
 
 }

@@ -196,7 +196,7 @@ public class ArticleLotSearchController implements EntityController
 
    public void handleEntityListPageIndexChangedEvent(@Observes @EntityListPageIndexChangedEvent ArticleLotSearchResult searchResult)
    {
-      searchService.setSearchInputs(searchResult.getSearchInput()).start();
+      searchService.setSearchInputs(searchResult.getSearchInput()).restart();
    }
 
 	public void reset() {

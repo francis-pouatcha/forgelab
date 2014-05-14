@@ -168,7 +168,7 @@ public class CustomerInvoiceEJB {
 	public List<CustomerInvoice> findByLike(CustomerInvoice entity, int start,
 			int max, SingularAttribute<CustomerInvoice, Object>[] attributes) {
 		CustomerInvoice customerInvoice = attach(entity);
-		return repository.criteriafindBy(entity, attributes).orderDesc(CustomerInvoice_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
+		return repository.findByLike(entity, start, max, attributes);
 	}
 
 	public Long countByLike(CustomerInvoice entity,

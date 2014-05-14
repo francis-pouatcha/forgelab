@@ -114,7 +114,7 @@ public class ArticleLotEndpoint
    @Consumes({ "application/json", "application/xml" })
    public ArticleLotSearchResult findBy(ArticleLotSearchInput searchInput)
    {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+      SingularAttribute<ArticleLot, Object>[] attributes = readSeachAttributes(searchInput);
       Long count = ejb.countBy(searchInput.getEntity(), attributes);
       List<ArticleLot> resultList = ejb.findBy(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
@@ -137,7 +137,7 @@ public class ArticleLotEndpoint
    @Consumes({ "application/json", "application/xml" })
    public ArticleLotSearchResult findByLike(ArticleLotSearchInput searchInput)
    {
-      SingularAttribute<ArticleLot, ?>[] attributes = readSeachAttributes(searchInput);
+      SingularAttribute<ArticleLot, Object>[] attributes = readSeachAttributes(searchInput);
       Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
       List<ArticleLot> resultList = ejb.findByLike(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
@@ -155,7 +155,7 @@ public class ArticleLotEndpoint
    }
 
    @SuppressWarnings("unchecked")
-   private SingularAttribute<ArticleLot, ?>[] readSeachAttributes(
+   private SingularAttribute<ArticleLot, Object>[] readSeachAttributes(
          ArticleLotSearchInput searchInput)
    {
       List<String> fieldNames = searchInput.getFieldNames();
