@@ -181,7 +181,7 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
 	private Event<PaymentId> printPaymentReceiptRequestedEvent;
-	
+
 	@Inject
 	@CloseOpenTabRequestEvent
 	private Event<Object> closeOpenTabRequestEvent ;
@@ -190,8 +190,8 @@ public class CashDrawerDisplayController implements EntityController
 	public void postConstruct()
 	{
 
-//		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
-//		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
+		//		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
+		//		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.bindInvoice(proccessingInvoice);
 		//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
 		displayView.bindPayment(paymentManager.getPayment());
@@ -266,7 +266,7 @@ public class CashDrawerDisplayController implements EntityController
 				PaymentItem selectedItem = displayView.getPaymentItemDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
 					BigDecimal amount = displayView.getAmount().getNumber();
-					displayView.getAmount().setNumber(amount.add(selectedItem.getAmount()));
+					//					displayView.getAmount().setNumber(amount.add(selectedItem.getAmount()));
 					displayView.getPaymentItemDataList().getItems().remove(selectedItem);
 				}
 			}
@@ -340,14 +340,14 @@ public class CashDrawerDisplayController implements EntityController
 
 			}
 		});
-				cashDrawerCloseServiceFailedHandler.setErrorDisplay(new ErrorDisplay() {
-					
-					@Override
-					protected void showError(Throwable exception) {
-						Dialogs.create().showException(exception);
-						
-					}
-				});
+		cashDrawerCloseServiceFailedHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+
+			}
+		});
 
 		cashDrawerCloseService.setOnFailed(cashDrawerCloseServiceFailedHandler);
 		cashDrawerCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -500,14 +500,16 @@ public class CashDrawerDisplayController implements EntityController
 						selectedItem = paymentItem;
 					}
 				}
-				if(PaymentMode.VOUCHER.equals(selectedItem.getPaymentMode())){
-					// load voucher from the database.
-					CustomerVoucher customerVoucher = new CustomerVoucher();
-					customerVoucher.setVoucherNumber(selectedItem.getDocumentNumber());
-					CustomerVoucherSearchInput searchInputs = new CustomerVoucherSearchInput();
-					searchInputs.setEntity(customerVoucher);
-					searchInputs.getFieldNames().add("voucherNumber");
-					customerVoucherSearchService.setSearchInputs(searchInputs).start();
+				if(selectedItem!=null){
+					if(PaymentMode.VOUCHER.equals(selectedItem.getPaymentMode())){
+						// load voucher from the database.
+						CustomerVoucher customerVoucher = new CustomerVoucher();
+						customerVoucher.setVoucherNumber(selectedItem.getDocumentNumber());
+						CustomerVoucherSearchInput searchInputs = new CustomerVoucherSearchInput();
+						searchInputs.setEntity(customerVoucher);
+						searchInputs.getFieldNames().add("voucherNumber");
+						customerVoucherSearchService.setSearchInputs(searchInputs).start();
+					}
 				}
 			}
 		});
@@ -659,8 +661,13 @@ public class CashDrawerDisplayController implements EntityController
 			public void changed(ObservableValue<? extends BigDecimal> obs,BigDecimal oldValue, BigDecimal newValue) {
 				PaymentItem paymentItem = getSelectedPaymentItem();
 				BigDecimal amount = displayView.getAmount().getNumber();
+				amount = amount.subtract(getPayAmount());
+				if(paymentItem!=null)
+					amount = amount.add(paymentItem.getAmount());
+
 				BigDecimal paidAmount = null;
-				if(newValue.compareTo(amount)>=0){
+
+				if(newValue.compareTo(amount)>=0) {
 					displayView.getDifference().setNumber(newValue.subtract(amount));
 					paidAmount = amount;
 				} else {
@@ -713,33 +720,35 @@ public class CashDrawerDisplayController implements EntityController
 			public void changed(ObservableValue<? extends PaymentMode> obs,
 					PaymentMode oldValue, PaymentMode newValue) {
 
-				// Whatever comes here, first compute the amount to pay.
-				BigDecimal amount = displayView.getAmount().getNumber();
-				BigDecimal paid = BigDecimal.ZERO;
-
-				PaymentItem selectedItem = getSelectedPaymentItem();
-				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
-				for (PaymentItem paymentItem : paymentItems) {
-					paid = paid.add(paymentItem.getReceivedAmount());
-				}
-				if(amount.compareTo(paid)>=0 && oldValue!=newValue){
-					if(selectedItem!=null){
-						displayView.getAmount().setNumber(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
-						displayView.getReceivedAmount().setNumber(selectedItem.getReceivedAmount());
-						displayView.getDocNumber().setText(selectedItem.getDocumentNumber());
-						displayView.getDifference().setNumber(BigDecimal.ZERO);
-					} else {
-						displayView.getAmount().setNumber(amount.subtract(paid));
-						displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
-						displayView.getDocNumber().setText("");
-						displayView.getDifference().setNumber(BigDecimal.ZERO);
-					}
-				}else {
-					Dialogs.create().message("impossible to add annother payement !").showInformation();
-				}
-				if(newValue.equals(PaymentMode.VOUCHER)){
-					displayView.getPaymentMode().setEditable(false);
-				}
+				//				// Whatever comes here, first compute the amount to pay.
+				//				BigDecimal amount = displayView.getAmount().getNumber();
+				//				
+				//				BigDecimal paid = getPayAmount();
+				//
+				//				PaymentItem selectedItem = getSelectedPaymentItem();
+				////				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
+				////				for (PaymentItem paymentItem : paymentItems) {
+				////					paid = paid.add(paymentItem.getReceivedAmount());
+				////				}
+				//				if(amount.compareTo(paid)>=0){
+				//					if(selectedItem!=null){
+				//						displayView.getAmount().setNumber(amount.subtract(paid).add(selectedItem.getReceivedAmount()));
+				//						displayView.getReceivedAmount().setNumber(selectedItem.getReceivedAmount());
+				//						displayView.getDocNumber().setText(selectedItem.getDocumentNumber());
+				//						displayView.getDifference().setNumber(BigDecimal.ZERO);
+				//					} else {
+				//						displayView.getAmount().setNumber(amount.subtract(paid));
+				//						displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
+				//						displayView.getDocNumber().setText("");
+				//						displayView.getDifference().setNumber(BigDecimal.ZERO);
+				//					}
+				//				}else {
+				//					Dialogs.create().message("impossible to add annother payement !").showInformation();
+				//				}
+								if(newValue.equals(PaymentMode.VOUCHER)){
+									displayView.getPaymentMode().setEditable(false);
+									displayView.getDocNumber().requestFocus();
+								}
 			}
 		});
 	}
@@ -771,7 +780,7 @@ public class CashDrawerDisplayController implements EntityController
 				BigDecimal payAmount = getPayAmount();
 				BigDecimal customerRestTopay = proccessingInvoice.getCustomerRestTopay();
 				if(customerRestTopay.compareTo(payAmount)<=0){
-				processPayment();
+					processPayment();
 				}else {
 					Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
 				}
@@ -867,9 +876,11 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getPaymentItemDataList().getItems().clear();
 		displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
 		displayView.getPaymentMode().setValue(PaymentMode.CASH);
+		displayView.getDocNumber().setText(null);
+		displayView.getDifference().setNumber(BigDecimal.ZERO);
 		paymentManager.newPayment();
 	}
-
+	
 	private void activate(){
 		displayView.getAmount().setDisable(false);
 		displayView.getDifference().setDisable(false);
@@ -885,17 +896,18 @@ public class CashDrawerDisplayController implements EntityController
 	public void reset() {
 		PropertyReader.copy(new CashDrawer(), displayedEntity);
 	}
-	
+
+
 	public BigDecimal getPayAmount(){
 		BigDecimal payAmount = BigDecimal.ZERO;
 		Iterator<PaymentItem> iterator = displayView.getPaymentItemDataList().getItems().iterator();
-	while (iterator.hasNext()) {
-		PaymentItem paymentItem = (PaymentItem) iterator.next();
-		BigDecimal amount = paymentItem.getAmount();
-		if(amount!=null)
-			payAmount = payAmount.add(amount);
-		
-	}
-	return payAmount ;
+		while (iterator.hasNext()) {
+			PaymentItem paymentItem = (PaymentItem) iterator.next();
+			BigDecimal amount = paymentItem.getAmount();
+			if(amount!=null)
+				payAmount = payAmount.add(amount);
+
+		}
+		return payAmount ;
 	}
 }

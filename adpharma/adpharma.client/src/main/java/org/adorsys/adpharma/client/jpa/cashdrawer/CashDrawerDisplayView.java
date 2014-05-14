@@ -192,7 +192,7 @@ public class CashDrawerDisplayView
 
 	public void BuildPaymentGrid(){
 //		paymentMode = ViewBuilderUtils.newComboBox(null, "paymentMode", resourceBundle, PaymentMode.values(), false);
-	  Font font = new Font("latin", 18D);
+	  Font font = new Font("latin", 24D);
 		paymentMode = ViewBuilderUtils.newComboBox("Payment_paymentMode_description.title", "paymentMode", paymentResourceBundle, PaymentMode.values(), false);
 		paymentMode.setPrefHeight(40d);
 		paymentMode.setPrefWidth(230d);
