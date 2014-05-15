@@ -128,6 +128,10 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	private CustomerInvoiceChartDataService customerInvoiceChartDataService ;
 
+
+	@Inject
+	private SalesOrderLoadService salesOrderLoadService ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -264,8 +268,10 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem== null) return ;
-				processSalesOrderRequestedEvent.fire(selectedItem);
+				if(selectedItem!= null) 
+					salesOrderLoadService.setId(selectedItem.getId()).start();
+
+
 			}
 		});
 
@@ -285,6 +291,19 @@ public class SalesOrderListController implements EntityController
 
 				});
 
+		salesOrderLoadService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderLoadService s = (SalesOrderLoadService) event.getSource();
+				SalesOrder result = s.getValue();
+				event.consume();
+				s.reset();
+				processSalesOrderRequestedEvent.fire(result);
+
+			}
+		});
+		salesOrderLoadService.setOnFailed(salesOrderRemoveServiceCallFailedEventHandler);
 		salesOrderRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override

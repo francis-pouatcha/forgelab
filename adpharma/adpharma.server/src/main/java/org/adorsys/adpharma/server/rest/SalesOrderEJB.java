@@ -204,6 +204,8 @@ public class SalesOrderEJB
 	}
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
+			return  findById(salesOrder.getId()) ;
 		Login realSaller = getRealSaller(salesOrder.getSalesKey());
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		SalesOrder original = findById(salesOrder.getId());

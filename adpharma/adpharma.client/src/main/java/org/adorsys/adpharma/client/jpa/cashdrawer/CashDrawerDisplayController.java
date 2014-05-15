@@ -230,7 +230,7 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
-				displayView.getInvoiceItemDataList().getItems().remove(selectedItem);
+				displayView.getInvoicesDataList().getItems().remove(selectedItem);
 				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
 				displayView.getPaymentItemDataList().getItems().clear();
 			}
