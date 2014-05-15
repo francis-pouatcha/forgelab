@@ -358,7 +358,7 @@ public class CashDrawerDisplayController implements EntityController
 				CashDrawer searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				closeOpenTabRequestEvent.fire(this);
+				closeOpenTabRequestEvent.fire(new Object());
 
 			}
 		});
@@ -617,7 +617,7 @@ public class CashDrawerDisplayController implements EntityController
 					if(Dialog.Actions.YES.equals(showConfirm)){
 						createCashDrawer();
 					}else {
-						closeOpenTabRequestEvent.fire(this);
+						closeOpenTabRequestEvent.fire(new Object());
 					}
 
 

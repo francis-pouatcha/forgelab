@@ -97,7 +97,7 @@ public class ModalUserInfoController {
 
 	}
 
-	public void handleUserInfoRequestEvent(@Observes(notifyObserver=Reception.ALWAYS) @UserInfoRequestEvent Object object){
+	public void handleUserInfoRequestEvent(@Observes @UserInfoRequestEvent Object object){
 		Login connectedUser = securityUtil.getConnectedUser();
 		if(connectedUser!=null){
 			if("sales".equals(connectedUser.getLoginName())){
