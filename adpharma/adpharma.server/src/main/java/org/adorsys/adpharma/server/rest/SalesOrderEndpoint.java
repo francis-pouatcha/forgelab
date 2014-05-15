@@ -230,7 +230,7 @@ public class SalesOrderEndpoint
 
 	private static final List<String> cashDrawerFields = Arrays.asList("cashDrawerNumber", "agency.name", "openingDate", "closingDate", "initialAmount", "totalCashIn", "totalCashOut", "totalCash", "totalCheck", "totalCreditCard", "totalCompanyVoucher", "totalClientVoucher", "opened");
 
-	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","customerCategory");
+	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","customerCategory.discountRate","customerCategory.name");
 
 	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.fullName", "insurer.fullName", "coverageRate");
 

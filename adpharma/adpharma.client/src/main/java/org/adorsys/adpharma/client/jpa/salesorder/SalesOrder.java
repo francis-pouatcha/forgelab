@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
+import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.login.Login;
@@ -478,7 +480,11 @@ public class SalesOrder implements Cloneable
 			customer = new SalesOrderCustomer();
 		}
 		PropertyReader.copy(customer, getCustomer());
-		customerProperty().setValue(ObjectUtils.clone(getCustomer()));
+		CustomerCustomerCategory customerCategory = new CustomerCustomerCategory();
+		PropertyReader.copy(customer.getCustomerCategory(), customerCategory);
+		SalesOrderCustomer customer2 = getCustomer();
+		customer2.setCustomerCategory(customerCategory);
+		customerProperty().setValue(customer2);
 	}
 
 	public SimpleObjectProperty<SalesOrderInsurance> insuranceProperty()

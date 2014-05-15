@@ -99,12 +99,14 @@ public class ModalUserInfoController {
 
 	public void handleUserInfoRequestEvent(@Observes(notifyObserver=Reception.ALWAYS) @UserInfoRequestEvent Object object){
 		Login connectedUser = securityUtil.getConnectedUser();
-		if("sales".equals(connectedUser.getLoginName())){
-			Dialogs.create().message("impossible de modifier les infos de cette utilisateur").nativeTitleBar().showError();
-		}else {
-			
-			PropertyReader.copy(connectedUser, login);
-			view.showDiaLog();
+		if(connectedUser!=null){
+			if("sales".equals(connectedUser.getLoginName())){
+				Dialogs.create().message("impossible de modifier les infos de cette utilisateur").nativeTitleBar().showError();
+			}else {
+
+				PropertyReader.copy(connectedUser, login);
+				view.showDiaLog();
+			}
 		}
 	}
 

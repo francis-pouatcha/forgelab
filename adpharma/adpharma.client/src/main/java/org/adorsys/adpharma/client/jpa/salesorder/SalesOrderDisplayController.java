@@ -13,12 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -33,9 +28,6 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
-
-import jfxtras.scene.layout.HBox;
-import jfxtras.scene.layout.VBox;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
@@ -418,6 +410,8 @@ public class SalesOrderDisplayController implements EntityController
 					BigDecimal oldValue, BigDecimal newValue) {
 				if(newValue!=null){
 					BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
+					if(BigDecimal.ONE.compareTo(newValue)<0)
+						newValue = newValue.divide(BigDecimal.valueOf(100));
 					BigDecimal discount = amountAfterTax.multiply(newValue);
 					displayedEntity.setAmountDiscount(discount);
 
@@ -425,6 +419,7 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
+
 		insurranceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -713,24 +708,31 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public boolean isValideSale(){
+		BigDecimal amountDiscount = displayedEntity.getAmountDiscount()!=null?displayedEntity.getAmountDiscount():BigDecimal.ZERO;
+		BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
+
 		if(displayedEntity.getSalesOrderItems().isEmpty()){
 			Dialogs.create().nativeTitleBar().message("la vente dois avoir au moins un produit ").showError();
 			return false;
 		}
-		if(displayedEntity.getCustomer().getCustomerCategory()!=null){
+		
+		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
 			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
 			if(discountRate!=null){
-				BigDecimal amountDiscount = displayedEntity.getAmountDiscount()!=null?displayedEntity.getAmountDiscount():BigDecimal.ZERO;
-				BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
 				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100)));
 				if(realDiscount.compareTo(realDiscount)<0){
 					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
 					return false ;
 				}
-			}else {
-				displayedEntity.setAmountDiscount(BigDecimal.ZERO);
 			}
+		}else  if(BigDecimal.ZERO.compareTo(amountDiscount)!=0){
+			Dialogs.create().message("ce client n est pas autorise a avoir une remise ").showInformation();
+			displayedEntity.setAmountDiscount(BigDecimal.ZERO);
+			displayView.getDiscountRate().requestFocus();
+			return false ;
+
 		}
+
 		return true;
 	}
 
