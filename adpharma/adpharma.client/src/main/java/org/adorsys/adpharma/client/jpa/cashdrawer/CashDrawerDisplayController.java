@@ -304,9 +304,11 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
+				Action showConfirm = Dialogs.create().message(resourceBundle.getString("CashDrawer_close_confirmation.title")).showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
 				if(displayedEntity.getId()!=null)
 					cashDrawerCloseService.setCashDrawer(displayedEntity).restart();
-
+				}
 			}
 		});
 

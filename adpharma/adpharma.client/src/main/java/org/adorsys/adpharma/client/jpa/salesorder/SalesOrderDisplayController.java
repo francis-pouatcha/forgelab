@@ -577,7 +577,7 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER|| code==KeyCode.TAB){
+				if(code== KeyCode.ENTER){
 					String internalPic = displayView.getInternalPic().getText();
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();
@@ -587,6 +587,7 @@ public class SalesOrderDisplayController implements EntityController
 					asi.setMax(30);
 					asi.getFieldNames().add("secondaryPic");
 					modalArticleLotSearchEvent.fire(asi);
+
 				}
 			}
 		});
@@ -715,7 +716,7 @@ public class SalesOrderDisplayController implements EntityController
 			Dialogs.create().nativeTitleBar().message("la vente dois avoir au moins un produit ").showError();
 			return false;
 		}
-		
+
 		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
 			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
 			if(discountRate!=null){

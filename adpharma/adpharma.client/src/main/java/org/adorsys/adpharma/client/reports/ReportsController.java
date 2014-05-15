@@ -7,6 +7,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.ReportMenuItem;
 import org.adorsys.javafx.crud.extensions.events.MenuAddRequestedEvent;
@@ -17,6 +18,7 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 
 import javafx.scene.control.Menu;
 
+@Singleton
 public class ReportsController {
 
 	private Menu reportsMenu;
