@@ -19,6 +19,7 @@ import org.apache.commons.lang3.time.DateUtils;
 public class DateHelper {
 
 	public 	final static String  DATE_SLASH_FORMAT = "dd/MM/yy";
+	public 	final static String  DATE_FORMAT = "dd-MM-yyyy";
 	
 	
 	public static String  format(Date date , String patern){

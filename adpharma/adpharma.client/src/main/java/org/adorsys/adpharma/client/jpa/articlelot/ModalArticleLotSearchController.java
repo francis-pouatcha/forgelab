@@ -51,7 +51,7 @@ public class ModalArticleLotSearchController  {
 
 	@Inject
 	ArticleLot articleLot;
-	
+
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<ArticleLotSearchResult> entityListPageIndexChangedEvent;
@@ -204,7 +204,7 @@ public class ModalArticleLotSearchController  {
 				}
 				if(articleLot!=null)lotList.add(articleLot);
 			}
-			
+
 			view.getDataList().getItems().setAll(lotList);
 			view.showDiaLog();
 		}

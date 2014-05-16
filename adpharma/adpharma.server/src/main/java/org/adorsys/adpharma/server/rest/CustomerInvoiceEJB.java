@@ -91,8 +91,8 @@ public class CustomerInvoiceEJB {
 
 	public CustomerInvoice create(CustomerInvoice entity) {
 		CustomerInvoice save = repository.save(attach(entity)); 
-		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
-		return repository.save(save);
+//		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
+		return repository.save((attach(entity)));
 	}
 
 

@@ -23,7 +23,7 @@ public class DebtStatementCustomerInvoiceAssocSearchInput
    /**
     * The entity holding search inputs.
     */
-   private DebtStatementCustomerInvoiceAssoc entity;
+   private DebtStatementCustomerInvoiceAssoc entity = new DebtStatementCustomerInvoiceAssoc();
 
    /**
     * The start cursor

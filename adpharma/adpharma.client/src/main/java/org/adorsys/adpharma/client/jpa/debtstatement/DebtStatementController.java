@@ -104,7 +104,7 @@ public class DebtStatementController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -119,7 +119,7 @@ public class DebtStatementController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(searchController);
+//      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -134,7 +134,7 @@ public class DebtStatementController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -145,7 +145,7 @@ public class DebtStatementController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }
@@ -155,7 +155,7 @@ public class DebtStatementController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -165,7 +165,7 @@ public class DebtStatementController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }

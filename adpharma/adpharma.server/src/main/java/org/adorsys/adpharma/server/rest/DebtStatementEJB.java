@@ -25,6 +25,7 @@ import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DebtStatementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
@@ -48,6 +49,8 @@ public class DebtStatementEJB
 
    public DebtStatement create(DebtStatement entity)
    {
+	   DebtStatement save = repository.save(attach(entity)); 
+		save.setStatementNumber((SequenceGenerator.DEBTS_INVOICE_SEQUENCE_PREFIXE+save.getId()));
       return repository.save(attach(entity));
    }
 

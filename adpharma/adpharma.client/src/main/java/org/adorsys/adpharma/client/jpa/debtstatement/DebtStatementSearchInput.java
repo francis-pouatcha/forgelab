@@ -22,7 +22,7 @@ public class DebtStatementSearchInput
    /**
     * The entity holding search inputs.
     */
-   private DebtStatement entity;
+   private DebtStatement entity = new DebtStatement();
 
    /**
     * The start cursor
