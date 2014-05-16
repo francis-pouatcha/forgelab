@@ -91,8 +91,8 @@ public class CustomerInvoiceEJB {
 
 	public CustomerInvoice create(CustomerInvoice entity) {
 		CustomerInvoice save = repository.save(attach(entity)); 
-//		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
-		return repository.save((attach(entity)));
+		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
+		return repository.save(save);
 	}
 
 
@@ -345,7 +345,7 @@ public class CustomerInvoiceEJB {
 				if(amount.compareTo(BigDecimal.ZERO)<=0) continue;
 
 				boolean customer = true;// paid by the client
-				if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getCustomer().equals(payer))customer=false;// paid by the insurance.
+				if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getInsurer().equals(payer))customer=false;// paid by the insurance.
 
 
 				BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();

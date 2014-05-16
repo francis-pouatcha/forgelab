@@ -115,7 +115,7 @@ public class DebtStatementListView
 		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//		rootPane = viewBuilder.toAnchorPane();
 
-		viewBuilder.addStringColumn(dataListItem, "invoiceNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataListItem, "id", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataListItem, "invoiceType", "CustomerInvoice_invoiceType_description.title", resourceBundle, invoiceTypeConverter);
 		viewBuilder.addStringColumn(dataListItem, "cashed", "CustomerInvoice_cashed_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataListItem, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
