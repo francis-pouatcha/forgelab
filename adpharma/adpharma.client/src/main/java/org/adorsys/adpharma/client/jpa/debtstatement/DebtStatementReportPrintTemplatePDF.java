@@ -24,6 +24,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -63,6 +64,8 @@ public class DebtStatementReportPrintTemplatePDF {
 
 		pdfFileName = "DebtStatement" + ".pdf";
 		document = new Document();
+		document.setMargins(10f, 10f, 5f, 0);
+		
 		File file = new File(pdfFileName);
 		try {
 			fos = new FileOutputStream(file);
@@ -78,6 +81,8 @@ public class DebtStatementReportPrintTemplatePDF {
 	}
 
 	public void addItems(List<CustomerInvoice> invoices) {
+		BigDecimal total = BigDecimal.ZERO;
+		BigDecimal instotal = BigDecimal.ZERO;
 		for (CustomerInvoice inoice : invoices) {
 			newTableRow(inoice.getInvoiceNumber(), 
 					inoice.getInsurance().getCustomer().getFullName(),
@@ -85,7 +90,11 @@ public class DebtStatementReportPrintTemplatePDF {
 					inoice.getNetToPay(),
 					inoice.getInsurranceRestTopay(),
 					inoice.getInsurance().getCoverageRate() );
+		
+			total = total.add(inoice.getNetToPay());
+		instotal =	instotal.add(inoice.getInsurranceRestTopay());
 		}
+		newTableRow(null, null, "TOTAUX :",total, instotal, null);
 	}
 
 	private void newTableRow(String invoiceNumber, 
@@ -117,13 +126,13 @@ public class DebtStatementReportPrintTemplatePDF {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(rate))));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(rate)+"%")));
 		reportTable.addCell(pdfPCell);
 
 	}
-
+	
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.13f,.4f,.18f,.10f,.10f,.10f});
+		reportTable = new PdfPTable(new float[]{.11f,.45f,.15f,.14f,.14f,.08f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -162,7 +171,7 @@ public class DebtStatementReportPrintTemplatePDF {
 		document.add(paragraph);
 
 		document.add(Chunk.NEWLINE);
-		document.add(Chunk.NEWLINE);
+		document.add(new LineSeparator());
 
 		paragraph = new Paragraph(new BoldText(agency.getName()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
@@ -172,8 +181,8 @@ public class DebtStatementReportPrintTemplatePDF {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText(agency.getFax()));
-		paragraph.setAlignment(Element.ALIGN_LEFT);
+		paragraph = new Paragraph(new StandardText("Asurrance : "+debtStatement.getInsurrance().getFullName()));
+		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_agent.title") 

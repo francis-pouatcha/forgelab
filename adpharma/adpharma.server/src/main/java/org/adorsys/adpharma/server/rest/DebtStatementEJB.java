@@ -191,7 +191,8 @@ public class DebtStatementEJB
 		dcas.setSourceQualifier("invoices");
 		dcas.setTargetQualifier("source");
 		debtStatementCustomerInvoiceAssocEJB.create(dcas);
-		debtStatement.setRestAmount(debtStatement.getRestAmount().add(restTopay));
+		debtStatement.setInitialAmount(debtStatement.getInitialAmount().add(restTopay));
+		debtStatement.setRestAmount(debtStatement.getInitialAmount().subtract(debtStatement.getAdvancePayment()).subtract(debtStatement.getAmountFromVouchers()));
 		debtStatement.setPaymentDate(new Date());
 		update(debtStatement);
 	}

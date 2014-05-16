@@ -97,8 +97,8 @@ public class DebtStatementListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "statementNumber", "DebtStatement_statementNumber_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle,300d);
-		viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "insurrance", "DebtStatement_insurrance_description.title", resourceBundle,300d);
+		viewBuilder.addStringColumn(dataList, "agency", "DebtStatement_agency_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataList, "paymentDate", "DebtStatement_paymentDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "initialAmount", "DebtStatement_initialAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "advancePayment", "DebtStatement_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -121,7 +121,7 @@ public class DebtStatementListView
 		viewBuilder.addDateColumn(dataListItem, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addStringColumn(dataListItem, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataListItem, "salesOrder", "CustomerInvoice_salesOrder_description.title", resourceBundle);
-		viewBuilder.addBigDecimalColumn(dataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);

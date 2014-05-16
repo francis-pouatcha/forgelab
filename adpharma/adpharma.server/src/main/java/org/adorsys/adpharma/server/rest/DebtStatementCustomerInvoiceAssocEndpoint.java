@@ -137,7 +137,8 @@ public class DebtStatementCustomerInvoiceAssocEndpoint
       Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
       List<DebtStatementCustomerInvoiceAssoc> resultList = ejb.findByLike(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
-      return new DebtStatementCustomerInvoiceAssocSearchResult(countLike, detach(resultList),
+      List<DebtStatementCustomerInvoiceAssoc> detach = detach(resultList);
+      return new DebtStatementCustomerInvoiceAssocSearchResult(countLike,detach ,
             detach(searchInput));
    }
 
@@ -185,7 +186,7 @@ public class DebtStatementCustomerInvoiceAssocEndpoint
 
    private static final List<String> s_invoices_t_source_sourceFields = Arrays.asList("statementNumber", "insurrance.fullName", "agency.name", "paymentDate", "initialAmount", "advancePayment", "restAmount", "settled", "amountFromVouchers", "canceled", "useVoucher");
 
-   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
+   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
 
    private DebtStatementCustomerInvoiceAssoc detach(DebtStatementCustomerInvoiceAssoc entity)
    {

@@ -68,6 +68,7 @@ public class DebtStatementMerger
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
       MergerUtils.copyFields(entity, newEntity, fieldList);
+      newEntity.setInsurrance(entity.getInsurrance());
       return newEntity;
    }
 

@@ -68,6 +68,8 @@ public class CustomerInvoiceMerger
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
       MergerUtils.copyFields(entity, newEntity, fieldList);
+      newEntity.setInsurance(entity.getInsurance());
+      newEntity.setCustomer(entity.getCustomer());
       return newEntity;
    }
 
