@@ -13,6 +13,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
@@ -20,8 +21,10 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.repo.CustomerVoucherRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
 public class CustomerVoucherEJB
@@ -44,9 +47,14 @@ public class CustomerVoucherEJB
 
 	@Inject
 	private SecurityUtil securityUtil;
+	
+	@Inject
+	private CustomerInvoiceEJB customerInvoiceEJB ;
 
 	public CustomerVoucher create(CustomerVoucher entity)
 	{
+		CustomerVoucher save = repository.save(attach(entity)); 
+		save.setVoucherNumber((SequenceGenerator.CUSTOMER_VOUCHER_SEQUENCE_PREFIXE+save.getId()));
 		return repository.save(attach(entity));
 	}
 
@@ -118,6 +126,13 @@ public class CustomerVoucherEJB
 		entity.setRecordingUser(loginMerger.bindAggregated(entity.getRecordingUser()));
 
 		return entity;
+	}
+	
+	public CustomerVoucher findBySalesOrder(SalesOrder salesOrder){
+		List<CustomerVoucher> found = repository.findBySalesOrder(salesOrder);
+		if(!found.isEmpty())
+			return found.iterator().next();
+		 return null ;
 	}
 
 	@SuppressWarnings("unchecked")

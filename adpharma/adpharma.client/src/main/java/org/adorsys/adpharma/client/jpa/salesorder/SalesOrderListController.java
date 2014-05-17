@@ -1,11 +1,16 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -25,6 +30,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
@@ -32,7 +38,14 @@ import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceChartDataService;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherPrintTemplatePdf;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchBySalesOrderService;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchInput;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchService;
+import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatementReportPrintTemplatePDF;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
@@ -88,7 +101,7 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	private SalesOrderItemSearchService salesOrderItemSearchService;
 	@Inject
-	private ServiceCallFailedEventHandler salesOrderItemSearchServiceCallFailedEventHandler;
+	private ServiceCallFailedEventHandler serviceCallFailedEventHandler;
 
 	@Inject
 	private SalesOrderRemoveService salesOrderRemoveService ;
@@ -113,7 +126,7 @@ public class SalesOrderListController implements EntityController
 
 
 	@Inject
-	@Bundle({ CrudKeys.class})
+	@Bundle({ CrudKeys.class,CustomerVoucher.class})
 	private ResourceBundle resourceBundle;
 
 	@Inject
@@ -127,11 +140,18 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private CustomerInvoiceChartDataService customerInvoiceChartDataService ;
-
+	
+	@Inject
+	private CustomerVoucherSearchBySalesOrderService voucherSearchBySalesOrderService ;
 
 	@Inject
 	private SalesOrderLoadService salesOrderLoadService ;
+	
+	@Inject
+	private Locale locale;
 
+	@Inject
+	private SecurityUtil securityUtil;
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -141,8 +161,9 @@ public class SalesOrderListController implements EntityController
 		searchInput.setMax(100);
 
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
+		
+		
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
-
 			@Override
 			public void changed(ObservableValue<? extends SalesOrder> observable,
 					SalesOrder oldValue, SalesOrder newValue) {
@@ -150,6 +171,8 @@ public class SalesOrderListController implements EntityController
 					selectedSalesOrderId = new SalesOrderId(newValue.getId());
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getPrintInvoiceButtonn().disableProperty().unbind();
+					listView.getPrintVoucherButton().disableProperty().unbind();
+					listView.getPrintVoucherButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getAlreadyReturned()));
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
@@ -161,6 +184,43 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
+		
+		listView.getPrintVoucherButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+				voucherSearchBySalesOrderService.setSalesOrder(selectedItem).start();
+				}
+			}
+		});
+		
+		voucherSearchBySalesOrderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerVoucherSearchBySalesOrderService s = (CustomerVoucherSearchBySalesOrderService) event.getSource();
+				CustomerVoucher result = s.getValue();
+				event.consume();
+				s.reset();
+				Login login = securityUtil.getConnectedUser();
+				SalesOrder selectedSalesOrder = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(result !=null && selectedSalesOrder!=null){
+					try {
+						CustomerVoucherPrintTemplatePdf pdfRepportTemplate = new CustomerVoucherPrintTemplatePdf(result, resourceBundle, locale, login,selectedSalesOrder.getSoNumber());
+						pdfRepportTemplate.addItems();
+						pdfRepportTemplate.closeDocument();
+						Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		voucherSearchBySalesOrderService.setOnFailed(serviceCallFailedEventHandler);
+		
 
 		salesOrderItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -174,8 +234,8 @@ public class SalesOrderListController implements EntityController
 				listView.getDataListItem().getItems().setAll(resultList);
 			}
 		});
-		salesOrderItemSearchService.setOnFailed(salesOrderItemSearchServiceCallFailedEventHandler);
-		salesOrderItemSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		salesOrderItemSearchService.setOnFailed(serviceCallFailedEventHandler);
+		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().nativeTitleBar().showException(exception);
