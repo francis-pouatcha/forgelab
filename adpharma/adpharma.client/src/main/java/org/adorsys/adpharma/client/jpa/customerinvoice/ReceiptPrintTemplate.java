@@ -19,4 +19,8 @@ public abstract class ReceiptPrintTemplate {
 	public abstract void addItems(List<CustomerInvoiceItem> resultList);
 
 	public abstract Object getPage();
+
+	public abstract ReceiptPrinterData getReceiptPrinterData();
+
+	public abstract String getReceiptPrinterName();
 }
