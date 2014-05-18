@@ -18,6 +18,10 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemIn
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemService;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchByPaiementIdService;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchService;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherService;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
@@ -28,7 +32,7 @@ import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustom
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocService;
 
 public class ReceiptPrinterDataService extends
-		Service<ReceiptPrinterData> {
+Service<ReceiptPrinterData> {
 
 	@Inject
 	private PaymentService paymentService;
@@ -44,6 +48,9 @@ public class ReceiptPrinterDataService extends
 	private LoginService loginService;
 	@Inject
 	private CustomerInvoiceItemService customerInvoiceItemService;
+
+	@Inject
+	private CustomerVoucherService voucherService;
 
 	private PaymentId paymentId;
 
@@ -64,8 +71,9 @@ public class ReceiptPrinterDataService extends
 				Agency agency = agencyService.findById(payment.getAgency().getId());
 				Company company = companyService.findById(agency.getCompany().getId());
 				Login cashier = loginService.findById(payment.getCashier().getId());
+				List<CustomerVoucher> usedVoucher = voucherService.findByPaiementId(paymentId.getId());
 				ReceiptPrinterData result = new ReceiptPrinterData(payment, agency, company, cashier);
-
+				result.getUsedVouchers().addAll(usedVoucher);
 				PaymentCustomerInvoiceAssocSearchInput searchInput = new PaymentCustomerInvoiceAssocSearchInput();
 				int max = 100;
 				searchInput.setMax(max);
@@ -86,7 +94,7 @@ public class ReceiptPrinterDataService extends
 				}
 				return result;
 			}
-			
+
 			private List<CustomerInvoicePrinterData> processResultList(List<PaymentCustomerInvoiceAssoc> resultList){
 				List<CustomerInvoicePrinterData> result = new ArrayList<CustomerInvoicePrinterData>();
 				for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : resultList) {
@@ -96,17 +104,17 @@ public class ReceiptPrinterDataService extends
 					Agency agency = agencyService.findById(customerInvoice.getAgency().getId());
 					Company company = companyService.findById(agency.getCompany().getId());
 					Login login = loginService.findById(customerInvoice.getCreatingUser().getId());
-					
+
 					CustomerInvoiceItem customerInvoiceItem = new CustomerInvoiceItem();
 					customerInvoiceItem.setInvoice(new CustomerInvoiceItemInvoice(
-						customerInvoice));
+							customerInvoice));
 					CustomerInvoiceItemSearchInput searchInput = new CustomerInvoiceItemSearchInput();
 					searchInput.setEntity(customerInvoiceItem);
 					searchInput.getFieldNames().add("invoice");
 					CustomerInvoiceItemSearchResult found = customerInvoiceItemService
 							.findBy(searchInput);
 					result.add(new CustomerInvoicePrinterData(customerInvoice,
-						company, agency, login, found));
+							company, agency, login, found));
 				}
 				return result;
 			}

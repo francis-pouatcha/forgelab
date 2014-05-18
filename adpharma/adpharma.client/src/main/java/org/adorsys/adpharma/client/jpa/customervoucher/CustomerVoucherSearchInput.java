@@ -22,7 +22,7 @@ public class CustomerVoucherSearchInput
    /**
     * The entity holding search inputs.
     */
-   private CustomerVoucher entity;
+   private CustomerVoucher entity = new CustomerVoucher();
 
    /**
     * The start cursor

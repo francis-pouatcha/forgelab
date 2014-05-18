@@ -40,6 +40,7 @@ import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSe
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchService;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherCheckingView;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherCustomer;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchInput;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchResult;
@@ -139,7 +140,7 @@ public class CashDrawerDisplayController implements EntityController
 	private ServiceCallFailedEventHandler paymentCreateServiceFailedHandler;
 
 	@Inject
-	private ServiceCallFailedEventHandler salesOrderCancelServiceFailedHandler;
+	private ServiceCallFailedEventHandler serviceFailedHandler;
 
 	@Inject
 	@AssocSelectionResponseEvent
@@ -173,8 +174,7 @@ public class CashDrawerDisplayController implements EntityController
 	private CustomerVoucherSearchService customerVoucherSearchService;
 	@Inject
 	private ServiceCallFailedEventHandler customerVoucherSearchFailedEventHandler;
-	@Inject
-	private ErrorMessageDialog customerVoucherErrorMessageDialog;
+
 	@Inject
 	private ErrorMessageDialog errorMessageDialog;
 
@@ -186,6 +186,10 @@ public class CashDrawerDisplayController implements EntityController
 	@CloseOpenTabRequestEvent
 	private Event<Object> closeOpenTabRequestEvent ;
 
+	@Inject
+	private CustomerVoucherCheckingView voucherCheckingView ;
+
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -196,7 +200,7 @@ public class CashDrawerDisplayController implements EntityController
 		//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
 		displayView.bindPayment(paymentManager.getPayment());
 
-		processDocumentNumberChanged();
+		processVoucherPaiementChanged();
 		handleCashDrawerCreateService();
 		handleCashDrawerLoadService();
 		handleReceivedAmountChanged();
@@ -236,8 +240,8 @@ public class CashDrawerDisplayController implements EntityController
 			}
 		});
 
-		orderCancelService.setOnFailed(salesOrderCancelServiceFailedHandler);
-		salesOrderCancelServiceFailedHandler.setErrorDisplay(new ErrorDisplay() 
+		orderCancelService.setOnFailed(serviceFailedHandler);
+		serviceFailedHandler.setErrorDisplay(new ErrorDisplay() 
 		{
 			@Override
 			protected void showError(Throwable exception)
@@ -306,8 +310,8 @@ public class CashDrawerDisplayController implements EntityController
 			public void handle(ActionEvent event) {
 				Action showConfirm = Dialogs.create().message(resourceBundle.getString("CashDrawer_close_confirmation.title")).showConfirm();
 				if(Dialog.Actions.YES.equals(showConfirm)){
-				if(displayedEntity.getId()!=null)
-					cashDrawerCloseService.setCashDrawer(displayedEntity).restart();
+					if(displayedEntity.getId()!=null)
+						cashDrawerCloseService.setCashDrawer(displayedEntity).restart();
 				}
 			}
 		});
@@ -488,33 +492,74 @@ public class CashDrawerDisplayController implements EntityController
 
 	}
 
-	private void processDocumentNumberChanged(){
-		displayView.getDocNumber().textProperty().addListener(new ChangeListener<String>() {
+	private void processVoucherPaiementChanged(){
+
+		voucherCheckingView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
+
 			@Override
-			public void changed(ObservableValue<? extends String> obs,
-					String oldValue, String newValue) {
-				// check if we have the old payment on file and update it
-				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
-				PaymentItem selectedItem = null;
-				for (PaymentItem paymentItem : paymentItems) {
-					if(paymentItem.getPaymentMode().equals(displayView.getPaymentMode())){
-						paymentItem.setDocumentNumber(displayView.getDocNumber().getText());
-						selectedItem = paymentItem;
-					}
-				}
-				if(selectedItem!=null){
-					if(PaymentMode.VOUCHER.equals(selectedItem.getPaymentMode())){
-						// load voucher from the database.
-						CustomerVoucher customerVoucher = new CustomerVoucher();
-						customerVoucher.setVoucherNumber(selectedItem.getDocumentNumber());
-						CustomerVoucherSearchInput searchInputs = new CustomerVoucherSearchInput();
-						searchInputs.setEntity(customerVoucher);
-						searchInputs.getFieldNames().add("voucherNumber");
-						customerVoucherSearchService.setSearchInputs(searchInputs).start();
-					}
-				}
+			public void handle(ActionEvent event) {
+				String voucherNumber = voucherCheckingView.getVoucherNumber().getText();
+				BigDecimal restAmount = voucherCheckingView.getRestAmount().getNumber();
+
+				CustomerVoucherSearchInput voucherSearchInput = new CustomerVoucherSearchInput();
+				voucherSearchInput.getEntity().setVoucherNumber(voucherNumber);
+				voucherSearchInput.getEntity().setRestAmount(restAmount);
+				voucherSearchInput.getFieldNames().add("voucherNumber");
+				voucherSearchInput.getFieldNames().add("restAmount");
+				customerVoucherSearchService.setSearchInputs(voucherSearchInput).start();
+				voucherCheckingView.close();
+
 			}
 		});
+		voucherCheckingView.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				voucherCheckingView.close();
+				resetPaymentModeTocash();
+			}
+		});
+
+		displayView.getPaymentMode().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PaymentMode>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends PaymentMode> observable,
+					PaymentMode oldValue, PaymentMode newValue) {
+				if(newValue!=null){
+					if(PaymentMode.VOUCHER.equals(newValue))
+						voucherCheckingView.show();
+				}
+
+			}
+		});
+
+		//		displayView.getDocNumber().textProperty().addListener(new ChangeListener<String>() {
+		//			@Override
+		//			public void changed(ObservableValue<? extends String> obs,
+		//					String oldValue, String newValue) {
+		//				// check if we have the old payment on file and update it
+		//				ObservableList<PaymentItem> paymentItems = displayView.getPaymentItemDataList().getItems();				
+		//				PaymentItem selectedItem = null;
+		//				for (PaymentItem paymentItem : paymentItems) {
+		//					if(paymentItem.getPaymentMode().equals(displayView.getPaymentMode())){
+		//						paymentItem.setDocumentNumber(displayView.getDocNumber().getText());
+		//						selectedItem = paymentItem;
+		//					}
+		//				}
+		//				if(selectedItem!=null){
+		//					if(PaymentMode.VOUCHER.equals(selectedItem.getPaymentMode())){
+		//						// load voucher from the database.
+		//						CustomerVoucher customerVoucher = new CustomerVoucher();
+		//						customerVoucher.setVoucherNumber(selectedItem.getDocumentNumber());
+		//						CustomerVoucherSearchInput searchInputs = new CustomerVoucherSearchInput();
+		//						searchInputs.setEntity(customerVoucher);
+		//						searchInputs.getFieldNames().add("voucherNumber");
+		//						customerVoucherSearchService.setSearchInputs(searchInputs).start();
+		//					}
+		//				}
+		//			}
+		//		});
 
 		customerVoucherSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -524,12 +569,7 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				if(result.getResultList().isEmpty()){
-					// reset and show error.
-					// Display error to user.
-					customerVoucherErrorMessageDialog.getTitleText().setText(
-							resourceBundle.getString("Entity_search_error.title"));
-					customerVoucherErrorMessageDialog.getDetailText().setText("Customer voucher with Number: " + displayView.getDocNumber().getText() + " not found");
-					customerVoucherErrorMessageDialog.display();
+					Dialogs.create().message("Les Informations Fournies Sont incorrecte").showError();
 				} else {
 					CustomerVoucher customerVoucher = result.getResultList().iterator().next();
 					displayView.getReceivedAmount().setNumber(customerVoucher.getRestAmount());
@@ -545,28 +585,12 @@ public class CashDrawerDisplayController implements EntityController
 					PaymentItemPaidBy payer = new PaymentItemPaidBy();
 					PropertyReader.copy(customer, payer);
 					expectedItem.setPaidBy(payer);
+					expectedItem.setDocumentNumber(customerVoucher.getVoucherNumber());
 				}
+				resetPaymentModeTocash();
 			}
 		});
-		customerVoucherErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				customerVoucherErrorMessageDialog.closeDialog();
-			}
-		});
-		customerVoucherSearchService.setOnFailed(customerVoucherSearchFailedEventHandler);
-		customerVoucherSearchFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-		{
-			@Override
-			protected void showError(Throwable exception)
-			{
-				String message = exception.getMessage();
-				errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_general_error.title"));
-				if (!StringUtils.isBlank(message))
-					errorMessageDialog.getDetailText().setText(message);
-				errorMessageDialog.display();
-			}
-		});
+		customerVoucherSearchService.setOnFailed(serviceFailedHandler);
 	}
 
 	public void handleCashDrawerCreateService(){
@@ -668,7 +692,7 @@ public class CashDrawerDisplayController implements EntityController
 					amount = amount.add(paymentItem.getAmount());
 
 				BigDecimal paidAmount = null;
-
+			
 				if(newValue.compareTo(amount)>=0) {
 					displayView.getDifference().setNumber(newValue.subtract(amount));
 					paidAmount = amount;
@@ -747,10 +771,10 @@ public class CashDrawerDisplayController implements EntityController
 				//				}else {
 				//					Dialogs.create().message("impossible to add annother payement !").showInformation();
 				//				}
-								if(newValue.equals(PaymentMode.VOUCHER)){
-									displayView.getPaymentMode().setEditable(false);
-									displayView.getDocNumber().requestFocus();
-								}
+				if(newValue.equals(PaymentMode.VOUCHER)){
+					displayView.getPaymentMode().setEditable(false);
+					displayView.getDocNumber().requestFocus();
+				}
 			}
 		});
 	}
@@ -882,7 +906,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getDifference().setNumber(BigDecimal.ZERO);
 		paymentManager.newPayment();
 	}
-	
+
 	private void activate(){
 		displayView.getAmount().setDisable(false);
 		displayView.getDifference().setDisable(false);
@@ -894,9 +918,15 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashButon().setDisable(false);
 		displayView.getCashOutButton().setDisable(false);
 
-	}
+	}                                                                                                                                 
 	public void reset() {
 		PropertyReader.copy(new CashDrawer(), displayedEntity);
+	}
+
+	public void resetPaymentModeTocash(){
+		displayView.getPaymentMode().setValue(PaymentMode.CASH);
+		displayView.getReceivedAmount().requestFocus();
+		displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
 	}
 
 

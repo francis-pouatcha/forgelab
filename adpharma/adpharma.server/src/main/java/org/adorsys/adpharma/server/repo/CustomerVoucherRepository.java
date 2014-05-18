@@ -13,4 +13,5 @@ public interface CustomerVoucherRepository extends EntityRepository<CustomerVouc
 {
 	@Query("SELECT v FROM CustomerVoucher AS v WHERE v.customerInvoice.salesOrder = ?1")
 	public  List<CustomerVoucher>   findBySalesOrder(SalesOrder salesOrder) ;
+	
 }

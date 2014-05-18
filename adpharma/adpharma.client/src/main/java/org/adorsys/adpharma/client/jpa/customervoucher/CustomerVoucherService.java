@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customervoucher;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -59,6 +61,20 @@ public class CustomerVoucherService {
 		return target().path("/findBySalesOrder").request(media)
 				.post(ent, CustomerVoucher.class);
 	}
+	
+
+//	@POST
+//	@Path("/findByPaiementId")
+//	@Produces({ "application/json", "application/xml" })
+	public List<CustomerVoucher> findByPaiementId(Long PaiementId )
+	{
+		
+		Entity<Long> ent = Entity.entity(PaiementId, media);
+		return target().path("/findByPaiementId").request(media)
+				.post(ent, List.class);
+	}
+
+
 
 	// @GET
 	// @Path("/{id:[0-9][0-9]*}")

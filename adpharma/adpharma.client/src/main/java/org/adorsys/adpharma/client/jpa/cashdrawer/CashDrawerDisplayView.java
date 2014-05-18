@@ -168,7 +168,7 @@ public class CashDrawerDisplayView
 	    viewBuilder.addBigDecimalColumn(paymentItemDataList, "amount", "PaymentItem_amount_description.title", paymentResourceBundle, NumberType.CURRENCY, locale);
 //	    viewBuilder.addBigDecimalColumn(paymentItemDataList, "receivedAmount", "PaymentItem_receivedAmount_description.title", paymentResourceBundle, NumberType.CURRENCY, locale);
         viewBuilder.addStringColumn(paymentItemDataList, "documentNumber", "PaymentItem_documentNumber_description.title", paymentResourceBundle);
-        viewBuilder.addStringColumn(paymentItemDataList, "fullName", "Customer_fullName_description.title", paymentResourceBundle);
+        viewBuilder.addStringColumn(paymentItemDataList, "paidBy", "PaymentItem_paidBy_description.title", paymentResourceBundle,300d);
 	}
 	
 	public void buildInvoiceDataList(ViewBuilder viewBuilder){

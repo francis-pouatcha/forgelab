@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -47,15 +48,36 @@ public class CustomerVoucherEJB
 
 	@Inject
 	private SecurityUtil securityUtil;
-	
+
 	@Inject
 	private CustomerInvoiceEJB customerInvoiceEJB ;
+
+	@Inject
+	private PaymentEJB paymentEJB;
 
 	public CustomerVoucher create(CustomerVoucher entity)
 	{
 		CustomerVoucher save = repository.save(attach(entity)); 
 		save.setVoucherNumber((SequenceGenerator.CUSTOMER_VOUCHER_SEQUENCE_PREFIXE+save.getId()));
 		return repository.save(attach(entity));
+	}
+
+	public List<CustomerVoucher> findByPaiementId(Long PaiementId){
+		ArrayList<CustomerVoucher> usedVouchers = new ArrayList<CustomerVoucher>() ;
+		Payment payment = paymentEJB.findById(PaiementId);
+		if(payment!=null){
+			Set<PaymentItem> paymentItems = payment.getPaymentItems();
+			for (PaymentItem paymentItem : paymentItems) {
+				if(PaymentMode.VOUCHER.equals(paymentItem.getPaymentMode())){
+					CustomerVoucher voucher = new CustomerVoucher();
+					voucher.setVoucherNumber(paymentItem.getDocumentNumber());
+					List<CustomerVoucher> found = findBy(voucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber});
+					if(!found.isEmpty())
+						usedVouchers.add(found.iterator().next());
+				}
+			}
+		}
+		return usedVouchers;
 	}
 
 	public CustomerVoucher deleteById(Long id)
@@ -127,12 +149,12 @@ public class CustomerVoucherEJB
 
 		return entity;
 	}
-	
+
 	public CustomerVoucher findBySalesOrder(SalesOrder salesOrder){
 		List<CustomerVoucher> found = repository.findBySalesOrder(salesOrder);
 		if(!found.isEmpty())
 			return found.iterator().next();
-		 return null ;
+		return null ;
 	}
 
 	@SuppressWarnings("unchecked")

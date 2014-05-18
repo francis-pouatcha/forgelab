@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.company.Company;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 
@@ -15,8 +16,8 @@ public class ReceiptPrinterData {
 	private final Company company;
 	private final Login cashier;
 	private final List<CustomerInvoicePrinterData> invoiceData = new ArrayList<CustomerInvoicePrinterData>();
-
-	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier) {
+	private final List<CustomerVoucher> usedVouchers  = new ArrayList<CustomerVoucher>() ;
+	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier ) {
 		super();
 		this.payment = payment;
 		this.agency = agency;
@@ -43,6 +44,10 @@ public class ReceiptPrinterData {
 	public Login getCashier() {
 		return cashier;
 	}
-	
-	
+
+	public List<CustomerVoucher> getUsedVouchers() {
+		return usedVouchers;
+	}
+
+
 }
