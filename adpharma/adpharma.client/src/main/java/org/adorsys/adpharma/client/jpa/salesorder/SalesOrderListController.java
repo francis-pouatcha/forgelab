@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
@@ -140,13 +141,17 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private CustomerInvoiceChartDataService customerInvoiceChartDataService ;
-	
+
 	@Inject
 	private CustomerVoucherSearchBySalesOrderService voucherSearchBySalesOrderService ;
 
 	@Inject
 	private SalesOrderLoadService salesOrderLoadService ;
-	
+
+	@Inject
+	@PrintCustomerVoucherRequestEvent
+	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
+
 	@Inject
 	private Locale locale;
 
@@ -161,8 +166,8 @@ public class SalesOrderListController implements EntityController
 		searchInput.setMax(100);
 
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
-		
-		
+
+
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 			@Override
 			public void changed(ObservableValue<? extends SalesOrder> observable,
@@ -184,18 +189,18 @@ public class SalesOrderListController implements EntityController
 
 			}
 		});
-		
+
 		listView.getPrintVoucherButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-				voucherSearchBySalesOrderService.setSalesOrder(selectedItem).start();
+					salesOrderVoucherPrintRequestEvent.fire(selectedItem);
 				}
 			}
 		});
-		
+
 		voucherSearchBySalesOrderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -220,7 +225,7 @@ public class SalesOrderListController implements EntityController
 			}
 		});
 		voucherSearchBySalesOrderService.setOnFailed(serviceCallFailedEventHandler);
-		
+
 
 		salesOrderItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -573,5 +578,11 @@ public class SalesOrderListController implements EntityController
 	public void reset() {
 		listView.getDataList().getItems().clear();
 		listView.getDataListItem().getItems().clear();
+	}
+
+	public void handleCustomerVoucherPrint(@Observes SalesOrder salesOrder){
+		if(salesOrder.getId()!=null){
+		voucherSearchBySalesOrderService.setSalesOrder(salesOrder).start();
+		}
 	}
 }

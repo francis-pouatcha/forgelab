@@ -196,6 +196,9 @@ public class SalesOrderEJB
 	}
 
 	public SalesOrder processReturn(SalesOrder salesOrder){
+		SalesOrder original = findById(salesOrder.getId());
+		salesOrder = attach(salesOrder);
+		salesOrder.setVersion(original.getVersion());
 		salesOrder.setAlreadyReturned(Boolean.TRUE);
 		salesOrder.calculateTotalReturnAmount();
 		SalesOrder update = update(salesOrder);
