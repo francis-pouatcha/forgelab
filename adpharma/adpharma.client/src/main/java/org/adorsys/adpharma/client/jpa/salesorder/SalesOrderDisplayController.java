@@ -31,6 +31,7 @@ import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
@@ -191,6 +192,11 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesKeyReciever salesKeyRecieverView;
+	
+	@Inject
+	@PrintCustomerVoucherRequestEvent
+	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -384,7 +390,12 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrder so = s.getValue();
 				event.consume();
 				s.reset();
+				displayedEntity.setAlreadyReturned(so.getAlreadyReturned());
 				workingInfosEvent.fire("Article Returned   successfully !");
+				Action showConfirm = Dialogs.create().message("voulez vs Imprimer l Avoir ?").showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
+					salesOrderVoucherPrintRequestEvent.fire(so);
+				}
 
 			}
 		});

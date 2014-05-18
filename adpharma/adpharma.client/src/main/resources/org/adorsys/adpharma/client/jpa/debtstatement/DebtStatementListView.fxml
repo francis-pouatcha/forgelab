@@ -11,10 +11,10 @@
 			<children>
 				<ToolBar orientation="VERTICAL" prefHeight="135.0" prefWidth="175.0" VBox.vgrow="NEVER">
 					<items>
-						<Button fx:id="editButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Traiter " />
+						<Button fx:id="createButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Nouveau" />
 						<Button fx:id="printButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Imprimer" />
-						<Button fx:id="createButton" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Nouveau" />
-						<Button fx:id="removeButton" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Suprimer" />
+						<Button fx:id="removeButton" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="suprime" />
+						<Button fx:id="removeItemButton" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Suprimer la facture" />
 					</items>
 				</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="389.0" prefWidth="170.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">

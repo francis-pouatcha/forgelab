@@ -128,6 +128,7 @@ public class DebtStatement implements Serializable
    @Enumerated(EnumType.STRING)
    private DocumentProcessingState statementStatus = DocumentProcessingState.ONGOING;
    
+   
    public Long getId()
    {
       return this.id;
@@ -179,7 +180,6 @@ public class DebtStatement implements Serializable
       }
       return super.hashCode();
    }
-
    public String getStatementNumber()
    {
       return this.statementNumber;

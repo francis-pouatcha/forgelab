@@ -7,6 +7,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -35,7 +36,7 @@ public class CustomerVoucherService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public CustomerVoucher deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(CustomerVoucher.class);
 	}
@@ -47,6 +48,16 @@ public class CustomerVoucherService {
 		Entity<CustomerVoucher> ent = Entity.entity(entity, media);
 		return target().path("" + entity.getId()).request(media)
 				.put(ent, CustomerVoucher.class);
+	}
+
+//	@POST
+//	@Path("/findBySalesOrder")
+//	@Produces({ "application/json", "application/xml" })
+	public CustomerVoucher findBySalesOrder(SalesOrder salesOrder )
+	{
+		Entity<SalesOrder> ent = Entity.entity(salesOrder, media);
+		return target().path("/findBySalesOrder").request(media)
+				.post(ent, CustomerVoucher.class);
 	}
 
 	// @GET

@@ -10,7 +10,7 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="197.0" prefWidth="152.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="264.0" prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
 						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="Recherche Avancee" />
 						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">
@@ -33,6 +33,7 @@
 								<Insets />
 							</VBox.margin>
 						</Button>
+<Button fx:id="printVoucherButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Imp l'Avoir" />
 					</items>
 				</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">

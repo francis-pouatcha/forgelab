@@ -22,10 +22,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.CustomerVoucher;
-import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
 import org.adorsys.adpharma.server.jpa.CustomerVoucherSearchInput;
 import org.adorsys.adpharma.server.jpa.CustomerVoucherSearchResult;
+import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 
 /**
  * 
@@ -88,6 +90,14 @@ public class CustomerVoucherEndpoint
       if (found == null)
          return Response.status(Status.NOT_FOUND).build();
       return Response.ok(detach(found)).build();
+   }
+   
+   @POST
+   @Path("/findBySalesOrder")
+   @Produces({ "application/json", "application/xml" })
+   public CustomerVoucher findBySalesOrder(SalesOrder salesOrder )
+   {
+	   return detach(ejb.findBySalesOrder(salesOrder));
    }
 
    @GET

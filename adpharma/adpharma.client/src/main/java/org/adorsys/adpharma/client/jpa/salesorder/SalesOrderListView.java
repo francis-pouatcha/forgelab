@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
@@ -52,6 +53,10 @@ public class SalesOrderListView
 
 	@FXML
 	private Button printInvoiceButton;
+	
+	@FXML
+	private Button printVoucherButton;
+	
 
 	@FXML
 	private Button computeButton;
@@ -133,12 +138,13 @@ public class SalesOrderListView
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
 
 		// Field not displayed in table
-		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale,170d);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addEnumColumn(dataList, "salesOrderType", "SalesOrder_salesOrderType_description.title", resourceBundle, salesOrderTypeConverter);
 		viewBuilder.addStringColumn(dataList, "cashed", "SalesOrder_cashed_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "alreadyReturned", "SalesOrder_alreadyReturned_description.title", resourceBundle);
 
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
@@ -229,6 +235,9 @@ public class SalesOrderListView
 
 	public Button getPrintInvoiceButtonn() {
 		return printInvoiceButton;
+	}
+	public Button getPrintVoucherButton() {
+		return printVoucherButton;
 	}
 	public void setRemoveButton(Button removeButton) {
 		this.removeButton = removeButton;
