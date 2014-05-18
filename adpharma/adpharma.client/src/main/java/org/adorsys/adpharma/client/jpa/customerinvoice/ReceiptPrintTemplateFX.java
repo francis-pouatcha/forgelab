@@ -495,4 +495,14 @@ public class ReceiptPrintTemplateFX extends ReceiptPrintTemplate {
 			setFont(boldFont);
 		}
 	}
+
+	@Override
+	public ReceiptPrinterData getReceiptPrinterData() {
+		return receiptPrinterData;
+	}
+
+	@Override
+	public String getReceiptPrinterName() {
+		return "receipt";
+	}
 }

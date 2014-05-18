@@ -34,7 +34,6 @@ import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -133,14 +132,16 @@ public class ReceiptPrinter {
 						PrintService printService = null;
 						if (printServices != null && printServices.length>=1) {
 							for (PrintService ps : printServices) {
-								if(StringUtils.containsIgnoreCase(ps.getName(), "receipt")){
+								if(StringUtils.containsIgnoreCase(ps.getName(), worker.getReceiptPrinterName())){
 									printService=ps;
 									break;
 								}
 							}
 						}
 						if(printService==null){
-							String fileName = UUID.randomUUID().toString()+"-aaa.pdf";
+							ReceiptPrinterData receiptPrinterData = worker.getReceiptPrinterData();
+							String paymentNumber = receiptPrinterData.getPayment().getPaymentNumber();
+							String fileName = UUID.randomUUID().toString()+paymentNumber+".pdf";
 							try {
 								FileOutputStream fos = new FileOutputStream(fileName);
 								IOUtils.write(data, fos);
@@ -149,7 +150,7 @@ public class ReceiptPrinter {
 							} catch (IOException e) {
 								throw new IllegalStateException(e);
 							} finally{
-								FileUtils.deleteQuietly(new File(fileName));
+//								FileUtils.deleteQuietly(new File(fileName));
 							}
 							
 						} else {
