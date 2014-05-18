@@ -1,20 +1,28 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.awt.Desktop;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.print.PrinterJob;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
 
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
@@ -26,6 +34,8 @@ import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class ReceiptPrinter {
@@ -70,7 +80,7 @@ public class ReceiptPrinter {
 	            s.reset();
 	    		if(receiptPrinterData==null) return;
 	    		if(receiptPrinterData.getPayment()==null) return;
-	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplate(receiptPrinterData, resourceBundle, locale);
+	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplatePDF(receiptPrinterData, resourceBundle, locale);
 	    		worker.startPage();
 	    		CustomerInvoicePrinterData customerInvoicePrinterData = worker.nextInvoice();
 	    		if(customerInvoicePrinterData==null) {
@@ -117,28 +127,42 @@ public class ReceiptPrinter {
 	    			CustomerInvoicePrinterData customerInvoicePrinterData = worker.nextInvoice();
 		    		if(customerInvoicePrinterData==null) {
 		    			worker.closePayment();
-		    			VBox page = worker.getPage();
-		    			Stage dialog = new Stage();
-		    			dialog.initModality(Modality.APPLICATION_MODAL);
-		    			// Stage
-		    			Scene scene = new Scene(page);
-//		    			scene.getStylesheets().add("/styles/application.css");
-		    			dialog.setScene(scene);
-		    			dialog.setTitle(invoiceData.getCustomerInvoice().getInvoiceNumber());
-		    			dialog.show();
+		    			byte[] data =  (byte[]) worker.getPage();
+						PrintService[] printServices = PrintServiceLookup
+								.lookupPrintServices(DocFlavor.INPUT_STREAM.PDF, null);
+						PrintService printService = null;
+						if (printServices != null && printServices.length>=1) {
+							for (PrintService ps : printServices) {
+								if(StringUtils.containsIgnoreCase(ps.getName(), "receipt")){
+									printService=ps;
+									break;
+								}
+							}
+						}
+						if(printService==null){
+							String fileName = UUID.randomUUID().toString()+"-aaa.pdf";
+							try {
+								FileOutputStream fos = new FileOutputStream(fileName);
+								IOUtils.write(data, fos);
+								IOUtils.closeQuietly(fos);
+								Desktop.getDesktop().print(new File(fileName));
+							} catch (IOException e) {
+								throw new IllegalStateException(e);
+							} finally{
+								FileUtils.deleteQuietly(new File(fileName));
+							}
+							
+						} else {
+							DocPrintJob printJob = printService.createPrintJob();
+							Doc doc = new SimpleDoc(new ByteArrayInputStream(data), DocFlavor.INPUT_STREAM.PDF,
+									null);
+							try {
+								printJob.print(doc, null);
+							} catch (PrintException e) {
+								throw new IllegalStateException(e);
+							}
+						}
 
-		    			
-		    			PrinterJob job = PrinterJob.createPrinterJob();
-		    			job.showPrintDialog(dialog);
-//						JobSettings jobSettings = job.getJobSettings();
-//		    			@SuppressWarnings("unused")
-//		    			Printer printer = job.getPrinter();
-		    			if (job != null) {
-		    				boolean success =  job.printPage(page);
-		    				if (success) {
-		    					job.endJob();
-		    				}
-		    			}
 		    		} else {
 						worker.printInvoiceHeader(customerInvoicePrinterData);
 						worker.addItems(customerInvoicePrinterData.getCustomerInvoiceItemSearchResult().getResultList());

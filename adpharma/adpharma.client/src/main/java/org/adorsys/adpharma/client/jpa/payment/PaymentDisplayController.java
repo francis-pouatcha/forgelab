@@ -143,7 +143,7 @@ public class PaymentDisplayController implements EntityController
       {
          children.add(rootPane);
       }
-      if(!securityUtil.hasRole(AccessRoleEnum.ADMIN.name())){
+      if(!securityUtil.hasRole(AccessRoleEnum.MANAGER.name())){
     	  displayView.getPrintButton().setDisable(true);
       } else {
     	  displayView.getPrintButton().setDisable(false);
