@@ -138,7 +138,7 @@ public class SalesOrderListView
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
 
 		// Field not displayed in table
-		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale,170d);
+		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountVAT", "SalesOrder_amountVAT_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "SalesOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "SalesOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);

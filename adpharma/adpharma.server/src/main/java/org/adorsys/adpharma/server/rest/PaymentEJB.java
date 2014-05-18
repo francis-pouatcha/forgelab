@@ -29,23 +29,23 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class PaymentEJB
 {
 
-   @Inject
-   private PaymentRepository repository;
+	@Inject
+	private PaymentRepository repository;
 
-   @Inject
-   private LoginMerger loginMerger;
+	@Inject
+	private LoginMerger loginMerger;
 
-   @Inject
-   private CustomerMerger customerMerger;
+	@Inject
+	private CustomerMerger customerMerger;
 
-   @Inject
-   private CashDrawerMerger cashDrawerMerger;
+	@Inject
+	private CashDrawerMerger cashDrawerMerger;
 
-   @Inject
-   private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
+	@Inject
+	private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
+	@Inject
+	private AgencyMerger agencyMerger;
 
 	@EJB
 	private SecurityUtil securityUtil;   
@@ -55,147 +55,147 @@ public class PaymentEJB
 	@Inject
 	@DocumentProcessedEvent
 	private Event<Payment> paymentProcessedEvent;
-   
+
 	@Inject
 	@DocumentClosedEvent
 	private Event<Payment> paymentClosedEvent;
-	
+
 	@EJB
 	private CustomerInvoiceEJB customerInvoiceEJB;
 
 	public Payment create(Payment entity)
-   {
-	   ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
-	   Payment payment = attach(entity);
-	   for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
-		   PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
-		   i.setSource(payment);
-		   i.setSourceQualifier("invoices");
-		   CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
-		   CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
-		   i.setTarget(customerInvoice);
-		   i.setTargetQualifier("payments");
-		   payment.getInvoices().add(i);
-	   }
-	   Login cashier = securityUtil.getConnectedUser();
-	   CashDrawer cashDrawer = payment.getCashDrawer();
-	   // Is the cashier the owner of this cashdrawer
-	   if(!cashDrawer.getCashier().equals(cashier)){
-		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
-	   }
-	   payment.setAgency(cashDrawer.getAgency());
-	   payment.setCashier(cashDrawer.getCashier());
-	   Date now = new Date();
-	   payment.setPaymentDate(now);
-	   payment.setRecordDate(now);
-	   payment.setPaymentNumber("PY-"+RandomStringUtils.randomAlphanumeric(5));
-	   Set<PaymentItem> paymentItems = payment.getPaymentItems();
-	   BigDecimal amount = BigDecimal.ZERO;
-	   BigDecimal receivedAmount = BigDecimal.ZERO;
-	   BigDecimal difference = BigDecimal.ZERO;
-	   PaymentMode paymentMode = null;
-	   for (PaymentItem paymentItem : paymentItems) {
-		   BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
-		   amount = amount.add(piAmount);
-		   BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
-		   receivedAmount = receivedAmount.add(piReceivedAmount);
-		   difference = difference.add(piReceivedAmount.subtract(piAmount));
-		   paymentMode = paymentItem.getPaymentMode();
-	   }
-	   payment.setAmount(amount);
-	   payment.setReceivedAmount(receivedAmount);
-	   payment.setDifference(difference);
-	   payment.setPaymentMode(paymentMode);
+	{
+		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
+		Payment payment = attach(entity);
+		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+			PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
+			i.setSource(payment);
+			i.setSourceQualifier("invoices");
+			CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
+			CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
+			i.setTarget(customerInvoice);
+			i.setTargetQualifier("payments");
+			payment.getInvoices().add(i);
+		}
+		Login cashier = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = payment.getCashDrawer();
+		// Is the cashier the owner of this cashdrawer
+		//	   if(!cashDrawer.getCashier().equals(cashier)){
+		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
+		//	   }
+		payment.setAgency(cashDrawer.getAgency());
+		payment.setCashier(cashDrawer.getCashier());
+		Date now = new Date();
+		payment.setPaymentDate(now);
+		payment.setRecordDate(now);
+		payment.setPaymentNumber("PY-"+RandomStringUtils.randomAlphanumeric(5));
+		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+		BigDecimal amount = BigDecimal.ZERO;
+		BigDecimal receivedAmount = BigDecimal.ZERO;
+		BigDecimal difference = BigDecimal.ZERO;
+		PaymentMode paymentMode = null;
+		for (PaymentItem paymentItem : paymentItems) {
+			BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
+			amount = amount.add(piAmount);
+			BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
+			receivedAmount = receivedAmount.add(piReceivedAmount);
+			difference = difference.add(piReceivedAmount.subtract(piAmount));
+			paymentMode = paymentItem.getPaymentMode();
+		}
+		payment.setAmount(amount);
+		payment.setReceivedAmount(receivedAmount);
+		payment.setDifference(difference);
+		payment.setPaymentMode(paymentMode);
 
-	   
-      payment = repository.save(payment);
-      paymentProcessedEvent.fire(payment);
-      return payment;
-   }
 
-   public Payment deleteById(Long id)
-   {
-      Payment entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
+		payment = repository.save(payment);
+		paymentProcessedEvent.fire(payment);
+		return payment;
+	}
 
-   public Payment update(Payment entity)
-   {
-      return repository.save(attach(entity));
-   }
+	public Payment deleteById(Long id)
+	{
+		Payment entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+		}
+		return entity;
+	}
 
-   public Payment findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public Payment update(Payment entity)
+	{
+		return repository.save(attach(entity));
+	}
 
-   public List<Payment> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public Payment findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public List<Payment> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public List<Payment> findBy(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
-   {
-	   Payment payment = attach(entity);
-      return repository.findBy(payment, start, max, attributes);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public Long countBy(Payment entity, SingularAttribute<Payment, ?>[] attributes)
-   {
-	   Payment payment = attach(entity);
-      return repository.count(payment, attributes);
-   }
+	public List<Payment> findBy(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
+	{
+		Payment payment = attach(entity);
+		return repository.findBy(payment, start, max, attributes);
+	}
 
-   public List<Payment> findByLike(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
-   {
-	   Payment payment = attach(entity);
-      return repository.findByLike(payment, start, max, attributes);
-   }
+	public Long countBy(Payment entity, SingularAttribute<Payment, ?>[] attributes)
+	{
+		Payment payment = attach(entity);
+		return repository.count(payment, attributes);
+	}
 
-   public Long countByLike(Payment entity, SingularAttribute<Payment, ?>[] attributes)
-   {
-	   Payment payment = attach(entity);
-      return repository.countLike(payment, attributes);
-   }
+	public List<Payment> findByLike(Payment entity, int start, int max, SingularAttribute<Payment, ?>[] attributes)
+	{
+		Payment payment = attach(entity);
+		return repository.findByLike(payment, start, max, attributes);
+	}
 
-   private Payment attach(Payment entity)
-   {
-      if (entity == null)
-         return null;
+	public Long countByLike(Payment entity, SingularAttribute<Payment, ?>[] attributes)
+	{
+		Payment payment = attach(entity);
+		return repository.countLike(payment, attributes);
+	}
 
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+	private Payment attach(Payment entity)
+	{
+		if (entity == null)
+			return null;
 
-      // aggregated
-      entity.setCashier(loginMerger.bindAggregated(entity.getCashier()));
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
 
-      // aggregated
-      entity.setCashDrawer(cashDrawerMerger.bindAggregated(entity.getCashDrawer()));
+		// aggregated
+		entity.setCashier(loginMerger.bindAggregated(entity.getCashier()));
 
-      // aggregated
-      entity.setPaidBy(customerMerger.bindAggregated(entity.getPaidBy()));
+		// aggregated
+		entity.setCashDrawer(cashDrawerMerger.bindAggregated(entity.getCashDrawer()));
 
-      // composed collections
-      Set<PaymentItem> paymentItems = entity.getPaymentItems();
-      for (PaymentItem paymentItem : paymentItems)
-      {
-         paymentItem.setPayment(entity);
-      }
+		// aggregated
+		entity.setPaidBy(customerMerger.bindAggregated(entity.getPaidBy()));
 
-      // aggregated collection
-      paymentCustomerInvoiceAssocMerger.bindAggregated(entity.getInvoices());
+		// composed collections
+		Set<PaymentItem> paymentItems = entity.getPaymentItems();
+		for (PaymentItem paymentItem : paymentItems)
+		{
+			paymentItem.setPayment(entity);
+		}
 
-      return entity;
-   }
+		// aggregated collection
+		paymentCustomerInvoiceAssocMerger.bindAggregated(entity.getInvoices());
+
+		return entity;
+	}
 
 
 }

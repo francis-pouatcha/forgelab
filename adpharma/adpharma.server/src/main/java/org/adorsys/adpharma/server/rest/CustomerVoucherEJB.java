@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
@@ -158,7 +159,7 @@ public class CustomerVoucherEJB
 	}
 
 	@SuppressWarnings("unchecked")
-	public void processPaymentClosed(@Observes @DocumentClosedEvent Payment payment){
+	public void processPaymentClosed(@Observes @DocumentProcessedEvent Payment payment){
 		Set<PaymentItem> paymentItems = payment.getPaymentItems();
 		for (PaymentItem paymentItem : paymentItems) {
 			if(PaymentMode.VOUCHER.equals(paymentItem.getPaymentMode())){
@@ -172,6 +173,7 @@ public class CustomerVoucherEJB
 				customerVoucher.setModifiedDate(new Date());
 				customerVoucher.setRecordingUser(securityUtil.getConnectedUser());
 				customerVoucher.setRestAmount(customerVoucher.getRestAmount().subtract(paymentItem.getAmount()));
+				customerVoucher.setAmountUsed(customerVoucher.getAmount().subtract(customerVoucher.getRestAmount()));
 				if(customerVoucher.getRestAmount().compareTo(BigDecimal.ZERO)<=0)
 					customerVoucher.setSettled(Boolean.TRUE);
 				update(customerVoucher);
