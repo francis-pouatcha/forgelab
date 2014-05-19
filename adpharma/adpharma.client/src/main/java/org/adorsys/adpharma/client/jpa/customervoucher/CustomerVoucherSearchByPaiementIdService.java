@@ -31,7 +31,7 @@ public class CustomerVoucherSearchByPaiementIdService extends Service<List<Custo
 	         {
 	            if (paiementId == null)
 	               return null;
-	            return remoteService.findByPaiementId(paiementId);
+	            return remoteService.findByPaiementId(paiementId).getResultList();
 	         }
 	      };
 	   }
