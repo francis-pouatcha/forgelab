@@ -196,19 +196,19 @@ private Locale locale ;
 			}
 				});
 
-		/*
-		 * listen to edit button and fire search select event.
-		 */
-		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
-				{
-			@Override
-			public void handle(ActionEvent e)
-			{
-				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null)
-					selectionEvent.fire(selectedItem);
-			}
-				});
+//		/*
+//		 * listen to edit button and fire search select event.
+//		 */
+//		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
+//				{
+//			@Override
+//			public void handle(ActionEvent e)
+//			{
+//				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+//				if(selectedItem!=null)
+//					selectionEvent.fire(selectedItem);
+//			}
+//				});
 
 		/*
 		 * listen to search button and fire search activated event.

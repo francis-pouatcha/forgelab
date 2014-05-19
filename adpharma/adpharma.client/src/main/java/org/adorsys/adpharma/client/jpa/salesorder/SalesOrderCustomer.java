@@ -29,6 +29,7 @@ public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cl
 	private int version;
 
 	private SimpleStringProperty fullName;
+	private SimpleStringProperty serialNumber;
 	private SimpleStringProperty landLinePhone;
 	private SimpleStringProperty mobile;
 	private SimpleStringProperty fax;
@@ -110,6 +111,26 @@ public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cl
 	public final void setFullName(String fullName)
 	{
 		this.fullNameProperty().set(fullName);
+	}
+	
+
+	public SimpleStringProperty serialNumberProperty()
+	{
+		if (serialNumber == null)
+		{
+			serialNumber = new SimpleStringProperty();
+		}
+		return serialNumber;
+	}
+
+	public String getSerialNumber()
+	{
+		return serialNumberProperty().get();
+	}
+
+	public final void setSerialNumber(String serialNumber)
+	{
+		this.serialNumberProperty().set(serialNumber);
 	}
 
 	public SimpleStringProperty landLinePhoneProperty()

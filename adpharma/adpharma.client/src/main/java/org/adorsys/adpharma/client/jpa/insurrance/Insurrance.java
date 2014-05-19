@@ -5,6 +5,8 @@ import java.util.Calendar;
 
 import javafx.beans.property.SimpleObjectProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -82,6 +84,9 @@ public class Insurrance implements Cloneable
       return coverageRate;
    }
 
+   @Max(100)
+   @Min(0)
+   @NotNull
    public BigDecimal getCoverageRate()
    {
       return coverageRateProperty().get();
@@ -101,7 +106,7 @@ public class Insurrance implements Cloneable
       return beginDate;
    }
 
-   @NotNull(message = "Insurrance_beginDate_NotNull_validation")
+//   @NotNull(message = "Insurrance_beginDate_NotNull_validation")
    public Calendar getBeginDate()
    {
       return beginDateProperty().get();
@@ -121,7 +126,7 @@ public class Insurrance implements Cloneable
       return endDate;
    }
 
-   @NotNull(message = "Insurrance_endDate_NotNull_validation")
+//   @NotNull(message = "Insurrance_endDate_NotNull_validation")
    public Calendar getEndDate()
    {
       return endDateProperty().get();

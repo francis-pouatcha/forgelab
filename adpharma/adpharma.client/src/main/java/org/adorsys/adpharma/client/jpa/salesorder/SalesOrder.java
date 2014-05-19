@@ -485,6 +485,7 @@ public class SalesOrder implements Cloneable
 		SalesOrderCustomer customer2 = getCustomer();
 		customer2.setCustomerCategory(customerCategory);
 		customerProperty().setValue(customer2);
+		
 	}
 
 	public SimpleObjectProperty<SalesOrderInsurance> insuranceProperty()

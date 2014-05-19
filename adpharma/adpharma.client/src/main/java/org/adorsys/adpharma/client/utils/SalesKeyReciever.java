@@ -16,8 +16,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Separator;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
@@ -93,6 +97,8 @@ public class SalesKeyReciever  extends VBox{
 			}
 		});
 
+
+
 		koButton.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -100,6 +106,23 @@ public class SalesKeyReciever  extends VBox{
 				userAction = Actions.CANCEL ;
 				close();
 
+			}
+		});
+
+
+		passwordField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					userAction = Actions.OK ;
+					if(StringUtils.isBlank(passwordField.getText())){
+						showKeyError();
+						return;
+					}
+					close();
+				}
 			}
 		});
 	}

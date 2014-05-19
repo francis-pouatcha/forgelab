@@ -45,6 +45,7 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
+import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
@@ -88,6 +89,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Singleton
 public class SalesOrderDisplayController implements EntityController
@@ -351,9 +354,14 @@ public class SalesOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
+				SalesOrderCustomer orderCustomer = displayedEntity.getCustomer();
+				
+				if("000000001".equals(orderCustomer.getSerialNumber()))
+						return ;
+				System.out.println(orderCustomer.getSerialNumber()+" serial");
 				Insurrance insurrance = new Insurrance();
 				InsurranceCustomer customer = new InsurranceCustomer();
-				PropertyReader.copy(displayedEntity.getCustomer(), customer);
+				PropertyReader.copy(orderCustomer, customer);
 				insurrance.setCustomer(customer);
 				modalInsurerCreateRequestEvent.fire(insurrance);
 
@@ -780,8 +788,8 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleNewCustomer(Customer model){
 		if(model !=null){
-			displayedEntity.setCustomer((new SalesOrderCustomer(model)));
-			displayedEntity.setInsurance(new SalesOrderInsurance());
+			displayView.getClient().setValue(new SalesOrderCustomer(model));
+			displayView.getInsurrer().setValue(new SalesOrderInsurance());
 			getCustomerInsurance(model);
 
 		}
