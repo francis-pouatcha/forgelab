@@ -146,7 +146,7 @@ public class ReceiptPrinter {
 								FileOutputStream fos = new FileOutputStream(fileName);
 								IOUtils.write(data, fos);
 								IOUtils.closeQuietly(fos);
-								Desktop.getDesktop().print(new File(fileName));
+								Desktop.getDesktop().open(new File(fileName));
 							} catch (IOException e) {
 								throw new IllegalStateException(e);
 							} finally{

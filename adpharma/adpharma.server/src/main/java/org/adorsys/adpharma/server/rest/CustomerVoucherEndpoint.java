@@ -103,9 +103,11 @@ public class CustomerVoucherEndpoint
 	@POST
 	@Path("/findByPaiementId")
 	@Produces({ "application/json", "application/xml" })
-	public List<CustomerVoucher> findByPaiementId(Long PaiementId )
+	public CustomerVoucherSearchResult findByPaiementId(Long PaiementId )
 	{
-		return detach(detach(ejb.findByPaiementId(PaiementId)));
+		List<CustomerVoucher> resultList = ejb.findByPaiementId(PaiementId);
+		return new CustomerVoucherSearchResult((long) resultList.size(),
+				detach(resultList), detach(new CustomerVoucherSearchInput()));
 	}
 
 

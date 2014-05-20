@@ -49,6 +49,7 @@ import org.adorsys.adpharma.client.jpa.disbursement.Disbursement;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementAgency;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashDrawer;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -470,7 +471,9 @@ public class CashDrawerDisplayController implements EntityController
 	public void handleCustomerInvoiceSearchEvent(){
 		CustomerInvoiceSearchInput csi = new CustomerInvoiceSearchInput();
 		csi.getEntity().setCashed(Boolean.FALSE);
+		csi.getEntity().setInvoiceType(InvoiceType.CASHDRAWER);
 		csi.getFieldNames().add("cashed");
+		csi.getFieldNames().add("invoiceType");
 		csi.setMax(100);
 		customerInvoiceSearchService.setSearchInputs(csi).start();
 	}
