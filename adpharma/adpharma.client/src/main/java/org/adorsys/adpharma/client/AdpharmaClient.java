@@ -7,17 +7,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Properties;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.enterprise.inject.Instance;
 
 import org.adorsys.javafx.crud.extensions.MainController;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.locale.LocaleFactory;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -118,6 +123,15 @@ public final class AdpharmaClient extends Application {
 
 	@Override
 	public void start(Stage stage) {
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				Collection<File> listFiles = FileUtils.listFiles(new File("."), new String[]{".pdf"}, false);
+				for (File file : listFiles) {
+					if(file.getName().endsWith(".pdf"))FileUtils.deleteQuietly(file);
+				}
+			}
+		});
 		Instance<Object> instance = weld.initialize().instance();
 		instance.select(LocaleFactory.class).get().setLocale(locale);
 		instance.select(MainController.class).get()
