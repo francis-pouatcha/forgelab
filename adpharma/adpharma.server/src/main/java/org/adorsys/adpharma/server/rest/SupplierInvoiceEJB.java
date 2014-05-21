@@ -3,7 +3,10 @@ package org.adorsys.adpharma.server.rest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -15,15 +18,18 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
+import org.adorsys.adpharma.server.jpa.Agency_;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.jpa.DeliveryStattisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.jpa.SupplierInvoice;
 import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
+import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SupplierInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
@@ -167,38 +173,120 @@ public class SupplierInvoiceEJB
 		return searchResult ;
 
 	}
-	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
-		SupplierInvoice si = new SupplierInvoice();
-		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
-		Agency agency = creatingUser.getAgency();
-		si.setDelivery(closedDelivery);
-		si.setAgency(agency);
-		si.setSupplier(closedDelivery.getSupplier());
-		si.setCreatingUser(creatingUser);
-		si.setCreationDate(creationDate);
-		si.setInvoiceType(InvoiceType.CASHDRAWER);
-		si = create(si);
-		// Generate the supplier invoice items
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			SupplierInvoiceItem sii = new SupplierInvoiceItem();
-			sii.setAmountReturn(BigDecimal.ZERO);
-			sii.setArticle(deliveryItem.getArticle());
-			sii.setDeliveryQty(deliveryItem.getStockQuantity());
-			sii.setInternalPic(deliveryItem.getInternalPic());
-			sii.setInvoice(si);
-			sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-			sii.setTotalPurchasePrice(deliveryItem.getTotalPurchasePrice());
-			sii = supplierInvoiceItemEJB.create(sii);
-		}
 
-		si.setAmountDiscount(closedDelivery.getAmountDiscount());
-		si.setAmountBeforeTax(closedDelivery.getAmountBeforeTax());
-		si.setAmountAfterTax(closedDelivery.getAmountAfterTax());
-		si.setAmountDiscount(closedDelivery.getAmountDiscount());
-		si.setNetToPay(closedDelivery.getNetAmountToPay());
-		si.setTaxAmount(closedDelivery.getAmountVat());
-		si = update(si);
+	/**
+	 * First group delivery items in agencies then produce the supplier invoice.
+	 * 
+	 * @param closedDelivery
+	 */
+	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery) {
+		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+		Map<String, List<DeliveryItem>> deliveryItemMap = new HashMap<String, List<DeliveryItem>>();
+		Map<String, Agency> agencies = new HashMap<String, Agency>();
+		Map<String, ArticleLot> articleLots =  new HashMap<String, ArticleLot>();
+		// Group delivery items by agency
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			ArticleLot articleLot = getArticleLot(deliveryItem.getInternalPic(), articleLots);
+			List<DeliveryItem> list = deliveryItemMap.get(articleLot.getAgency().getAgencyNumber());
+			if(list==null){
+				list = new ArrayList<DeliveryItem>();
+				deliveryItemMap.put(articleLot.getAgency().getAgencyNumber(), list);
+			}
+			list.add(deliveryItem);
+		}
+		Set<Entry<String,List<DeliveryItem>>> entrySet = deliveryItemMap.entrySet();
+		for (Entry<String, List<DeliveryItem>> entry : entrySet) {
+			String agencyNumber = entry.getKey();
+			SupplierInvoice si = new SupplierInvoice();
+			Login creatingUser = securityUtil.getConnectedUser();
+			Date creationDate = new Date();
+			si.setDelivery(closedDelivery);
+			si.setAgency(getAgency(agencyNumber, agencies));
+			si.setSupplier(closedDelivery.getSupplier());
+			si.setCreatingUser(creatingUser);
+			si.setCreationDate(creationDate);
+			si.setInvoiceType(InvoiceType.CASHDRAWER);
+			si = create(si);
+			// Generate the supplier invoice items
+			List<DeliveryItem> items = entry.getValue();
+			BigDecimal afterTax = BigDecimal.ZERO;
+			BigDecimal vat = BigDecimal.ZERO;
+			BigDecimal discount = BigDecimal.ZERO;
+			for (DeliveryItem deliveryItem : items) {
+				SupplierInvoiceItem sii = new SupplierInvoiceItem();
+				sii.setAmountReturn(BigDecimal.ZERO);
+				sii.setArticle(deliveryItem.getArticle());
+				sii.setDeliveryQty(deliveryItem.getStockQuantity());
+				String internalPic = deliveryItem.getInternalPic();
+				sii.setInternalPic(internalPic);
+				sii.setInvoice(si);
+				sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+				BigDecimal amountAfterTax = deliveryItem.getTotalPurchasePrice();
+				sii.setTotalPurchasePrice(amountAfterTax);
+				afterTax = afterTax.add(amountAfterTax);
+				
+				// Read the vat rate saed in the article lot.
+				ArticleLot articleLot = getArticleLot(internalPic, articleLots);
+				VAT ivat = articleLot.getVat();
+				BigDecimal vatRate = ivat!=null?ivat.getRate():BigDecimal.ZERO;
+				
+				// IF the vat to be collected is waived in the delivery item, ignore vat computation here.
+				if(BigDecimal.ZERO.compareTo(closedDelivery.getAmountVat())<=0)vatRate=BigDecimal.ZERO;
+				BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRate)); 
+				
+				BigDecimal amountVat = amountAfterTax.subtract(amountBeforeTax);
+				vat = vat.add(amountVat);
+
+				BigDecimal deliveryDiscount = closedDelivery.getAmountDiscount()==null?BigDecimal.ZERO:closedDelivery.getAmountDiscount();
+				BigDecimal deliveryAmountBeforeTax = closedDelivery.getAmountBeforeTax();
+				
+				// Proportion on whole invoice before tax. Because not all item have vat.
+				// Take the proportion of amount before tax
+				BigDecimal amountDiscount = BigDecimal.ZERO;				
+				if(deliveryDiscount.compareTo(BigDecimal.ZERO)>0){
+					if(deliveryAmountBeforeTax.compareTo(BigDecimal.ZERO)>0){
+						BigDecimal proportion = amountBeforeTax.divide(deliveryAmountBeforeTax);
+						amountDiscount = deliveryDiscount.multiply(proportion);	
+					}
+				}
+				discount = discount.add(amountDiscount);
+
+				sii = supplierInvoiceItemEJB.create(sii);
+			}
+			
+			si.setAmountAfterTax(afterTax);
+			si.setTaxAmount(vat);
+			si.setAmountBeforeTax(afterTax.subtract(vat));
+			si.setAmountDiscount(discount);
+			si.setNetToPay(afterTax.subtract(discount));
+			si = update(si);
+		}
+	}
+	
+	@Inject
+	private AgencyEJB agencyEJB;
+	@SuppressWarnings("unchecked")
+	private Agency getAgency(String agencyNumber, Map<String, Agency> agencyCache){
+		if(agencyCache.containsKey(agencyNumber)) return agencyCache.get(agencyNumber);
+		Agency model = new Agency();
+		model.setAgencyNumber(agencyNumber);
+		List<Agency> found = agencyEJB.findBy(model, 0, 1, new SingularAttribute[]{Agency_.agencyNumber});
+		if(found.isEmpty()) throw new IllegalStateException("No agency with agency number: " + agencyNumber);
+		Agency agency = found.iterator().next();
+		agencyCache.put(agencyNumber, agency);
+		return agency;
+	}
+	
+	@Inject
+	private ArticleLotEJB articleLotEJB;
+	private ArticleLot getArticleLot(String internalPic, Map<String, ArticleLot> cache){
+		if(cache.containsKey(internalPic)) return cache.get(internalPic);
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setInternalPic(internalPic);
+		List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+		if(found.isEmpty()) throw new IllegalStateException("No article lot with article internal pic: " + internalPic);
+		ArticleLot next = found.iterator().next();
+		cache.put(internalPic, next);
+		return next;
 	}
 }
