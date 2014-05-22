@@ -70,6 +70,8 @@ public abstract class InsurranceInsurerController
             selection.getInsurer().getItems().add(new InsurranceInsurer());
             for (Customer entity : entities)
             {
+            	if("000000001".equals(entity.getSerialNumber()))
+            		continue ;
                selection.getInsurer().getItems().add(new InsurranceInsurer(entity));
             }
          }

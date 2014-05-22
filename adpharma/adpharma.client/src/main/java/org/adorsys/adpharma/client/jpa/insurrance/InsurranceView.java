@@ -16,6 +16,8 @@ import org.adorsys.javafx.crud.extensions.ViewModel;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldFoccusChangedListener;
+import org.adorsys.javafx.crud.extensions.validation.BigDecimalFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.CalendarTextFieldFoccusChangedListener;
 import org.adorsys.javafx.crud.extensions.validation.CalendarTextFieldValidator;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
@@ -50,6 +52,9 @@ public class InsurranceView extends AbstractForm<Insurrance>
 
    @Inject
    private CalendarTextFieldValidator calendarTextFieldValidator;
+   
+   @Inject
+   private BigDecimalFieldValidator bigDecimalFieldValidator ;
    @Inject
    private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
@@ -74,15 +79,19 @@ public class InsurranceView extends AbstractForm<Insurrance>
    {
       beginDate.calendarProperty().addListener(new CalendarTextFieldFoccusChangedListener<Insurrance>(calendarTextFieldValidator, beginDate, Insurrance.class, "beginDate", resourceBundle));
       endDate.calendarProperty().addListener(new CalendarTextFieldFoccusChangedListener<Insurrance>(calendarTextFieldValidator, endDate, Insurrance.class, "endDate", resourceBundle));
+      coverageRate.numberProperty().addListener(new BigDecimalFieldFoccusChangedListener<Insurrance>(bigDecimalFieldValidator, coverageRate, Insurrance.class, "endDate", resourceBundle));
+
       // no active validator
       // no active validator
    }
 
    public Set<ConstraintViolation<Insurrance>> validate(Insurrance model)
    {
+	   
       Set<ConstraintViolation<Insurrance>> violations = new HashSet<ConstraintViolation<Insurrance>>();
       violations.addAll(calendarTextFieldValidator.validate(beginDate, Insurrance.class, "beginDate", resourceBundle));
       violations.addAll(calendarTextFieldValidator.validate(endDate, Insurrance.class, "endDate", resourceBundle));
+      violations.addAll(bigDecimalFieldValidator.validate(coverageRate, Insurrance.class, "coverageRate", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(insurranceCustomerSelection.getCustomer(), model.getCustomer(), Insurrance.class, "customer", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(insurranceInsurerSelection.getInsurer(), model.getInsurer(), Insurrance.class, "insurer", resourceBundle));
       return violations;

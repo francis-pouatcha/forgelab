@@ -1,29 +1,44 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
+import javax.persistence.PrePersist;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
+
 import java.util.Date;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.format.DateFormatPattern;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.adpharma.server.jpa.Customer;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.ToStringField;
+
 import java.math.BigDecimal;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
+import org.apache.commons.lang3.time.DateUtils;
 
 @Entity
 @Description("Insurrance_description")
@@ -69,6 +84,14 @@ public class Insurrance implements Serializable
    @Description("Insurrance_coverageRate_description")
    @NumberFormatType(NumberType.PERCENTAGE)
    private BigDecimal coverageRate;
+   
+   
+   @PrePersist
+   public void prePersist(){
+	   Date date = new Date();
+	   beginDate = DateUtils.addYears(date, -2);
+	   endDate =DateUtils.addYears(date, 5);
+   }
 
    public Long getId()
    {

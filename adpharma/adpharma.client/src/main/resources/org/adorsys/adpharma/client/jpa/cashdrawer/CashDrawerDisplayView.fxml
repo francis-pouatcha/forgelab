@@ -113,7 +113,7 @@
 													</Button>
 												</HBox>
 												<HBox>
-													<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="OUVRIR" textFill="#1e8334">
+													<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="LISTER" textFill="#1e8334">
 														<font>
 															<Font size="24.0" />
 														</font>

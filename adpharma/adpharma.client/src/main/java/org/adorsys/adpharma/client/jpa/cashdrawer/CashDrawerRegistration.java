@@ -23,6 +23,7 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.DomainComponentRegistration;
 import org.adorsys.javafx.crud.extensions.cdiextention.Eager;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.MenuItemAddRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.MenuItemRemoveRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -44,6 +45,7 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    private ResourceBundle resourceBundle;
    
    private MenuItem cashDrawerReportMenuItem;
+   
    @Inject
    @MenuItemAddRequestedEvent
    private Event<ReportMenuItem> cashDrawerReportMenuItemAddEvent;
@@ -54,6 +56,10 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    @Inject
    @PrintRequestedEvent
    private Event<CashDrawerPrintRequest> cashDrawerPrintRequestEvent;
+   
+   @Inject
+   @EntitySearchRequestedEvent
+   private Event<CashDrawer>   cashDrawerSearchRequestEvent ;
 
    @Override
    protected Class<?> getComponentClass()
