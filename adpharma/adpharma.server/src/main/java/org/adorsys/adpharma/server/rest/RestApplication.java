@@ -1,3 +1,4 @@
+
 package org.adorsys.adpharma.server.rest;
 
 import javax.ws.rs.core.Application;

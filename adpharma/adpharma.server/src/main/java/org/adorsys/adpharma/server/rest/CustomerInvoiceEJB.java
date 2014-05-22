@@ -3,6 +3,7 @@ package org.adorsys.adpharma.server.rest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +21,9 @@ import org.adorsys.adpharma.server.events.DocumentCanceledEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.Agency;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
@@ -52,6 +56,9 @@ public class CustomerInvoiceEJB {
 
 	@Inject
 	private LoginMerger loginMerger;
+
+	@Inject
+	private ArticleLotEJB articleLotEJB ;
 
 	@Inject
 	private CustomerInvoiceItemMerger customerInvoiceItemMerger;
@@ -109,7 +116,7 @@ public class CustomerInvoiceEJB {
 
 		if(dataSearchInput.getCustomer()!=null)
 			querys.setParameter("customer", dataSearchInput.getCustomer());
-		
+
 		querys.setParameter("creationDate", dataSearchInput.getYears());
 		querys.setParameter("cashed", Boolean.TRUE);
 		querys.setParameter("invoiceType", InvoiceType.VOUCHER);
@@ -212,51 +219,124 @@ public class CustomerInvoiceEJB {
 	}
 
 	public void handleSalesClosed(@Observes @DocumentClosedEvent SalesOrder salesOrder){
-		CustomerInvoice ci = new CustomerInvoice();
+
 
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
-		ci.setCreatingUser(creatingUser);
-		ci.setCreationDate(creationDate);
-		ci.setAgency(salesOrder.getAgency());
-		ci.setAmountBeforeTax(salesOrder.getAmountBeforeTax());
-		ci.setTaxAmount(salesOrder.getAmountVAT());
-		ci.setAmountAfterTax(salesOrder.getAmountAfterTax());
-		ci.setAmountDiscount(salesOrder.getAmountDiscount());
-		ci.setNetToPay(salesOrder.getAmountAfterTax().subtract(salesOrder.getAmountDiscount()));
-		ci.setTotalRestToPay(ci.getNetToPay());
-		ci.setCustomer(salesOrder.getCustomer());
-		ci.setInsurance(salesOrder.getInsurance());
-
-		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
-		BigDecimal customerCoverageRate = BigDecimal.ONE;
-		Insurrance insurance = salesOrder.getInsurance();
-		if(insurance!=null){
-			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
-			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
-		}
-		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
-		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
-
-
-		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
-		ci.setInvoiceType(InvoiceType.CASHDRAWER);
-		ci.setSalesOrder(salesOrder);
-		ci.setAdvancePayment(BigDecimal.ZERO);
-
-		ci = create(ci);
+		//		ci.setCreatingUser(creatingUser);
+		//		ci.setCreationDate(creationDate);
+		//		ci.setAgency(salesOrder.getAgency());
+		//		ci.setAmountBeforeTax(salesOrder.getAmountBeforeTax());
+		//		ci.setTaxAmount(salesOrder.getAmountVAT());
+		//		ci.setAmountAfterTax(salesOrder.getAmountAfterTax());
+		//		ci.setAmountDiscount(salesOrder.getAmountDiscount());
+		//		ci.setNetToPay(salesOrder.getAmountAfterTax().subtract(salesOrder.getAmountDiscount()));
+		//		ci.setTotalRestToPay(ci.getNetToPay());
+		//		ci.setCustomer(salesOrder.getCustomer());
+		//		ci.setInsurance(salesOrder.getInsurance());
+		//
+		//		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
+		//		BigDecimal customerCoverageRate = BigDecimal.ONE;
+		//		Insurrance insurance = salesOrder.getInsurance();
+		//		if(insurance!=null){
+		//			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
+		//			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
+		//		}
+		//		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
+		//		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
+		//
+		//
+		//		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
+		//		ci.setInvoiceType(InvoiceType.CASHDRAWER);
+		//		ci.setSalesOrder(salesOrder);
+		//		ci.setAdvancePayment(BigDecimal.ZERO);
+		//
+		//		ci = create(ci);
+		//
+		//		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+		//		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+		//			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
+		//			ciItem.setArticle(salesOrderItem.getArticle());
+		//			ciItem.setInternalPic(salesOrderItem.getInternalPic());
+		//			ciItem.setInvoice(ci);
+		//			ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
+		//			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+		//			ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
+		//			ciItem = customerInvoiceItemEJB.create(ciItem);
+		//		}
 
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+		HashMap<Agency, CustomerInvoice> agencyInvoiceMap = new HashMap<Agency, CustomerInvoice>();
+
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
-			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
-			ciItem.setArticle(salesOrderItem.getArticle());
-			ciItem.setInternalPic(salesOrderItem.getInternalPic());
-			ciItem.setInvoice(ci);
-			ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
-			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
-			ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
-			ciItem = customerInvoiceItemEJB.create(ciItem);
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(salesOrderItem.getInternalPic());
+			List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+			if(found.isEmpty())
+				continue ;
+			Agency agency = found.iterator().next().getAgency();
+			CustomerInvoice agencyInvoice = agencyInvoiceMap.get(agency);
+			if(agencyInvoice!=null){
+				CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
+				ciItem.setArticle(salesOrderItem.getArticle());
+				ciItem.setInternalPic(salesOrderItem.getInternalPic());
+				ciItem.setInvoice(agencyInvoice);
+				ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
+				ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+				ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
+				ciItem = customerInvoiceItemEJB.create(ciItem);
+				agencyInvoice.setAmountBeforeTax(agencyInvoice.getAmountBeforeTax().add(ciItem.getTotalSalesPrice()));
+
+			}else {
+				CustomerInvoice ci = new CustomerInvoice();
+				ci.setCreatingUser(creatingUser);
+				ci.setCreationDate(creationDate);
+				ci.setAgency(agency);
+				ci.setAmountBeforeTax(BigDecimal.ZERO);
+				//				ci.setTaxAmount(salesOrder.getAmountVAT()); TODO we should add Taxe Rate to calculate taxe amount
+				ci.setAmountAfterTax(BigDecimal.ZERO);
+				ci.setAmountDiscount(BigDecimal.ZERO);
+				ci.setNetToPay(BigDecimal.ZERO);
+				ci.setTotalRestToPay(BigDecimal.ZERO);
+				ci.setCustomer(salesOrder.getCustomer());
+				ci.setInsurance(salesOrder.getInsurance());
+				ci.setInvoiceNumber(salesOrder.getSoNumber().replace("SO", "CI"));
+				ci.setInvoiceType(InvoiceType.CASHDRAWER);
+				ci.setSalesOrder(salesOrder);
+				ci.setAdvancePayment(BigDecimal.ZERO);
+				ci = create(ci);
+				CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
+				ciItem.setArticle(salesOrderItem.getArticle());
+				ciItem.setInternalPic(salesOrderItem.getInternalPic());
+				ciItem.setInvoice(ci);
+				ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
+				ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+				ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
+				ciItem = customerInvoiceItemEJB.create(ciItem);
+				ci.setAmountBeforeTax(ci.getAmountBeforeTax().add(ciItem.getTotalSalesPrice()));
+				agencyInvoiceMap.put(agency, ci);
+			}
+
 		}
+
+		Set<Agency> keySet = agencyInvoiceMap.keySet();
+		for (Agency agency : keySet) {
+			CustomerInvoice customerInvoice = agencyInvoiceMap.get(agency);
+			customerInvoice.setAmountAfterTax(customerInvoice.getAmountBeforeTax());
+			customerInvoice.setNetToPay(customerInvoice.getAmountBeforeTax());
+			BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
+			BigDecimal customerCoverageRate = BigDecimal.ONE;
+			Insurrance insurance = customerInvoice.getInsurance();
+			if(insurance!=null){
+				insuranceCoverageRate = customerInvoice.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
+				customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
+			}
+			customerInvoice.setCustomerRestTopay(customerInvoice.getNetToPay().multiply(customerCoverageRate));
+			customerInvoice.setInsurranceRestTopay(customerInvoice.getNetToPay().multiply(insuranceCoverageRate));
+			customerInvoice.setAdvancePayment(BigDecimal.ZERO);
+			customerInvoice = update(customerInvoice);
+		}
+
 	}
 
 	/**

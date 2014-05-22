@@ -170,7 +170,7 @@ public class ArticleLotEJB
 
 		}else {
 			ArticleLot al = new  ArticleLot();
-			al.setAgency(login.getAgency());
+			al.setAgency(lotToDetails.getAgency());
 			al.setArticle(detailConfig.getTarget());
 			al.setArticleName(al.getArticle().getArticleName());
 			al.setCreationDate(new Date());
@@ -212,7 +212,7 @@ public class ArticleLotEJB
 
 	public void createArticleLot(Login creatingUser ,DeliveryItem deliveryItem){
 		ArticleLot al = new  ArticleLot();
-		al.setAgency(creatingUser.getAgency());
+		al.setAgency(deliveryItem.getDelivery().getReceivingAgency());
 		Article article = deliveryItem.getArticle();
 		al.setArticle(article);
 		al.setArticleName(article.getArticleName());

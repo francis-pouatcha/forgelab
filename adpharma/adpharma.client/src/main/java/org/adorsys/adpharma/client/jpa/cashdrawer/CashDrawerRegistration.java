@@ -14,6 +14,7 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.CashDrawerListMenuItem;
 import org.adorsys.adpharma.client.events.CashDrawerPrintRequest;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ReportMenuItem;
@@ -23,6 +24,7 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.DomainComponentRegistration;
 import org.adorsys.javafx.crud.extensions.cdiextention.Eager;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.MenuItemAddRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.MenuItemRemoveRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -44,6 +46,8 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    private ResourceBundle resourceBundle;
    
    private MenuItem cashDrawerReportMenuItem;
+   
+   private MenuItem cashDrawerListmenuItem ;
    @Inject
    @MenuItemAddRequestedEvent
    private Event<ReportMenuItem> cashDrawerReportMenuItemAddEvent;
@@ -52,8 +56,19 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    private Event<ReportMenuItem> cashDrawerReportMenuItemRemoveEvent;
    
    @Inject
+   @MenuItemAddRequestedEvent
+   private Event<CashDrawerListMenuItem> cashDrawerListMenuItemAddEvent;
+   @Inject
+   @MenuItemRemoveRequestedEvent
+   private Event<CashDrawerListMenuItem> cashDrawerListMenuItemRemoveEvent;
+   
+   @Inject
    @PrintRequestedEvent
    private Event<CashDrawerPrintRequest> cashDrawerPrintRequestEvent;
+   
+   @Inject
+   @EntitySearchRequestedEvent
+   private Event<CashDrawer>   cashDrawerSearchRequestEvent ;
 
    @Override
    protected Class<?> getComponentClass()
@@ -92,13 +107,23 @@ public class CashDrawerRegistration extends DomainComponentRegistration
 			cashDrawerPrintRequestEvent.fire(new CashDrawerPrintRequest(new AdTimeFrame()));
 		}
 	   });
+	   
+	   cashDrawerReportMenuItem = new MenuItem(resourceBundle.getString("CashDrawer_Menu_Item_list.title"));
+	   cashDrawerReportMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+		@Override
+		public void handle(ActionEvent event) {
+			cashDrawerSearchRequestEvent.fire(new CashDrawer());
+		}         
+	   });
    }
 
    public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 	   if(roles.contains(AccessRoleEnum.MANAGER.name())){
 		   cashDrawerReportMenuItemAddEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));
+		   cashDrawerListMenuItemAddEvent.fire(new CashDrawerListMenuItem(cashDrawerListmenuItem));
 	   } else {
 		   cashDrawerReportMenuItemRemoveEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));
+		   cashDrawerListMenuItemRemoveEvent.fire(new CashDrawerListMenuItem(cashDrawerListmenuItem));
 	   }
    }
 }

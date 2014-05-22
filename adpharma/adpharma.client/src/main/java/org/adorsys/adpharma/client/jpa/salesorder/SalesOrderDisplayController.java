@@ -582,7 +582,6 @@ public class SalesOrderDisplayController implements EntityController
 					entity.setArticleName(articleName);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
-					asi.setEntity(entity);
 					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
 					modalArticleLotSearchEvent.fire(asi);
