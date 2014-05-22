@@ -14,7 +14,6 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.events.CashDrawerListMenuItem;
 import org.adorsys.adpharma.client.events.CashDrawerPrintRequest;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ReportMenuItem;
@@ -47,20 +46,12 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    
    private MenuItem cashDrawerReportMenuItem;
    
-   private MenuItem cashDrawerListmenuItem ;
    @Inject
    @MenuItemAddRequestedEvent
    private Event<ReportMenuItem> cashDrawerReportMenuItemAddEvent;
    @Inject
    @MenuItemRemoveRequestedEvent
    private Event<ReportMenuItem> cashDrawerReportMenuItemRemoveEvent;
-   
-   @Inject
-   @MenuItemAddRequestedEvent
-   private Event<CashDrawerListMenuItem> cashDrawerListMenuItemAddEvent;
-   @Inject
-   @MenuItemRemoveRequestedEvent
-   private Event<CashDrawerListMenuItem> cashDrawerListMenuItemRemoveEvent;
    
    @Inject
    @PrintRequestedEvent
@@ -107,23 +98,13 @@ public class CashDrawerRegistration extends DomainComponentRegistration
 			cashDrawerPrintRequestEvent.fire(new CashDrawerPrintRequest(new AdTimeFrame()));
 		}
 	   });
-	   
-	   cashDrawerReportMenuItem = new MenuItem(resourceBundle.getString("CashDrawer_Menu_Item_list.title"));
-	   cashDrawerReportMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-		@Override
-		public void handle(ActionEvent event) {
-			cashDrawerSearchRequestEvent.fire(new CashDrawer());
-		}         
-	   });
    }
 
    public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 	   if(roles.contains(AccessRoleEnum.MANAGER.name())){
 		   cashDrawerReportMenuItemAddEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));
-		   cashDrawerListMenuItemAddEvent.fire(new CashDrawerListMenuItem(cashDrawerListmenuItem));
 	   } else {
 		   cashDrawerReportMenuItemRemoveEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));
-		   cashDrawerListMenuItemRemoveEvent.fire(new CashDrawerListMenuItem(cashDrawerListmenuItem));
 	   }
    }
 }
