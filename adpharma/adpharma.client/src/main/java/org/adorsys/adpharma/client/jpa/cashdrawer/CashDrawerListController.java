@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.cashdrawer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,6 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
@@ -35,9 +37,16 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class CashDrawerListController implements EntityController
@@ -72,9 +81,22 @@ public class CashDrawerListController implements EntityController
 
 	@Inject
 	private CashDrawerRegistration registration;
-	
+
 	@Inject
 	private LoginSearchService loginSearchService ;
+
+	@Inject
+	@Bundle({ CrudKeys.class
+		, CashDrawer.class
+		, Agency.class
+	})
+	private ResourceBundle resourceBundle;
+
+	@Inject
+	private CashDrawerCloseService cashDrawerCloseService;
+	@Inject
+	private ServiceCallFailedEventHandler cashDrawerCloseServiceFailedHandler;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -93,7 +115,7 @@ public class CashDrawerListController implements EntityController
 			{
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(30);
-				cashDrawerSearchService.setSearchInputs(new CashDrawerSearchInput()).start();
+				cashDrawerSearchService.setSearchInputs(searchInput).start();
 			}
 				});
 		cashDrawerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -125,10 +147,10 @@ public class CashDrawerListController implements EntityController
 				if(newValue){
 					loginSearchService.setSearchInputs(new LoginSearchInput()).start();
 				}
-				
+
 			}
 		});
-		
+
 		loginSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -153,18 +175,63 @@ public class CashDrawerListController implements EntityController
 				s.reset();				
 			}
 		});
-		listView.getDataList().getSelectionModel().selectedItemProperty()
-		.addListener(new ChangeListener<CashDrawer>()
-				{
+		listView.getCloseButton().setOnAction(new EventHandler<ActionEvent>() {
+
 			@Override
-			public void changed(
-					ObservableValue<? extends CashDrawer> property,
-					CashDrawer oldValue, CashDrawer newValue)
-			{
-				if (newValue != null)
-					selectionEvent.fire(newValue);
+			public void handle(ActionEvent event) {
+				CashDrawer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null&& selectedItem.getOpened()){
+					Action showConfirm = Dialogs.create().message(resourceBundle.getString("CashDrawer_close_confirmation.title")).showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						if(selectedItem.getId()!=null)
+							cashDrawerCloseService.setCashDrawer(selectedItem).restart();
+					}
+				}
 			}
-				});
+		});
+
+		cashDrawerCloseServiceFailedHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+
+			}
+		});
+
+		cashDrawerCloseService.setOnFailed(cashDrawerCloseServiceFailedHandler);
+		cashDrawerCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CashDrawerCloseService s = (CashDrawerCloseService) event.getSource();
+				CashDrawer searchResult = s.getValue();
+				event.consume();
+				s.reset();
+
+			}
+		});
+
+		listView.getOpenButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				selectionEvent.fire(new CashDrawer());
+			}
+		});
+		//		listView.getDataList().getSelectionModel().selectedItemProperty()
+		//		.addListener(new ChangeListener<CashDrawer>()
+		//				{
+		//			@Override
+		//			public void changed(
+		//					ObservableValue<? extends CashDrawer> property,
+		//					CashDrawer oldValue, CashDrawer newValue)
+		//			{
+		//				if (newValue != null)
+		//					selectionEvent.fire(newValue);
+		//			}
+		//				});
 
 		//      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 		//      {
@@ -291,7 +358,7 @@ public class CashDrawerListController implements EntityController
 		CashDrawerCashier cashier = searchInput.getEntity().getCashier();
 		if(StringUtils.isNotBlank(cashDrawerNumber)) seachAttributes.add("cashDrawerNumber");
 		if(opened!=null) seachAttributes.add("opened");
-		if(cashier!=null) seachAttributes.add("cashier");
+		if(cashier!=null&&cashier.getId()!=null) seachAttributes.add("cashier");
 		return seachAttributes;
 
 	}

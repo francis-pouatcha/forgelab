@@ -182,6 +182,10 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
 	private Event<PaymentId> printPaymentReceiptRequestedEvent;
+	
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<CashDrawer> cashDrawerSearchRequestEvent;
 
 	@Inject
 	@CloseOpenTabRequestEvent
@@ -258,7 +262,7 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				createCashDrawer();
+				cashDrawerSearchRequestEvent.fire(new CashDrawer());
 			}
 		});
 		/*
@@ -653,7 +657,6 @@ public class CashDrawerDisplayController implements EntityController
 				} else {
 					CashDrawer cashDrawer = resultList.iterator().next();
 					PropertyReader.copy(cashDrawer, displayedEntity);
-					displayView.getOpenCashDrawerButton().setDisable(true);
 				}
 
 			}
@@ -945,4 +948,12 @@ public class CashDrawerDisplayController implements EntityController
 		}
 		return payAmount ;
 	}
+
+
+	public CashDrawerDisplayView getDisplayView() {
+		return displayView;
+	}
+
+
+	
 }

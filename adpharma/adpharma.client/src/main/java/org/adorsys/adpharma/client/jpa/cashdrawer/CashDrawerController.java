@@ -124,7 +124,7 @@ public class CashDrawerController extends DomainComponentController
 			return;
 		List<EntityController> displayedViews = getDisplayedViews();
 		displayedViews.clear();
-		displayedViews.add(searchController);
+		//		displayedViews.add(searchController);
 		displayedViews.add(listController);
 		displayComponent();
 	}
@@ -181,10 +181,10 @@ public class CashDrawerController extends DomainComponentController
 		displayedViews.clear();
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
 			displayedViews.add(listController);
-
+			displayController.getDisplayView().getOpenCashDrawerButton().setDisable(false);
 		}else {
 			displayedViews.add(displayController);
-
+			displayController.getDisplayView().getOpenCashDrawerButton().setDisable(true);
 		}
 	}
 

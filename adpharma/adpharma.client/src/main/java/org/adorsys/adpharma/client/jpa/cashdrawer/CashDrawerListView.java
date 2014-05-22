@@ -87,9 +87,12 @@ public class CashDrawerListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "cashDrawerNumber", "CashDrawer_cashDrawerNumber_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "cashier", "CashDrawer_cashier_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataList, "openingDate", "CashDrawer_openingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addDateColumn(dataList, "closingDate", "CashDrawer_closingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addDateColumn(dataList, "openingDate", "CashDrawer_openingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addStringColumn(dataList, "opened", "CashDrawer_opened_description.title", resourceBundle);
+
 		viewBuilder.addBigDecimalColumn(dataList, "initialAmount", "CashDrawer_initialAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalCashIn", "CashDrawer_totalCashIn_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalCashOut", "CashDrawer_totalCashOut_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -113,7 +116,7 @@ public class CashDrawerListView
 	{
 
 		cashDrawerNumber.textProperty().bindBidirectional(searchInput.getEntity().cashDrawerNumberProperty());
-		opened.textProperty().bindBidirectional(searchInput.getEntity().openedProperty(), new BooleanStringConverter());
+		opened.selectedProperty().bindBidirectional(searchInput.getEntity().openedProperty());
 		cashier.valueProperty().bindBidirectional(searchInput.getEntity().cashierProperty());
 	}
 
