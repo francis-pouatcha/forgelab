@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -179,7 +180,7 @@ public class ArticleLotEJB
 			al.setMainPic(detailConfig.getTarget().getPic());
 			al.setSecondaryPic(lotToDetails.getSecondaryPic());
 			al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
-			al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(),2));
+			al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(), 4, RoundingMode.HALF_EVEN));
 			al.setSalesPricePU(detailConfig.getSalesPrice());
 			al.calculateTotalAmout();
 			lot = create(al);

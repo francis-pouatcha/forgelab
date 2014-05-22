@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +17,7 @@ import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
@@ -69,7 +72,7 @@ public class DeliveryEJB
 	{
 
 		Delivery save = repository.save(attach(entity));
-		save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
+		save.setDeliveryNumber(SequenceGenerator.getSequence(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE));
 		return repository.save(save);
 	}
 
@@ -89,6 +92,7 @@ public class DeliveryEJB
 	}
 
 	public Delivery saveAndClose(Delivery delivery) {
+		delivery = attach(delivery);
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
@@ -101,10 +105,40 @@ public class DeliveryEJB
 			}
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
-			deliveryItem = deliveryItemEJB.update(deliveryItem);
+			if(deliveryItem.getId()==null){
+				deliveryItemEJB.create(deliveryItem);
+			} else {
+				deliveryItem = deliveryItemEJB.update(deliveryItem);
+			}
 		}
+		
+		// Init fields
+		delivery.setAmountAfterTax(BigDecimal.ZERO);
+		delivery.setAmountBeforeTax(BigDecimal.ZERO);
+		delivery.setAmountVat(BigDecimal.ZERO);
+		delivery.setNetAmountToPay(BigDecimal.ZERO);
+		if(delivery.getAmountDiscount()==null)delivery.setAmountDiscount(BigDecimal.ZERO);
+		
+		// navigate over all delivery items
+		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
+		delivery.getDeliveryItems().clear();
+		delivery.getDeliveryItems().addAll(deliveryItems2);
+		
+		for (DeliveryItem deliveryItem : deliveryItems2) {
+			BigDecimal totalPurchasePrice = deliveryItem.getTotalPurchasePrice();
+			// Ammount after Tax
+			delivery.setAmountAfterTax(delivery.getAmountAfterTax().add(totalPurchasePrice));
+			VAT vat = deliveryItem.getArticle().getVat();
+			BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);
+			// Amount before tax
+			delivery.setAmountBeforeTax(delivery.getAmountBeforeTax().add(purchasePriceBeforTax));
+			// Amount vat
+			delivery.setAmountVat(delivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
+		}
+		
+		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-		delivery.computeAmount();
+
 		Delivery closedDelivery = update(delivery);
 		deliveryClosedDoneEvent.fire(closedDelivery);
 		return closedDelivery;

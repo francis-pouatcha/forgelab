@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -421,9 +422,9 @@ public class SalesOrderDisplayController implements EntityController
 					BigDecimal oldValue, BigDecimal newValue) {
 				if(newValue!=null){
 					BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
-					if(BigDecimal.ONE.compareTo(newValue)<0)
-						newValue = newValue.divide(BigDecimal.valueOf(100));
-					BigDecimal discount = amountAfterTax.multiply(newValue);
+//					if(BigDecimal.ONE.compareTo(newValue)<0)
+//						newValue = ;
+					BigDecimal discount = amountAfterTax.multiply(newValue.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
 					displayedEntity.setAmountDiscount(discount);
 
 				}
@@ -731,7 +732,7 @@ public class SalesOrderDisplayController implements EntityController
 		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
 			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
 			if(discountRate!=null){
-				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100)));
+				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN));
 				if(realDiscount.compareTo(realDiscount)<0){
 					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
 					return false ;

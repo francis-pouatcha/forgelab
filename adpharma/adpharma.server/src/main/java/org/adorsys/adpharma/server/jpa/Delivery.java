@@ -21,7 +21,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -136,7 +135,7 @@ public class Delivery implements Serializable
 	@NotNull(message = "Delivery_receivingAgency_NotNull_validation")
 	private Agency receivingAgency;
 
-	@OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "delivery", cascade = {CascadeType.ALL})
 	@Description("Delivery_deliveryItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
 	private Set<DeliveryItem> deliveryItems = new HashSet<DeliveryItem>();
@@ -144,18 +143,6 @@ public class Delivery implements Serializable
 	@PrePersist
 	public void prePersist(){
 		recordingDate = new Date();
-	}
-	
-	public void computeAmount(){
-		amountBeforeTax = amountBeforeTax!=BigDecimal.ZERO?amountBeforeTax:BigDecimal.ZERO;
-		amountDiscount = amountDiscount!=BigDecimal.ZERO?amountDiscount:BigDecimal.ZERO;
-		amountVat = BigDecimal.ZERO;
-		
-		if(vat!=null && vat.getRate()!=null)
-			amountVat =amountBeforeTax.multiply(vat.getRate().divide(BigDecimal.valueOf(100)));
-		amountAfterTax = amountBeforeTax.add(amountVat);
-		netAmountToPay = amountBeforeTax.subtract(amountDiscount);
-		
 	}
 
 	public Long getId()

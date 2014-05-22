@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -232,7 +233,7 @@ public class CustomerInvoiceEJB {
 		BigDecimal customerCoverageRate = BigDecimal.ONE;
 		Insurrance insurance = salesOrder.getInsurance();
 		if(insurance!=null){
-			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
+			insuranceCoverageRate = salesOrder.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN);
 			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
 		}
 		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
@@ -285,7 +286,7 @@ public class CustomerInvoiceEJB {
 		BigDecimal customerCoverageRate = BigDecimal.ONE;
 		Insurrance insurance = salesOrder.getInsurance();
 		if(insurance!=null){
-			insuranceCoverageRate = (salesOrder.getInsurance().getCoverageRate()).divide(BigDecimal.valueOf(100));
+			insuranceCoverageRate = (salesOrder.getInsurance().getCoverageRate()).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN);
 			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
 		}
 		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));

@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -298,7 +299,7 @@ public class SalesOrderEJB
 				amountAfterTax=amountAfterTax.add(salesOrderItem.getTotalSalePrice());
 				VAT vat = salesOrderItem.getVat();
 				if(vat!=null){
-					amountVAT = amountVAT.add(salesOrderItem.getTotalSalePrice().multiply(vat.getRate()).divide(HUNDRED));
+					amountVAT = amountVAT.add(salesOrderItem.getTotalSalePrice().multiply(vat.getRate()).divide(HUNDRED, 4, RoundingMode.HALF_EVEN));
 				}
 				amountBeforeTax = amountAfterTax.subtract(amountVAT);
 			}

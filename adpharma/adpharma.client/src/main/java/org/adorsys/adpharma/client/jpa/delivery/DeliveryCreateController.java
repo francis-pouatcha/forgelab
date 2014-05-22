@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
@@ -88,9 +89,8 @@ public class DeliveryCreateController implements EntityController
 					ObservableValue<? extends DeliveryVat> observable,
 					DeliveryVat oldValue, DeliveryVat newValue) {
 				if(newValue!=null){
-					BigDecimal rate =newValue.getRate()!=null?newValue.getRate().divide(BigDecimal.valueOf(100)):BigDecimal.ZERO;
 					BigDecimal amountBeforeTax = model.getAmountBeforeTax()!=null?model.getAmountBeforeTax():BigDecimal.ZERO;
-					model.setAmountVat(amountBeforeTax.multiply(rate));
+					model.setAmountVat(amountBeforeTax.multiply(VAT.getRawRate(newValue.getRate())));
 				}
 
 			}

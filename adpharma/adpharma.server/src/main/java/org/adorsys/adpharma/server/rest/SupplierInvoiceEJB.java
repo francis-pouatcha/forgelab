@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -194,6 +195,12 @@ public class SupplierInvoiceEJB
 			}
 			list.add(deliveryItem);
 		}
+		if(deliveryItemMap.size()>1){
+			Set<String> keySet = deliveryItemMap.keySet();
+			for (String string : keySet) {
+				System.out.println( "Agency- " + string);
+			}
+		}
 		Set<Entry<String,List<DeliveryItem>>> entrySet = deliveryItemMap.entrySet();
 		for (Entry<String, List<DeliveryItem>> entry : entrySet) {
 			String agencyNumber = entry.getKey();
@@ -228,11 +235,11 @@ public class SupplierInvoiceEJB
 				// Read the vat rate saed in the article lot.
 				ArticleLot articleLot = getArticleLot(internalPic, articleLots);
 				VAT ivat = articleLot.getVat();
-				BigDecimal vatRate = ivat!=null?ivat.getRate():BigDecimal.ZERO;
+				BigDecimal vatRate = ivat!=null?VAT.getRawRate(ivat.getRate()):BigDecimal.ZERO;
 				
 				// IF the vat to be collected is waived in the delivery item, ignore vat computation here.
-				if(BigDecimal.ZERO.compareTo(closedDelivery.getAmountVat())<=0)vatRate=BigDecimal.ZERO;
-				BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRate)); 
+//				if(BigDecimal.ZERO.compareTo(closedDelivery.getAmountVat())<=0)vatRate=BigDecimal.ZERO;
+				BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRate), 4, RoundingMode.HALF_EVEN); 
 				
 				BigDecimal amountVat = amountAfterTax.subtract(amountBeforeTax);
 				vat = vat.add(amountVat);
@@ -245,7 +252,7 @@ public class SupplierInvoiceEJB
 				BigDecimal amountDiscount = BigDecimal.ZERO;				
 				if(deliveryDiscount.compareTo(BigDecimal.ZERO)>0){
 					if(deliveryAmountBeforeTax.compareTo(BigDecimal.ZERO)>0){
-						BigDecimal proportion = amountBeforeTax.divide(deliveryAmountBeforeTax);
+						BigDecimal proportion = amountBeforeTax.divide(deliveryAmountBeforeTax, 4, RoundingMode.HALF_EVEN);
 						amountDiscount = deliveryDiscount.multiply(proportion);	
 					}
 				}

@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.client.jpa.vat;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -110,6 +111,10 @@ public class VAT implements Cloneable
    public BigDecimal getRate()
    {
       return rateProperty().get();
+   }
+   public static BigDecimal getRawRate(BigDecimal vatRate){
+	   if(vatRate==null) return BigDecimal.ZERO;
+	   return vatRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN);
    }
 
    public final void setRate(BigDecimal rate)

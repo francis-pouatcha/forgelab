@@ -1,17 +1,24 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 
@@ -108,6 +115,11 @@ public class VAT implements Serializable
    public BigDecimal getRate()
    {
       return this.rate;
+   }
+   
+   public static BigDecimal getRawRate(BigDecimal rate){
+	   if(rate==null) return BigDecimal.ZERO;
+	   return rate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN);
    }
 
    public void setRate(final BigDecimal rate)

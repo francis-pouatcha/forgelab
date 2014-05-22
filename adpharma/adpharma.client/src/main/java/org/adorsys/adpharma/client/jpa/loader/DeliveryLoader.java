@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.client.jpa.loader;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleVat;
 import org.adorsys.adpharma.client.jpa.currency.Currency;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryCurrency;
@@ -104,10 +106,10 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setArticleName(itemCell.getStringCellValue().trim());
 
 					itemCell = row.getCell(23);
+					Article article = null;
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue())){
 						String articlePic = itemCell.getStringCellValue().trim();
 						List<Article> articles = dataMap.getArticles();
-						Article article = null;
 						for (Article a : articles) {
 							if(articlePic.equals(a.getPic())){
 								article = a;
@@ -185,14 +187,24 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setPurchasePricePU(decimal);
 					}
 				
-					itemCell = row.getCell(32);
-					if (itemCell != null)
-					{
-						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
-						deliveryItem.setTotalPurchasePrice(decimal);
-					}
+					BigDecimal totalPurchasePrice = deliveryItem.getStockQuantity()
+														.subtract(deliveryItem.getFreeQuantity())
+														.multiply(deliveryItem.getPurchasePricePU());
+					deliveryItem.setTotalPurchasePrice(totalPurchasePrice);
+					currentDelivery.setAmountAfterTax(currentDelivery.getAmountAfterTax().add(totalPurchasePrice));
+//					itemCell = row.getCell(32);
+//					if (itemCell != null)
+//					{
+//						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+//					}
+					
+					ArticleVat vat = article.getVat();
+					BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);
+					currentDelivery.setAmountBeforeTax(currentDelivery.getAmountBeforeTax().add(purchasePriceBeforTax));
+					currentDelivery.setAmountVat(currentDelivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
 					
 					deliveryItem.setDelivery(new DeliveryItemDelivery(currentDelivery));
+					
 					deliveryItem = deliveryItemService.create(deliveryItem);
 					currentDelivery.addToDeliveryItems(deliveryItem);
 				}
