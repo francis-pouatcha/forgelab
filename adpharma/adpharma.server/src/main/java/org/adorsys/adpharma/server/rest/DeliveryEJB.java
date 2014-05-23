@@ -72,7 +72,7 @@ public class DeliveryEJB
 	{
 
 		Delivery save = repository.save(attach(entity));
-		save.setDeliveryNumber(SequenceGenerator.getSequence(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE));
+		save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
 		return repository.save(save);
 	}
 
@@ -111,31 +111,34 @@ public class DeliveryEJB
 				deliveryItem = deliveryItemEJB.update(deliveryItem);
 			}
 		}
-		
+
 		// Init fields
 		delivery.setAmountAfterTax(BigDecimal.ZERO);
 		delivery.setAmountBeforeTax(BigDecimal.ZERO);
 		delivery.setAmountVat(BigDecimal.ZERO);
 		delivery.setNetAmountToPay(BigDecimal.ZERO);
 		if(delivery.getAmountDiscount()==null)delivery.setAmountDiscount(BigDecimal.ZERO);
-		
+
 		// navigate over all delivery items
 		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
 		delivery.getDeliveryItems().clear();
 		delivery.getDeliveryItems().addAll(deliveryItems2);
-		
+
 		for (DeliveryItem deliveryItem : deliveryItems2) {
 			BigDecimal totalPurchasePrice = deliveryItem.getTotalPurchasePrice();
 			// Ammount after Tax
 			delivery.setAmountAfterTax(delivery.getAmountAfterTax().add(totalPurchasePrice));
 			VAT vat = deliveryItem.getArticle().getVat();
-			BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);
+			BigDecimal vatRate = BigDecimal.ZERO;
+			if(vat!=null)
+				vatRate =vat.getRate();
+			BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vatRate)), 4, RoundingMode.HALF_EVEN);
 			// Amount before tax
 			delivery.setAmountBeforeTax(delivery.getAmountBeforeTax().add(purchasePriceBeforTax));
 			// Amount vat
 			delivery.setAmountVat(delivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
 		}
-		
+
 		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
 

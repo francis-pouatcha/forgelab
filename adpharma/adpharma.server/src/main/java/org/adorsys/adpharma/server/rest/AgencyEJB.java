@@ -5,8 +5,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
+
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.repo.AgencyRepository;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
 @Stateless
 public class AgencyEJB
@@ -20,7 +22,9 @@ public class AgencyEJB
 
    public Agency create(Agency entity)
    {
-      return repository.save(attach(entity));
+	   Agency save = repository.save(attach(entity));
+		save.setAgencyNumber(SequenceGenerator.getSequence(SequenceGenerator.AGENCY_SEQUENCE_PREFIXE));
+      return repository.save(save);
    }
 
    public Agency deleteById(Long id)
