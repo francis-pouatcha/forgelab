@@ -1,6 +1,10 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
@@ -23,6 +27,8 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrintTemplate;
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrintTemplatePDF;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSalesKeyResetService;
 import org.adorsys.adpharma.client.jpa.login.ModalUserInfoView;
@@ -62,6 +68,19 @@ public class ModalInvoiceByAgencySearchController  {
 	@Inject
 	private AgencySearchService agencySearchService;
 
+	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService ;
+
+	private CustomerInvoiceListPrintTemplatePdf customerInvoiceListPrintTemplatePdf ;
+
+	@Inject
+	@Bundle({DeliveryReportPrintTemplate.class,CustomerInvoice.class})
+	private ResourceBundle resourceBundle ;
+
+	@Inject
+	private Locale locale ;
+
+
 	@PostConstruct
 	public void ppostContruct(){
 		view.bind(invoiceByAgencyPrintInput);
@@ -86,11 +105,32 @@ public class ModalInvoiceByAgencySearchController  {
 
 			@Override
 			public void handle(ActionEvent event) {
-				view.closeDialog();
+				customerInvoiceSearchService.setSearchInputs(new CustomerInvoiceSearchInput()).start();
 
 			}
 		});
+		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				CustomerInvoiceSearchResult cs = s.getValue();
+				event.consume();
+				s.reset();
+				List<CustomerInvoice> resultList = cs.getResultList();
+
+				customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(), resourceBundle, locale);
+				customerInvoiceListPrintTemplatePdf.addItems(resultList);
+				customerInvoiceListPrintTemplatePdf.closeReport();
+				File file = new File(customerInvoiceListPrintTemplatePdf.getFileName());
+				if(file.exists()) {
+					openFile(file);
+				} 
+			}
+		});
+
+
+		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
 		view.getView().getAgency().armedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
@@ -122,5 +162,12 @@ public class ModalInvoiceByAgencySearchController  {
 	public void handleUserInfoRequestEvent(@Observes @EntitySearchRequestedEvent InvoiceByAgencyPrintInput searchInput){
 		PropertyReader.copy(searchInput, invoiceByAgencyPrintInput);
 		view.showDiaLog();
+	}
+	private void openFile(File file){
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
