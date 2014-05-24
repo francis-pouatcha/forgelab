@@ -143,7 +143,7 @@ public class ArticleView extends AbstractForm<Article>
       viewBuilder.addSubForm("Article_clearanceConfig_description.title", "clearanceConfig", resourceBundle, articleClearanceConfigSelection, ViewModel.READ_WRITE);
 //      viewBuilder.addTitlePane("Article_vat_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Article_vat_description.title", "vat", resourceBundle, articleVatForm, ViewModel.READ_ONLY);
-//      viewBuilder.addSubForm("Article_vat_description.title", "vat", resourceBundle, articleVatSelection, ViewModel.READ_WRITE);
+      viewBuilder.addSubForm("Article_vat_description.title", "vat", resourceBundle, articleVatSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
    }

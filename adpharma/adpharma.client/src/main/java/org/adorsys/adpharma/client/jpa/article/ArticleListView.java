@@ -122,20 +122,20 @@ public class ArticleListView
 	public void buildsearchBar(){
 		section =ViewBuilderUtils.newComboBox(null,"section", false);
 		section.setPromptText("ALL SECTION ");
-		section.setPrefHeight(40d);
-		section.setPrefWidth(150d);
+		section.setPrefHeight(30d);
+		section.setPrefWidth(300d);
 
 		articleName =ViewBuilderUtils.newTextField("articleName", false);
 		articleName.setPromptText("Article Name");
-		articleName.setPrefHeight(40d);
+		articleName.setPrefHeight(30d);
 		articleName.setPrefWidth(400d);
 		
 		mainPic =ViewBuilderUtils.newTextField("mainPic", false);
 		mainPic.setPromptText("mainPic");
-		mainPic.setPrefHeight(40d);
+		mainPic.setPrefHeight(30d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchButton.setPrefHeight(40d);
+		searchButton.setPrefHeight(30d);
 		searchBar.getChildren().addAll(mainPic,articleName,section,searchButton);
 	}
 

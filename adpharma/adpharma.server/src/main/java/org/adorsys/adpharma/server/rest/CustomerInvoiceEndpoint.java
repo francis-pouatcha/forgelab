@@ -27,6 +27,7 @@ import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.server.jpa.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 
@@ -125,6 +126,18 @@ public class CustomerInvoiceEndpoint
 		return new CustomerInvoiceSearchResult((long) resultList.size(),
 				detach(resultList), detach(searchInput));
 	}
+	
+	@POST
+	@Path("/findByAgencyAndDateBetween")
+	@Produces({ "application/json", "application/xml" })
+	public CustomerInvoiceSearchResult findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput)
+	{
+		List<CustomerInvoice> resultList = ejb.findByAgencyAndDateBetween(searchInput);
+		CustomerInvoiceSearchInput input = new CustomerInvoiceSearchInput();
+		return new CustomerInvoiceSearchResult((long) resultList.size(),
+				detach(resultList), detach(input));
+	}
+
 
 	@GET
 	@Path("/count")
