@@ -34,6 +34,7 @@ import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.Insurrance;
+import org.adorsys.adpharma.server.jpa.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
@@ -106,7 +107,7 @@ public class CustomerInvoiceEJB {
 
 	@Inject
 	PaymentItemCustomerInvoiceAssocRepository paymentItemCustomerInvoiceAssocRepository;
-	
+
 	public CustomerInvoice create(CustomerInvoice entity) {
 		CustomerInvoice save = repository.save(attach(entity)); 
 		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
@@ -116,6 +117,11 @@ public class CustomerInvoiceEJB {
 
 	@Inject
 	private EntityManager em ;
+
+
+	public List<CustomerInvoice> findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput){
+		return repository.findByAgencyAndDateBetween(searchInput.getFromDate(), searchInput.getToDate(), searchInput.getAgency());
+	}
 
 	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput dataSearchInput){
 		List<ChartData> chartDataSearchResult = new ArrayList<ChartData>();
@@ -243,19 +249,19 @@ public class CustomerInvoiceEJB {
 			Agency agency = found.iterator().next().getAgency();
 			if(agencyInvoiceMap.containsKey(agency)){
 				CustomerInvoice agencyInvoice = agencyInvoiceMap.get(agency);
-				
+
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, agencyInvoice);
 
 				updateCustomerInvoiceAmounts(ciItem, agencyInvoice);
-				
+
 			}else {
 				CustomerInvoice ci = new CustomerInvoice();
 				agencyInvoiceMap.put(agency, ci);
 				// intialize the sales order
 				ci = initCustomerInvoice(ci, agency, salesOrder);
-				
+
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
-				
+
 				updateCustomerInvoiceAmounts(ciItem, ci);
 			}
 		}
@@ -265,12 +271,12 @@ public class CustomerInvoiceEJB {
 		// DIscount will be shared proportionally to all invoices.
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = amountDiscount.divide(amountAfterTax, 8, RoundingMode.HALF_EVEN);
-		
+
 		for (CustomerInvoice customerInvoice : values) {
 			BigDecimal discount = customerInvoice.getAmountAfterTax().multiply(discountRate);
 			customerInvoice.setAmountDiscount(discount);
 			customerInvoice.setNetToPay(customerInvoice.getAmountAfterTax().subtract(discount));
-			
+
 			BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
 			BigDecimal customerCoverageRate = BigDecimal.ONE;
 			Insurrance insurance = customerInvoice.getInsurance();
@@ -284,24 +290,24 @@ public class CustomerInvoiceEJB {
 			customerInvoice = update(customerInvoice);
 		}
 	}
-	
+
 	private void updateCustomerInvoiceAmounts(CustomerInvoiceItem ciItem, CustomerInvoice ci){
 		// This is amount after tax. Tax is always included in the unit price.
 		BigDecimal amountAfterTax = ciItem.getTotalSalesPrice();
-		
+
 		ci.setAmountAfterTax(ci.getAmountAfterTax().add(amountAfterTax));
-		
+
 		VAT vat = ciItem.getArticle().getVat();
 		BigDecimal vatRateRaw = BigDecimal.ZERO;
 		if(vat!=null)vatRateRaw = VAT.getRawRate(vat.getRate());
 		BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRateRaw), 4, RoundingMode.HALF_EVEN);
 		ci.setAmountBeforeTax(ci.getAmountBeforeTax().add(amountBeforeTax));
-		
+
 		BigDecimal taxAmount = amountAfterTax.subtract(amountBeforeTax);
 		ci.setTaxAmount(ci.getTaxAmount().add(taxAmount));
-		
+
 	}
-	
+
 	private CustomerInvoiceItem createCustoerInvoiceItem(SalesOrderItem salesOrderItem, CustomerInvoice ci){
 		CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
 		ciItem.setArticle(salesOrderItem.getArticle());
@@ -312,7 +318,7 @@ public class CustomerInvoiceEJB {
 		ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
 		return customerInvoiceItemEJB.create(ciItem);
 	}
-	
+
 	private CustomerInvoice initCustomerInvoice(CustomerInvoice ci, Agency agency, SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
@@ -333,7 +339,7 @@ public class CustomerInvoiceEJB {
 		ci.setSalesOrder(salesOrder);
 		ci.setAdvancePayment(BigDecimal.ZERO);
 		return create(ci);
-		
+
 	}
 
 	/**
@@ -419,7 +425,7 @@ public class CustomerInvoiceEJB {
 				customerInvoiceClosedEvent.fire(customerInvoice);
 				customerInvoice.setCashed(Boolean.TRUE);
 			}
-			
+
 			// Sort those customer invoices by agency.
 			CustomerInvoice ci = paymentCustomerInvoiceAssoc.getTarget();
 			Agency agency = ci.getAgency();
@@ -433,13 +439,13 @@ public class CustomerInvoiceEJB {
 		}		
 		Collections.sort(agencies, new AgencyByNumberComparator());
 		Collections.reverse(agencies);
-		
+
 		for (PaymentItem paymentItem : paymentItemList) {
 			Customer payer = paymentItem.getPaidBy();
 			BigDecimal amount = paymentItem.getAmount();
 			for (Agency agency : agencies) {
 				List<PaymentCustomerInvoiceAssoc> assocs = byAgency.get(agency);
-				
+
 				for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : assocs) {
 					CustomerInvoice customerInvoice = paymentCustomerInvoiceAssoc.getTarget();
 
@@ -466,7 +472,7 @@ public class CustomerInvoiceEJB {
 						customerInvoice.setCustomerRestTopay(payerRestTopay);
 					else 
 						customerInvoice.setInsurranceRestTopay(payerRestTopay);
-					
+
 					PaymentItemCustomerInvoiceAssoc piciAssoc = new PaymentItemCustomerInvoiceAssoc();
 					piciAssoc.setAgency(agency);
 					piciAssoc.setCashDrawer(payment.getCashDrawer());
@@ -475,7 +481,7 @@ public class CustomerInvoiceEJB {
 					piciAssoc.setPaymentItem(paymentItem);
 					piciAssoc.setPaymentMode(paymentItem.getPaymentMode());
 					paymentItemCustomerInvoiceAssocRepository.save(piciAssoc);
-					
+
 					totalRestToPay = totalRestToPay.subtract(amountForThisInvoice);
 					customerInvoice.setTotalRestToPay(totalRestToPay);
 					if(totalRestToPay.compareTo(BigDecimal.ZERO)<=0){

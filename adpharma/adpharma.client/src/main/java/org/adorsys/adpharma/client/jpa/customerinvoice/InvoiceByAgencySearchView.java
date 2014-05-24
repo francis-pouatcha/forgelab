@@ -14,9 +14,12 @@ import javax.validation.ConstraintViolation;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.validation.CalendarTextFieldValidator;
+import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
@@ -31,6 +34,14 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 
 	@Inject
 	private Locale locale;
+
+	@Inject
+	private CalendarTextFieldValidator calendarTextFieldValidator ;
+
+	@Inject
+	private ToOneAggreggationFieldValidator aggreggationFieldValidator ;
+
+
 
 
 	@PostConstruct
@@ -50,11 +61,13 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		//		fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Login>(textInputControlValidator, fullName, Login.class, "fullName", resourceBundle));
 	}
 
-	public Set<ConstraintViolation<Login>> validate(Login model)
+	public Set<ConstraintViolation<InvoiceByAgencyPrintInput>> validate(InvoiceByAgencyPrintInput model)
 	{
-		Set<ConstraintViolation<Login>> violations = new HashSet<ConstraintViolation<Login>>();
-		//		violations.addAll(textInputControlValidator.validate(loginName, Login.class, "loginName", resourceBundle));
-		//		violations.addAll(textInputControlValidator.validate(fullName, Login.class, "fullName", resourceBundle));
+		Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = new HashSet<ConstraintViolation<InvoiceByAgencyPrintInput>>();
+		violations.addAll(calendarTextFieldValidator.validate(fromDate, InvoiceByAgencyPrintInput.class, "fromDate", resourceBundle));
+		violations.addAll(calendarTextFieldValidator.validate(toDate, InvoiceByAgencyPrintInput.class, "toDate", resourceBundle));
+		violations.addAll(aggreggationFieldValidator.validate(agency, model.getAgency(), InvoiceByAgencyPrintInput.class, "agency", resourceBundle));
+
 		return violations;
 	}
 	@Override

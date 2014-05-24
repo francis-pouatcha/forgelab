@@ -26,6 +26,7 @@ public class InvoiceByAgencyPrintInput {
 	      return toDate;
 	   }
 
+	 @NotNull
 	   public Calendar getToDate()
 	   {
 	      return toDateProperty().get();
@@ -45,6 +46,7 @@ public class InvoiceByAgencyPrintInput {
 		return fromDate;
 	}
 
+	@NotNull
 	public Calendar getFromDate()
 	{
 		return fromDateProperty().get();

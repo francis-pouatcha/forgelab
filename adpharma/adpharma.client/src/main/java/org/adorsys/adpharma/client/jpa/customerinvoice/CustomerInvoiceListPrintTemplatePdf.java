@@ -3,14 +3,17 @@ package org.adorsys.adpharma.client.jpa.customerinvoice;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrinterData;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.apache.commons.io.IOUtils;
@@ -42,12 +45,14 @@ public class CustomerInvoiceListPrintTemplatePdf {
 	private final Login agent;
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
+	private final Agency agency ;
 
 	private String fileName ;
 	public CustomerInvoiceListPrintTemplatePdf(
-			Login agent,
+			Login agent, Agency agency,
 			ResourceBundle resourceBundle,
 			Locale locale) {
+		this.agency =agency ;
 		this.agent = agent;
 		this.resourceBundle = resourceBundle;
 		this.locale = locale;
@@ -145,28 +150,19 @@ public class CustomerInvoiceListPrintTemplatePdf {
 		rt.setWidthPercentage(100);
 
 		Paragraph documentName = new CenterParagraph(new BoldText(
-				resourceBundle.getString("DeliveryReportPrintTemplate_header.title")));
+				resourceBundle.getString("CustomerInvoicePrintTemplate_menuitem.title")));
 		borderlessCell(rt, documentName, 2, 1);
 
 		borderlessCell(rt, new LineSeparator(), 2, 1);
 
-		Paragraph paragraph = new Paragraph(new BoldText("AgencyName"));
+		Paragraph paragraph = new Paragraph(new BoldText(agency.getName()));
 		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText("Tel: " ));
+		paragraph = new Paragraph(new StandardText("Tel: "+agency.getPhone() ));
 		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_supplier.title") 
-				+ " " ));
-		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_agent.title") 
-				+ " "));
-		borderlessCell(rt, paragraph, 1, 1);
-
-		paragraph = new Paragraph(new StandardText(
-				resourceBundle.getString("DeliveryReportPrintTemplate_deliveryDate.title")
-				+ " " ));
+		paragraph = new Paragraph(new StandardText("date : "+DateHelper.format(new Date(), "dd-MM-yyyy HH:mm") ));
 		borderlessCell(rt, paragraph, 1, 1);
 
 		borderlessCell(rt, new CenterParagraph(""));

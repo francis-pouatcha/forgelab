@@ -6,46 +6,32 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrintTemplate;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrintTemplatePDF;
-import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSalesKeyResetService;
-import org.adorsys.adpharma.client.jpa.login.ModalUserInfoView;
-import org.adorsys.adpharma.client.jpa.login.UserInfoView;
-import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
-import org.adorsys.javafx.crud.extensions.login.UserInfoRequestEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.adorsys.javafx.crud.extensions.view.ApplicationModal;
-import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.controlsfx.dialog.Dialogs;
-
-import de.jensd.fx.fontawesome.AwesomeIcon;
 
 @Singleton
 public class ModalInvoiceByAgencySearchController  {
@@ -64,17 +50,17 @@ public class ModalInvoiceByAgencySearchController  {
 
 	@Inject
 	private InvoiceByAgencyPrintInput invoiceByAgencyPrintInput ;
+	
+	@Inject
+	private CustomerInvoiceByAgencySearchService invoiceByAgencySearchService ;
 
 	@Inject
 	private AgencySearchService agencySearchService;
 
-	@Inject
-	private CustomerInvoiceSearchService customerInvoiceSearchService ;
-
 	private CustomerInvoiceListPrintTemplatePdf customerInvoiceListPrintTemplatePdf ;
 
 	@Inject
-	@Bundle({DeliveryReportPrintTemplate.class,CustomerInvoice.class})
+	@Bundle({CustomerInvoicePrintTemplate.class,CustomerInvoice.class})
 	private ResourceBundle resourceBundle ;
 
 	@Inject
@@ -105,21 +91,25 @@ public class ModalInvoiceByAgencySearchController  {
 
 			@Override
 			public void handle(ActionEvent event) {
-				customerInvoiceSearchService.setSearchInputs(new CustomerInvoiceSearchInput()).start();
+				  Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = view.getView().validate(invoiceByAgencyPrintInput);
+		            if (violations.isEmpty())
+		            {
+		            	invoiceByAgencySearchService.setSearchInputs(invoiceByAgencyPrintInput).start();
+		            }
 
 			}
 		});
-		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		invoiceByAgencySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				CustomerInvoiceByAgencySearchService s = (CustomerInvoiceByAgencySearchService) event.getSource();
 				CustomerInvoiceSearchResult cs = s.getValue();
 				event.consume();
 				s.reset();
 				List<CustomerInvoice> resultList = cs.getResultList();
-
-				customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(), resourceBundle, locale);
+				Agency agency = invoiceByAgencyPrintInput.getAgency();
+				customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(),agency, resourceBundle, locale);
 				customerInvoiceListPrintTemplatePdf.addItems(resultList);
 				customerInvoiceListPrintTemplatePdf.closeReport();
 				File file = new File(customerInvoiceListPrintTemplatePdf.getFileName());
@@ -130,7 +120,7 @@ public class ModalInvoiceByAgencySearchController  {
 		});
 
 
-		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
+		invoiceByAgencySearchService.setOnFailed(callFailedEventHandler);
 		view.getView().getAgency().armedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override

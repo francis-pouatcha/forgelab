@@ -1,7 +1,5 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -41,6 +39,18 @@ public class CustomerInvoiceService {
 		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(CustomerInvoice.class);
+	}
+	
+
+//	@GET
+//	@Path("/findByAgencyAndDateBetween")
+//	@Produces({ "application/json", "application/xml" })
+	public CustomerInvoiceSearchResult findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput)
+	{
+		Entity<InvoiceByAgencyPrintInput> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("/findByAgencyAndDateBetween").request(media)
+				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
 	}
 
 	// @PUT
