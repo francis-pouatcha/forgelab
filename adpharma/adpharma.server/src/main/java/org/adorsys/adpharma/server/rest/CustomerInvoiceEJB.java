@@ -51,7 +51,6 @@ import org.adorsys.adpharma.server.repo.PaymentItemCustomerInvoiceAssocRepositor
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
-import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
 public class CustomerInvoiceEJB {
@@ -131,6 +130,7 @@ public class CustomerInvoiceEJB {
 		querys.setParameter("creationDate", dataSearchInput.getYears());
 		querys.setParameter("cashed", Boolean.TRUE);
 		querys.setParameter("invoiceType", InvoiceType.VOUCHER);
+		@SuppressWarnings("unchecked")
 		List<Object[]> resultList = querys.getResultList();
 		for (Object[] objects : resultList) {
 			BigDecimal netTopay = (BigDecimal) objects[0];
@@ -237,6 +237,7 @@ public class CustomerInvoiceEJB {
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			ArticleLot articleLot = new ArticleLot();
 			articleLot.setInternalPic(salesOrderItem.getInternalPic());
+			@SuppressWarnings("unchecked")
 			List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
 			if(found.isEmpty())
 				continue ;
@@ -252,7 +253,7 @@ public class CustomerInvoiceEJB {
 				CustomerInvoice ci = new CustomerInvoice();
 				agencyInvoiceMap.put(agency, ci);
 				// intialize the sales order
-				ci = initCustomerInvoice(ci, agency, salesOrder);
+				ci = initCustomerInvoice(ci, agency, salesOrder, "CI", InvoiceType.CASHDRAWER);
 				
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
 				
@@ -260,13 +261,17 @@ public class CustomerInvoiceEJB {
 			}
 		}
 
-		Collection<CustomerInvoice> values = agencyInvoiceMap.values();
+		processInvoices(agencyInvoiceMap.values(), salesOrder);
+	}
+	
+	private Collection<CustomerInvoice> processInvoices(Collection<CustomerInvoice> invoices, SalesOrder salesOrder){
 		BigDecimal amountAfterTax = salesOrder.getAmountAfterTax();
 		// DIscount will be shared proportionally to all invoices.
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = amountDiscount.divide(amountAfterTax, 8, RoundingMode.HALF_EVEN);
 		
-		for (CustomerInvoice customerInvoice : values) {
+		Collection<CustomerInvoice> result = new ArrayList<CustomerInvoice>(invoices.size());
+		for (CustomerInvoice customerInvoice : invoices) {
 			BigDecimal discount = customerInvoice.getAmountAfterTax().multiply(discountRate);
 			customerInvoice.setAmountDiscount(discount);
 			customerInvoice.setNetToPay(customerInvoice.getAmountAfterTax().subtract(discount));
@@ -282,8 +287,12 @@ public class CustomerInvoiceEJB {
 			customerInvoice.setInsurranceRestTopay(customerInvoice.getNetToPay().multiply(insuranceCoverageRate));
 			customerInvoice.setAdvancePayment(BigDecimal.ZERO);
 			customerInvoice = update(customerInvoice);
+			result.add(customerInvoice);
 		}
+		
+		return result;
 	}
+	
 	
 	private void updateCustomerInvoiceAmounts(CustomerInvoiceItem ciItem, CustomerInvoice ci){
 		// This is amount after tax. Tax is always included in the unit price.
@@ -307,13 +316,19 @@ public class CustomerInvoiceEJB {
 		ciItem.setArticle(salesOrderItem.getArticle());
 		ciItem.setInternalPic(salesOrderItem.getInternalPic());
 		ciItem.setInvoice(ci);
-		ciItem.setPurchasedQty(salesOrderItem.getOrderedQty().subtract(salesOrderItem.getReturnedQty()));
+		if(salesOrderItem.getReturnedQty()!=null && salesOrderItem.getReturnedQty().compareTo(BigDecimal.ZERO)>0){
+			// Return
+			ciItem.setPurchasedQty(salesOrderItem.getReturnedQty().negate());
+		} else {
+			// Sale
+			ciItem.setPurchasedQty(salesOrderItem.getDeliveredQty());
+		}
 		ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
-		ciItem.setTotalSalesPrice(salesOrderItem.getTotalSalePrice());
+		ciItem.setTotalSalesPrice(ciItem.getSalesPricePU().multiply(ciItem.getPurchasedQty()));
 		return customerInvoiceItemEJB.create(ciItem);
 	}
 	
-	private CustomerInvoice initCustomerInvoice(CustomerInvoice ci, Agency agency, SalesOrder salesOrder){
+	private CustomerInvoice initCustomerInvoice(CustomerInvoice ci, Agency agency, SalesOrder salesOrder, String invoicePrefix, InvoiceType invoiceType){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 
@@ -328,8 +343,8 @@ public class CustomerInvoiceEJB {
 		ci.setTotalRestToPay(BigDecimal.ZERO);
 		ci.setCustomer(salesOrder.getCustomer());
 		ci.setInsurance(salesOrder.getInsurance());
-		ci.setInvoiceNumber(salesOrder.getSoNumber().replace("SO", "CI")+"-"+agency.getId());
-		ci.setInvoiceType(InvoiceType.CASHDRAWER);
+		ci.setInvoiceNumber(salesOrder.getSoNumber().replace("SO", invoicePrefix)+"-"+agency.getId());
+		ci.setInvoiceType(invoiceType);
 		ci.setSalesOrder(salesOrder);
 		ci.setAdvancePayment(BigDecimal.ZERO);
 		return create(ci);
@@ -342,53 +357,43 @@ public class CustomerInvoiceEJB {
 	 * @param salesOrder
 	 */
 	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
-		CustomerInvoice ci = new CustomerInvoice();
-
-		Login creatingUser = securityUtil.getConnectedUser();
-		Date creationDate = new Date();
-		ci.setCreatingUser(creatingUser);
-		ci.setCreationDate(creationDate);
-		ci.setAgency(salesOrder.getAgency());
-		ci.setAmountBeforeTax(salesOrder.getTotalReturnAmount().negate());
-		ci.setTaxAmount(BigDecimal.ZERO);
-		ci.setAmountAfterTax(salesOrder.getTotalReturnAmount().negate());
-		ci.setAmountDiscount(BigDecimal.ZERO);
-		ci.setNetToPay(salesOrder.getTotalReturnAmount().negate());
-		ci.setTotalRestToPay(ci.getNetToPay());
-		ci.setCustomer(salesOrder.getCustomer());
-		ci.setInsurance(salesOrder.getInsurance());
-
-		BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
-		BigDecimal customerCoverageRate = BigDecimal.ONE;
-		Insurrance insurance = salesOrder.getInsurance();
-		if(insurance!=null){
-			insuranceCoverageRate = (salesOrder.getInsurance().getCoverageRate()).divide(BigDecimal.valueOf(100));
-			customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
-		}
-		ci.setCustomerRestTopay(ci.getNetToPay().multiply(customerCoverageRate));
-		ci.setInsurranceRestTopay(ci.getNetToPay().multiply(insuranceCoverageRate));
-
-
-		ci.setInvoiceNumber(RandomStringUtils.randomAlphanumeric(7));
-		ci.setInvoiceType(InvoiceType.VOUCHER);
-		ci.setSalesOrder(salesOrder);
-		ci.setAdvancePayment(BigDecimal.ZERO);
-
-		ci = create(ci);
-
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+		HashMap<Agency, CustomerInvoice> agencyInvoiceMap = new HashMap<Agency, CustomerInvoice>();
+
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
-			CustomerInvoiceItem ciItem = new CustomerInvoiceItem();
-			ciItem.setArticle(salesOrderItem.getArticle());
-			ciItem.setInternalPic(salesOrderItem.getInternalPic());
-			ciItem.setInvoice(ci);
-			ciItem.setPurchasedQty(salesOrderItem.getReturnedQty().negate());
-			ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
-			ciItem.setTotalSalesPrice(ciItem.getSalesPricePU().multiply(salesOrderItem.getReturnedQty()));
-			ciItem = customerInvoiceItemEJB.create(ciItem);
+			// no invoice if returned quantity is zero.
+			if(salesOrderItem.getReturnedQty()==null || 
+					salesOrderItem.getReturnedQty().compareTo(BigDecimal.ZERO)==0) continue;
+			
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(salesOrderItem.getInternalPic());
+			@SuppressWarnings("unchecked")
+			List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+			if(found.isEmpty())
+				continue ;
+			Agency agency = found.iterator().next().getAgency();
+			if(agencyInvoiceMap.containsKey(agency)){
+				CustomerInvoice agencyInvoice = agencyInvoiceMap.get(agency);
+				
+				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, agencyInvoice);
+
+				updateCustomerInvoiceAmounts(ciItem, agencyInvoice);
+				
+			}else {
+				CustomerInvoice ci = new CustomerInvoice();
+				agencyInvoiceMap.put(agency, ci);
+				// intialize the sales order
+				ci = initCustomerInvoice(ci, agency, salesOrder, "CR", InvoiceType.VOUCHER);
+				
+				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
+				
+				updateCustomerInvoiceAmounts(ciItem, ci);
+			}
 		}
-		CustomerInvoice update = update(ci);
-		customerInvoiceReturnSalesEvent.fire(update);
+		Collection<CustomerInvoice> processedInvoices = processInvoices(agencyInvoiceMap.values(), salesOrder);
+		for (CustomerInvoice customerInvoice : processedInvoices) {
+			customerInvoiceReturnSalesEvent.fire(customerInvoice);
+		}
 	}
 
 	/**
