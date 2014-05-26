@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -32,13 +34,31 @@ public class ProductFamilyLoader extends Service<List<ProductFamily>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public ProductFamilyLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public ProductFamilyLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<ProductFamily> load() {
+		List<ProductFamily> result = new ArrayList<ProductFamily>();
+		result.addAll(remoteService.listAll().getResultList());
+		
 		HSSFSheet sheet = workbook.getSheet("ProductFamily");
+		if(sheet==null){
+			return result;
+		}
+
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		List<ProductFamily> result = new ArrayList<ProductFamily>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 

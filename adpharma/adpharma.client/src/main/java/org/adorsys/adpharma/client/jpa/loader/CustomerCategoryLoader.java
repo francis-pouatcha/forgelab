@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -31,15 +33,32 @@ public class CustomerCategoryLoader extends Service<List<CustomerCategory>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public CustomerCategoryLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public CustomerCategoryLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<CustomerCategory> load() {
-		HSSFSheet sheet = workbook.getSheet("CustomerCategory");
+		List<CustomerCategory> result = new ArrayList<CustomerCategory>();
+		result.addAll(remoteService.listAll().getResultList());
 		
+		HSSFSheet sheet = workbook.getSheet("CustomerCategory");
+		if(sheet==null){
+			return result;
+		}
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<CustomerCategory> result = new ArrayList<CustomerCategory>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			CustomerCategory entity = new CustomerCategory();
@@ -56,7 +75,7 @@ public class CustomerCategoryLoader extends Service<List<CustomerCategory>> {
 			
 			CustomerCategorySearchResult found = remoteService.findBy(sectionSearchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 			

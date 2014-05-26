@@ -8,8 +8,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -47,15 +49,32 @@ public class CustomerLoader extends Service<List<Customer>> {
 		this.dataMap = dataMap;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public CustomerLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public CustomerLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<Customer> loadAgencies() {
-		HSSFSheet sheet = workbook.getSheet("Customer");
+		List<Customer> result = new ArrayList<Customer>();
+		result.addAll(remoteService.listAll().getResultList());
 		
+		HSSFSheet sheet = workbook.getSheet("Customer");
+		if(sheet==null){
+			return result;
+		}
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Customer> result = new ArrayList<Customer>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Customer entity = new Customer();
@@ -73,7 +92,7 @@ public class CustomerLoader extends Service<List<Customer>> {
 			
 			CustomerSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 

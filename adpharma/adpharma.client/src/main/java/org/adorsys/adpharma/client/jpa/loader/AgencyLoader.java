@@ -5,8 +5,10 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -28,11 +30,24 @@ public class AgencyLoader extends Service<List<Agency>> {
 	private AgencyService remoteService;
 	
 	private HSSFWorkbook workbook;
+	
 
 	public AgencyLoader setWorkbook(HSSFWorkbook workbook) {
 		this.workbook = workbook;
 		return this;
 	}
+	
+	private String progressText;
+	private Label progressLabel;
+	public AgencyLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public AgencyLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
+
 
 	private DataMap dataMap;
 	public AgencyLoader setDataMap(DataMap dataMap) {
@@ -41,13 +56,20 @@ public class AgencyLoader extends Service<List<Agency>> {
 	}
 
 	private List<Agency> loadAgencies() {
+		List<Agency> result = new ArrayList<Agency>();
+		result.addAll(remoteService.listAll().getResultList());
+		
 		HSSFSheet sheet = workbook.getSheet("Agency");
+		if(sheet==null){
+			return result;
+		}
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
 		
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Agency> result = new ArrayList<Agency>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Agency entity = new Agency();
@@ -65,7 +87,7 @@ public class AgencyLoader extends Service<List<Agency>> {
 			
 			AgencySearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 

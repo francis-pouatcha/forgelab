@@ -8,9 +8,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -30,6 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.jboss.weld.executor.ExecutorServicesFactory;
 
 public class ArticleLoader extends Service<List<Article>> {
 
@@ -48,22 +53,47 @@ public class ArticleLoader extends Service<List<Article>> {
 		this.dataMap = dataMap;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public ArticleLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public ArticleLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
-	private List<Article> loadAgencies() {
+	private List<Article> loadArticles() {
+		List<Article> result = new ArrayList<Article>();
+		result.addAll(remoteService.listAll().getResultList());
+		
+		PGRunner pgRunner = new PGRunner(progressLabel);
+		Platform.runLater(pgRunner.setText(progressText));
+		
+
 		HSSFSheet sheet = workbook.getSheet("Article");
+		if(sheet==null){
+			return result;
+		}
 		
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Article> result = new ArrayList<Article>();
+		String working = progressText;
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
-			Article entity = new Article();
-
+			final Article entity = new Article();
+			
+			working+= " .";
+			if(working.length()>150) working=progressText;
+			Platform.runLater(pgRunner.setText(working));
+			
 			Cell cell = row.getCell(0);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setArticleName(cell.getStringCellValue().trim());
+
 
 			cell = row.getCell(1);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -72,15 +102,16 @@ public class ArticleLoader extends Service<List<Article>> {
 			if (StringUtils.isBlank(entity.getPic()))
 				continue;
 
+
 			ArticleSearchInput searchInput = new ArticleSearchInput();
 			searchInput.setEntity(entity);
 			searchInput.getFieldNames().add("pic");
 			
 			ArticleSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
 				continue;
 			}
+			Platform.runLater(pgRunner.setText(progressText + " : " + entity.getArticleName()));
 
 			cell = row.getCell(2);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -240,7 +271,7 @@ public class ArticleLoader extends Service<List<Article>> {
 		return new Task<List<Article>>() {
 			@Override
 			protected List<Article> call() throws Exception {
-				return loadAgencies();
+				return loadArticles();
 			}
 		};
 	}

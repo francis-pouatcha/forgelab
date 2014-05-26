@@ -9,8 +9,10 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -47,6 +49,16 @@ public class LoginLoader extends Service<List<Login>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public LoginLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public LoginLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	public LoginLoader setDataMap(DataMap dataMap) {
 		this.dataMap = dataMap;
@@ -55,15 +67,19 @@ public class LoginLoader extends Service<List<Login>> {
 
 	private List<Login> load() {
 		
-		setModelLoginAgencies();
+		List<Login> result = setModelLoginAgencies();
 		
 		HSSFSheet sheet = workbook.getSheet("Login");
+		if(sheet==null){
+			return result;
+		}
 		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Login> result = new ArrayList<Login>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Login entity = new Login();
@@ -81,7 +97,7 @@ public class LoginLoader extends Service<List<Login>> {
 			
 			LoginSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 
@@ -232,16 +248,23 @@ public class LoginLoader extends Service<List<Login>> {
 		};
 	}
 	
-	private void setModelLoginAgencies(){
+	private List<Login> setModelLoginAgencies(){
+		List<Login> result = new ArrayList<Login>();
+
 		Agency agency = dataMap.getAgencies().iterator().next();
 		
 		// After loading the agencies, we could switch the agency of those users already in the database.
 		LoginSearchResult logins = remoteService.listAll();
 		List<Login> resultList = logins.getResultList();
 		for (Login login : resultList) {
-			login.setAgency(new LoginAgency(agency));
-			remoteService.update(login);
+			if(login.getAgency()==null || StringUtils.isBlank(login.getAgency().getAgencyNumber())){
+				login.setAgency(new LoginAgency(agency));
+				Login updated = remoteService.update(login);
+				result.add(updated);
+			} else {
+				result.add(login);
+			}
 		}
-		
+		return result ;
 	}
 }

@@ -14,8 +14,6 @@ import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.jpa.AccessRoleEnum;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.Company;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.LoginRoleNameAssoc;
 import org.adorsys.adpharma.server.jpa.PermissionActionEnum;
@@ -24,8 +22,6 @@ import org.adorsys.adpharma.server.jpa.PermissionName_;
 import org.adorsys.adpharma.server.jpa.RoleName;
 import org.adorsys.adpharma.server.jpa.RoleNamePermissionNameAssoc;
 import org.adorsys.adpharma.server.jpa.RoleName_;
-import org.adorsys.adpharma.server.rest.AgencyEJB;
-import org.adorsys.adpharma.server.rest.CompanyEJB;
 import org.adorsys.adpharma.server.rest.LoginEJB;
 import org.adorsys.adpharma.server.rest.LoginRoleNameAssocEJB;
 import org.adorsys.adpharma.server.rest.PermissionNameEJB;
@@ -50,13 +46,13 @@ public class InitUserAccountService
 	@Inject
 	private PermissionNameEJB permissionEJB;
 
-	@Inject 
-	private CompanyEJB companyEJB;
+//	@Inject 
+//	private CompanyEJB companyEJB;
+//
+//	@Inject
+//	private AgencyEJB agencyEJB;
 
-	@Inject
-	private AgencyEJB agencyEJB;
-
-	Agency agency ;
+//	Agency agency ;
 
 	@Inject
 	private RoleNamePermissionNameAssocEJB roleNamePermissionNameAssocEJB;
@@ -66,14 +62,14 @@ public class InitUserAccountService
 	{
 		if(loginEJB.count()< 1){
 
-			if(companyEJB.count()<1){
-				Company company = companyEJB.create(new Company("Adorsys SA"));
-				if(agencyEJB.count()<1){
-					agency =agencyEJB.create(new Agency("Douala", company));
-				}else {
-					agency = agencyEJB.findById(Long.valueOf(1));
-				}
-			}
+//			if(companyEJB.count()<1){
+//				Company company = companyEJB.create(new Company("Adorsys SA"));
+//				if(agencyEJB.count()<1){
+//					agency =agencyEJB.create(new Agency("Douala", company));
+//				}else {
+//					agency = agencyEJB.findById(Long.valueOf(1));
+//				}
+//			}
 
 			Properties logins = new Properties();
 			Properties roles = new Properties();
@@ -191,7 +187,7 @@ public class InitUserAccountService
 				login.setLoginName(loginName);
 				login.setFullName(loginName);
 				login.setPassword(password);
-				login.setAgency(agency);
+//				login.setAgency(agency);
 				login = loginEJB.create(login);
 				String roleNames = roles.getProperty(loginName);
 				if (StringUtils.isBlank(roleNames))
