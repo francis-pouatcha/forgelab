@@ -180,6 +180,8 @@ public class DeliveryEndpoint
 				searchInput.getStart(), searchInput.getMax(), attributes);
 		return new DeliverySearchResult(countLike, detach(resultList),
 				detach(searchInput));
+		
+		
 	}
 
 	@POST

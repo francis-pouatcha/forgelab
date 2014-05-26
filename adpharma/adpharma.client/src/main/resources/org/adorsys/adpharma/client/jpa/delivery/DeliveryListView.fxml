@@ -35,6 +35,7 @@
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
+<Button fx:id="printButton" layoutX="23.0" layoutY="179.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_print_description.title" />
 				<Pane prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets left="5.0" />
@@ -45,7 +46,7 @@
 				<Insets />
 			</BorderPane.margin>
 			<padding>
-				<Insets top="55.0" />
+				<Insets top="5.0" />
 			</padding>
 		</VBox>
 	</right>

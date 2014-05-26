@@ -80,6 +80,9 @@ public class DeliveryListView
 	
 	@FXML
 	private Button exportToXlsButton;
+	
+	@FXML
+	private Button printButton;
 
 	@FXML
 	private Button removeButton;
@@ -128,9 +131,9 @@ public class DeliveryListView
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle,150d);
 
-		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle,200d);
 		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -154,9 +157,9 @@ public class DeliveryListView
 		//deliveryitem
 
 		viewBuilder.addStringColumn(dataListItem, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
-		ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,300d);
+//		viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,350d);
 		viewBuilder.addDateColumn(dataListItem, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -194,7 +197,7 @@ public class DeliveryListView
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText("All Suppliers");
 		supplier.setTooltip(new Tooltip("Fournisseurs"));
-		supplier.setPrefWidth(200d);
+		supplier.setPrefWidth(300d);
 		supplier.setPrefHeight(40d);
 
 
@@ -281,6 +284,10 @@ public class DeliveryListView
 
 	public Button getComputeButton() {
 		return computeButton;
+	}
+	
+	public Button getPrintButton() {
+		return printButton;
 	}
 
 	public PieChart getPieChart() {

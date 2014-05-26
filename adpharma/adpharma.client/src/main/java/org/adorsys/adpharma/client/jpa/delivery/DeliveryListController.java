@@ -33,6 +33,8 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.exception.DRException;
 
+import org.adorsys.adpharma.client.events.DeliveryId;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
@@ -124,6 +126,9 @@ public class DeliveryListController implements EntityController
 	@Inject
 	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
+	@Inject
+	@PrintRequestedEvent
+	private Event<DeliveryId> printRequestedEvent;
 
 
 	@PostConstruct
@@ -140,6 +145,17 @@ public class DeliveryListController implements EntityController
 			protected void showError(Throwable exception) {
 				Dialogs.create().nativeTitleBar().showException(exception);
 
+			}
+		});
+		
+		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					printRequestedEvent.fire(new DeliveryId(selectedItem.getId()));
+				
 			}
 		});
 		
