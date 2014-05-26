@@ -21,6 +21,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemInvoice;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchInput;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -32,9 +37,12 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class CustomerInvoiceListController implements EntityController
@@ -69,24 +77,60 @@ public class CustomerInvoiceListController implements EntityController
 
 	@Inject
 	private CustomerInvoiceSearchService customerInvoiceSearchService;
-	
+
 	@Inject
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<CustomerInvoice> printCustomerInvoiceRequestedEvent;
+
+	@Inject
+	private CustomerInvoiceItemSearchService  invoiceItemSearchService ;
+
+	@Inject
+	private ServiceCallFailedEventHandler  callFailedEventHandler ;
 
 	@PostConstruct
 	public void postConstruct()
 	{
 		listView.getPrintButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
-		listView.getShowButton().setOnAction(new EventHandler<ActionEvent>() {
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
-			public void handle(ActionEvent event) {
-				CustomerInvoice selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null)selectionEvent.fire(selectedItem);
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+
 			}
 		});
+
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<CustomerInvoice>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends CustomerInvoice> observable,
+					CustomerInvoice oldValue, CustomerInvoice newValue) {
+				if(newValue!=null){
+					CustomerInvoiceItemSearchInput  searchInput = new CustomerInvoiceItemSearchInput();
+					searchInput.getEntity().setInvoice(new CustomerInvoiceItemInvoice(newValue));
+					searchInput.getFieldNames().add("invoice");
+					invoiceItemSearchService.setSearchInputs(searchInput).start();
+				}
+
+			}
+		});
+		invoiceItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceItemSearchService s = (CustomerInvoiceItemSearchService) event.getSource();
+				CustomerInvoiceItemSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<CustomerInvoiceItem> resultList = result.getResultList();
+				listView.getDataListItem().getItems().setAll(resultList);
+
+			}
+		});
+		invoiceItemSearchService.setOnFailed(callFailedEventHandler);
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -245,7 +289,7 @@ public class CustomerInvoiceListController implements EntityController
 	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		}
+		listView.getDataList().getItems().clear();
+	}
 }
 

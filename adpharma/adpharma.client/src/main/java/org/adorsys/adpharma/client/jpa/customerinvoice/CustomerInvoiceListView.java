@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
@@ -45,9 +46,6 @@ public class CustomerInvoiceListView
 	private Button printButton;
 
 	@FXML
-	private Button showButton;
-
-	@FXML
 	HBox searchBar;
 
 	private TextField invoiceNumber ;
@@ -56,6 +54,9 @@ public class CustomerInvoiceListView
 
 	@FXML
 	private TableView<CustomerInvoice> dataList;
+
+	@FXML
+	private TableView<CustomerInvoiceItem> dataListItem;
 
 	@Inject
 	private Locale locale;
@@ -69,7 +70,7 @@ public class CustomerInvoiceListView
 		, Customer.class
 		, Login.class
 		, Agency.class
-		, SalesOrder.class
+		, SalesOrder.class ,  CustomerInvoiceItem.class
 	})
 	private ResourceBundle resourceBundle;
 
@@ -111,6 +112,12 @@ public class CustomerInvoiceListView
 		//      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
 		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//      rootPane = viewBuilder.toAnchorPane();
+		viewBuilder.addStringColumn(dataListItem, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataListItem, "article", "CustomerInvoiceItem_article_description.title", resourceBundle,400d);
+		viewBuilder.addBigDecimalColumn(dataListItem, "purchasedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+
+
 		buildsearchBar();
 	}
 
@@ -148,6 +155,11 @@ public class CustomerInvoiceListView
 		return dataList;
 	}
 
+	public TableView<CustomerInvoiceItem> getDataListItem()
+	{
+		return dataListItem;
+	}
+
 	public BorderPane getRootPane()
 	{
 		return rootPane;
@@ -162,10 +174,5 @@ public class CustomerInvoiceListView
 	{
 		return pagination;
 	}
-
-	public Button getShowButton() {
-		return showButton;
-	}
-	
 
 }
