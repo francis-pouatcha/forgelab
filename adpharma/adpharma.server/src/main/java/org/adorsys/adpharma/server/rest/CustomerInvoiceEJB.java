@@ -257,13 +257,14 @@ public class CustomerInvoiceEJB {
 
 			}else {
 				CustomerInvoice ci = new CustomerInvoice();
-				agencyInvoiceMap.put(agency, ci);
 				// intialize the sales order
 				ci = initCustomerInvoice(ci, agency, salesOrder, "CI", InvoiceType.CASHDRAWER);
 
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
 
 				updateCustomerInvoiceAmounts(ciItem, ci);
+				
+				agencyInvoiceMap.put(agency, ci);
 			}
 		}
 

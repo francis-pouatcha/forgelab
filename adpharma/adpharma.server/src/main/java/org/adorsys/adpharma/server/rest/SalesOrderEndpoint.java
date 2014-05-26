@@ -110,11 +110,7 @@ public class SalesOrderEndpoint
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
-		if(salesOrder.getSalesOrderStatus()==DocumentProcessingState.CLOSED)
-			return salesOrder;
-		
 		SalesOrder closedOrder = ejb.saveAndClose(salesOrder);
-
 		return detach(closedOrder);
 	}
 	

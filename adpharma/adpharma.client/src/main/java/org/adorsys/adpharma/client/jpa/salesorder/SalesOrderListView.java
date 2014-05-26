@@ -184,20 +184,20 @@ public class SalesOrderListView
 	public void buildsearchBar(){
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
 		soNumber.setPromptText(resourceBundle.getString("SalesOrder_soNumber_description.title"));
-		soNumber.setPrefHeight(40d);
+		soNumber.setPrefHeight(30d);
 
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
 		customer.setPromptText(resourceBundle.getString("SalesOrder_all_supplier_description.title"));
 		customer.setPrefWidth(300d);
-		customer.setPrefHeight(40d);
+		customer.setPrefHeight(30d);
 
 		salesOrderStatus =ViewBuilderUtils.newComboBox(null, "salesOrderStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		salesOrderStatus.setPromptText(resourceBundle.getString("SalesOrder_salesOrderStatus_description.title"));
-		salesOrderStatus.setPrefHeight(40d);
+		salesOrderStatus.setPrefHeight(30d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchButton.setPrefHeight(40d);
+		searchButton.setPrefHeight(30d);
 		searchBar.getChildren().addAll(soNumber,customer,salesOrderStatus,searchButton);
 	}
 	public Button getCreateButton()

@@ -23,7 +23,7 @@ public class AgencyEJB
    public Agency create(Agency entity)
    {
 	   Agency save = repository.save(attach(entity));
-		save.setAgencyNumber(SequenceGenerator.getSequence(SequenceGenerator.AGENCY_SEQUENCE_PREFIXE));
+//		save.setAgencyNumber(SequenceGenerator.getSequence(SequenceGenerator.AGENCY_SEQUENCE_PREFIXE));
       return repository.save(save);
    }
 

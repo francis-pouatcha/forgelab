@@ -681,9 +681,10 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
-		//		salesOrderItem.calculateTotalAmout();
+//				salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
 			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity)); 
+			salesOrderItem.setDeliveredQty(salesOrderItem.getOrderedQty());
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
 		}
 	}
