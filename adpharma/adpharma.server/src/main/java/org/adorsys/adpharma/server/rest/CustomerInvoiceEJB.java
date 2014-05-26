@@ -294,6 +294,7 @@ public class CustomerInvoiceEJB {
 			customerInvoice.setCustomerRestTopay(customerInvoice.getNetToPay().multiply(customerCoverageRate));
 			customerInvoice.setInsurranceRestTopay(customerInvoice.getNetToPay().multiply(insuranceCoverageRate));
 			customerInvoice.setAdvancePayment(BigDecimal.ZERO);
+			customerInvoice.setTotalRestToPay(customerInvoice.getNetToPay().subtract(customerInvoice.getAdvancePayment()));
 			customerInvoice = update(customerInvoice);
 			result.add(customerInvoice);
 		}
@@ -315,7 +316,6 @@ public class CustomerInvoiceEJB {
 
 		BigDecimal taxAmount = amountAfterTax.subtract(amountBeforeTax);
 		ci.setTaxAmount(ci.getTaxAmount().add(taxAmount));
-
 	}
 
 	private CustomerInvoiceItem createCustoerInvoiceItem(SalesOrderItem salesOrderItem, CustomerInvoice ci){
