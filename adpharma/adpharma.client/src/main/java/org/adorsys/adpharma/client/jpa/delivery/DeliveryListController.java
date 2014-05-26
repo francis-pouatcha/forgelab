@@ -6,6 +6,9 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,6 +68,11 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -111,18 +119,18 @@ public class DeliveryListController implements EntityController
 
 	@Inject 
 	DeliverySearchInput searchInput;
-	
+
 	@Inject
 	private SupplierInvoiceChartDataService supplierInvoiceChartDataService;
-	
+
 
 	@Inject
 	private DeliveryRegistration registration;
 
 	@Inject
-	@Bundle({ CrudKeys.class})
+	@Bundle({ CrudKeys.class,DeliveryItem.class})
 	private ResourceBundle resourceBundle;
-	
+
 	@Inject
 	private ServiceCallFailedEventHandler chartDataSearchServiceCallFailedEventHandler;
 
@@ -138,7 +146,7 @@ public class DeliveryListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.bind(searchInput);
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
-		
+
 		chartDataSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -147,27 +155,27 @@ public class DeliveryListController implements EntityController
 
 			}
 		});
-		
+
 		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null)
 					printRequestedEvent.fire(new DeliveryId(selectedItem.getId()));
-				
+
 			}
 		});
-		
+
 		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				exportDeliveryToXls();
-				
+
 			}
 		});
-		
+
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Delivery>() {
 			@Override
 			public void changed(ObservableValue<? extends Delivery> observable,
@@ -216,7 +224,7 @@ public class DeliveryListController implements EntityController
 
 			}
 		});
-		
+
 		supplierInvoiceChartDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -505,28 +513,63 @@ public class DeliveryListController implements EntityController
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
-	
+
+	@SuppressWarnings("resource")
 	public void exportDeliveryToXls(){
 		Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-		if( selectedItem!=null){
-		Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
-		List<DeliveryItem> items = Lists.newArrayList(iterator);
-		try {
-			report()
-			.columns(
-					col.column("CIPM", "internalPic", type.stringType()), 
-					col.column("CIP", "mainPic", type.stringType()),
-					col.column("Designation", "articleName", type.stringType()),
-					col.column("Qte", "stockQuantity", type.bigDecimalType()),
-					col.column("P.V", "salesPricePU", type.bigDecimalType())
-					)
+		HSSFWorkbook deleveryXls = new HSSFWorkbook();
+		int rownum = 0 ;
+		int cellnum = 0 ;
+		HSSFCell cell ;
+		HSSFSheet sheet = deleveryXls.createSheet(selectedItem.getDeliveryNumber());
+		HSSFRow header = sheet.createRow(rownum++);
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_internalPic_description.title"));
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_stockQuantity_description.title"));
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_delivery_description.title"));
 
-					.setDataSource(items)
-					.print();
-		} catch (DRException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if( selectedItem!=null&&sheet!=null){
+			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
+			List<DeliveryItem> items = Lists.newArrayList(iterator);
+			for (DeliveryItem item : items) {
+				cellnum = 0 ;
+				HSSFRow row = sheet.createRow(rownum++);
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getInternalPic());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getArticle().getArticleName());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getStockQuantity().doubleValue());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getSalesPricePU().doubleValue());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getDelivery().getDeliveryNumber());
+
+			}
+			try {
+				File file = new File("delivery.xls");
+				FileOutputStream outputStream = new FileOutputStream(file);
+				deleveryXls.write(outputStream);
+				outputStream.close();
+				Desktop.getDesktop().open(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
