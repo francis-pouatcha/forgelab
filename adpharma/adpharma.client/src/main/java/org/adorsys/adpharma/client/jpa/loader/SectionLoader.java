@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -33,6 +35,16 @@ public class SectionLoader extends Service<List<Section>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public SectionLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public SectionLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	public SectionLoader setDataMap(DataMap dataMap) {
 		this.dataMap = dataMap;
@@ -40,13 +52,20 @@ public class SectionLoader extends Service<List<Section>> {
 	}
 
 	private List<Section> load() {
-		HSSFSheet sheet = workbook.getSheet("Section");
+		List<Section> result = new ArrayList<Section>();
+		result.addAll(sectionService.listAll().getResultList());
 		
+		HSSFSheet sheet = workbook.getSheet("Section");
+		if(sheet==null){
+			return result;
+		}
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Section> result = new ArrayList<Section>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Section entity = new Section();
@@ -94,7 +113,7 @@ public class SectionLoader extends Service<List<Section>> {
 			
 			SectionSearchResult found = sectionService.findBy(sectionSearchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 			} else {
 				result.add(sectionService.create(entity));
 			}

@@ -14,9 +14,8 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.events.CustomerInvoiceAgencyRepportMenuItem;
+import org.adorsys.adpharma.client.events.ReportMenuItem;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerReportPrintTemplate;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.DomainComponentRegistration;
@@ -46,10 +45,10 @@ public class CustomerInvoiceRegistration extends DomainComponentRegistration
 
 	@Inject
 	@MenuItemAddRequestedEvent
-	private Event<CustomerInvoiceAgencyRepportMenuItem> customerInvoiceAgencyRepportMenuItemAddEvent;
+	private Event<ReportMenuItem> customerInvoiceAgencyRepportMenuItemAddEvent;
 	@Inject
 	@MenuItemRemoveRequestedEvent
-	private Event<CustomerInvoiceAgencyRepportMenuItem> customerInvoiceAgencyRepportMenuItemRemoveEvent;
+	private Event<ReportMenuItem> customerInvoiceAgencyRepportMenuItemRemoveEvent;
 
 	@Inject
 	@EntitySearchRequestedEvent
@@ -96,9 +95,9 @@ public class CustomerInvoiceRegistration extends DomainComponentRegistration
 
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
-			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new CustomerInvoiceAgencyRepportMenuItem(customerInvoiceAgencyRepportMenuItem));
+			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new ReportMenuItem(customerInvoiceAgencyRepportMenuItem));
 		} else {
-			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new CustomerInvoiceAgencyRepportMenuItem(customerInvoiceAgencyRepportMenuItem));
+			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new ReportMenuItem(customerInvoiceAgencyRepportMenuItem));
 		}
 	}
 

@@ -22,6 +22,7 @@ import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class DeliveryEJB
@@ -71,8 +72,11 @@ public class DeliveryEJB
 	public Delivery create(Delivery entity)
 	{
 
+		String deliveryNumber = entity.getDeliveryNumber();
 		Delivery save = repository.save(attach(entity));
-		save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
+		if(StringUtils.isBlank(deliveryNumber))
+			save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
+		
 		return repository.save(save);
 	}
 

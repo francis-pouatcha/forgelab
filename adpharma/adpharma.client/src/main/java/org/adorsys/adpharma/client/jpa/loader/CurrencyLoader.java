@@ -6,8 +6,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -32,13 +34,31 @@ public class CurrencyLoader extends Service<List<Currency>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public CurrencyLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public CurrencyLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<Currency> load() {
+		List<Currency> result = new ArrayList<Currency>();
+		result.addAll(remoteService.listAll().getResultList());
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		HSSFSheet sheet = workbook.getSheet("Currency");
+		if(sheet==null){
+			return result;
+		}
+		
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		List<Currency> result = new ArrayList<Currency>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 
@@ -55,7 +75,7 @@ public class CurrencyLoader extends Service<List<Currency>> {
 			searchInput.setFieldNames(Arrays.asList("name"));
 			CurrencySearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 

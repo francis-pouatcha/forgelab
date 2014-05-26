@@ -6,8 +6,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -32,13 +34,28 @@ public class VATLoader extends Service<List<VAT>> {
 		this.workbook = workbook;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public VATLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public VATLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<VAT> load() {
+		List<VAT> result = new ArrayList<VAT>();
+		result.addAll(remoteService.listAll().getResultList());
 		HSSFSheet sheet = workbook.getSheet("VAT");
+		if(sheet==null)return result;
+		
+		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		List<VAT> result = new ArrayList<VAT>();
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 
@@ -55,10 +72,9 @@ public class VATLoader extends Service<List<VAT>> {
 			searchInput.setFieldNames(Arrays.asList("name"));
 			VATSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-				result.add(found.getResultList().iterator().next());
+//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
-
 			cell = row.getCell(1);
 			if (cell != null)
 			{

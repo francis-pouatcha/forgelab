@@ -1,26 +1,36 @@
 package org.adorsys.adpharma.client.jpa.loader;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 
+import jfxtras.scene.layout.VBox;
+
+import org.adorsys.adpharma.client.events.DataMenuItem;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.company.Company;
@@ -32,11 +42,13 @@ import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.javafx.crud.extensions.events.MenuItemAddRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.MenuItemRemoveRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
-import org.adorsys.javafx.crud.extensions.view.ModalPanelBuilder;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -46,7 +58,7 @@ public class DataLoadController {
 	private ErrorMessageDialog errorMessageDialog;
 
 	@Inject
-	@Bundle(CrudKeys.class)
+	@Bundle({CrudKeys.class, DataLoadController.class})
 	private ResourceBundle resourceBundle;
 	
 	@Inject
@@ -75,10 +87,7 @@ public class DataLoadController {
 	
 	@Inject
 	private DeliveryLoader deliveryLoader;
-	
-	@Inject
-	private LoaderCheck loaderCheck;
-	
+
 	@Inject
 	private LoginLoader loginLoader;
 	
@@ -91,12 +100,57 @@ public class DataLoadController {
 	@Inject
 	private CustomerLoader customerLoader;
 	
+	private MenuItem loaderMenuItem;
+
+	@Inject
+	@MenuItemAddRequestedEvent
+	private Event<DataMenuItem> loaderMenuItemAddEvent;
+	@Inject
+	@MenuItemRemoveRequestedEvent
+	private Event<DataMenuItem> loaderMenuItemRemoveEvent;
+	
 	private HSSFWorkbook workbook;
 	
 	private DataMap dataMap = new DataMap();
+	
+	ProgressIndicator pi = new ProgressIndicator();
+	Label progressLabel1 = new Label();
+	Label progressLabel2 = new Label();
+
+	Stage dialog = new Stage();
 
 	@PostConstruct
 	public void postConstruct() {
+		
+		dialog.initModality(Modality.APPLICATION_MODAL);
+		
+		loaderMenuItem = new MenuItem(resourceBundle.getString("DataLoadController_menuitem.title"));
+		loaderMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle(resourceBundle.getString("DataLoadController_select_data_file.title"));
+				fileChooser.getExtensionFilters().add(new ExtensionFilter(resourceBundle.getString("DataLoadController_excel_file.title"), "*.xls"));
+				String userDirName = System.getProperty("user.dir");
+				File userDir = new File(userDirName);
+				if(!userDir.exists()){
+					userDir = new File("test").getParentFile();
+				}
+				fileChooser.setInitialDirectory(userDir);// working directory
+				File selectedFile = fileChooser.showOpenDialog(dialog);
+				if(selectedFile!=null){
+					try {
+						FileInputStream dataStream = FileUtils.openInputStream(selectedFile);
+						workbook = new HSSFWorkbook(dataStream);
+					}catch(IOException ioe){
+						throw new IllegalStateException(ioe);
+					}
+					openProgressbar();
+					companyLoader.setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_Companies.title")).start();
+				}
+			}
+		});
+		
 		errorMessageDialog.getOkButton().setOnAction(
 				new EventHandler<ActionEvent>() {
 					@Override
@@ -107,42 +161,6 @@ public class DataLoadController {
 				});
 		errorMessageDialog.getTitleText().setText(
 				resourceBundle.getString("Entity_create_error.title"));
-
-		loaderCheck.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				handleFailure(event);
-			}
-		});
-		
-		loaderCheck.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
-			@Override
-			public void handle(WorkerStateEvent event) {
-				LoaderCheck s = (LoaderCheck) event.getSource();
-				Long value = s.getValue();
-				s.reset();
-				event.consume();
-				if(value<=0l){
-					try {
-						Properties properties = new Properties();
-						InputStream propStream = DataLoadController.class.getResourceAsStream(DataLoadController.class.getSimpleName()+".properties");
-						if(propStream==null) return;
-						properties.load(propStream);
-
-						String dataFile = properties.getProperty("data_file");
-						if(dataFile==null)return;
-						InputStream dataStream = DataLoadController.class.getResourceAsStream(dataFile);
-						if(dataStream==null) return;
-						
-						if(dataMap.getCompanies()!=null) return;
-						workbook = new HSSFWorkbook(dataStream);
-					}catch(IOException ioe){
-						throw new IllegalStateException(ioe);
-					}
-					openProgressbar();
-					companyLoader.setWorkbook(workbook).start();
-				}
-			}});
 		
 		companyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -161,7 +179,7 @@ public class DataLoadController {
 				dataMap.setCompanies(companies);
 				pi.setProgress(0.1);
 				// Agency Loader
-				agencyLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+				agencyLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_Agencies.title")).start();
 			}});
 
 		agencyLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
@@ -174,8 +192,8 @@ public class DataLoadController {
 				dataMap.setAgencies(agencies);
 				// Section Loader
 				pi.setProgress(0.2);
-				loginLoader.setDataMap(dataMap).setWorkbook(workbook).start();
-				sectionLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+				loginLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_Logins.title")).start();
+				sectionLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Sections.title")).start();
 				
 			}});
 		agencyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -195,7 +213,7 @@ public class DataLoadController {
 				dataMap.setSections(sections);
 				pi.setProgress(0.2);
 				// Product Family Loader
-				productFamilyLoader.setWorkbook(workbook).start();
+				productFamilyLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_ProductFamilies.title")).start();
 			}});
 		sectionLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -211,7 +229,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 				// Employers
-				employerLoader.setWorkbook(workbook).start();
+				employerLoader.setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_Employers.title")).start();
 			}});
 		loginLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -229,7 +247,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setEmployers(employers);
 				// CustomerCategoryLoader
-				customerCategoryLoader.setWorkbook(workbook).start();
+				customerCategoryLoader.setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_CustomerCategories.title")).start();
 			}});
 		employerLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -247,7 +265,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setCustomerCategories(customerCategories);
 				// CustomerCategoryLoader
-				customerLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+				customerLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel1).setProgressText(resourceBundle.getString("DataLoadController_Loading_Customers.title")).start();
 			}});
 		customerCategoryLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -264,6 +282,7 @@ public class DataLoadController {
 				s.reset();
 				event.consume();
 //				dataMap.setCustomers(customerCategories);
+				progressLabel1.setText(resourceBundle.getString("DataLoadController_Loading_Done.title"));
 			}});
 		customerLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -282,7 +301,7 @@ public class DataLoadController {
 				dataMap.setProductFamilies(productFamilies);
 				pi.setProgress(0.3);
 				// VAT Loader
-				vatLoader.setWorkbook(workbook).start();
+				vatLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_VAT.title")).start();
 			}});
 		productFamilyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -300,7 +319,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setVats(vats);
 				// Article Loader
-				articleLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+				articleLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Articles.title")).start();
 			}});
 		vatLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -319,7 +338,7 @@ public class DataLoadController {
 				dataMap.setArticles(articles);
 				pi.setProgress(0.4);
 				// Supplier Loader
-				supplierLoader.setWorkbook(workbook).start();
+				supplierLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Suppliers.title")).start();
 			}});
 		articleLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -337,7 +356,7 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setSuppliers(suppliers);
 				// Currency Loader
-				currencyLoader.setWorkbook(workbook).start();
+				currencyLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Currencies.title")).start();
 			}});
 		supplierLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -356,7 +375,7 @@ public class DataLoadController {
 				dataMap.setCurrencies(currencies);
 				pi.setProgress(0.75);
 				// Delivery Loader
-				deliveryLoader.setDataMap(dataMap).setWorkbook(workbook).start();
+				deliveryLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Deliveries.title")).start();
 			}});
 		currencyLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -375,6 +394,7 @@ public class DataLoadController {
 				pi.setProgress(1);
 				closeProgressbar();
 				dataMap.setDeliveries(deliveries);
+				progressLabel2.setText(resourceBundle.getString("DataLoadController_Loading_Done.title"));
 			}});
 		deliveryLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -384,12 +404,12 @@ public class DataLoadController {
 		});
 	}
 
-	public void handleLoginSucceededEvent(
-			@Observes(notifyObserver = Reception.ALWAYS) @LoginSucceededEvent String loginName) throws IOException 
-	{
-		if(!"manager".equals(loginName)) return;
-		
-		loaderCheck.start();
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+			loaderMenuItemAddEvent.fire(new DataMenuItem(loaderMenuItem));
+		} else {
+			loaderMenuItemAddEvent.fire(new DataMenuItem(loaderMenuItem));
+		}
 	}
 
 	private void handleFailure(WorkerStateEvent event) {
@@ -416,16 +436,19 @@ public class DataLoadController {
 		errorMessageDialog.display();
 	}
 	
-	ProgressIndicator pi = new ProgressIndicator();
-	Stage dialog = new Stage();
 	private void openProgressbar(){
-		dialog.initModality(Modality.APPLICATION_MODAL);
+		VBox vBox = new VBox();
+		vBox.getChildren().add(pi);
+		pi.setPrefWidth(100);
+		pi.setPrefHeight(100);
+		vBox.add(progressLabel1);
+		vBox.add(progressLabel2);
 		// Stage
-		Scene scene = new Scene(pi);
+		Scene scene = new Scene(vBox);
 		scene.getStylesheets().add("/styles/application.css");
 		dialog.setScene(scene);
-		dialog.setWidth(100);
-		dialog.setHeight(100);
+		dialog.setWidth(500);
+		dialog.setHeight(170);
 		dialog.show();
 	}
 	private void closeProgressbar(){

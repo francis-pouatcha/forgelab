@@ -10,8 +10,10 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
@@ -61,21 +63,35 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		this.dataMap = dataMap;
 		return this;
 	}
+	private String progressText;
+	private Label progressLabel;
+	public DeliveryLoader setProgressText(String progressText) {
+		this.progressText = progressText;
+		return this;
+	}
+	public DeliveryLoader setProgressLabel(Label progressLabel) {
+		this.progressLabel = progressLabel;
+		return this;
+	}
 
 	private List<Delivery> load() {
+		List<Delivery> result = new ArrayList<Delivery>();
 		HSSFSheet sheet = workbook.getSheet("Delivery");
-		
+		if(sheet==null) return result;
+
+		PGRunner pgRunner = new PGRunner(progressLabel);
+		Platform.runLater(pgRunner.setText(progressText));
+//		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
 		
-		List<Delivery> result = new ArrayList<Delivery>();
-//		Map<String, Delivery> deliveryMap = new HashMap<String, Delivery>();
 		Delivery currentDelivery = null;
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Cell cell = row.getCell(0);
 			if (cell == null || StringUtils.isBlank(cell.getStringCellValue())){
+				if(currentDelivery==null) continue;
 				// check if item row.
 				Cell itemCell = row.getCell(17);
 				if (itemCell == null || StringUtils.isBlank(itemCell.getStringCellValue())){
@@ -102,8 +118,10 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setSecondaryPic(itemCell.getStringCellValue().trim());
 
 					itemCell = row.getCell(22);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue())){
 						deliveryItem.setArticleName(itemCell.getStringCellValue().trim());
+						Platform.runLater(pgRunner.setText(progressText + " : " + currentDelivery.getDeliveryNumber() + " : " + deliveryItem.getArticleName()));
+					}
 
 					itemCell = row.getCell(23);
 					Article article = null;
@@ -211,7 +229,11 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 				
 			} else {
 				Delivery delivery = loadDelivery(row);
-				result.add(delivery);
+				
+				if(delivery!=null){
+					result.add(delivery);
+				}
+				
 				if(currentDelivery==null){
 					currentDelivery = delivery;
 				} else {
@@ -243,7 +265,8 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		searchInput.getFieldNames().add("deliveryNumber");
 		DeliverySearchResult found = remoteService.findBy(searchInput);
 		if (!found.getResultList().isEmpty()){
-			return found.getResultList().iterator().next();
+//			return found.getResultList().iterator().next();
+			return null;
 		}
 
 		cell = row.getCell(1);
