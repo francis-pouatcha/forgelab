@@ -147,15 +147,12 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		rt.setWidthPercentage(100);
 
 		Paragraph documentName = new CenterParagraph(new BoldText(
-				resourceBundle.getString("DeliveryReportPrintTemplate_header.title")));
+				resourceBundle.getString("DeliveryReportPrintTemplate_header.title")+deliveryNumber));
 		borderlessCell(rt, documentName, 2, 1);
 
 		borderlessCell(rt, new LineSeparator(), 2, 1);
 
 		Paragraph paragraph = new Paragraph(new BoldText(delivery.getReceivingAgency().getName()));
-		borderlessCell(rt, paragraph, 2, 1);
-
-		paragraph = new Paragraph(new BoldText(delivery.getReceivingAgency().getName()));
 		borderlessCell(rt, paragraph, 2, 1);
 
 		paragraph = new Paragraph(new StandardText("Tel: " + delivery.getReceivingAgency().getPhone()));

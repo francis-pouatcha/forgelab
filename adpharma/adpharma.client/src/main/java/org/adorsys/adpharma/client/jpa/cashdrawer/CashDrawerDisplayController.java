@@ -193,6 +193,7 @@ public class CashDrawerDisplayController implements EntityController
 
 	@Inject
 	private CustomerVoucherCheckingView voucherCheckingView ;
+	
 
 
 	@PostConstruct
