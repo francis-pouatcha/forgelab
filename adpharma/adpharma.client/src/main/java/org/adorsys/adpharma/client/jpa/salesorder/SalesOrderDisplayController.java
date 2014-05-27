@@ -443,8 +443,8 @@ public class SalesOrderDisplayController implements EntityController
 					BigDecimal oldValue, BigDecimal newValue) {
 				if(newValue!=null){
 					BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax()!=null?displayedEntity.getAmountBeforeTax():BigDecimal.ZERO;
-//					if(BigDecimal.ONE.compareTo(newValue)<0)
-//						newValue = ;
+					//					if(BigDecimal.ONE.compareTo(newValue)<0)
+					//						newValue = ;
 					BigDecimal discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_EVEN));
 					displayedEntity.setAmountDiscount(discount);
 
@@ -630,10 +630,14 @@ public class SalesOrderDisplayController implements EntityController
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();
 					entity.setSecondaryPic(internalPic);
+					entity.setInternalPic(internalPic);
+					entity.setMainPic(internalPic);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
 					asi.setMax(30);
 					asi.getFieldNames().add("secondaryPic");
+					asi.getFieldNames().add("mainPic");
+					asi.getFieldNames().add("internalPic");
 					modalArticleLotSearchEvent.fire(asi);
 
 				}
@@ -700,7 +704,9 @@ public class SalesOrderDisplayController implements EntityController
 		{
 			children.add(rootPane);
 		}
+		displayView.getInternalPic().requestFocus();
 		getOpenCashDrawer();
+		
 	}
 
 	@Override
@@ -798,7 +804,13 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
-		displayView.getOrderedQty().requestFocus();
+		if(!displayView.getOrderedQty().isEditable()){
+			if(isValidSalesOrderItem())
+				handleAddSalesOrderItem(salesOrderItem);
+			displayView.getInternalPic().requestFocus();
+		}else {
+			displayView.getOrderedQty().requestFocus();
+		}
 	}
 
 
