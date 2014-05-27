@@ -237,10 +237,14 @@ public class SalesOrderDisplayController implements EntityController
 					// delete article
 					salesOrderItemRemoveService.setEntity(selectedItem).start();
 				} else {
-					selectedItem.setOrderedQty(newValue);
-					selectedItem.updateTotalSalesPrice();
-					// update article
-					salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+					if(displayView.getOrderedQty().isEditable()){
+						selectedItem.setOrderedQty(newValue);
+						selectedItem.updateTotalSalesPrice();
+						// update article
+						salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+					}else {
+						orderedQtyCell.getRowValue().setOrderedQty(orderedQtyCell.getOldValue());
+					}
 				}
 			}
 		});
@@ -519,8 +523,12 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().remove(createdItem);
-				displayView.getDataList().getItems().add(createdItem);
+				int indexOf = displayView.getDataList().getItems().indexOf(createdItem);
+				if(indexOf>=0){
+					PropertyReader.copy(createdItem, displayView.getDataList().getItems().get(indexOf));
+				}else {
+					displayView.getDataList().getItems().add(0,createdItem);
+				}
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
 				displayView.getInternalPic().requestFocus();
@@ -706,7 +714,7 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		displayView.getInternalPic().requestFocus();
 		getOpenCashDrawer();
-		
+
 	}
 
 	@Override
