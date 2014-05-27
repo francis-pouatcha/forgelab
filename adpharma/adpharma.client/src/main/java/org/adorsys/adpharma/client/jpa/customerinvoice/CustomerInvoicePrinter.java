@@ -52,18 +52,18 @@ public class CustomerInvoicePrinter {
 	@Inject
 	private Locale locale;
 	
-	public void handlePrintCustomerInvoiceRequestedEvent(
-			@Observes @PrintCustomerInvoiceRequestedEvent SalesOrderId salesOrderId) {
-		CustomerInvoice customerInvoice = new CustomerInvoice();
-		CustomerInvoiceSalesOrder salesOrder = new CustomerInvoiceSalesOrder();
-		salesOrder.setId(salesOrderId.getId());
-		customerInvoice.setSalesOrder(salesOrder);
-		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
-		searchInputs.setEntity(customerInvoice);
-		searchInputs.getFieldNames().add("salesOrder");
-		invoiceDataService.setSearchInputs(searchInputs).start();
-	}
-
+//	public void handlePrintCustomerInvoiceRequestedEvent(
+//			@Observes @PrintCustomerInvoiceRequestedEvent SalesOrderId salesOrderId) {
+//		CustomerInvoice customerInvoice = new CustomerInvoice();
+//		CustomerInvoiceSalesOrder salesOrder = new CustomerInvoiceSalesOrder();
+//		salesOrder.setId(salesOrderId.getId());
+//		customerInvoice.setSalesOrder(salesOrder);
+//		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
+//		searchInputs.setEntity(customerInvoice);
+//		searchInputs.getFieldNames().add("salesOrder");
+//		invoiceDataService.setSearchInputs(searchInputs).start();
+//	}
+//
 	public void handlePrintCustomerInvoiceRequestedEvent(
 			@Observes @PrintCustomerInvoiceRequestedEvent CustomerInvoice customerInvoice) {
 		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
