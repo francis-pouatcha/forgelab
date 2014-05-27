@@ -31,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 
 /**
  * 
@@ -40,7 +41,9 @@ import org.adorsys.adpharma.server.security.SecurityUtil;
 @Path("/salesorders")
 public class SalesOrderEndpoint
 {
-
+	@Inject
+	private ApplicationConfiguration applicationConfiguration ;
+	
 	@Inject
 	private SalesOrderEJB ejb;
 
@@ -95,7 +98,7 @@ public class SalesOrderEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
-	
+
 	@PUT
 	@Path("/processReturn")
 	@Produces({ "application/json", "application/xml" })
@@ -113,7 +116,9 @@ public class SalesOrderEndpoint
 		SalesOrder closedOrder = ejb.saveAndClose(salesOrder);
 		return detach(closedOrder);
 	}
-	
+
+
+
 	@GET
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces({ "application/json", "application/xml" })
@@ -123,6 +128,15 @@ public class SalesOrderEndpoint
 		if (found == null)
 			return Response.status(Status.NOT_FOUND).build();
 		return Response.ok(detach(found)).build();
+	}
+
+	@GET
+	@Path("/isManagedLot")
+	@Produces({ "application/json", "application/xml" })
+	public Boolean isManagedLot()
+	{
+		return  Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+
 	}
 
 	@GET
@@ -284,7 +298,7 @@ public class SalesOrderEndpoint
 		searchInput.setEntity(detach(searchInput.getEntity()));
 		return searchInput;
 	}
-	
+
 	@PUT
 	@Path("/cancel/{id:[0-9][0-9]*}")
 	@Produces({ "application/json", "application/xml" })
@@ -292,10 +306,10 @@ public class SalesOrderEndpoint
 	public SalesOrder cancel(SalesOrder salesOrder) {
 		if(salesOrder.getSalesOrderStatus()!=DocumentProcessingState.CLOSED)
 			return salesOrder;
-		
+
 		SalesOrder closedOrder = ejb.cancelSalesOrder(salesOrder);
 
 		return detach(closedOrder);
 	}
-	
+
 }

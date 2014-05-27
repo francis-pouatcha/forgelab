@@ -25,10 +25,12 @@ import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 public class ModalArticleLotSearchController  {
 
@@ -61,6 +63,15 @@ public class ModalArticleLotSearchController  {
 
 	@PostConstruct
 	public void postConstruct(){
+		
+		articleSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+			
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+				
+			}
+		});
 		view.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -68,6 +79,8 @@ public class ModalArticleLotSearchController  {
 				view.closeDialog();
 			}
 		});
+		
+		
 
 		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ArticleLot>() {
 

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.jpa.WareHouse;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
@@ -41,6 +43,8 @@ import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.deltaspike.data.api.criteria.Criteria;
 
 @Stateless
 public class ArticleLotEJB
@@ -101,10 +105,11 @@ public class ArticleLotEJB
 		return repository.count();
 	}
 
-	public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	public List<ArticleLot> findBy(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, Object>[] attributes)
 	{
 		ArticleLot articleLot = attach(entity);
 		return repository.findBy(articleLot, start, max, attributes);
+
 	}
 
 	public Long countBy(ArticleLot entity, SingularAttribute<ArticleLot, ?>[] attributes)
@@ -113,7 +118,7 @@ public class ArticleLotEJB
 		return repository.count(articleLot, attributes);
 	}
 
-	public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, ?>[] attributes)
+	public List<ArticleLot> findByLike(ArticleLot entity, int start, int max, SingularAttribute<ArticleLot, Object>[] attributes)
 	{
 		ArticleLot articleLot = attach(entity);
 		return repository.findByLike(articleLot, start, max, attributes);

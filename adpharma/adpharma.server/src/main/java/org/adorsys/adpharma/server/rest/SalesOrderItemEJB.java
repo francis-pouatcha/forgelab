@@ -10,29 +10,31 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 
 @Stateless
 public class SalesOrderItemEJB
 {
 
-   @Inject
-   private SalesOrderItemRepository repository;
+	@Inject
+	private SalesOrderItemRepository repository;
 
-   @Inject
-   private ArticleMerger articleMerger;
+	@Inject
+	private ArticleMerger articleMerger;
 
-   @Inject
-   private VATMerger vATMerger;
+	@Inject
+	private VATMerger vATMerger;
 
-   @Inject
-   private SalesOrderMerger salesOrderMerger;
+	@Inject
+	private SalesOrderMerger salesOrderMerger;
 
 	@Inject
 	@DocumentProcessedEvent
 	private Event<SalesOrderItem> salesOrderItemProcessedEvent;
-   
+
 	@Inject
 	@DocumentDeletedEvent
 	private Event<SalesOrderItem> salesOrderItemDeletedEvent;
@@ -42,84 +44,104 @@ public class SalesOrderItemEJB
 	private Event<SalesOrderItem> salesOrderItemCreatedEvent;
 
 	public SalesOrderItem create(SalesOrderItem entity)
-    {
+	{
+		entity = attach(entity);
+		SalesOrderItem orderItem = new SalesOrderItem();
+		orderItem.setSalesOrder(entity.getSalesOrder());
+		orderItem.setInternalPic(entity.getInternalPic());
+		orderItem.setArticle(entity.getArticle());
+
+		List<SalesOrderItem> found = findBy(orderItem, 0, 1, new SingularAttribute[]{SalesOrderItem_.internalPic,SalesOrderItem_.article,SalesOrderItem_.salesOrder});
+		if(!found.isEmpty()){
+			System.out.println("IS FOUND ");
+			SalesOrderItem existingItem = found.iterator().next();
+			existingItem.setOrderedQty(existingItem.getOrderedQty().add(entity.getOrderedQty()));
+			existingItem.setSalesPricePU(entity.getSalesPricePU());
+			existingItem.calucateDeliveryQty();
+			existingItem.calculateAmount();
+			existingItem = repository.save(existingItem);
+			salesOrderItemCreatedEvent.fire(existingItem);
+			return repository.save(existingItem);
+		}
+		System.out.println("IS NOT FOUND ");
+		entity.calucateDeliveryQty();
+		entity.calculateAmount();
+		entity = repository.save(entity);
+		salesOrderItemCreatedEvent.fire(entity);
+		return entity;
+	}
+
+	public SalesOrderItem deleteById(Long id)
+	{
+		SalesOrderItem entity = repository.findBy(id);
+		if (entity != null)
+		{
+			repository.remove(entity);
+			salesOrderItemDeletedEvent.fire(entity);
+		}
+		return entity;
+	}
+
+	public SalesOrderItem update(SalesOrderItem entity)
+	{
 		entity.updateTotalSalesPrice();
-      entity = repository.save(attach(entity));
-      salesOrderItemCreatedEvent.fire(entity);
-      return entity;
-   }
+		entity = repository.save(attach(entity));
+		salesOrderItemProcessedEvent.fire(entity);
+		return entity;
+	}
 
-   public SalesOrderItem deleteById(Long id)
-   {
-      SalesOrderItem entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-         salesOrderItemDeletedEvent.fire(entity);
-      }
-      return entity;
-   }
+	public SalesOrderItem findById(Long id)
+	{
+		return repository.findBy(id);
+	}
 
-   public SalesOrderItem update(SalesOrderItem entity)
-   {
-	  entity.updateTotalSalesPrice();
-      entity = repository.save(attach(entity));
-      salesOrderItemProcessedEvent.fire(entity);
-      return entity;
-   }
+	public List<SalesOrderItem> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
 
-   public SalesOrderItem findById(Long id)
-   {
-      return repository.findBy(id);
-   }
+	public Long count()
+	{
+		return repository.count();
+	}
 
-   public List<SalesOrderItem> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
+	public List<SalesOrderItem> findBy(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
+	{
+		SalesOrderItem salesOrderItem = attach(entity);
+		return repository.findBy(salesOrderItem, start, max, attributes);
+	}
 
-   public Long count()
-   {
-      return repository.count();
-   }
+	public Long countBy(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
+	{
+		SalesOrderItem salesOrderItem = attach(entity);
+		return repository.count(salesOrderItem, attributes);
+	}
 
-   public List<SalesOrderItem> findBy(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
-   {
-	   SalesOrderItem salesOrderItem = attach(entity);
-      return repository.findBy(salesOrderItem, start, max, attributes);
-   }
+	public List<SalesOrderItem> findByLike(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
+	{
+		SalesOrderItem salesOrderItem = attach(entity);
+		return repository.findByLike(salesOrderItem, start, max, attributes);
+	}
 
-   public Long countBy(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
-   {
-	   SalesOrderItem salesOrderItem = attach(entity);
-      return repository.count(salesOrderItem, attributes);
-   }
+	public Long countByLike(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
+	{
+		SalesOrderItem salesOrderItem = attach(entity);
+		return repository.countLike(salesOrderItem, attributes);
+	}
 
-   public List<SalesOrderItem> findByLike(SalesOrderItem entity, int start, int max, SingularAttribute<SalesOrderItem, ?>[] attributes)
-   {
-	   SalesOrderItem salesOrderItem = attach(entity);
-      return repository.findByLike(salesOrderItem, start, max, attributes);
-   }
+	private SalesOrderItem attach(SalesOrderItem entity)
+	{
+		if (entity == null)
+			return null;
 
-   public Long countByLike(SalesOrderItem entity, SingularAttribute<SalesOrderItem, ?>[] attributes)
-   {
-	   SalesOrderItem salesOrderItem = attach(entity);
-      return repository.countLike(salesOrderItem, attributes);
-   }
+		// composed
 
-   private SalesOrderItem attach(SalesOrderItem entity)
-   {
-      if (entity == null)
-         return null;
+		// aggregated
+		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 
-      // composed
+		// aggregated
+		entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
-      // aggregated
-      entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
-
-      // aggregated
-      entity.setVat(vATMerger.bindAggregated(entity.getVat()));
-
-      return entity;
-   }
+		return entity;
+	}
 }

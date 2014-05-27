@@ -96,8 +96,6 @@ public class CustomerInvoiceRegistration extends DomainComponentRegistration
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
 			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new ReportMenuItem(customerInvoiceAgencyRepportMenuItem));
-		} else {
-			customerInvoiceAgencyRepportMenuItemAddEvent.fire(new ReportMenuItem(customerInvoiceAgencyRepportMenuItem));
 		}
 	}
 

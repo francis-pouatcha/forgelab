@@ -51,6 +51,7 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
@@ -83,6 +84,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -147,7 +149,13 @@ public class SalesOrderDisplayController implements EntityController
 	InsurranceSearchService insurranceSearchService;
 
 	@Inject
+	private SalesOrderManagedLotService salesOrderManagedLotService ;
+
+	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler;
+
+	@Inject
+	private ServiceCallFailedEventHandler salesOrderItemCreateFailedEventHandler;
 
 	@Inject
 	private SalesOrder displayedEntity;
@@ -196,7 +204,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private SalesKeyReciever salesKeyRecieverView;
-	
+
 	@Inject
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
@@ -212,6 +220,14 @@ public class SalesOrderDisplayController implements EntityController
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
+
+		salesOrderItemCreateFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+			}
+		});
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -356,9 +372,9 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				SalesOrderCustomer orderCustomer = displayedEntity.getCustomer();
-				
+
 				if("000000001".equals(orderCustomer.getSerialNumber()))
-						return ;
+					return ;
 				System.out.println(orderCustomer.getSerialNumber()+" serial");
 				Insurrance insurrance = new Insurrance();
 				InsurranceCustomer customer = new InsurranceCustomer();
@@ -430,8 +446,8 @@ public class SalesOrderDisplayController implements EntityController
 					BigDecimal oldValue, BigDecimal newValue) {
 				if(newValue!=null){
 					BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
-//					if(BigDecimal.ONE.compareTo(newValue)<0)
-//						newValue = ;
+					//					if(BigDecimal.ONE.compareTo(newValue)<0)
+					//						newValue = ;
 					BigDecimal discount = amountAfterTax.multiply(newValue.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
 					displayedEntity.setAmountDiscount(discount);
 
@@ -506,6 +522,7 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
+				displayView.getDataList().getItems().remove(createdItem);
 				displayView.getDataList().getItems().add(createdItem);
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
@@ -513,7 +530,21 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
-		salesOrderItemCreateService.setOnFailed(callFailedEventHandler);
+		salesOrderItemCreateService.setOnFailed(salesOrderItemCreateFailedEventHandler);
+		// handle managedlot information 
+		salesOrderManagedLotService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderManagedLotService s = (SalesOrderManagedLotService) event.getSource();
+				Boolean managedLot = s.getValue();
+				event.consume();
+				s.reset();
+				displayView.getOrderedQty().setEditable(!managedLot);
+
+			}
+		});
+		salesOrderManagedLotService.setOnFailed(callFailedEventHandler);
 
 		salesOrderItemEditService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -581,6 +612,7 @@ public class SalesOrderDisplayController implements EntityController
 					if(StringUtils.isBlank(articleName)) return;
 					ArticleLot entity = new ArticleLot();
 					entity.setArticleName(articleName);
+					entity.setStockQuantity(BigDecimal.ONE);
 					ArticleLotSearchInput asi = new ArticleLotSearchInput();
 					asi.setEntity(entity);
 					asi.setMax(30);
@@ -681,7 +713,7 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
-//				salesOrderItem.calculateTotalAmout();
+		//				salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
 			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity)); 
 			salesOrderItem.setDeliveredQty(salesOrderItem.getOrderedQty());
@@ -706,8 +738,10 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrder selectedEntity)
 	{
 		PropertyReader.copy(selectedEntity, displayedEntity);
+		displayView.getClient().setValue(selectedEntity.getCustomer());
 		Customer customer = new Customer();
 		PropertyReader.copy(displayedEntity.getCustomer(), customer);
+		System.out.println(displayedEntity.getCustomer());
 		getCustomerInsurance(customer);
 	}
 
@@ -868,6 +902,10 @@ public class SalesOrderDisplayController implements EntityController
 	}
 	public void reset() {
 		PropertyReader.copy(new SalesOrder(), displayedEntity);
+	}
+
+	public void handleLoginSucceedEvent (@Observes(notifyObserver = Reception.ALWAYS) @LoginSucceededEvent String loginName) {
+		salesOrderManagedLotService.start();
 	}
 
 }

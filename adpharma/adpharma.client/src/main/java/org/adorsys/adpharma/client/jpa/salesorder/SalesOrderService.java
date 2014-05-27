@@ -3,6 +3,9 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -22,7 +25,7 @@ public class SalesOrderService {
 
 	@Inject
 	private ClientCookieFilter clientCookieFilter;
-	
+
 	Client client = ClientBuilder.newClient();
 	@Inject
 	private ServerAddress serverAddress;
@@ -36,11 +39,21 @@ public class SalesOrderService {
 		Entity<SalesOrder> eCopy = Entity.entity(entity, media);
 		return target().request(media).post(eCopy, SalesOrder.class);
 	}
-	
+
+
+	//	@GET
+	//	@Path("/isManagedLot")
+	//	@Produces({ "application/json", "application/xml" })
+	public Boolean isManagedLot()
+	{
+		return target().path("isManagedLot").request(media).get(Boolean.class);
+
+	}
+
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public SalesOrder deleteById(Long id) {// @PathParam("id")
-											// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media).delete(SalesOrder.class);
 	}
 
