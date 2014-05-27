@@ -279,6 +279,7 @@ public class SalesOrderDisplayView
 		amountHT.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		taxAmount.numberProperty().bindBidirectional(model.amountVATProperty());
 		discount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+		discountRate.numberProperty().bindBidirectional(model.discountRateProperty());
 		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
 		//		tax.valueProperty().bindBidirectional(model.vatProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());

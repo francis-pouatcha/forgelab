@@ -46,7 +46,6 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
-import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
@@ -90,8 +89,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
-
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Singleton
 public class SalesOrderDisplayController implements EntityController
@@ -429,10 +426,10 @@ public class SalesOrderDisplayController implements EntityController
 			public void changed(ObservableValue<? extends BigDecimal> observable,
 					BigDecimal oldValue, BigDecimal newValue) {
 				if(newValue!=null){
-					BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
+					BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax()!=null?displayedEntity.getAmountBeforeTax():BigDecimal.ZERO;
 //					if(BigDecimal.ONE.compareTo(newValue)<0)
 //						newValue = ;
-					BigDecimal discount = amountAfterTax.multiply(newValue.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN));
+					BigDecimal discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_EVEN));
 					displayedEntity.setAmountDiscount(discount);
 
 				}

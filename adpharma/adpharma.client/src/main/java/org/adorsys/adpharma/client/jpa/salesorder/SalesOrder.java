@@ -20,7 +20,6 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
-import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.login.Login;
@@ -116,6 +115,10 @@ public class SalesOrder implements Cloneable
 	@Description("SalesOrder_agency_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
 	private SimpleObjectProperty<SalesOrderAgency> agency;
+
+	@Description("SalesOrder_discountRate_description")
+	@NumberFormatType(NumberType.PERCENTAGE)
+	private SimpleObjectProperty<BigDecimal> discountRate;
 
 	public Long getId()
 	{
@@ -586,6 +589,26 @@ public class SalesOrder implements Cloneable
 		agencyProperty().setValue(ObjectUtils.clone(getAgency()));
 	}
 
+	public SimpleObjectProperty<BigDecimal> discountRateProperty()
+	{
+		if (discountRate == null)
+		{
+			discountRate = new SimpleObjectProperty<BigDecimal>();
+		}
+		return discountRate;
+	}
+
+	public BigDecimal getDiscountRate()
+	{
+		return discountRateProperty().get();
+	}
+
+	public final void setDiscountRate(BigDecimal discountRate)
+	{
+		this.amountBeforeTaxProperty().set(discountRate);
+	}
+	
+	
 	@Override
 	public int hashCode()
 	{

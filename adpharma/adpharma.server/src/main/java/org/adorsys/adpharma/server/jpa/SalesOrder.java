@@ -1,64 +1,37 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.EnumType;
-import javax.persistence.Id;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.PostPersist;
-import javax.persistence.PrePersist;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-
-import java.lang.Override;
-
-import org.adorsys.javaext.description.Description;
-import org.adorsys.adpharma.server.jpa.CashDrawer;
-
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.display.ToStringField;
-
-import java.util.Date;
-
+import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.adorsys.javaext.format.DateFormatPattern;
-import org.adorsys.adpharma.server.jpa.Customer;
-
+import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.server.jpa.Insurrance;
-import org.adorsys.adpharma.server.jpa.VAT;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-
-import javax.persistence.Enumerated;
-
-import java.math.BigDecimal;
-
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.adpharma.server.jpa.SalesOrderType;
-import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.utils.SequenceGenerator;
-import org.apache.commons.lang3.RandomStringUtils;
-
-import java.util.Set;
-import java.util.HashSet;
-
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
+import org.adorsys.javaext.list.ListField;
 
 @Entity
 @Description("SalesOrder_description")
@@ -183,7 +156,11 @@ public class SalesOrder implements Serializable
 	@Description("SalesOrder_alreadyReturned_description")
 	private Boolean alreadyReturned = Boolean.FALSE;
 
-
+	@Column
+	@Description("SalesOrder_discountRate_description")
+	@NumberFormatType(NumberType.PERCENTAGE)
+	private BigDecimal discountRate =BigDecimal.ZERO;
+	
 	@PostPersist
 	public void prePersist(){
 		creationDate = new Date();
@@ -465,5 +442,13 @@ public class SalesOrder implements Serializable
 	public void setSalesOrderItems(final Set<SalesOrderItem> salesOrderItems)
 	{
 		this.salesOrderItems = salesOrderItems;
+	}
+
+	public BigDecimal getDiscountRate() {
+		return discountRate;
+	}
+
+	public void setDiscountRate(BigDecimal discountRate) {
+		this.discountRate = discountRate;
 	}
 }
