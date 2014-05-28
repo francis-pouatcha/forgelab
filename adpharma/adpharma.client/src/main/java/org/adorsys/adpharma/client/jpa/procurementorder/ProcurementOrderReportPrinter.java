@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -13,14 +15,16 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrinterDataService;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.print.PrintDialog;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,6 +47,9 @@ public class ProcurementOrderReportPrinter {
 	@Inject
 	@Bundle({ CrudKeys.class, ProcurementOrderReportPrintTemplate.class })
 	private ResourceBundle resourceBundle;
+
+	@Inject
+	private SecurityUtil securityUtil ;
 
 	@Inject
 	private Locale locale;
@@ -68,9 +75,18 @@ public class ProcurementOrderReportPrinter {
 				s.reset();
 				if(procurementOrderData==null) return;
 				if(procurementOrderData.getProcurementOrderItemSearchResult().getResultList().isEmpty()) return;
-				ProcurementOrderReportPrintTemplate worker = new ProcurementOrderReportPrintTemplate(procurementOrderData, resourceBundle, locale);
-				worker.addItems(procurementOrderData.getProcurementOrderItemSearchResult().getResultList());
-				itemDataService.setProcurementOrderReportPrintTemplateWorker(worker).setProcurementOrderReportPrinterData(procurementOrderData).start();
+				//				ProcurementOrderReportPrintTemplate worker = new ProcurementOrderReportPrintTemplate(procurementOrderData, resourceBundle, locale);
+				try {
+					Agency agency = new Agency();
+					PropertyReader.copy(procurementOrderData.getProcurementOrder().getAgency(), agency);
+					ProcurementOrderReportPrintTemplatePdf pdfRepportTemplate = new ProcurementOrderReportPrintTemplatePdf(procurementOrderData,agency,securityUtil.getConnectedUser(),resourceBundle);
+					pdfRepportTemplate.addItem();
+					pdfRepportTemplate.closeDocument();
+					Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 

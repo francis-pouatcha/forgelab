@@ -57,6 +57,9 @@ public class ProcurementOrderListView
 	
 	@FXML
 	private Button removeButton ;
+	
+	@FXML
+	private Button printButton ;
 
 	@FXML
 	private TableView<ProcurementOrder> dataList;
@@ -124,11 +127,11 @@ public class ProcurementOrderListView
 
 	public void buildsearchBar(){
 		procurementOrderNumber =ViewBuilderUtils.newTextField("procurementOrderNumber", false);
-		procurementOrderNumber.setPromptText("internal Pic");
+		procurementOrderNumber.setPromptText(resourceBundle.getString("ProcurementOrder_procurementOrderNumber_description.title"));
 		procurementOrderNumber.setPrefHeight(40d);
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
-		supplier.setPromptText("ALL SUPPLIER");
+		supplier.setPromptText(resourceBundle.getString("ProcurementOrder_supplier_description.title"));
 		supplier.setPrefHeight(40d);
 		supplier.setPrefWidth(300d);
 
@@ -165,6 +168,11 @@ public class ProcurementOrderListView
 	public Button getSearchButton()
 	{
 		return searchButton;
+	}
+	
+	public Button getPrintButton()
+	{
+		return printButton;
 	}
 
 	public TableView<ProcurementOrderItem> getDataListItem()

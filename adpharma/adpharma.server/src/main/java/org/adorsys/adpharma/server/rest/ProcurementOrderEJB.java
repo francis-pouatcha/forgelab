@@ -203,77 +203,77 @@ public class ProcurementOrderEJB
 
 	public void handleStockMovementEvent(@Observes @DocumentProcessedEvent StockMovement stockMovement){
 		if(stockMovement.canEnablePurchase()){
-			Article article = stockMovement.getArticle();
-			ProcurementOrderItem searchEntity = new ProcurementOrderItem();
-			searchEntity.setArticle(article);
-			DeliveryItem deliveryItem = new DeliveryItem();
-			deliveryItem.setInternalPic(stockMovement.getInternalPic());
-			deliveryItem.setArticle(stockMovement.getArticle());
-			List<DeliveryItem> foundDI = deliveryItemEJB.findBy(deliveryItem, 0, 1, new SingularAttribute[]{DeliveryItem_.internalPic, DeliveryItem_.article});
-			if(foundDI==null) throw new IllegalStateException("Deliveryitem associated with this stock movement not found.");
-			deliveryItem = foundDI.iterator().next();
-			List<ProcurementOrderItem> found = procurementOrderItemEJB.findBy(searchEntity, 0, 1, new SingularAttribute[]{ProcurementOrderItem_.article, ProcurementOrderItem_.poStatus});
-			ProcurementOrderItem procurementOrderItem = null;
-			if(found.isEmpty()){
-				Login user = securityUtil.getConnectedUser();
-				Agency agency = user.getAgency();
-				procurementOrderItem = new ProcurementOrderItem();
-				procurementOrderItem.setArticle(article);
-				procurementOrderItem.setArticleName(deliveryItem.getArticleName());
-				procurementOrderItem.setCreatingUser(user);
-				procurementOrderItem.setMainPic(article.getPic());
-				procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
-				procurementOrderItem.setProductRecCreated(new Date());
-				procurementOrderItem.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-				procurementOrderItem.setQtyOrdered(BigDecimal.ZERO);
-				procurementOrderItem.setSalesPricePU(deliveryItem.getSalesPricePU());
-				procurementOrderItem.setSecondaryPic(deliveryItem.getSecondaryPic());
-				procurementOrderItem.setStockQuantity(article.getQtyInStock());
-				procurementOrderItem.setValid(Boolean.FALSE);
-				ProcurementOrder procurementOrder = new ProcurementOrder();
-				procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
-				Supplier supplier = deliveryItem.getDelivery().getSupplier();
-				procurementOrder.setSupplier(supplier);
-				List<ProcurementOrder> foundPOs = findBy(procurementOrder, 0, 1, new SingularAttribute[]{ProcurementOrder_.poStatus,ProcurementOrder_.supplier});
-				if(!foundPOs.isEmpty()){
-					procurementOrder = foundPOs.iterator().next();
-				} else {
-					procurementOrder = new ProcurementOrder();
-					procurementOrder.setAgency(agency);
-					procurementOrder.setCreatedDate(new Date());
-					procurementOrder.setCreatingUser(user);
-					procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
-					procurementOrder.setProcurementOrderNumber(SequenceGenerator.getSequence(SequenceGenerator.PORCHASE_SEQUENCE_PREFIXE));
-					procurementOrder.setProcurementOrderType(ProcurementOrderType.ORDINARY);
-					procurementOrder.setSupplier(supplier);
-					procurementOrder = create(procurementOrder);
-				}
-				procurementOrderItem.setProcurementOrder(procurementOrder);
-				procurementOrderItem = procurementOrderItemEJB.create(procurementOrderItem);
-			} else {
-				procurementOrderItem = found.iterator().next();
-			}
-
-			BigDecimal diffAmountAfterTax = null;
-			if(stockMovement.isReturnStockMovement()){
-				procurementOrderItem.setQtyOrdered(procurementOrderItem.getQtyOrdered().subtract(stockMovement.getMovedQty()));
-				diffAmountAfterTax = BigDecimal.ZERO.subtract(stockMovement.getMovedQty()).multiply(procurementOrderItem.getPurchasePricePU());
-			}else {
-				procurementOrderItem.setQtyOrdered(procurementOrderItem.getQtyOrdered().add(stockMovement.getMovedQty()));
-				diffAmountAfterTax = stockMovement.getMovedQty().multiply(procurementOrderItem.getPurchasePricePU());
-			}
-			procurementOrderItem.setTotalPurchasePrice(procurementOrderItem.getQtyOrdered().multiply(procurementOrderItem.getPurchasePricePU()));
-			procurementOrderItem = procurementOrderItemEJB.update(procurementOrderItem);
-
-			ProcurementOrder procurementOrder = procurementOrderItem.getProcurementOrder();
-			procurementOrder.setAmountAfterTax(procurementOrder.getAmountAfterTax().add(diffAmountAfterTax));
-			BigDecimal vatRateRaw = procurementOrderItem.getArticle().getVat()==null?BigDecimal.ZERO:VAT.getRawRate(procurementOrderItem.getArticle().getVat().getRate());
-			BigDecimal diffAmountBeforeTax = diffAmountAfterTax.divide(BigDecimal.ONE.add(vatRateRaw), 4, RoundingMode.HALF_EVEN);
-			procurementOrder.setAmountBeforeTax(procurementOrder.getAmountBeforeTax().add(diffAmountBeforeTax));
-			BigDecimal difAmountVat = diffAmountAfterTax.subtract(diffAmountBeforeTax);
-			procurementOrder.setTaxAmount(procurementOrder.getTaxAmount().add(difAmountVat));
-			procurementOrder.setNetAmountToPay(procurementOrder.getAmountAfterTax().subtract(procurementOrder.getAmountDiscount()));
-			update(procurementOrder);
+//			Article article = stockMovement.getArticle();
+//			ProcurementOrderItem searchEntity = new ProcurementOrderItem();
+//			searchEntity.setArticle(article);
+//			DeliveryItem deliveryItem = new DeliveryItem();
+//			deliveryItem.setInternalPic(stockMovement.getInternalPic());
+//			deliveryItem.setArticle(stockMovement.getArticle());
+//			List<DeliveryItem> foundDI = deliveryItemEJB.findBy(deliveryItem, 0, 1, new SingularAttribute[]{DeliveryItem_.internalPic, DeliveryItem_.article});
+//			if(foundDI==null) throw new IllegalStateException("Deliveryitem associated with this stock movement not found.");
+//			deliveryItem = foundDI.iterator().next();
+//			List<ProcurementOrderItem> found = procurementOrderItemEJB.findBy(searchEntity, 0, 1, new SingularAttribute[]{ProcurementOrderItem_.article, ProcurementOrderItem_.poStatus});
+//			ProcurementOrderItem procurementOrderItem = null;
+//			if(found.isEmpty()){
+//				Login user = securityUtil.getConnectedUser();
+//				Agency agency = user.getAgency();
+//				procurementOrderItem = new ProcurementOrderItem();
+//				procurementOrderItem.setArticle(article);
+//				procurementOrderItem.setArticleName(deliveryItem.getArticleName());
+//				procurementOrderItem.setCreatingUser(user);
+//				procurementOrderItem.setMainPic(article.getPic());
+//				procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
+//				procurementOrderItem.setProductRecCreated(new Date());
+//				procurementOrderItem.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+//				procurementOrderItem.setQtyOrdered(BigDecimal.ZERO);
+//				procurementOrderItem.setSalesPricePU(deliveryItem.getSalesPricePU());
+//				procurementOrderItem.setSecondaryPic(deliveryItem.getSecondaryPic());
+//				procurementOrderItem.setStockQuantity(article.getQtyInStock());
+//				procurementOrderItem.setValid(Boolean.FALSE);
+//				ProcurementOrder procurementOrder = new ProcurementOrder();
+//				procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
+//				Supplier supplier = deliveryItem.getDelivery().getSupplier();
+//				procurementOrder.setSupplier(supplier);
+//				List<ProcurementOrder> foundPOs = findBy(procurementOrder, 0, 1, new SingularAttribute[]{ProcurementOrder_.poStatus,ProcurementOrder_.supplier});
+//				if(!foundPOs.isEmpty()){
+//					procurementOrder = foundPOs.iterator().next();
+//				} else {
+//					procurementOrder = new ProcurementOrder();
+//					procurementOrder.setAgency(agency);
+//					procurementOrder.setCreatedDate(new Date());
+//					procurementOrder.setCreatingUser(user);
+//					procurementOrder.setPoStatus(DocumentProcessingState.ONGOING);
+//					procurementOrder.setProcurementOrderNumber(SequenceGenerator.getSequence(SequenceGenerator.PORCHASE_SEQUENCE_PREFIXE));
+//					procurementOrder.setProcurementOrderType(ProcurementOrderType.ORDINARY);
+//					procurementOrder.setSupplier(supplier);
+//					procurementOrder = create(procurementOrder);
+//				}
+//				procurementOrderItem.setProcurementOrder(procurementOrder);
+//				procurementOrderItem = procurementOrderItemEJB.create(procurementOrderItem);
+//			} else {
+//				procurementOrderItem = found.iterator().next();
+//			}
+//
+//			BigDecimal diffAmountAfterTax = null;
+//			if(stockMovement.isReturnStockMovement()){
+//				procurementOrderItem.setQtyOrdered(procurementOrderItem.getQtyOrdered().subtract(stockMovement.getMovedQty()));
+//				diffAmountAfterTax = BigDecimal.ZERO.subtract(stockMovement.getMovedQty()).multiply(procurementOrderItem.getPurchasePricePU());
+//			}else {
+//				procurementOrderItem.setQtyOrdered(procurementOrderItem.getQtyOrdered().add(stockMovement.getMovedQty()));
+//				diffAmountAfterTax = stockMovement.getMovedQty().multiply(procurementOrderItem.getPurchasePricePU());
+//			}
+//			procurementOrderItem.setTotalPurchasePrice(procurementOrderItem.getQtyOrdered().multiply(procurementOrderItem.getPurchasePricePU()));
+//			procurementOrderItem = procurementOrderItemEJB.update(procurementOrderItem);
+//
+//			ProcurementOrder procurementOrder = procurementOrderItem.getProcurementOrder();
+//			procurementOrder.setAmountAfterTax(procurementOrder.getAmountAfterTax().add(diffAmountAfterTax));
+//			BigDecimal vatRateRaw = procurementOrderItem.getArticle().getVat()==null?BigDecimal.ZERO:VAT.getRawRate(procurementOrderItem.getArticle().getVat().getRate());
+//			BigDecimal diffAmountBeforeTax = diffAmountAfterTax.divide(BigDecimal.ONE.add(vatRateRaw), 4, RoundingMode.HALF_EVEN);
+//			procurementOrder.setAmountBeforeTax(procurementOrder.getAmountBeforeTax().add(diffAmountBeforeTax));
+//			BigDecimal difAmountVat = diffAmountAfterTax.subtract(diffAmountBeforeTax);
+//			procurementOrder.setTaxAmount(procurementOrder.getTaxAmount().add(difAmountVat));
+//			procurementOrder.setNetAmountToPay(procurementOrder.getAmountAfterTax().subtract(procurementOrder.getAmountDiscount()));
+//			update(procurementOrder);
 		}
 	}
 }

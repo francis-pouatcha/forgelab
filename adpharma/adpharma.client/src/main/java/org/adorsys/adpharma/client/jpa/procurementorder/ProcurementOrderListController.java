@@ -20,6 +20,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.events.ProcurementOrderId;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemProcurementOrder;
@@ -93,6 +95,10 @@ public class ProcurementOrderListController implements EntityController
 	private ProcurementOrderRegistration registration;
 
 	@Inject
+	@PrintRequestedEvent
+	private Event<ProcurementOrderId> poPrintRequestEvent ;
+
+	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ProcurementOrderPreparationData> orderPreparationEventData;
 
@@ -103,6 +109,19 @@ public class ProcurementOrderListController implements EntityController
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
+		/**
+		 * handle print action
+		 */
+		listView.getPrintButton().setOnAction(new  EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					poPrintRequestEvent.fire(new ProcurementOrderId(selectedItem.getId()));
+
+			}
+		});
 		listView.getDataList().getSelectionModel().selectedItemProperty()
 		.addListener(new ChangeListener<ProcurementOrder>()
 				{
@@ -114,7 +133,7 @@ public class ProcurementOrderListController implements EntityController
 				if (newValue != null){
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-                   
+
 					ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
 					poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
 					poisi.getFieldNames().add("procurementOrder");
@@ -373,6 +392,6 @@ public class ProcurementOrderListController implements EntityController
 	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		}
+		listView.getDataList().getItems().clear();
+	}
 }
