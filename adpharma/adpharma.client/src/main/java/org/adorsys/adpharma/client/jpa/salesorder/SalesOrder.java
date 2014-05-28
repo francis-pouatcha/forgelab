@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -244,7 +245,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (salesOrderType == null)
 		{
-			salesOrderType = new SimpleObjectProperty<SalesOrderType>();
+			salesOrderType = new SimpleObjectProperty<SalesOrderType>(SalesOrderType.CASH_SALE);
 		}
 		return salesOrderType;
 	}
@@ -263,7 +264,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountBeforeTax == null)
 		{
-			amountBeforeTax = new SimpleObjectProperty<BigDecimal>();
+			amountBeforeTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountBeforeTax;
 	}
@@ -282,7 +283,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountVAT == null)
 		{
-			amountVAT = new SimpleObjectProperty<BigDecimal>();
+			amountVAT = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountVAT;
 	}
@@ -301,7 +302,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountDiscount == null)
 		{
-			amountDiscount = new SimpleObjectProperty<BigDecimal>();
+			amountDiscount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountDiscount;
 	}
@@ -320,7 +321,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (totalReturnAmount == null)
 		{
-			totalReturnAmount = new SimpleObjectProperty<BigDecimal>();
+			totalReturnAmount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return totalReturnAmount;
 	}
@@ -339,7 +340,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountAfterTax == null)
 		{
-			amountAfterTax = new SimpleObjectProperty<BigDecimal>();
+			amountAfterTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountAfterTax;
 	}
@@ -358,7 +359,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (creationDate == null)
 		{
-			creationDate = new SimpleObjectProperty<Calendar>();
+			creationDate = new SimpleObjectProperty<Calendar>(new GregorianCalendar());
 		}
 		return creationDate;
 	}
@@ -594,7 +595,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (discountRate == null)
 		{
-			discountRate = new SimpleObjectProperty<BigDecimal>();
+			discountRate = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return discountRate;
 	}
