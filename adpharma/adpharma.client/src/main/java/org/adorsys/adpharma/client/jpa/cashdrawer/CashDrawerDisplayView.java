@@ -1,8 +1,11 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -21,7 +24,6 @@ import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceCreatingUser;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
@@ -29,6 +31,11 @@ import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeListCellFatory;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderRestToPay;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgent;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
@@ -62,10 +69,10 @@ public class CashDrawerDisplayView
 	private Button confirmSelectionButton;
 
 	@FXML
-	private TableView<CustomerInvoice> invoicesDataList ;
+	private TableView<SalesOrder> salesOrderDataList ;
 
 	@FXML
-	private TableView<CustomerInvoiceItem> invoiceItemDataList ;
+	private TableView<SalesOrderItem> invoiceItemDataList ;
 
 	@FXML
 	private TableView<PaymentItem> paymentItemDataList ;
@@ -82,7 +89,7 @@ public class CashDrawerDisplayView
 	private BigDecimalField amountDiscount;
 
 
-	private ComboBox<CustomerInvoiceCreatingUser> creatingUser;
+	private ComboBox<SalesOrderSalesAgent> creatingUser;
 
 	private Button cancelButton;
 
@@ -106,7 +113,7 @@ public class CashDrawerDisplayView
 	private Button closeCashDrawerButton;
 
 	@Inject
-	@Bundle({ CrudKeys.class, CashDrawer.class ,CustomerInvoice.class , CustomerInvoiceItem.class })
+	@Bundle({ CrudKeys.class, CashDrawer.class ,CustomerInvoice.class , CustomerInvoiceItem.class, SalesOrder.class })
 	private ResourceBundle resourceBundle;
 
 	@Inject
@@ -116,7 +123,7 @@ public class CashDrawerDisplayView
 	private Locale locale;
 
 	@Inject
-	private InvoiceTypeConverter invoiceTypeConverter;
+	private SalesOrderTypeConverter salesOrderTypeConverter;
 
 	@FXML
 	private GridPane paymentGrid ;
@@ -147,7 +154,7 @@ public class CashDrawerDisplayView
 	{
 		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
-		buildInvoiceDataList(viewBuilder);
+		buildSalesOrderDataList(viewBuilder);
 		buildInvoiceItemDataList(viewBuilder);
 		buildPaymentItemDataList(viewBuilder);
 
@@ -171,23 +178,23 @@ public class CashDrawerDisplayView
         viewBuilder.addStringColumn(paymentItemDataList, "paidBy", "PaymentItem_paidBy_description.title", paymentResourceBundle,300d);
 	}
 	
-	public void buildInvoiceDataList(ViewBuilder viewBuilder){
-		viewBuilder.addEnumColumn(invoicesDataList, "invoiceType", "CustomerInvoice_invoiceType_description.title", resourceBundle, invoiceTypeConverter);
-		viewBuilder.addStringColumn(invoicesDataList, "invoiceNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
-		viewBuilder.addDateColumn(invoicesDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		viewBuilder.addStringColumn(invoicesDataList, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
-		viewBuilder.addStringColumn(invoicesDataList, "cashed", "CustomerInvoice_cashed_description.title", resourceBundle);
+	public void buildSalesOrderDataList(ViewBuilder viewBuilder){
+		viewBuilder.addEnumColumn(salesOrderDataList, "salesOrderType", "CustomerInvoice_invoiceType_description.title", resourceBundle, salesOrderTypeConverter);
+		viewBuilder.addStringColumn(salesOrderDataList, "soNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
+		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle);
+		viewBuilder.addStringColumn(salesOrderDataList, "cashed", "CustomerInvoice_cashed_description.title", resourceBundle);
 		// Field not displayed in table
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "taxAmount", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoicesDataList, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 	}
 
 	public void BuildPaymentGrid(){
@@ -269,13 +276,20 @@ public class CashDrawerDisplayView
 		view.bind(model);
 	}
 
-	public void bindInvoice(CustomerInvoice model){
-		invoiceNumber.textProperty().bindBidirectional(model.invoiceNumberProperty());
-		creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
+	public void bindInvoice(final SalesOrder model){
+		invoiceNumber.textProperty().bindBidirectional(model.soNumberProperty());
+		creatingUser.valueProperty().bindBidirectional(model.salesAgentProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
-		customerRestTopay.numberProperty().bindBidirectional(model.customerRestTopayProperty());
-		insurranceRestTopay.numberProperty().bindBidirectional(model.insurranceRestTopayProperty());
-		invoiceItemDataList.itemsProperty().bindBidirectional(model.invoiceItemsProperty());
+		model.amountAfterTaxProperty().addListener(new ChangeListener<BigDecimal>() {
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> source,
+					BigDecimal oldValue, BigDecimal newValue) {
+				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(model);
+				customerRestTopay.setNumber(restToPay.getCustomerRestToPay());
+				insurranceRestTopay.setNumber(restToPay.getInsuranceRestToPay());
+			}
+		});
+		invoiceItemDataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 	}
 
 	public void bindPayment(Payment model) {
@@ -329,11 +343,11 @@ public class CashDrawerDisplayView
 		return closeCashDrawerButton ;
 	}
 
-	public TableView<CustomerInvoice> getInvoicesDataList() {
-		return invoicesDataList;
+	public TableView<SalesOrder> getInvoicesDataList() {
+		return salesOrderDataList;
 	}
 
-	public TableView<CustomerInvoiceItem> getInvoiceItemDataList() {
+	public TableView<SalesOrderItem> getInvoiceItemDataList() {
 		return invoiceItemDataList;
 	}
 
@@ -363,6 +377,4 @@ public class CashDrawerDisplayView
 	public TableView<PaymentItem> getPaymentItemDataList() {
 		return paymentItemDataList;
 	}
-	
-	
 }

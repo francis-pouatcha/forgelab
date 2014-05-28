@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -451,4 +450,30 @@ public class SalesOrder implements Serializable
 	public void setDiscountRate(BigDecimal discountRate) {
 		this.discountRate = discountRate;
 	}
+	
+	public BigDecimal getNetToPay(){
+		return getAmountAfterTax();
+	}
+	public void setNetToPay(BigDecimal netToPay){}
+	
+	public BigDecimal getCustomerRestTopay(){
+		return getAmountAfterTax();
+	}
+	public void setCustomerRestTopay(BigDecimal customerRestToPay){}
+	
+	public BigDecimal getInsurranceRestTopay(){
+		return BigDecimal.ZERO;
+	}
+	public void setInsurranceRestTopay(BigDecimal insurranceRestToPay){}	
+	
+	public BigDecimal getAdvancePayment(){
+		return BigDecimal.ZERO;
+	}
+	public void setAdvancePayment(BigDecimal advancePayment){}
+	
+	public BigDecimal getTotalRestToPay(){
+		return getAmountAfterTax();
+	}
+	public void setTotalRestToPay(BigDecimal totalRestToPay){}
+	
 }

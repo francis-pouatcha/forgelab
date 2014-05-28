@@ -20,6 +20,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.login.Login;
@@ -681,4 +682,44 @@ public class SalesOrder implements Cloneable
 		e.agency = agency;
 		return e;
 	}
+	
+	private List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>();
+	
+	public void writeInvoices(List<CustomerInvoice> invoices){
+		this.customerInvoices = invoices;
+	}
+	
+	public List<CustomerInvoice> readInvoices(){
+		return this.customerInvoices;
+	}
+	
+	public BigDecimal getNetToPay(){
+		return getAmountAfterTax();
+	}
+	public void setNetToPay(BigDecimal netToPay){}
+	
+	public BigDecimal getCustomerRestTopay(){
+		return new SalesOrderRestToPay(this).getCustomerRestToPay();
+	}
+	public void setCustomerRestTopay(BigDecimal customerRestToPay){}
+	
+	public BigDecimal getInsurranceRestTopay(){
+		return new SalesOrderRestToPay(this).getInsuranceRestToPay();
+	}
+	public void setInsurranceRestTopay(BigDecimal insurranceRestToPay){}	
+	
+	public BigDecimal getAdvancePayment(){
+		return BigDecimal.ZERO;
+	}
+	public void setAdvancePayment(BigDecimal advancePayment){}
+	
+	public BigDecimal getTotalRestToPay(){
+		return getAmountAfterTax();
+	}
+	public void setTotalRestToPay(BigDecimal totalRestToPay){}
+
+	public void clearInvoices() {
+		this.customerInvoices.clear();
+	}
+
 }
