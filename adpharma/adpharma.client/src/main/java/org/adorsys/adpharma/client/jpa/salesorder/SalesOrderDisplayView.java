@@ -329,10 +329,8 @@ public class SalesOrderDisplayView
 					BigDecimal oldVal, BigDecimal newVal) {
 				if(newVal==null){
 					orderedQty.setNumber(BigDecimal.ZERO);
-				} else {
-					totalSalePrice.setNumber(newVal.multiply(salesPricePU.getNumber()));
 				}
-
+				totalSalePrice.setNumber(orderedQty.getNumber().multiply(salesPricePU.getNumber()));
 			}});
 		salesPricePU.numberProperty().addListener(new ChangeListener<BigDecimal>() {
 			@Override
@@ -340,10 +338,8 @@ public class SalesOrderDisplayView
 					BigDecimal oldVal, BigDecimal newVal) {
 				if(newVal==null){
 					salesPricePU.setNumber(BigDecimal.ZERO);
-				} else {
-					totalSalePrice.setNumber(newVal.multiply(orderedQty.getNumber()));
-				}
-
+				} 
+				totalSalePrice.setNumber(salesPricePU.getNumber().multiply(orderedQty.getNumber()));
 			}});
 	}
 

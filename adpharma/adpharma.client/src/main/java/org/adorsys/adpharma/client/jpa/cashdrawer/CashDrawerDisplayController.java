@@ -31,14 +31,10 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSalesOrder;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemInvoice;
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchInput;
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchResult;
-import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemSearchService;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherCheckingView;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherCustomer;
@@ -49,7 +45,6 @@ import org.adorsys.adpharma.client.jpa.disbursement.Disbursement;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementAgency;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashDrawer;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceType;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -59,6 +54,16 @@ import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPaidBy;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCancelService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderRestToPay;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchService;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchResult;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchService;
+import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -109,9 +114,9 @@ public class CashDrawerDisplayController implements EntityController
 	private Event<CashDrawer> removeRequest;
 
 	@Inject
-	private CustomerInvoiceSearchService customerInvoiceSearchService;
+	private SalesOrderSearchService salesOrderSearchService;
 	@Inject
-	private ServiceCallFailedEventHandler customerInvoiceSearchServiceFailedHandler;
+	private ServiceCallFailedEventHandler salesOrderSearchServiceFailedHandler;
 
 	@Inject
 	private CashDrawerCreateService cashDrawerCreateService ;
@@ -131,9 +136,9 @@ public class CashDrawerDisplayController implements EntityController
 	private ErrorMessageDialog noCashDrawerErrorMessageDialog;
 
 	@Inject
-	private CustomerInvoiceItemSearchService customerInvoiceItemSearchService ;
+	private SalesOrderItemSearchService salesOrderItemSearchService ;
 	@Inject
-	private ServiceCallFailedEventHandler customerInvoiceItemSearchServiceFailedHandler;
+	private ServiceCallFailedEventHandler salesOrderItemSearchServiceFailedHandler;
 
 	@Inject 
 	private PaymentCreateService paymentCreateService;
@@ -163,7 +168,7 @@ public class CashDrawerDisplayController implements EntityController
 	private final PaymentManager paymentManager = new PaymentManager();
 
 	@Inject
-	private CustomerInvoice proccessingInvoice;
+	private SalesOrder proccessingOrder;
 
 	@Inject
 	private SalesOrderCancelService orderCancelService;
@@ -194,6 +199,10 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	private CustomerVoucherCheckingView voucherCheckingView ;
 	
+	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService;
+	@Inject
+	private ServiceCallFailedEventHandler customerInvoiceServiceFailedHandler;
 
 
 	@PostConstruct
@@ -202,7 +211,7 @@ public class CashDrawerDisplayController implements EntityController
 
 		//		displayView.getOpenCashDrawerButton().disableProperty().bind(registration.canCreateProperty().not());
 		//		displayView.getCloseCashDrawerButton().disableProperty().bind(registration.canEditProperty().not());
-		displayView.bindInvoice(proccessingInvoice);
+		displayView.bindInvoice(proccessingOrder);
 		//		paymentManager.getPayment().paymentItemsProperty().bind(displayView.getPaymentItemDataList().itemsProperty());
 		displayView.bindPayment(paymentManager.getPayment());
 
@@ -218,10 +227,10 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) 
 			{
-				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
+				SalesOrder selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
 					SalesOrder salesOrder = new SalesOrder() ;
-					PropertyReader.copy(selectedItem.getSalesOrder(), salesOrder);
+					PropertyReader.copy(selectedItem, salesOrder);
 					Action showConfirm = Dialogs.create().message("etes vous sure de vouloir annuler cette facture ? ").showConfirm();
 					if(Dialog.Actions.YES.equals(showConfirm))
 						orderCancelService.setSalesOrder(salesOrder).start();
@@ -239,9 +248,13 @@ public class CashDrawerDisplayController implements EntityController
 				SalesOrder so = s.getValue();
 				event.consume();
 				s.reset();
-				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
+				SalesOrder selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
 				displayView.getInvoicesDataList().getItems().remove(selectedItem);
-				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
+				PropertyReader.copy(new SalesOrder(), proccessingOrder);
+				// Reset invoices.
+				
+				proccessingOrder.clearInvoices();
+
 				displayView.getPaymentItemDataList().getItems().clear();
 			}
 		});
@@ -330,24 +343,30 @@ public class CashDrawerDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				handleCustomerInvoiceSearchEvent();
+				handleSalesOrderSearchEvent();
 			}
 		});
 		displayView.getInvoicesDataList().setOnMouseClicked(new  EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				CustomerInvoice selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
+				SalesOrder selectedItem = displayView.getInvoicesDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-					PropertyReader.copy(selectedItem, proccessingInvoice);
+					PropertyReader.copy(selectedItem, proccessingOrder);
 
-					CustomerInvoiceItemSearchInput ciisi = new CustomerInvoiceItemSearchInput();
-					ciisi.getEntity().setInvoice(new CustomerInvoiceItemInvoice(selectedItem));
-					ciisi.getFieldNames().add("invoice");
+					SalesOrderItemSearchInput ciisi = new SalesOrderItemSearchInput();
+					ciisi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(selectedItem));
+					ciisi.getFieldNames().add("salesOrder");
 					ciisi.setMax(-1);
 					activate();
 					clearPaymentDataList();
-					customerInvoiceItemSearchService.setSearchInputs(ciisi).start();
+					salesOrderItemSearchService.setSearchInputs(ciisi).start();
+					
+					CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
+					searchInputs.getEntity().setSalesOrder(new CustomerInvoiceSalesOrder(selectedItem));
+					searchInputs.getFieldNames().add("salesOrder");
+					searchInputs.setMax(-1);
+					customerInvoiceSearchService.setSearchInputs(searchInputs).start();
 				}
 
 			}
@@ -376,6 +395,38 @@ public class CashDrawerDisplayController implements EntityController
 		});
 
 
+		salesOrderSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderSearchService s = (SalesOrderSearchService) event.getSource();
+				SalesOrderSearchResult searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				List<SalesOrder> resultList = searchResult.getResultList();
+				displayView.getInvoicesDataList().getItems().setAll(resultList);
+
+			}
+		});
+		salesOrderSearchService.setOnFailed(salesOrderSearchServiceFailedHandler);
+
+		salesOrderItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderItemSearchService s = (SalesOrderItemSearchService) event.getSource();
+				SalesOrderItemSearchResult searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				List<SalesOrderItem> resultList = searchResult.getResultList();
+				proccessingOrder.setSalesOrderItems(resultList);
+				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(proccessingOrder);
+				displayView.getAmount().setNumber(restToPay.getCustomerRestToPay());
+				displayView.getReceivedAmount().requestFocus();
+			}
+		});
+		salesOrderItemSearchService.setOnFailed(salesOrderItemSearchServiceFailedHandler);
+
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -384,29 +435,11 @@ public class CashDrawerDisplayController implements EntityController
 				CustomerInvoiceSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<CustomerInvoice> resultList = searchResult.getResultList();
-				displayView.getInvoicesDataList().getItems().setAll(resultList);
-
+				List<CustomerInvoice> resultList2 = searchResult.getResultList();
+				proccessingOrder.writeInvoices(resultList2);
 			}
 		});
-		customerInvoiceSearchService.setOnFailed(customerInvoiceSearchServiceFailedHandler);
-
-		customerInvoiceItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				CustomerInvoiceItemSearchService s = (CustomerInvoiceItemSearchService) event.getSource();
-				CustomerInvoiceItemSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				List<CustomerInvoiceItem> resultList = searchResult.getResultList();
-				proccessingInvoice.setInvoiceItems(resultList);
-				displayView.getAmount().setNumber(proccessingInvoice.getCustomerRestTopay());
-				displayView.getReceivedAmount().requestFocus();
-			}
-		});
-		customerInvoiceItemSearchService.setOnFailed(customerInvoiceItemSearchServiceFailedHandler);
-
+		customerInvoiceSearchService.setOnFailed(customerInvoiceServiceFailedHandler);
 	}
 
 
@@ -473,14 +506,14 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.bind(this.displayedEntity);
 	}
 
-	public void handleCustomerInvoiceSearchEvent(){
-		CustomerInvoiceSearchInput csi = new CustomerInvoiceSearchInput();
+	public void handleSalesOrderSearchEvent(){
+		SalesOrderSearchInput csi = new SalesOrderSearchInput();
 		csi.getEntity().setCashed(Boolean.FALSE);
-		csi.getEntity().setInvoiceType(InvoiceType.CASHDRAWER);
+		csi.getEntity().setSalesOrderType(SalesOrderType.CASH_SALE);
 		csi.getFieldNames().add("cashed");
 		csi.getFieldNames().add("invoiceType");
 		csi.setMax(100);
-		customerInvoiceSearchService.setSearchInputs(csi).start();
+		salesOrderSearchService.setSearchInputs(csi).start();
 	}
 
 	public void loadOpenCashDrawer(){
@@ -721,7 +754,7 @@ public class CashDrawerDisplayController implements EntityController
 					paymentItem.setReceivedAmount(displayView.getReceivedAmount().getNumber());
 					paymentItem.setDocumentNumber(displayView.getDocNumber().getText());
 					PaymentItemPaidBy paidBy = new PaymentItemPaidBy();
-					PropertyReader.copy(proccessingInvoice.getCustomer(), paidBy);
+					PropertyReader.copy(proccessingOrder.getCustomer(), paidBy);
 					paymentItem.setPaidBy(paidBy);
 					displayView.getPaymentItemDataList().getItems().add(paymentItem);
 					int size = displayView.getPaymentItemDataList().getItems().size();
@@ -811,7 +844,8 @@ public class CashDrawerDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				BigDecimal payAmount = getPayAmount();
-				BigDecimal customerRestTopay = proccessingInvoice.getCustomerRestTopay();
+				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(proccessingOrder);
+				BigDecimal customerRestTopay = restToPay.getCustomerRestToPay();
 				if(customerRestTopay.compareTo(payAmount)<=0){
 					processPayment();
 				}else {
@@ -841,10 +875,10 @@ public class CashDrawerDisplayController implements EntityController
 				s.reset();
 				// Print receipt here.
 				printPaymentReceiptRequestedEvent.fire(paymentId);
-				displayView.getInvoicesDataList().getItems().remove(proccessingInvoice);
+				displayView.getInvoicesDataList().getItems().remove(proccessingOrder);
 				PropertyReader.copy(new Payment(), payment);
-				PropertyReader.copy(new CustomerInvoice(), proccessingInvoice);
-
+				PropertyReader.copy(new SalesOrder(), proccessingOrder);
+				proccessingOrder.clearInvoices();
 				deactivate();
 
 			}
@@ -853,10 +887,13 @@ public class CashDrawerDisplayController implements EntityController
 	public void processPayment(){
 		Payment payment = paymentManager.getPayment();
 		payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));
-		PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = new PaymentCustomerInvoiceAssoc();
-		paymentCustomerInvoiceAssoc.setSource(payment);
-		paymentCustomerInvoiceAssoc.setTarget(proccessingInvoice);
-		payment.addToInvoices(paymentCustomerInvoiceAssoc);
+		List<CustomerInvoice> invoices2 = proccessingOrder.readInvoices();
+		for (CustomerInvoice customerInvoice : invoices2) {
+			PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = new PaymentCustomerInvoiceAssoc();
+			paymentCustomerInvoiceAssoc.setSource(payment);
+			paymentCustomerInvoiceAssoc.setTarget(customerInvoice);
+			payment.addToInvoices(paymentCustomerInvoiceAssoc);
+		}
 
 		ObservableList<PaymentItem> list = displayView.getPaymentItemDataList().getItems();
 
@@ -879,7 +916,7 @@ public class CashDrawerDisplayController implements EntityController
 			paymentItem.setReceivedAmount(BigDecimal.ZERO);
 			paymentItem.setDocumentNumber("");
 			PaymentItemPaidBy paymentItemPaidBy = new PaymentItemPaidBy();
-			PropertyReader.copy(paymentCustomerInvoiceAssoc.getTarget().getCustomer(), paymentItemPaidBy);
+			PropertyReader.copy(proccessingOrder.getCustomer(), paymentItemPaidBy);
 			paymentItem.setPaidBy(paymentItemPaidBy);
 			displayView.getPaymentItemDataList().getItems().add(paymentItem);
 		}
@@ -954,7 +991,4 @@ public class CashDrawerDisplayController implements EntityController
 	public CashDrawerDisplayView getDisplayView() {
 		return displayView;
 	}
-
-
-	
 }

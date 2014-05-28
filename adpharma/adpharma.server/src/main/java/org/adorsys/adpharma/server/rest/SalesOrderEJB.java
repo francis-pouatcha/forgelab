@@ -32,6 +32,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class SalesOrderEJB
@@ -104,9 +105,11 @@ public class SalesOrderEJB
 			Customer otherCustomers = customerEJB.otherCustomers();
 			entity.setCustomer(otherCustomers);
 		}
-		SalesOrder save = repository.save(attach(entity)); 
-		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
-		return repository.save(save);
+		entity.setSoNumber(StringUtils.upperCase(SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE)));
+		return repository.save(attach(entity)); 
+//		SalesOrder save = repository.save(attach(entity)); 
+//		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
+//		return repository.save(save);
 	}
 
 	public SalesOrder deleteById(Long id)
@@ -206,22 +209,23 @@ public class SalesOrderEJB
 		returnSalesEvent.fire(update);
 		return update;
 	}
-	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			return  findById(salesOrder.getId()) ;
 		Login realSaller = getRealSaller(salesOrder.getSalesKey());
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
-		SalesOrder original = findById(salesOrder.getId());
+//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
-		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
-		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
-		salesOrder.setAmountVAT(original.getAmountVAT());
-		if(salesOrder.getAmountDiscount()==null)
-			salesOrder.setAmountDiscount(BigDecimal.ZERO);
+		
+//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
+//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
+//		salesOrder.setAmountVAT(original.getAmountVAT());
+//		if(salesOrder.getAmountDiscount()==null)
+//			salesOrder.setAmountDiscount(BigDecimal.ZERO);
 
-		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		salesOrder.setSalesAgent(realSaller);
+		rebuildSaleOrder(salesOrder);
+		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		SalesOrder closedSales = update(salesOrder);
 		salesOrderClosedEvent.fire(closedSales);
 		return closedSales;
@@ -266,52 +270,97 @@ public class SalesOrderEJB
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private void updateSalesOrder(SalesOrderItem updatingSalesOrderItem, boolean deleted) {
 
-		SalesOrderItem searchInput = new SalesOrderItem();
 		SalesOrder salesOrder = updatingSalesOrderItem.getSalesOrder();
 		salesOrder = findById(salesOrder.getId());
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			throw new IllegalStateException("Sales order closed.");
-		searchInput.setSalesOrder(salesOrder);
+		
+		VAT vat = updatingSalesOrderItem.getVat();
+		BigDecimal vatRate = vat==null?BigDecimal.ZERO:VAT.getRawRate(vat.getRate());
+		BigDecimal totalSalePrice = updatingSalesOrderItem.getTotalSalePrice();
+		BigDecimal amountBeforeTax = totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 8, RoundingMode.HALF_EVEN);
+		BigDecimal discountRateAbs = salesOrder.getDiscountRate();
+		if(discountRateAbs!=null && discountRateAbs.compareTo(BigDecimal.ZERO)!=0){
+			BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
+			BigDecimal discount = amountBeforeTax.multiply(discaountRate);
+			BigDecimal salesOrderDiscount = salesOrder.getAmountDiscount()==null?BigDecimal.ZERO:salesOrder.getAmountDiscount();
+			
+			if(deleted){
+				salesOrder.setAmountDiscount(salesOrderDiscount.subtract(discount));
+			} else {
+				salesOrder.setAmountDiscount(salesOrderDiscount.add(discount));
+			}
+			amountBeforeTax = amountBeforeTax.subtract(discount);
+		}
+		BigDecimal salesOrderAmountBeforeTax = salesOrder.getAmountBeforeTax()==null?BigDecimal.ZERO:salesOrder.getAmountBeforeTax();
+		BigDecimal salesOrderTaxAmount = salesOrder.getAmountVAT()==null?BigDecimal.ZERO:salesOrder.getAmountVAT();
+		BigDecimal amountVAT = amountBeforeTax.multiply(vatRate);
+		BigDecimal amountAfterTax = amountBeforeTax.add(amountVAT);
+		BigDecimal salesOrderAmountAfterTax = salesOrder.getAmountAfterTax()==null?BigDecimal.ZERO:salesOrder.getAmountAfterTax();
 
+		if(deleted){
+			salesOrder.setAmountBeforeTax(salesOrderAmountBeforeTax.subtract(amountBeforeTax));
+			salesOrder.setAmountVAT(salesOrderTaxAmount.subtract(amountVAT));
+			salesOrder.setAmountAfterTax(salesOrderAmountAfterTax.subtract(amountAfterTax));
+		} else {
+			salesOrder.setAmountBeforeTax(salesOrderAmountBeforeTax.add(amountBeforeTax));
+			salesOrder.setAmountVAT(salesOrderTaxAmount.add(amountVAT));
+			salesOrder.setAmountAfterTax(salesOrderAmountAfterTax.add(amountAfterTax));
+		}
+
+		salesOrder = update(salesOrder);
+		updatingSalesOrderItem.setSalesOrder(salesOrder);
+	}
+
+	private void rebuildSaleOrder(SalesOrder salesOrder) {
+		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
+			throw new IllegalStateException("Sales order closed.");
+
+		SalesOrderItem searchInput = new SalesOrderItem();
+		searchInput.setSalesOrder(salesOrder);
 		@SuppressWarnings("rawtypes")
 		SingularAttribute[] attributes = new SingularAttribute[]{SalesOrderItem_.salesOrder};
 		Long count = salesOrderItemEJB.countBy(searchInput, attributes );
 		int start = 0;
 		int max = 100;
-		BigDecimal amountAfterTax = BigDecimal.ZERO;
-		BigDecimal amountBeforeTax = BigDecimal.ZERO;
-		BigDecimal amountVAT = BigDecimal.ZERO;
+		
+		BigDecimal salesOrderAmountBeforeTax = BigDecimal.ZERO;
+		BigDecimal salesOrderTaxAmount = BigDecimal.ZERO;
+		BigDecimal salesOrderDiscount = BigDecimal.ZERO;
+		BigDecimal salesOrderAmountAfterTax = BigDecimal.ZERO;
+		BigDecimal discountRateAbs = salesOrder.getDiscountRate();
+		BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
+		
 		while(start<=count){
 			List<SalesOrderItem> found = salesOrderItemEJB.findBy(searchInput, start , max, attributes);
 			start +=max;
 
 			for (SalesOrderItem salesOrderItem : found) {
-
-				// use the current event object. Not sure about transactional behavior here.
-				if(updatingSalesOrderItem.getId().equals(salesOrderItem.getId())){
-					if(deleted) continue;// do not account for the deleted item. In case it appears here.
-					salesOrderItem = updatingSalesOrderItem;
-				}
-
-				amountAfterTax=amountAfterTax.add(salesOrderItem.getTotalSalePrice());
 				VAT vat = salesOrderItem.getVat();
-				if(vat!=null){
-					amountVAT = amountVAT.add(salesOrderItem.getTotalSalePrice().multiply(vat.getRate()).divide(HUNDRED, 4, RoundingMode.HALF_EVEN));
+				BigDecimal vatRate = vat==null?BigDecimal.ZERO:VAT.getRawRate(vat.getRate());
+				BigDecimal totalSalePrice = salesOrderItem.getTotalSalePrice();
+				BigDecimal amountBeforeTax = totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 8, RoundingMode.HALF_EVEN);
+				if(discountRateAbs!=null && discountRateAbs.compareTo(BigDecimal.ZERO)!=0){
+					BigDecimal discount = amountBeforeTax.multiply(discaountRate);
+					salesOrderDiscount = salesOrderDiscount.add(discount);					
+					amountBeforeTax = amountBeforeTax.subtract(discount);
 				}
-				amountBeforeTax = amountAfterTax.subtract(amountVAT);
+				BigDecimal amountVAT = amountBeforeTax.multiply(vatRate);
+				BigDecimal amountAfterTax = amountBeforeTax.add(amountVAT);
+				
+				salesOrderAmountBeforeTax = salesOrderAmountBeforeTax.add(amountBeforeTax);
+				salesOrderTaxAmount = salesOrderTaxAmount.add(amountVAT);
+				salesOrderAmountAfterTax = salesOrderAmountAfterTax.add(amountAfterTax);
 			}
-
 		}
-		salesOrder.setAmountAfterTax(amountAfterTax);
-		salesOrder.setAmountBeforeTax(amountBeforeTax);
-		salesOrder.setAmountVAT(amountVAT);
-		salesOrder = update(salesOrder);
-		updatingSalesOrderItem.setSalesOrder(salesOrder);
-	}
 
+		salesOrder.setAmountAfterTax(salesOrderAmountAfterTax);
+		salesOrder.setAmountBeforeTax(salesOrderAmountBeforeTax);
+		salesOrder.setAmountVAT(salesOrderTaxAmount);
+		salesOrder.setAmountDiscount(salesOrderDiscount);
+	}
 
 	@SuppressWarnings("unchecked")
 	private Login getRealSaller(String saleKey){

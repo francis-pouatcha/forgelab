@@ -35,7 +35,7 @@
 								</VBox>
 								<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
 								<TitledPane animated="false" text="Factures en attente de payement" textFill="#230b9a" />
-										<TableView fx:id="invoicesDataList" prefWidth="800.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+										<TableView fx:id="salesOrderDataList" prefWidth="800.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
 											<HBox.margin>
 												<Insets bottom="3.0" />
 											</HBox.margin>

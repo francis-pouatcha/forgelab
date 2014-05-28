@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,6 +21,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerCustomerCategory;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.login.Login;
@@ -243,7 +245,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (salesOrderType == null)
 		{
-			salesOrderType = new SimpleObjectProperty<SalesOrderType>();
+			salesOrderType = new SimpleObjectProperty<SalesOrderType>(SalesOrderType.CASH_SALE);
 		}
 		return salesOrderType;
 	}
@@ -262,7 +264,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountBeforeTax == null)
 		{
-			amountBeforeTax = new SimpleObjectProperty<BigDecimal>();
+			amountBeforeTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountBeforeTax;
 	}
@@ -281,7 +283,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountVAT == null)
 		{
-			amountVAT = new SimpleObjectProperty<BigDecimal>();
+			amountVAT = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountVAT;
 	}
@@ -300,7 +302,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountDiscount == null)
 		{
-			amountDiscount = new SimpleObjectProperty<BigDecimal>();
+			amountDiscount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountDiscount;
 	}
@@ -319,7 +321,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (totalReturnAmount == null)
 		{
-			totalReturnAmount = new SimpleObjectProperty<BigDecimal>();
+			totalReturnAmount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return totalReturnAmount;
 	}
@@ -338,7 +340,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (amountAfterTax == null)
 		{
-			amountAfterTax = new SimpleObjectProperty<BigDecimal>();
+			amountAfterTax = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return amountAfterTax;
 	}
@@ -357,7 +359,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (creationDate == null)
 		{
-			creationDate = new SimpleObjectProperty<Calendar>();
+			creationDate = new SimpleObjectProperty<Calendar>(new GregorianCalendar());
 		}
 		return creationDate;
 	}
@@ -593,7 +595,7 @@ public class SalesOrder implements Cloneable
 	{
 		if (discountRate == null)
 		{
-			discountRate = new SimpleObjectProperty<BigDecimal>();
+			discountRate = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
 		}
 		return discountRate;
 	}
@@ -681,4 +683,44 @@ public class SalesOrder implements Cloneable
 		e.agency = agency;
 		return e;
 	}
+	
+	private List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>();
+	
+	public void writeInvoices(List<CustomerInvoice> invoices){
+		this.customerInvoices = invoices;
+	}
+	
+	public List<CustomerInvoice> readInvoices(){
+		return this.customerInvoices;
+	}
+	
+	public BigDecimal getNetToPay(){
+		return getAmountAfterTax();
+	}
+	public void setNetToPay(BigDecimal netToPay){}
+	
+	public BigDecimal getCustomerRestTopay(){
+		return new SalesOrderRestToPay(this).getCustomerRestToPay();
+	}
+	public void setCustomerRestTopay(BigDecimal customerRestToPay){}
+	
+	public BigDecimal getInsurranceRestTopay(){
+		return new SalesOrderRestToPay(this).getInsuranceRestToPay();
+	}
+	public void setInsurranceRestTopay(BigDecimal insurranceRestToPay){}	
+	
+	public BigDecimal getAdvancePayment(){
+		return BigDecimal.ZERO;
+	}
+	public void setAdvancePayment(BigDecimal advancePayment){}
+	
+	public BigDecimal getTotalRestToPay(){
+		return getAmountAfterTax();
+	}
+	public void setTotalRestToPay(BigDecimal totalRestToPay){}
+
+	public void clearInvoices() {
+		this.customerInvoices.clear();
+	}
+
 }
