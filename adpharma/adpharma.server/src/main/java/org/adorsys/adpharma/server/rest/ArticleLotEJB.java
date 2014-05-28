@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
@@ -28,9 +31,12 @@ import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
+import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
+import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -50,6 +56,9 @@ import org.apache.deltaspike.data.api.criteria.Criteria;
 public class ArticleLotEJB
 {
 
+	@Inject
+	private EntityManager em ;
+	
 	@Inject
 	private ArticleLotRepository repository;
 
@@ -147,7 +156,27 @@ public class ArticleLotEJB
 		return entity;
 	}
 
+	public List<ArticleLot> stockValue(ArticleSearchInput searchInput){
+		List<ArticleLot> stockVAlues = new ArrayList<ArticleLot>();
+		String query ="SELECT c FROM ArticleLot AS c WHERE c.stockQuantity != :stockQuantity  ";
 
+		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
+			query = query+ " AND c.agency = :agency ";
+		if(searchInput.getEntity().getSection()!=null&&searchInput.getEntity().getSection().getId()!=null)
+			query = query+ " AND c.article.section = :section ";
+		query = query+" ORDER BY c.article.articleName) " ;
+
+		Query querys = em.createQuery(query,ArticleLot.class) ;
+
+		querys.setParameter("stockQuantity",BigDecimal.ZERO);
+		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
+		querys.setParameter("agency", searchInput.getEntity().getAgency());
+		if(searchInput.getEntity().getSection()!=null&&searchInput.getEntity().getSection().getId()!=null)
+			querys.setParameter("section", searchInput.getEntity().getSection());
+		 stockVAlues = querys.getResultList();
+
+		return stockVAlues ;
+	}
 
 	@Inject
 	@DocumentProcessedEvent

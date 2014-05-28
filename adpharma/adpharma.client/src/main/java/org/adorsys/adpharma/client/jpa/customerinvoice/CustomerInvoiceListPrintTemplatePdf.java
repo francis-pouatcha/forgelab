@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
@@ -9,213 +10,223 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrinterData;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
-import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.exceptions.IllegalStateException;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.LineSeparator;
+
 
 public class CustomerInvoiceListPrintTemplatePdf {
+	
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private Document document;
 	private FileOutputStream fos;
-
-	private PdfPTable invoiceTable = null;
-
 	private final Login agent;
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
 	private final Agency agency ;
+	private String pdfFileName;
+	private PdfPTable reportTable;
+	
+	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 8);
 
-	private String fileName ;
+	
 	public CustomerInvoiceListPrintTemplatePdf(
 			Login agent, Agency agency,
 			ResourceBundle resourceBundle,
-			Locale locale) {
+			Locale locale) throws DocumentException {
 		this.agency =agency ;
 		this.agent = agent;
 		this.resourceBundle = resourceBundle;
 		this.locale = locale;
+		pdfFileName = "invoices" + ".pdf";
 
-		printReportHeader();
-		fillTableHaeder();
-	}
-
-	int artNamelenght = 68;
-	public void addItems(List<CustomerInvoice> customerInvoices) {
-
-		for (CustomerInvoice invoice : customerInvoices) {
-
-			newTableRow(invoice.getInvoiceNumber(), 
-					invoice.getCustomer().getFullName(),
-					invoice.getNetToPay(), 
-					invoice.getCreatingUser().getLoginName(), 
-					invoice.getAdvancePayment(),
-					invoice.getAmountDiscount(),
-					invoice.getCashed());
-		}
-	}
-
-	private void newTableRow(String invoivenumber, 
-			String customer,
-			BigDecimal netTopay,
-			String createdBy,
-			BigDecimal advencePay, 
-			BigDecimal discount,
-			Boolean cashed) {
-
-		Paragraph par = new Paragraph(new StandardText(invoivenumber));
-		borderlessCell(invoiceTable, par);
-
-		par = new Paragraph(new StandardText(createdBy));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(netTopay)));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new StandardText(customer));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(advencePay)));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(discount)));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new StandardText(cashed+""));
-		borderlessCell(invoiceTable, par);
-
-	}
-
-	private void fillTableHaeder() {
-		invoiceTable = new PdfPTable(new float[] { .2f, .38f, .06f,.1f,.06f,.1f,.1f });
-		invoiceTable.setWidthPercentage(100);
-
-		Paragraph par = new Paragraph(new BoldText(resourceBundle.getString("CustomerInvoice_invoiceNumber_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new CenterParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_creatingUser_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_netToPay_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_customer_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_advancePayment_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_amountDiscount_description.title")));
-		borderlessCell(invoiceTable, par);
-
-		par = new RightParagraph(new BoldText(resourceBundle.getString("CustomerInvoice_cashed_description.title")));
-		borderlessCell(invoiceTable, par);
-	}
-
-	private void printReportHeader() {
-		document = new Document(PageSize.A4, 50,50,50,50);
-		fileName = "invoiceList.pdf";
+		document = new Document(PageSize.A4,5,5,5,5);
+		File file = new File(pdfFileName);
 		try {
-			fos = new FileOutputStream(fileName);
-			PdfWriter.getInstance(document, fos);
-			document.open();
-		} catch (DocumentException e) {
-			throw new IllegalStateException(e);
+			fos = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException(e);
 		}
-
-		PdfPTable rt = new PdfPTable(2);
-		rt.setWidthPercentage(100);
-
-		Paragraph documentName = new CenterParagraph(new BoldText(
-				resourceBundle.getString("CustomerInvoicePrintTemplate_menuitem.title")));
-		borderlessCell(rt, documentName, 2, 1);
-
-		borderlessCell(rt, new LineSeparator(), 2, 1);
-
-		Paragraph paragraph = new Paragraph(new BoldText(agency.getName()));
-		borderlessCell(rt, paragraph, 2, 1);
-
-		paragraph = new Paragraph(new StandardText("Tel: "+agency.getPhone() ));
-		borderlessCell(rt, paragraph, 2, 1);
-
-
-		paragraph = new Paragraph(new StandardText("date : "+DateHelper.format(new Date(), "dd-MM-yyyy HH:mm") ));
-		borderlessCell(rt, paragraph, 1, 1);
-
-		borderlessCell(rt, new CenterParagraph(""));
-
 		try {
-			document.add(rt);
+			PdfWriter.getInstance(document, fos);
 		} catch (DocumentException e) {
 			throw new IllegalStateException(e);
 		}
+		resetDocument();
 
 	}
 
-	public void closeReport(){
-		try {
-			document.add(invoiceTable);
-			document.close();
-			IOUtils.closeQuietly(fos);
-		} catch (DocumentException e) {
-			throw new IllegalStateException(e);
+	
+	public void addItems(List<CustomerInvoice> items) {
+		BigDecimal totalnet = BigDecimal.ZERO;
+		BigDecimal totalrest = BigDecimal.ZERO;
+		BigDecimal totaldiscount = BigDecimal.ZERO;
+		BigDecimal totalAdvence = BigDecimal.ZERO;
+		for (CustomerInvoice item : items) {
+			totalnet = item.getNetToPay()!=null?totalnet.add(item.getNetToPay()):totalnet;
+			totalrest = item.getTotalRestToPay()!=null?totalrest.add(item.getTotalRestToPay()):totalrest;
+			totaldiscount = item.getAmountDiscount()!=null?totaldiscount.add(item.getAmountDiscount()):totaldiscount;
+			totalAdvence = item.getAdvancePayment()!=null?totalAdvence.add(item.getAdvancePayment()):totalAdvence;
+			newTableRow(item.getInvoiceNumber(),
+					DateHelper.format(item.getCreationDate().getTime(), "dd-MM-yyyy HH:mm"),
+					item.getCreatingUser().getLoginName(),
+					item.getNetToPay(),
+					item.getAmountDiscount(),
+					item.getAdvancePayment(),
+					item.getTotalRestToPay()
+					);
 		}
-
+		newTableRow("", "Total", null, totalnet, totaldiscount, totalAdvence,totalrest);
 	}
 
-	private static float fontSize = 8;
-	private static Font myBoldFont = FontFactory.getFont("Arial",
-			fontSize, Font.BOLD);
-	private static Font myFont = FontFactory.getFont("Arial", fontSize);
+	private void newTableRow(String invNumber, 
+			String date,
+			String saller,
+			BigDecimal net, 
+			BigDecimal discount, 
+			BigDecimal avance, 
+			BigDecimal rest) {
 
-	static class StandardText extends Phrase {
+
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(invNumber));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(date));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(saller)));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(net!=null?net.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(discount!=null?discount.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(avance!=null?avance.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(rest!=null?rest.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+	}
+
+	private void fillTableHaeder() throws DocumentException {
+		reportTable = new PdfPTable(new float[]{.15f,.17f,.18f,.12f,.12f,.12f,.12f});
+		reportTable.setWidthPercentage(100);
+		reportTable.setHeaderRows(1);
+
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_invoiceNumber_description.title")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_creationDate_description.title")));
+		reportTable.addCell(pdfPCell);
+
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_creatingUser_description.title")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_netToPay_description.title")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_amountDiscount_description.title")));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_advancePayment_description.title")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_totalRestToPay_description.title")));
+		reportTable.addCell(pdfPCell);
+
+	}
+	
+
+	private void printReportHeader() throws DocumentException {
+
+		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("CustomerInvoicePrintTemplate_menuitem.title")+agency));
+		paragraph.setAlignment(Element.ALIGN_CENTER);
+		document.add(paragraph);
+
+		paragraph = new Paragraph(new BoldText(agency!=null?agency.getName():"Toute les Agences"));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
+
+		paragraph = new Paragraph(new StandardText(agency!=null?agency.getFax():"FAX :" ));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
+
+		paragraph = new Paragraph(new StandardText(agency!=null?agency.getPhone():"Phone :"));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
+
+		paragraph = new Paragraph(new StandardText("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
+		paragraph.setAlignment(Element.ALIGN_RIGHT);
+		document.add(paragraph);
+
+		document.add(Chunk.NEWLINE);
+
+		document.add(new LineSeparator());
+
+		paragraph = new Paragraph(new StandardText("Print By : "+agent.getFullName()));
+		paragraph.setAlignment(Element.ALIGN_RIGHT);
+		document.add(paragraph);
+
+		document.add(Chunk.NEWLINE);
+	}
+
+
+
+	static class StandardText extends Phrase{
 		private static final long serialVersionUID = -5796192414147292471L;
-
 		StandardText() {
 			super();
-			setFont(myFont);
+			setFont(font);
 		}
-
 		StandardText(String text) {
 			super(text);
-			setFont(myFont);
+			setFont(font);
 		}
 	}
 
 	static class BoldText extends Phrase {
 		private static final long serialVersionUID = -6569891897489003768L;
-
 		BoldText() {
 			super();
-			setFont(myBoldFont);
+			setFont(boldFont);
 		}
-
 		BoldText(String text) {
 			super(text);
-			setFont(myBoldFont);
+			setFont(boldFont);
 		}
 	}
 
@@ -228,47 +239,31 @@ public class CustomerInvoiceListPrintTemplatePdf {
 		}
 
 		public RightParagraph(String string) {
-			this(new StandardText(string));
-		}
-	}
-
-	static class CenterParagraph extends Paragraph {
-
-		private static final long serialVersionUID = -5432125323541770319L;
-
-		public CenterParagraph(Phrase phrase) {
-			super(phrase);
-			setAlignment(Element.ALIGN_CENTER);
+			this(new Phrase(string));
 		}
 
-		public CenterParagraph(String string) {
-			this(new StandardText(string));
-		}
-	}
-	private PdfPCell borderlessCell(PdfPTable table, Element... elements) {
-		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setBorder(Rectangle.NO_BORDER);
-		for (Element element : elements) {
-			pdfPCell.addElement(element);
-		}
-		table.addCell(pdfPCell);
-		return pdfPCell;
+
 	}
 
-	private PdfPCell borderlessCell(PdfPTable table, Element element,
-			int colspan, int rowspan) {
-		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setBorder(Rectangle.NO_BORDER);
-		pdfPCell.setColspan(colspan);
-		pdfPCell.setRowspan(rowspan);
-		pdfPCell.addElement(element);
-		table.addCell(pdfPCell);
-		return pdfPCell;
+	public void closeDocument() {
+		try {
+			document.add(reportTable);
+		} catch (DocumentException e) {
+			throw new IllegalStateException(e);
+		}
+		document.close();
 	}
-
 
 	public String getFileName() {
-		return fileName;
+		return pdfFileName;
+	}
+
+	public void resetDocument() throws DocumentException{
+		document.open();
+		if(reportTable!=null)
+			reportTable.getRows().clear();
+		printReportHeader();
+		fillTableHaeder();
 	}
 
 }

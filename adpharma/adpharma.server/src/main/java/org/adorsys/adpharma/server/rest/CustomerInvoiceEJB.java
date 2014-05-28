@@ -119,7 +119,45 @@ public class CustomerInvoiceEJB {
 
 
 	public List<CustomerInvoice> findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput){
-		return repository.findByAgencyAndDateBetween(searchInput.getFromDate(), searchInput.getToDate(), searchInput.getAgency());
+		if(searchInput.getAgency()==null||searchInput.getAgency().getId()==null)
+			return repository.findByDateBetweenAndCashed(searchInput.getFromDate(), searchInput.getToDate(), Boolean.TRUE, InvoiceType.VOUCHER);
+		return repository.findByAgencyAndDateBetween(searchInput.getFromDate(), searchInput.getToDate(), searchInput.getAgency(), Boolean.TRUE, InvoiceType.VOUCHER);
+	}
+
+	public List<CustomerInvoice> customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput){
+		List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>();
+		String query ="SELECT SUM(c.netToPay) , SUM(c.amountDiscount) ,   SUM(c.advancePayment) ,  SUM(c.totalRestToPay) , DATE(c.creationDate) FROM CustomerInvoice AS c WHERE c.creationDate BETWEEN :fromDate AND :toDate ";
+
+		if(searchInput.getAgency()!=null)
+			query = query+ " AND c.agency = :agency ";
+		query = query+" AND c.cashed = :cashed OR c.invoiceType = :invoiceType GROUP BY DATE(c.creationDate) " ;
+
+		Query querys = em.createQuery(query) ;
+
+		querys.setParameter("fromDate", searchInput.getFromDate());
+		querys.setParameter("toDate", searchInput.getFromDate());
+		querys.setParameter("cashed", Boolean.TRUE);
+		querys.setParameter("invoiceType",InvoiceType.VOUCHER);
+		if(searchInput.getAgency()!=null)
+			querys.setParameter("agency",searchInput.getAgency());
+		List<Object[]> resultList = querys.getResultList();
+		for (Object[] objects : resultList) {
+			CustomerInvoice invoice = new CustomerInvoice();
+			BigDecimal netTopay = (BigDecimal) objects[0];
+			BigDecimal amountDiscount = (BigDecimal) objects[1];
+			BigDecimal advancePayment = (BigDecimal) objects[2];
+			BigDecimal totalRestToPay = (BigDecimal) objects[3];
+			Date date = (Date) objects[4];
+			invoice.setNetToPay(netTopay);
+			invoice.setAmountDiscount(amountDiscount);
+			invoice.setAdvancePayment(advancePayment);
+			invoice.setTotalRestToPay(totalRestToPay);
+			invoice.setCreationDate(date);
+			customerInvoices.add(invoice);
+
+		}
+
+		return customerInvoices ;
 	}
 
 	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput dataSearchInput){
@@ -263,20 +301,20 @@ public class CustomerInvoiceEJB {
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
 
 				updateCustomerInvoiceAmounts(ciItem, ci);
-				
+
 				agencyInvoiceMap.put(agency, ci);
 			}
 		}
 
 		processInvoices(agencyInvoiceMap.values(), salesOrder);
 	}
-	
+
 	private Collection<CustomerInvoice> processInvoices(Collection<CustomerInvoice> invoices, SalesOrder salesOrder){
 		BigDecimal amountAfterTax = salesOrder.getAmountAfterTax();
 		// DIscount will be shared proportionally to all invoices.
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = amountDiscount.divide(amountAfterTax, 8, RoundingMode.HALF_EVEN);
-		
+
 		Collection<CustomerInvoice> result = new ArrayList<CustomerInvoice>(invoices.size());
 		for (CustomerInvoice customerInvoice : invoices) {
 
@@ -298,7 +336,7 @@ public class CustomerInvoiceEJB {
 			customerInvoice = update(customerInvoice);
 			result.add(customerInvoice);
 		}
-		
+
 		return result;
 	}
 
@@ -334,7 +372,7 @@ public class CustomerInvoiceEJB {
 		ciItem.setTotalSalesPrice(ciItem.getSalesPricePU().multiply(ciItem.getPurchasedQty()));
 		return customerInvoiceItemEJB.create(ciItem);
 	}
-	
+
 	private CustomerInvoice initCustomerInvoice(CustomerInvoice ci, Agency agency, SalesOrder salesOrder, String invoicePrefix, InvoiceType invoiceType){
 
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -372,7 +410,7 @@ public class CustomerInvoiceEJB {
 			// no invoice if returned quantity is zero.
 			if(salesOrderItem.getReturnedQty()==null || 
 					salesOrderItem.getReturnedQty().compareTo(BigDecimal.ZERO)==0) continue;
-			
+
 			ArticleLot articleLot = new ArticleLot();
 			articleLot.setInternalPic(salesOrderItem.getInternalPic());
 			@SuppressWarnings("unchecked")
@@ -382,19 +420,19 @@ public class CustomerInvoiceEJB {
 			Agency agency = found.iterator().next().getAgency();
 			if(agencyInvoiceMap.containsKey(agency)){
 				CustomerInvoice agencyInvoice = agencyInvoiceMap.get(agency);
-				
+
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, agencyInvoice);
 
 				updateCustomerInvoiceAmounts(ciItem, agencyInvoice);
-				
+
 			}else {
 				CustomerInvoice ci = new CustomerInvoice();
 				agencyInvoiceMap.put(agency, ci);
 				// intialize the sales order
 				ci = initCustomerInvoice(ci, agency, salesOrder, "CR", InvoiceType.VOUCHER);
-				
+
 				CustomerInvoiceItem ciItem = createCustoerInvoiceItem(salesOrderItem, ci);
-				
+
 				updateCustomerInvoiceAmounts(ciItem, ci);
 			}
 		}

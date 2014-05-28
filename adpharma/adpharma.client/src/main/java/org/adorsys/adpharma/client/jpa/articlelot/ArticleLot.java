@@ -80,6 +80,16 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
    private SimpleObjectProperty<ArticleLotVat> vat;
 
+   public void calculateAmount(){
+	   BigDecimal pu = getPurchasePricePU() !=null?getPurchasePricePU():BigDecimal.ZERO;
+	   BigDecimal sp = getSalesPricePU() !=null?getSalesPricePU():BigDecimal.ZERO;
+	   BigDecimal qty = getStockQuantity() !=null?getStockQuantity():BigDecimal.ZERO;
+	   
+	   setTotalPurchasePrice(qty.multiply(pu));
+	   setTotalSalePrice(qty.multiply(sp));
+	   setStockQuantity(qty);
+   }
+   
    public Long getId()
    {
       return id;

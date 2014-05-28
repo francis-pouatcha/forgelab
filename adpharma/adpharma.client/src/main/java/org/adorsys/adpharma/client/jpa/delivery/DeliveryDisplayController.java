@@ -544,6 +544,7 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
+		deliveryItem.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		Date parse = null ;
 		try {
 			String[] split = displayView.getExpirationDate().getText().split("/");

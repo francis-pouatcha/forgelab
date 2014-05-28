@@ -13,9 +13,17 @@ public class CustomerInvoiceByAgencySearchService extends Service<CustomerInvoic
 
 	private InvoiceByAgencyPrintInput searchInputs;
 
+	private Boolean perday = false ;
+
 	public CustomerInvoiceByAgencySearchService setSearchInputs(InvoiceByAgencyPrintInput searchInputs)
 	{
 		this.searchInputs = searchInputs;
+		return this;
+	}
+
+	public CustomerInvoiceByAgencySearchService setPerDay(Boolean perDay)
+	{
+		this.perday = perDay;
 		return this;
 	}
 
@@ -29,6 +37,10 @@ public class CustomerInvoiceByAgencySearchService extends Service<CustomerInvoic
 			{
 				if (searchInputs == null)
 					return null;
+				if(perday){
+					perday = Boolean.FALSE ;
+					return remoteService.customerInvicePerDayAndPerAgency(searchInputs);
+				}
 				return remoteService.findByAgencyAndDateBetween(searchInputs);
 			}
 				};

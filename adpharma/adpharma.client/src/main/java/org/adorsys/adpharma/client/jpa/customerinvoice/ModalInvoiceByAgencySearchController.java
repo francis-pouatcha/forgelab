@@ -33,6 +33,8 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
 
+import com.lowagie.text.DocumentException;
+
 @Singleton
 public class ModalInvoiceByAgencySearchController  {
 	@Inject
@@ -50,7 +52,7 @@ public class ModalInvoiceByAgencySearchController  {
 
 	@Inject
 	private InvoiceByAgencyPrintInput invoiceByAgencyPrintInput ;
-	
+
 	@Inject
 	private CustomerInvoiceByAgencySearchService invoiceByAgencySearchService ;
 
@@ -91,11 +93,13 @@ public class ModalInvoiceByAgencySearchController  {
 
 			@Override
 			public void handle(ActionEvent event) {
-				  Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = view.getView().validate(invoiceByAgencyPrintInput);
-		            if (violations.isEmpty())
-		            {
-		            	invoiceByAgencySearchService.setSearchInputs(invoiceByAgencyPrintInput).start();
-		            }
+				Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = view.getView().validate(invoiceByAgencyPrintInput);
+				if (violations.isEmpty())
+				{
+					if(view.getView().getGroupPerDays().isSelected())
+						invoiceByAgencySearchService.setPerDay(Boolean.TRUE);
+					invoiceByAgencySearchService.setSearchInputs(invoiceByAgencyPrintInput).start();
+				}
 
 			}
 		});
@@ -109,13 +113,18 @@ public class ModalInvoiceByAgencySearchController  {
 				s.reset();
 				List<CustomerInvoice> resultList = cs.getResultList();
 				Agency agency = invoiceByAgencyPrintInput.getAgency();
-				customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(),agency, resourceBundle, locale);
-				customerInvoiceListPrintTemplatePdf.addItems(resultList);
-				customerInvoiceListPrintTemplatePdf.closeReport();
-				File file = new File(customerInvoiceListPrintTemplatePdf.getFileName());
-				if(file.exists()) {
-					openFile(file);
-				} 
+				try {
+					customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(),agency, resourceBundle, locale);
+					customerInvoiceListPrintTemplatePdf.addItems(resultList);
+					customerInvoiceListPrintTemplatePdf.closeDocument();
+					File file = new File(customerInvoiceListPrintTemplatePdf.getFileName());
+					if(file.exists()) {
+						openFile(file);
+					} 
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -140,6 +149,7 @@ public class ModalInvoiceByAgencySearchController  {
 				event.consume();
 				s.reset();
 				List<Agency> resultList = cs.getResultList();
+				resultList.add(0, new Agency());
 				view.getView().getAgency().getItems().setAll(resultList);
 
 			}

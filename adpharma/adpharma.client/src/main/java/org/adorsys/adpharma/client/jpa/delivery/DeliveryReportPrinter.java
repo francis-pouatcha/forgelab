@@ -23,6 +23,8 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 
+import com.lowagie.text.DocumentException;
+
 public class DeliveryReportPrinter {
 
 	@Inject
@@ -67,16 +69,18 @@ public class DeliveryReportPrinter {
 	            s.reset();
 	    		if(deliveryData==null) return;
 	    		if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) return;
-	    		
-	    		String deliveryNumber = deliveryData.getDelivery().getDeliveryNumber();
-	    		File file = new File(deliveryNumber+".pdf");
-	    		if(file.exists()) {
-	    			openFile(file);
-	    		} else {
-		    		DeliveryReportPrintTemplate worker = new DeliveryReportPrintTemplatePDF(deliveryData, resourceBundle, locale);
-		    		worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
-		    		itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
-	    		}
+	    			DeliveryReportPrintTemplatePDF worker;
+					try {
+						worker = new DeliveryReportPrintTemplatePDF(deliveryData, resourceBundle, locale);
+						worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
+						itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
+						worker.closeDocument();
+						File file = new File(worker.getFileName());
+						openFile(file);
+					} catch (DocumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 		});
 

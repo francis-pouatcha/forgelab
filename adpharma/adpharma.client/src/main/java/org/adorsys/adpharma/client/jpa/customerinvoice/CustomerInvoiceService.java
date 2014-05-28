@@ -52,6 +52,16 @@ public class CustomerInvoiceService {
 		return target().path("/findByAgencyAndDateBetween").request(media)
 				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
 	}
+//	@GET
+//	@Path("/findByAgencyAndDateBetween")
+//	@Produces({ "application/json", "application/xml" })
+	public CustomerInvoiceSearchResult customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput)
+	{
+		Entity<InvoiceByAgencyPrintInput> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("/customerInvicePerDayAndPerAgency").request(media)
+				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
+	}
 
 	// @PUT
 	// @Path("/{id:[0-9][0-9]*}")

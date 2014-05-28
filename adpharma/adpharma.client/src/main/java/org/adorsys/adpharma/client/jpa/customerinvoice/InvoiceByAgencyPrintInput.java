@@ -66,7 +66,6 @@ public class InvoiceByAgencyPrintInput {
 		return agency;
 	}
 
-	@NotNull(message = "CustomerInvoice_agency_NotNull_validation")
 	public Agency getAgency()
 	{
 		return agencyProperty().get();

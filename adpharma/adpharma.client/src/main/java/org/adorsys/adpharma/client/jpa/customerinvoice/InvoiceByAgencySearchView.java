@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +28,7 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 	private CalendarTextField fromDate;
 	private CalendarTextField toDate;
 	private ComboBox<Agency> agency;
+	private CheckBox groupPerDays;
 
 	@Inject
 	@Bundle({ CrudKeys.class, CustomerInvoicePrintTemplate.class ,CustomerInvoice.class})
@@ -51,8 +53,9 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		fromDate = viewBuilder.addCalendarTextField("CustomerInvoice_fromdate_description.title", "fromDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		toDate = viewBuilder.addCalendarTextField("CustomerInvoice_todate_description.title", "fromDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		agency = viewBuilder.addComboBox("CustomerInvoice_agency_description.title", "agency", resourceBundle);
-
-		gridRows = viewBuilder.toRows();
+        groupPerDays =viewBuilder.addCheckBox("Entity_empty.text", "groupPerDays", resourceBundle);
+		groupPerDays.setText(resourceBundle.getString("CustomerInvoice_perDays_description.title"));
+        gridRows = viewBuilder.toRows();
 	}
 
 	public void addValidators()
@@ -96,6 +99,14 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 
 	public Locale getLocale() {
 		return locale;
+	}
+
+	public CheckBox getGroupPerDays() {
+		return groupPerDays;
+	}
+
+	public void setGroupPerDays(CheckBox groupPerDays) {
+		this.groupPerDays = groupPerDays;
 	}
 
 

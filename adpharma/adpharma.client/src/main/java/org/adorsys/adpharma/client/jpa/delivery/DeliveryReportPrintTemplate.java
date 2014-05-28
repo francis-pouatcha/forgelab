@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 
-
 public interface DeliveryReportPrintTemplate {
-
-	public void addItems(List<DeliveryItem> resultList);
-
+	
 	public void closeReport();
+	
+	public void addItems(List<DeliveryItem> deliveryItems );
+
 }
