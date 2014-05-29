@@ -14,11 +14,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
-import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -64,13 +61,13 @@ public class CustomerInvoicePrinter {
 //		invoiceDataService.setSearchInputs(searchInputs).start();
 //	}
 //
-	public void handlePrintCustomerInvoiceRequestedEvent(
-			@Observes @PrintCustomerInvoiceRequestedEvent CustomerInvoice customerInvoice) {
-		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
-		searchInputs.setEntity(customerInvoice);
-		searchInputs.getFieldNames().add("salesOrder");
-		invoiceDataService.setSearchInputs(searchInputs).start();
-	}
+//	public void handlePrintCustomerInvoiceRequestedEvent(
+//			@Observes @PrintCustomerInvoiceRequestedEvent CustomerInvoice customerInvoice) {
+//		CustomerInvoiceSearchInput searchInputs = new CustomerInvoiceSearchInput();
+//		searchInputs.setEntity(customerInvoice);
+//		searchInputs.getFieldNames().add("salesOrder");
+//		invoiceDataService.setSearchInputs(searchInputs).start();
+//	}
 	
 	@PostConstruct
 	public void postConstruct() {

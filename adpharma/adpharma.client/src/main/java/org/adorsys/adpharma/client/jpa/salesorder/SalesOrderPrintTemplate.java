@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -78,10 +79,11 @@ public class SalesOrderPrintTemplate {
 		rt.setWidthPercentage(100);
 
 		Paragraph documentName = new CenterParagraph(new BoldText(
-				resourceBundle.getString("SalesOrderPrintTemplate_invoice.title")+soNumber));
+				resourceBundle.getString("SalesOrderPrintTemplate_invoice.title")+ " " + soNumber));
+		documentName.setSpacingAfter(10);
 		borderlessCell(rt, documentName, 2, 1);
 
-		borderlessCell(rt, new LineSeparator(), 2, 1);
+		borderlessCell(rt, new LineSeparator(), 2, 2);
 
 		Paragraph paragraph = new Paragraph(new BoldText(agency.getName()));
 		borderlessCell(rt, paragraph, 2, 1);
@@ -101,9 +103,7 @@ public class SalesOrderPrintTemplate {
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("Company_registerNumber_description.title") 
 				+ ": " + company.getRegisterNumber()));
-		borderlessCell(rt, paragraph, 1, 1);
-
-		borderlessCell(rt, new CenterParagraph(""));
+		borderlessCell(rt, paragraph, 2, 1);
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " + salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 1, 1);
@@ -115,13 +115,13 @@ public class SalesOrderPrintTemplate {
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_salesAgent.title") 
 				+ " " + salesAgent.getFullName()));
+		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_invoiceNr.title") 
 				+ " " + salesOrder.getSoNumber()));
+		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
-		
-		borderlessCell(rt, new CenterParagraph(""));
 
 		try {
 			document.add(rt);
@@ -135,22 +135,22 @@ public class SalesOrderPrintTemplate {
 		invoiceTable.setWidthPercentage(100);
 
 		Paragraph par = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_cip.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 
 		par = new CenterParagraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_designation.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 
 		par = new RightParagraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_qty.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 
 		par = new RightParagraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_spputtc.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 
 		par = new RightParagraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_sppuht.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 
 		par = new RightParagraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_totalPriceHT.title")));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable, par);
 	}
 
 	private BigDecimal totalAmountHTBeforeDiscount = BigDecimal.ZERO;
@@ -159,72 +159,56 @@ public class SalesOrderPrintTemplate {
 	private BigDecimal totalAmountTax = BigDecimal.ZERO;
 	
 	public void addItems(List<SalesOrderItem> invoiceItems) {
+		BigDecimal discountRate = salesOrder.getDiscountRate()==null?BigDecimal.ZERO:VAT.getRawRate(salesOrder.getDiscountRate());
 		for (SalesOrderItem soItem : invoiceItems) {
-			Paragraph par = new Paragraph(new StandardText(soItem.getInternalPic()));
-			borderlessCell(invoiceTable, par);
+			int colspan = 1;
+			int rowspan = 1;
+			if(BigDecimal.ZERO.compareTo(discountRate)!=0){
+				rowspan+=1;
+			}			
+			BigDecimal vatRate = soItem.getVat()==null?BigDecimal.ZERO:VAT.getRawRate(soItem.getVat().getRate());
+			if(BigDecimal.ZERO.compareTo(vatRate)!=0){
+				rowspan+=1;
+			}
 
-			par = new Paragraph(new StandardText(soItem.getArticle().getArticleName()));
-			borderlessCell(invoiceTable, par);
+			Paragraph par = new Paragraph(new StandardText(soItem.getInternalPic()));
+			borderCell(invoiceTable,colspan,rowspan, par);
+
+			List<Paragraph> pars = new ArrayList<Paragraph>();
+			pars.add(new Paragraph(new StandardText(soItem.getArticle().getArticleName())));
+			if(BigDecimal.ZERO.compareTo(discountRate)!=0)
+				pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_discount.title"))));
+			if(BigDecimal.ZERO.compareTo(vatRate)!=0)
+				pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_vat.title"))));
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 
 			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(soItem.getOrderedQty())));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable,colspan,rowspan, par);
 			
 			BigDecimal sppuTTC = soItem.getSalesPricePU()==null?BigDecimal.ZERO:soItem.getSalesPricePU();
 			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(sppuTTC)));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable,colspan,rowspan, par);
 
-			BigDecimal vatRate = soItem.getVat()==null?BigDecimal.ZERO:VAT.getRawRate(soItem.getVat().getRate());
 			BigDecimal sppuHT = sppuTTC.divide(BigDecimal.ONE.add(vatRate), 8, RoundingMode.HALF_EVEN);
 			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(sppuHT)));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable,colspan,rowspan, par);
 
+			pars = new ArrayList<Paragraph>();
 			BigDecimal totalPriceHT = sppuHT.multiply(soItem.getOrderedQty());
-			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalPriceHT)));
-			borderlessCell(invoiceTable, par);
-			
-			BigDecimal discountRate = salesOrder.getDiscountRate()==null?BigDecimal.ZERO:VAT.getRawRate(salesOrder.getDiscountRate());
-			BigDecimal discount = totalPriceHT.multiply(discountRate);
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalPriceHT))));
+			BigDecimal discount = BigDecimal.ZERO;
 			if(BigDecimal.ZERO.compareTo(discountRate)!=0){
-				par = new Paragraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_discount.title")));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-				
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(discount.negate())));
-				borderlessCell(invoiceTable, par);
+				discount = totalPriceHT.multiply(discountRate);
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(discount.negate()))));
 			}
 			BigDecimal totalPriceHTAfterDiscount = totalPriceHT.subtract(discount);
-			BigDecimal vatAmount = totalPriceHTAfterDiscount.multiply(vatRate);
+			BigDecimal vatAmount = BigDecimal.ZERO;
 			if(BigDecimal.ZERO.compareTo(vatRate)!=0){
-				par = new Paragraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_vat.title")));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-				
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(""));
-				borderlessCell(invoiceTable, par);
-
-				par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(vatAmount)));
-				borderlessCell(invoiceTable, par);
+				vatAmount = totalPriceHTAfterDiscount.multiply(vatRate);
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(vatAmount))));
 			}
-
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
+			
 			totalAmountHTBeforeDiscount = totalAmountHTBeforeDiscount.add(totalPriceHT);
 			totalAmountDiscount = totalAmountDiscount.add(discount);
 			totalAmountHTAfterDiscount = totalAmountHTAfterDiscount.add(totalPriceHTAfterDiscount);
@@ -236,97 +220,63 @@ public class SalesOrderPrintTemplate {
 	
 	public void closeReport(){
 		Paragraph par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
+		borderCell(invoiceTable,6,1, par);
 
 		if(BigDecimal.ZERO.compareTo(totalAmountDiscount)!=0) {
+			int colspan = 1;
+			int rowspan = 5;
 			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTCBeforeDiscount.title")));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable, colspan,rowspan,par);
+			
+			List<Paragraph> pars = new ArrayList<Paragraph>();
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTCBeforeDiscount.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalDiscount.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHTAfterDiscount.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
+			
 			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTBeforeDiscount)));
-			borderlessCell(invoiceTable, par);
+			borderCell(invoiceTable, colspan,rowspan,par);
+			
+			pars = new ArrayList<Paragraph>();
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTBeforeDiscount))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountDiscount))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount.add(totalAmountTax)))));
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalDiscount.title")));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountDiscount)));
-			borderlessCell(invoiceTable, par);
-
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHTAfterDiscount.title")));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount)));
-			borderlessCell(invoiceTable, par);
 		} else {
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHT.title")));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new Paragraph(new StandardText(""));
-			borderlessCell(invoiceTable, par);
-			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount)));
-			borderlessCell(invoiceTable, par);
-		}
-		
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title")));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax)));
-		borderlessCell(invoiceTable, par);
+			int colspan = 1;
+			int rowspan = 3;
 
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title")));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new Paragraph(new StandardText(""));
-		borderlessCell(invoiceTable, par);
-		par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount.add(totalAmountTax))));
-		borderlessCell(invoiceTable, par);
+			par = new Paragraph(new StandardText(""));
+			borderCell(invoiceTable, colspan,rowspan,par);
+			
+			List<Paragraph> pars = new ArrayList<Paragraph>();
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHT.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
+			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
+			
+			par = new Paragraph(new StandardText(""));
+			borderCell(invoiceTable, colspan,rowspan,par);
+			par = new Paragraph(new StandardText(""));
+			borderCell(invoiceTable, colspan,rowspan,par);
+			par = new Paragraph(new StandardText(""));
+			borderCell(invoiceTable, colspan,rowspan,par);
+			
+			pars = new ArrayList<Paragraph>();
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax))));
+			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount.add(totalAmountTax)))));
+			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
+		}
 
 		try {
 			document.add(invoiceTable);
@@ -417,4 +367,28 @@ public class SalesOrderPrintTemplate {
 		table.addCell(pdfPCell);
 		return pdfPCell;
 	}
+
+	private PdfPCell borderCell(PdfPTable table, Element... elements) {
+		PdfPCell pdfPCell = new PdfPCell();
+//		pdfPCell.setBorder(Rectangle.NO_BORDER);
+		for (Element element : elements) {
+			pdfPCell.addElement(element);
+		}
+		table.addCell(pdfPCell);
+		return pdfPCell;
+	}
+
+	private PdfPCell borderCell(PdfPTable table,
+			int colspan, int rowspan, Element... elements) {
+		PdfPCell pdfPCell = new PdfPCell();
+//		pdfPCell.setBorder(Rectangle.NO_BORDER);
+		pdfPCell.setColspan(colspan);
+		pdfPCell.setRowspan(rowspan);
+		for (Element element : elements) {
+			pdfPCell.addElement(element);
+		}
+		table.addCell(pdfPCell);
+		return pdfPCell;
+	}
+
 }
