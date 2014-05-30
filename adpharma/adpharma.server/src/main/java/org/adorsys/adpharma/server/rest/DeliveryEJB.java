@@ -49,7 +49,6 @@ public class DeliveryEJB
 	@Inject
 	private AgencyMerger agencyMerger;
 
-
 	@Inject
 	private DeliveryItemEJB deliveryItemEJB;
 

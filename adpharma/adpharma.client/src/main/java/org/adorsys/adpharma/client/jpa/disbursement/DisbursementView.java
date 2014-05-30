@@ -110,14 +110,14 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 	{
 		raison.textProperty().bindBidirectional(model.raisonProperty());
 		amount.numberProperty().bindBidirectional(model.amountProperty());
-		creatingDate.calendarProperty().bindBidirectional(model.creationDateProperty());
+//		creatingDate.calendarProperty().bindBidirectional(model.creationDateProperty());
 		paymentMode.valueProperty().bind(model.paymentModeProperty());
-		cashOutCashierForm.bind(model);
-		cashOutCashierSelection.bind(model);
-		cashOutAgencyForm.bind(model);
-		cashOutAgencySelection.bind(model);
-		cashOutCashDrawerForm.bind(model);
-		cashOutCashDrawerSelection.bind(model);
+//		cashOutCashierForm.bind(model);
+//		cashOutCashierSelection.bind(model);
+//		cashOutAgencyForm.bind(model);
+//		cashOutAgencySelection.bind(model);
+//		cashOutCashDrawerForm.bind(model);
+//		cashOutCashDrawerSelection.bind(model);
 	}
 
 	public TextField getRaison() {

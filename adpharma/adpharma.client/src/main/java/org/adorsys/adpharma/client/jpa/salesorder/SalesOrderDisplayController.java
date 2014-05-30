@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -91,6 +92,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Singleton
 public class SalesOrderDisplayController implements EntityController
@@ -205,8 +208,7 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
-
-
+    
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -403,7 +405,7 @@ public class SalesOrderDisplayController implements EntityController
 
 					orderReturnService.setEntity(displayedEntity).start();
 				}else {
-					Dialogs.create().message("Cette commande adeja fais l abjet dun retour !").showInformation();
+					Dialogs.create().message("Cette commande a deja fais l'objet dun retour !").showInformation();
 				}
 			}
 		});
@@ -592,10 +594,10 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrder entity = s.getValue();
 				event.consume();
 				s.reset();
-				Action showConfirm = Dialogs.create().nativeTitleBar().message("Voulez vous imprimer la facture ?").showConfirm();
-				if(Dialog.Actions.YES.equals(showConfirm)){
-					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
-				}
+//				Action showConfirm = Dialogs.create().nativeTitleBar().message("Voulez vous imprimer la facture ?").showConfirm();
+//				if(Dialog.Actions.YES.equals(showConfirm)){
+//					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
+//				}
 				PropertyReader.copy(entity, displayedEntity);
 				salesOrderRequestEvent.fire(new SalesOrder());
 				workingInfosEvent.fire("Sales Number : "+entity.getSoNumber()+" Closed successfully!");
@@ -811,6 +813,8 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
+		if(!isValidateOrderedQty(model))
+			return ;
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
 		if(!displayView.getOrderedQty().isEditable()){
 			if(isValidSalesOrderItem())
@@ -821,6 +825,26 @@ public class SalesOrderDisplayController implements EntityController
 		}
 	}
 
+	public boolean isValidateOrderedQty(ArticleLot model){
+		Iterator<SalesOrderItem> iterator = displayView.getDataList().getItems().iterator();
+		while (iterator.hasNext()) {
+			SalesOrderItem next = iterator.next();
+			if(next.getInternalPic().equals(model.getInternalPic())){
+				BigDecimal salableStock = model.getStockQuantity();
+				BigDecimal orderedStock = next.getOrderedQty().add(BigDecimal.ONE);
+				if(salableStock.compareTo(orderedStock)< 0 ){
+					Dialogs.create().message("La Quantite Commandee ne peux etre superieur a "+ salableStock).showError();
+				displayView.getInternalPic().setText(null);
+					return false ;
+					
+				}
+			}
+		}
+		
+		
+		
+		return true ;
+	}
 
 	public void handleCustomerCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Customer model)
 	{
@@ -907,12 +931,12 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public BigDecimal getQtyToReturn() {
-		String showTextInput = Dialogs.create().message("Qte retounee : ").showTextInput("1");
-		BigDecimal qtyToReturn = BigDecimal.ONE;
+		String showTextInput = Dialogs.create().actions(Dialog.Actions.OK).message("Qte retounee : ").showTextInput("0");
+		BigDecimal qtyToReturn = BigDecimal.ZERO;
 		try {
 			qtyToReturn = new BigDecimal(showTextInput);
 		} catch (Exception e) {
-			getQtyToReturn();
+			e.printStackTrace();
 		}
 
 		return qtyToReturn;

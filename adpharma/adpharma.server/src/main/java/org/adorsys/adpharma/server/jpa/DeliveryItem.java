@@ -16,6 +16,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.adorsys.adpharma.server.utils.CurencyUtil;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -124,12 +125,12 @@ public class DeliveryItem implements Serializable
 	private Delivery delivery;
 
 	public void calculateAmount(){
-		totalPurchasePrice = totalPurchasePrice!=null?totalPurchasePrice:BigDecimal.ZERO; 
-		purchasePricePU = purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO; 
+		purchasePricePU = CurencyUtil.convertToCfa(delivery.getCurrency(), purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO);
 		stockQuantity = stockQuantity!=null?stockQuantity:BigDecimal.ZERO; 
 		freeQuantity = freeQuantity!=null?freeQuantity:BigDecimal.ZERO; 
 		totalPurchasePrice= purchasePricePU.multiply(stockQuantity.subtract(freeQuantity));
 	}
+	
 
 	public Long getId()
 	{

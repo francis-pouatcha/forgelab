@@ -191,6 +191,7 @@ public class ProcurementOrderListController implements EntityController
 				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null && !DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus()))
 					removeRequest.fire(selectedItem);
+			
 			}
 				});
 
@@ -348,6 +349,7 @@ public class ProcurementOrderListController implements EntityController
 	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent ProcurementOrder removedEntity)
 	{
 		listView.getDataList().getItems().remove(removedEntity);
+		listView.getDataListItem().getItems().clear();
 	}
 
 	public void handleEditDoneEvent(@Observes @EntityEditDoneEvent ProcurementOrder selectedEntity)

@@ -105,7 +105,7 @@ public class ProductDetailConfigController extends DomainComponentController
 		 List<EntityController> displayedViews = getDisplayedViews();
 		 displayedViews.clear();
 		 //      displayedViews.add(listController);
-		 displayedViews.add(displayController);
+		 displayedViews.add(editController);
 
 		 displayComponent();
 	 }
