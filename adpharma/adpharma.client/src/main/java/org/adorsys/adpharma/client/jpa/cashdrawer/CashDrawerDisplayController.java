@@ -45,6 +45,7 @@ import org.adorsys.adpharma.client.jpa.disbursement.Disbursement;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementAgency;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashDrawer;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -510,8 +511,10 @@ public class CashDrawerDisplayController implements EntityController
 		SalesOrderSearchInput csi = new SalesOrderSearchInput();
 		csi.getEntity().setCashed(Boolean.FALSE);
 		csi.getEntity().setSalesOrderType(SalesOrderType.CASH_SALE);
+		csi.getEntity().setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		csi.getFieldNames().add("cashed");
 		csi.getFieldNames().add("invoiceType");
+		csi.getFieldNames().add("salesOrderStatus");
 		csi.setMax(100);
 		salesOrderSearchService.setSearchInputs(csi).start();
 	}

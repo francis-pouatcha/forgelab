@@ -125,6 +125,7 @@ public class DeliveryItem implements Serializable
 	private Delivery delivery;
 
 	public void calculateAmount(){
+		salesPricePU = CurencyUtil.convertToCfa(delivery.getCurrency(), salesPricePU!=null?salesPricePU:BigDecimal.ZERO);
 		purchasePricePU = CurencyUtil.convertToCfa(delivery.getCurrency(), purchasePricePU!=null?purchasePricePU:BigDecimal.ZERO);
 		stockQuantity = stockQuantity!=null?stockQuantity:BigDecimal.ZERO; 
 		freeQuantity = freeQuantity!=null?freeQuantity:BigDecimal.ZERO; 
