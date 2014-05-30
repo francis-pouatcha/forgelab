@@ -190,21 +190,23 @@ public class ModalArticleLotSearchController  {
 			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
 			List<String> resultOrder = new ArrayList<String>();
 			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
-			// Group by secondary pic always taking the article
+			// Group by internal pic always taking the article
 			for (ArticleLot articleLot : resultList) {
-				String mainPic = articleLot.getMainPic();
-				if(!resultOrder.contains(mainPic)) resultOrder.add(mainPic);
-				// the main pic is unique per product.
-				Set<ArticleLot> set = lotMap.get(mainPic);
+				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
+					continue ;
+				String internalPic = articleLot.getInternalPic();
+				if(!resultOrder.contains(internalPic)) resultOrder.add(internalPic);
+				// the internal pic is unique per product.
+				Set<ArticleLot> set = lotMap.get( internalPic);
 				if(set==null){
 					set = new TreeSet<ArticleLot>();
-					lotMap.put(mainPic, set);
+					lotMap.put(internalPic, set);
 				}
 				set.add(articleLot);
 			}
 			ArrayList<ArticleLot> lotList = new ArrayList<ArticleLot>(resultOrder.size());
-			for (String mainPic : resultOrder) {
-				Set<ArticleLot> set = lotMap.get(mainPic);
+			for (String internalPic : resultOrder) {
+				Set<ArticleLot> set = lotMap.get(internalPic);
 				ArticleLot articleLot = null;
 				for (ArticleLot lot : set) {
 					if(articleLot==null) {

@@ -44,6 +44,7 @@ Service<ProcurementOrderReportPrinterData> {
 				poItem.setProcurementOrder(new ProcurementOrderItemProcurementOrder(po));
 				ProcurementOrderItemSearchInput poItemSearchInput = new ProcurementOrderItemSearchInput();
 				poItemSearchInput.setEntity(poItem);
+				poItemSearchInput.setMax(-1);
 				poItemSearchInput.getFieldNames().add("procurementOrder");
 				ProcurementOrderItemSearchResult poItemSearchResult = poItemService
 						.findBy(poItemSearchInput);

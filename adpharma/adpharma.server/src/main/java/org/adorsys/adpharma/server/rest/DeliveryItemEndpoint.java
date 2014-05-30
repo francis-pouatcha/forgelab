@@ -52,17 +52,14 @@ public class DeliveryItemEndpoint
 	@Inject
 	private ArticleMerger articleMerger;
 
-	@Inject
-	private SecurityUtil securityUtilEJB;
+	
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
 	@Produces({ "application/json", "application/xml" })
 	public DeliveryItem create(DeliveryItem entity)
 	{
-		Login login = securityUtilEJB.getConnectedUser();
-		entity.setCreatingUser(login);
-		entity.calculateAmount();
+		
 		return detach(ejb.create(entity));
 	}
 
@@ -83,7 +80,7 @@ public class DeliveryItemEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public DeliveryItem update(DeliveryItem entity)
 	{
-		entity.calculateAmount();
+		
 		return detach(ejb.update(entity));
 	}
 

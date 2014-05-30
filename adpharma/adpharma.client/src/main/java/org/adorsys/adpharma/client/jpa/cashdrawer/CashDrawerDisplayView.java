@@ -164,11 +164,11 @@ public class CashDrawerDisplayView
 		
 	}
 	public void buildInvoiceItemDataList(ViewBuilder viewBuilder){
-		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,170d);
 		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle,300d);
-		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "purchasedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "orderedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "totalSalesPrice", "CustomerInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "totalSalePrice", "CustomerInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 	}
 	public void buildPaymentItemDataList(ViewBuilder viewBuilder){
 	    viewBuilder.addEnumColumn(paymentItemDataList, "paymentMode", "PaymentItem_paymentMode_description.title", paymentResourceBundle, paymentModeConverter);

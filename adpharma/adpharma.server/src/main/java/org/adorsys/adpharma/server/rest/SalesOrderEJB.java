@@ -105,11 +105,11 @@ public class SalesOrderEJB
 			Customer otherCustomers = customerEJB.otherCustomers();
 			entity.setCustomer(otherCustomers);
 		}
-		entity.setSoNumber(StringUtils.upperCase(SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE)));
-		return repository.save(attach(entity)); 
-//		SalesOrder save = repository.save(attach(entity)); 
-//		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
-//		return repository.save(save);
+//		entity.setSoNumber(StringUtils.upperCase(SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE)));
+//		return repository.save(attach(entity)); 
+		SalesOrder save = repository.save(attach(entity)); 
+		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
+		return repository.save(save);
 	}
 
 	public SalesOrder deleteById(Long id)
