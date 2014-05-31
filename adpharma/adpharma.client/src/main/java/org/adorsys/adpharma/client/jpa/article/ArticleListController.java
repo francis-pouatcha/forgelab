@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.article;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -246,6 +247,14 @@ public class ArticleListController implements EntityController
 	{
 		this.searchResult = searchResult;
 		List<Article> entities = searchResult.getResultList();
+		entities.sort(new Comparator<Article>() {
+
+			@Override
+			public int compare(Article o1, Article o2) {
+				return o1.getArticleName().compareTo(o2.getArticleName());
+			}
+			
+		});
 		if (entities == null)
 			entities = new ArrayList<Article>();
 		listView.getDataList().getItems().clear();

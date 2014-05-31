@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.articlelot;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -229,6 +230,13 @@ public class ArticleLotListController implements EntityController
 	{
 		this.searchResult = searchResult;
 		List<ArticleLot> entities = searchResult.getResultList();
+		entities.sort(new Comparator<ArticleLot>() {
+
+			@Override
+			public int compare(ArticleLot o1, ArticleLot o2) {
+				return o1.getArticle().getArticleName().compareTo(o2.getArticle().getArticleName());
+			}
+		});
 		if (entities == null)
 			entities = new ArrayList<ArticleLot>();
 		listView.getDataList().getItems().clear();

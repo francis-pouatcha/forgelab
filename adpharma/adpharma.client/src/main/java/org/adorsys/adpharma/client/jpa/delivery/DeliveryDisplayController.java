@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,11 +24,14 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.events.ReportMenuItem;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -57,6 +61,7 @@ import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
@@ -136,8 +141,8 @@ public class DeliveryDisplayController implements EntityController
 	@PostConstruct
 	public void postConstruct()
 	{
-		displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.getDeleteButton().disableProperty().bind(registration.canEditProperty().not());
+		displayView.getEditButton().disableProperty().bind(registration.canNavigateProperty().not());
 
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
@@ -596,4 +601,6 @@ public class DeliveryDisplayController implements EntityController
 	public void reset() {
 		PropertyReader.copy(new Delivery(), displayedEntity);
 	}
+	
+	
 }

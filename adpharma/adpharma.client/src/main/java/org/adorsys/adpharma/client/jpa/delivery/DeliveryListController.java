@@ -144,6 +144,7 @@ public class DeliveryListController implements EntityController
 	{
 
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.getUpdateButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.bind(searchInput);
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
 

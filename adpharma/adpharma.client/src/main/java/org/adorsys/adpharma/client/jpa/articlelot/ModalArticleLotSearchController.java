@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.articlelot;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,13 +64,13 @@ public class ModalArticleLotSearchController  {
 
 	@PostConstruct
 	public void postConstruct(){
-		
+
 		articleSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-			
+
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
-				
+
 			}
 		});
 		view.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -79,8 +80,8 @@ public class ModalArticleLotSearchController  {
 				view.closeDialog();
 			}
 		});
-		
-		
+
+
 
 		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ArticleLot>() {
 
@@ -188,6 +189,13 @@ public class ModalArticleLotSearchController  {
 			modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
 			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
+			resultList.sort(new Comparator<ArticleLot>() {
+
+				@Override
+				public int compare(ArticleLot o1, ArticleLot o2) {
+					return o1.getArticle().getArticleName().compareToIgnoreCase(o2.getArticle().getArticleName()) ;
+				}
+			});
 			List<String> resultOrder = new ArrayList<String>();
 			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
 			// Group by internal pic always taking the article

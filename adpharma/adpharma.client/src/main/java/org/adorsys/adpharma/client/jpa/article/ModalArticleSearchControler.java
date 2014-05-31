@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.util.Comparator;
+import java.util.List;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
@@ -115,7 +118,15 @@ public class ModalArticleSearchControler {
 			view.closeDialog();
 			modalArticleSearchDoneEvent.fire(article2);
 		}else {
-			view.getDataList().getItems().setAll(articleSearchResult.getResultList());
+			List<Article> resultList = articleSearchResult.getResultList();
+			resultList.sort(new Comparator<Article>() {
+
+				@Override
+				public int compare(Article o1, Article o2) {
+					return o1.getArticleName().compareToIgnoreCase(o2.getArticleName());
+				}
+			});
+			view.getDataList().getItems().setAll();
 			if(!view.isDisplayed())
 				view.showDiaLog();
 		}
