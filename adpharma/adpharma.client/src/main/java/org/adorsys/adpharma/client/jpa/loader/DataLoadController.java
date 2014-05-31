@@ -38,6 +38,7 @@ import org.adorsys.adpharma.client.jpa.currency.Currency;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.employer.Employer;
+import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
@@ -75,6 +76,9 @@ public class DataLoadController {
 	
 	@Inject
 	private ArticleLoader articleLoader;
+
+	@Inject
+	private ProductDetailConfigLoader productDetailConfigLoader;
 	
 	@Inject
 	private SupplierLoader supplierLoader;
@@ -337,8 +341,8 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setArticles(articles);
 				pi.setProgress(0.4);
-				// Supplier Loader
-				supplierLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Suppliers.title")).start();
+				// productDetailConfigLoader Loader
+				productDetailConfigLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_ProductDetailConfig.title")).start();
 			}});
 		articleLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -347,6 +351,25 @@ public class DataLoadController {
 			}
 		});
 
+		productDetailConfigLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ProductDetailConfigLoader s = (ProductDetailConfigLoader) event.getSource();
+				List<ProductDetailConfig> pdc = s.getValue();
+				s.reset();
+				event.consume();
+//				dataMap.setArticles(articles);
+				pi.setProgress(0.4);
+				// Supplier Loader
+				supplierLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Suppliers.title")).start();
+			}});
+		productDetailConfigLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				handleFailure(event);
+			}
+		});
+		
 		supplierLoader.setOnSucceeded(new EventHandler<WorkerStateEvent>(){
 			@Override
 			public void handle(WorkerStateEvent event) {
