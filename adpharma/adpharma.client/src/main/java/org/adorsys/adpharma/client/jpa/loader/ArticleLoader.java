@@ -28,6 +28,7 @@ import org.adorsys.adpharma.client.jpa.article.ArticleService;
 import org.adorsys.adpharma.client.jpa.article.ArticleVat;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -91,8 +92,11 @@ public class ArticleLoader extends Service<List<Article>> {
 			Platform.runLater(pgRunner.setText(working));
 			
 			Cell cell = row.getCell(0);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setArticleName(cell.getStringCellValue().trim());
+			}else {
+				entity.setArticleName(RandomStringUtils.random(10));
+			}
 
 
 			cell = row.getCell(1);
@@ -119,11 +123,11 @@ public class ArticleLoader extends Service<List<Article>> {
 
 			cell = row.getCell(3);
 			if (cell != null)
-				entity.setActive(1==cell.getNumericCellValue());
+				entity.setActive(Boolean.TRUE);
 
 			cell = row.getCell(4);
 			if (cell != null)
-				entity.setAuthorizedSale(1==cell.getNumericCellValue());
+				entity.setAuthorizedSale(Boolean.TRUE);
 
 			cell = row.getCell(5);
 			if (cell != null)
@@ -165,6 +169,8 @@ public class ArticleLoader extends Service<List<Article>> {
 			{
 				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setTotalStockPrice(decimal);
+			}else {
+				entity.setTotalStockPrice(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(11);
@@ -258,7 +264,8 @@ public class ArticleLoader extends Service<List<Article>> {
 					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
 				}
 			} else {
-				throw new IllegalStateException("No vat name provided for article with pic: " + entity.getPic());
+				VAT vat = dataMap.getVats().iterator().next();
+				entity.setVat(new ArticleVat(vat));
 			}
 			
 			result.add(remoteService.create(entity));

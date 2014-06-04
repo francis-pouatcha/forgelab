@@ -342,6 +342,8 @@ public class DataLoadController {
 				dataMap.setArticles(articles);
 				pi.setProgress(0.4);
 				// productDetailConfigLoader Loader
+//				supplierLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Suppliers.title")).start();
+
 				productDetailConfigLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_ProductDetailConfig.title")).start();
 			}});
 		articleLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
@@ -379,7 +381,9 @@ public class DataLoadController {
 				event.consume();
 				dataMap.setSuppliers(suppliers);
 				// Currency Loader
-				currencyLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Currencies.title")).start();
+				deliveryLoader.setDataMap(dataMap).setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Deliveries.title")).start();
+
+//				currencyLoader.setWorkbook(workbook).setProgressLabel(progressLabel2).setProgressText(resourceBundle.getString("DataLoadController_Loading_Currencies.title")).start();
 			}});
 		supplierLoader.setOnFailed(new EventHandler<WorkerStateEvent>() {
 			@Override

@@ -47,7 +47,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 
 	@Inject
 	private DeliveryService remoteService;
-	
+
 	@Inject
 	private DeliveryItemService deliveryItemService;
 
@@ -81,11 +81,11 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 
 		PGRunner pgRunner = new PGRunner(progressLabel);
 		Platform.runLater(pgRunner.setText(progressText));
-//		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
+		// Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		
+
 		Delivery currentDelivery = null;
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
@@ -97,22 +97,22 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 				if (itemCell == null || StringUtils.isBlank(itemCell.getStringCellValue())){
 					continue;
 				} else {
-					if(DocumentProcessingState.CLOSED.equals(currentDelivery.getDeliveryProcessingState())) continue;					
+					if(DocumentProcessingState.CLOSED.equals(currentDelivery.getDeliveryProcessingState())) continue;	
 					DeliveryItem deliveryItem = new DeliveryItem();
 					// add item
-//					String deliveryNumber = itemCell.getStringCellValue();
-					
-//					itemCell = row.getCell(18);
+					// String deliveryNumber = itemCell.getStringCellValue();
+
+					// itemCell = row.getCell(18);
 					deliveryItem.setCreationDate(new GregorianCalendar());
-					
+
 					itemCell = row.getCell(19);
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setInternalPic(itemCell.getStringCellValue().trim());
-						
+
 					itemCell = row.getCell(20);
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setMainPic(itemCell.getStringCellValue().trim());
-					
+
 					itemCell = row.getCell(21);
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
 						deliveryItem.setSecondaryPic(itemCell.getStringCellValue().trim());
@@ -135,11 +135,14 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						}
 						if(article!=null){
 							deliveryItem.setArticle(new DeliveryItemArticle(article));
+							deliveryItem.setArticleName(deliveryItem.getArticle().getArticleName());
 						} else {
-							throw new IllegalStateException("Missing article for delivery item with pic: " + articlePic);
+							continue;
+//							throw new IllegalStateException("Missing article for delivery item with pic: " + articlePic);
 						}
 					} else {
-						throw new IllegalStateException("Missing article number for delivery item: " + deliveryItem.getMainPic());
+						continue;
+//						throw new IllegalStateException("Missing article number for delivery item: " + deliveryItem.getMainPic());
 					}
 
 					itemCell = row.getCell(24);
@@ -165,7 +168,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 							continue;
 						deliveryItem.setQtyOrdered(decimal);
 					}
-					
+
 					itemCell = row.getCell(26);
 					if (itemCell != null)
 					{
@@ -180,15 +183,15 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setFreeQuantity(decimal);
 					}
 
-//					itemCell = row.getCell(28);
-					
+					// itemCell = row.getCell(28);
+
 					itemCell = row.getCell(29);
 					if (itemCell != null)
 					{
 						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						if(BigDecimal.ZERO.equals(decimal))
 							continue;
-						deliveryItem.setStockQuantity(decimal);
+						deliveryItem.setStockQuantity(deliveryItem.getQtyOrdered());
 					}
 
 					itemCell = row.getCell(30);
@@ -204,36 +207,37 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
 						deliveryItem.setPurchasePricePU(decimal);
 					}
-				
+
 					BigDecimal totalPurchasePrice = deliveryItem.getStockQuantity()
-														.subtract(deliveryItem.getFreeQuantity())
-														.multiply(deliveryItem.getPurchasePricePU());
+							.subtract(deliveryItem.getFreeQuantity())
+							.multiply(deliveryItem.getPurchasePricePU());
 					deliveryItem.setTotalPurchasePrice(totalPurchasePrice);
 					currentDelivery.setAmountAfterTax(currentDelivery.getAmountAfterTax().add(totalPurchasePrice));
-//					itemCell = row.getCell(32);
-//					if (itemCell != null)
-//					{
-//						BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
-//					}
-					
+					 itemCell = row.getCell(32);
+					 if (itemCell != null)
+					 {
+					 BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+					 deliveryItem.setSalesPricePU(decimal);
+					 }
+
 					ArticleVat vat = article.getVat();
 					BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);
 					currentDelivery.setAmountBeforeTax(currentDelivery.getAmountBeforeTax().add(purchasePriceBeforTax));
 					currentDelivery.setAmountVat(currentDelivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
-					
+
 					deliveryItem.setDelivery(new DeliveryItemDelivery(currentDelivery));
-					
+
 					deliveryItem = deliveryItemService.create(deliveryItem);
 					currentDelivery.addToDeliveryItems(deliveryItem);
 				}
-				
+
 			} else {
 				Delivery delivery = loadDelivery(row);
-				
+
 				if(delivery!=null){
 					result.add(delivery);
 				}
-				
+
 				if(currentDelivery==null){
 					currentDelivery = delivery;
 				} else {
@@ -246,10 +250,10 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		}
 		if(currentDelivery!=null)
 			remoteService.saveAndClose(currentDelivery);
-		
+
 		return result;
 	}
-	
+
 	private Delivery loadDelivery(Row row){
 		Delivery entity = new Delivery();
 
@@ -265,14 +269,14 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 		searchInput.getFieldNames().add("deliveryNumber");
 		DeliverySearchResult found = remoteService.findBy(searchInput);
 		if (!found.getResultList().isEmpty()){
-//			return found.getResultList().iterator().next();
+			// return found.getResultList().iterator().next();
 			return null;
 		}
 
 		cell = row.getCell(1);
 		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 			entity.setDeliverySlipNumber(cell.getStringCellValue().trim());
-		
+
 
 		cell = row.getCell(2);
 		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -289,8 +293,8 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 			entity.setDateOnDeliverySlip(calendar);
 		}
 
-//		cell = row.getCell(3);
-//		creatingUser // auto
+		// cell = row.getCell(3);
+		// creatingUser // auto
 
 		cell = row.getCell(4);
 		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -415,9 +419,9 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 			}
 		}
 
-//		cell = row.getCell(15);
+		// cell = row.getCell(15);
 		entity.setRecordingDate(new GregorianCalendar());
-		
+
 		cell = row.getCell(16);
 		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 			String deliveryProcessingStateName = cell.getStringCellValue().trim();
@@ -431,7 +435,7 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 			if(entity.getDeliveryProcessingState()==null)
 				entity.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		}
-		
+
 		cell = row.getCell(17);
 		if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 			String agencyNumber = cell.getStringCellValue().trim();

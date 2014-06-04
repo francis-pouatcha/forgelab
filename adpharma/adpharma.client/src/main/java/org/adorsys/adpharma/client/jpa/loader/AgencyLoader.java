@@ -97,7 +97,7 @@ public class AgencyLoader extends Service<List<Agency>> {
 
 			cell = row.getCell(2);
 			if (cell != null)
-				entity.setActive(1==cell.getNumericCellValue());
+				entity.setActive(Boolean.TRUE);
 
 			cell = row.getCell(3);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -125,14 +125,14 @@ public class AgencyLoader extends Service<List<Agency>> {
 
 			cell = row.getCell(9);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String companyRegNumber = cell.getStringCellValue().trim();
+//				String companyRegNumber = cell.getStringCellValue().trim();
 				List<Company> companies = dataMap.getCompanies();
 				Company company = null;
 				for (Company c : companies) {
-					if(companyRegNumber.equalsIgnoreCase(c.getRegisterNumber())){
-						company=c;
+//					if(companyRegNumber.equalsIgnoreCase(c.getRegisterNumber())){
+			 			company=c;
 						break;
-					}
+//					}
 				}
 				if(company!=null)entity.setCompany(new AgencyCompany(company));
 			}

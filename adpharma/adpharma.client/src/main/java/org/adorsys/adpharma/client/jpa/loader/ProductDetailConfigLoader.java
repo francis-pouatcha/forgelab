@@ -18,6 +18,7 @@ import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
 import org.adorsys.adpharma.client.jpa.article.ArticleService;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
+import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchInput;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigService;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSource;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigTarget;
@@ -34,6 +35,7 @@ public class ProductDetailConfigLoader extends Service<List<ProductDetailConfig>
 
 	@Inject
 	private ArticleService articleService;
+	
 	
 	private HSSFWorkbook workbook;
 
@@ -148,6 +150,15 @@ public class ProductDetailConfigLoader extends Service<List<ProductDetailConfig>
 			}
 
 			entity.setRecordingDate(new GregorianCalendar());
+			
+			ProductDetailConfigSearchInput s = new ProductDetailConfigSearchInput();
+			s.getEntity().setSource(entity.getSource());
+			s.getEntity().setTarget(entity.getTarget());
+			s.getFieldNames().add("source");
+			s.getFieldNames().add("target");
+			List<ProductDetailConfig> resultList = remoteService.findBy(s).getResultList();
+			if(!resultList.isEmpty())
+				continue ;
 
 			result.add(remoteService.create(entity));
 		}

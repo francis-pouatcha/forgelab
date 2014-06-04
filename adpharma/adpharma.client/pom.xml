@@ -192,6 +192,7 @@
 					<!-- we need to tell the plugin which class to launch but it figures 
 						out most of the rest -->
 					<mainClass>${appMainClass}</mainClass>
+					<jvmProperties>-Xms768m -Xmx768m -XX:PermSize=256M -XX:MaxPermSize=256m</jvmProperties>
 					<vendor>Adorsys S.A</vendor>
 					<!-- only required if signing the jar file for webstart deployment - 
 						if you don't want to deploy to webstart you can delete this. Note that if 

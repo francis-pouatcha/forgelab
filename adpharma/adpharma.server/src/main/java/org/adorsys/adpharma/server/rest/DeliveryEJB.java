@@ -98,14 +98,11 @@ public class DeliveryEJB
 		delivery = attach(delivery);
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = delivery.getDeliveryItems();
-		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
-		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+//		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+//		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = deliveryItem.getMainPic();
-			if(isManagedLot){
-				internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
-			}
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){

@@ -27,46 +27,48 @@ import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 public class CustomerCustomerCategoryForm extends AbstractToOneAssociation<Customer, CustomerCategory>
 {
 
-   private TextField name;
+	private TextField name;
 
-   private BigDecimalField discountRate;
+	private BigDecimalField discountRate;
 
-   @Inject
-   @Bundle({ CrudKeys.class, CustomerCategory.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, CustomerCategory.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   private Locale locale;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      name = viewBuilder.addTextField("CustomerCategory_name_description.title", "name", resourceBundle);
-      discountRate = viewBuilder.addBigDecimalField("CustomerCategory_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
+	@PostConstruct
+	public void postConstruct()
+	{
+		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		name = viewBuilder.addTextField("CustomerCategory_name_description.title", "name", resourceBundle);
+		discountRate = viewBuilder.addBigDecimalField("CustomerCategory_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
 
-      gridRows = viewBuilder.toRows();
-   }
+		gridRows = viewBuilder.toRows();
+	}
 
-   public void bind(Customer model)
-   {
-      name.textProperty().bindBidirectional(model.getCustomerCategory().nameProperty());
-      discountRate.numberProperty().bindBidirectional(model.getCustomerCategory().discountRateProperty());
-   }
+	public void bind(Customer model)
+	{
+		name.textProperty().bindBidirectional(model.getCustomerCategory().nameProperty());
+		discountRate.numberProperty().bindBidirectional(model.getCustomerCategory().discountRateProperty());
+	}
 
-   public void update(CustomerCustomerCategory data)
-   {
-      name.textProperty().set(data.nameProperty().get());
-      discountRate.numberProperty().set(data.discountRateProperty().get());
-   }
+	public void update(CustomerCustomerCategory data)
+	{
+		if(data!=null){
+			name.textProperty().set(data.nameProperty().get());
+			discountRate.numberProperty().set(data.discountRateProperty().get());
+		}
+	}
 
-   public TextField getName()
-   {
-      return name;
-   }
+	public TextField getName()
+	{
+		return name;
+	}
 
-   public BigDecimalField getDiscountRate()
-   {
-      return discountRate;
-   }
+	public BigDecimalField getDiscountRate()
+	{
+		return discountRate;
+	}
 }

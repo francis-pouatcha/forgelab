@@ -115,11 +115,11 @@ public class LoginLoader extends Service<List<Login>> {
 
 			cell = row.getCell(4);
 			if (cell != null)
-				entity.setDisableLogin(1==cell.getNumericCellValue());
+				entity.setDisableLogin(Boolean.FALSE);
 
 			cell = row.getCell(5);
 			if (cell != null)
-				entity.setAccountLocked(1==cell.getNumericCellValue());
+				entity.setAccountLocked(Boolean.FALSE);
 
 			cell = row.getCell(6);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -158,8 +158,8 @@ public class LoginLoader extends Service<List<Login>> {
 			cell = row.getCell(9);
 			if (cell != null)
 			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setDiscountRate(decimal);
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setDiscountRate(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(10);

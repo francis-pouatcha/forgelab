@@ -238,14 +238,13 @@ public class ArticleLotEJB
 		// generate Article lot for each delivery item
 		for (DeliveryItem deliveryItem : deliveryItems) {
 			if(isManagedLot){
-				createArticleLot(creatingUser, deliveryItem);
+				createArticleLot(creatingUser, deliveryItem,isManagedLot);
 			}else {
 				upgradeArticleLotQtyOrCreate(deliveryItem, creatingUser);
 			}
 		}
 	}
-
-	public void createArticleLot(Login creatingUser ,DeliveryItem deliveryItem){
+	public void createArticleLot(Login creatingUser ,DeliveryItem deliveryItem,boolean manageLot){
 		ArticleLot al = new  ArticleLot();
 		al.setAgency(deliveryItem.getDelivery().getReceivingAgency());
 		Article article = deliveryItem.getArticle();
@@ -254,8 +253,11 @@ public class ArticleLotEJB
 		al.setVat(article.getVat());
 		al.setCreationDate(new Date());
 		al.setExpirationDate(deliveryItem.getExpirationDate());
-		// The internal PIC is supposed to be provided by the article lot.
-		al.setInternalPic(deliveryItem.getInternalPic());
+		if(manageLot){
+			al.setInternalPic(deliveryItem.getInternalPic());
+		}else {
+			al.setInternalPic(deliveryItem.getMainPic());
+		}
 		al.setMainPic(deliveryItem.getMainPic());
 		al.setSecondaryPic(deliveryItem.getSecondaryPic());
 		al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
@@ -281,7 +283,7 @@ public class ArticleLotEJB
 			next.calculateTotalAmout();
 			update(next);
 		}else {
-			createArticleLot(creatingUser, deliveryItem);
+			createArticleLot(creatingUser, deliveryItem,false);
 		}
 	}
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){

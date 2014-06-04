@@ -25,6 +25,7 @@ import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.customertype.CustomerType;
 import org.adorsys.adpharma.client.jpa.employer.Employer;
 import org.adorsys.adpharma.client.jpa.gender.Gender;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -84,7 +85,7 @@ public class CustomerLoader extends Service<List<Customer>> {
 				entity.setSerialNumber(cell.getStringCellValue().trim());
 
 			if (StringUtils.isBlank(entity.getSerialNumber()))
-				continue;
+				entity.setSerialNumber(RandomStringUtils.random(7));
 
 			CustomerSearchInput searchInput = new CustomerSearchInput();
 			searchInput.setEntity(entity);
@@ -105,12 +106,20 @@ public class CustomerLoader extends Service<List<Customer>> {
 				entity.setFirstName(cell.getStringCellValue().trim());
 
 			cell = row.getCell(3);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setLastName(cell.getStringCellValue().trim());
+				
+			}else {
+				entity.setLastName(".");
+			}
 
 			cell = row.getCell(4);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setFullName(cell.getStringCellValue().trim());
+				
+			}else {
+				entity.setFullName(".");
+			}
 
 			cell = row.getCell(5);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))

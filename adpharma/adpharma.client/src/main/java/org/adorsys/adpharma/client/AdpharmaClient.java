@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.adorsys.javafx.crud.extensions.MainController;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
@@ -28,7 +29,6 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.exceptions.IllegalStateException;
 
 public final class AdpharmaClient extends Application {
-
 	private Weld weld;
 
 	private static Locale locale;
