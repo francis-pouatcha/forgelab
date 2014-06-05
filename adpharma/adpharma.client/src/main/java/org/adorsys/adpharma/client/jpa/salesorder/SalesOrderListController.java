@@ -30,7 +30,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.SecurityUtil;
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;

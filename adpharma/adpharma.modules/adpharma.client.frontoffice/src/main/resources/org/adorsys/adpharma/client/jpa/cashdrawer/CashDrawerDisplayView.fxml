@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="661.0" prefWidth="1011.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<BorderPane fx:id="rootPane" layoutX="328.0" layoutY="197.0" prefHeight="661.0" prefWidth="1011.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+			<center>
+				<SplitPane orientation="VERTICAL">
+					<items>
+						<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+							<children>
+								<Separator layoutX="10.0" layoutY="453.0" prefHeight="0.0" prefWidth="167.0" />
+								<VBox maxWidth="999.0" prefHeight="37.0" prefWidth="999.0" spacing="5.0" VBox.vgrow="NEVER">
+									<VBox.margin>
+										<Insets bottom="5.0" />
+									</VBox.margin>
+									<children>
+										<HBox fx:id="invoiceSearchBox" alignment="CENTER_LEFT" prefHeight="27.0" prefWidth="984.0" spacing="5.0" VBox.vgrow="NEVER">
+											<VBox.margin>
+												<Insets />
+											</VBox.margin>
+											<padding>
+												<Insets left="5.0" />
+											</padding>
+										</HBox>
+									</children>
+									<padding>
+										<Insets top="10.0" />
+									</padding>
+								</VBox>
+								<Separator layoutX="10.0" layoutY="220.0" prefHeight="0.0" prefWidth="167.0" />
+								<TitledPane animated="false" text="Factures en attente de payement" textFill="#230b9a" />
+										<TableView fx:id="salesOrderDataList" prefWidth="800.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+											<HBox.margin>
+												<Insets bottom="3.0" />
+											</HBox.margin>
+										</TableView>
+							</children>
+							<BorderPane.margin>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</BorderPane.margin>
+						</VBox>
+						<HBox prefHeight="293.0" prefWidth="800.0" spacing="10.0" VBox.vgrow="ALWAYS">
+							<children>
+								<VBox prefHeight="203.0" prefWidth="450.0" spacing="5.0" HBox.hgrow="NEVER" VBox.vgrow="NEVER">
+									<children>
+										<VBox prefHeight="197.0" prefWidth="344.0" spacing="5.0" VBox.vgrow="ALWAYS">
+											<children>
+												<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="Information Montant" textFill="#3711dd" />
+												<GridPane fx:id="paymentGrid" prefHeight="164.0" prefWidth="343.0" vgap="3.0" VBox.vgrow="ALWAYS">
+													<columnConstraints>
+														<ColumnConstraints hgrow="SOMETIMES" maxWidth="149.0" minWidth="10.0" percentWidth="50.0" prefWidth="149.0" />
+														<ColumnConstraints halignment="CENTER" maxWidth="235.79999999999995" minWidth="10.0" percentWidth="50.0" prefWidth="195.79999999999995" />
+													</columnConstraints>
+													<rowConstraints>
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+														<RowConstraints />
+													</rowConstraints>
+													<VBox.margin>
+														<Insets bottom="5.0" />
+													</VBox.margin>
+													<children>
+														<Label text="Net a payer :">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label layoutX="10.0" layoutY="17.0" text="Mode Paiement :" GridPane.rowIndex="1">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label layoutX="10.0" layoutY="47.0" text="Montant recu :" GridPane.rowIndex="2">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label fx:id="amountTTC" graphicTextGap="3.0" layoutX="10.0" layoutY="77.0" text="Difference :" textFill="#1919b2" GridPane.rowIndex="3">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+														<Label fx:id="documentNumber" layoutX="10.0" layoutY="77.0" text="Num Bon :" textFill="#1919b2" GridPane.rowIndex="4">
+															<font>
+																<Font size="18.0" />
+															</font>
+														</Label>
+													</children>
+												</GridPane>
+											</children>
+										</VBox>
+										<Separator prefWidth="200.0" />
+										<VBox alignment="CENTER" prefHeight="50.0" prefWidth="450.0" spacing="5.0" VBox.vgrow="NEVER">
+											<children>
+												<HBox>
+													<Button fx:id="cashButon" layoutX="178.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="Enccaisser" textFill="#132f83">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+													<Button fx:id="cashOutButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="Deccaisser" textFill="#d70d0d">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+												</HBox>
+												<HBox>
+													<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="LISTER" textFill="#1e8334">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+													<Button fx:id="closeCashDrawerButton" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="FERMER" textFill="#c61b1b">
+														<font>
+															<Font size="24.0" />
+														</font>
+													</Button>
+												</HBox>
+											</children>
+											<padding>
+												<Insets top="5.0" />
+											</padding>
+										</VBox>
+									</children>
+								</VBox>
+								<VBox prefHeight="77.0" prefWidth="421.0" HBox.hgrow="ALWAYS">
+									<children>
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Facture selectionee" textFill="#1e0fa1" />
+										<GridPane fx:id="invoiceHeadGrid" hgap="2.0" styleClass="colored-text">
+											<columnConstraints>
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+												<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+											</columnConstraints>
+											<rowConstraints>
+												<RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+											</rowConstraints>
+										</GridPane>
+										<TableView fx:id="invoiceItemDataList" prefHeight="168.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+										</TableView>
+										<TitledPane animated="false" prefHeight="26.0" prefWidth="761.0" text="Paiements" textFill="#1e0fa1" />
+										<TableView fx:id="paymentItemDataList" prefHeight="98.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets bottom="2.0" />
+											</VBox.margin>
+											<contextMenu>
+												<ContextMenu>
+													<items>
+														<MenuItem fx:id="removePaymentMenuItem" mnemonicParsing="false" text="Remove Payment" />
+													</items>
+												</ContextMenu>
+											</contextMenu>
+										</TableView>
+									</children>
+								</VBox>
+							</children>
+						</HBox>
+					</items>
+				</SplitPane>
+			</center>
+		</BorderPane>
+	</children>
+</AnchorPane>

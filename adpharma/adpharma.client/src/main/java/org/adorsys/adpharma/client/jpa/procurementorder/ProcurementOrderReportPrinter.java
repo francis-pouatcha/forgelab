@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.SecurityUtil;
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
