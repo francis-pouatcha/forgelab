@@ -14,5 +14,7 @@
   	<module>adpharma.client.core</module>
   	<module>adpharma.client.ui</module>
   	<module>adpharma.client.frontoffice</module>
+  	<module>adpharma.client.backoffice</module>
+  	<module>adpharma.client.uib</module>
   </modules>
 </project>

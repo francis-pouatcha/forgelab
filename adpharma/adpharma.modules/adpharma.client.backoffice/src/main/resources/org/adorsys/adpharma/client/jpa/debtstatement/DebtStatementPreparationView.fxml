@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<VBox fx:id="rootNode" prefHeight="250.0" prefWidth="400.0" styleClass="side-background" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+			<children>
+				<TitledPane fx:id="header" prefHeight="13.0" prefWidth="400.0" text="Infos Preparation" textAlignment="RIGHT" textFill="#281a90" />
+				<VBox VBox.vgrow="ALWAYS">
+					<children>
+						<GridPane fx:id="entityForm" hgap="5.0" VBox.vgrow="ALWAYS">
+							<columnConstraints>
+								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
+							</columnConstraints>
+							<rowConstraints>
+								<RowConstraints vgrow="SOMETIMES" />
+								<RowConstraints vgrow="SOMETIMES" />
+								<RowConstraints vgrow="SOMETIMES" />
+								<RowConstraints vgrow="SOMETIMES" />
+							</rowConstraints>
+							<children>
+								<Label prefHeight="30.0" text="ASSURANCE :" GridPane.rowIndex="1" />
+								<Label layoutX="10.0" layoutY="17.0" prefHeight="30.0" text="DU :" GridPane.rowIndex="2" />
+								<Label layoutX="10.0" layoutY="47.0" prefHeight="30.0" text="AU :" GridPane.rowIndex="3" />
+								<Label layoutX="10.0" layoutY="22.0" prefHeight="30.0" text="SUPPLIER :" />
+							</children>
+						</GridPane>
+					</children>
+				</VBox>
+				<Separator prefWidth="200.0" />
+				<HBox fx:id="buttonBar" alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="400.0" spacing="10.0" VBox.vgrow="NEVER">
+					<children>
+						<Button fx:id="saveButton" mnemonicParsing="false" prefHeight="35.0" text="Sauvegarder" textFill="#142865" />
+						<Button fx:id="cancelButton" layoutX="350.0" layoutY="22.0" mnemonicParsing="false" prefHeight="35.0" text="Anuller" textFill="#142865" />
+					</children>
+					<VBox.margin>
+						<Insets />
+					</VBox.margin>
+				</HBox>
+			</children>
+		</VBox>
+	</children>
+</AnchorPane>

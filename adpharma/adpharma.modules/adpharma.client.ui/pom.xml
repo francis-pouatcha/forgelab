@@ -6,9 +6,9 @@
 		<artifactId>adpharma.modules</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>adpharma.client.ui</artifactId>
-	<name>Adpharma Client UI</name>
-	<description>Adpharma Client UI</description>
+	<artifactId>adpharma.client.uif</artifactId>
+	<name>Adpharma Frontoffice UI</name>
+	<description>Adpharma Frontoffice UI</description>
 
 	<properties>
 		<javaVersion>1.8</javaVersion>
