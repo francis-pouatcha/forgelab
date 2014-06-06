@@ -258,7 +258,7 @@ public class DeliveryDisplayController implements EntityController
 					entity.setArticleName(articleName);
 					ArticleSearchInput asi = new ArticleSearchInput();
 					asi.setEntity(entity);
-					asi.setMax(200);
+					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
 					modalArticleSearchEvent.fire(asi);
 				}
@@ -280,7 +280,7 @@ public class DeliveryDisplayController implements EntityController
 					entity.setPic( mainPic);
 					ArticleSearchInput asi = new ArticleSearchInput();
 					asi.setEntity(entity);
-					asi.setMax(200);
+					asi.setMax(30);
 					asi.getFieldNames().add("pic");
 					modalArticleSearchEvent.fire(asi);
 				}

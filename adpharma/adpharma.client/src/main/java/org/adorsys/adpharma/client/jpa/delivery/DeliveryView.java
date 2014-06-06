@@ -117,7 +117,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
 		viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierSelection, ViewModel.READ_WRITE);
-		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
+//		deliveryNumber = viewBuilder.addTextField("Delivery_deliveryNumber_description.title", "deliveryNumber", resourceBundle,ViewModel.READ_ONLY);
 		deliverySlipNumber = viewBuilder.addTextField("Delivery_deliverySlipNumber_description.title", "deliverySlipNumber", resourceBundle);
 		deliveryProcessingState = viewBuilder.addComboBox("Delivery_deliveryProcessingState_description.title", "deliveryProcessingState", resourceBundle, DocumentProcessingState.values(),ViewModel.READ_ONLY);
 		viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencySelection, ViewModel.READ_WRITE);
@@ -140,7 +140,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//      viewBuilder.addSubForm("Delivery_supplier_description.title", "supplier", resourceBundle, deliverySupplierForm, ViewModel.READ_ONLY);
 		//      viewBuilder.addTitlePane("Delivery_vat_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatForm, ViewModel.READ_ONLY);
-		viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatSelection, ViewModel.READ_WRITE);
+//		viewBuilder.addSubForm("Delivery_vat_description.title", "vat", resourceBundle, deliveryVatSelection, ViewModel.READ_WRITE);
 		//      viewBuilder.addTitlePane("Delivery_currency_description.title", resourceBundle);
 		//      viewBuilder.addSubForm("Delivery_currency_description.title", "currency", resourceBundle, deliveryCurrencyForm, ViewModel.READ_ONLY);
 		//         viewBuilder.addSubForm("Delivery_receivingAgency_description.title", "receivingAgency", resourceBundle, deliveryReceivingAgencyForm, ViewModel.READ_ONLY);
@@ -175,7 +175,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 
 	public void bind(Delivery model)
 	{
-		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
+//		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
 		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
 		deliveryProcessingState.valueProperty().bindBidirectional(model.deliveryProcessingStateProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
@@ -194,7 +194,7 @@ public class DeliveryView extends AbstractForm<Delivery>
 		//      deliverySupplierForm.bind(model);
 		deliverySupplierSelection.bind(model);
 		//      deliveryVatForm.bind(model);
-		deliveryVatSelection.bind(model);
+//		deliveryVatSelection.bind(model);
 		//      deliveryCurrencyForm.bind(model);
 		deliveryCurrencySelection.bind(model);
 		//      deliveryReceivingAgencyForm.bind(model);

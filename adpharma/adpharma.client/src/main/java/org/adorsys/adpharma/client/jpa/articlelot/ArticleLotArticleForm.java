@@ -75,9 +75,9 @@ public class ArticleLotArticleForm extends AbstractToOneAssociation<ArticleLot, 
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       articleName = viewBuilder.addTextField("Article_articleName_description.title", "articleName", resourceBundle);
       pic = viewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle);
-      manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
-      active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
-      authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
+//      manufacturer = viewBuilder.addTextField("Article_manufacturer_description.title", "manufacturer", resourceBundle);
+//      active = viewBuilder.addCheckBox("Article_active_description.title", "active", resourceBundle);
+//      authorizedSale = viewBuilder.addCheckBox("Article_authorizedSale_description.title", "authorizedSale", resourceBundle);
       qtyInStock = viewBuilder.addBigDecimalField("Article_qtyInStock_description.title", "qtyInStock", resourceBundle, NumberType.INTEGER, locale);
       sppu = viewBuilder.addBigDecimalField("Article_sppu_description.title", "sppu", resourceBundle, NumberType.INTEGER, locale);
 
@@ -88,9 +88,9 @@ public class ArticleLotArticleForm extends AbstractToOneAssociation<ArticleLot, 
    {
       articleName.textProperty().bindBidirectional(model.getArticle().articleNameProperty());
       pic.textProperty().bindBidirectional(model.getArticle().picProperty());
-      manufacturer.textProperty().bindBidirectional(model.getArticle().manufacturerProperty());
-      active.textProperty().bindBidirectional(model.getArticle().activeProperty(), new BooleanStringConverter());
-      authorizedSale.textProperty().bindBidirectional(model.getArticle().authorizedSaleProperty(), new BooleanStringConverter());
+//      manufacturer.textProperty().bindBidirectional(model.getArticle().manufacturerProperty());
+//      active.textProperty().bindBidirectional(model.getArticle().activeProperty(), new BooleanStringConverter());
+//      authorizedSale.textProperty().bindBidirectional(model.getArticle().authorizedSaleProperty(), new BooleanStringConverter());
       qtyInStock.numberProperty().bindBidirectional(model.getArticle().qtyInStockProperty());
       sppu.numberProperty().bindBidirectional(model.getArticle().sppuProperty());
    }
@@ -99,9 +99,9 @@ public class ArticleLotArticleForm extends AbstractToOneAssociation<ArticleLot, 
    {
       articleName.textProperty().set(data.articleNameProperty().get());
       pic.textProperty().set(data.picProperty().get());
-      manufacturer.textProperty().set(data.manufacturerProperty().get());
-      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
-      authorizedSale.textProperty().set(new BooleanStringConverter().toString(data.authorizedSaleProperty().get()));
+//      manufacturer.textProperty().set(data.manufacturerProperty().get());
+//      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+//      authorizedSale.textProperty().set(new BooleanStringConverter().toString(data.authorizedSaleProperty().get()));
       qtyInStock.numberProperty().set(data.qtyInStockProperty().get());
       sppu.numberProperty().set(data.sppuProperty().get());
    }

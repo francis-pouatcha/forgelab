@@ -8,7 +8,7 @@ Description: MistSilver Skin for JavaFX
 */
 .root{
      -fx-font: 14px;
-     -fx-base: rgb(227,244,251);
+     -fx-base: rgb(227,250,251);
 }
 
 .domainComponentView {

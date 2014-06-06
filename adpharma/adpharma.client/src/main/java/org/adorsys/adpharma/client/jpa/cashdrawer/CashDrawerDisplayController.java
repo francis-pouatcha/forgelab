@@ -635,6 +635,17 @@ public class CashDrawerDisplayController implements EntityController
 			}
 		});
 		customerVoucherSearchService.setOnFailed(serviceFailedHandler);
+		
+		displayView.getReceivedAmount().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(KeyCode.SPACE.equals(code))
+					doPayement();
+				
+			}
+		});
 	}
 
 	public void handleCashDrawerCreateService(){
@@ -846,14 +857,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashButon().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				BigDecimal payAmount = getPayAmount();
-				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(proccessingOrder);
-				BigDecimal customerRestTopay = restToPay.getCustomerRestToPay();
-				if(customerRestTopay.compareTo(payAmount)<=0){
-					processPayment();
-				}else {
-					Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
-				}
+				doPayement();
 			}
 		});
 		displayView.getCashButon().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -886,6 +890,17 @@ public class CashDrawerDisplayController implements EntityController
 
 			}
 		});
+	}
+	
+	public void doPayement(){
+		BigDecimal payAmount = getPayAmount();
+		SalesOrderRestToPay restToPay = new SalesOrderRestToPay(proccessingOrder);
+		BigDecimal customerRestTopay = restToPay.getCustomerRestToPay();
+		if(customerRestTopay.compareTo(payAmount)<=0){
+			processPayment();
+		}else {
+			Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
+		}
 	}
 	public void processPayment(){
 		Payment payment = paymentManager.getPayment();

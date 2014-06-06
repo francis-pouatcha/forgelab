@@ -103,12 +103,12 @@ public class LoginView extends AbstractForm<Login>
       credentialExpiration = viewBuilder.addCalendarTextField("Login_credentialExpiration_description.title", "credentialExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       accountExpiration = viewBuilder.addCalendarTextField("Login_accountExpiration_description.title", "accountExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       recordingDate = viewBuilder.addCalendarTextField("Login_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      viewBuilder.addTitlePane("Login_agency_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencyForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencySelection, ViewModel.READ_WRITE);
       viewBuilder.addTitlePane("Login_roleNames_description.title", resourceBundle);
       viewBuilder.addSubForm("Login_roleNames_description.title", "roleNames", resourceBundle, loginRoleNamesForm, ViewModel.READ_WRITE);
       viewBuilder.addSubForm("Login_roleNames_description.title", "roleNames", resourceBundle, loginRoleNamesSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("Login_agency_description.title", resourceBundle);
-      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencyForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencySelection, ViewModel.READ_WRITE);
 
       ComboBoxInitializer.initialize(gender, genderConverter, genderListCellFatory, genderBundle);
 

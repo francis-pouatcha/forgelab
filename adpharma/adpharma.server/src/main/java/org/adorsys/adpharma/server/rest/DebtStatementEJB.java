@@ -208,7 +208,7 @@ public class DebtStatementEJB
 	 * keeps going on.
 	 * 
 	 * @param customer
-	 * @return
+	 * @return 
 	 */
 	public List<DebtStatement> closeDebtStatement(Customer customer){
 		DebtStatement debtStatement = new DebtStatement();

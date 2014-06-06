@@ -100,14 +100,14 @@ public class ArticleLotView extends AbstractForm<ArticleLot>
       totalSalePrice = viewBuilder.addBigDecimalField("ArticleLot_totalSalePrice_description.title", "totalSalePrice", resourceBundle, NumberType.CURRENCY, locale);
       expirationDate = viewBuilder.addCalendarTextField("ArticleLot_expirationDate_description.title", "expirationDate", resourceBundle, "dd-MM-yyyy", locale);
       creationDate = viewBuilder.addCalendarTextField("ArticleLot_creationDate_description.title", "creationDate", resourceBundle, "dd-MM-yyyy HH:mm", locale,ViewModel.READ_ONLY);
-      viewBuilder.addTitlePane("ArticleLot_agency_description.title", resourceBundle);
-      viewBuilder.addSubForm("ArticleLot_agency_description.title", "agency", resourceBundle, articleLotAgencyForm, ViewModel.READ_ONLY);
+//      viewBuilder.addTitlePane("ArticleLot_agency_description.title", resourceBundle);
+//      viewBuilder.addSubForm("ArticleLot_agency_description.title", "agency", resourceBundle, articleLotAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ArticleLot_agency_description.title", "agency", resourceBundle, articleLotAgencySelection, ViewModel.READ_WRITE);
       viewBuilder.addTitlePane("ArticleLot_article_description.title", resourceBundle);
       viewBuilder.addSubForm("ArticleLot_article_description.title", "article", resourceBundle, articleLotArticleForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("ArticleLot_article_description.title", "article", resourceBundle, articleLotArticleSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("ArticleLot_vat_description.title", resourceBundle);
-      viewBuilder.addSubForm("ArticleLot_vat_description.title", "vat", resourceBundle, articleLotVatForm, ViewModel.READ_ONLY);
+//      viewBuilder.addSubForm("ArticleLot_article_description.title", "article", resourceBundle, articleLotArticleSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("ArticleLot_vat_description.title", resourceBundle);
+//      viewBuilder.addSubForm("ArticleLot_vat_description.title", "vat", resourceBundle, articleLotVatForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("ArticleLot_vat_description.title", "vat", resourceBundle, articleLotVatSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();

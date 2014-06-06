@@ -226,7 +226,7 @@ public class ProductDetailConfigTarget implements Association<ProductDetailConfi
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "articleName", "pic");
+      return PropertyReader.buildToString(this, "articleName");
    }
 
    @Override

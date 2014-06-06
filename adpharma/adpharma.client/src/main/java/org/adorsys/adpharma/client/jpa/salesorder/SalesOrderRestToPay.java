@@ -12,16 +12,14 @@ public class SalesOrderRestToPay {
 	public SalesOrderRestToPay(SalesOrder salesOrder) {
 		BigDecimal amountAfterTax = salesOrder.getAmountAfterTax();
 		if(amountAfterTax==null || amountAfterTax.compareTo(BigDecimal.ZERO)==0) return;
-		
 		SalesOrderInsurance insurance = salesOrder.getInsurance();
-		Date creationDate2 = salesOrder.getCreationDate()==null?new Date():salesOrder.getCreationDate().getTime();
 		if(insurance==null || 
 			insurance.getCoverageRate()==null ||
-			insurance.getCoverageRate().compareTo(BigDecimal.ZERO)==0 ||
-			(insurance.getBeginDate()!=null && insurance.getBeginDate().after(creationDate2)) ||
-			(insurance.getEndDate()!=null && insurance.getEndDate().before(creationDate2))
+			insurance.getCoverageRate().compareTo(BigDecimal.ZERO)==0 
+			
 		) {
 			this.customerRestToPay = amountAfterTax;
+			return ;
 		}
 		
 		BigDecimal coverageRateAbs = insurance.getCoverageRate();

@@ -68,7 +68,7 @@ public class InsurranceMerger
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
       MergerUtils.copyFields(entity, newEntity, fieldList);
-      return newEntity;
+      return entity;
    }
 
    public Set<Insurrance> unbind(final Set<Insurrance> entities, List<String> fieldList)

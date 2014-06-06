@@ -515,6 +515,7 @@ public class SalesOrder implements Cloneable
 		}
 		PropertyReader.copy(insurance, getInsurance());
 		insuranceProperty().setValue(ObjectUtils.clone(getInsurance()));
+		getInsurance().setInsurer(insurance.getInsurer());
 	}
 
 	public SimpleObjectProperty<SalesOrderVat> vatProperty()

@@ -84,7 +84,7 @@ public class ArticleLotListView
 		viewBuilder.addStringColumn(dataList, "mainPic", "ArticleLot_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "internalPic", "ArticleLot_internalPic_description.title", resourceBundle);
 //		viewBuilder.addStringColumn(dataList, "agency", "ArticleLot_agency_description.title", resourceBundle);
-		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,200d);
+		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,300d);
 		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ArticleLot_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ArticleLot_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -104,15 +104,15 @@ public class ArticleLotListView
 	public void buildsearchBar(){
 		internalPic =ViewBuilderUtils.newTextField("internalPic", false);
 		internalPic.setPromptText("internal Pic");
-		internalPic.setPrefHeight(40d);
+		internalPic.setPrefHeight(30d);
 
 		articleName =ViewBuilderUtils.newTextField("articleName", false);
 		articleName.setPromptText("Article Name");
-		articleName.setPrefHeight(40d);
-		articleName.setPrefWidth(400d);
+		articleName.setPrefHeight(30d);
+		articleName.setPrefWidth(300d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchButton.setPrefHeight(40d);
+		searchButton.setPrefHeight(30d);
 		searchBar.getChildren().addAll(internalPic,articleName,searchButton);
 	}
 

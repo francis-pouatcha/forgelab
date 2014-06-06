@@ -192,7 +192,8 @@ public class SalesOrderEndpoint
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<SalesOrder> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
-		return new SalesOrderSearchResult(countLike, detach(resultList),
+		List<SalesOrder> detach = detach(resultList);
+		return new SalesOrderSearchResult(countLike, detach,
 				detach(searchInput));
 	}
 
@@ -242,7 +243,7 @@ public class SalesOrderEndpoint
 
 	private static final List<String> customerFields = Arrays.asList("fullName", "serialNumber", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","customerCategory.discountRate","customerCategory.name");
 
-	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.fullName", "insurer.fullName", "coverageRate");
+	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer", "insurer", "coverageRate");
 
 	private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 

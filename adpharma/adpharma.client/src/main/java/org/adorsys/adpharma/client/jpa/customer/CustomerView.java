@@ -135,11 +135,11 @@ public class CustomerView extends AbstractForm<Customer>
       totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
       totalDebt = viewBuilder.addBigDecimalField("Customer_totalDebt_description.title", "totalDebt", resourceBundle, NumberType.CURRENCY, locale);
       birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
-      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
-      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerForm, ViewModel.READ_ONLY);
+//      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("Customer_customerCategory_description.title", resourceBundle);
-      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategoryForm, ViewModel.READ_ONLY);
+//      viewBuilder.addTitlePane("Customer_customerCategory_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategoryForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategorySelection, ViewModel.READ_WRITE);
 
       ComboBoxInitializer.initialize(gender, genderConverter, genderListCellFatory, genderBundle);
