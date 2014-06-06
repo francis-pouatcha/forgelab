@@ -91,9 +91,9 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 	
 				newTableRow(deliveryItem.getInternalPic(), 
 						articleName, 
-						deliveryItem.getStockQuantity(), 
+						deliveryItem.getArticle().getQtyInStock(), 
 						deliveryItem.getPurchasePricePU(),
-						deliveryItem.getQtyOrdered(),
+						deliveryItem.getStockQuantity(),
 						deliveryItem.getSalesPricePU(),
 						deliveryItem.getTotalPurchasePrice());
 			}

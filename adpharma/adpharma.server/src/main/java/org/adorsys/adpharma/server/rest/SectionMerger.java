@@ -68,7 +68,7 @@ public class SectionMerger
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
       MergerUtils.copyFields(entity, newEntity, fieldList);
-      return newEntity;
+      return entity;
    }
 
    public Set<Section> unbind(final Set<Section> entities, List<String> fieldList)

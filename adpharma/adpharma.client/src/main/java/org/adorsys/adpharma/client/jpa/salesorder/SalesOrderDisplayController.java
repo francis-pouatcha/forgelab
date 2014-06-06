@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -378,7 +379,6 @@ public class SalesOrderDisplayController implements EntityController
 
 				if("000000001".equals(orderCustomer.getSerialNumber()))
 					return ;
-				System.out.println(orderCustomer.getSerialNumber()+" serial");
 				Insurrance insurrance = new Insurrance();
 				InsurranceCustomer customer = new InsurranceCustomer();
 				PropertyReader.copy(orderCustomer, customer);
@@ -469,9 +469,18 @@ public class SalesOrderDisplayController implements EntityController
 				s.reset();
 				List<Insurrance> resultList = cs.getResultList();
 				displayView.getInsurrer().getItems().clear();
+				ArrayList<SalesOrderInsurance> insurrances = new ArrayList<SalesOrderInsurance>();
 				resultList.add(0, new Insurrance());
 				for (Insurrance insurrance : resultList) {
-					displayView.getInsurrer().getItems().add(new SalesOrderInsurance(insurrance));
+					insurrances.add(new SalesOrderInsurance(insurrance));
+				}
+				
+				displayView.getInsurrer().getItems().addAll(insurrances);
+				if(!insurrances.isEmpty()){
+					displayedEntity.setInsurance(insurrances.iterator().next());
+					
+				}else {
+					displayedEntity.setInsurance(new SalesOrderInsurance());
 				}
 
 			}
@@ -882,7 +891,9 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public void handleNewInsurance(Insurrance model){
-		displayedEntity.setInsurance(new SalesOrderInsurance(model));
+		Customer customer = new Customer();
+		PropertyReader.copy(model.getCustomer(),customer);
+		getCustomerInsurance(customer);
 	}
 
 

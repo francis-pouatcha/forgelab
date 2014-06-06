@@ -198,7 +198,7 @@ public class ArticleEndpoint
 
    private static final List<String> emptyList = Collections.emptyList();
 
-   private static final List<String> sectionFields = Arrays.asList("sectionCode", "name", "position", "agency.name");
+   private static final List<String> sectionFields = Arrays.asList("sectionCode", "name", "position", "agency");
 
    private static final List<String> familyFields = Arrays.asList("name");
 

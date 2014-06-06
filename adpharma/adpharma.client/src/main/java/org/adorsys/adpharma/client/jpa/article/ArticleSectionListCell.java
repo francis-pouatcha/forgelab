@@ -15,7 +15,7 @@ public class ArticleSectionListCell extends AbstractToStringListCell<ArticleSect
       {
          return "";
       }
-      return PropertyReader.buildToString(item, "sectionCode");
+      return PropertyReader.buildToString(item, "name");
    }
 
 }

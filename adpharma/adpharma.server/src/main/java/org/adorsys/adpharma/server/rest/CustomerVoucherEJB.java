@@ -169,7 +169,7 @@ public class CustomerVoucherEJB
 				List<CustomerVoucher> found = findBy(customerVoucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber});
 				if(found.isEmpty()) throw new IllegalStateException("Unknown customer voucher.");
 				customerVoucher = found.iterator().next();
-				customerVoucher.setAmountUsed((customerVoucher.getAmountUsed().add(paymentItem.getAmount())).negate());
+				customerVoucher.setAmountUsed((customerVoucher.getAmountUsed().add(paymentItem.getAmount())));
 				customerVoucher.setModifiedDate(new Date());
 				customerVoucher.setRecordingUser(securityUtil.getConnectedUser());
 				customerVoucher.setRestAmount(customerVoucher.getAmount().subtract(customerVoucher.getAmountUsed()));

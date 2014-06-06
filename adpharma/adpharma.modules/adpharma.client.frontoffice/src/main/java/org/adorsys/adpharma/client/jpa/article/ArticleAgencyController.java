@@ -109,7 +109,7 @@ public abstract class ArticleAgencyController
          {
             if (sourceEntity != null)
                form.update(newValue);
-            //                sourceEntity.setAgency(newValue);
+            //                sourceEntity.seztAgency(newValue);
          }
       });
 

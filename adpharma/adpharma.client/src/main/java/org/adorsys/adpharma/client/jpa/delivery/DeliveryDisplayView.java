@@ -261,11 +261,11 @@ public class DeliveryDisplayView
 		stockQuantity.setPrefWidth(75d);
 		stockQuantity.setAlignment(Pos.CENTER);
 
-		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
+		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.INTEGER, locale,false);
 		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
 		salesPricePU.setPrefWidth(110d);
 
-		purchasePricePU = ViewBuilderUtils.newBigDecimalField( "purchasePricePU", NumberType.CURRENCY, locale,false);
+		purchasePricePU = ViewBuilderUtils.newBigDecimalField( "purchasePricePU", NumberType.INTEGER, locale,false);
 		purchasePricePU.setTooltip(new Tooltip("Prix d achat unitaire"));
 		purchasePricePU.setPrefWidth(110d);
 

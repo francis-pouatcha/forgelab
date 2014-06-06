@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Description("Supplier_description")
 @ToStringField("name")
 @ListField({ "name", "fax", "email" })
-public class Supplier implements Serializable
+public class Supplier implements Serializable,Comparable<Supplier>
 {
 
    @Id
@@ -247,4 +247,9 @@ public class Supplier implements Serializable
          result += ", taxIdNumber: " + taxIdNumber;
       return result;
    }
+
+@Override
+public int compareTo(Supplier o) {
+	return this.getName().compareToIgnoreCase(o.getName()) ;
+}
 }

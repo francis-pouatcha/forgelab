@@ -5,10 +5,14 @@ Created on : Feb 25, 2013, 3:46:06 AM
 Author : Farrukh Obaid
 Description: MistSilver Skin for JavaFX
 
-*/
 .root{
      -fx-font: 14px;
      -fx-base: rgb(227,250,251);
+}
+*/
+
+.root{
+     -fx-font: 14px;
 }
 
 .domainComponentView {

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Supplier;
 import org.adorsys.adpharma.server.jpa.Supplier_;
 import org.adorsys.adpharma.server.jpa.SupplierSearchInput;
@@ -84,6 +86,7 @@ public class SupplierEndpoint
          @QueryParam("max") int max)
    {
       List<Supplier> resultList = ejb.listAll(start, max);
+      Collections.sort(resultList);
       SupplierSearchInput searchInput = new SupplierSearchInput();
       searchInput.setStart(start);
       searchInput.setMax(max);
@@ -108,6 +111,7 @@ public class SupplierEndpoint
       Long count = ejb.countBy(searchInput.getEntity(), attributes);
       List<Supplier> resultList = ejb.findBy(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
+      Collections.sort(resultList);
       return new SupplierSearchResult(count, detach(resultList),
             detach(searchInput));
    }
@@ -131,6 +135,7 @@ public class SupplierEndpoint
       Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
       List<Supplier> resultList = ejb.findByLike(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
+      Collections.sort(resultList);
       return new SupplierSearchResult(countLike, detach(resultList),
             detach(searchInput));
    }

@@ -524,19 +524,19 @@ public class DeliveryListController implements EntityController
 		HSSFCell cell ;
 		HSSFSheet sheet = deleveryXls.createSheet(selectedItem.getDeliveryNumber());
 		HSSFRow header = sheet.createRow(rownum++);
-		
+
 		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_internalPic_description.title"));
-		
+
 		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
-		
+
 		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_stockQuantity_description.title"));
-		
+
 		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
-		
+
 		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_delivery_description.title"));
 
@@ -544,22 +544,28 @@ public class DeliveryListController implements EntityController
 			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
 			List<DeliveryItem> items = Lists.newArrayList(iterator);
 			for (DeliveryItem item : items) {
-				cellnum = 0 ;
-				HSSFRow row = sheet.createRow(rownum++);
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getInternalPic());
+				int intValue = item.getStockQuantity().intValue();
 
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getArticle().getArticleName());
+				for (int i = 0; i < intValue; i++) {
+					cellnum = 0 ;
+					HSSFRow row = sheet.createRow(rownum++);
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getInternalPic());
 
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getStockQuantity().doubleValue());
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getArticle().getArticleName());
+					//
+					//					cell = row.createCell(cellnum++);
+					//					cell.setCellValue(item.getStockQuantity().doubleValue());
 
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getSalesPricePU().doubleValue());
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getSalesPricePU().doubleValue());
 
-				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getDelivery().getDeliveryNumber());
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getDelivery().getDeliveryNumber());
+				}
+
+
 
 			}
 			try {

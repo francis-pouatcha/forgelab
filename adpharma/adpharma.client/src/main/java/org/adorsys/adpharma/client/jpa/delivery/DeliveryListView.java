@@ -161,9 +161,9 @@ public class DeliveryListView
 //		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,350d);
 		viewBuilder.addDateColumn(dataListItem, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "stockQuantity", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);

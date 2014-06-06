@@ -124,7 +124,6 @@ public final class AdpharmaClient extends Application {
 	@Override
 	public void start(Stage stage) {
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
 			public void handle(WindowEvent event) {
 				Collection<File> listFiles = FileUtils.listFiles(new File("."), new String[]{"pdf"}, false);
 				for (File file : listFiles) {

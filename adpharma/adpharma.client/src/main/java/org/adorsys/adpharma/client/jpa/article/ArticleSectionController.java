@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -68,10 +70,20 @@ public abstract class ArticleSectionController
             List<Section> entities = targetSearchResult.getResultList();
             selection.getSection().getItems().clear();
             selection.getSection().getItems().add(new ArticleSection());
+            entities.sort(new Comparator<Section>() {
+
+				@Override
+				public int compare(Section o1, Section o2) {
+					// TODO Auto-generated method stub
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				}
+			});
+            ArrayList<ArticleSection> arrayList = new ArrayList<ArticleSection>();
             for (Section entity : entities)
             {
-               selection.getSection().getItems().add(new ArticleSection(entity));
+            	arrayList.add(new ArticleSection(entity));
             }
+            selection.getSection().getItems().addAll(arrayList);
          }
       });
       searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
