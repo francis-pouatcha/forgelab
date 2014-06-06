@@ -9,6 +9,7 @@
   <modules>
     <module>adpharma.server</module>
     <module>adpharma.client</module>
+    <module>adpharma.modules</module>
   </modules>
   <repositories>
     <repository>

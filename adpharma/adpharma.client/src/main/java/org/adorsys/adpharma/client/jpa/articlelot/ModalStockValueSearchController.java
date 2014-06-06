@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.SecurityUtil;
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
