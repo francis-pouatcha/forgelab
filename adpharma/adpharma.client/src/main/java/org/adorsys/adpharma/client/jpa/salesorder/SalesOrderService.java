@@ -1,17 +1,13 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.util.List;
-
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -63,6 +59,15 @@ public class SalesOrderService {
 	public SalesOrder update(SalesOrder entity) {
 		Entity<SalesOrder> ent = Entity.entity(entity, media);
 		return target().path("" + entity.getId()).request(media)
+				.put(ent, SalesOrder.class);
+	}
+
+	// @PUT
+	// @Path("/{id:[0-9][0-9]*}")
+	// @Consumes("application/xml")
+	public SalesOrder changeCustomer(Long salesId ,Customer customer) {
+		Entity<Customer> ent = Entity.entity(customer, media);
+		return target().path("changeCustomer/" + salesId).request(media)
 				.put(ent, SalesOrder.class);
 	}
 

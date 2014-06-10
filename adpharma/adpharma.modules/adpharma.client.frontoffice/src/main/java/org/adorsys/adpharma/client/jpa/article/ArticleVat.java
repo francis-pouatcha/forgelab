@@ -144,7 +144,7 @@ public class ArticleVat implements Association<Article, VAT>, Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name");
+      return PropertyReader.buildToString(this, "name","rate");
    }
 
    @Override

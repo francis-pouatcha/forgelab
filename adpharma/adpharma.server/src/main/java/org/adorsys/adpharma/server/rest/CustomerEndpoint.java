@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.Customer_;
 import org.adorsys.adpharma.server.jpa.CustomerSearchInput;
@@ -203,6 +205,13 @@ public class CustomerEndpoint
 
    private List<Customer> detach(List<Customer> list)
    {
+	   Collections.sort(list, new Comparator<Customer>() {
+
+		@Override
+		public int compare(Customer o1, Customer o2) {
+			return o1.getFullName().compareTo(o2.getFullName());
+		}
+	});
       if (list == null)
          return list;
       List<Customer> result = new ArrayList<Customer>();

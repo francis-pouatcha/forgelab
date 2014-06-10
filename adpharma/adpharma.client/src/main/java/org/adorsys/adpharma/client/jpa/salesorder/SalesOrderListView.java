@@ -133,7 +133,7 @@ public class SalesOrderListView
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle); 
 		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_customer_description.title", resourceBundle,250d);
-		viewBuilder.addStringColumn(dataList, "cashDrawer", "SalesOrder_cashDrawer_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "cashDrawer", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "salesAgent", "SalesOrder_salesAgent_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
 
@@ -165,7 +165,7 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "SalesOrderItem", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+//		viewBuilder.addBigDecimalColumn(dataListItem, "vat", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
 
 		// pie Chart table view
 		viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);

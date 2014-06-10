@@ -98,6 +98,15 @@ public class SalesOrderEndpoint
 	{
 		return detach(ejb.update(entity));
 	}
+	
+	@PUT
+	@Path("changeCustomer/{id:[0-9][0-9]*}")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrder changeCustomer(@PathParam("id") Long id,Customer customer)
+	{
+		return detach(ejb.changeCustomer(id,customer));
+	}
 
 	@PUT
 	@Path("/processReturn")

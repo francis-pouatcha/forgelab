@@ -58,7 +58,7 @@ public class ArticleLotEJB
 
 	@Inject
 	private EntityManager em ;
-	
+
 	@Inject
 	private ArticleLotRepository repository;
 
@@ -170,10 +170,10 @@ public class ArticleLotEJB
 
 		querys.setParameter("stockQuantity",BigDecimal.ZERO);
 		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
-		querys.setParameter("agency", searchInput.getEntity().getAgency());
+			querys.setParameter("agency", searchInput.getEntity().getAgency());
 		if(searchInput.getEntity().getSection()!=null&&searchInput.getEntity().getSection().getId()!=null)
 			querys.setParameter("section", searchInput.getEntity().getSection());
-		 stockVAlues = querys.getResultList();
+		stockVAlues = querys.getResultList();
 
 		return stockVAlues ;
 	}
@@ -182,51 +182,66 @@ public class ArticleLotEJB
 	@DocumentProcessedEvent
 	private Event<ArticleLotDetailsManager> articleLotDetailsEvent ;
 
+	/**
+	 * 
+	 *
+	 */
 	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager){
 		ArticleLot lot = null ;
 
 		Login login = securityUtil.getConnectedUser();
-		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
+		ArticleLot source = lotDetailsManager.getLotToDetails();
 		ProductDetailConfig detailConfig = lotDetailsManager.getDetailConfig();
 		BigDecimal detailsQty = lotDetailsManager.getDetailsQty();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+		
 		if(isManagedLot){
+			ArticleLot al = newArticleLot(lotDetailsManager);
+			lot = create(al);
+		}else {
 			ArticleLot articleLot = new ArticleLot();
 			articleLot.setArticle(detailConfig.getTarget());
 			List<ArticleLot> found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article});
-			articleLot = found.iterator().next();
-			BigDecimal stockQuantity = articleLot.getStockQuantity();
-			stockQuantity =stockQuantity.add(detailsQty.multiply(detailConfig.getTargetQuantity()));
-			articleLot.setStockQuantity(stockQuantity);
-			articleLot.setSalesPricePU(detailConfig.getSalesPrice());
-			articleLot.calculateTotalAmout();
+			if(!found.isEmpty()){
+				articleLot = found.iterator().next();
+				BigDecimal stockQuantity = articleLot.getStockQuantity();
+				stockQuantity =stockQuantity.add(detailsQty.multiply(detailConfig.getTargetQuantity()));
+				articleLot.setStockQuantity(stockQuantity);
+				articleLot.setSalesPricePU(detailConfig.getSalesPrice());
+				articleLot.calculateTotalAmout();
+			}else {
+				articleLot = newArticleLot(lotDetailsManager);
+			}
+
 			lot = update(articleLot);
-
-		}else {
-			ArticleLot al = new  ArticleLot();
-			al.setAgency(lotToDetails.getAgency());
-			al.setArticle(detailConfig.getTarget());
-			al.setArticleName(al.getArticle().getArticleName());
-			al.setCreationDate(new Date());
-			al.setExpirationDate(lotToDetails.getExpirationDate());
-			al.setInternalPic(lotToDetails.getInternalPic()+"-"+RandomStringUtils.randomNumeric(2));
-			al.setMainPic(detailConfig.getTarget().getPic());
-			al.setSecondaryPic(lotToDetails.getSecondaryPic());
-			al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
-			al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(), 4, RoundingMode.HALF_EVEN));
-			al.setSalesPricePU(detailConfig.getSalesPrice());
-			al.calculateTotalAmout();
-			lot = create(al);
 		}
-
-
-
-		lotToDetails.setStockQuantity(lotToDetails.getStockQuantity().subtract(detailsQty)); // remove details qty to lot stock
-		lotToDetails.calculateTotalAmout();
-		update(lotToDetails);
+		source.setStockQuantity(source.getStockQuantity().subtract(detailsQty)); // remove details qty to lot stock
+		source.calculateTotalAmout();
+		source = update(source);
 		articleLotDetailsEvent.fire(lotDetailsManager);
-		return lot;
+		return source ;
+	 }
+	
+
+	public ArticleLot newArticleLot(ArticleLotDetailsManager lotDetailsManager){
+		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
+		ProductDetailConfig detailConfig = lotDetailsManager.getDetailConfig();
+		BigDecimal detailsQty = lotDetailsManager.getDetailsQty();
+		ArticleLot al = new  ArticleLot();
+		al.setAgency(lotToDetails.getAgency());
+		al.setArticle(detailConfig.getTarget());
+		al.setArticleName(al.getArticle().getArticleName());
+		al.setCreationDate(new Date());
+		al.setExpirationDate(lotToDetails.getExpirationDate());
+		al.setInternalPic(lotToDetails.getInternalPic());
+		al.setMainPic(detailConfig.getTarget().getPic());
+		al.setSecondaryPic(lotToDetails.getSecondaryPic());
+		al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
+		al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(), 4, RoundingMode.HALF_EVEN));
+		al.setSalesPricePU(detailConfig.getSalesPrice());
+		al.calculateTotalAmout();
+		return al ;
 	}
 
 	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){

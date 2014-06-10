@@ -12,11 +12,19 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.StockMovement;
+import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
+import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
 
 @Stateless
@@ -196,6 +204,41 @@ public class ArticleEJB
 			article.setRecordingDate(new Date());
 
 			update(article);
+		}
+	}
+	
+	public void handleArticleLotDetails(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
+		Article source = lotDetailsManager.getDetailConfig().getSource();
+		 Article target = lotDetailsManager.getDetailConfig().getTarget();
+		lotDetailsManager.getLotToDetails();
+		if(lotDetailsManager==null)
+			return;
+	    if(source == null || target == null)
+	    	throw new IllegalStateException("source and target  article is required !");
+	    source =   findById(source.getId());
+	    target =   findById(target.getId());
+	    source.setQtyInStock(source.getQtyInStock().subtract(lotDetailsManager.getDetailsQty()));
+	    target.setQtyInStock(target.getQtyInStock().add(lotDetailsManager.getDetailsQty().multiply(lotDetailsManager.getDetailConfig().getTargetQuantity())));
+	    update(source);
+	    update(target);
+	}
+	
+	/**
+	 * update article stocks according to returned qty.
+	 * 
+	 * @param salesOrder
+	 */
+	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
+
+		for (SalesOrderItem salesOrderItem : salesOrderItems) {
+			if(salesOrderItem.hasReturnArticle()){
+				Article article = salesOrderItem.getArticle();
+				BigDecimal movedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
+				article.setQtyInStock(article.getQtyInStock().add(movedQty));
+				update(article);
+			}
+
 		}
 	}
 

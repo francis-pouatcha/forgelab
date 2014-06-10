@@ -41,7 +41,7 @@ public class ArticleLoader extends Service<List<Article>> {
 
 	@Inject
 	private ArticleService remoteService;
-	
+
 	private HSSFWorkbook workbook;
 	private DataMap dataMap;
 
@@ -68,34 +68,34 @@ public class ArticleLoader extends Service<List<Article>> {
 	private List<Article> loadArticles() {
 		List<Article> result = new ArrayList<Article>();
 		result.addAll(remoteService.listAll().getResultList());
-		
+
 		PGRunner pgRunner = new PGRunner(progressLabel);
 		Platform.runLater(pgRunner.setText(progressText));
-		
+
 
 		HSSFSheet sheet = workbook.getSheet("Article");
 		if(sheet==null){
 			return result;
 		}
-		
+
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		
+
 		String working = progressText;
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			final Article entity = new Article();
-			
+
 			working+= " .";
 			if(working.length()>150) working=progressText;
 			Platform.runLater(pgRunner.setText(working));
-			
+
 			Cell cell = row.getCell(0);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setArticleName(cell.getStringCellValue().trim());
 			}else {
-				entity.setArticleName(RandomStringUtils.random(10));
+				entity.setArticleName(".");
 			}
 
 
@@ -110,7 +110,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			ArticleSearchInput searchInput = new ArticleSearchInput();
 			searchInput.setEntity(entity);
 			searchInput.getFieldNames().add("pic");
-			
+
 			ArticleSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
 				continue;
@@ -132,15 +132,15 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(5);
 			if (cell != null)
 			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setMaxStockQty(decimal);
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setMaxStockQty(BigDecimal.valueOf(50));
 			}
 
 			cell = row.getCell(6);
 			if (cell != null)
 			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setQtyInStock(decimal);
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setQtyInStock(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(7);
@@ -160,48 +160,48 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(9);
 			if (cell != null)
 			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setMaxDiscountRate(decimal);
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setMaxDiscountRate(BigDecimal.valueOf(5));
 			}
 
 			cell = row.getCell(10);
 			if (cell != null)
 			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setTotalStockPrice(decimal);
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setTotalStockPrice(BigDecimal.ZERO);
 			}else {
 				entity.setTotalStockPrice(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(11);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-			{
-				String date = cell.getStringCellValue().trim();
-				Date parseDate;
-				try {
-					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-				} catch (ParseException e) {
-					throw new IllegalStateException(e);
-				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(parseDate);
-				entity.setLastStockEntry(calendar);
-			}
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//			{
+//				String date = cell.getStringCellValue().trim();
+//				Date parseDate;
+//				try {
+//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+//				} catch (ParseException e) {
+//					throw new IllegalStateException(e);
+//				}
+//				Calendar calendar = Calendar.getInstance();
+//				calendar.setTime(parseDate);
+//				entity.setLastStockEntry(calendar);
+//			}
 
 			cell = row.getCell(12);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-			{
-				String date = cell.getStringCellValue().trim();
-				Date parseDate;
-				try {
-					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-				} catch (ParseException e) {
-					throw new IllegalStateException(e);
-				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(parseDate);
-				entity.setLastOutOfStock(calendar);
-			}
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//			{
+//				String date = cell.getStringCellValue().trim();
+//				Date parseDate;
+//				try {
+//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+//				} catch (ParseException e) {
+//					throw new IllegalStateException(e);
+//				}
+//				Calendar calendar = Calendar.getInstance();
+//				calendar.setTime(parseDate);
+//				entity.setLastOutOfStock(calendar);
+//			}
 
 			entity.setRecordingDate(new GregorianCalendar());
 
@@ -226,48 +226,46 @@ public class ArticleLoader extends Service<List<Article>> {
 			}
 
 			cell = row.getCell(18);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String agencyNumber = cell.getStringCellValue().trim();
-				List<Agency> agencies = dataMap.getAgencies();
-				Agency agency = null;
-				for (Agency ag : agencies) {
-					if(agencyNumber.equalsIgnoreCase(ag.getAgencyNumber())){
-						agency = ag;
-						break;
-					}
+			String agencyNumber = "AG-0001" ;
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+				agencyNumber = cell.getStringCellValue().trim();
+			List<Agency> agencies = dataMap.getAgencies();
+			Agency agency = null;
+			for (Agency ag : agencies) {
+				if(agencyNumber.equalsIgnoreCase(ag.getAgencyNumber())){
+					agency = ag;
+					break;
 				}
-				if(agency!=null){
-					entity.setAgency(new ArticleAgency(agency));
-				} else {
-					throw new IllegalStateException("No agency found with agency number: " + agencyNumber);
-				}
-			} else {
-				throw new IllegalStateException("No agency number provided for article with pic: " + entity.getPic());
 			}
-			
-//			cell = row.getCell(19);
-			
+			if(agency!=null){
+				entity.setAgency(new ArticleAgency(agency));
+			} else {
+				throw new IllegalStateException("No agency found with agency number: " + agencyNumber);
+			}
+
+			//			cell = row.getCell(19);
+
 			cell = row.getCell(20);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String vatNamme = cell.getStringCellValue().trim();
-				List<VAT> vats = dataMap.getVats();
-				VAT vat = null;
-				for (VAT v : vats) {
-					if(vatNamme.equals(v.getName())){
-						vat=v;
-						break;
-					}
-				}
-				if(vat!=null){
-					entity.setVat(new ArticleVat(vat));
-				} else {
-					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
-				}
-			} else {
-				VAT vat = dataMap.getVats().iterator().next();
-				entity.setVat(new ArticleVat(vat));
-			}
-			
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+//				String vatNamme = cell.getStringCellValue().trim();
+//				List<VAT> vats = dataMap.getVats();
+//				VAT vat = null;
+//				for (VAT v : vats) {
+//					if(vatNamme.equals(v.getName())){
+//						vat=v;
+//						break;
+//					}
+//				}
+//				if(vat!=null){
+//					entity.setVat(new ArticleVat(vat));
+//				} else {
+//					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
+//				}
+//			} else {
+//			}
+			VAT vat = dataMap.getVats().iterator().next();
+			entity.setVat(new ArticleVat(vat));
+
 			result.add(remoteService.create(entity));
 		}
 		return result;

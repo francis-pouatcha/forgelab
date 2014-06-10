@@ -214,11 +214,11 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 					deliveryItem.setTotalPurchasePrice(totalPurchasePrice);
 					currentDelivery.setAmountAfterTax(currentDelivery.getAmountAfterTax().add(totalPurchasePrice));
 					 itemCell = row.getCell(32);
-					 if (itemCell != null)
-					 {
-					 BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
-					 deliveryItem.setSalesPricePU(decimal);
-					 }
+//					 if (itemCell != null)
+//					 {
+//					 BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+//					 deliveryItem.setSalesPricePU(decimal);
+//					 }
 
 					ArticleVat vat = article.getVat();
 					BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);

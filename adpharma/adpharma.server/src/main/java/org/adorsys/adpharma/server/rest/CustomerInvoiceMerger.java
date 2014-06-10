@@ -5,7 +5,9 @@ import java.util.Set;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 
 public class CustomerInvoiceMerger
@@ -70,6 +72,12 @@ public class CustomerInvoiceMerger
       MergerUtils.copyFields(entity, newEntity, fieldList);
       newEntity.setInsurance(entity.getInsurance());
       newEntity.setCustomer(entity.getCustomer());
+      SalesOrder salesOrder = new SalesOrder();
+      if(entity.getSalesOrder()!=null){
+      salesOrder.setId(entity.getSalesOrder().getId());
+      salesOrder.setSoNumber(entity.getSalesOrder().getSoNumber());
+      newEntity.setSalesOrder(salesOrder);
+      }
       return newEntity;
    }
 

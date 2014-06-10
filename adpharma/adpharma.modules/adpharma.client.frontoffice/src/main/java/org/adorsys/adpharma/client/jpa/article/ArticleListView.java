@@ -108,7 +108,7 @@ public class ArticleListView
 		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		// Field not displayed in table
-		viewBuilder.addStringColumn(dataList, "agency", "Article_agency_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
 //		pagination = viewBuilder.addPagination();
 //		viewBuilder.addSeparator();
 //

@@ -102,7 +102,7 @@ public class ArticleLotService
       Entity<ArticleLotDetailsManager> articleLotDetailsManagerEntity = Entity.entity(
             lotDetailsManager, media);
       return target().path("processDetails").request()
-            .post(articleLotDetailsManagerEntity, ArticleLot.class);
+            .put(articleLotDetailsManagerEntity, ArticleLot.class);
    }
 
 

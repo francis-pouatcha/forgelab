@@ -153,6 +153,9 @@ public class SalesOrderListController implements EntityController
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
 
 	@Inject
+	private SalesOrderChangeCustomerService changeCustomerService ;
+
+	@Inject
 	private Locale locale;
 
 	@Inject
@@ -480,7 +483,34 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
-				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				String customerName = null;
+				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					 customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				if(StringUtils.isBlank(customerName)){
+					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
+				}else {
+					Customer customer = new Customer();
+					customer.setFirstName(customerName);
+					customer.setFullName(customerName);
+					customer.setLastName(customerName);
+					changeCustomerService.setCustomer(customer);
+					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
+				}
+			}
+		});
+
+		changeCustomerService.setOnFailed(serviceCallFailedEventHandler);
+		changeCustomerService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderChangeCustomerService s = (SalesOrderChangeCustomerService) event.getSource();
+				SalesOrder sales = s.getValue();
+				event.consume();
+				s.reset();
+				printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(sales.getId()));
+
 			}
 		});
 	}
@@ -582,7 +612,7 @@ public class SalesOrderListController implements EntityController
 
 	public void handleCustomerVoucherPrint(@Observes SalesOrder salesOrder){
 		if(salesOrder.getId()!=null){
-		voucherSearchBySalesOrderService.setSalesOrder(salesOrder).start();
+			voucherSearchBySalesOrderService.setSalesOrder(salesOrder).start();
 		}
 	}
 }

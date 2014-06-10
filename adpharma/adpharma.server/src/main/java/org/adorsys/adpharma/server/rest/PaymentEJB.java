@@ -23,6 +23,7 @@ import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.PaymentRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Stateless
@@ -109,6 +110,8 @@ public class PaymentEJB
 
 
 		payment = repository.save(payment);
+		payment.setPaymentNumber(SequenceGenerator.PAYMENT_SEQUENCE_PREFIX+payment.getId());
+		payment = update(payment);
 		paymentProcessedEvent.fire(payment);
 		return payment;
 	}

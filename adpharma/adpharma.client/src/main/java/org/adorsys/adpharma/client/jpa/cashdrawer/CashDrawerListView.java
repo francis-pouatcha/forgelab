@@ -90,7 +90,6 @@ public class CashDrawerListView
 		viewBuilder.addStringColumn(dataList, "cashier", "CashDrawer_cashier_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataList, "openingDate", "CashDrawer_openingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addDateColumn(dataList, "closingDate", "CashDrawer_closingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		viewBuilder.addDateColumn(dataList, "openingDate", "CashDrawer_openingDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addStringColumn(dataList, "opened", "CashDrawer_opened_description.title", resourceBundle);
 
 		viewBuilder.addBigDecimalColumn(dataList, "initialAmount", "CashDrawer_initialAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);

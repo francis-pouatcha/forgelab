@@ -52,7 +52,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 	private static Font myFont = FontFactory.getFont("Times-Roman", fontSize);
 
 	static final String separatorText = "------------------------";
-	private static float docWidth = 138f;
+	private static float docWidth = 140f;
 	private static float docHeight = 7700f;
 	private static double width = docWidth;
 
@@ -72,7 +72,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			try {
 				properties.load(new FileInputStream(file));
 				String paperFormat = properties.getProperty("receipt-printer-format");
-				int format = 58;// Default
+				int format = 86;// Default
 				if(StringUtils.isNotBlank(paperFormat)){
 					format = NumberUtils.toInt(paperFormat);
 					if(format == 80){
@@ -131,7 +131,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 				resourceBundle
 				.getString("ReceiptPrintTemplate_cashReceipt.title")
 				+ " "
-				+ receiptPrinterData.getPayment().getPaymentNumber()));
+				+ receiptPrinterData.getSalesOrderNumber()));
 
 		borderlessCell(rt, documentName);
 

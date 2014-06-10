@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.jpa.Section_;
 import org.adorsys.adpharma.server.jpa.SectionSearchInput;
@@ -195,6 +197,13 @@ public class SectionEndpoint
 
    private List<Section> detach(List<Section> list)
    {
+	   Collections.sort(list, new Comparator<Section>() {
+
+		@Override
+		public int compare(Section o1, Section o2) {
+			return o1.getName().compareToIgnoreCase(o2.getName());
+		}
+	});
       if (list == null)
          return list;
       List<Section> result = new ArrayList<Section>();

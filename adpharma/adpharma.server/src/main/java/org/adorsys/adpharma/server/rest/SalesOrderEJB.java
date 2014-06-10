@@ -31,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.CurencyUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -110,6 +111,14 @@ public class SalesOrderEJB
 		SalesOrder save = repository.save(attach(entity)); 
 		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
 		return repository.save(save);
+	}
+	
+	public SalesOrder changeCustomer(Long salesId, Customer customer){
+		
+		SalesOrder salesOrder = findById(salesId);
+		Customer create = customerEJB.create(customer);
+		salesOrder.setCustomer(customer);
+		return update(salesOrder);
 	}
 
 	public SalesOrder deleteById(Long id)
@@ -280,11 +289,11 @@ public class SalesOrderEJB
 		VAT vat = updatingSalesOrderItem.getVat();
 		BigDecimal vatRate = vat==null?BigDecimal.ZERO:VAT.getRawRate(vat.getRate());
 		BigDecimal totalSalePrice = updatingSalesOrderItem.getTotalSalePrice();
-		BigDecimal amountBeforeTax = totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 8, RoundingMode.HALF_EVEN);
+		BigDecimal amountBeforeTax = CurencyUtil.round(totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 2, RoundingMode.HALF_EVEN));
 		BigDecimal discountRateAbs = salesOrder.getDiscountRate();
 		if(discountRateAbs!=null && discountRateAbs.compareTo(BigDecimal.ZERO)!=0){
 			BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
-			BigDecimal discount = amountBeforeTax.multiply(discaountRate);
+			BigDecimal discount = CurencyUtil.round(amountBeforeTax.multiply(discaountRate));
 			BigDecimal salesOrderDiscount = salesOrder.getAmountDiscount()==null?BigDecimal.ZERO:salesOrder.getAmountDiscount();
 			
 			if(deleted){
@@ -296,8 +305,8 @@ public class SalesOrderEJB
 		}
 		BigDecimal salesOrderAmountBeforeTax = salesOrder.getAmountBeforeTax()==null?BigDecimal.ZERO:salesOrder.getAmountBeforeTax();
 		BigDecimal salesOrderTaxAmount = salesOrder.getAmountVAT()==null?BigDecimal.ZERO:salesOrder.getAmountVAT();
-		BigDecimal amountVAT = amountBeforeTax.multiply(vatRate);
-		BigDecimal amountAfterTax = amountBeforeTax.add(amountVAT);
+		BigDecimal amountVAT = CurencyUtil.round(amountBeforeTax.multiply(vatRate));
+		BigDecimal amountAfterTax = CurencyUtil.round(amountBeforeTax.add(amountVAT));
 		BigDecimal salesOrderAmountAfterTax = salesOrder.getAmountAfterTax()==null?BigDecimal.ZERO:salesOrder.getAmountAfterTax();
 
 		if(deleted){

@@ -38,10 +38,10 @@ public class LoginLoader extends Service<List<Login>> {
 
 	@Inject
 	private LoginService remoteService;
-	
+
 	@Inject
 	private LoginRoleNameAssocService loginRoleNameAssocService;
-	
+
 	private HSSFWorkbook workbook;
 	private DataMap dataMap;
 
@@ -66,20 +66,20 @@ public class LoginLoader extends Service<List<Login>> {
 	}
 
 	private List<Login> load() {
-		
+
 		List<Login> result = setModelLoginAgencies();
-		
+
 		HSSFSheet sheet = workbook.getSheet("Login");
 		if(sheet==null){
 			return result;
 		}
-		
+
 		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
 
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		
+
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Login entity = new Login();
@@ -90,14 +90,14 @@ public class LoginLoader extends Service<List<Login>> {
 
 			if (StringUtils.isBlank(entity.getLoginName()))
 				continue;
-			
+
 			LoginSearchInput searchInput = new LoginSearchInput();
 			searchInput.setEntity(entity);
 			searchInput.getFieldNames().add("loginName");
-			
+
 			LoginSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-//				result.add(found.getResultList().iterator().next());
+				//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 
@@ -121,35 +121,35 @@ public class LoginLoader extends Service<List<Login>> {
 			if (cell != null)
 				entity.setAccountLocked(Boolean.FALSE);
 
-			cell = row.getCell(6);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-			{
-				String date = cell.getStringCellValue().trim();
-				Date parseDate;
-				try {
-					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy HH:mm");
-				} catch (ParseException e) {
-					throw new IllegalStateException(e);
-				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(parseDate);
-				entity.setCredentialExpiration(calendar);
-			}
+//			cell = row.getCell(6);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//			{
+//				String date = cell.getStringCellValue().trim();
+//				Date parseDate;
+//				try {
+//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy HH:mm");
+//				} catch (ParseException e) {
+//					throw new IllegalStateException(e);
+//				}
+//				Calendar calendar = Calendar.getInstance();
+//				calendar.setTime(parseDate);
+//				entity.setCredentialExpiration(calendar);
+//			}
 
-			cell = row.getCell(7);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-			{
-				String date = cell.getStringCellValue().trim();
-				Date parseDate;
-				try {
-					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy HH:mm");
-				} catch (ParseException e) {
-					throw new IllegalStateException(e);
-				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(parseDate);
-				entity.setAccountExpiration(calendar);
-			}
+//			cell = row.getCell(7);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//			{
+//				String date = cell.getStringCellValue().trim();
+//				Date parseDate;
+//				try {
+//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy HH:mm");
+//				} catch (ParseException e) {
+//					throw new IllegalStateException(e);
+//				}
+//				Calendar calendar = Calendar.getInstance();
+//				calendar.setTime(parseDate);
+//				entity.setAccountExpiration(calendar);
+//			}
 
 			cell = row.getCell(8);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
@@ -158,39 +158,38 @@ public class LoginLoader extends Service<List<Login>> {
 			cell = row.getCell(9);
 			if (cell != null)
 			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setDiscountRate(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(10);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setGender(Gender.valueOf(cell.getStringCellValue().trim()));
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+				entity.setGender(Gender.NEUTRAL);
 
-//			cell = row.getCell(11);
+			//			cell = row.getCell(11);
 			entity.setRecordingDate(new GregorianCalendar());
-			
+
 			cell = row.getCell(12);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String agencyNumber = cell.getStringCellValue().trim();
-				List<Agency> agencies = dataMap.getAgencies();
-				Agency agency = null;
-				for (Agency ag : agencies) {
-					if(agencyNumber.equalsIgnoreCase(ag.getAgencyNumber())){
-						agency = ag;
-						break;
-					}
+			String agencyNumber = "AG-0001";
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+				agencyNumber = cell.getStringCellValue().trim();
+			List<Agency> agencies = dataMap.getAgencies();
+			Agency agency = null;
+			for (Agency ag : agencies) {
+				if(agencyNumber.equalsIgnoreCase(ag.getAgencyNumber())){
+					agency = ag;
+					break;
 				}
-				if(agency!=null){
-					entity.setAgency(new LoginAgency(agency));
-				} else {
-					throw new IllegalStateException("No agency found with agency number: " + agencyNumber + " specified for login: " + entity.getLoginName());
-				}
+			}
+			if(agency!=null){
+				entity.setAgency(new LoginAgency(agency));
 			} else {
-				throw new IllegalStateException("No agency number specified for login: " + entity.getLoginName());
+				throw new IllegalStateException("No agency found with agency number: " + agencyNumber + " specified for login: " + entity.getLoginName());
 			}
 
+
 			entity = remoteService.create(entity);
-			
+
 			cell = row.getCell(13);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				String modelLoginName = cell.getStringCellValue().trim();
@@ -199,7 +198,7 @@ public class LoginLoader extends Service<List<Login>> {
 				login.setLoginName(modelLoginName);
 				loginSearchInput.setEntity(login);
 				loginSearchInput.getFieldNames().add("loginName");
-				
+
 				LoginSearchResult lsr = remoteService.findBy(loginSearchInput);
 				if (lsr.getResultList().isEmpty()){
 					throw new IllegalStateException("No login found with login name: " + modelLoginName + " specified as model for login: " + entity.getLoginName());
@@ -223,16 +222,16 @@ public class LoginLoader extends Service<List<Login>> {
 					lra = loginRoleNameAssocService.create(lra);
 					entity.getRoleNames().add(lra.getTarget());
 				}
-//				
-//				// later on auto lock model logins.
-//				if (!modelLogin.getAccountLocked()){
-//					modelLogin.setAccountLocked(Boolean.TRUE);
-//					remoteService.update(modelLogin);
-//				}
+				//				
+				//				// later on auto lock model logins.
+				//				if (!modelLogin.getAccountLocked()){
+				//					modelLogin.setAccountLocked(Boolean.TRUE);
+				//					remoteService.update(modelLogin);
+				//				}
 			} else {
-				throw new IllegalStateException("No model login specified for login: " + entity.getLoginName());
+//				throw new IllegalStateException("No model login specified for login: " + entity.getLoginName());
 			}
-			
+
 			result.add(entity);
 		}
 		return result;
@@ -247,12 +246,12 @@ public class LoginLoader extends Service<List<Login>> {
 			}
 		};
 	}
-	
+
 	private List<Login> setModelLoginAgencies(){
 		List<Login> result = new ArrayList<Login>();
 
 		Agency agency = dataMap.getAgencies().iterator().next();
-		
+
 		// After loading the agencies, we could switch the agency of those users already in the database.
 		LoginSearchResult logins = remoteService.listAll();
 		List<Login> resultList = logins.getResultList();

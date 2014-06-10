@@ -48,7 +48,7 @@ Service<ReceiptPrinterData> {
 	private LoginService loginService;
 	@Inject
 	private CustomerInvoiceItemService customerInvoiceItemService;
-
+	
 	@Inject
 	private CustomerVoucherService voucherService;
 
@@ -82,6 +82,10 @@ Service<ReceiptPrinterData> {
 				searchInput.setEntity(paymentCustomerInvoiceAssoc);
 				searchInput.getFieldNames().add("source");
 				PaymentCustomerInvoiceAssocSearchResult paymentCustomerInvoiceAssocSearchResult = paymentCustomerInvoiceAssocService.findBy(searchInput);
+				if(!paymentCustomerInvoiceAssocSearchResult.getResultList().isEmpty()) {
+					String soNumber = paymentCustomerInvoiceAssocSearchResult.getResultList().iterator().next().getTarget().getSalesOrder().getSoNumber();
+					result.setSalesOrderNumber(soNumber);
+				}
 				Long count = paymentCustomerInvoiceAssocSearchResult.getCount();
 				int start = paymentCustomerInvoiceAssocSearchResult.getSearchInput().getStart();
 				while (start<count) {

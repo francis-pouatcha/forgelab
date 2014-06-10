@@ -15,9 +15,10 @@ public class ReceiptPrinterData {
 	private final Agency agency;
 	private final Company company;
 	private final Login cashier;
+	private  String salesOrderNumber;
 	private final List<CustomerInvoicePrinterData> invoiceData = new ArrayList<CustomerInvoicePrinterData>();
 	private final List<CustomerVoucher> usedVouchers  = new ArrayList<CustomerVoucher>() ;
-	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier ) {
+	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier) {
 		super();
 		this.payment = payment;
 		this.agency = agency;
@@ -47,6 +48,14 @@ public class ReceiptPrinterData {
 
 	public List<CustomerVoucher> getUsedVouchers() {
 		return usedVouchers;
+	}
+
+	public String getSalesOrderNumber() {
+		return salesOrderNumber;
+	}
+
+	public void setSalesOrderNumber(String salesOrderNumber) {
+		this.salesOrderNumber = salesOrderNumber;
 	}
 
 

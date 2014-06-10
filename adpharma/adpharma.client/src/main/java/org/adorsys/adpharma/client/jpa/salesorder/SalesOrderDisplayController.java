@@ -451,8 +451,8 @@ public class SalesOrderDisplayController implements EntityController
 					BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax()!=null?displayedEntity.getAmountBeforeTax():BigDecimal.ZERO;
 					//					if(BigDecimal.ONE.compareTo(newValue)<0)
 					//						newValue = ;
-					BigDecimal discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_EVEN));
-					displayedEntity.setAmountDiscount(discount);
+					BigDecimal discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.DOWN));
+					displayedEntity.setAmountDiscount(discount.setScale(0,RoundingMode.HALF_UP).setScale(2));
 
 				}
 

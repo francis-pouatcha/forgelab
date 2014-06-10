@@ -52,10 +52,10 @@ public class SectionListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
-      viewBuilder.addStringColumn(dataList, "sectionCode", "Section_sectionCode_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Section_name_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "position", "Section_position_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "sectionCode", "Section_sectionCode_description.title", resourceBundle,200d);
+      viewBuilder.addStringColumn(dataList, "name", "Section_name_description.title", resourceBundle,400d);
+//      viewBuilder.addStringColumn(dataList, "position", "Section_position_description.title", resourceBundle);
+//      viewBuilder.addStringColumn(dataList, "name", "Agency_name_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

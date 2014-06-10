@@ -84,13 +84,13 @@ public class ArticleLotListView
 		viewBuilder.addStringColumn(dataList, "mainPic", "ArticleLot_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "internalPic", "ArticleLot_internalPic_description.title", resourceBundle);
 //		viewBuilder.addStringColumn(dataList, "agency", "ArticleLot_agency_description.title", resourceBundle);
-		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,300d);
+		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,350d);
 		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ArticleLot_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ArticleLot_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "ArticleLot_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "ArticleLot_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "ArticleLot_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "ArticleLot_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "ArticleLot_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
 		//
@@ -103,11 +103,11 @@ public class ArticleLotListView
 
 	public void buildsearchBar(){
 		internalPic =ViewBuilderUtils.newTextField("internalPic", false);
-		internalPic.setPromptText("internal Pic");
+		internalPic.setPromptText(resourceBundle.getString("ArticleLot_internalPic_description.title"));
 		internalPic.setPrefHeight(30d);
 
 		articleName =ViewBuilderUtils.newTextField("articleName", false);
-		articleName.setPromptText("Article Name");
+		articleName.setPromptText(resourceBundle.getString("ArticleLot_articleName_description.title"));
 		articleName.setPrefHeight(30d);
 		articleName.setPrefWidth(300d);
 

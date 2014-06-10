@@ -98,17 +98,17 @@ public class ArticleListView
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,300d);
-		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle,300d);
 //		viewBuilder.addStringColumn(dataList, "manufacturer", "Article_manufacturer_description.title", resourceBundle);
 		// Field not displayed in table
 		viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "pppu", "Article_pppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
-
-		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		// Field not displayed in table
-		viewBuilder.addStringColumn(dataList, "agency", "Article_agency_description.title", resourceBundle);
+//
+//		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//		// Field not displayed in table
+		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
 //		pagination = viewBuilder.addPagination();
 //		viewBuilder.addSeparator();
 //

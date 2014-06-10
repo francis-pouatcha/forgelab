@@ -237,13 +237,13 @@ public class SalesOrderDisplayView
 	}
 
 	public void buildInsurranceGrid(){
-		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.PERCENTAGE,locale,false);
+		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.INTEGER,locale,false);
 		discountRate.setEditable(true);
 		rigthGrid.add(discountRate, 1, 3);
 
 	}
 	public void buildOrderItemBar(){
-		internalPic = ViewBuilderUtils.newTextField( "internalPic", false);
+		internalPic = ViewBuilderUtils.newTextField("internalPic", false);
 		internalPic.setPromptText("cip");
 		internalPic.setTooltip(new Tooltip("cip"));
 
