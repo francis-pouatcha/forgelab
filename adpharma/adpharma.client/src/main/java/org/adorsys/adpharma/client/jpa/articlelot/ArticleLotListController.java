@@ -316,7 +316,7 @@ public class ArticleLotListController implements EntityController
 	public void handleArticleLotMovetToTrashDone(@Observes  @ArticlelotMovedDoneRequestEvent ArticleLot articleLot){
 		int indexOf = listView.getDataList().getItems().indexOf(articleLot);
 		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
-		listView.getDataList().getItems().remove(articleLot);
+		
 	}
 
 	public void reset() {

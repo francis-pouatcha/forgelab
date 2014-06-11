@@ -3,11 +3,16 @@ package org.adorsys.adpharma.server.rest;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
+import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DeliveryItemRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -50,6 +55,19 @@ public class DeliveryItemEJB
 		return entity;
 	}
 
+	public void handleArticleChange(@Observes @EntityEditDoneRequestEvent Article article){
+
+		DeliveryItem item = new DeliveryItem();
+		item.setArticle(article);
+		List<DeliveryItem> found = findBy(item, 0, -1, new SingularAttribute[]{DeliveryItem_.article});
+		if(!found.isEmpty()){
+			for (DeliveryItem lot : found) {
+				lot.setArticleName(article.getArticleName());
+				lot.setMainPic(article.getPic());
+				update(lot);
+			}
+		}
+		}
 	public DeliveryItem update(DeliveryItem entity)
 	{
 		entity = attach(entity);

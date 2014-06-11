@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
@@ -13,6 +14,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
@@ -55,6 +57,10 @@ public class ArticleEJB
    
    @Inject
    private ArticleLotEJB articleLotEJB;
+   
+   @Inject
+   @EntityEditDoneRequestEvent
+   private Event<Article> articleEditDoneRequestEvent ;
 
    @Inject
    private ClearanceConfigMerger clearanceConfigMerger;
@@ -76,7 +82,9 @@ public class ArticleEJB
 
    public Article update(Article entity)
    {
-      return repository.save(attach(entity));
+	   Article save = repository.save(attach(entity));
+	   articleEditDoneRequestEvent.fire(save);
+      return repository.save(save);
    }
 
    public Article findById(Long id)

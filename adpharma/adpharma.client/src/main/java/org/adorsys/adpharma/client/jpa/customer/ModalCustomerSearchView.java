@@ -62,11 +62,11 @@ public class ModalCustomerSearchView extends ApplicationModal{
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
 
-		viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
-		viewBuilder.addDateColumn(dataList, "birthDate", "Customer_birthDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle,400d);
+//		viewBuilder.addDateColumn(dataList, "birthDate", "Customer_birthDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addStringColumn(dataList, "landLinePhone", "Customer_landLinePhone_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "mobile", "Customer_mobile_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "fax", "Customer_fax_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "fax", "Customer_fax_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "email", "Customer_email_description.title", resourceBundle);
 	}
 

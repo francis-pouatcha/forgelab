@@ -22,6 +22,7 @@ import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
+import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
@@ -307,6 +308,21 @@ public class ArticleLotEJB
 		}else {
 			createArticleLot(creatingUser, deliveryItem,false);
 		}
+	}
+	
+	public void handleArticleChange(@Observes @EntityEditDoneRequestEvent Article article){
+
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setArticle(article);
+		List<ArticleLot> found = findBy(articleLot, 0, -1, new SingularAttribute[]{ArticleLot_.article});
+		if(!found.isEmpty()){
+			for (ArticleLot lot : found) {
+				lot.setArticleName(article.getArticleName());
+				lot.setMainPic(article.getPic());
+				update(lot);
+			}
+		}
+	
 	}
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
 

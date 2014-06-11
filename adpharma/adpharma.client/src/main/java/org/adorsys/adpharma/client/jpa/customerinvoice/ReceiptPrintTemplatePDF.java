@@ -71,7 +71,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 	}
 
 	double designationRowWidth = 0;
-	boolean printOrder = false;
+	boolean printOrder = true;
 
 	private void printReceiptHeader() throws DocumentException {
 
@@ -168,8 +168,22 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 	PdfPTable invoiceTable = null;
 
+	private BigDecimal coverRate ;
+	private BigDecimal customerRest ;
+	private BigDecimal insurranceRest ;
+	private Boolean hasInsurrance = Boolean.FALSE ;
+
+
 	@Override
 	public void printInvoiceHeader(CustomerInvoicePrinterData invoiceData) {
+		CustomerInvoiceInsurance insurance = invoiceData.getCustomerInvoice().getInsurance();
+		if(insurance!=null&& insurance.getId()!=null){
+			hasInsurrance = Boolean.TRUE ;
+			coverRate = insurance.getCoverageRate();
+			customerRest = invoiceData.getCustomerInvoice().getCustomerRestTopay();
+			insurranceRest = invoiceData.getCustomerInvoice().getInsurranceRestTopay();
+
+		}
 		int invoiceTableColCount = 3;
 		try {
 			if (invoiceTable != null)
@@ -187,7 +201,6 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			invoiceTable.setWidthPercentage(100);
 
 			if (printOrder) {
-				borderlessCell(invoiceTable, new CenterParagraph(separatorText), invoiceTableColCount,1);
 
 				StandardText standardText = new StandardText(
 						resourceBundle
@@ -304,13 +317,36 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 		borderlessCell(paymentPane,new RightParagraph(new StandardText(
 				DefaultBigDecimalFormatCM.getinstance().format(
 						totalAmountDiscount))));
-
 		borderlessCell(paymentPane,new StandardText(resourceBundle
 				.getString("ReceiptPrintTemplate_netToPay.title")));
 
 		borderlessCell(paymentPane,new RightParagraph(new StandardText(
 				DefaultBigDecimalFormatCM.getinstance().format(
-						totalAmountRestToPay))));
+						totalAmountInvoices.subtract(totalAmountDiscount)))));
+
+
+		if(hasInsurrance){
+			borderlessCell(paymentPane,new StandardText(resourceBundle
+					.getString("ReceiptPrintTemplate_coverRate.title")));
+
+			borderlessCell(paymentPane,new RightParagraph(new StandardText(
+					DefaultBigDecimalFormatCM.getinstance().format(
+							coverRate)+"%")));
+
+			borderlessCell(paymentPane,new StandardText(resourceBundle
+					.getString("ReceiptPrintTemplate_clientRest.title")));
+
+			borderlessCell(paymentPane,new RightParagraph(new StandardText(
+					DefaultBigDecimalFormatCM.getinstance().format(
+							customerRest))));
+
+			borderlessCell(paymentPane,new StandardText(resourceBundle
+					.getString("ReceiptPrintTemplate_insuranceRest.title")));
+
+			borderlessCell(paymentPane,new RightParagraph(new StandardText(
+					DefaultBigDecimalFormatCM.getinstance().format(
+							insurranceRest))));
+		}
 
 		borderlessCell(paymentPane,new StandardText(resourceBundle
 				.getString("ReceiptPrintTemplate_amountReceived.title")));

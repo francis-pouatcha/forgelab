@@ -110,7 +110,7 @@ public class CashDrawerDisplayController implements EntityController
 	@EntityEditRequestedEvent
 	private Event<CashDrawer> editRequestEvent;
 
-	@Inject
+	@Inject  
 	@EntityRemoveRequestEvent
 	private Event<CashDrawer> removeRequest;
 
