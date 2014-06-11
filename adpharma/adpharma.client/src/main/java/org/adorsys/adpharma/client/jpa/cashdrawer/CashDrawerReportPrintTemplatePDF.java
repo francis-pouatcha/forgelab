@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -23,6 +24,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
@@ -37,7 +39,7 @@ import com.lowagie.text.pdf.draw.LineSeparator;
  *
  */
 public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintTemplate {
-	
+
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private Document document;
@@ -52,7 +54,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	private final Map<Long, Login> logins;
 	private final Calendar startDate;
 	private final Calendar endDate;
-	
+
 	static Font boldFont = FontFactory.getFont("Times-Roman", 12, Font.BOLD);
 	static Font font = FontFactory.getFont("Times-Roman", 12);
 
@@ -65,10 +67,10 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		this.logins = cashDrawerPrinterData.getLogins();
 		this.startDate = cashDrawerPrinterData.getStartDate();
 		this.endDate = cashDrawerPrinterData.getEndDate();
-		
+
 
 		pdfFileName = UUID.randomUUID().toString() + ".pdf";
-		document = new Document();
+		document = new Document(PageSize.A4.rotate(),5,5,5,5);
 		File file = new File(pdfFileName);
 		try {
 			fos = new FileOutputStream(file);
@@ -87,65 +89,83 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 	public void addItems(List<CashDrawer> cashDrawers) {
 		for (CashDrawer cashDrawer : cashDrawers) {
-			newTableRow(cashDrawer.getCashDrawerNumber(), 
+			newTableRow(cashDrawer.getCashDrawerNumber(),
+					DateHelper.format(cashDrawer.getOpeningDate().getTime(),"dd-MM-yyyy HH:mm"),
+					cashDrawer.getOpened()+"",
 					cashDrawer.getCashier().getLoginName(), 
-					logins.get(cashDrawer.getCashier().getId()).getFullName(), 
+					cashDrawer.getInitialAmount(),
 					cashDrawer.getTotalClientVoucher(),
-					cashDrawer.getTotalCompanyVoucher(),
-					cashDrawer.getTotalCash(),
-					cashDrawer.getTotalCreditCard());
+					cashDrawer.getTotalCashOut(),
+					cashDrawer.getTotalCashIn(),
+					cashDrawer.getTotalCash());
 		}
 	}
 
 	private void newTableRow(String cashDrawerNumber, 
+			String opendDate,
+			String closedDate,
 			String cashierLoginName,
-			String cashierFullName,
+			BigDecimal fond,
 			BigDecimal totalClientVoucher,
-			BigDecimal totalCompanyVoucher, 
+			BigDecimal cashOut,
 			BigDecimal totalCash,
-			BigDecimal totalCreditCard) {
-		
+			BigDecimal solde) {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(cashDrawerNumber));
 		reportTable.addCell(pdfPCell);
-		
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(opendDate));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(closedDate));
+		reportTable.addCell(pdfPCell);
+
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(cashierLoginName));
 		reportTable.addCell(pdfPCell);
 
+
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(cashierFullName));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(fond))));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCompanyVoucher))));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(cashOut))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCash))));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCreditCard))));
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(solde))));
 		reportTable.addCell(pdfPCell);
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.15f,.15f,.18f,.13f,.13f,.13f,.13f});
+		reportTable = new PdfPTable(new float[]{.10f,.13f,.13f,.10f,.10f,.10f,.10f,.12f,.12f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
-		
+
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_cashDrawerNumber.title")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_cashierLogin.title")));
+		pdfPCell.addElement(new StandardText("Date Ouverture"));
+		reportTable.addCell(pdfPCell);
+
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("OUVERT ?"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -153,21 +173,25 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Fond "));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalClientVoucher.title")));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCompanyVoucher.title")));
+		pdfPCell.addElement(new StandardText("Cash OUT "));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCash.title")));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCreditCard.title")));
+		pdfPCell.addElement(new StandardText("SOLDE "));
 		reportTable.addCell(pdfPCell);
-		
+
 	}
 
 	private void printReportHeader() throws DocumentException {
@@ -175,14 +199,14 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("CashDrawerReportPrintTemplate_header.title")));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
-		
+
 		document.add(Chunk.NEWLINE);
 		document.add(Chunk.NEWLINE);
 
 		paragraph = new Paragraph(new BoldText(agency.getName()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
-		
+
 		paragraph = new Paragraph(new StandardText("Tel: " + agency.getPhone()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
@@ -190,14 +214,14 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		paragraph = new Paragraph(new StandardText(agency.getStreet()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
-		
+
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_agent.title") 
 				+ " " + reportPrinter.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
 		document.add(Chunk.NEWLINE);
-		
+
 		document.add(new LineSeparator());
 
 		paragraph = new Paragraph(new StandardText(calendarFormat.format(startDate, "dd-MM-yyyy HH:mm", locale) +
@@ -207,9 +231,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 		document.add(Chunk.NEWLINE);
 	}
-	
 
-	
+
+
 	static class StandardText extends Phrase{
 		private static final long serialVersionUID = -5796192414147292471L;
 		StandardText() {
@@ -221,7 +245,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			setFont(font);
 		}
 	}
-	
+
 	static class BoldText extends Phrase {
 		private static final long serialVersionUID = -6569891897489003768L;
 		BoldText() {
@@ -233,7 +257,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			setFont(boldFont);
 		}
 	}
-	
+
 	static class RightParagraph extends Paragraph {
 		private static final long serialVersionUID = 986392503142787342L;
 
@@ -245,8 +269,8 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		public RightParagraph(String string) {
 			this(new Phrase(string));
 		}
-		
-		
+
+
 	}
 
 	public void closeDocument() {
