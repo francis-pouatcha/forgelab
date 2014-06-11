@@ -505,4 +505,10 @@ public class ReceiptPrintTemplateFX extends ReceiptPrintTemplate {
 	public String getReceiptPrinterName() {
 		return "receipt";
 	}
+
+	@Override
+	public ReceiptPrintMode getReceiptPrintMode() {
+		return ReceiptPrintMode.open;
+	}
+	
 }

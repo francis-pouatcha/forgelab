@@ -23,4 +23,6 @@ public abstract class ReceiptPrintTemplate {
 	public abstract ReceiptPrinterData getReceiptPrinterData();
 
 	public abstract String getReceiptPrinterName();
+	
+	public abstract ReceiptPrintMode getReceiptPrintMode();
 }

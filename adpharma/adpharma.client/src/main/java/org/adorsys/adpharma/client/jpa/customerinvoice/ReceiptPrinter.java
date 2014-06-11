@@ -1,13 +1,11 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
 import java.awt.Desktop;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -16,13 +14,6 @@ import javafx.event.EventHandler;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
 
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
@@ -127,42 +118,52 @@ public class ReceiptPrinter {
 		    		if(customerInvoicePrinterData==null) {
 		    			worker.closePayment();
 		    			byte[] data =  (byte[]) worker.getPage();
-						PrintService[] printServices = PrintServiceLookup
-								.lookupPrintServices(DocFlavor.INPUT_STREAM.PDF, null);
-						PrintService printService = null;
-						if (printServices != null && printServices.length>=1) {
-							for (PrintService ps : printServices) {
-								if(StringUtils.containsIgnoreCase(ps.getName(), worker.getReceiptPrinterName())){
-									printService=ps;
-									break;
-								}
-							}
-						}
-						if(printService==null){
+//						PrintService[] printServices = PrintServiceLookup
+//								.lookupPrintServices(DocFlavor.INPUT_STREAM.PDF, null);
+//						PrintService printService = null;
+//						if (printServices != null && printServices.length>=1) {
+//							for (PrintService ps : printServices) {
+//								if(StringUtils.containsIgnoreCase(ps.getName(), worker.getReceiptPrinterName())){
+//									printService=ps;
+//									break;
+//								}
+//							}
+//						}
+//						if(printService==null){
 							ReceiptPrinterData receiptPrinterData = worker.getReceiptPrinterData();
 							String paymentNumber = receiptPrinterData.getPayment().getPaymentNumber();
-							String fileName = UUID.randomUUID().toString()+paymentNumber+".pdf";
+							String fileName = paymentNumber+".pdf";
 							try {
 								FileOutputStream fos = new FileOutputStream(fileName);
 								IOUtils.write(data, fos);
 								IOUtils.closeQuietly(fos);
-								Desktop.getDesktop().open(new File(fileName));
+								ReceiptPrintMode receiptPrintMode = worker.getReceiptPrintMode();
+								switch (receiptPrintMode) {
+								case print:
+									Desktop.getDesktop().print(new File(fileName));
+									break;
+								case open:
+									Desktop.getDesktop().open(new File(fileName));
+									break;
+								default:
+									break;
+								}
 							} catch (IOException e) {
 								throw new IllegalStateException(e);
 							} finally{
 //								FileUtils.deleteQuietly(new File(fileName));
 							}
 							
-						} else {
-							DocPrintJob printJob = printService.createPrintJob();
-							Doc doc = new SimpleDoc(new ByteArrayInputStream(data), DocFlavor.INPUT_STREAM.PDF,
-									null);
-							try {
-								printJob.print(doc, null);
-							} catch (PrintException e) {
-								throw new IllegalStateException(e);
-							}
-						}
+//						} else {
+//							DocPrintJob printJob = printService.createPrintJob();
+//							Doc doc = new SimpleDoc(new ByteArrayInputStream(data), DocFlavor.INPUT_STREAM.PDF,
+//									null);
+//							try {
+//								printJob.print(doc, null);
+//							} catch (PrintException e) {
+//								throw new IllegalStateException(e);
+//							}
+//						}
 
 		    		} else {
 						worker.printInvoiceHeader(customerInvoicePrinterData);

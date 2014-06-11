@@ -1,31 +1,23 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.weld.exceptions.IllegalStateException;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -44,70 +36,29 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
-
-	private static int articleNameMaxLength = 36;
-	private static float fontSize = 6;
-	private static boolean mergeCipAndDesignation = true;
-	private static Font myBoldFont = FontFactory.getFont("Times-Roman", fontSize, Font.BOLD);
-	private static Font myFont = FontFactory.getFont("Times-Roman", fontSize);
+	private static ReceiptPrintProperties receiptPrintProperties = new ReceiptPrintProperties();
 
 	static final String separatorText = "------------------------";
-	private static float docWidth = 140f;
-	private static float docHeight = 7700f;
-	private static double width = docWidth;
 
 	private Document document;
 	private ByteArrayOutputStream bos;
-	private Rectangle pageSize = new Rectangle(docWidth, docHeight);
 
 	private final ReceiptPrinterData receiptPrinterData;
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
-
-	private static String receiptPrinterName = "receipt";
-	static {
-		File file = new File("appconfig.properties");
-		if(file.exists()){
-			Properties properties = new Properties();
-			try {
-				properties.load(new FileInputStream(file));
-				String paperFormat = properties.getProperty("receipt-printer-format");
-				int format = 86;// Default
-				if(StringUtils.isNotBlank(paperFormat)){
-					format = NumberUtils.toInt(paperFormat);
-					if(format == 80){
-						fontSize = 7;
-						docWidth = 190f;
-						width = docWidth;
-						articleNameMaxLength = 50;
-					}
-				}
-				String mergeCipAndDesignationProp = properties.getProperty("receipt-printer-mergeCipAndDesignation");
-				if(StringUtils.isNotBlank(mergeCipAndDesignationProp)){
-					mergeCipAndDesignation = BooleanUtils.toBoolean(mergeCipAndDesignationProp);
-				}	
-
-				String receiptPrinterNameProp = properties.getProperty("receipt-printer-name");
-				if(StringUtils.isNotBlank(receiptPrinterNameProp)){
-					receiptPrinterName = receiptPrinterNameProp;
-				}	
-			} catch (FileNotFoundException e) {
-				throw new IllegalStateException(e);
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
 
 	public ReceiptPrintTemplatePDF(ReceiptPrinterData receiptPrinterData,
 			ResourceBundle resourceBundle, Locale locale) {
 		this.receiptPrinterData = receiptPrinterData;
 		this.resourceBundle = resourceBundle;
 		this.locale = locale;
+		if(receiptPrintProperties.isDebug())
+			receiptPrintProperties = ReceiptPrintProperties.loadPrintProperties();
+
 	}
 
 	public void startPage() {
-		document = new Document(pageSize);
+		document = new Document(receiptPrintProperties.getPageSize());
 		document.setMargins(1, 1, 1, 1);
 		bos = new ByteArrayOutputStream();
 		try {
@@ -131,7 +82,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 				resourceBundle
 				.getString("ReceiptPrintTemplate_cashReceipt.title")
 				+ " "
-				+ receiptPrinterData.getSalesOrderNumber()));
+				+ receiptPrinterData.getPayment().getPaymentNumber()));
 
 		borderlessCell(rt, documentName);
 
@@ -224,13 +175,13 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			if (invoiceTable != null)
 				document.add(invoiceTable);
 
-			if(mergeCipAndDesignation){
+			if(receiptPrintProperties.isMergeCipAndDesignation()){
 				invoiceTable = new PdfPTable(new float[] { .6f, .13f, .27f });
-				designationRowWidth = width * .6;
+				designationRowWidth = receiptPrintProperties.getWidth() * .6;
 				invoiceTableColCount = 3;
 			} else {
 				invoiceTable = new PdfPTable(new float[] {.17f, .47f, .06f, .2f });
-				designationRowWidth = width * .47;
+				designationRowWidth = receiptPrintProperties.getWidth() * .47;
 				invoiceTableColCount = 4;
 			}
 			invoiceTable.setWidthPercentage(100);
@@ -271,7 +222,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			totalAmountRestToPay = totalAmountRestToPay.add(invoiceData
 					.getCustomerInvoice().getTotalRestToPay());
 
-			if(mergeCipAndDesignation){
+			if(receiptPrintProperties.isMergeCipAndDesignation()){
 				borderlessCell(invoiceTable, new Paragraph(
 						new BoldText(resourceBundle.getString("ReceiptPrintTemplate_cip.title") + "/"+resourceBundle.getString("ReceiptPrintTemplate_designation.title"))));
 			} else {
@@ -292,11 +243,11 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			String articleName = customerInvoiceItem.getArticle()
 					.getArticleName();
 			if (StringUtils.isNotBlank(articleName)
-					&& articleName.length() > articleNameMaxLength) {
-				articleName = StringUtils.substring(articleName, 0, articleNameMaxLength);
+					&& articleName.length() > receiptPrintProperties.getArticleNameMaxLength()) {
+				articleName = StringUtils.substring(articleName, 0, receiptPrintProperties.getArticleNameMaxLength());
 			}
 
-			if(mergeCipAndDesignation){
+			if(receiptPrintProperties.isMergeCipAndDesignation()){
 				Paragraph cip = new Paragraph(new StandardText(customerInvoiceItem.getInternalPic()));
 				Paragraph artName = new Paragraph(new StandardText(articleName));	
 				borderlessCell(invoiceTable, cip,artName);
@@ -390,35 +341,35 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			// add voucher details
 
 			List<CustomerVoucher> usedVouchers = receiptPrinterData.getUsedVouchers();
-				if(!usedVouchers.isEmpty()){
-					PdfPTable rt = new PdfPTable(1);
-					borderlessCell(rt,new CenterParagraph(separatorText));
-					
-					PdfPTable voucherHeader = new PdfPTable(2);
-					voucherHeader.setWidthPercentage(100);
-					borderlessCell(voucherHeader, new BoldText(resourceBundle
-							.getString("ReceiptPrintTemplate_voucherNumer.title")));
-					borderlessCell(voucherHeader, new BoldText(resourceBundle
-							.getString("ReceiptPrintTemplate_voucherRest.title")));
-					
-					PdfPTable voucherPane = new PdfPTable(2);
-					voucherPane.setWidthPercentage(100);
-					
-					for (CustomerVoucher customerVoucher : usedVouchers) {
-						
-						Paragraph voucherParagraphe = new Paragraph(new StandardText(customerVoucher.getVoucherNumber()));
-						Paragraph amountParagraphe = new Paragraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(
-								customerVoucher.getRestAmount())));
-						borderlessCell(voucherPane, voucherParagraphe);
-						borderlessCell(voucherPane, amountParagraphe);
-					}
-					document.add(rt);
-					document.add(voucherHeader);
-					document.add(voucherPane);
+			if(!usedVouchers.isEmpty()){
+				PdfPTable rt = new PdfPTable(1);
+				borderlessCell(rt,new CenterParagraph(separatorText));
+
+				PdfPTable voucherHeader = new PdfPTable(2);
+				voucherHeader.setWidthPercentage(100);
+				borderlessCell(voucherHeader, new BoldText(resourceBundle
+						.getString("ReceiptPrintTemplate_voucherNumer.title")));
+				borderlessCell(voucherHeader, new BoldText(resourceBundle
+						.getString("ReceiptPrintTemplate_voucherRest.title")));
+
+				PdfPTable voucherPane = new PdfPTable(2);
+				voucherPane.setWidthPercentage(100);
+
+				for (CustomerVoucher customerVoucher : usedVouchers) {
+
+					Paragraph voucherParagraphe = new Paragraph(new StandardText(customerVoucher.getVoucherNumber()));
+					Paragraph amountParagraphe = new Paragraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(
+							customerVoucher.getRestAmount())));
+					borderlessCell(voucherPane, voucherParagraphe);
+					borderlessCell(voucherPane, amountParagraphe);
 				}
+				document.add(rt);
+				document.add(voucherHeader);
+				document.add(voucherPane);
+			}
 
 			document.add(salutationPane);
-			
+
 			document.setPageCount(1);
 			document.close();
 			bos.close();
@@ -431,6 +382,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			TextMarginFinder finder = parser.processContent(1, new TextMarginFinder());
 
 			PdfDictionary page = pdfReader.getPageN(1);
+			Rectangle pageSize = receiptPrintProperties.getPageSize();
 			page.put(PdfName.CROPBOX, new PdfArray(new float[]{pageSize.getLeft(), finder.getLly(), pageSize.getRight(), pageSize.getTop()}));
 			stamper.markUsed(page);
 			stamper.close();
@@ -458,12 +410,12 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 		StandardText() {
 			super();
-			setFont(myFont);
+			setFont(receiptPrintProperties.getMyFont());
 		}
 
 		StandardText(String text) {
 			super(text);
-			setFont(myFont);
+			setFont(receiptPrintProperties.getMyFont());
 		}
 	}
 
@@ -472,12 +424,12 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 		BoldText() {
 			super();
-			setFont(myBoldFont);
+			setFont(receiptPrintProperties.getMyBoldFont());
 		}
 
 		BoldText(String text) {
 			super(text);
-			setFont(myBoldFont);
+			setFont(receiptPrintProperties.getMyBoldFont());
 		}
 	}
 
@@ -515,6 +467,11 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 	@Override
 	public String getReceiptPrinterName(){
-		return receiptPrinterName;
+		return receiptPrintProperties.getReceiptPrinterName();
+	}
+
+	@Override
+	public ReceiptPrintMode getReceiptPrintMode() {
+		return receiptPrintProperties.getReceiptPrintMode();
 	}
 }
