@@ -565,6 +565,7 @@ public class Article implements Cloneable
       return vat;
    }
 
+   @NotNull
    public ArticleVat getVat()
    {
       return vatProperty().get();

@@ -71,7 +71,7 @@ public class SalesOrderItem implements Serializable
 
    @Column
    @Description("SalesOrderItem_internalPic_description")
-   @Size(min = 7, message = "SalesOrderItem_internalPic_Size_validation")
+   @Size(min = 0, message = "SalesOrderItem_internalPic_Size_validation")
    private String internalPic;
 
    @ManyToOne

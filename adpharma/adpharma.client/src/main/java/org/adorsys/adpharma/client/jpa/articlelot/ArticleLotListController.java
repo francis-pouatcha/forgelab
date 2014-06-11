@@ -21,6 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -62,6 +63,9 @@ public class ArticleLotListController implements EntityController
 	@EntityListPageIndexChangedEvent
 	private Event<ArticleLotSearchResult> entityListPageIndexChangedEvent;
 
+	@Inject
+	private Event<ArticleLotMovedToTrashData> articleLotTrashRequestEvent;
+
 	private ArticleLotSearchResult searchResult;
 
 	@Inject
@@ -69,7 +73,7 @@ public class ArticleLotListController implements EntityController
 
 	@Inject
 	private ArticleLotSearchService searchService;
-	
+
 	@Inject 
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
@@ -84,18 +88,18 @@ public class ArticleLotListController implements EntityController
 		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
 		listView.bind(searchInput);
-		
+
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-			
+
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
-				
+
 			}
 		});
-				
+
 		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
@@ -154,7 +158,7 @@ public class ArticleLotListController implements EntityController
 					lotDetailsManager.setLotToDetails(selectedItem);
 					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
 					detailscreateRequestedEvent.fire(lotDetailsManager);
-					
+
 				}
 			}
 				});
@@ -177,7 +181,12 @@ public class ArticleLotListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				Dialogs.create().message("not yet implemented").showInformation();
+				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					ArticleLotMovedToTrashData data = new ArticleLotMovedToTrashData();
+					PropertyReader.copy(selectedItem, data);
+					articleLotTrashRequestEvent.fire(data);
+				}
 			}
 				});
 
@@ -254,10 +263,10 @@ public class ArticleLotListController implements EntityController
 	{
 		listView.getDataList().getItems().add(0, createdEntity);
 	}
-	
+
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent WareHouseArticleLot wareHouseArticleLot)
 	{
-		
+
 		PropertyReader.copy(wareHouseArticleLot.getArticleLot(), listView.getDataList().getSelectionModel().getSelectedItem());
 	}
 
@@ -304,7 +313,13 @@ public class ArticleLotListController implements EntityController
 
 	}
 
+	public void handleArticleLotMovetToTrashDone(@Observes  @ArticlelotMovedDoneRequestEvent ArticleLot articleLot){
+		int indexOf = listView.getDataList().getItems().indexOf(articleLot);
+		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
+		listView.getDataList().getItems().remove(articleLot);
+	}
+
 	public void reset() {
-	   listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().clear();
 	}
 }

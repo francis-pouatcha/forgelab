@@ -3,7 +3,6 @@ package org.adorsys.adpharma.server.rest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,30 +26,22 @@ import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
-import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.DeliveryItem_;
-import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.jpa.SalesOrder_;
-import org.adorsys.adpharma.server.jpa.WareHouse;
-import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.deltaspike.data.api.criteria.Criteria;
 
 @Stateless
 public class ArticleLotEJB
@@ -74,6 +65,9 @@ public class ArticleLotEJB
 
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
+
+	@Inject
+	private Event<ArticleLotMovedToTrashData> articleLotMovetTotrashRequestEvent ;
 
 
 	@EJB
@@ -156,6 +150,7 @@ public class ArticleLotEJB
 		return entity;
 	}
 
+
 	public List<ArticleLot> stockValue(ArticleSearchInput searchInput){
 		List<ArticleLot> stockVAlues = new ArrayList<ArticleLot>();
 		String query ="SELECT c FROM ArticleLot AS c WHERE c.stockQuantity != :stockQuantity  ";
@@ -178,6 +173,18 @@ public class ArticleLotEJB
 		return stockVAlues ;
 	}
 
+	public ArticleLot movetoTrash(ArticleLotMovedToTrashData data){
+		ArticleLot articleLot = findById(data.getId());
+		if(articleLot==null)
+			throw new IllegalStateException("no Article Lot found with Id :"+data.getId());
+		if(data.getQtyToMoved()!=null  && articleLot.getStockQuantity().compareTo(data.getQtyToMoved())>=0)
+			articleLot.setStockQuantity(articleLot.getStockQuantity().subtract(data.getQtyToMoved()));
+
+		articleLotMovetTotrashRequestEvent.fire(data);
+		return update(articleLot);
+
+	}
+
 	@Inject
 	@DocumentProcessedEvent
 	private Event<ArticleLotDetailsManager> articleLotDetailsEvent ;
@@ -195,7 +202,7 @@ public class ArticleLotEJB
 		BigDecimal detailsQty = lotDetailsManager.getDetailsQty();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
-		
+
 		if(isManagedLot){
 			ArticleLot al = newArticleLot(lotDetailsManager);
 			lot = create(al);
@@ -221,8 +228,8 @@ public class ArticleLotEJB
 		source = update(source);
 		articleLotDetailsEvent.fire(lotDetailsManager);
 		return source ;
-	 }
-	
+	}
+
 
 	public ArticleLot newArticleLot(ArticleLotDetailsManager lotDetailsManager){
 		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();

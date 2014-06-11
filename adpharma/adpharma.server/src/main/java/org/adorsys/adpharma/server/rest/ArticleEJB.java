@@ -17,6 +17,7 @@ import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Login;
@@ -51,6 +52,9 @@ public class ArticleEJB
 
    @Inject
    private SectionMerger sectionMerger;
+   
+   @Inject
+   private ArticleLotEJB articleLotEJB;
 
    @Inject
    private ClearanceConfigMerger clearanceConfigMerger;
@@ -141,6 +145,19 @@ public class ArticleEJB
       entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
       return entity;
+   }
+   
+   /**
+	 *Reduice stock accordind to moved qty.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+   
+   public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
+	   ArticleLot articleLot = articleLotEJB.findById(data.getId());
+	   Article article = articleLot.getArticle();
+	   article.setQtyInStock(article.getQtyInStock().subtract(data.getQtyToMoved()));
+	   update(article);
    }
 
 	/**

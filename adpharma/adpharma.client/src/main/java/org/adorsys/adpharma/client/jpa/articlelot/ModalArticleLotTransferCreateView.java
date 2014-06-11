@@ -53,7 +53,6 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	@Inject
 	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
-
 	@PostConstruct
 	public void postConstruct(){
 		LazyViewBuilder lvb = new LazyViewBuilder();

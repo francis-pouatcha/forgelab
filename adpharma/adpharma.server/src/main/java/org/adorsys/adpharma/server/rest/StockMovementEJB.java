@@ -16,8 +16,10 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
@@ -48,6 +50,9 @@ public class StockMovementEJB
 
 	@Inject
 	private SecurityUtil securityUtil;
+	
+	  @Inject
+	   private ArticleLotEJB articleLotEJB;
 
 	@Inject
 	@DocumentProcessedEvent
@@ -124,6 +129,39 @@ public class StockMovementEJB
 
 		return entity;
 	}
+	
+	/**
+	 *Reduice stock according to moved qty.
+	 * 	- 
+	 * @param closedDelivery
+	 */
+   
+   public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
+	   ArticleLot articleLot = articleLotEJB.findById(data.getId());
+	   Article article = articleLot.getArticle();
+	   article.setQtyInStock(article.getQtyInStock().subtract(data.getQtyToMoved()));
+	   
+		Login creatingUser = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		// Generate Stock Movement for article to details
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(data.getInternalPic());
+		sm.setMovementType(StockMovementType.OUT);
+		sm.setArticle(article);
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(articleLot.getStockQuantity().add(data.getQtyToMoved()));
+		sm.setMovedQty(data.getQtyToMoved());
+		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
+		sm.setMovementDestination(StockMovementTerminal.TRASH);
+		sm.setOriginatedDocNumber("....");
+		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(data.getQtyToMoved()));
+		if(articleLot.getSalesPricePU()!=null)
+			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(data.getQtyToMoved()));
+		sm = create(sm);
+   }
 
 	public void handleArticleLotDetails(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
 		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();

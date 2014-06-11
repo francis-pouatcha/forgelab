@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
+import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
@@ -77,6 +78,16 @@ public class ArticleLotEndpoint
    public ArticleLot update(ArticleLot entity)
    {
       return detach(ejb.update(entity));
+   }
+   
+
+   @PUT
+   @Path("movedToTrash")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public ArticleLot movedToTrash(ArticleLotMovedToTrashData data)
+   {
+      return detach(ejb.movetoTrash(data));
    }
    
    @PUT

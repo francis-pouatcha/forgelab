@@ -163,6 +163,8 @@ public class ArticleView extends AbstractForm<Article>
       violations.addAll(textInputControlValidator.validate(articleName, Article.class, "articleName", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(articleSectionSelection.getSection(), model.getSection(), Article.class, "section", resourceBundle));
       violations.addAll(toOneAggreggationFieldValidator.validate(articleAgencySelection.getAgency(), model.getAgency(), Article.class, "agency", resourceBundle));
+      violations.addAll(toOneAggreggationFieldValidator.validate(articleVatSelection.getVat(), model.getVat(), Article.class, "agency", resourceBundle));
+
       return violations;
    }
 
