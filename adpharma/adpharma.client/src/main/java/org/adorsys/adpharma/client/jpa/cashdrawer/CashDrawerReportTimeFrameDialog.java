@@ -45,9 +45,11 @@ public class CashDrawerReportTimeFrameDialog {
 		startTime = modal.addCalendarTextField(
 				"CashDrawerReportPrintTemplate_startTime.title", "startTime",
 				resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		startTime.setPrefWidth(300d);
 		endTime = modal.addCalendarTextField(
 				"CashDrawerReportPrintTemplate_endTime.title", "endTime",
 				resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		endTime.setPrefWidth(300d);
 		modal.addButtonBar();
 		okButton = modal.addButton("okButton", "Entity_ok.title",
 				resourceBundle);

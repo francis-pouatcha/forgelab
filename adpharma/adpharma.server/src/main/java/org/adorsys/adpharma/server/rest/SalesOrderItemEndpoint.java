@@ -22,10 +22,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchResult;
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 
 /**
  * 
@@ -105,6 +107,18 @@ public class SalesOrderItemEndpoint
    public Long count()
    {
       return ejb.count();
+   }
+   
+   @POST
+   @Path("/periodicalSales")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public SalesOrderItemSearchResult periodicalSales(PeriodicalDataSearchInput data)
+   {
+	   List<SalesOrderItem> periodicalSales = ejb.periodicalSales(data);
+	   periodicalSales = detach(periodicalSales);
+	   SalesOrderItemSearchInput searchInput = new SalesOrderItemSearchInput();
+      return new SalesOrderItemSearchResult(Long.valueOf(1), periodicalSales, searchInput);
    }
 
    @POST

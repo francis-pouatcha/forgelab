@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.delivery;
+package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
@@ -32,31 +32,26 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
 
-public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTemplate {
+public class SalesOrderReportPrintTemplatePDF {
 
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private Document document;
 	private FileOutputStream fos;
-	private final ResourceBundle resourceBundle;
-	private final Locale locale;
-	private final Delivery delivery;
-	private Agency agency = new Agency() ;
+	private LoginAgency agency  ;
 	private Login login ;
 	private PdfPTable reportTable;
 	private String pdfFileName;
+private PeriodicalDataSearchInput model;
 
-
-	public DeliveryReportPrintTemplatePDF(
-			DeliveryReportPrinterData invoicePrinterData, 
-			ResourceBundle resourceBundle,
-			Locale locale) throws DocumentException {
-		this.delivery = invoicePrinterData.getDelivery();
-		this.login = invoicePrinterData.getLogin();
-		this.resourceBundle = resourceBundle;
-		this.locale = locale;
+	public SalesOrderReportPrintTemplatePDF(
+			Login login,LoginAgency agency,PeriodicalDataSearchInput model
+			) throws DocumentException {
+		this.agency = agency;
+		this.login = login;
+		this.model = model;
 		PropertyReader.copy(login.getAgency(), agency);
-		pdfFileName = "delivery_"+delivery.getDeliveryNumber() + ".pdf";
+		pdfFileName = "sales.pdf";
 
 		document = new Document(PageSize.A4,5,5,5,5);
 		File file = new File(pdfFileName);
@@ -75,30 +70,35 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 
 	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
 	static Font font = FontFactory.getFont("Times-Roman", 8);
-	
-	public void addItems(List<DeliveryItem> deliveryItems) {
-	int artNamelenght = 68 ;
-			for (DeliveryItem deliveryItem : deliveryItems) {
-				String articleName = deliveryItem.getArticleName();
-				if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
-	
-				newTableRow(deliveryItem.getInternalPic(), 
-						articleName, 
-						deliveryItem.getArticle().getQtyInStock(), 
-						deliveryItem.getPurchasePricePU(),
-						deliveryItem.getStockQuantity(),
-						deliveryItem.getSalesPricePU(),
-						deliveryItem.getTotalPurchasePrice());
-			}
+
+	public void addItems(List<SalesOrderItem> items) {
+		int artNamelenght = 68 ;
+		BigDecimal totalQty = BigDecimal.ZERO ;
+		BigDecimal totalPrice = BigDecimal.ZERO ;
+		
+		for (SalesOrderItem item : items) {
+			String articleName = item.getArticle().getArticleName();
+			totalQty = totalQty.add(item.getDeliveredQty());
+			totalPrice = totalPrice.add(item.getTotalSalePrice());
+			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
+
+			newTableRow(item.getInternalPic(), 
+					articleName, 
+					item.getDeliveredQty(),
+					item.getTotalSalePrice()
+					);
 		}
-	
+		newTableRow("", 
+				"TOTAL :", 
+				totalQty,
+				totalPrice
+				);
+	}
+
 	private void newTableRow(String internalPic, 
 			String articleName,
 			BigDecimal stockQuantity,
-			BigDecimal purchasePricePU,
-			BigDecimal qtyOrdered, 
-			BigDecimal salesPricePU,
-			BigDecimal totalPurchasePrice) {
+			BigDecimal salesPricePU) {
 
 
 		PdfPCell pdfPCell = new PdfPCell();
@@ -114,63 +114,39 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(purchasePricePU!=null?purchasePricePU.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(qtyOrdered!=null?qtyOrdered.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?salesPricePU.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(totalPurchasePrice!=null?totalPurchasePrice.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
+
 	}
-	
+
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .2f, .38f, .06f,.1f,.06f,.1f,.1f });
+		reportTable = new PdfPTable(new float[]{ .13f, .61f, .13f,.13f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_internalPic.title")));
+		pdfPCell.addElement(new StandardText("cip"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_articleName.title")));
+		pdfPCell.addElement(new StandardText("Libelle"));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_stockQuantity.title")));
+		pdfPCell.addElement(new StandardText("Qte Vendu "));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_purchasePricePU.title")));
+		pdfPCell.addElement(new StandardText("Montant"));
 		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title")));
-		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title")));
-		reportTable.addCell(pdfPCell);
-
 	}
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("DeliveryReportPrintTemplate_header.title")+" "+delivery.getDeliveryNumber()));
+		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES"));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
@@ -186,7 +162,8 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new StandardText("Periode Du  :"+org.adorsys.adpharma.client.utils.DateHelper.format(model.getBeginDate().getTime(), "EEE dd MMMMM yyyy")+" AU : "+
+				org.adorsys.adpharma.client.utils.DateHelper.format(model.getEndDate().getTime(), "EEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
@@ -263,10 +240,9 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		fillTableHaeder();
 	}
 
-	@Override
 	public void closeReport() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 

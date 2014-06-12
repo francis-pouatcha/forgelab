@@ -7,6 +7,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -34,7 +35,7 @@ public class SalesOrderItemService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public SalesOrderItem deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(SalesOrderItem.class);
 	}
@@ -115,5 +116,19 @@ public class SalesOrderItemService {
 				searchInput, media);
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
+	}
+
+
+
+	// @POST
+	// @Path("/findByLike"
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public SalesOrderItemSearchResult periodicalSales(
+			PeriodicalDataSearchInput searchInput) {
+		Entity<PeriodicalDataSearchInput> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("periodicalSales").request(media)
+				.post(searchInputEntity, SalesOrderItemSearchResult.class);
 	}
 }

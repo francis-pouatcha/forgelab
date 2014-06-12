@@ -1,19 +1,25 @@
 package org.adorsys.adpharma.server.rest;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 
 @Stateless
 public class SalesOrderItemEJB
@@ -71,6 +77,39 @@ public class SalesOrderItemEJB
 		return entity;
 	}
 
+	@Inject
+	private EntityManager em ;
+
+	public List<SalesOrderItem> periodicalSales(PeriodicalDataSearchInput searchInput){
+		Boolean check = searchInput.getCheck();
+		ArrayList<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
+
+		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed ORDER BY s.article.articleName ";
+		List<Object[]> sales = new ArrayList<Object[]>();
+		if(check)
+			query ="SELECT s.internalPic , s.article, SUM(s.deliveredQty),SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE "
+					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed  GROUP BY s.article ORDER BY SUM(s.deliveredQty) DESC";
+		Query querys = em.createQuery(query) ;
+
+		querys.setParameter("from", searchInput.getBeginDate());
+		querys.setParameter("to", searchInput.getEndDate());
+		querys.setParameter("cashed", Boolean.TRUE);
+		sales = querys.getResultList();
+		for (Object[] objects : sales) {
+			SalesOrderItem item = new SalesOrderItem();
+			String internalPic = (String) objects[0];
+			Article article = (Article) objects[1];
+			BigDecimal qty = (BigDecimal) objects[2];
+			BigDecimal price = (BigDecimal) objects[3];
+
+			item.setInternalPic(internalPic);
+			item.setArticle(article);
+			item.setDeliveredQty(qty);
+			item.setTotalSalePrice(price);
+			result.add(item);
+		}
+		return result ;
+	}
 	public SalesOrderItem deleteById(Long id)
 	{
 		SalesOrderItem entity = repository.findBy(id);

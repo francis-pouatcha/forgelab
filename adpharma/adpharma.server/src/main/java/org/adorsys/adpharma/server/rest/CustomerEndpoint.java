@@ -28,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.Customer_;
 import org.adorsys.adpharma.server.jpa.CustomerSearchInput;
 import org.adorsys.adpharma.server.jpa.CustomerSearchResult;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -209,7 +210,7 @@ public class CustomerEndpoint
 
 		@Override
 		public int compare(Customer o1, Customer o2) {
-			return o1.getFullName().compareTo(o2.getFullName());
+			return o1.getFirstName().compareTo(o2.getFirstName());
 		}
 	});
       if (list == null)

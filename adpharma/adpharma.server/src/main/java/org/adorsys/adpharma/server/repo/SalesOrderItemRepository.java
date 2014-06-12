@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.server.repo;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.deltaspike.data.api.EntityRepository;
@@ -11,4 +12,5 @@ import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 @Repository(forEntity = SalesOrderItem.class)
 public interface SalesOrderItemRepository extends EntityRepository<SalesOrderItem, Long>
 {
+	
 }

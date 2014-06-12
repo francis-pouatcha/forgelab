@@ -91,7 +91,7 @@ public class CustomerListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//      dataList = viewBuilder.addTable("dataList");
 		ViewBuilderUtils.newStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle,300d);
-		viewBuilder.addDateColumn(dataList, "birthDate", "Customer_birthDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+//		viewBuilder.addDateColumn(dataList, "birthDate", "Customer_birthDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addStringColumn(dataList, "mobile", "Customer_mobile_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "fax", "Customer_fax_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "email", "Customer_email_description.title", resourceBundle);
