@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,7 +70,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		this.endDate = cashDrawerPrinterData.getEndDate();
 
 
-		pdfFileName = UUID.randomUUID().toString() + ".pdf";
+		pdfFileName = "caisse du "+DateHelper.format(new Date(), "dd-MM-yyyy") + ".pdf";
 		document = new Document(PageSize.A4.rotate(),5,5,5,5);
 		File file = new File(pdfFileName);
 		try {
@@ -89,9 +90,10 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 	public void addItems(List<CashDrawer> cashDrawers) {
 		for (CashDrawer cashDrawer : cashDrawers) {
+			String closindDate = cashDrawer.getClosingDate() ==null ?"":DateHelper.format(cashDrawer.getClosingDate().getTime(),"dd-MM-yyyy HH:mm");
 			newTableRow(cashDrawer.getCashDrawerNumber(),
 					DateHelper.format(cashDrawer.getOpeningDate().getTime(),"dd-MM-yyyy HH:mm"),
-					cashDrawer.getOpened()+"",
+					closindDate,
 					cashDrawer.getCashier().getLoginName(), 
 					cashDrawer.getInitialAmount(),
 					cashDrawer.getTotalClientVoucher(),
@@ -165,7 +167,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("OUVERT ?"));
+		pdfPCell.addElement(new StandardText("Date Fermeture"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -181,7 +183,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Cash OUT "));
+		pdfPCell.addElement(new StandardText("Decaissement"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -189,7 +191,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("SOLDE "));
+		pdfPCell.addElement(new StandardText("Solde "));
 		reportTable.addCell(pdfPCell);
 
 	}

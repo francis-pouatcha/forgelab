@@ -1,5 +1,9 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
+import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -90,8 +94,15 @@ public class CashDrawerReportPrinter {
 //	    			List<String> pages = (List<String>) worker.getPages();
 //	    			printDialog.getPages().clear();
 //	    			printDialog.getPages().addAll(pages);
-	    			printDialog.setFileName(worker.getFileName());
-	    			printDialog.show();
+//	    			printDialog.setFileName(worker.getFileName());
+	    			try {
+	    				File file = new File(worker.getFileName());
+						Desktop.getDesktop().open(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//	    			printDialog.show();
 	    		} else {
 		    		worker.addItems(reportData.getCashDrawerSearchResult().getResultList());
 		    		reportData.setStart(reportData.getStart() + reportData.getMax());

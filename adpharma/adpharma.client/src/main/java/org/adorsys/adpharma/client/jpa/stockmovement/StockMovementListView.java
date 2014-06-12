@@ -86,20 +86,19 @@ public class StockMovementListView
 		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addStringColumn(dataList, "internalPic", "StockMovement_internalPic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataList, "article", "StockMovement_article_description.title", resourceBundle,300d);
+		viewBuilder.addBigDecimalColumn(dataList, "movedQty", "StockMovement_movedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addEnumColumn(dataList, "movementType", "StockMovement_movementType_description.title", resourceBundle, stockMovementTypeConverter);
 		viewBuilder.addDateColumn(dataList, "creationDate", "StockMovement_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		
-		viewBuilder.addStringColumn(dataList, "internalPic", "StockMovement_internalPic_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "movementOrigin", "StockMovement_movementOrigin_description.title", resourceBundle, stockMovementTerminalConverter);
 		viewBuilder.addEnumColumn(dataList, "movementDestination", "StockMovement_movementDestination_description.title", resourceBundle, stockMovementTerminalConverter);
-		ViewBuilderUtils.newStringColumn(dataList, "article", "StockMovement_article_description.title", resourceBundle,300d);
-		viewBuilder.addStringColumn(dataList, "agency", "StockMovement_agency_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "agency", "StockMovement_agency_description.title", resourceBundle);
 		//		viewBuilder.addBigDecimalColumn(dataList, "initialQty", "StockMovement_initialQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "movedQty", "StockMovement_movedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "finalQty", "StockMovement_finalQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasingPrice", "StockMovement_totalPurchasingPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasingPrice", "StockMovement_totalPurchasingPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "totalDiscount", "StockMovement_totalDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "StockMovement_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "StockMovement_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//      pagination = viewBuilder.addPagination();
 		//      viewBuilder.addSeparator();
 

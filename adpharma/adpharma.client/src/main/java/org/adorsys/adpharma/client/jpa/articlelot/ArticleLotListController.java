@@ -1,9 +1,15 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,6 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -33,12 +41,20 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.controlsfx.dialog.Dialogs;
+
+import com.google.common.collect.Lists;
 
 @Singleton
 public class ArticleLotListController implements EntityController
@@ -79,6 +95,11 @@ public class ArticleLotListController implements EntityController
 
 	@Inject
 	private ArticleLotRegistration registration;
+	
+	@Inject
+	@Bundle({ CrudKeys.class,DeliveryItem.class})
+	private ResourceBundle resourceBundle;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -98,6 +119,19 @@ public class ArticleLotListController implements EntityController
 			}
 		});
 
+		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				String textInput = Dialogs.create().message("Quantite : ").showTextInput();
+				try {
+					Long valueOf = Long.valueOf(textInput);
+					exportDeliveryToXls(valueOf.intValue());
+				} catch (Exception e) {
+				}
+				
+			}
+		});
 		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -322,4 +356,65 @@ public class ArticleLotListController implements EntityController
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
+	
+	@SuppressWarnings("resource")
+	public void exportDeliveryToXls(int qty){
+		ArticleLot item = listView.getDataList().getSelectionModel().getSelectedItem();
+		String supllierName = "ALL"; 
+
+		
+
+		HSSFWorkbook deleveryXls = new HSSFWorkbook();
+		int rownum = 0 ;
+		int cellnum = 0 ;
+		HSSFCell cell ;
+		HSSFSheet sheet = deleveryXls.createSheet(item.getInternalPic());
+		HSSFRow header = sheet.createRow(rownum++);
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_internalPic_description.title"));
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("Fournisseur");
+
+		if( item!=null&&sheet!=null){
+
+				for (int i = 0; i < qty; i++) {
+					cellnum = 0 ;
+					HSSFRow row = sheet.createRow(rownum++);
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getInternalPic());
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getArticle().getArticleName());
+					//
+					//					cell = row.createCell(cellnum++);
+					//					cell.setCellValue(item.getStockQuantity().doubleValue());
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getSalesPricePU().toBigInteger()+" CFA");
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(supllierName);
+				}
+
+
+
+			}
+			try {
+				File file = new File("delivery.xls");
+				FileOutputStream outputStream = new FileOutputStream(file);
+				deleveryXls.write(outputStream);
+				outputStream.close();
+				Desktop.getDesktop().open(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 }

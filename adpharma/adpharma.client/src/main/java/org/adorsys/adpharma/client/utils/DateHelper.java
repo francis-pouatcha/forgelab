@@ -23,6 +23,7 @@ public class DateHelper {
 	
 	
 	public static String  format(Date date , String patern){
+		if(date ==null) return null;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(patern);
 		String format = simpleDateFormat.format(date);
 		return format ;

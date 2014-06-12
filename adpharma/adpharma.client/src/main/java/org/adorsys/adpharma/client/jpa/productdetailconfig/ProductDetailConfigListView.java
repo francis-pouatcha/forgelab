@@ -73,8 +73,10 @@ public class ProductDetailConfigListView
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
-		ViewBuilderUtils.newStringColumn(dataList, "source", "ProductDetailConfig_source_description.title", resourceBundle,400d);
-		ViewBuilderUtils.newStringColumn(dataList, "target", "ProductDetailConfig_target_description.title", resourceBundle,400d);
+		ViewBuilderUtils.newStringColumn(dataList, "source.pic", "ProductDetailConfig_source_description.title", resourceBundle,100d);
+		ViewBuilderUtils.newStringColumn(dataList, "source", "ProductDetailConfig_source_description.title", resourceBundle,350d);
+		ViewBuilderUtils.newStringColumn(dataList, "target.pic", "ProductDetailConfig_target_description.title", resourceBundle,100d);
+		ViewBuilderUtils.newStringColumn(dataList, "target", "ProductDetailConfig_target_description.title", resourceBundle,350d);
 		viewBuilder.addBigDecimalColumn(dataList, "targetQuantity", "ProductDetailConfig_targetQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPrice", "ProductDetailConfig_salesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table

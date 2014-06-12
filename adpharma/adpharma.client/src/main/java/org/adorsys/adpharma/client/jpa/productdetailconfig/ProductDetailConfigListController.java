@@ -94,6 +94,7 @@ public class ProductDetailConfigListController implements EntityController
 				String sourceName = listView.getArticleOriginName().getText();
 				String targetName = listView.getArticleTargetName().getText();
 				ProductDetailConfigSearchInput searchInput = new ProductDetailConfigSearchInput();
+				
 				searchInput.setMax(30);
 				configSearchService.setSearchInputs(searchInput).start();
 

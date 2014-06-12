@@ -518,6 +518,12 @@ public class DeliveryListController implements EntityController
 	@SuppressWarnings("resource")
 	public void exportDeliveryToXls(){
 		Delivery selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+		String supllierName = selectedItem.getSupplier().getName(); 
+
+		if(StringUtils.isNotBlank(supllierName))
+			if(supllierName.length()>4)
+				supllierName = StringUtils.substring(supllierName, 0, 3);
+
 		HSSFWorkbook deleveryXls = new HSSFWorkbook();
 		int rownum = 0 ;
 		int cellnum = 0 ;
@@ -532,13 +538,10 @@ public class DeliveryListController implements EntityController
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_stockQuantity_description.title"));
-
-		cell = header.createCell(cellnum++);
 		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_delivery_description.title"));
+		cell.setCellValue("Fournisseur");
 
 		if( selectedItem!=null&&sheet!=null){
 			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
@@ -559,10 +562,10 @@ public class DeliveryListController implements EntityController
 					//					cell.setCellValue(item.getStockQuantity().doubleValue());
 
 					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getSalesPricePU().doubleValue());
+					cell.setCellValue(item.getSalesPricePU().toBigInteger()+" CFA");
 
 					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getDelivery().getDeliveryNumber());
+					cell.setCellValue(supllierName);
 				}
 
 
