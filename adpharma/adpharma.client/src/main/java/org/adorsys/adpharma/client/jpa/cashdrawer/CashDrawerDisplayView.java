@@ -165,7 +165,7 @@ public class CashDrawerDisplayView
 
 	}
 	public void buildInvoiceItemDataList(ViewBuilder viewBuilder){
-		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,170d);
+		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,120d);
 		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle,300d);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "orderedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -190,12 +190,12 @@ public class CashDrawerDisplayView
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addStringColumn(salesOrderDataList, "insurance", "CustomerInvoice_insurance_description.title", resourceBundle,200d);
-		viewBuilder.addBigDecimalColumn(salesOrderDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(salesOrderDataList, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 	}
 
 	public void BuildPaymentGrid(){
@@ -212,17 +212,20 @@ public class CashDrawerDisplayView
 		amount.setPrefWidth(200d);
 		amount.setFont(font);
 		amount.setEditable(false);
+		amount.getStyleClass().add("green-text");
 
-		receivedAmount = ViewBuilderUtils.newBigDecimalField("receivedAmount", NumberType.CURRENCY, locale, false);
+		receivedAmount = ViewBuilderUtils.newBigDecimalField("receivedAmount", NumberType.INTEGER, locale, false);
 		receivedAmount.setPrefHeight(35d);
 		receivedAmount.setFont(font);
 		receivedAmount.setPrefWidth(200d);
+		receivedAmount.getStyleClass().add("blue-text");
 
-		difference = ViewBuilderUtils.newBigDecimalField("difference", NumberType.CURRENCY, locale, false);
+		difference = ViewBuilderUtils.newBigDecimalField("difference", NumberType.INTEGER, locale, false);
 		difference.setPrefHeight(35d);
 		difference.setPrefWidth(200d);
 		difference.setEditable(false);
 		difference.setFont(font);
+		difference.getStyleClass().add("red-text");
 
 
 		docNumber = ViewBuilderUtils.newTextField("docNumber", false);
@@ -245,7 +248,9 @@ public class CashDrawerDisplayView
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchButton.setPrefHeight(35d);
+		searchButton.setPrefWidth(120d);
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
+		cancelButton.setPrefWidth(120d);
 		invoiceSearchBox.setMargin(cancelButton, new Insets(0, 0, 0, 400));
 		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton,cancelButton);
 	}

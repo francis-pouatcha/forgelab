@@ -268,6 +268,18 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
+		
+		
+		displayView.getOrderedQty().setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					if(isValidSalesOrderItem())
+						handleAddSalesOrderItem(salesOrderItem);
+				}
+			}
+});
 
 
 		/*
@@ -805,6 +817,7 @@ public class SalesOrderDisplayController implements EntityController
 		}else  if(BigDecimal.ZERO.compareTo(amountDiscount)!=0){
 			Dialogs.create().message("ce client n est pas autorise a avoir une remise ").showInformation();
 			displayedEntity.setAmountDiscount(BigDecimal.ZERO);
+			displayView.getDiscountRate().setNumber(BigDecimal.ZERO);
 			displayView.getDiscountRate().requestFocus();
 			return false ;
 
@@ -836,19 +849,19 @@ public class SalesOrderDisplayController implements EntityController
 
 	public boolean isValidateOrderedQty(ArticleLot model){
 		Iterator<SalesOrderItem> iterator = displayView.getDataList().getItems().iterator();
-		while (iterator.hasNext()) {
-			SalesOrderItem next = iterator.next();
-			if(next.getInternalPic().equals(model.getInternalPic())){
-				BigDecimal salableStock = model.getStockQuantity();
-				BigDecimal orderedStock = next.getOrderedQty().add(BigDecimal.ONE);
-				if(salableStock.compareTo(orderedStock)< 0 ){
-					Dialogs.create().message("La Quantite Commandee ne peux etre superieur a "+ salableStock).showError();
-				displayView.getInternalPic().setText(null);
-					return false ;
-					
-				}
-			}
-		}
+//		while (iterator.hasNext()) {
+//			SalesOrderItem next = iterator.next();
+//			if(next.getInternalPic().equals(model.getInternalPic())){
+//				BigDecimal salableStock = model.getStockQuantity();
+//				BigDecimal orderedStock = next.getOrderedQty().add(BigDecimal.ONE);
+//				if(salableStock.compareTo(orderedStock)< 0 ){
+//					Dialogs.create().message("La Quantite Commandee ne peux etre superieur a "+ salableStock).showError();
+//				displayView.getInternalPic().setText(null);
+//					return false ;
+//					
+//				}
+//			}
+//		}
 		
 		
 		

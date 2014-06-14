@@ -33,11 +33,14 @@ import org.adorsys.adpharma.server.jpa.SupplierInvoiceItem;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SupplierInvoiceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.ChartData;
 
 @Stateless
 public class SupplierInvoiceEJB
 {
+	@Inject
+	private ApplicationConfiguration applicationConfiguration;
 
 	@Inject
 	private SupplierInvoiceRepository repository;
@@ -185,9 +188,15 @@ public class SupplierInvoiceEJB
 		Map<String, List<DeliveryItem>> deliveryItemMap = new HashMap<String, List<DeliveryItem>>();
 		Map<String, Agency> agencies = new HashMap<String, Agency>();
 		Map<String, ArticleLot> articleLots =  new HashMap<String, ArticleLot>();
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+
 		// Group delivery items by agency
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			ArticleLot articleLot = getArticleLot(deliveryItem.getInternalPic(), articleLots);
+			String internalPic = deliveryItem.getMainPic();
+			if(isManagedLot)
+				internalPic = deliveryItem.getInternalPic();
+			ArticleLot articleLot = getArticleLot(internalPic, articleLots);
 			List<DeliveryItem> list = deliveryItemMap.get(articleLot.getAgency().getAgencyNumber());
 			if(list==null){
 				list = new ArrayList<DeliveryItem>();
@@ -224,7 +233,9 @@ public class SupplierInvoiceEJB
 				sii.setAmountReturn(BigDecimal.ZERO);
 				sii.setArticle(deliveryItem.getArticle());
 				sii.setDeliveryQty(deliveryItem.getStockQuantity());
-				String internalPic = deliveryItem.getInternalPic();
+				String internalPic = deliveryItem.getMainPic();
+				if(isManagedLot)
+					internalPic = deliveryItem.getInternalPic();
 				sii.setInternalPic(internalPic);
 				sii.setInvoice(si);
 				sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());

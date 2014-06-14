@@ -121,7 +121,7 @@ public class CustomerCustomerCategory implements Association<Customer, CustomerC
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name");
+      return PropertyReader.buildToString(this, "name","discountRate");
    }
 
    @Override

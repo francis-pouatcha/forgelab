@@ -2,9 +2,11 @@ package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.util.Calendar;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 public class PeriodicalDeliveryDataSearchInput {
 
@@ -14,7 +16,7 @@ public class PeriodicalDeliveryDataSearchInput {
 	 
 	 private SimpleObjectProperty<Supplier> supplier;
 	 
-	 private SimpleObjectProperty<Boolean> check;
+	 private SimpleBooleanProperty check;
 	 
 	 public SimpleObjectProperty<Calendar> beginDateProperty()
 	   {
@@ -72,6 +74,31 @@ public class PeriodicalDeliveryDataSearchInput {
 	   {
 	      this.supplierProperty().set(supplier);
 	   }
+	   
+	   public SimpleBooleanProperty checkProperty()
+		{
+			if (check == null)
+			{
+				check = new SimpleBooleanProperty();
+			}
+			return check;
+		}
 
+		public Boolean getCheck()
+		{
+			return checkProperty().get();
+		}
+
+		public final void setCheck(Boolean check)
+		{
+			if (check == null)
+				check = Boolean.FALSE;
+			this.checkProperty().set(check);
+		}
+
+	   public String toString()
+	   {
+	      return PropertyReader.buildToString(this, "beginDate","endDate");
+	   }
 
 }

@@ -82,7 +82,6 @@ public class ModalSalesRepportDataController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//TODO generate repport there .
 				
 			}
 		});

@@ -77,7 +77,7 @@ public class DebtStatementListView
 	@Bundle({ CrudKeys.class
 		, DebtStatement.class
 		, Customer.class
-		, Agency.class,CustomerInvoice.class ,CashDrawerReportPrintTemplate.class
+		, Agency.class,CustomerInvoice.class ,CashDrawerReportPrintTemplate.class 
 	})
 	private ResourceBundle resourceBundle;
 

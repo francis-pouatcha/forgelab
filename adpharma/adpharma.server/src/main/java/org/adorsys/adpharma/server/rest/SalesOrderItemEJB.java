@@ -59,7 +59,6 @@ public class SalesOrderItemEJB
 
 		List<SalesOrderItem> found = findBy(orderItem, 0, 1, new SingularAttribute[]{SalesOrderItem_.internalPic,SalesOrderItem_.article,SalesOrderItem_.salesOrder});
 		if(!found.isEmpty()){
-			System.out.println("IS FOUND ");
 			SalesOrderItem existingItem = found.iterator().next();
 			existingItem.setOrderedQty(existingItem.getOrderedQty().add(entity.getOrderedQty()));
 			existingItem.setSalesPricePU(entity.getSalesPricePU());
@@ -69,7 +68,6 @@ public class SalesOrderItemEJB
 			salesOrderItemCreatedEvent.fire(existingItem);
 			return repository.save(existingItem);
 		}
-		System.out.println("IS NOT FOUND ");
 		entity.calucateDeliveryQty();
 		entity.calculateAmount();
 		entity = repository.save(entity);
@@ -175,6 +173,7 @@ public class SalesOrderItemEJB
 
 		// composed
 
+		entity.setSalesOrder(salesOrderMerger.bindAggregated(entity.getSalesOrder()));
 		// aggregated
 		entity.setArticle(articleMerger.bindAggregated(entity.getArticle()));
 

@@ -61,7 +61,7 @@ public class InventoryItemListView
       viewBuilder.addBigDecimalColumn(dataList, "gapTotalSalePrice", "InventoryItem_gapTotalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "gapTotalPurchasePrice", "InventoryItem_gapTotalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addStringColumn(dataList, "internalPic", "InventoryItem_internalPic_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "article", "InventoryItem_article_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

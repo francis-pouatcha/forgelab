@@ -24,6 +24,8 @@ import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -51,6 +53,14 @@ public class InventoryCreateController implements EntityController
    @Inject
    @EntitySearchRequestedEvent
    private Event<Inventory> searchRequestedEvent;
+   
+   @Inject
+   @ShowProgressBarRequestEvent
+   private Event<Object> showProgressRequestEvent;
+   
+   @Inject
+   @HideProgressBarRequestEvent
+   private Event<Object> hideProgressRequestEvent;
 
    /**
     * The create page has it own model object.
@@ -93,6 +103,7 @@ public class InventoryCreateController implements EntityController
             if (violations.isEmpty())
             {
                createService.setModel(model).start();
+               showProgressRequestEvent.fire(new Object());
             }
             else
             {
@@ -114,6 +125,7 @@ public class InventoryCreateController implements EntityController
             Inventory ent = s.getValue();
             event.consume();
             s.reset();
+            hideProgressRequestEvent.fire(new Object());
             createDoneEvent.fire(ent);
          }
       });

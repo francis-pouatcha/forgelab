@@ -102,9 +102,9 @@ public class DeliveryEJB
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = deliveryItem.getMainPic() ;
-			if(isManagedLot)
-				internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
+//			String internalPic = deliveryItem.getMainPic() ;
+//			if(isManagedLot)
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){

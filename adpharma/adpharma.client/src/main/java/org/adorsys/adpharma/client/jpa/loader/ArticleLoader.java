@@ -92,16 +92,17 @@ public class ArticleLoader extends Service<List<Article>> {
 			Platform.runLater(pgRunner.setText(working));
 
 			Cell cell = row.getCell(0);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setArticleName(cell.getStringCellValue().trim());
-			}else {
-				entity.setArticleName(".");
-			}
+
 
 
 			cell = row.getCell(1);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setPic(cell.getStringCellValue().trim());
+				if(StringUtils.isBlank(entity.getArticleName()))
+					entity.setArticleName(entity.getPic());
+			}
 
 			if (StringUtils.isBlank(entity.getPic()))
 				continue;
@@ -132,14 +133,14 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(5);
 			if (cell != null)
 			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setMaxStockQty(BigDecimal.valueOf(50));
 			}
 
 			cell = row.getCell(6);
 			if (cell != null)
 			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setQtyInStock(BigDecimal.ZERO);
 			}
 
@@ -160,48 +161,48 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(9);
 			if (cell != null)
 			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setMaxDiscountRate(BigDecimal.valueOf(5));
 			}
 
 			cell = row.getCell(10);
 			if (cell != null)
 			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setTotalStockPrice(BigDecimal.ZERO);
 			}else {
 				entity.setTotalStockPrice(BigDecimal.ZERO);
 			}
 
 			cell = row.getCell(11);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//			{
-//				String date = cell.getStringCellValue().trim();
-//				Date parseDate;
-//				try {
-//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-//				} catch (ParseException e) {
-//					throw new IllegalStateException(e);
-//				}
-//				Calendar calendar = Calendar.getInstance();
-//				calendar.setTime(parseDate);
-//				entity.setLastStockEntry(calendar);
-//			}
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//			{
+			//				String date = cell.getStringCellValue().trim();
+			//				Date parseDate;
+			//				try {
+			//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+			//				} catch (ParseException e) {
+			//					throw new IllegalStateException(e);
+			//				}
+			//				Calendar calendar = Calendar.getInstance();
+			//				calendar.setTime(parseDate);
+			//				entity.setLastStockEntry(calendar);
+			//			}
 
 			cell = row.getCell(12);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//			{
-//				String date = cell.getStringCellValue().trim();
-//				Date parseDate;
-//				try {
-//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-//				} catch (ParseException e) {
-//					throw new IllegalStateException(e);
-//				}
-//				Calendar calendar = Calendar.getInstance();
-//				calendar.setTime(parseDate);
-//				entity.setLastOutOfStock(calendar);
-//			}
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//			{
+			//				String date = cell.getStringCellValue().trim();
+			//				Date parseDate;
+			//				try {
+			//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+			//				} catch (ParseException e) {
+			//					throw new IllegalStateException(e);
+			//				}
+			//				Calendar calendar = Calendar.getInstance();
+			//				calendar.setTime(parseDate);
+			//				entity.setLastOutOfStock(calendar);
+			//			}
 
 			entity.setRecordingDate(new GregorianCalendar());
 
@@ -246,23 +247,23 @@ public class ArticleLoader extends Service<List<Article>> {
 			//			cell = row.getCell(19);
 
 			cell = row.getCell(20);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-//				String vatNamme = cell.getStringCellValue().trim();
-//				List<VAT> vats = dataMap.getVats();
-//				VAT vat = null;
-//				for (VAT v : vats) {
-//					if(vatNamme.equals(v.getName())){
-//						vat=v;
-//						break;
-//					}
-//				}
-//				if(vat!=null){
-//					entity.setVat(new ArticleVat(vat));
-//				} else {
-//					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
-//				}
-//			} else {
-//			}
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+			//				String vatNamme = cell.getStringCellValue().trim();
+			//				List<VAT> vats = dataMap.getVats();
+			//				VAT vat = null;
+			//				for (VAT v : vats) {
+			//					if(vatNamme.equals(v.getName())){
+			//						vat=v;
+			//						break;
+			//					}
+			//				}
+			//				if(vat!=null){
+			//					entity.setVat(new ArticleVat(vat));
+			//				} else {
+			//					throw new IllegalStateException("No vat found with vat name: " + vatNamme);
+			//				}
+			//			} else {
+			//			}
 			VAT vat = dataMap.getVats().iterator().next();
 			entity.setVat(new ArticleVat(vat));
 

@@ -28,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
+import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
@@ -35,6 +36,7 @@ import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -43,6 +45,7 @@ import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class ArticleLotEJB
@@ -63,6 +66,8 @@ public class ArticleLotEJB
 	@Inject
 	private VATMerger vATMerger;
 
+	@Inject
+	private DeliveryItemEJB deliveryItemEJB;
 
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
@@ -149,6 +154,56 @@ public class ArticleLotEJB
 		entity.setVat(vATMerger.bindAggregated(entity.getVat()));
 
 		return entity;
+	}
+
+	public List<ArticleLot> findArticleLotByInternalPicWhitRealPrice(ArticleLotSearchInput lotSearchInput){
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+		List<ArticleLot> found = new ArrayList<ArticleLot>();
+		String internalPic = lotSearchInput.getEntity().getInternalPic();
+		if(isManagedLot){
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(internalPic);
+			found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,});
+		}else {
+			if(StringUtils.isNotBlank(internalPic)){
+				// find corresponding delivery item whith this internal pic
+				DeliveryItem deliveryItem = new DeliveryItem();
+				deliveryItem.setInternalPic(internalPic);
+				List<DeliveryItem> deliveryItems = deliveryItemEJB.findBy(deliveryItem, 0, 1,new  SingularAttribute[]{DeliveryItem_.internalPic});
+
+				if(!deliveryItems.isEmpty()){
+					DeliveryItem item = deliveryItems.iterator().next();
+					String pic = item.getArticle().getPic();
+					
+					ArticleLot articleLot = new ArticleLot();
+					articleLot.setInternalPic(pic);
+					List<ArticleLot> lots  =	 findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
+
+					// change global sales price whit real sale price
+					if(!lots.isEmpty()){
+						ArticleLot lot = lots.iterator().next();
+						lot.setSalesPricePU(item.getSalesPricePU());
+						found.add(lot);
+					}
+				}else {
+					ArticleLot articleLot = new ArticleLot(); 
+					articleLot.setInternalPic(internalPic);
+					found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,});
+				}
+
+			}else {
+				ArticleLot articleLot = new ArticleLot();
+				articleLot.setInternalPic(internalPic);
+				found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,});
+			}
+
+		}
+
+
+
+
+		return found ;
 	}
 
 
@@ -294,7 +349,7 @@ public class ArticleLotEJB
 	public void upgradeArticleLotQtyOrCreate(DeliveryItem deliveryItem ,Login creatingUser ){
 		ArticleLot articleLot = new ArticleLot();
 		articleLot.setArticle(deliveryItem.getArticle());
-		articleLot.setInternalPic(deliveryItem.getInternalPic());
+		articleLot.setInternalPic(deliveryItem.getMainPic());
 		List<ArticleLot> found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
 		if(!found.isEmpty()){
 			ArticleLot next = found.iterator().next();
@@ -309,7 +364,7 @@ public class ArticleLotEJB
 			createArticleLot(creatingUser, deliveryItem,false);
 		}
 	}
-	
+
 	public void handleArticleChange(@Observes @EntityEditDoneRequestEvent Article article){
 
 		ArticleLot articleLot = new ArticleLot();
@@ -322,7 +377,7 @@ public class ArticleLotEJB
 				update(lot);
 			}
 		}
-	
+
 	}
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
 

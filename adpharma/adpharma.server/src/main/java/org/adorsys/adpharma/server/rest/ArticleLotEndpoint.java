@@ -144,6 +144,18 @@ public class ArticleLotEndpoint
             detach(searchInput));
    }
    
+   
+   @POST
+   @Path("/findArticleLotByInternalPicWhitRealPrice")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public ArticleLotSearchResult findArticleLotByInternalPicWhitRealPrice(ArticleLotSearchInput searchInput)
+   {
+      SingularAttribute<ArticleLot, Object>[] attributes = readSeachAttributes(searchInput);
+      List<ArticleLot> resultList = ejb.findArticleLotByInternalPicWhitRealPrice(searchInput);
+      return new ArticleLotSearchResult(Long.valueOf(1), detach(resultList), detach(searchInput));
+   }
+   
    @POST
    @Path("/stockValue")
    @Produces({ "application/json", "application/xml" })

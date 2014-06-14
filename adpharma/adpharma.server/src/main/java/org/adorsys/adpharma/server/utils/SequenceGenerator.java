@@ -19,7 +19,7 @@ public class SequenceGenerator {
 	public static String PRESCRIPTIONBOOK_SEQUENCE_PREFIXE = "PB";
 	public static String CUSTOMER_VOUCHER_SEQUENCE_PREFIXE = "CV";
 	public static String CUSTOMER_INVOICE_SEQUENCE_PREFIXE = "CI";
-
+	public static String CUSTOMER_INVENTORY_SEQUENCE_PREFIXE = "IV";
 
 	static long time = 0l;// the time corresponding to the 01.01.2010 00:00:00:00 ...
 	static {

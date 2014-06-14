@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -20,6 +21,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -70,6 +72,14 @@ public class Inventory implements Cloneable
    @Description("Inventory_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<InventoryAgency> agency;
+   
+   @Description("Inventory_section_description")
+   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Section.class)
+   private SimpleObjectProperty<InventorySection> section;
+   
+	@Description("Inventory_createEmpty_description")
+	private SimpleBooleanProperty createEmpty;
+
 
    public Long getId()
    {
@@ -153,7 +163,7 @@ public class Inventory implements Cloneable
    {
       if (gapSaleAmount == null)
       {
-         gapSaleAmount = new SimpleObjectProperty<BigDecimal>();
+         gapSaleAmount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return gapSaleAmount;
    }
@@ -172,7 +182,7 @@ public class Inventory implements Cloneable
    {
       if (gapPurchaseAmount == null)
       {
-         gapPurchaseAmount = new SimpleObjectProperty<BigDecimal>();
+         gapPurchaseAmount = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
       }
       return gapPurchaseAmount;
    }
@@ -242,7 +252,7 @@ public class Inventory implements Cloneable
       return recordingUser;
    }
 
-   @NotNull(message = "Inventory_recordingUser_NotNull_validation")
+//   @NotNull(message = "Inventory_recordingUser_NotNull_validation")
    public InventoryRecordingUser getRecordingUser()
    {
       return recordingUserProperty().get();
@@ -282,7 +292,52 @@ public class Inventory implements Cloneable
       PropertyReader.copy(agency, getAgency());
       agencyProperty().setValue(ObjectUtils.clone(getAgency()));
    }
+   
+   public SimpleObjectProperty<InventorySection> sectionProperty()
+   {
+      if (section == null)
+      {
+    	  section = new SimpleObjectProperty<InventorySection>(new InventorySection());
+      }
+      return section;
+   }
 
+   public InventorySection getSection()
+   {
+      return sectionProperty().get();
+   }
+
+   public final void setSection(InventorySection section)
+   {
+      if (section == null)
+      {
+    	  section = new InventorySection();
+      }
+      PropertyReader.copy(section, getSection());
+      sectionProperty().setValue(ObjectUtils.clone(getSection()));
+   }
+
+   public SimpleBooleanProperty createEmptyProperty()
+	{
+		if (createEmpty == null)
+		{
+			createEmpty = new SimpleBooleanProperty();
+		}
+		return createEmpty;
+	}
+
+	public Boolean getCreateEmpty()
+	{
+		return createEmptyProperty().get();
+	}
+
+	public final void setCreateEmpty(Boolean createEmpty)
+	{
+		if (createEmpty == null)
+			createEmpty = Boolean.FALSE;
+		this.createEmptyProperty().set(createEmpty);
+	}
+	
    @Override
    public int hashCode()
    {

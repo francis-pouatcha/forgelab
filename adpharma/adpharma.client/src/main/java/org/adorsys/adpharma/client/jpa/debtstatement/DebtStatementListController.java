@@ -102,14 +102,14 @@ public class DebtStatementListController implements EntityController
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
-	
+
 	@Inject
 	private SecurityUtil securityUtil ;
 
 	@Inject
 	private DebtStatementCustomerInvoiceAssocSearchService statementCustomerInvoiceAssocSearchService ;
-@Inject
-private Locale locale ;
+	@Inject
+	private Locale locale ;
 
 	@PostConstruct
 	public void postConstruct()
@@ -196,19 +196,19 @@ private Locale locale ;
 			}
 				});
 
-//		/*
-//		 * listen to edit button and fire search select event.
-//		 */
-//		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
-//				{
-//			@Override
-//			public void handle(ActionEvent e)
-//			{
-//				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-//				if(selectedItem!=null)
-//					selectionEvent.fire(selectedItem);
-//			}
-//				});
+		//		/*
+		//		 * listen to edit button and fire search select event.
+		//		 */
+		//		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
+		//				{
+		//			@Override
+		//			public void handle(ActionEvent e)
+		//			{
+		//				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+		//				if(selectedItem!=null)
+		//					selectionEvent.fire(selectedItem);
+		//			}
+		//				});
 
 		/*
 		 * listen to search button and fire search activated event.
@@ -270,9 +270,9 @@ private Locale locale ;
 				s.reset();				
 			}
 		});
-		
+
 		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
@@ -280,15 +280,15 @@ private Locale locale ;
 				ArrayList<CustomerInvoice> invoices = Lists.newArrayList(iterator);
 				Login login = securityUtil.getConnectedUser();
 				if(selectedItem!=null){
-				try {
-					DebtStatementReportPrintTemplatePDF pdfRepportTemplate = new DebtStatementReportPrintTemplatePDF(selectedItem, listView.getResourceBundle(), locale, login);
-					pdfRepportTemplate.addItems(invoices);
-					pdfRepportTemplate.closeDocument();
-					Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					try {
+						DebtStatementReportPrintTemplatePDF pdfRepportTemplate = new DebtStatementReportPrintTemplatePDF(selectedItem, listView.getResourceBundle(), locale, login);
+						pdfRepportTemplate.addItems(invoices);
+						pdfRepportTemplate.closeDocument();
+						Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		});

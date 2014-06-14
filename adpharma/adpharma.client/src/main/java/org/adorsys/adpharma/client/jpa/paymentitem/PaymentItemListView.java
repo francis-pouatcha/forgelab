@@ -61,7 +61,7 @@ public class PaymentItemListView
       viewBuilder.addStringColumn(dataList, "documentNumber", "PaymentItem_documentNumber_description.title", resourceBundle);
       viewBuilder.addBigDecimalColumn(dataList, "amount", "PaymentItem_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "receivedAmount", "PaymentItem_receivedAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "customer", "PaymentItem_customer_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

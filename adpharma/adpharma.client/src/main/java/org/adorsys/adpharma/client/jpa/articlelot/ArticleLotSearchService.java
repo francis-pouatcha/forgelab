@@ -12,11 +12,19 @@ public class ArticleLotSearchService extends Service<ArticleLotSearchResult>
 	private ArticleLotService remoteService;
 
 	private ArticleLotSearchInput searchInputs;
+	
+	private Boolean searchRealPrice = Boolean.FALSE;
 
 
 	public ArticleLotSearchService setSearchInputs(ArticleLotSearchInput searchInputs)
 	{
 		this.searchInputs = searchInputs;
+		return this;
+	}
+	
+	public ArticleLotSearchService setSearchRealPrice(Boolean searchRealPrice)
+	{
+		this.searchRealPrice = searchRealPrice;
 		return this;
 	}
 
@@ -29,6 +37,9 @@ public class ArticleLotSearchService extends Service<ArticleLotSearchResult>
 			@Override
 			protected ArticleLotSearchResult call() throws Exception
 			{
+				if(searchRealPrice)
+					return remoteService.findArticleLotByInternalPicWhitRealPrice(searchInputs);
+				
 				if (searchInputs == null)
 					return null;
 

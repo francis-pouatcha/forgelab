@@ -42,7 +42,6 @@ public class CustomerInvoiceListView
 	@FXML
 	private Button searchButton;
 
-	@FXML
 	private Button printButton;
 
 	@FXML
@@ -116,6 +115,7 @@ public class CustomerInvoiceListView
 		viewBuilder.addStringColumn(dataListItem, "article", "CustomerInvoiceItem_article_description.title", resourceBundle,400d);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalesPrice", "CustomerInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
 		buildsearchBar();
@@ -135,9 +135,15 @@ public class CustomerInvoiceListView
 		invoiceNumber.setPrefHeight(40d);
 		cashed = ViewBuilderUtils.newCheckBox(null, "cashed", resourceBundle, false);
 		cashed.setText("Cashed");
+		
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(invoiceNumber,cashed,searchButton);
+		
+		printButton =ViewBuilderUtils.newButton("Entity_print.title", "printButton", resourceBundle, AwesomeIcon.SEARCH);
+		printButton.setPrefHeight(40d);
+
+		
+		searchBar.getChildren().addAll(invoiceNumber,cashed,searchButton,printButton);
 	}
 
 	public Button getPrintButton()

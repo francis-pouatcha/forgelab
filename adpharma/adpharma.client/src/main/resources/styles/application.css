@@ -12,7 +12,8 @@ Description: MistSilver Skin for JavaFX
 */
 
 .root{
-     -fx-font: 14px;
+     -fx-font: latin;
+     -fx-font-size: 14px;
 }
 
 .domainComponentView {
@@ -24,8 +25,49 @@ Description: MistSilver Skin for JavaFX
     -fx-spacing: 5;
 }
 
+
+
 .button{
-	-fx-text-fill: maroon ;
+-fx-background-color:
+        #3c7fb1,
+        linear-gradient(#fafdfe, #e8f5fc),
+        linear-gradient(#eaf6fd 0%, #d9f0fc 49%, #bee6fd 50%, #a7d9f5 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 3 5 3 5;
+    -fx-text-fill: maroon ;
+    -fx-font-size: 14px;
+}
+
+.button:hover{
+ -fx-background-color:
+        #707070,
+        linear-gradient(#fcfcfc, #f3f3f3),
+        linear-gradient(#f2f2f2 0%, #ebebeb 49%, #dddddd 50%, #cfcfcf 100%);
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 3,2,1;
+    -fx-padding: 3 5 3 5;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-cursor: hand ;
+}
+.list-view:hover{
+	-fx-cursor: hand ;
+}
+
+.table-view:hover{
+	-fx-cursor: hand ;
+}
+
+.blue-text{
+	-fx-text-fill: blue ;
+}
+
+.red-text{
+	-fx-text-fill: red ;
+}
+.green-text{
+	-fx-text-fill: green ;
 }
 
 

@@ -110,8 +110,11 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 						deliveryItem.setInternalPic(itemCell.getStringCellValue().trim());
 
 					itemCell = row.getCell(20);
-					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
+					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue())){
 						deliveryItem.setMainPic(itemCell.getStringCellValue().trim());
+						if(StringUtils.isBlank(deliveryItem.getInternalPic()))
+							deliveryItem.setInternalPic(deliveryItem.getMainPic());
+					}
 
 					itemCell = row.getCell(21);
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue()))
@@ -138,11 +141,11 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 							deliveryItem.setArticleName(deliveryItem.getArticle().getArticleName());
 						} else {
 							continue;
-//							throw new IllegalStateException("Missing article for delivery item with pic: " + articlePic);
+							//							throw new IllegalStateException("Missing article for delivery item with pic: " + articlePic);
 						}
 					} else {
 						continue;
-//						throw new IllegalStateException("Missing article number for delivery item: " + deliveryItem.getMainPic());
+						//						throw new IllegalStateException("Missing article number for delivery item: " + deliveryItem.getMainPic());
 					}
 
 					itemCell = row.getCell(24);
@@ -213,12 +216,12 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 							.multiply(deliveryItem.getPurchasePricePU());
 					deliveryItem.setTotalPurchasePrice(totalPurchasePrice);
 					currentDelivery.setAmountAfterTax(currentDelivery.getAmountAfterTax().add(totalPurchasePrice));
-					 itemCell = row.getCell(32);
-//					 if (itemCell != null)
-//					 {
-//					 BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
-//					 deliveryItem.setSalesPricePU(decimal);
-//					 }
+					itemCell = row.getCell(32);
+					//					 if (itemCell != null)
+					//					 {
+					//					 BigDecimal decimal = new BigDecimal(itemCell.getNumericCellValue());
+					//					 deliveryItem.setSalesPricePU(decimal);
+					//					 }
 
 					ArticleVat vat = article.getVat();
 					BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vat.getRate())), 4, RoundingMode.HALF_EVEN);

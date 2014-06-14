@@ -54,214 +54,243 @@ import javax.persistence.CascadeType;
 @Description("Inventory_description")
 @ToStringField("inventoryNumber")
 @ListField({ "inventoryNumber", "gapSaleAmount", "gapPurchaseAmount", "inventoryStatus",
-      "agency.name" })
+"agency.name" })
 public class Inventory implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("Inventory_inventoryNumber_description")
-   private String inventoryNumber;
+	@Column
+	@Description("Inventory_inventoryNumber_description")
+	private String inventoryNumber;
 
-   @ManyToOne
-   @Description("Inventory_recordingUser_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
-   @NotNull(message = "Inventory_recordingUser_NotNull_validation")
-   private Login recordingUser;
+	@ManyToOne
+	@Description("Inventory_recordingUser_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
+	@NotNull(message = "Inventory_recordingUser_NotNull_validation")
+	private Login recordingUser;
 
-   @Column
-   @Description("Inventory_gapSaleAmount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal gapSaleAmount;
+	@Column
+	@Description("Inventory_gapSaleAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal gapSaleAmount;
 
-   @Column
-   @Description("Inventory_gapPurchaseAmount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal gapPurchaseAmount;
+	@Column
+	@Description("Inventory_gapPurchaseAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal gapPurchaseAmount;
 
-   @Column
-   @Description("Inventory_inventoryStatus_description")
-   @Enumerated(EnumType.STRING)
-   private DocumentProcessingState inventoryStatus;
+	@Column
+	@Description("Inventory_inventoryStatus_description")
+	@Enumerated(EnumType.STRING)
+	private DocumentProcessingState inventoryStatus;
 
-   @Column
-   @Description("Inventory_description_description")
-   @Size(max = 256, message = "Inventory_description_Size_validation")
-   private String description;
+	@Column
+	@Description("Inventory_description_description")
+	@Size(max = 256, message = "Inventory_description_Size_validation")
+	private String description;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Inventory_inventoryDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date inventoryDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Inventory_inventoryDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date inventoryDate;
 
-   @ManyToOne
-   @Description("Inventory_agency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   @NotNull(message = "Inventory_agency_NotNull_validation")
-   private Agency agency;
+	@ManyToOne
+	@Description("Inventory_agency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	@NotNull(message = "Inventory_agency_NotNull_validation")
+	private Agency agency;
 
-   @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
-   @Description("Inventory_inventoryItems_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = InventoryItem.class, selectionMode = SelectionMode.TABLE)
-   private Set<InventoryItem> inventoryItems = new HashSet<InventoryItem>();
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@ManyToOne
+	@Description("Inventory_section_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Section.class)
+	private Section section;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	@Column
+	@Description("Inventory_createEmpty_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private Boolean createEmpty;
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	@OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
+	@Description("Inventory_inventoryItems_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = InventoryItem.class, selectionMode = SelectionMode.TABLE)
+	private Set<InventoryItem> inventoryItems = new HashSet<InventoryItem>();
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((Inventory) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   public String getInventoryNumber()
-   {
-      return this.inventoryNumber;
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   public void setInventoryNumber(final String inventoryNumber)
-   {
-      this.inventoryNumber = inventoryNumber;
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((Inventory) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public Login getRecordingUser()
-   {
-      return this.recordingUser;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setRecordingUser(final Login recordingUser)
-   {
-      this.recordingUser = recordingUser;
-   }
+	public String getInventoryNumber()
+	{
+		return this.inventoryNumber;
+	}
 
-   public BigDecimal getGapSaleAmount()
-   {
-      return this.gapSaleAmount;
-   }
+	public void setInventoryNumber(final String inventoryNumber)
+	{
+		this.inventoryNumber = inventoryNumber;
+	}
 
-   public void setGapSaleAmount(final BigDecimal gapSaleAmount)
-   {
-      this.gapSaleAmount = gapSaleAmount;
-   }
+	public Login getRecordingUser()
+	{
+		return this.recordingUser;
+	}
 
-   public BigDecimal getGapPurchaseAmount()
-   {
-      return this.gapPurchaseAmount;
-   }
+	public void setRecordingUser(final Login recordingUser)
+	{
+		this.recordingUser = recordingUser;
+	}
 
-   public void setGapPurchaseAmount(final BigDecimal gapPurchaseAmount)
-   {
-      this.gapPurchaseAmount = gapPurchaseAmount;
-   }
+	public BigDecimal getGapSaleAmount()
+	{
+		return this.gapSaleAmount;
+	}
 
-   public DocumentProcessingState getInventoryStatus()
-   {
-      return this.inventoryStatus;
-   }
+	public void setGapSaleAmount(final BigDecimal gapSaleAmount)
+	{
+		this.gapSaleAmount = gapSaleAmount;
+	}
 
-   public void setInventoryStatus(final DocumentProcessingState inventoryStatus)
-   {
-      this.inventoryStatus = inventoryStatus;
-   }
+	public BigDecimal getGapPurchaseAmount()
+	{
+		return this.gapPurchaseAmount;
+	}
 
-   public String getDescription()
-   {
-      return this.description;
-   }
+	public void setGapPurchaseAmount(final BigDecimal gapPurchaseAmount)
+	{
+		this.gapPurchaseAmount = gapPurchaseAmount;
+	}
 
-   public void setDescription(final String description)
-   {
-      this.description = description;
-   }
+	public DocumentProcessingState getInventoryStatus()
+	{
+		return this.inventoryStatus;
+	}
 
-   public Date getInventoryDate()
-   {
-      return this.inventoryDate;
-   }
+	public void setInventoryStatus(final DocumentProcessingState inventoryStatus)
+	{
+		this.inventoryStatus = inventoryStatus;
+	}
 
-   public void setInventoryDate(final Date inventoryDate)
-   {
-      this.inventoryDate = inventoryDate;
-   }
+	public String getDescription()
+	{
+		return this.description;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (inventoryNumber != null && !inventoryNumber.trim().isEmpty())
-         result += "inventoryNumber: " + inventoryNumber;
-      if (description != null && !description.trim().isEmpty())
-         result += ", description: " + description;
-      return result;
-   }
+	public void setDescription(final String description)
+	{
+		this.description = description;
+	}
 
-   public Agency getAgency()
-   {
-      return this.agency;
-   }
+	public Date getInventoryDate()
+	{
+		return this.inventoryDate;
+	}
 
-   public void setAgency(final Agency agency)
-   {
-      this.agency = agency;
-   }
+	public void setInventoryDate(final Date inventoryDate)
+	{
+		this.inventoryDate = inventoryDate;
+	}
 
-   public Set<InventoryItem> getInventoryItems()
-   {
-      return this.inventoryItems;
-   }
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (inventoryNumber != null && !inventoryNumber.trim().isEmpty())
+			result += "inventoryNumber: " + inventoryNumber;
+		if (description != null && !description.trim().isEmpty())
+			result += ", description: " + description;
+		return result;
+	}
 
-   public void setInventoryItems(final Set<InventoryItem> inventoryItems)
-   {
-      this.inventoryItems = inventoryItems;
-   }
+	public Agency getAgency()
+	{
+		return this.agency;
+	}
+
+	public void setAgency(final Agency agency)
+	{
+		this.agency = agency;
+	}
+
+	public Set<InventoryItem> getInventoryItems()
+	{
+		return this.inventoryItems;
+	}
+
+	public void setInventoryItems(final Set<InventoryItem> inventoryItems)
+	{
+		this.inventoryItems = inventoryItems;
+	}
+
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
+	public Boolean getCreateEmpty() {
+		return createEmpty;
+	}
+
+	public void setCreateEmpty(Boolean createEmpty) {
+		this.createEmpty = createEmpty;
+	}
+
+
 }

@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,11 +24,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DeliveryItemSearchInput;
 import org.adorsys.adpharma.server.jpa.DeliveryItemSearchResult;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
+import org.adorsys.adpharma.server.jpa.PeriodicalDeliveryDataSearchInput;
 
 /**
  * 
@@ -52,14 +50,14 @@ public class DeliveryItemEndpoint
 	@Inject
 	private ArticleMerger articleMerger;
 
-	
+
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
 	@Produces({ "application/json", "application/xml" })
 	public DeliveryItem create(DeliveryItem entity)
 	{
-		
+
 		return detach(ejb.create(entity));
 	}
 
@@ -80,7 +78,7 @@ public class DeliveryItemEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public DeliveryItem update(DeliveryItem entity)
 	{
-		
+
 		return detach(ejb.update(entity));
 	}
 
@@ -129,6 +127,17 @@ public class DeliveryItemEndpoint
 				detach(searchInput));
 	}
 
+	@POST
+	@Path("/periodicalDeliveryRepport")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public DeliveryItemSearchResult periodicalDeliveryRepport(PeriodicalDeliveryDataSearchInput searchInput)
+	{
+		List<DeliveryItem> resultList = ejb.periodicalDeliveryRepport(searchInput);
+
+		return new DeliveryItemSearchResult(Long.valueOf(1), detach(resultList),
+				new DeliveryItemSearchInput());
+	}
 	@POST
 	@Path("/countBy")
 	@Consumes({ "application/json", "application/xml" })

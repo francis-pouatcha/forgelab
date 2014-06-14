@@ -20,6 +20,7 @@ import javax.validation.ConstraintViolation;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.delivery.PeriodicalDeliveryDataSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
@@ -80,11 +81,12 @@ public class ModalProcurementRepportDataView extends ApplicationModal{
 
 
 
-	public void bind(PeriodicalDataSearchInput model)
+	public void bind(PeriodicalDeliveryDataSearchInput model)
 	{
 		beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
 		endDate.calendarProperty().bindBidirectional(model.endDateProperty());
 		check.selectedProperty().bindBidirectional(model.checkProperty());
+		supplier.valueProperty().bindBidirectional(model.supplierProperty());
 	}
 
 	public void addValidators()
@@ -93,11 +95,11 @@ public class ModalProcurementRepportDataView extends ApplicationModal{
 		// no active validator
 	}
 
-	public Set<ConstraintViolation<PeriodicalDataSearchInput>> validate(PeriodicalDataSearchInput model)
+	public Set<ConstraintViolation<PeriodicalDeliveryDataSearchInput>> validate(PeriodicalDeliveryDataSearchInput model)
 	{
-		Set<ConstraintViolation<PeriodicalDataSearchInput>> violations = new HashSet<ConstraintViolation<PeriodicalDataSearchInput>>();
-		violations.addAll(calendarControlValidator.validate(beginDate, PeriodicalDataSearchInput.class, "beginDate", resourceBundle));
-		violations.addAll(calendarControlValidator.validate(endDate, PeriodicalDataSearchInput.class, "endDate", resourceBundle));
+		Set<ConstraintViolation<PeriodicalDeliveryDataSearchInput>> violations = new HashSet<ConstraintViolation<PeriodicalDeliveryDataSearchInput>>();
+		violations.addAll(calendarControlValidator.validate(beginDate, PeriodicalDeliveryDataSearchInput.class, "beginDate", resourceBundle));
+		violations.addAll(calendarControlValidator.validate(endDate, PeriodicalDeliveryDataSearchInput.class, "endDate", resourceBundle));
 		return violations;
 	}
 

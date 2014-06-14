@@ -69,6 +69,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
 		rootPane = viewBuilder.toAnchorPane();
+		rootPane.setPrefWidth(300);
 	}
 
 

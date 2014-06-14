@@ -22,11 +22,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
-import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -64,11 +60,13 @@ public class ModalArticleLotSearchController  {
 
 	private ArticleLotSearchResult searchResult;
 
+	@Inject
+	private ArticleLotSearchInput lotSearchInput ;
+
 
 
 	@PostConstruct
 	public void postConstruct(){
-
 		view.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{
 			@Override
@@ -152,6 +150,7 @@ public class ModalArticleLotSearchController  {
 				ArticleLotSearchResult articleSearchResult = s.getValue();
 				event.consume();
 				s.reset();
+				s.setSearchRealPrice(Boolean.FALSE);
 				handleArticleSearchResult(articleSearchResult);
 			}
 
@@ -159,9 +158,10 @@ public class ModalArticleLotSearchController  {
 
 		});
 
+		
 	}
 
-	
+
 
 	public void handleArticleSearchResult(
 			ArticleLotSearchResult articleLotSearchResult) {
@@ -212,8 +212,8 @@ public class ModalArticleLotSearchController  {
 				}
 				if(articleLot!=null)lotList.add(articleLot);
 			}
-			
-			
+
+
 			int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
 			int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 			view.getPagination().setPageCount(pageCount);
@@ -232,6 +232,10 @@ public class ModalArticleLotSearchController  {
 	}
 
 	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
-		articleSearchService.setSearchInputs(lotSearchInput).start();
+		if(lotSearchInput.getFieldNames().contains("internalPic")){
+			articleSearchService.setSearchInputs(lotSearchInput).setSearchRealPrice(Boolean.TRUE).start();
+		}else{
+			articleSearchService.setSearchInputs(lotSearchInput).start();
+		}
 	}
 }

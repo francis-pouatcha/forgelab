@@ -75,7 +75,7 @@ public class ArticleLotSequence {
 
 	public void newLot() {
 		lotNumber += 1;
-		internalPic = mainPic + StringUtils.leftPad("" + lotNumber, 4, '0');
+		internalPic = mainPic +"-"+ StringUtils.leftPad("" + lotNumber, 4, '0');
 		lotDate = new Date();
 	}
 }

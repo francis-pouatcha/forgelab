@@ -187,7 +187,7 @@ public class InventoryAgency implements Association<Inventory, Agency>, Cloneabl
    @Override
    public Object clone() throws CloneNotSupportedException
    {
-      InventoryAgency a = new InventoryAgency();
+	   InventoryAgency a = new InventoryAgency();
       a.id = id;
       a.version = version;
 

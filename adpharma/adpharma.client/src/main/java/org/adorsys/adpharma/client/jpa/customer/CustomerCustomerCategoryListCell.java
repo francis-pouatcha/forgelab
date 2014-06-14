@@ -15,7 +15,7 @@ public class CustomerCustomerCategoryListCell extends AbstractToStringListCell<C
       {
          return "";
       }
-      return PropertyReader.buildToString(item, "name");
+      return PropertyReader.buildToString(item, "name","discountRate");
    }
 
 }

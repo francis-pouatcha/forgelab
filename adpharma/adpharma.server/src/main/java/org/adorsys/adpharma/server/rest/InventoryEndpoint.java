@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Inventory;
 import org.adorsys.adpharma.server.jpa.Inventory_;
 import org.adorsys.adpharma.server.jpa.InventorySearchInput;
@@ -47,6 +48,10 @@ public class InventoryEndpoint
 
    @Inject
    private AgencyMerger agencyMerger;
+   
+   @Inject
+   private SectionMerger sectionMerger;
+
 
    @POST
    @Consumes({ "application/json", "application/xml" })
@@ -183,6 +188,8 @@ public class InventoryEndpoint
       }
       return result.toArray(new SingularAttribute[result.size()]);
    }
+   
+   private static final List<String> sectionFields = Arrays.asList("sectionCode", "name", "position", "agency","id");
 
    private static final List<String> emptyList = Collections.emptyList();
 
@@ -196,6 +203,10 @@ public class InventoryEndpoint
    {
       if (entity == null)
          return null;
+      
+      // aggregated
+      entity.setSection(sectionMerger.unbind(entity.getSection(), sectionFields));
+
 
       // aggregated
       entity.setRecordingUser(loginMerger.unbind(entity.getRecordingUser(), recordingUserFields));

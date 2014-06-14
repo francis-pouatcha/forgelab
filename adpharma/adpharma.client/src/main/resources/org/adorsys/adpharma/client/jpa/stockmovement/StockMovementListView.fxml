@@ -6,23 +6,6 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
-			<children>
-				<Pane fx:id="rigthpane" prefHeight="630.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-					<VBox.margin>
-						<Insets bottom="50.0" left="5.0" />
-					</VBox.margin>
-				</Pane>
-			</children>
-			<BorderPane.margin>
-				<Insets />
-			</BorderPane.margin>
-			<padding>
-				<Insets top="55.0" />
-			</padding>
-		</VBox>
-	</right>
 	<center>
 		<VBox>
 			<children>
@@ -46,6 +29,9 @@
 					</children>
 				</HBox>
 			</children>
+<BorderPane.margin>
+<Insets />
+</BorderPane.margin>
 		</VBox>
 	</center>
 </BorderPane>
