@@ -124,7 +124,7 @@ private PeriodicalDeliveryDataSearchInput model;
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .61f, .13f,.13f });
+		reportTable = new PdfPTable(new float[]{ .2f, .54f, .13f,.13f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 

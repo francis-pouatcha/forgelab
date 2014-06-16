@@ -220,7 +220,7 @@ public class SalesOrderDisplayView
 		amountHT = ViewBuilderUtils.newBigDecimalField( "amountHT", NumberType.CURRENCY,locale,false);
 		amountHT.setEditable(false);
 
-		discount = ViewBuilderUtils.newBigDecimalField( "discount", NumberType.CURRENCY,locale,false);
+		discount = ViewBuilderUtils.newBigDecimalField( "discount", NumberType.INTEGER,locale,false);
 		discount.setEditable(true);
 
 		amountTTC = ViewBuilderUtils.newBigDecimalField( "amountTTC", NumberType.CURRENCY,locale,false);
@@ -256,7 +256,7 @@ public class SalesOrderDisplayView
 		orderedQty.setTooltip(new Tooltip("Quantite"));
 		orderedQty.setPrefWidth(75d);
 
-		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.CURRENCY, locale,false);
+		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.INTEGER, locale,false);
 		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
 		salesPricePU.setPrefWidth(130d);
 		salesPricePU.setEditable(false);

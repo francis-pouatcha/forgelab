@@ -185,8 +185,8 @@ public class ModalArticleLotSearchController  {
 			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
 			// Group by internal pic always taking the article
 			for (ArticleLot articleLot : resultList) {
-				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
-					continue ;
+//				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
+//					continue ;
 				String internalPic = articleLot.getInternalPic();
 				if(!resultOrder.contains(internalPic)) resultOrder.add(internalPic);
 				// the internal pic is unique per product.
@@ -205,10 +205,10 @@ public class ModalArticleLotSearchController  {
 					if(articleLot==null) {
 						articleLot=lot;
 					} else if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0){
-						articleLot=lot;
 					} else {
 						break;
 					}
+					articleLot=lot;
 				}
 				if(articleLot!=null)lotList.add(articleLot);
 			}

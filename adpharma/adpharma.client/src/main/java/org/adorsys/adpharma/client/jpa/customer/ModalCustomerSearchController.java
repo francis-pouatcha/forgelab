@@ -126,6 +126,8 @@ public class ModalCustomerSearchController  {
 	}
 
 	public void handleCustomerSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent CustomerSearchInput customerSearchInput){
+		if(customerSearchInput!=null)
+		customerSearchInput.setMax(30);
 		customerSearchService.setSearchInputs(customerSearchInput).start();
 	}
 

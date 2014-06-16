@@ -26,7 +26,7 @@ public class InventoryAgencyDisplayController extends InventoryAgencyController
    public void handleNewModelEvent(@Observes @SelectedModelEvent Inventory model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getInventoryAgencySelection());
-      bind(displayView.getView().getInventoryAgencySelection(), displayView.getView().getInventoryAgencyForm());
+//      disableButton(displayView.getView().getInventoryAgencySelection());
+//      bind(displayView.getView().getInventoryAgencySelection(), displayView.getView().getInventoryAgencyForm());
    }
 }

@@ -25,8 +25,8 @@ public class InventoryRecordingUserDisplayController extends InventoryRecordingU
     */
    public void handleNewModelEvent(@Observes @SelectedModelEvent Inventory model)
    {
-      this.sourceEntity = model;
-      disableButton(displayView.getView().getInventoryRecordingUserSelection());
-      bind(displayView.getView().getInventoryRecordingUserSelection(), displayView.getView().getInventoryRecordingUserForm());
+//      this.sourceEntity = model;
+//      disableButton(displayView.getView().getInventoryRecordingUserSelection());
+//      bind(displayView.getView().getInventoryRecordingUserSelection(), displayView.getView().getInventoryRecordingUserForm());
    }
 }

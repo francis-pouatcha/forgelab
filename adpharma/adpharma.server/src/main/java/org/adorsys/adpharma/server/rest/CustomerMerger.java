@@ -69,6 +69,8 @@ public class CustomerMerger
       newEntity.setVersion(entity.getVersion());
       MergerUtils.copyFields(entity, newEntity, fieldList);
       newEntity.setCustomerCategory(entity.getCustomerCategory());
+      if(newEntity.getEmployer()!=null)
+    	  newEntity.setEmployer(null);
       return newEntity;
    }
 

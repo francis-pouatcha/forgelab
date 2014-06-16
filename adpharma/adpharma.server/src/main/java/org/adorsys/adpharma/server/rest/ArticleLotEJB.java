@@ -37,6 +37,8 @@ import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
+import org.adorsys.adpharma.server.jpa.Inventory;
+import org.adorsys.adpharma.server.jpa.InventoryItem;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -175,7 +177,7 @@ public class ArticleLotEJB
 				if(!deliveryItems.isEmpty()){
 					DeliveryItem item = deliveryItems.iterator().next();
 					String pic = item.getArticle().getPic();
-					
+
 					ArticleLot articleLot = new ArticleLot();
 					articleLot.setInternalPic(pic);
 					List<ArticleLot> lots  =	 findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
@@ -421,6 +423,27 @@ public class ArticleLotEJB
 				}
 
 			}
+
+		}
+	}
+
+	
+	public void handleReturnSales(@Observes @DocumentClosedEvent Inventory inventory){
+		Set<InventoryItem> inventoryItems = inventory.getInventoryItems();
+
+		for (InventoryItem inventoryItem : inventoryItems) {
+			ArticleLot articleLot = new ArticleLot();
+			articleLot.setInternalPic(inventoryItem.getInternalPic());
+			articleLot.setArticle(inventoryItem.getArticle());
+			@SuppressWarnings("unchecked")
+			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+			if(!found.isEmpty()){
+				ArticleLot lot = found.iterator().next();
+				lot.setStockQuantity(inventoryItem.getAsseccedQty());
+				lot.calculateTotalAmout();
+				update(lot);
+			}
+
 
 		}
 	}

@@ -10,7 +10,7 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="264.0" prefWidth="152.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="350.0" prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
 						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="Recherche Avancee" />
 						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">

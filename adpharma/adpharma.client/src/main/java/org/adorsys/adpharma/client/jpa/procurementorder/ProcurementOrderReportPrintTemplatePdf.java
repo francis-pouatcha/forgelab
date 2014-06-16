@@ -121,35 +121,35 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_pic.title")));
+		pdfPCell.addElement(new StandardText("CIP"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_articleName.title")));
+		pdfPCell.addElement(new StandardText("DESIGNATION"));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_qtyOrdered.title")));
+		pdfPCell.addElement(new StandardText("CMD"));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_stockQuantity.title")));
+		pdfPCell.addElement(new StandardText("STOCK"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_purchasePricePU.title")));
+		pdfPCell.addElement(new StandardText("P.A"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("ProcurementOrderPrintTemplate_totalPurchasePrice.title")));
+		pdfPCell.addElement(new StandardText("P.V"));
 		reportTable.addCell(pdfPCell);
 
 	}
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("ProcurementOrderPrintTemplate_header.title")+data.getProcurementOrder().getProcurementOrderNumber()));
+		Paragraph paragraph = new Paragraph(new BoldText("COMMANDE FOURNISSEUR")+data.getProcurementOrder().getProcurementOrderNumber());
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 

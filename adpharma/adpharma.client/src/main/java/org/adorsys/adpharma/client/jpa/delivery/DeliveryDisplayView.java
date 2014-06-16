@@ -501,6 +501,33 @@ public class DeliveryDisplayView
 	public ContextMenu getDatalistContextMenu() {
 		return datalistContextMenu;
 	}
+	public HBox getActionbar() {
+		return actionbar;
+	}
+	public ComboBox<DocumentProcessingState> getState() {
+		return state;
+	}
+	public ResourceBundle getDeliveryProcessingStateBundle() {
+		return deliveryProcessingStateBundle;
+	}
+	public DocumentProcessingStateConverter getDeliveryProcessingStateConverter() {
+		return deliveryProcessingStateConverter;
+	}
+	public DocumentProcessingStateListCellFatory getDeliveryProcessingStateListCellFatory() {
+		return deliveryProcessingStateListCellFatory;
+	}
+	public GridPane getLeftGride() {
+		return leftGride;
+	}
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+	public Locale getLocale() {
+		return locale;
+	}
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
 
 
 

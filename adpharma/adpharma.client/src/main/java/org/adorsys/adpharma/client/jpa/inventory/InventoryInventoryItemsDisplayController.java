@@ -27,8 +27,8 @@ public class InventoryInventoryItemsDisplayController extends InventoryInventory
    public void handleNewModelEvent(@Observes @SelectedModelEvent Inventory model)
    {
       this.sourceEntity = model;
-      disableButton(displayView.getView().getInventoryInventoryItemsSelection(), displayView.getView().getInventoryInventoryItemsForm());
-      bind(displayView.getView().getInventoryInventoryItemsSelection(), displayView.getView().getInventoryInventoryItemsForm());
+//      disableButton(displayView.getView().getInventoryInventoryItemsSelection(), displayView.getView().getInventoryInventoryItemsForm());
+//      bind(displayView.getView().getInventoryInventoryItemsSelection(), displayView.getView().getInventoryInventoryItemsForm());
    }
 
    public void handleSelectionEvent(@Observes @EntitySelectionEvent Inventory selectedEntity)

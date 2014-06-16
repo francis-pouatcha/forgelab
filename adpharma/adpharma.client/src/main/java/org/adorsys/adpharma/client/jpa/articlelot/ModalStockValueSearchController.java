@@ -115,6 +115,7 @@ public class ModalStockValueSearchController {
 						searchService.setStockValue(Boolean.TRUE);
 						System.out.println(searchInput.getEntity().getAgency()+" agence");
 						System.out.println(searchInput.getEntity().getSection()+" section ");
+						searchInput.setMax(-1);
 						searchService.setSearchInputs(searchInput).start();
 					}
 				}

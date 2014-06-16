@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.delivery;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -156,17 +157,18 @@ public class DeliveryDisplayController implements EntityController
 
 			}
 		});
-		displayView.getMulRate().textProperty().addListener(new ChangeListener<String>() {
+
+
+		displayView.getMulRate().numberProperty().addListener(new ChangeListener<BigDecimal>() {
 
 			@Override
-			public void changed(ObservableValue<? extends String> observable,
-					String oldValue, String newValue) {
-				BigDecimal number = new BigDecimal(newValue);
-				if(number!=null&& !BigDecimal.ZERO.equals(number)) {
+			public void changed(ObservableValue<? extends BigDecimal> observable,
+					BigDecimal oldValue, BigDecimal newValue) {
+				if(newValue!=null&& !BigDecimal.ZERO.equals(newValue)) {
 					BigDecimal pppu = displayView.getPurchasePricePU().getNumber();
 					if(pppu!=null){
-						long longValue = (pppu.multiply(number)).longValue();
-						deliveryItem.setSalesPricePU(BigDecimal.valueOf(longValue));
+
+						deliveryItem.setSalesPricePU( pppu.multiply(newValue));
 					}
 				}
 
@@ -273,7 +275,7 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
+				if(code== KeyCode.ENTER||code== KeyCode.TAB){
 					String mainPic = displayView.getMainPic().getText();
 					if(StringUtils.isBlank( mainPic)) return;
 					Article entity = new Article();
@@ -418,6 +420,7 @@ public class DeliveryDisplayController implements EntityController
 				displayView.getDataList().getItems().add(createdItem);
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
+				displayView.getMainPic().requestFocus();
 
 			}
 		});
@@ -434,6 +437,7 @@ public class DeliveryDisplayController implements EntityController
 				displayView.getDataList().getItems().add(editedItem);
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
+				displayView.getMainPic().requestFocus();
 
 
 			}
@@ -451,6 +455,7 @@ public class DeliveryDisplayController implements EntityController
 				displayView.getDataList().getItems().remove(removeddItem);
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
+				displayView.getMainPic().requestFocus();
 
 			}
 		});
@@ -536,6 +541,7 @@ public class DeliveryDisplayController implements EntityController
 		fromArticle.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		PropertyReader.copy(fromArticle, deliveryItem);
 		displayView.getMulRate().setNumber(BigDecimal.ZERO);
+		displayView.getStockQuantity().requestFocus();
 	}
 
 	private void handleModalArticleCreateDone(@Observes @ModalEntityCreateDoneEvent Article article) {
@@ -601,6 +607,6 @@ public class DeliveryDisplayController implements EntityController
 	public void reset() {
 		PropertyReader.copy(new Delivery(), displayedEntity);
 	}
-	
-	
+
+
 }

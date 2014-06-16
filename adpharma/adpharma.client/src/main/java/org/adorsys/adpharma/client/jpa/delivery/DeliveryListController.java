@@ -532,16 +532,16 @@ public class DeliveryListController implements EntityController
 		HSSFRow header = sheet.createRow(rownum++);
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_internalPic_description.title"));
+		cell.setCellValue("cipm");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
+		cell.setCellValue("designation");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
+		cell.setCellValue("pv");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue("Fournisseur");
+		cell.setCellValue("fournisseur");
 
 		if( selectedItem!=null&&sheet!=null){
 			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();

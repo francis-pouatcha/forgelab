@@ -46,7 +46,6 @@ public class DeliveryItemEJB
 		entity = attach(entity);
 		Login login = securityUtilEJB.getConnectedUser();
 		entity.setCreatingUser(login);
-		entity.calculateAmount();
 		return repository.save(entity);
 	}
 
@@ -75,8 +74,6 @@ public class DeliveryItemEJB
 	}
 	public DeliveryItem update(DeliveryItem entity)
 	{
-		entity = attach(entity);
-		entity.calculateAmount();
 		return repository.save(attach(entity));
 	}
 
@@ -131,7 +128,6 @@ public class DeliveryItemEJB
 			Article article = (Article) objects[1];
 			BigDecimal qty = (BigDecimal) objects[2];
 			BigDecimal price = (BigDecimal) objects[3];
-
 			item.setInternalPic(internalPic);
 			item.setArticle(article);
 			item.setQtyOrdered(qty);

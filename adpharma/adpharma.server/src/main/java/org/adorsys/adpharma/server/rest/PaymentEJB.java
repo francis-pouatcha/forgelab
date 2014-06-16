@@ -57,10 +57,6 @@ public class PaymentEJB
 	@DocumentProcessedEvent
 	private Event<Payment> paymentProcessedEvent;
 
-	@Inject
-	@DocumentClosedEvent
-	private Event<Payment> paymentClosedEvent;
-
 	@EJB
 	private CustomerInvoiceEJB customerInvoiceEJB;
 

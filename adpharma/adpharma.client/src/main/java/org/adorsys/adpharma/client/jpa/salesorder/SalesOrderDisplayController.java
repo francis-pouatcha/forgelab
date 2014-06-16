@@ -209,7 +209,7 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
-    
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -268,8 +268,8 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
-		
-		
+
+
 		displayView.getOrderedQty().setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -279,7 +279,7 @@ public class SalesOrderDisplayController implements EntityController
 						handleAddSalesOrderItem(salesOrderItem);
 				}
 			}
-});
+		});
 
 
 		/*
@@ -344,7 +344,6 @@ public class SalesOrderDisplayController implements EntityController
 
 
 		/*
-		 * listen to save button .
 		 */
 		displayView.getCloseButton().disableProperty().bind(closeService.runningProperty());
 		displayView.getCloseButton().setOnAction(
@@ -459,15 +458,14 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void changed(ObservableValue<? extends BigDecimal> observable,
 					BigDecimal oldValue, BigDecimal newValue) {
+				BigDecimal discount  = BigDecimal.ZERO;
 				if(newValue!=null){
 					BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax()!=null?displayedEntity.getAmountBeforeTax():BigDecimal.ZERO;
 					//					if(BigDecimal.ONE.compareTo(newValue)<0)
 					//						newValue = ;
-					BigDecimal discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.DOWN));
-					displayedEntity.setAmountDiscount(discount.setScale(0,RoundingMode.HALF_UP).setScale(2));
-
+					discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.DOWN));
 				}
-
+				displayedEntity.setAmountDiscount(discount.setScale(0,RoundingMode.HALF_UP).setScale(2));
 			}
 		});
 
@@ -486,11 +484,11 @@ public class SalesOrderDisplayController implements EntityController
 				for (Insurrance insurrance : resultList) {
 					insurrances.add(new SalesOrderInsurance(insurrance));
 				}
-				
+
 				displayView.getInsurrer().getItems().addAll(insurrances);
 				if(!insurrances.isEmpty()){
 					displayedEntity.setInsurance(insurrances.iterator().next());
-					
+
 				}else {
 					displayedEntity.setInsurance(new SalesOrderInsurance());
 				}
@@ -569,6 +567,8 @@ public class SalesOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				displayView.getOrderedQty().setEditable(!managedLot);
+				if(securityUtil.hasRole("SALES_PRICE_CHANGE"))
+					displayView.getSalesPricePU().setEditable(true);
 
 			}
 		});
@@ -615,10 +615,10 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrder entity = s.getValue();
 				event.consume();
 				s.reset();
-//				Action showConfirm = Dialogs.create().nativeTitleBar().message("Voulez vous imprimer la facture ?").showConfirm();
-//				if(Dialog.Actions.YES.equals(showConfirm)){
-//					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
-//				}
+				//				Action showConfirm = Dialogs.create().nativeTitleBar().message("Voulez vous imprimer la facture ?").showConfirm();
+				//				if(Dialog.Actions.YES.equals(showConfirm)){
+				//					printCustomerInvoiceRequestedEvent.fire(new SalesOrderId(entity.getId()));
+				//				}
 				PropertyReader.copy(entity, displayedEntity);
 				salesOrderRequestEvent.fire(new SalesOrder());
 				workingInfosEvent.fire("Sales Number : "+entity.getSoNumber()+" Closed successfully!");
@@ -656,7 +656,7 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
+				if(code== KeyCode.ENTER||code== KeyCode.TAB){
 					String internalPic = displayView.getInternalPic().getText();
 					if(StringUtils.isBlank(internalPic)) return;
 					ArticleLot entity = new ArticleLot();
@@ -747,7 +747,6 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	private void handleAddSalesOrderItem(SalesOrderItem salesOrderItem) {
-		//				salesOrderItem.calculateTotalAmout();
 		if(salesOrderItem.getId()==null){
 			if(salesOrderItem.getSalesOrder()==null) salesOrderItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity)); 
 			salesOrderItem.setDeliveredQty(salesOrderItem.getOrderedQty());
@@ -775,8 +774,10 @@ public class SalesOrderDisplayController implements EntityController
 		displayView.getClient().setValue(selectedEntity.getCustomer());
 		Customer customer = new Customer();
 		PropertyReader.copy(displayedEntity.getCustomer(), customer);
-		System.out.println(displayedEntity.getCustomer());
+		displayView.getAmountHT().setNumber(displayedEntity.getAmountAfterTax());
 		getCustomerInsurance(customer);
+		displayView.getDiscountRate().setNumber(BigDecimal.ZERO);
+		displayView.getDiscount().setNumber(BigDecimal.ZERO);
 	}
 
 	public boolean isValidSalesOrderItem(){
@@ -849,22 +850,22 @@ public class SalesOrderDisplayController implements EntityController
 
 	public boolean isValidateOrderedQty(ArticleLot model){
 		Iterator<SalesOrderItem> iterator = displayView.getDataList().getItems().iterator();
-//		while (iterator.hasNext()) {
-//			SalesOrderItem next = iterator.next();
-//			if(next.getInternalPic().equals(model.getInternalPic())){
-//				BigDecimal salableStock = model.getStockQuantity();
-//				BigDecimal orderedStock = next.getOrderedQty().add(BigDecimal.ONE);
-//				if(salableStock.compareTo(orderedStock)< 0 ){
-//					Dialogs.create().message("La Quantite Commandee ne peux etre superieur a "+ salableStock).showError();
-//				displayView.getInternalPic().setText(null);
-//					return false ;
-//					
-//				}
-//			}
-//		}
-		
-		
-		
+		//		while (iterator.hasNext()) {
+		//			SalesOrderItem next = iterator.next();
+		//			if(next.getInternalPic().equals(model.getInternalPic())){
+		//				BigDecimal salableStock = model.getStockQuantity();
+		//				BigDecimal orderedStock = next.getOrderedQty().add(BigDecimal.ONE);
+		//				if(salableStock.compareTo(orderedStock)< 0 ){
+		//					Dialogs.create().message("La Quantite Commandee ne peux etre superieur a "+ salableStock).showError();
+		//				displayView.getInternalPic().setText(null);
+		//					return false ;
+		//					
+		//				}
+		//			}
+		//		}
+
+
+
 		return true ;
 	}
 

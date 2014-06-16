@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.cashdrawer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -405,6 +406,14 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				List<SalesOrder> resultList = searchResult.getResultList();
+				resultList.sort(new Comparator<SalesOrder>() {
+
+					@Override
+					public int compare(SalesOrder o1, SalesOrder o2) {
+						// TODO Auto-generated method stub
+						return o1.getId().compareTo(o2.getId());
+					}
+				});
 				displayView.getInvoicesDataList().getItems().setAll(resultList);
 
 			}

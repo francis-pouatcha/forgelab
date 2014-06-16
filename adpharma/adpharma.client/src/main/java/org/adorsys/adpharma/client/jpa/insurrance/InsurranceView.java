@@ -62,14 +62,14 @@ public class InsurranceView extends AbstractForm<Insurrance>
    public void postConstruct()
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      coverageRate = viewBuilder.addBigDecimalField("Insurrance_coverageRate_description.title", "coverageRate", resourceBundle, NumberType.PERCENTAGE, locale);
+      coverageRate = viewBuilder.addBigDecimalField("Insurrance_coverageRate_description.title", "coverageRate", resourceBundle, NumberType.INTEGER, locale);
       beginDate = viewBuilder.addCalendarTextField("Insurrance_beginDate_description.title", "beginDate", resourceBundle, "dd-MM-yyyy", locale);
       endDate = viewBuilder.addCalendarTextField("Insurrance_endDate_description.title", "endDate", resourceBundle, "dd-MM-yyyy", locale);
-      viewBuilder.addTitlePane("Insurrance_customer_description.title", resourceBundle);
-      viewBuilder.addSubForm("Insurrance_customer_description.title", "customer", resourceBundle, insurranceCustomerForm, ViewModel.READ_ONLY);
+//      viewBuilder.addTitlePane("Insurrance_customer_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Insurrance_customer_description.title", "customer", resourceBundle, insurranceCustomerForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Insurrance_customer_description.title", "customer", resourceBundle, insurranceCustomerSelection, ViewModel.READ_WRITE);
-      viewBuilder.addTitlePane("Insurrance_insurer_description.title", resourceBundle);
-      viewBuilder.addSubForm("Insurrance_insurer_description.title", "insurer", resourceBundle, insurranceInsurerForm, ViewModel.READ_ONLY);
+//      viewBuilder.addTitlePane("Insurrance_insurer_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Insurrance_insurer_description.title", "insurer", resourceBundle, insurranceInsurerForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Insurrance_insurer_description.title", "insurer", resourceBundle, insurranceInsurerSelection, ViewModel.READ_WRITE);
 
       gridRows = viewBuilder.toRows();
@@ -102,9 +102,9 @@ public class InsurranceView extends AbstractForm<Insurrance>
       coverageRate.numberProperty().bindBidirectional(model.coverageRateProperty());
       beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
       endDate.calendarProperty().bindBidirectional(model.endDateProperty());
-      insurranceCustomerForm.bind(model);
+//      insurranceCustomerForm.bind(model);
       insurranceCustomerSelection.bind(model);
-      insurranceInsurerForm.bind(model);
+//      insurranceInsurerForm.bind(model);
       insurranceInsurerSelection.bind(model);
    }
 

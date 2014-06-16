@@ -1,7 +1,10 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -22,11 +25,15 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchService;
+import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -44,6 +51,9 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.google.common.collect.Lists;
+import com.lowagie.text.DocumentException;
 
 @Singleton
 public class InventoryListController implements EntityController
@@ -86,7 +96,11 @@ public class InventoryListController implements EntityController
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
 	@Inject
-	private InventorySearchInput searchInput ; 
+	private InventorySearchInput searchInput ;
+
+
+	@Inject
+	private SecurityUtil securityUtil;
 
 
 
@@ -114,6 +128,38 @@ public class InventoryListController implements EntityController
 				}
 			}
 				});
+		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Inventory selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					selectionEvent.fire(selectedItem);
+
+			}
+		});
+		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Inventory inventory = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(inventory!=null){
+					Login login = securityUtil.getConnectedUser();
+					LoginAgency agency = securityUtil.getAgency();
+					Iterator<InventoryItem> iterator = listView.getDataListItem().getItems().iterator();
+					try {
+						InventoryComptRepportTemplatePdf repportTemplatePdf = new InventoryComptRepportTemplatePdf(login, agency, inventory);
+						repportTemplatePdf.addItems(Lists.newArrayList(iterator));
+						repportTemplatePdf.closeDocument();
+						Desktop.getDesktop().open(new File(repportTemplatePdf.getFileName()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			}
+		});
 		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -155,8 +201,6 @@ public class InventoryListController implements EntityController
 				source.reset();
 				event.consume();
 				listView.getDataListItem().getItems().setAll(result.getResultList());
-
-
 			}
 		});
 		itemSearchService.setOnFailed(callFailedEventHandler);

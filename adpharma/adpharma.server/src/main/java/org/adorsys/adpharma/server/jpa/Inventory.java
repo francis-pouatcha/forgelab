@@ -107,7 +107,6 @@ public class Inventory implements Serializable
 	@NotNull(message = "Inventory_agency_NotNull_validation")
 	private Agency agency;
 
-
 	@ManyToOne
 	@Description("Inventory_section_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Section.class)
@@ -123,6 +122,10 @@ public class Inventory implements Serializable
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = InventoryItem.class, selectionMode = SelectionMode.TABLE)
 	private Set<InventoryItem> inventoryItems = new HashSet<InventoryItem>();
 
+	public void initAmount(){
+		gapPurchaseAmount = BigDecimal.ZERO;
+		gapSaleAmount = BigDecimal.ZERO;
+	}
 	public Long getId()
 	{
 		return this.id;

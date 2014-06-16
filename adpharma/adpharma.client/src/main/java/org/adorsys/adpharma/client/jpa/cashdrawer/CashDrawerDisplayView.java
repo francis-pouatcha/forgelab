@@ -165,8 +165,8 @@ public class CashDrawerDisplayView
 
 	}
 	public void buildInvoiceItemDataList(ViewBuilder viewBuilder){
-		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,120d);
-		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle,300d);
+//		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,100d);
+		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle ,250d);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "orderedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "totalSalePrice", "CustomerInvoiceItem_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -182,46 +182,46 @@ public class CashDrawerDisplayView
 	public void buildSalesOrderDataList(ViewBuilder viewBuilder){
 //		viewBuilder.addEnumColumn(salesOrderDataList, "salesOrderType", "CustomerInvoice_invoiceType_description.title", resourceBundle, salesOrderTypeConverter);
 		viewBuilder.addStringColumn(salesOrderDataList, "soNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
-		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle,200d);
-		viewBuilder.addStringColumn(salesOrderDataList, "customer", "CustomerInvoice_customer_description.title", resourceBundle,200d);
+//		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle,100d);
+		viewBuilder.addStringColumn(salesOrderDataList, "customer", "CustomerInvoice_customer_description.title", resourceBundle,150d);
 		// Field not displayed in table
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 //		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addStringColumn(salesOrderDataList, "insurance", "CustomerInvoice_insurance_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(salesOrderDataList, "insurance", "CustomerInvoice_insurance_description.title", resourceBundle,250d);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
-//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(salesOrderDataList, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(salesOrderDataList, "netToPay","CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 	}
 
 	public void BuildPaymentGrid(){
 		//		paymentMode = ViewBuilderUtils.newComboBox(null, "paymentMode", resourceBundle, PaymentMode.values(), false);
 		Font font = new Font("latin", 20D);
 		paymentMode = ViewBuilderUtils.newComboBox("Payment_paymentMode_description.title", "paymentMode", paymentResourceBundle, PaymentMode.values(), false);
-		paymentMode.setPrefHeight(35d);
+		paymentMode.setPrefHeight(30d);
 		paymentMode.setPrefWidth(230d);
 		ComboBoxInitializer.initialize(paymentMode, paymentModeConverter, paymentModeListCellFatory, paymentModeBundle);
 		paymentMode.setValue(PaymentMode.CASH);
 
 		amount = ViewBuilderUtils.newBigDecimalField("amount", NumberType.CURRENCY, locale, false);
-		amount.setPrefHeight(35d);
+		amount.setPrefHeight(30d);
 		amount.setPrefWidth(200d);
 		amount.setFont(font);
 		amount.setEditable(false);
 		amount.getStyleClass().add("green-text");
 
 		receivedAmount = ViewBuilderUtils.newBigDecimalField("receivedAmount", NumberType.INTEGER, locale, false);
-		receivedAmount.setPrefHeight(35d);
+		receivedAmount.setPrefHeight(30d);
 		receivedAmount.setFont(font);
 		receivedAmount.setPrefWidth(200d);
 		receivedAmount.getStyleClass().add("blue-text");
 
 		difference = ViewBuilderUtils.newBigDecimalField("difference", NumberType.INTEGER, locale, false);
-		difference.setPrefHeight(35d);
+		difference.setPrefHeight(30d);
 		difference.setPrefWidth(200d);
 		difference.setEditable(false);
 		difference.setFont(font);
@@ -230,7 +230,7 @@ public class CashDrawerDisplayView
 
 		docNumber = ViewBuilderUtils.newTextField("docNumber", false);
 		docNumber.setPromptText("Doc Number");
-		docNumber.setPrefHeight(35d);
+		docNumber.setPrefHeight(30d);
 		docNumber.setPrefWidth(200d);
 		docNumber.setFont(font);
 
@@ -238,16 +238,16 @@ public class CashDrawerDisplayView
 	}
 	public void buildinvoiceSearchGrid(){
 		invoiceNumberToSearch = ViewBuilderUtils.newTextField( "invoiceNumberToSearch", false);
-		invoiceNumberToSearch.setPrefHeight(35d);
+		invoiceNumberToSearch.setPrefHeight(25d);
 		invoiceNumberToSearch.setPromptText("Invoice ID");
 
 		openCashDrawer = ViewBuilderUtils.newComboBox(null,"openCashDrawer", false);
 		openCashDrawer.setPrefWidth(200d);
-		openCashDrawer.setPrefHeight(35d);
+		openCashDrawer.setPrefHeight(25d);
 		openCashDrawer.setPromptText("Cash Drawer");
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
-		searchButton.setPrefHeight(35d);
+		searchButton.setPrefHeight(25d);
 		searchButton.setPrefWidth(120d);
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
 		cancelButton.setPrefWidth(120d);

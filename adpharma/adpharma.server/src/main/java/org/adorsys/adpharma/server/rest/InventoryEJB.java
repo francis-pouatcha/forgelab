@@ -7,16 +7,19 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Inventory;
 import org.adorsys.adpharma.server.jpa.InventoryItem;
+import org.adorsys.adpharma.server.jpa.InventorySearchInput;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.repo.InventoryRepository;
@@ -50,6 +53,10 @@ public class InventoryEJB
 
 	@Inject
 	private InventoryItemEJB inventoryItemEJB ;
+	
+	@Inject
+	@DocumentClosedEvent
+	private Event<Inventory>  inventoryCloseRequestEvent ;
 
 	@Inject
 	private EntityManager em ;
@@ -76,6 +83,22 @@ public class InventoryEJB
 		}
 		return entity;
 	}
+	
+	public Inventory closeInventory(Inventory inventory){
+		Inventory original = attach(inventory);
+		Set<InventoryItem> inventoryItems = original.getInventoryItems();
+		original.initAmount();
+		original.setInventoryStatus(DocumentProcessingState.CLOSED);
+		for (InventoryItem item : inventoryItems) {
+			original.setGapPurchaseAmount(original.getGapPurchaseAmount().add(item.getGapTotalPurchasePrice()));
+			original.setGapSaleAmount(original.getGapSaleAmount().add(item.getGapTotalSalePrice()));
+		}
+		Inventory save = repository.save(inventory);
+		inventoryCloseRequestEvent.fire(save);
+		return save ;
+	}
+	
+	
 
 	public Inventory update(Inventory entity)
 	{

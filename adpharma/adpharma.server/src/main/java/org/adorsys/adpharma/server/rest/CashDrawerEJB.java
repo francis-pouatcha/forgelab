@@ -209,10 +209,10 @@ public class CashDrawerEJB
 		Set<PaymentItem> paymentItems = payment.getPaymentItems();
 		for (PaymentItem paymentItem : paymentItems) {
 			BigDecimal amount = paymentItem.getAmount();
+			cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
 			switch (paymentItem.getPaymentMode()) {
 			case CASH:
 				cashDrawer.setTotalCash(cashDrawer.getTotalCash().add(amount));
-				cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
 				break;
 			case CREDIT_CARD:
 				cashDrawer.setTotalCreditCard(cashDrawer.getTotalCreditCard().add(amount));

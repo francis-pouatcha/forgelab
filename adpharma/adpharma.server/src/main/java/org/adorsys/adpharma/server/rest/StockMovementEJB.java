@@ -139,8 +139,6 @@ public class StockMovementEJB
    public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
 	   ArticleLot articleLot = articleLotEJB.findById(data.getId());
 	   Article article = articleLot.getArticle();
-	   article.setQtyInStock(article.getQtyInStock().subtract(data.getQtyToMoved()));
-	   
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		// Generate Stock Movement for article to details

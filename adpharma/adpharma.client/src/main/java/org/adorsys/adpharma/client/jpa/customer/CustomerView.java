@@ -129,7 +129,7 @@ public class CustomerView extends AbstractForm<Customer>
       email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
       creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
       discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
-      serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle,ViewModel.READ_ONLY);
+      serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle,ViewModel.READ_WRITE);
       gender = viewBuilder.addComboBox("Customer_gender_description.title", "gender", resourceBundle, Gender.values());
       customerType = viewBuilder.addComboBox("Customer_customerType_description.title", "customerType", resourceBundle, CustomerType.values());
       totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
@@ -137,7 +137,7 @@ public class CustomerView extends AbstractForm<Customer>
       birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
 //      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerSelection, ViewModel.READ_WRITE);
+      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerSelection, ViewModel.READ_ONLY);
 //      viewBuilder.addTitlePane("Customer_customerCategory_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategoryForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategorySelection, ViewModel.READ_WRITE);
