@@ -9,7 +9,7 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="219.0" prefWidth="152.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="295.0" prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
 						<Button fx:id="moveButton" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_trash_description.title">
 							<VBox.margin>
@@ -26,11 +26,6 @@
                         <Button fx:id="printButton" layoutX="10.0" layoutY="120.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="140.0" text="%ArticleLot_barecode_description.title" />
 					</items>
 				</ToolBar>
-				<Pane fx:id="rigthpane" prefHeight="396.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-					<VBox.margin>
-						<Insets bottom="48.0" left="5.0" />
-					</VBox.margin>
-				</Pane>
 			</children>
 			<BorderPane.margin>
 				<Insets />

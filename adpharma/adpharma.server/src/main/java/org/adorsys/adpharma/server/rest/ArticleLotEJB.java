@@ -45,9 +45,12 @@ import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
+import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.apache.commons.lang3.StringUtils;
+
+import com.sun.corba.se.impl.orbutil.RepIdDelegator;
 
 @Stateless
 public class ArticleLotEJB
@@ -75,8 +78,10 @@ public class ArticleLotEJB
 	private ApplicationConfiguration applicationConfiguration;
 
 	@Inject
-	private Event<ArticleLotMovedToTrashData> articleLotMovetTotrashRequestEvent ;
+	private ArticleRepository articlerepo ;
 
+	@Inject
+	private Event<ArticleLotMovedToTrashData> articleLotMovetTotrashRequestEvent ;
 
 	@EJB
 	private SecurityUtil securityUtil;
@@ -381,6 +386,34 @@ public class ArticleLotEJB
 		}
 
 	}
+
+	public void handleDeliveryItemChange(@Observes @EntityEditDoneRequestEvent DeliveryItem deliveryItem){
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setArticle(deliveryItem.getArticle());
+		articleLot.setMainPic(deliveryItem.getMainPic());
+		articleLot.setInternalPic(deliveryItem.getInternalPic());
+		List<ArticleLot> found = new ArrayList<ArticleLot>();
+		if(isManagedLot){
+			found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article,ArticleLot_.internalPic});
+		}else {
+			found = findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.article,ArticleLot_.mainPic});
+		}
+		if(!found.isEmpty()){
+			for (ArticleLot lot : found) {
+				BigDecimal purchasePricePU = deliveryItem.getPurchasePricePU();
+				BigDecimal salesPricePU = deliveryItem.getSalesPricePU();
+				if(purchasePricePU!=null)
+					lot.setPurchasePricePU(purchasePricePU);
+				if(salesPricePU!=null)
+					lot.setSalesPricePU(salesPricePU);
+				repository.save(lot);
+			}
+		}
+
+	}
 	public void handleTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager lotTransferManager){
 
 		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
@@ -427,7 +460,7 @@ public class ArticleLotEJB
 		}
 	}
 
-	
+
 	public void handleReturnSales(@Observes @DocumentClosedEvent Inventory inventory){
 		Set<InventoryItem> inventoryItems = inventory.getInventoryItems();
 
@@ -441,12 +474,30 @@ public class ArticleLotEJB
 				ArticleLot lot = found.iterator().next();
 				lot.setStockQuantity(inventoryItem.getAsseccedQty());
 				lot.calculateTotalAmout();
-				update(lot);
+				repository.save(lot);
 			}
+			updateArticleStock(inventoryItem);
 
 
 		}
 	}
+
+	public void updateArticleStock(InventoryItem inventoryItem){
+		Article article = articlerepo.findBy(inventoryItem.getArticle().getId());
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setArticle(inventoryItem.getArticle());
+		@SuppressWarnings("unchecked")
+		List<ArticleLot> found = findByLike(articleLot, 0, -1, new SingularAttribute[]{ArticleLot_.article});
+		if(!found.isEmpty()){
+			BigDecimal lotStock = BigDecimal.ZERO;
+			for (ArticleLot lot : found) {
+				lotStock = lotStock.add(lot.getStockQuantity());
+			}
+			article.setQtyInStock(lotStock);
+			articlerepo.save(article);
+		}
+	}
+
 
 	/**
 	 * Process a completed sales. Will process with the known lot if provided if not

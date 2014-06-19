@@ -177,17 +177,11 @@
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="comptR" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" prefWidth="150.0" text="Fiche de saisie">
-									<VBox.margin>
-										<Insets bottom="10.0" />
-									</VBox.margin>
-								</Button>
 								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" prefWidth="150.0" text="Fiche d'inventaire" />
 							</children>
 							<padding>
 								<Insets bottom="2.0" />

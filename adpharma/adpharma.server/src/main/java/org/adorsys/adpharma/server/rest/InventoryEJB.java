@@ -86,6 +86,8 @@ public class InventoryEJB
 	
 	public Inventory closeInventory(Inventory inventory){
 		Inventory original = attach(inventory);
+		if(DocumentProcessingState.CLOSED.equals(original.getInventoryStatus()))
+		         return original ;
 		Set<InventoryItem> inventoryItems = original.getInventoryItems();
 		original.initAmount();
 		original.setInventoryStatus(DocumentProcessingState.CLOSED);

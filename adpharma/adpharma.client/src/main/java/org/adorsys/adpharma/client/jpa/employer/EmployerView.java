@@ -55,9 +55,9 @@ public class EmployerView extends AbstractForm<Employer>
       zipCode = viewBuilder.addTextField("Employer_zipCode_description.title", "zipCode", resourceBundle);
       city = viewBuilder.addTextField("Employer_city_description.title", "city", resourceBundle);
       country = viewBuilder.addTextField("Employer_country_description.title", "country", resourceBundle);
-      viewBuilder.addTitlePane("Employer_creatingUser_description.title", resourceBundle);
-      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserSelection, ViewModel.READ_WRITE);
+//      viewBuilder.addTitlePane("Employer_creatingUser_description.title", resourceBundle);
+//      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserForm, ViewModel.READ_ONLY);
+      viewBuilder.addSubForm("Employer_creatingUser_description.title", "creatingUser", resourceBundle, employerCreatingUserSelection, ViewModel.READ_ONLY);
 
       gridRows = viewBuilder.toRows();
    }

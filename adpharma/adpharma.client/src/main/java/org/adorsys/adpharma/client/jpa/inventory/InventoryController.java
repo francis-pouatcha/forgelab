@@ -12,6 +12,7 @@ import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
@@ -170,6 +171,16 @@ public class InventoryController extends DomainComponentController
       displayComponent();
    }
 
+   public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Inventory selectedEntity)
+   {
+      List<EntityController> displayedViews = getDisplayedViews();
+      displayedViews.clear();
+      displayedViews.add(listController);
+//      displayedViews.add(displayController);
+
+      displayComponent();
+   }
+   
    @Override
    protected void selectDisplay()
    {

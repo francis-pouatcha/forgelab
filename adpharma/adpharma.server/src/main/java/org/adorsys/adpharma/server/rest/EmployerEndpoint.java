@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,10 +23,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.Employer;
-import org.adorsys.adpharma.server.jpa.Employer_;
 import org.adorsys.adpharma.server.jpa.EmployerSearchInput;
 import org.adorsys.adpharma.server.jpa.EmployerSearchResult;
+import org.adorsys.adpharma.server.jpa.Employer_;
 
 /**
  * 
@@ -189,7 +191,6 @@ public class EmployerEndpoint
 
       // aggregated
       entity.setCreatingUser(loginMerger.unbind(entity.getCreatingUser(), creatingUserFields));
-
       return entity;
    }
 
@@ -197,6 +198,14 @@ public class EmployerEndpoint
    {
       if (list == null)
          return list;
+      Collections.sort(list, new Comparator<Employer>() {
+
+		@Override
+		public int compare(Employer o1, Employer o2) {
+			// TODO Auto-generated method stub
+			return o1.getName().compareTo(o2.getName());
+		}
+	});
       List<Employer> result = new ArrayList<Employer>();
       for (Employer entity : list)
       {

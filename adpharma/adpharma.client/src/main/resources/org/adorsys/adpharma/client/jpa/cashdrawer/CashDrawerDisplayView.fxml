@@ -99,17 +99,12 @@
 										</VBox>
 										<Separator prefWidth="200.0" />
 												<HBox>
-													<Button fx:id="closeCashDrawerButton" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="FERMER" textFill="#c61b1b">
-														<font>
+													<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="LISTER" textFill="#1e8334">
+														<font> 
 															<Font size="16.0" />
 														</font>
 													</Button>
 													<Button fx:id="cashOutButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="Deccaisser" textFill="#d70d0d">
-														<font>
-															<Font size="16.0" />
-														</font>
-													</Button>
-													<Button fx:id="openCashDrawerButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="15.0" prefWidth="300.0" text="LISTER" textFill="#1e8334">
 														<font>
 															<Font size="16.0" />
 														</font>

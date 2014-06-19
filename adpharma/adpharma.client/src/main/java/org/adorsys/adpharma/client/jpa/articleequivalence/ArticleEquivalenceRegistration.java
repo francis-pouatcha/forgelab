@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.articleequivalence.ArticleEquivalence;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class ArticleEquivalenceRegistration extends DomainComponentRegistration
 {

@@ -66,8 +66,6 @@ public class InventoryDisplayView
 	@FXML
 	private Button ordonnancierButton;
 
-	@FXML
-	private Button saveReturnButton;
 
 	@FXML
 	private GridPane inventoryItemBar;
@@ -260,8 +258,8 @@ public class InventoryDisplayView
 		closeButton.disableProperty().bind(model.inventoryStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 //		asseccedQtyColumn.editableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		returnSOIMenu.disableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		saveReturnButton.disableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		code.textProperty().bindBidirectional(model.inventoryNumberProperty());
+		asseccedQtyColumn.editableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		//		view.bind(model);
 	}
 
@@ -363,10 +361,6 @@ public class InventoryDisplayView
 
 	public Button getOkButton() {
 		return okButton;
-	}
-
-	public Button getSaveReturnButton() {
-		return saveReturnButton;
 	}
 
 

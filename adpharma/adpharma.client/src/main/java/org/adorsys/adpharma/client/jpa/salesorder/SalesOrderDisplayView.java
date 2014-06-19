@@ -65,6 +65,9 @@ public class SalesOrderDisplayView
 	private Button ordonnancierButton;
 
 	@FXML
+	private TextField netClientText ;
+	
+	@FXML
 	private Button saveReturnButton;
 
 	@FXML
@@ -199,6 +202,8 @@ public class SalesOrderDisplayView
 		buildOrderItemBar();
 		buildAmountPane();
 		buildInsurranceGrid();
+		netClientText.getStyleClass().add("green-text");
+		returnSOIMenu.setText("Retourner");
 	}
 
 	public void addValidators()
@@ -520,6 +525,198 @@ public class SalesOrderDisplayView
 	public TableColumn<SalesOrderItem, BigDecimal> getOrderQuantityColumn() {
 		return orderQuantityColumn;
 	}
+
+	public TextField getNetClientText() {
+		return netClientText;
+	}
+
+	public void setNetClientText(TextField netClientText) {
+		this.netClientText = netClientText;
+	}
+
+	public GridPane getRigthGrid() {
+		return rigthGrid;
+	}
+
+	public void setRigthGrid(GridPane rigthGrid) {
+		this.rigthGrid = rigthGrid;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public void setResourceBundle(ResourceBundle resourceBundle) {
+		this.resourceBundle = resourceBundle;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+
+	public void setFxmlLoader(FXMLLoader fxmlLoader) {
+		this.fxmlLoader = fxmlLoader;
+	}
+
+	public Pagination getPagination() {
+		return pagination;
+	}
+
+	public void setPagination(Pagination pagination) {
+		this.pagination = pagination;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public ToOneAggreggationFieldValidator getToOneAggreggationFieldValidator() {
+		return toOneAggreggationFieldValidator;
+	}
+
+	public void setToOneAggreggationFieldValidator(
+			ToOneAggreggationFieldValidator toOneAggreggationFieldValidator) {
+		this.toOneAggreggationFieldValidator = toOneAggreggationFieldValidator;
+	}
+
+	public void setRootPane(BorderPane rootPane) {
+		this.rootPane = rootPane;
+	}
+
+	public void setCloseButton(Button closeButton) {
+		this.closeButton = closeButton;
+	}
+
+	public void setClientButton(Button clientButton) {
+		this.clientButton = clientButton;
+	}
+
+	public void setInsurreurButton(Button insurreurButton) {
+		this.insurreurButton = insurreurButton;
+	}
+
+	public void setCancelButton(Button cancelButton) {
+		this.cancelButton = cancelButton;
+	}
+
+	public void setOrdonnancierButton(Button ordonnancierButton) {
+		this.ordonnancierButton = ordonnancierButton;
+	}
+
+	public void setSaveReturnButton(Button saveReturnButton) {
+		this.saveReturnButton = saveReturnButton;
+	}
+
+	public void setSaleOrderItemBar(GridPane saleOrderItemBar) {
+		this.saleOrderItemBar = saleOrderItemBar;
+	}
+
+	public void setArticleName(TextField articleName) {
+		this.articleName = articleName;
+	}
+
+	public void setInternalPic(TextField internalPic) {
+		this.internalPic = internalPic;
+	}
+
+	public void setOrderedQty(BigDecimalField orderedQty) {
+		this.orderedQty = orderedQty;
+	}
+
+	public void setTotalSalePrice(BigDecimalField totalSalePrice) {
+		this.totalSalePrice = totalSalePrice;
+	}
+
+	public void setSalesPricePU(BigDecimalField salesPricePU) {
+		this.salesPricePU = salesPricePU;
+	}
+
+	public void setOkButton(Button okButton) {
+		this.okButton = okButton;
+	}
+
+	public void setClient(ComboBox<SalesOrderCustomer> client) {
+		this.client = client;
+	}
+
+	public void setCashDrawer(ComboBox<SalesOrderCashDrawer> cashDrawer) {
+		this.cashDrawer = cashDrawer;
+	}
+
+	public void setClientPhone(TextField clientPhone) {
+		this.clientPhone = clientPhone;
+	}
+
+	public void setClientAdresse(TextField clientAdresse) {
+		this.clientAdresse = clientAdresse;
+	}
+
+	public void setSalesStatus(ComboBox<DocumentProcessingState> salesStatus) {
+		this.salesStatus = salesStatus;
+	}
+
+	public void setInsurrer(ComboBox<SalesOrderInsurance> insurrer) {
+		this.insurrer = insurrer;
+	}
+
+	public void setNumBon(TextField numBon) {
+		this.numBon = numBon;
+	}
+
+	public void setNumcmd(TextField numcmd) {
+		this.numcmd = numcmd;
+	}
+
+	public void setAmountPane(GridPane amountPane) {
+		this.amountPane = amountPane;
+	}
+
+	public void setAmountHT(BigDecimalField amountHT) {
+		this.amountHT = amountHT;
+	}
+
+	public void setTaxAmount(BigDecimalField taxAmount) {
+		this.taxAmount = taxAmount;
+	}
+
+	public void setDiscount(BigDecimalField discount) {
+		this.discount = discount;
+	}
+
+	public void setAmountTTC(BigDecimalField amountTTC) {
+		this.amountTTC = amountTTC;
+	}
+
+	public void setDiscountRate(BigDecimalField discountRate) {
+		this.discountRate = discountRate;
+	}
+
+	public void setView(SalesOrderView view) {
+		this.view = view;
+	}
+
+	public void setDataList(TableView<SalesOrderItem> dataList) {
+		this.dataList = dataList;
+	}
+
+	public void setDatalistContextMenu(ContextMenu datalistContextMenu) {
+		this.datalistContextMenu = datalistContextMenu;
+	}
+
+	public void setReturnSOIMenu(MenuItem returnSOIMenu) {
+		this.returnSOIMenu = returnSOIMenu;
+	}
+
+	public void setOrderQuantityColumn(
+			TableColumn<SalesOrderItem, BigDecimal> orderQuantityColumn) {
+		this.orderQuantityColumn = orderQuantityColumn;
+	}
+	
+	
 
 
 }

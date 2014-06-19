@@ -61,6 +61,7 @@ import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSalesOrd
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchInput;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchResult;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchService;
+import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateService;
@@ -86,6 +87,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -209,7 +211,7 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -228,6 +230,8 @@ public class SalesOrderDisplayController implements EntityController
 				Dialogs.create().showException(exception);
 			}
 		});
+
+
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -466,6 +470,23 @@ public class SalesOrderDisplayController implements EntityController
 					discount = amountBeforeTax.multiply(newValue.divide(BigDecimal.valueOf(100), 8, RoundingMode.DOWN));
 				}
 				displayedEntity.setAmountDiscount(discount.setScale(0,RoundingMode.HALF_UP).setScale(2));
+				resetNetTopay(displayedEntity);
+
+			}
+		});
+
+		
+
+		displayView.getAmountTTC().numberProperty().addListener(new ChangeListener<BigDecimal>() {
+
+			@Override
+			public void changed(ObservableValue<? extends BigDecimal> observable,
+					BigDecimal oldValue, BigDecimal newValue) {
+				BigDecimal discount  = BigDecimal.ZERO;
+				if(newValue!=null){
+					resetNetTopay(displayedEntity);
+				}
+
 			}
 		});
 
@@ -649,6 +670,26 @@ public class SalesOrderDisplayController implements EntityController
 				}
 			}
 		});
+		
+//		displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
+//				) {
+//
+//					@Override
+//					public void changed(
+//							ObservableValue<? extends BigDecimal> observable,
+//							BigDecimal oldValue, BigDecimal newValue) {
+//						if(newValue!=null){
+//							BigDecimal ttc = displayView.getAmountTTC().getNumber();
+//							if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
+//								BigDecimal discountRate = (newValue.multiply(BigDecimal.valueOf(100))).divide(ttc, 2, RoundingMode.HALF_EVEN);
+////						        displayedEntity.setDiscountRate(discountRate);
+//								System.out.println(discountRate);
+//						        displayView.getDiscountRate().setNumber(discountRate);
+//							}
+//						}
+//						
+//					}
+//		});
 
 		//		
 		displayView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -776,8 +817,28 @@ public class SalesOrderDisplayController implements EntityController
 		PropertyReader.copy(displayedEntity.getCustomer(), customer);
 		displayView.getAmountHT().setNumber(displayedEntity.getAmountAfterTax());
 		getCustomerInsurance(customer);
+		setDiscountt(selectedEntity);
+		resetNetTopay(selectedEntity);
+	}
+
+	public void setDiscountt(SalesOrder selectedEntity){
 		displayView.getDiscountRate().setNumber(BigDecimal.ZERO);
 		displayView.getDiscount().setNumber(BigDecimal.ZERO);
+
+	}
+
+	public void resetNetTopay(SalesOrder selectedEntity){
+		BigDecimal discount = displayView.getDiscount().getNumber()!=null?displayView.getDiscount().getNumber():BigDecimal.ZERO;
+		BigDecimal netToPay = displayView.getAmountTTC().getNumber()!=null?displayView.getAmountTTC().getNumber():BigDecimal.ZERO;
+		if(discount!=null){
+			netToPay = netToPay.subtract(discount);
+		}
+		if(selectedEntity.getInsurance()!=null&&selectedEntity.getInsurance().getId()!=null){
+			BigDecimal coverageRate = selectedEntity.getInsurance().getCoverageRate();
+			coverageRate = coverageRate.divide(BigDecimal.valueOf(100));
+			netToPay = netToPay.subtract(netToPay.multiply(coverageRate));
+		}
+		displayView.getNetClientText().setText(netToPay.toBigInteger()+" CFA");
 	}
 
 	public boolean isValidSalesOrderItem(){
@@ -808,9 +869,9 @@ public class SalesOrderDisplayController implements EntityController
 
 		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
 			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
-			if(discountRate!=null){
-				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN));
-				if(realDiscount.compareTo(realDiscount)<0){
+			if(discountRate!=null&&amountDiscount!=null){
+				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN)).add(BigDecimal.valueOf(5));
+				if(realDiscount.compareTo(amountDiscount)<0){
 					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
 					return false ;
 				}
@@ -972,6 +1033,12 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleLoginSucceedEvent (@Observes(notifyObserver = Reception.ALWAYS) @LoginSucceededEvent String loginName) {
 		salesOrderManagedLotService.start();
+	}
+	
+	public void handleRolesRequestEvent(@Observes @RolesEvent Set<String> roles) {
+		if(roles.contains("MANAGER")){
+//			displayView.getOrderQuantityColumn().setEditable(true);
+		}
 	}
 
 }

@@ -38,6 +38,12 @@ public class ModalUserInfoController {
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
+	@Inject
+	private LoginEditService loginEditService ;
+	
+	@Inject
+	private LoginLoadService loadService;
+
 
 	@Inject
 	private Login login ;
@@ -61,15 +67,34 @@ public class ModalUserInfoController {
 
 			}
 		});
+		
+		
 
 		view.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				view.closeDialog();
+				loadService.setId(login.getId()).start();
 
 			}
 		});
+		loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				LoginLoadService s = (LoginLoadService) event.getSource();
+				Login cs = s.getValue();
+				event.consume();
+				s.reset();
+				cs.setPassword(login.getPassword());
+				loginEditService.setLogin(cs).start();
+
+			}
+		});
+
+
+		loadService.setOnFailed(callFailedEventHandler);
+		
 
 		view.getSaleKeyButton().setOnAction(new EventHandler<ActionEvent>() {
 
@@ -94,6 +119,24 @@ public class ModalUserInfoController {
 
 
 		loginSalesKeyResetService.setOnFailed(callFailedEventHandler);
+		
+		loginEditService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				LoginEditService s = (LoginEditService) event.getSource();
+				Login cs = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(cs, login);
+				PropertyReader.copy(cs, securityUtil.getConnectedUser());
+				view.closeDialog();
+
+			}
+		});
+
+
+		loginEditService.setOnFailed(callFailedEventHandler);
 
 	}
 

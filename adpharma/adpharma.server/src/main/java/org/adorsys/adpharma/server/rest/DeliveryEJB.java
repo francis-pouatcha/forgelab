@@ -75,7 +75,6 @@ public class DeliveryEJB
 		Delivery save = repository.save(attach(entity));
 		if(StringUtils.isBlank(deliveryNumber))
 			save.setDeliveryNumber(SequenceGenerator.DELIVERY_SEQUENCE_PREFIXE+save.getId());
-
 		return repository.save(save);
 	}
 
@@ -102,8 +101,8 @@ public class DeliveryEJB
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 
 		for (DeliveryItem deliveryItem : deliveryItems) {
-//			String internalPic = deliveryItem.getMainPic() ;
-//			if(isManagedLot)
+			//			String internalPic = deliveryItem.getMainPic() ;
+			//			if(isManagedLot)
 			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);

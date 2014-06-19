@@ -182,7 +182,7 @@ public class SalesOrderListController implements EntityController
 					listView.getPrintVoucherButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getAlreadyReturned()));
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+//					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
 					sosi.setMax(-1);
 					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
@@ -490,12 +490,14 @@ public class SalesOrderListController implements EntityController
 				if(StringUtils.isBlank(customerName)){
 					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
 				}else {
-					Customer customer = new Customer();
-					customer.setFirstName(customerName);
-					customer.setFullName(customerName);
-					customer.setLastName(customerName);
-					changeCustomerService.setCustomer(customer);
-					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
+//					Customer customer = new Customer();
+//					customer.setFirstName(customerName);
+//					customer.setFullName(customerName);
+//					customer.setLastName(customerName);
+//					changeCustomerService.setCustomer(customer);
+					selectedSalesOrderId.setCustomerName(customerName);
+					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
+//					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
 				}
 			}
 		});

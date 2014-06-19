@@ -92,17 +92,17 @@ public class LoginView extends AbstractForm<Login>
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       loginName = viewBuilder.addTextField("Login_loginName_description.title", "loginName", resourceBundle);
-      email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
+//      email = viewBuilder.addTextField("Login_email_description.title", "email", resourceBundle);
       fullName = viewBuilder.addTextField("Login_fullName_description.title", "fullName", resourceBundle);
-      password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);
+//      password = viewBuilder.addTextField("Login_password_description.title", "password", resourceBundle);
       disableLogin = viewBuilder.addCheckBox("Login_disableLogin_description.title", "disableLogin", resourceBundle);
       accountLocked = viewBuilder.addCheckBox("Login_accountLocked_description.title", "accountLocked", resourceBundle);
       saleKey = viewBuilder.addTextField("Login_saleKey_description.title", "saleKey", resourceBundle,ViewModel.READ_ONLY);
       gender = viewBuilder.addComboBox("Login_gender_description.title", "gender", resourceBundle, Gender.values());
       discountRate = viewBuilder.addBigDecimalField("Login_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
-      credentialExpiration = viewBuilder.addCalendarTextField("Login_credentialExpiration_description.title", "credentialExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      accountExpiration = viewBuilder.addCalendarTextField("Login_accountExpiration_description.title", "accountExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      recordingDate = viewBuilder.addCalendarTextField("Login_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      credentialExpiration = viewBuilder.addCalendarTextField("Login_credentialExpiration_description.title", "credentialExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      accountExpiration = viewBuilder.addCalendarTextField("Login_accountExpiration_description.title", "accountExpiration", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+//      recordingDate = viewBuilder.addCalendarTextField("Login_recordingDate_description.title", "recordingDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //      viewBuilder.addTitlePane("Login_agency_description.title", resourceBundle);
 //      viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Login_agency_description.title", "agency", resourceBundle, loginAgencySelection, ViewModel.READ_WRITE);
@@ -132,17 +132,17 @@ public class LoginView extends AbstractForm<Login>
    public void bind(Login model)
    {
       loginName.textProperty().bindBidirectional(model.loginNameProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
+//      email.textProperty().bindBidirectional(model.emailProperty());
       fullName.textProperty().bindBidirectional(model.fullNameProperty());
-      password.textProperty().bindBidirectional(model.passwordProperty());
+//      password.textProperty().bindBidirectional(model.passwordProperty());
       disableLogin.textProperty().bindBidirectional(model.disableLoginProperty(), new BooleanStringConverter());
       accountLocked.textProperty().bindBidirectional(model.accountLockedProperty(), new BooleanStringConverter());
       saleKey.textProperty().bindBidirectional(model.saleKeyProperty());
       gender.valueProperty().bindBidirectional(model.genderProperty());
       discountRate.numberProperty().bindBidirectional(model.discountRateProperty());
-      credentialExpiration.calendarProperty().bindBidirectional(model.credentialExpirationProperty());
-      accountExpiration.calendarProperty().bindBidirectional(model.accountExpirationProperty());
-      recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
+//      credentialExpiration.calendarProperty().bindBidirectional(model.credentialExpirationProperty());
+//      accountExpiration.calendarProperty().bindBidirectional(model.accountExpirationProperty());
+//      recordingDate.calendarProperty().bindBidirectional(model.recordingDateProperty());
       loginRoleNamesForm.bind(model);
       loginRoleNamesSelection.bind(model);
       loginAgencyForm.bind(model);

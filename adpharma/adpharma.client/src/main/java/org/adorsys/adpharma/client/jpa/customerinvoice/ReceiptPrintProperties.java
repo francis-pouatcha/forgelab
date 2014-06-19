@@ -28,7 +28,7 @@ public class ReceiptPrintProperties {
 	private Font myBoldFont = FontFactory.getFont("Arial", fontSize, Font.BOLD);
 	private Font myFont = FontFactory.getFont("Arial", fontSize);
 	
-	private static float docHeight = 7700f;
+	private static float docHeight = 4700f;
 
 	private Rectangle pageSize = new Rectangle(docWidth, docHeight);
 

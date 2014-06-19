@@ -106,15 +106,15 @@ public class SalesOrderEJB
 			Customer otherCustomers = customerEJB.otherCustomers();
 			entity.setCustomer(otherCustomers);
 		}
-//		entity.setSoNumber(StringUtils.upperCase(SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE)));
-//		return repository.save(attach(entity)); 
+		//		entity.setSoNumber(StringUtils.upperCase(SequenceGenerator.getSequence(SequenceGenerator.SALE_SEQUENCE_PREFIXE)));
+		//		return repository.save(attach(entity)); 
 		SalesOrder save = repository.save(attach(entity)); 
 		save.setSoNumber(SequenceGenerator.SALE_SEQUENCE_PREFIXE+save.getId());
 		return repository.save(save);
 	}
-	
+
 	public SalesOrder changeCustomer(Long salesId, Customer customer){
-		
+
 		SalesOrder salesOrder = findById(salesId);
 		Customer create = customerEJB.create(customer);
 		salesOrder.setCustomer(customer);
@@ -212,6 +212,7 @@ public class SalesOrderEJB
 		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
 		salesOrder.setVersion(original.getVersion());
+		salesOrder.setInsurance(original.getInsurance());
 		salesOrder.setAlreadyReturned(Boolean.TRUE);
 		salesOrder.calculateTotalReturnAmount();
 		SalesOrder update = update(salesOrder);
@@ -223,14 +224,14 @@ public class SalesOrderEJB
 			return  findById(salesOrder.getId()) ;
 		Login realSaller = getRealSaller(salesOrder.getSalesKey());
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
-//		SalesOrder original = findById(salesOrder.getId());
+		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
-		
-//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
-//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
-//		salesOrder.setAmountVAT(original.getAmountVAT());
-//		if(salesOrder.getAmountDiscount()==null)
-//			salesOrder.setAmountDiscount(BigDecimal.ZERO);
+
+		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
+		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
+		//		salesOrder.setAmountVAT(original.getAmountVAT());
+		//		if(salesOrder.getAmountDiscount()==null)
+		//			salesOrder.setAmountDiscount(BigDecimal.ZERO);
 
 		salesOrder.setSalesAgent(realSaller);
 		rebuildSaleOrder(salesOrder);
@@ -285,7 +286,7 @@ public class SalesOrderEJB
 		salesOrder = findById(salesOrder.getId());
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			throw new IllegalStateException("Sales order closed.");
-		
+
 		VAT vat = updatingSalesOrderItem.getVat();
 		BigDecimal vatRate = vat==null?BigDecimal.ZERO:VAT.getRawRate(vat.getRate());
 		BigDecimal totalSalePrice = updatingSalesOrderItem.getTotalSalePrice();
@@ -295,7 +296,7 @@ public class SalesOrderEJB
 			BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
 			BigDecimal discount = CurencyUtil.round(amountBeforeTax.multiply(discaountRate));
 			BigDecimal salesOrderDiscount = salesOrder.getAmountDiscount()==null?BigDecimal.ZERO:salesOrder.getAmountDiscount();
-			
+
 			if(deleted){
 				salesOrder.setAmountDiscount(salesOrderDiscount.subtract(discount));
 			} else {
@@ -318,6 +319,7 @@ public class SalesOrderEJB
 			salesOrder.setAmountVAT(salesOrderTaxAmount.add(amountVAT));
 			salesOrder.setAmountAfterTax(salesOrderAmountAfterTax.add(amountAfterTax));
 		}
+		rebuildSaleOrder(salesOrder);
 
 		salesOrder = update(salesOrder);
 		updatingSalesOrderItem.setSalesOrder(salesOrder);
@@ -334,14 +336,15 @@ public class SalesOrderEJB
 		Long count = salesOrderItemEJB.countBy(searchInput, attributes );
 		int start = 0;
 		int max = 100;
-		
+
 		BigDecimal salesOrderAmountBeforeTax = BigDecimal.ZERO;
 		BigDecimal salesOrderTaxAmount = BigDecimal.ZERO;
 		BigDecimal salesOrderDiscount = BigDecimal.ZERO;
 		BigDecimal salesOrderAmountAfterTax = BigDecimal.ZERO;
 		BigDecimal discountRateAbs = salesOrder.getDiscountRate();
+		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
-		
+
 		while(start<=count){
 			List<SalesOrderItem> found = salesOrderItemEJB.findBy(searchInput, start , max, attributes);
 			start +=max;
@@ -358,7 +361,7 @@ public class SalesOrderEJB
 				}
 				BigDecimal amountVAT = amountBeforeTax.multiply(vatRate);
 				BigDecimal amountAfterTax = amountBeforeTax.add(amountVAT);
-				
+
 				salesOrderAmountBeforeTax = salesOrderAmountBeforeTax.add(amountBeforeTax);
 				salesOrderTaxAmount = salesOrderTaxAmount.add(amountVAT);
 				salesOrderAmountAfterTax = salesOrderAmountAfterTax.add(amountAfterTax);

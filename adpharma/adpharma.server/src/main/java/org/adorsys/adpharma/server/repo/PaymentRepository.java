@@ -9,4 +9,6 @@ import org.adorsys.adpharma.server.jpa.Payment;
 @Repository(forEntity = Payment.class)
 public interface PaymentRepository extends EntityRepository<Payment, Long>
 {
+	
+	
 }

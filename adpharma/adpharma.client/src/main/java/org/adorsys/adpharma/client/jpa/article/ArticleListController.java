@@ -12,6 +12,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -70,7 +71,7 @@ public class ArticleListController implements EntityController
 
 	@Inject
 	private ArticleSearchService searchService;
-	
+
 	@Inject
 	private SectionSearchService sectionSearchService;
 
@@ -78,7 +79,7 @@ public class ArticleListController implements EntityController
 
 	@Inject
 	private ArticleSearchInput searchInput;
-	
+
 
 	@Inject
 	private ArticleRegistration registration;
@@ -117,14 +118,14 @@ public class ArticleListController implements EntityController
 					selectionEvent.fire(selectedItem);
 			}
 				});
-		
-		
+
+
 		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
 				SectionSearchService s = (SectionSearchService) event.getSource();
-				 SectionSearchResult result = s.getValue();
+				SectionSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
 				List<Section> resultList = result.getResultList();
@@ -147,6 +148,30 @@ public class ArticleListController implements EntityController
 			}
 		});
 
+		listView.getMainPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(KeyCode.ENTER.equals(event.getCode())){
+					handleSearchAction();
+				}
+
+			}
+		});
+
+		listView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(KeyCode.ENTER.equals(event.getCode())){
+					handleSearchAction();
+				}
+
+			}
+
+
+		});
+
 		/*
 		 * listen to search button and fire search activated event.
 		 */
@@ -155,13 +180,11 @@ public class ArticleListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(30);
-				searchService.setSearchInputs(searchInput).start();
+				handleSearchAction();
 			}
 				});
-		
-		
+
+
 		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -237,6 +260,13 @@ public class ArticleListController implements EntityController
 		return ViewType.LIST;
 	}
 
+	private void handleSearchAction() {
+		searchInput.setFieldNames(readSearchAttributes());
+		searchInput.setMax(30);
+		searchService.setSearchInputs(searchInput).start();
+
+	}
+
 	/**
 	 * Handle search results. But the switch of displays is centralized
 	 * in the main article controller.
@@ -253,7 +283,7 @@ public class ArticleListController implements EntityController
 			public int compare(Article o1, Article o2) {
 				return o1.getArticleName().compareTo(o2.getArticleName());
 			}
-			
+
 		});
 		if (entities == null)
 			entities = new ArrayList<Article>();

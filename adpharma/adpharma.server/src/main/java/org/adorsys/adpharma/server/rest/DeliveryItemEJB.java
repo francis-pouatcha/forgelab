@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -40,12 +41,17 @@ public class DeliveryItemEJB
 
 	@Inject
 	private SecurityUtil securityUtilEJB;
+	
+	@Inject
+	@EntityEditDoneRequestEvent
+	private Event<DeliveryItem> deliveryItemEditRequestEvent;
 
 	public DeliveryItem create(DeliveryItem entity)
 	{
 		entity = attach(entity);
 		Login login = securityUtilEJB.getConnectedUser();
 		entity.setCreatingUser(login);
+		entity.calculateAmount();
 		return repository.save(entity);
 	}
 
@@ -68,13 +74,16 @@ public class DeliveryItemEJB
 			for (DeliveryItem lot : found) {
 				lot.setArticleName(article.getArticleName());
 				lot.setMainPic(article.getPic());
-				update(lot);
+				repository.save(lot);
 			}
 		}
 	}
 	public DeliveryItem update(DeliveryItem entity)
 	{
-		return repository.save(attach(entity));
+//		entity.calculateAmount();
+		 DeliveryItem save = repository.save(attach(entity));
+		deliveryItemEditRequestEvent.fire(save);
+		return save;
 	}
 
 	public DeliveryItem findById(Long id)

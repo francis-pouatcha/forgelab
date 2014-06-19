@@ -122,6 +122,9 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	private SecurityUtil securityUtil ;
 
+	@Inject
+	private InventoryCloseService inventoryCloseService;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -142,6 +145,28 @@ public class InventoryDisplayController implements EntityController
 				searchRequestedEvent.fire(displayedEntity);
 			}
 				});
+		displayView.getCloseButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				inventoryCloseService.setModel(displayedEntity).start();
+
+			}
+		});
+
+		inventoryCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				InventoryCloseService s = (InventoryCloseService) event.getSource();
+				Inventory closedInventory = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(closedInventory, displayedEntity);
+
+			}
+		});
+		inventoryCloseService.setOnFailed(callFailedEventHandler);
 
 		displayView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
@@ -202,15 +227,18 @@ public class InventoryDisplayController implements EntityController
 			public void handle(CellEditEvent<InventoryItem, BigDecimal> orderedQtyCell) {
 				InventoryItem selectedItem = orderedQtyCell.getRowValue();
 				BigDecimal newValue = orderedQtyCell.getNewValue();
-				if(newValue==null){
-					// reset old value.
-				} else if (newValue.compareTo(BigDecimal.ZERO)<0){
-					// delete article
-					inventoryItemRemoveService.setEntity(selectedItem).start();
-				} else {
-					selectedItem.setAsseccedQty(newValue);
-					// update article
-					inventoryItemEditService.setInventoryItem(selectedItem).start();
+				BigDecimal oldValue = orderedQtyCell.getOldValue();
+				if(newValue!=null){
+					if(newValue.compareTo(BigDecimal.ZERO)<0){
+						if(oldValue!=null)
+							selectedItem.setAsseccedQty(oldValue);
+						inventoryItemRemoveService.setEntity(selectedItem).start();
+
+					}else {
+						selectedItem.setAsseccedQty(newValue);
+						// update article
+						inventoryItemEditService.setInventoryItem(selectedItem).start();
+					}
 				}
 			}
 		});

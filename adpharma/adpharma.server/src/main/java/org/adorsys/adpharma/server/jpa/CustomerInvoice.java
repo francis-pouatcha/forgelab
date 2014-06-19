@@ -163,6 +163,7 @@ public class CustomerInvoice implements Serializable
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = Payment.class)
    private Set<PaymentCustomerInvoiceAssoc> payments = new HashSet<PaymentCustomerInvoiceAssoc>();
 
+   
    public Long getId()
    {
       return this.id;

@@ -7,6 +7,8 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -19,6 +21,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.delivery.DeliverySearchInput;
+import org.adorsys.adpharma.client.jpa.delivery.DeliverySearchService;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -30,8 +36,12 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class DeliveryItemListController implements EntityController
@@ -56,16 +66,36 @@ public class DeliveryItemListController implements EntityController
    @EntityListPageIndexChangedEvent
    private Event<DeliveryItemSearchResult> entityListPageIndexChangedEvent;
 
+   @Inject
    private DeliveryItemSearchResult searchResult;
 
    @Inject
    private DeliveryItemRegistration registration;
+   
+   @Inject
+   private DeliverySearchService deliverySearchService;
+   
+   @Inject
+   private DeliveryItemSearchService deliveryItemSearchService;
+   
+   @Inject
+   private ServiceCallFailedEventHandler callFailedEventHandler ;
+   
 
    @PostConstruct
    public void postConstruct()
    {
-      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+//      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 
+	   callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+		
+		@Override
+		protected void showError(Throwable exception) {
+			Dialogs.create().showException(exception);
+			
+		}
+	});
+	   
       listView.getDataList().getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<DeliveryItem>()
             {
@@ -87,24 +117,63 @@ public class DeliveryItemListController implements EntityController
          @Override
          public void handle(ActionEvent e)
          {
-            DeliveryItem selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new DeliveryItem();
-            searchRequestedEvent.fire(selectedItem);
+           String deliverNumber = listView.getDeliveryNumber().getText();
+           if(StringUtils.isNotBlank(deliverNumber)){
+        	   DeliverySearchInput deliverySearchInput = new DeliverySearchInput();
+        	   deliverySearchInput.getEntity().setDeliveryNumber(deliverNumber);
+        	   deliverySearchInput.getEntity().setDeliveryProcessingState(DocumentProcessingState.CLOSED);
+        	   deliverySearchInput.getFieldNames().add("deliveryNumber");
+        	   deliverySearchInput.getFieldNames().add("deliveryProcessingState");
+        	   deliverySearchService.setSearchInputs(deliverySearchInput).start();
+           }
          }
       });
+      deliverySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		
+		@Override
+		public void handle(WorkerStateEvent event) {
+			DeliverySearchService source = (DeliverySearchService) event.getSource();
+			List<Delivery> resultList = source.getValue().getResultList();
+			event.consume();
+			source.reset();
+			if(!resultList.isEmpty()){
+				DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
+				Delivery next = resultList.iterator().next();
+				deliveryItemSearchInput.getEntity().setDelivery(new DeliveryItemDelivery(next));
+				deliveryItemSearchInput.getFieldNames().add("delivery");
+				deliveryItemSearchInput.setMax(-1);
+				deliveryItemSearchService.setSearchInputs(deliveryItemSearchInput).start();
+			}
+			
+			
+		}
+	});
+      deliverySearchService.setOnFailed(callFailedEventHandler);
+      
+      deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+  		
+  		@Override
+  		public void handle(WorkerStateEvent event) {
+  			DeliveryItemSearchService source = (DeliveryItemSearchService) event.getSource();
+  			DeliveryItemSearchResult deliveryItemSearchResult = source.getValue();
+  			event.consume();
+  			source.reset();
+  			handleSearchResult(deliveryItemSearchResult);
+  		}
+  	});
+      deliveryItemSearchService.setOnFailed(callFailedEventHandler);
 
-      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            DeliveryItem selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new DeliveryItem();
-            createRequestedEvent.fire(selectedItem);
-         }
-      });
+//      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//            DeliveryItem selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+//            if (selectedItem == null)
+//               selectedItem = new DeliveryItem();
+//            createRequestedEvent.fire(selectedItem);
+//         }
+//      });
 
       listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
       {

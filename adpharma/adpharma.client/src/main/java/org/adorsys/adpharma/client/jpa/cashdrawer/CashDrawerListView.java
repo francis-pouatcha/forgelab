@@ -41,11 +41,10 @@ public class CashDrawerListView
 	private Button searchButton;
 
 	@FXML
-	private Button printButton;
+	private Button printPaymentListButton;
 
 	@FXML
 	private Button openButton;
-	
 
 	@FXML
 	private Button closeButton;
@@ -162,8 +161,8 @@ public class CashDrawerListView
 		return rootPane;
 	}
 
-	public Button getPrintButton() {
-		return printButton;
+	public Button getPrintPaymentListButtonButton() {
+		return printPaymentListButton;
 	}
 
 	public HBox getSearchBar() {

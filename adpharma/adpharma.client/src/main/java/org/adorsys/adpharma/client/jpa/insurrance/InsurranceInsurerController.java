@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.insurrance;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -66,6 +67,16 @@ public abstract class InsurranceInsurerController
             event.consume();
             s.reset();
             List<Customer> entities = targetSearchResult.getResultList();
+            entities.sort(new Comparator<Customer>() {
+
+				@Override
+				public int compare(Customer o1, Customer o2) {
+					o1.setFirstName(o1.getFirstName());
+					o2.setFirstName(o2.getFirstName());
+					
+					return o1.getFirstName().compareTo(o2.getFirstName());
+				}
+			});
             selection.getInsurer().getItems().clear();
             selection.getInsurer().getItems().add(new InsurranceInsurer());
             for (Customer entity : entities)

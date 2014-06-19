@@ -29,6 +29,7 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
@@ -49,7 +50,9 @@ import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
+import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchInput;
 import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItemPaidBy;
@@ -80,6 +83,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -149,6 +153,10 @@ public class CashDrawerDisplayController implements EntityController
 
 	@Inject
 	private ServiceCallFailedEventHandler serviceFailedHandler;
+	
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<PaymentSearchInput> paymentSearchInputRequestEvent;
 
 	@Inject
 	@AssocSelectionResponseEvent
@@ -205,6 +213,9 @@ public class CashDrawerDisplayController implements EntityController
 	private CustomerInvoiceSearchService customerInvoiceSearchService;
 	@Inject
 	private ServiceCallFailedEventHandler customerInvoiceServiceFailedHandler;
+	
+	@Inject
+	private SecurityUtil securityUtil;
 
 
 	@PostConstruct
@@ -241,6 +252,23 @@ public class CashDrawerDisplayController implements EntityController
 
 			}
 		});
+		
+
+		displayView.getSearchPayementButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
+				paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(displayedEntity));
+				paymentSearchInput.getEntity().setCashier(new PaymentCashier(securityUtil.getConnectedUser()));
+				paymentSearchInput.setMax(30);
+				paymentSearchInput.getFieldNames().add("cashDrawer");
+				paymentSearchInput.getFieldNames().add("cashier");
+				paymentSearchInputRequestEvent.fire(paymentSearchInput);
+
+			}
+		});
 
 		orderCancelService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -258,6 +286,7 @@ public class CashDrawerDisplayController implements EntityController
 				proccessingOrder.clearInvoices();
 
 				displayView.getPaymentItemDataList().getItems().clear();
+				displayView.getAmount().setNumber(BigDecimal.ZERO);
 			}
 		});
 
@@ -869,6 +898,7 @@ public class CashDrawerDisplayController implements EntityController
 				doPayement();
 			}
 		});
+		
 		displayView.getCashButon().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override

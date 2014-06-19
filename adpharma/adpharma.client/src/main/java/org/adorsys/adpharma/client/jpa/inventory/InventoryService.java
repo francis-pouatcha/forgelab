@@ -34,7 +34,7 @@ public class InventoryService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public Inventory deleteById(Long id) {// @PathParam("id")
-											// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media).delete(Inventory.class);
 	}
 
@@ -44,6 +44,15 @@ public class InventoryService {
 	public Inventory update(Inventory entity) {
 		Entity<Inventory> ent = Entity.entity(entity, media);
 		return target().path("" + entity.getId()).request(media)
+				.put(ent, Inventory.class);
+	}
+
+	// @PUT
+	// @Path("/{id:[0-9][0-9]*}")
+	// @Consumes("application/xml")
+	public Inventory closeInventory(Inventory entity) {
+		Entity<Inventory> ent = Entity.entity(entity, media);
+		return target().path("closeInventory").request(media)
 				.put(ent, Inventory.class);
 	}
 

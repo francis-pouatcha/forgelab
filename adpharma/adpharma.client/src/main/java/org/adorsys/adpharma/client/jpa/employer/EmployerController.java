@@ -103,8 +103,8 @@ public class EmployerController extends DomainComponentController
       // else display list of employers.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
       displayedViews.add(displayController);
+      displayedViews.add(listController);
 
       displayComponent();
    }
@@ -134,8 +134,8 @@ public class EmployerController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
       displayedViews.add(createController);
+      displayedViews.add(listController);
       displayComponent();
    }
 
@@ -145,8 +145,8 @@ public class EmployerController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
       displayedViews.add(editController);
+      displayedViews.add(listController);
       displayComponent();
    }
 
@@ -154,8 +154,8 @@ public class EmployerController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
       displayedViews.add(displayController);
+      displayedViews.add(listController);
 
       displayComponent();
    }
@@ -164,8 +164,8 @@ public class EmployerController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
       displayedViews.add(displayController);
+      displayedViews.add(listController);
 
       displayComponent();
    }

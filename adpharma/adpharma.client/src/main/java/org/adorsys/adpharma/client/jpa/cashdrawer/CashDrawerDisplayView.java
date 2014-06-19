@@ -103,6 +103,8 @@ public class CashDrawerDisplayView
 
 
 	private Button searchButton;
+	
+	private Button searchPayementButton;
 
 	@Inject
 	private CashDrawerView view;
@@ -110,7 +112,6 @@ public class CashDrawerDisplayView
 	@FXML
 	private Button openCashDrawerButton;
 
-	@FXML
 	private Button closeCashDrawerButton;
 
 	@Inject
@@ -248,11 +249,27 @@ public class CashDrawerDisplayView
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchButton.setPrefHeight(25d);
-		searchButton.setPrefWidth(120d);
+		searchButton.setPrefWidth(150d);
+		
+		searchPayementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
+		searchPayementButton.setPrefHeight(25d);
+		searchPayementButton.setPrefWidth(180d);
+		searchPayementButton.setText("Liste des Payements");
+		
+		closeCashDrawerButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
+		closeCashDrawerButton.setPrefHeight(25d);
+		closeCashDrawerButton.setPrefWidth(100d);
+		closeCashDrawerButton.setText("Fermer");
+		
+		
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
-		cancelButton.setPrefWidth(120d);
-		invoiceSearchBox.setMargin(cancelButton, new Insets(0, 0, 0, 400));
-		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton,cancelButton);
+		cancelButton.setPrefWidth(100d);
+		HBox hBox = new HBox();
+		hBox.setSpacing(5d);
+		hBox.getChildren().addAll(cancelButton,closeCashDrawerButton,searchPayementButton);
+		invoiceSearchBox.setMargin(hBox, new Insets(0, 0, 0, 100));
+		
+		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton,hBox);
 	}
 
 	public void buildinvoiceHeadGrid(){
@@ -348,6 +365,10 @@ public class CashDrawerDisplayView
 
 	public Button getCloseCashDrawerButton(){
 		return closeCashDrawerButton ;
+	}
+	
+	public Button getSearchPayementButton(){
+		return searchPayementButton ;
 	}
 
 	public TableView<SalesOrder> getInvoicesDataList() {

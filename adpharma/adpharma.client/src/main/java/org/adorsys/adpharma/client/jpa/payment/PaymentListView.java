@@ -4,109 +4,154 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.javaext.format.NumberType;
+import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
+import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 
 public class PaymentListView
 {
 
-   @FXML
-   AnchorPane rootPane;
+	@FXML
+	BorderPane rootPane;
 
-   @FXML
-   private Button searchButton;
+	@FXML
+	private Button searchButton;
 
-   @FXML
-   private Button createButton;
+	private Button printButton;
 
-   @FXML
-   private TableView<Payment> dataList;
+	@FXML
+	HBox searchBar;
 
-   @Inject
-   private Locale locale;
+	private TextField paymentNumber ;
 
-   private Pagination pagination;
+	private CheckBox cashed ;
 
-   @Inject
-   @Bundle({ CrudKeys.class
-         , Payment.class
-         , Agency.class
-         , Login.class
-         , CashDrawer.class
-         , Customer.class
-   })
-   private ResourceBundle resourceBundle;
+	@FXML
+	private TableView<Payment> dataList;
 
-   @Inject
-   private PaymentModeConverter paymentModeConverter;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      ViewBuilder viewBuilder = new ViewBuilder();
-      dataList = viewBuilder.addTable("dataList");
-      viewBuilder.addStringColumn(dataList, "paymentNumber", "Payment_paymentNumber_description.title", resourceBundle);
-      viewBuilder.addDateColumn(dataList, "paymentDate", "Payment_paymentDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      viewBuilder.addDateColumn(dataList, "recordDate", "Payment_recordDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-      viewBuilder.addBigDecimalColumn(dataList, "amount", "Payment_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "receivedAmount", "Payment_receivedAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addBigDecimalColumn(dataList, "difference", "Payment_difference_description.title", resourceBundle, NumberType.CURRENCY, locale);
-      viewBuilder.addStringColumn(dataList, "agency", "Payment_agency_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "cashier", "Payment_cashier_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "cashDrawer", "Payment_cashDrawer_description.title", resourceBundle);
-      viewBuilder.addEnumColumn(dataList, "paymentMode", "Payment_paymentMode_description.title", resourceBundle, paymentModeConverter);
-      // Field not displayed in table
-      viewBuilder.addStringColumn(dataList, "paidBy", "Payment_paidBy_description.title", resourceBundle);
-      pagination = viewBuilder.addPagination();
-      viewBuilder.addSeparator();
+	@FXML
+	private Pagination pagination;
 
-      HBox buttonBar = viewBuilder.addButtonBar();
-      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-      rootPane = viewBuilder.toAnchorPane();
-   }
+	@Inject
+	@Bundle({ CrudKeys.class
+		, Payment.class
+	})
+	private ResourceBundle resourceBundle;
 
-   public Button getCreateButton()
-   {
-      return createButton;
-   }
+	@Inject
+	private PaymentModeConverter paymentModeConverter;
 
-   public Button getSearchButton()
-   {
-      return searchButton;
-   }
+	@Inject
+	private FXMLLoader fxmlLoader;
 
-   public TableView<Payment> getDataList()
-   {
-      return dataList;
-   }
+	@PostConstruct
+	public void postConstruct()
+	{
+		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
+		ViewBuilder viewBuilder = new ViewBuilder();
+		//      dataList = viewBuilder.addTable("dataList");
+		viewBuilder.addStringColumn(dataList, "paymentNumber", "Payment_paymentNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "cashDrawer", "Payment_cashDrawer_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "cashier", "Payment_cashier_description.title", resourceBundle,200d);
+		viewBuilder.addDateColumn(dataList, "recordDate", "Payment_recordDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addEnumColumn(dataList, "paymentMode", "Payment_paymentMode_description.title", resourceBundle, paymentModeConverter);
+		viewBuilder.addBigDecimalColumn(dataList, "amount", "Payment_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "receivedAmount", "Payment_receivedAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "difference", "Payment_difference_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addStringColumn(dataList, "agency", "CustomerInvoice_agency_description.title", resourceBundle);
+		// Field not displayed in table
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "CustomerInvoice_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		// Field not displayed in table
 
-   public AnchorPane getRootPane()
-   {
-      return rootPane;
-   }
+		//      pagination = viewBuilder.addPagination();
+		//      viewBuilder.addSeparator();
+		//
+		//      HBox buttonBar = viewBuilder.addButtonBar();
+		//      createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//      rootPane = viewBuilder.toAnchorPane();
+		buildsearchBar();
+	}
 
-   public Pagination getPagination()
-   {
-      return pagination;
-   }
+	public void bind(PaymentSearchInput searchInput)
+	{
+
+		paymentNumber.textProperty().bindBidirectional(searchInput.getEntity().paymentNumberProperty());
+	}
+
+	public void buildsearchBar(){
+		paymentNumber =ViewBuilderUtils.newTextField("paymentNumber", false);
+		paymentNumber.setPromptText("Numero du payement");
+		paymentNumber.setPrefWidth(200d);
+		paymentNumber.setPrefHeight(40d);
+		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton.setPrefHeight(40d);
+		
+		printButton =ViewBuilderUtils.newButton("Entity_print.title", "printButton", resourceBundle, AwesomeIcon.SEARCH);
+		printButton.setPrefHeight(40d);
+
+		
+		searchBar.getChildren().addAll(paymentNumber,searchButton,printButton);
+	}
+
+	public Button getPrintButton()
+	{
+		return printButton;
+	}
+
+	public Button getSearchButton()
+	{
+		return searchButton;
+	}
+
+	public TableView<Payment> getDataList()
+	{
+		return dataList;
+	}
+
+	public BorderPane getRootPane()
+	{
+		return rootPane;
+	}
+
+	public CheckBox getCashed()
+	{
+		return cashed;
+	}
+
+	public Pagination getPagination()
+	{
+		return pagination;
+	}
 
 }

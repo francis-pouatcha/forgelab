@@ -22,7 +22,7 @@ public class PaymentSearchInput
    /**
     * The entity holding search inputs.
     */
-   private Payment entity;
+   private Payment entity = new Payment();
 
    /**
     * The start cursor

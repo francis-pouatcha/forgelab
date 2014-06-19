@@ -1,8 +1,9 @@
 package org.adorsys.adpharma.client.jpa.customer;
 
+import java.math.BigDecimal;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,10 +16,14 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchInput;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchResult;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchService;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Singleton
@@ -43,10 +48,35 @@ public class ModalCustomerSearchController  {
 
 	@Inject
 	Customer customer;
+	
+	private CustomerSearchResult searchResult;
 
 
 	@PostConstruct
 	public void postConstruct(){
+		
+		view.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new CustomerSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				customerSearchService.setSearchInputs(searchResult.getSearchInput()).start();
+
+
+			}
+				});
+
 		view.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -115,9 +145,19 @@ public class ModalCustomerSearchController  {
 			view.closeDialog();
 			modalCustomerSearchDoneEvent.fire(customerSearch);
 		}else {
+			this.searchResult = customerSearchResult;
 			view.getDataList().getItems().setAll(customerSearchResult.getResultList());
-			view.showDiaLog();
+			int maxResult = customerSearchResult.getSearchInput() != null ? customerSearchResult.getSearchInput().getMax() : 5;
+			int pageCount = PaginationUtils.computePageCount(customerSearchResult.getCount(), maxResult);
+			view.getPagination().setPageCount(pageCount);
+			int firstResult = customerSearchResult.getSearchInput() != null ? customerSearchResult.getSearchInput().getStart() : 0;
+			int pageIndex = PaginationUtils.computePageIndex(firstResult, customerSearchResult.getCount(), maxResult);
+			view.getPagination().setCurrentPageIndex(pageIndex);
+			view.getDataList().getItems().setAll(searchResult.getResultList());
+			if(!view.isDisplayed())
+				view.showDiaLog();
 		}
+		
 	}
 
 

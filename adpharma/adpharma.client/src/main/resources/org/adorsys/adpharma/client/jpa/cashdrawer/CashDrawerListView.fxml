@@ -5,30 +5,22 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0"
-	AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-	AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0"
-			prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
+		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="printButton" mnemonicParsing="false"
-					prefWidth="140.0" text="Print  Repport">
+				<Button fx:id="printPaymentListButton" mnemonicParsing="false" prefWidth="140.0" text="Liste Des payments">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="closeButton" layoutX="58.0" layoutY="102.0"
-					mnemonicParsing="false" prefWidth="140.0" text="Close">
+				<Button fx:id="closeButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Fermer la caisse">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="openButton" layoutX="23.0" layoutY="84.0"
-					mnemonicParsing="false" prefHeight="18.0" prefWidth="140.0" text="Open " />
-				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0"
-					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+				<Button fx:id="openButton" layoutX="23.0" layoutY="84.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="140.0" text="Ouvrir une caisse" />
+				<Pane fx:id="rigthpane" prefHeight="336.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="50.0" left="5.0" />
 					</VBox.margin>
@@ -46,15 +38,13 @@
 		<VBox>
 			<children>
 				<Separator prefWidth="200.0" />
-				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0"
-					layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 					<padding>
 						<Insets left="10.0" />
 					</padding>
 				</HBox>
 				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0"
-					BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>
 					<VBox.margin>
@@ -63,8 +53,7 @@
 				</TableView>
 				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
 					<children>
-						<Pagination fx:id="pagination" maxPageIndicatorCount="5"
-							pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 					</children>
 				</HBox>
 			</children>

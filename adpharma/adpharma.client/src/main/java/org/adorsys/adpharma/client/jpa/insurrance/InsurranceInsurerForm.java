@@ -73,9 +73,9 @@ public class InsurranceInsurerForm extends AbstractToOneAssociation<Insurrance, 
 
    public void update(InsurranceInsurer data)
    {
-      fullName.textProperty().set(data.fullNameProperty().get());
-      landLinePhone.textProperty().set(data.landLinePhoneProperty().get());
-      mobile.textProperty().set(data.mobileProperty().get());
+//      fullName.textProperty().set(data.fullNameProperty().get());
+//      landLinePhone.textProperty().set(data.landLinePhoneProperty().get());
+//      mobile.textProperty().set(data.mobileProperty().get());
 //      fax.textProperty().set(data.faxProperty().get());
 //      email.textProperty().set(data.emailProperty().get());
 //      creditAuthorized.textProperty().set(new BooleanStringConverter().toString(data.creditAuthorizedProperty().get()));

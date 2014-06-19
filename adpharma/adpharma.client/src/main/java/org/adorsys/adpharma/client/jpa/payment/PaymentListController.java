@@ -7,10 +7,11 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -30,183 +32,212 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class PaymentListController implements EntityController
 {
 
-   @Inject
-   private PaymentListView listView;
+	@Inject
+	private PaymentListView listView;
 
-   @Inject
-   @EntitySelectionEvent
-   private Event<Payment> selectionEvent;
+	@Inject
+	@EntitySelectionEvent
+	private Event<Payment> selectionEvent;
 
-   @Inject
-   @EntitySearchRequestedEvent
-   private Event<Payment> searchRequestedEvent;
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<Payment> searchRequestedEvent;
 
-   @Inject
-   @EntityCreateRequestedEvent
-   private Event<Payment> createRequestedEvent;
+	@Inject
+	@EntityCreateRequestedEvent
+	private Event<Payment> createRequestedEvent;
 
-   @Inject
-   @EntityListPageIndexChangedEvent
-   private Event<PaymentSearchResult> entityListPageIndexChangedEvent;
+	@Inject
+	@EntityListPageIndexChangedEvent
+	private Event<PaymentSearchResult> entityListPageIndexChangedEvent;
 
-   private PaymentSearchResult searchResult;
+	private PaymentSearchResult searchResult;
 
-   @Inject
-   private PaymentRegistration registration;
+	@Inject
+	private PaymentRegistration registration;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+	@Inject
+	private PaymentSearchInput searchInput ;
 
-      listView.getDataList().getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<Payment>()
-            {
-               @Override
-               public void changed(
-                     ObservableValue<? extends Payment> property,
-                     Payment oldValue, Payment newValue)
-               {
-                  if (newValue != null)
-                     selectionEvent.fire(newValue);
-               }
-            });
+	@Inject
+	private PaymentSearchService paymentSearchService;
 
-      /*
-       * listen to search button and fire search activated event.
-       */
-      listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            Payment selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new Payment();
-            searchRequestedEvent.fire(selectedItem);
-         }
-      });
+	@Inject
+	private ServiceCallFailedEventHandler  callFailedEventHandler ;
 
-      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            Payment selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new Payment();
-            createRequestedEvent.fire(selectedItem);
-         }
-      });
+	@PostConstruct
+	public void postConstruct()
+	{
+		listView.getPrintButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.bind(searchInput);
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
-      listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-         {
-            if (searchResult == null)
-               return;
-            if (searchResult.getSearchInput() == null)
-               searchResult.setSearchInput(new PaymentSearchInput());
-            int start = 0;
-            int max = searchResult.getSearchInput().getMax();
-            if (newValue != null)
-            {
-               start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
-            }
-            searchResult.getSearchInput().setStart(start);
-            entityListPageIndexChangedEvent.fire(searchResult);
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
 
-         }
-      });
-   }
+			}
+		});
 
-   @Override
-   public void display(Pane parent)
-   {
-      AnchorPane rootPane = listView.getRootPane();
-      ObservableList<Node> children = parent.getChildren();
-      if (!children.contains(rootPane))
-      {
-         children.add(rootPane);
-      }
-   }
 
-   @Override
-   public ViewType getViewType()
-   {
-      return ViewType.LIST;
-   }
+		/*
+		 * listen to search button and fire search activated event.
+		 */
+		listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				searchInput.setFieldNames(readSearchAttributes());
+				searchInput.setMax(30);
+				paymentSearchService.setSearchInputs(searchInput).start();
+			}
+				});
+		paymentSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-   /**
-    * Handle search results. But the switch of displays is centralized
-    * in the main payment controller.
-    * 
-    * @param entities
-    */
-   public void handleSearchResult(@Observes @EntitySearchDoneEvent PaymentSearchResult searchResult)
-   {
-      this.searchResult = searchResult;
-      List<Payment> entities = searchResult.getResultList();
-      if (entities == null)
-         entities = new ArrayList<Payment>();
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(entities);
-      int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
-      int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
-      listView.getPagination().setPageCount(pageCount);
-      int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
-      int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
-      listView.getPagination().setCurrentPageIndex(pageIndex);
+			@Override
+			public void handle(WorkerStateEvent event) {
+				PaymentSearchService s = (PaymentSearchService) event.getSource();
+				searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				handleSearchResult(searchResult);
 
-   }
+			}
+		});
 
-   public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Payment createdEntity)
-   {
-      listView.getDataList().getItems().add(0, createdEntity);
-   }
+		paymentSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
-   public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent Payment removedEntity)
-   {
-      listView.getDataList().getItems().remove(removedEntity);
-   }
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				s.reset();				
+			}
+		});
 
-   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent Payment selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      Payment entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+		
 
-      ArrayList<Payment> arrayList = new ArrayList<Payment>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new PaymentSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				entityListPageIndexChangedEvent.fire(searchResult);
 
-   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent Payment selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      Payment entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+			}
+				});
+	}
 
-      ArrayList<Payment> arrayList = new ArrayList<Payment>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+	@Override
+	public void display(Pane parent)
+	{
+		BorderPane rootPane = listView.getRootPane();
+		ObservableList<Node> children = parent.getChildren();
+		if (!children.contains(rootPane))
+		{
+			children.add(rootPane);
+		}
+	}
+
+	@Override
+	public ViewType getViewType()
+	{
+		return ViewType.LIST;
+	}
+
+	/**
+	 * Handle search results. But the switch of displays is centralized
+	 * in the main customerInvoice controller.
+	 * 
+	 * @param entities
+	 */
+	public void handleSearchResult(@Observes @EntitySearchDoneEvent PaymentSearchResult searchResult)
+	{
+		this.searchResult = searchResult;
+		List<Payment> entities = searchResult.getResultList();
+		if (entities == null)
+			entities = new ArrayList<Payment>();
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(entities);
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
+		listView.getPagination().setPageCount(pageCount);
+		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
+		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
+		listView.getPagination().setCurrentPageIndex(pageIndex);
+
+	}
+
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Payment createdEntity)
+	{
+		listView.getDataList().getItems().add(0, createdEntity);
+	}
+
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent Payment removedEntity)
+	{
+		listView.getDataList().getItems().remove(removedEntity);
+	}
+
+	public void handleEditDoneEvent(@Observes @EntityEditDoneEvent Payment selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		Payment entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<Payment> arrayList = new ArrayList<Payment>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent Payment selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		Payment entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<Payment> arrayList = new ArrayList<Payment>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+
+	public List<String> readSearchAttributes(){
+		ArrayList<String> seachAttributes = new ArrayList<String>() ;
+		String invoiceNumber = searchInput.getEntity().getPaymentNumber();
+		if(StringUtils.isNotBlank(invoiceNumber)) seachAttributes.add("paymentNumber");
+		return seachAttributes;
+
+	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		}
+		listView.getDataList().getItems().clear();
+	}
 }

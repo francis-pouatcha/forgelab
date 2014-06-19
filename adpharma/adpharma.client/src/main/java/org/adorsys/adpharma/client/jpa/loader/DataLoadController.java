@@ -435,7 +435,7 @@ public class DataLoadController {
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
 			loaderMenuItemAddEvent.fire(new DataMenuItem(loaderMenuItem));
 		} else {
-			loaderMenuItemAddEvent.fire(new DataMenuItem(loaderMenuItem));
+			loaderMenuItemRemoveEvent.fire(new DataMenuItem(loaderMenuItem));
 		}
 	}
 

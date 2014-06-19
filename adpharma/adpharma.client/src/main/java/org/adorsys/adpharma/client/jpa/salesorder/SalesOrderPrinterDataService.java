@@ -35,12 +35,22 @@ public class SalesOrderPrinterDataService extends Service<SalesOrderPrinterData>
    private LoginService loginService;
    @Inject
    private SalesOrderItemService soItemService;
+   
+   private String customerName ;
 
    private Long salesOrderId;
 
    public SalesOrderPrinterDataService setSalesOrderId(Long salesOrderId)
    {
       this.salesOrderId = salesOrderId;
+      return this;
+   }
+   public String getCustomerName(){
+	   return customerName ;
+   }
+   public SalesOrderPrinterDataService setCustomerName(String customerName)
+   {
+      this.customerName = customerName;
       return this;
    }
 

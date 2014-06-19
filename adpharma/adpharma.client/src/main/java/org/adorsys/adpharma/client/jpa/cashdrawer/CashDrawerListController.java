@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.cashdrawer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -26,6 +27,9 @@ import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
+import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
+import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchInput;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -37,6 +41,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -75,6 +80,10 @@ public class CashDrawerListController implements EntityController
 
 	@Inject
 	private CashDrawerSearchInput searchInput ;
+	
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<PaymentSearchInput> paymentSearchInputRequestEvent;
 
 	@Inject
 	private CashDrawerSearchService  cashDrawerSearchService ;
@@ -145,12 +154,28 @@ public class CashDrawerListController implements EntityController
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
 				if(newValue){
-					loginSearchService.setSearchInputs(new LoginSearchInput()).start();
+					LoginSearchInput loginSearchInput = new LoginSearchInput();
+					loginSearchInput.setMax(-1);
+					loginSearchService.setSearchInputs(loginSearchInput).start();
 				}
 
 			}
 		});
+		listView.getPrintPaymentListButtonButton().setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) 
+			{
+				CashDrawer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+				PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
+				paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(selectedItem));
+				paymentSearchInput.setMax(-1);
+				paymentSearchInput.getFieldNames().add("cashDrawer");
+				paymentSearchInputRequestEvent.fire(paymentSearchInput);
+				}
+			}
+		});
 		loginSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -160,6 +185,14 @@ public class CashDrawerListController implements EntityController
 				event.consume();
 				s.reset();
 				List<Login> resultList = result.getResultList();
+				resultList.sort(new Comparator<Login>() {
+
+					@Override
+					public int compare(Login o1, Login o2) {
+						// TODO Auto-generated method stub
+						return o1.getLoginName().compareToIgnoreCase(o2.getLoginName());
+					}
+				});
 				for (Login login : resultList) {
 					listView.getCashier().getItems().add(new CashDrawerCashier(login));
 				}

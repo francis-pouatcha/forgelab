@@ -65,6 +65,8 @@ public class PaymentEJB
 		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
 		Payment payment = attach(entity);
 		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+			if(paymentCustomerInvoiceAssoc.getTarget()!=null && paymentCustomerInvoiceAssoc.getTarget().getCashed())
+				continue;
 			PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
 			i.setSource(payment);
 			i.setSourceQualifier("invoices");
@@ -99,6 +101,7 @@ public class PaymentEJB
 			difference = difference.add(piReceivedAmount.subtract(piAmount));
 			paymentMode = paymentItem.getPaymentMode();
 		}
+
 		payment.setAmount(amount);
 		payment.setReceivedAmount(receivedAmount);
 		payment.setDifference(difference);

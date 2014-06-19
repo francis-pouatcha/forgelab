@@ -104,7 +104,7 @@ public class PaymentController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -119,7 +119,7 @@ public class PaymentController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(searchController);
+//      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -135,7 +135,7 @@ public class PaymentController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(createController);
+//      displayedViews.add(createController);
       displayComponent();
    }
 
@@ -146,7 +146,7 @@ public class PaymentController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(editController);
+//      displayedViews.add(editController);
       displayComponent();
    }
 
@@ -155,7 +155,7 @@ public class PaymentController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -165,7 +165,7 @@ public class PaymentController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }

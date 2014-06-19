@@ -7,7 +7,17 @@ package org.adorsys.adpharma.client.events;
  *
  */
 public class SalesOrderId extends DomainObjectId {
+	
+	private String customerName ;
 	public SalesOrderId(Long id) {
 		super(id);
 	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+	
+	
 }

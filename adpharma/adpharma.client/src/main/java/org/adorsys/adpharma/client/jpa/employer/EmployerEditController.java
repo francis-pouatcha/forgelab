@@ -68,6 +68,7 @@ public class EmployerEditController implements EntityController
    @Inject
    @Bundle(CrudKeys.class)
    private ResourceBundle resourceBundle;
+   
 
    @PostConstruct
    public void postConstruct()

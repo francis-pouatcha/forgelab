@@ -469,6 +469,8 @@ public class CustomerInvoiceEJB {
 			if(!customerInvoice.getCashed()){
 				customerInvoiceClosedEvent.fire(customerInvoice);
 				customerInvoice.setCashed(Boolean.TRUE);
+			}else {
+				continue;
 			}
 
 			// Sort those customer invoices by agency.

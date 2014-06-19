@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<HBox alignment="CENTER" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="10.0">
+			<children>
+				<TextField fx:id="paymentNumber" prefHeight="35.0" prefWidth="200.0" promptText="Article name">
+					<HBox.margin>
+						<Insets right="5.0" />
+					</HBox.margin>
+				</TextField>
+				<Button fx:id="cancelButton" layoutX="689.0" layoutY="24.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="146.0" text="Cancel" />
+<Button fx:id="printButton" layoutX="765.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="146.0" text="Imprimer " />
+			</children>
+			<padding>
+				<Insets left="10.0" />
+			</padding>
+		</HBox>
+		<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+			<columns>
+			</columns>
+			<VBox.margin>
+				<Insets left="10.0" right="10.0" />
+			</VBox.margin>
+		</TableView>
+		<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
+			<children>
+				<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+			</children>
+		</HBox>
+	</children>
+</VBox>

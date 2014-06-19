@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -221,6 +222,13 @@ public class ProcurementOrderItemEndpoint
 
 	private List<ProcurementOrderItem> detach(List<ProcurementOrderItem> list)
 	{
+		Collections.sort(list,new Comparator<ProcurementOrderItem>() {
+
+			@Override
+			public int compare(ProcurementOrderItem o1, ProcurementOrderItem o2) {
+				return o1.getArticleName().compareTo(o2.getArticleName());
+			}
+		});
 		if (list == null)
 			return list;
 		List<ProcurementOrderItem> result = new ArrayList<ProcurementOrderItem>();

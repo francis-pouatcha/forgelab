@@ -103,7 +103,7 @@ public class LoginController extends DomainComponentController
       // else display list of logins.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(displayController);
 
       displayComponent();
@@ -134,7 +134,7 @@ public class LoginController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -145,7 +145,7 @@ public class LoginController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }
@@ -155,7 +155,7 @@ public class LoginController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -165,7 +165,7 @@ public class LoginController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(displayController);
 
       displayComponent();
    }

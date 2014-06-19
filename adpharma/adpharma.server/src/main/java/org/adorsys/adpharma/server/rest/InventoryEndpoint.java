@@ -80,6 +80,15 @@ public class InventoryEndpoint
    {
       return detach(ejb.update(entity));
    }
+   
+   @PUT
+   @Path("/closeInventory")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public Inventory closeInventory(Inventory entity)
+   {
+      return detach(ejb.closeInventory(entity));
+   }
 
    @GET
    @Path("/{id:[0-9][0-9]*}")

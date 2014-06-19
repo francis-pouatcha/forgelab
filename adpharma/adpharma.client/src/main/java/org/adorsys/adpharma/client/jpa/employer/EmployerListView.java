@@ -53,8 +53,11 @@ public class EmployerListView
    {
       ViewBuilder viewBuilder = new ViewBuilder();
       dataList = viewBuilder.addTable("dataList");
-      viewBuilder.addStringColumn(dataList, "name", "Employer_name_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "name", "Employer_name_description.title", resourceBundle,300d);
       viewBuilder.addStringColumn(dataList, "phone", "Employer_phone_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "zipCode", "Employer_zipCode_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "city", "Employer_city_description.title", resourceBundle);
+      viewBuilder.addStringColumn(dataList, "country", "Employer_country_description.title", resourceBundle);
       pagination = viewBuilder.addPagination();
       viewBuilder.addSeparator();
 

@@ -73,8 +73,8 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		resetDocument();
 	}
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 8);
+	static Font boldFont = FontFactory.getFont("latin", 8, Font.BOLD);
+	static Font font = FontFactory.getFont("latin", 8);
 	
 	public void addItems(List<DeliveryItem> deliveryItems) {
 	int artNamelenght = 68 ;

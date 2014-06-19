@@ -4,10 +4,8 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -18,6 +16,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.javafx.crud.extensions.EntityController;
@@ -53,8 +52,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.controlsfx.dialog.Dialogs;
-
-import com.google.common.collect.Lists;
 
 @Singleton
 public class ArticleLotListController implements EntityController
@@ -132,6 +129,26 @@ public class ArticleLotListController implements EntityController
 				
 			}
 		});
+		listView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(KeyCode.ENTER.equals(event.getCode())){
+					handleSearchAction();
+				}
+				
+			}
+		});
+		listView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(KeyCode.ENTER.equals(event.getCode())){
+					handleSearchAction();
+				}
+				
+			}
+		});
 		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -150,9 +167,7 @@ public class ArticleLotListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(30);
-				searchService.setSearchInputs(searchInput).start();
+				handleSearchAction();
 			}
 				});
 
@@ -291,6 +306,12 @@ public class ArticleLotListController implements EntityController
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
 
+	}
+	
+	public void handleSearchAction(){
+		searchInput.setFieldNames(readSearchAttributes());
+		searchInput.setMax(30);
+		searchService.setSearchInputs(searchInput).start();
 	}
 
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent ArticleLot createdEntity)
