@@ -19,8 +19,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
@@ -59,6 +61,9 @@ public class ModalPaymentSearchController {
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
 	private Event<PaymentId> printPaymentReceiptRequestedEvent;
+	
+	@Inject
+	private SecurityUtil securityUtil;
 
 	@PostConstruct
 	public void postConstruct(){
@@ -141,6 +146,18 @@ public class ModalPaymentSearchController {
 				PaymentSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				if(securityUtil.hasRole(AccessRoleEnum.MANAGER.name())){
+					view.getFooter().setVisible(true);
+					List<Payment> resultList = searchResult.getResultList();
+					BigDecimal total = BigDecimal.ZERO;
+					for (Payment payment : resultList) {
+						total = total.add(payment.getAmount());
+						view.getTotal().setText(total+"");
+					}
+				}else {
+					view.getFooter().setVisible(false);
+				}
+				
 				handleArticleSearchResult(searchResult);
 			}
 

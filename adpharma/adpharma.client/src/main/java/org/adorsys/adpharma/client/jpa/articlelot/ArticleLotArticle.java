@@ -1,19 +1,26 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.article.ArticleSection;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+
 import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
 import org.adorsys.adpharma.client.jpa.article.ArticleFamily;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
+
 import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
 import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMargin;
 import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
 import org.adorsys.adpharma.client.jpa.article.ArticlePackagingMode;
+
 import javafx.beans.property.SimpleLongProperty;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
@@ -29,8 +36,8 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.apache.commons.lang3.ObjectUtils;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -49,7 +56,9 @@ public class ArticleLotArticle implements Association<ArticleLot, Article>, Clon
    private SimpleBooleanProperty authorizedSale;
    private SimpleObjectProperty<BigDecimal> qtyInStock;
    private SimpleObjectProperty<BigDecimal> sppu;
+   private SimpleObjectProperty<ClearanceConfig> clearanceConfig;
 
+  
    public ArticleLotArticle()
    {
    }
@@ -239,6 +248,30 @@ public class ArticleLotArticle implements Association<ArticleLot, Article>, Clon
    //      if (id== null) return other.id==null;
    //      return id.equals(other.id);
    //	}
+   
+   public SimpleObjectProperty<ClearanceConfig> clearanceConfigProperty()
+   {
+      if (clearanceConfig == null)
+      {
+         clearanceConfig = new SimpleObjectProperty<ClearanceConfig>(new ClearanceConfig());
+      }
+      return clearanceConfig;
+   }
+
+   public ClearanceConfig getClearanceConfig()
+   {
+      return clearanceConfigProperty().get();
+   }
+
+   public final void setClearanceConfig(ClearanceConfig clearanceConfig)
+   {
+      if (clearanceConfig == null)
+      {
+         clearanceConfig = new ClearanceConfig();
+      }
+      PropertyReader.copy(clearanceConfig, getClearanceConfig());
+      clearanceConfigProperty().setValue(ObjectUtils.clone(getClearanceConfig()));
+   }
 
    public String toString()
    {

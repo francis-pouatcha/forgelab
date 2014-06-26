@@ -50,8 +50,8 @@ public class DebtStatementReportPrintTemplatePDF {
 	private final Locale locale;
 	private final  DebtStatementAgency agency;
 	private final DebtStatement debtStatement ;	
-	static Font boldFont = FontFactory.getFont("Times-Roman", 12, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 12);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 8);
 
 	public DebtStatementReportPrintTemplatePDF(DebtStatement debtStatement, ResourceBundle resourceBundle,
 			Locale locale,Login login) throws DocumentException {
@@ -64,7 +64,7 @@ public class DebtStatementReportPrintTemplatePDF {
 
 		pdfFileName = "DebtStatement" + ".pdf";
 		document = new Document();
-		document.setMargins(10f, 10f, 5f, 0);
+		document.setMargins(5f, 5f, 5f, 0);
 		
 		File file = new File(pdfFileName);
 		try {

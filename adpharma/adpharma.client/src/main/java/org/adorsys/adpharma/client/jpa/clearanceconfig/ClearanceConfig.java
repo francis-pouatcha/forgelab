@@ -201,7 +201,7 @@ public class ClearanceConfig implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "startDate", "endDate", "discountRate", "clearanceState");
+      return PropertyReader.buildToString(this, "discountRate");
    }
 
    public void cleanIds()

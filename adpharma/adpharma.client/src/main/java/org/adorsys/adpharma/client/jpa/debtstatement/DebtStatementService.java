@@ -34,7 +34,7 @@ public class DebtStatementService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public DebtStatement deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(DebtStatement.class);
 	}
@@ -82,6 +82,16 @@ public class DebtStatementService {
 				searchInput, media);
 		return target().path(FIND_BY).request(media)
 				.post(searchInputEntity, DebtStatementSearchResult.class);
+	}
+
+	// @POST
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public DebtStatement createDebtStatement(DebtStatementProcessingData searchInput) {
+		Entity<DebtStatementProcessingData> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("createDebtStatement").request(media)
+				.post(searchInputEntity, DebtStatement.class);
 	}
 
 	// @POST

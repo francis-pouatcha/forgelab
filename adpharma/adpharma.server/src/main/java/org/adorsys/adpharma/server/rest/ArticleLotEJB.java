@@ -461,42 +461,42 @@ public class ArticleLotEJB
 	}
 
 
-	public void handleReturnSales(@Observes @DocumentClosedEvent Inventory inventory){
-		Set<InventoryItem> inventoryItems = inventory.getInventoryItems();
-
-		for (InventoryItem inventoryItem : inventoryItems) {
-			ArticleLot articleLot = new ArticleLot();
-			articleLot.setInternalPic(inventoryItem.getInternalPic());
-			articleLot.setArticle(inventoryItem.getArticle());
-			@SuppressWarnings("unchecked")
-			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
-			if(!found.isEmpty()){
-				ArticleLot lot = found.iterator().next();
-				lot.setStockQuantity(inventoryItem.getAsseccedQty());
-				lot.calculateTotalAmout();
-				repository.save(lot);
-			}
-			updateArticleStock(inventoryItem);
-
-
-		}
-	}
-
-	public void updateArticleStock(InventoryItem inventoryItem){
-		Article article = articlerepo.findBy(inventoryItem.getArticle().getId());
-		ArticleLot articleLot = new ArticleLot();
-		articleLot.setArticle(inventoryItem.getArticle());
-		@SuppressWarnings("unchecked")
-		List<ArticleLot> found = findByLike(articleLot, 0, -1, new SingularAttribute[]{ArticleLot_.article});
-		if(!found.isEmpty()){
-			BigDecimal lotStock = BigDecimal.ZERO;
-			for (ArticleLot lot : found) {
-				lotStock = lotStock.add(lot.getStockQuantity());
-			}
-			article.setQtyInStock(lotStock);
-			articlerepo.save(article);
-		}
-	}
+//	public void handleReturnSales(@Observes @DocumentClosedEvent Inventory inventory){
+//		Set<InventoryItem> inventoryItems = inventory.getInventoryItems();
+//
+//		for (InventoryItem inventoryItem : inventoryItems) {
+//			ArticleLot articleLot = new ArticleLot();
+//			articleLot.setInternalPic(inventoryItem.getInternalPic());
+//			articleLot.setArticle(inventoryItem.getArticle());
+//			@SuppressWarnings("unchecked")
+//			List<ArticleLot> found = findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+//			if(!found.isEmpty()){
+//				ArticleLot lot = found.iterator().next();
+//				lot.setStockQuantity(inventoryItem.getAsseccedQty());
+//				lot.calculateTotalAmout();
+//				repository.save(lot);
+//			}
+//			updateArticleStock(inventoryItem);
+//
+//
+//		}
+//	}
+//
+//	public void updateArticleStock(InventoryItem inventoryItem){
+//		Article article = articlerepo.findBy(inventoryItem.getArticle().getId());
+//		ArticleLot articleLot = new ArticleLot();
+//		articleLot.setArticle(inventoryItem.getArticle());
+//		@SuppressWarnings("unchecked")
+//		List<ArticleLot> found = repository.findByLike(articleLot, 0, -1, new SingularAttribute[]{ArticleLot_.article});
+//		if(!found.isEmpty()){
+//			BigDecimal lotStock = BigDecimal.ZERO;
+//			for (ArticleLot lot : found) {
+//				lotStock = lotStock.add(lot.getStockQuantity());
+//			}
+//			article.setQtyInStock(lotStock);
+//			articlerepo.save(article);
+//		}
+//	}
 
 
 	/**

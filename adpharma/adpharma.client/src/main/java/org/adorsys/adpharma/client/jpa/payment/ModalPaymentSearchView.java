@@ -14,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import jfxtras.scene.layout.HBox;
+
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.javaext.format.NumberType;
@@ -42,6 +44,12 @@ public class ModalPaymentSearchView extends ApplicationModal{
 
 	@Inject
 	FXMLLoader fxmlLoader;
+
+	@FXML
+	TextField total;
+
+	@FXML
+	private javafx.scene.layout.HBox footerBar ;
 
 	@Inject
 	@Bundle({ CrudKeys.class, Payment.class })
@@ -78,7 +86,7 @@ public class ModalPaymentSearchView extends ApplicationModal{
 	public Button getPrintButton() {
 		return printButton;
 	}
-	
+
 	public Button getCancelButton() {
 		return cancelButton;
 	}
@@ -89,6 +97,13 @@ public class ModalPaymentSearchView extends ApplicationModal{
 
 	public Pagination getPagination() {
 		return pagination;
+	}
+	public TextField getTotal(){
+		return total;
+	}
+
+	public javafx.scene.layout.HBox getFooter(){
+		return footerBar;
 	}
 
 }

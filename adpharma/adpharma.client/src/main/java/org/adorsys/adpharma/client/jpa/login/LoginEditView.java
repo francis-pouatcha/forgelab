@@ -26,6 +26,8 @@ public class LoginEditView
    private Button saveButton;
 
    private Button cancelButton;
+   
+   private Button resetPassWordButton;
 
    @Inject
    private LoginView view;
@@ -42,6 +44,7 @@ public class LoginEditView
       viewBuilder.addSeparator();
       HBox buttonBar = viewBuilder.addButtonBar();
       saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
+      resetPassWordButton   = viewBuilder.addButton(buttonBar, "Login_password_change.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
       cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
       rootPane = viewBuilder.toAnchorPane();
    }
@@ -64,6 +67,11 @@ public class LoginEditView
    public Button getCancelButton()
    {
       return cancelButton;
+   }
+   
+   public Button getResetPassWordButton()
+   {
+      return resetPassWordButton;
    }
 
    public LoginView getView()

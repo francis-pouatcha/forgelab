@@ -416,7 +416,7 @@ public class Login implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    public void cleanIds()

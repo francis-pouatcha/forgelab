@@ -15,7 +15,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-
+/**
+ * 
+ * @author clovisgakam
+ *
+ */
 public class DateHelper {
 
 	public 	final static String  DATE_SLASH_FORMAT = "dd/MM/yy";

@@ -5,19 +5,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0"
+	AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+	AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
+		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0"
+			prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="135.0" prefWidth="175.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="253.0"
+					prefWidth="175.0" VBox.vgrow="NEVER">
 					<items>
-						<Button fx:id="createButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Nouveau" />
-						<Button fx:id="printButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Imprimer" />
-						<Button fx:id="removeButton" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="suprime" />
-						<Button fx:id="removeItemButton" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Suprimer la facture" />
+						<Button fx:id="createButton" mnemonicParsing="false"
+							prefHeight="26.0" prefWidth="163.0" text="Nouveau" />
+						<Button fx:id="printButton" layoutX="10.0" layoutY="10.0"
+							mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0"
+							text="Imprimer l'Etat" />
+						<Button fx:id="removeButton" layoutX="10.0" layoutY="40.0"
+							mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0"
+							text="suprime L'etat" />
+						<Button fx:id="removeInvoiceButton" layoutX="10.0" layoutY="70.0"
+							mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0"
+							text="Suprimer la facture" />
+						<Button fx:id="exportToXlsButton" layoutX="10.0" layoutY="100.0"
+							mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0"
+							text="exporter (.Xls)" />
 					</items>
 				</ToolBar>
-				<Pane fx:id="rigthpane" prefHeight="389.0" prefWidth="170.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+				<Pane fx:id="rigthpane" prefHeight="389.0" prefWidth="170.0"
+					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="50.0" left="5.0" />
 					</VBox.margin>
@@ -39,35 +55,41 @@
 						<Insets left="5.0" />
 					</VBox.margin>
 				</Separator>
-				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
+				<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0"
+					layoutY="-50.0" prefHeight="54.0" prefWidth="801.0" spacing="5.0">
 					<padding>
 						<Insets left="10.0" />
 					</padding>
 				</HBox>
 				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="535.0" prefWidth="801.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+				<TableView fx:id="dataList" prefHeight="400.0" prefWidth="801.0"
+					BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>
 					<VBox.margin>
 						<Insets left="5.0" />
 					</VBox.margin>
 				</TableView>
-				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0" text="Details">
+				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0"
+					text="Details">
 					<content>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
+							prefWidth="200.0" />
 					</content>
 					<VBox.margin>
 						<Insets left="5.0" />
 					</VBox.margin>
 				</TitledPane>
-				<TableView fx:id="dataListItem" prefHeight="400.0" prefWidth="200.0">
+				<TableView fx:id="dataListItem" prefHeight="400.0"
+					prefWidth="200.0" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets left="5.0" />
 					</VBox.margin>
 				</TableView>
 				<HBox alignment="CENTER" prefHeight="48.0" prefWidth="801.0">
 					<children>
-						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+						<Pagination fx:id="pagination" maxPageIndicatorCount="5"
+							pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 					</children>
 				</HBox>
 			</children>

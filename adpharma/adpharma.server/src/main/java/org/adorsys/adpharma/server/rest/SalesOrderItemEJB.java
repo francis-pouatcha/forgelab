@@ -119,14 +119,23 @@ public class SalesOrderItemEJB
 		return entity;
 	}
 
+//	public SalesOrderItem update(SalesOrderItem entity)
+//	{
+//		entity.updateTotalSalesPrice();
+//		entity = repository.save(attach(entity));
+//		salesOrderItemProcessedEvent.fire(entity);
+//		return entity;
+//	}
+
 	public SalesOrderItem update(SalesOrderItem entity)
 	{
-		entity.updateTotalSalesPrice();
-		entity = repository.save(attach(entity));
+		SalesOrderItem attach = attach(entity);
+		attach.calucateDeliveryQty();
+		attach.calculateAmount();
+		entity = repository.save(attach);
 		salesOrderItemProcessedEvent.fire(entity);
 		return entity;
 	}
-
 	public SalesOrderItem findById(Long id)
 	{
 		return repository.findBy(id);

@@ -115,6 +115,16 @@ public class SalesOrderService {
 		return target().path(FIND_BY).request(media)
 				.post(searchInputEntity, SalesOrderSearchResult.class);
 	}
+	
+	// @POST
+		// @Produces("application/xml")
+		// @Consumes("application/xml")
+		public SalesOrderSearchResult advenceSearch(SalesOrderAdvenceSearchData data) {
+			Entity<SalesOrderAdvenceSearchData> searchInputEntity = Entity.entity(
+					data, media);
+			return target().path("advenceSearch").request(media)
+					.post(searchInputEntity, SalesOrderSearchResult.class);
+		}
 
 	// @POST
 	// @Path("/countBy")

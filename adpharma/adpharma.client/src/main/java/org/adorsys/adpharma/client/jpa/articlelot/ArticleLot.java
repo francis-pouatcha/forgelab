@@ -1,12 +1,18 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfig;
+
 import java.util.Calendar;
 import java.math.BigDecimal;
+
 import org.adorsys.adpharma.client.jpa.vat.VAT;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,13 +20,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-
 import org.apache.commons.lang3.ObjectUtils;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
+
 import javax.validation.constraints.Size;
+
 import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
@@ -372,6 +381,7 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
       }
       PropertyReader.copy(article, getArticle());
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
+      getArticle().setClearanceConfig(article.getClearanceConfig());
    }
 
    public SimpleObjectProperty<ArticleLotVat> vatProperty()

@@ -322,6 +322,8 @@ public class CashDrawerDisplayController implements EntityController
 					BigDecimal amount = displayView.getAmount().getNumber();
 					//					displayView.getAmount().setNumber(amount.add(selectedItem.getAmount()));
 					displayView.getPaymentItemDataList().getItems().remove(selectedItem);
+					displayView.getReceivedAmount().setNumber(BigDecimal.ZERO);
+					displayView.getDifference().setNumber(BigDecimal.ZERO);
 				}
 			}
 		});

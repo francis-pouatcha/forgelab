@@ -52,6 +52,9 @@ public class SalesOrderListView
 	private Button removeButton;
 
 	@FXML
+	private Button advenceSearchButton;
+	
+	@FXML
 	private Button printInvoiceButton;
 	
 	@FXML
@@ -232,6 +235,12 @@ public class SalesOrderListView
 	public Button getRemoveButton() {
 		return removeButton;
 	}
+	
+
+	public Button getAdvenceSearchButton() {
+		return advenceSearchButton;
+	}
+
 
 	public Button getPrintInvoiceButtonn() {
 		return printInvoiceButton;

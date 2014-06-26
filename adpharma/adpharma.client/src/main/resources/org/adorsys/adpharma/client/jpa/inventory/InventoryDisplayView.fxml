@@ -155,16 +155,6 @@
 						<TableView fx:id="dataList" prefHeight="246.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
 							<columns>
 							</columns>
-							<contextMenu>
-								<ContextMenu fx:id="datalistContextMenu">
-									<items>
-										<!-- <MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit 
-											Line" /> <MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete 
-											Line" /> <SeparatorMenuItem mnemonicParsing="false" /> -->
-										<MenuItem fx:id="returnSOIMenu" mnemonicParsing="false" text="Return Article" />
-									</items>
-								</ContextMenu>
-							</contextMenu>
 							<VBox.margin>
 								<Insets bottom="2.0" />
 							</VBox.margin>
@@ -182,6 +172,8 @@
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
+<Button fx:id="printButton" layoutX="360.0" layoutY="13.0" mnemonicParsing="false" prefWidth="150.0" text="Fiche de Comptage" />
+<Button fx:id="printRepportButton" layoutX="600.0" layoutY="13.0" mnemonicParsing="false" prefWidth="150.0" text="Rapport D'inventaire" />
 							</children>
 							<padding>
 								<Insets bottom="2.0" />

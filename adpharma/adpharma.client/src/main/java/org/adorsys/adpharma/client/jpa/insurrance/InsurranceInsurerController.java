@@ -71,8 +71,8 @@ public abstract class InsurranceInsurerController
 
 				@Override
 				public int compare(Customer o1, Customer o2) {
-					o1.setFirstName(o1.getFirstName());
-					o2.setFirstName(o2.getFirstName());
+					o1.setFullName(o1.getFirstName());
+					o2.setFullName(o2.getFirstName());
 					
 					return o1.getFirstName().compareTo(o2.getFirstName());
 				}

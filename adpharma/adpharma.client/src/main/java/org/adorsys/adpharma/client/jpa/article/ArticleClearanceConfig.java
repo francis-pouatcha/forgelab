@@ -185,7 +185,7 @@ public class ArticleClearanceConfig implements Association<Article, ClearanceCon
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "startDate", "endDate", "discountRate", "clearanceState");
+      return PropertyReader.buildToString(this,"discountRate");
    }
 
    @Override

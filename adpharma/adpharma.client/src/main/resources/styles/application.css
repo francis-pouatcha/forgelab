@@ -24,6 +24,16 @@ Description: MistSilver Skin for JavaFX
     -fx-padding: 5;
     -fx-spacing: 5;
 }
+.text-field{
+	-fx-border-color: rgb(118,118,118);
+}
+.text-field:hover{
+	-fx-border-color:rgb(36,84,198);
+}
+.text-field:focus{
+	-fx-border-color:rgb(36,84,198);
+}
+
 
 
 

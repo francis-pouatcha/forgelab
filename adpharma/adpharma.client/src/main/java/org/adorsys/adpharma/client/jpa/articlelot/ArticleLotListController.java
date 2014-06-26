@@ -203,11 +203,14 @@ public class ArticleLotListController implements EntityController
 			{
 				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
+					if(BigDecimal.ZERO.compareTo(selectedItem.getStockQuantity())<0){
 					ArticleLotDetailsManager lotDetailsManager = new ArticleLotDetailsManager();
 					lotDetailsManager.setLotToDetails(selectedItem);
 					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
 					detailscreateRequestedEvent.fire(lotDetailsManager);
-
+					}else {
+						Dialogs.create().message("imppossible de Decomposer Quantite insuffisante !").showError();
+					}
 				}
 			}
 				});
@@ -370,7 +373,8 @@ public class ArticleLotListController implements EntityController
 
 	public void handleArticleLotMovetToTrashDone(@Observes  @ArticlelotMovedDoneRequestEvent ArticleLot articleLot){
 		int indexOf = listView.getDataList().getItems().indexOf(articleLot);
-		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
+		handleEditDoneEvent(articleLot);
+//		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
 		
 	}
 

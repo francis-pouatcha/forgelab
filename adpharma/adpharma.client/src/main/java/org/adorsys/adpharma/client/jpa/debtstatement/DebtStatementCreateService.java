@@ -10,29 +10,39 @@ import javax.inject.Singleton;
 public class DebtStatementCreateService extends Service<DebtStatement>
 {
 
-   private DebtStatement model;
+	private DebtStatement model;
 
-   @Inject
-   private DebtStatementService remoteService;
+	private DebtStatementProcessingData data ;
 
-   public DebtStatementCreateService setModel(DebtStatement model)
-   {
-      this.model = model;
-      return this;
-   }
+	@Inject
+	private DebtStatementService remoteService;
 
-   @Override
-   protected Task<DebtStatement> createTask()
-   {
-      return new Task<DebtStatement>()
-      {
-         @Override
-         protected DebtStatement call() throws Exception
-         {
-            if (model == null)
-               return null;
-            return remoteService.create(model);
-         }
-      };
-   }
+	public DebtStatementCreateService setModel(DebtStatement model)
+	{
+		this.model = model;
+		return this;
+	}
+
+	public DebtStatementCreateService setData(DebtStatementProcessingData data)
+	{
+		this.data = data;
+		return this;
+	}
+
+	@Override
+	protected Task<DebtStatement> createTask()
+	{
+		return new Task<DebtStatement>()
+				{
+			@Override
+			protected DebtStatement call() throws Exception
+			{
+				if (model != null)
+					return remoteService.create(model);
+				if (data != null)
+					return remoteService.createDebtStatement(data);
+				return null;
+			}
+				};
+	}
 }

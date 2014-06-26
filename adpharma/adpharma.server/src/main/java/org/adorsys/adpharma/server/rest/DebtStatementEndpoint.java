@@ -22,10 +22,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.adorsys.adpharma.server.jpa.DebtStatement;
-import org.adorsys.adpharma.server.jpa.DebtStatement_;
+import org.adorsys.adpharma.server.jpa.DebtStatementProcessingData;
 import org.adorsys.adpharma.server.jpa.DebtStatementSearchInput;
 import org.adorsys.adpharma.server.jpa.DebtStatementSearchResult;
+import org.adorsys.adpharma.server.jpa.DebtStatement_;
 
 /**
  * 
@@ -54,6 +56,15 @@ public class DebtStatementEndpoint
    public DebtStatement create(DebtStatement entity)
    {
       return detach(ejb.create(entity));
+   }
+   
+   @POST
+   @Path("/createDebtStatement")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json", "application/xml" })
+   public DebtStatement createDebtStatement(DebtStatementProcessingData entity)
+   {
+      return detach(ejb.createDebtStatement(entity));
    }
 
    @DELETE

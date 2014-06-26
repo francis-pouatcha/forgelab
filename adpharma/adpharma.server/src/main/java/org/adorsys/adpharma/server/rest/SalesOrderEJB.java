@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
@@ -25,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderAdvenceSearchData;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
@@ -94,6 +98,9 @@ public class SalesOrderEJB
 	@Inject
 	private SecurityUtil securityUtilEJB;
 
+	@Inject
+	private EntityManager em ;
+
 
 	public SalesOrder create(SalesOrder entity)
 	{
@@ -129,6 +136,48 @@ public class SalesOrderEJB
 			repository.remove(entity);
 		}
 		return entity;
+	}
+
+	public List<SalesOrder> advenceSearch(SalesOrderAdvenceSearchData data){
+		List<SalesOrder> sales = new ArrayList<SalesOrder>();
+		String query ="SELECT DISTINCT(s.salesOrder) FROM SalesOrderItem AS s WHERE s.id != NULL  ";
+		if(data.getFromDate()!=null)
+			query = query+" AND s.salesOrder.creationDate >= :fromDate ";
+
+		if(data.getToDate()!=null)
+			query = query+" AND s.salesOrder.creationDate <= :toDate ";
+
+		if(data.getSaller()!=null)
+			query = query+" AND s.salesOrder.salesAgent = :salesAgent ";
+
+		if(data.getSate()!=null)
+			query = query+" AND s.salesOrder.salesOrderStatus = :salesOrderStatus ";
+
+		if(StringUtils.isNotBlank(data.getArticleName()))
+			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName)";
+
+		Query querys = em.createQuery(query) ;
+
+		if(data.getFromDate()!=null)
+			querys.setParameter("fromDate", data.getFromDate());
+
+		if(data.getToDate()!=null)
+			querys.setParameter("toDate", data.getToDate());
+
+		if(data.getSaller()!=null)
+			querys.setParameter("salesAgent", data.getSaller());
+
+		if(data.getSate()!=null)
+			querys.setParameter("salesOrderStatus", data.getSate());
+
+		if(StringUtils.isNotBlank(data.getArticleName())){
+			String articleName = data.getArticleName()+"%";
+			querys.setParameter("articleName", articleName);
+
+		}
+		sales = (List<SalesOrder>) querys.getResultList();
+
+		return sales;
 	}
 
 	public SalesOrder update(SalesOrder entity)

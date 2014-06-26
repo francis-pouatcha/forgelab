@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -36,6 +37,7 @@ public class ModalArticleLotMovedToTrashController {
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 	
 	@Inject
+	@EntityEditDoneEvent
 	private Event<ArticleLot> articleLotMovedDoneRequestEvent ;
 	
 
@@ -84,9 +86,9 @@ public class ModalArticleLotMovedToTrashController {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				ArticlelotMoveToTrashService source = (ArticlelotMoveToTrashService) event.getSource();
+				ArticleLot articleLot = source.getValue();
 				event.consume();
 				source.reset();
-				ArticleLot articleLot = source.getValue();
 				articleLotMovedDoneRequestEvent.fire(articleLot);
 				
 			}

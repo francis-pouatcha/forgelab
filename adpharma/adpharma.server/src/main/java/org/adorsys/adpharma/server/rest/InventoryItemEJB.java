@@ -29,7 +29,7 @@ public class InventoryItemEJB
 	public InventoryItem create(InventoryItem entity)
 	{
 		InventoryItem attach = attach(entity);
-		attach.setGap(entity.getExpectedQty().subtract(entity.getAsseccedQty()).longValue());
+		attach.setGap(entity.getAsseccedQty().subtract(entity.getExpectedQty()).longValue());
 		attach.setGapTotalPurchasePrice(entity.getGapPurchasePricePU().multiply(BigDecimal.valueOf(entity.getGap())));
 		attach.setGapTotalSalePrice(entity.getGapSalesPricePU().multiply(BigDecimal.valueOf(entity.getGap())));
 		return repository.save(attach);
@@ -48,7 +48,7 @@ public class InventoryItemEJB
 	public InventoryItem update(InventoryItem entity)
 	{
 		InventoryItem attach = attach(entity);
-		attach.setGap(entity.getExpectedQty().subtract(entity.getAsseccedQty()).longValue());
+		attach.setGap(entity.getAsseccedQty().subtract(entity.getExpectedQty()).longValue());
 		attach.setGapTotalPurchasePrice(entity.getGapPurchasePricePU().multiply(BigDecimal.valueOf(entity.getGap())));
 		attach.setGapTotalSalePrice(entity.getGapSalesPricePU().multiply(BigDecimal.valueOf(entity.getGap())));
 		return repository.save(attach);

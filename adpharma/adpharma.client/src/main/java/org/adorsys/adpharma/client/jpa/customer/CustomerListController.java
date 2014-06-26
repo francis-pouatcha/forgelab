@@ -44,6 +44,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class CustomerListController implements EntityController
@@ -197,7 +198,11 @@ public class CustomerListController implements EntityController
 			{
 				Customer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if (selectedItem != null)
-					customerEditRequetedEvent.fire(selectedItem);
+					if("000000001".equals(selectedItem.getSerialNumber())){
+						Dialogs.create().masthead("Impossible de modifier ce client ").showError();
+					}else {
+						customerEditRequetedEvent.fire(selectedItem);
+					}
 			}
 				});
 

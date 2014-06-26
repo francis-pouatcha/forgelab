@@ -57,9 +57,15 @@ public class DebtStatementListView
 	
 	@FXML
 	private Button printButton ;
+	
+	@FXML
+	private Button exportToXlsButton ;
 
 	@FXML
 	private Button removeButton ;
+	
+	@FXML
+	private Button removeInvoiceButton ;
 
 	@FXML
 	private TableView<DebtStatement> dataList;
@@ -102,7 +108,7 @@ public class DebtStatementListView
 		viewBuilder.addDateColumn(dataList, "paymentDate", "DebtStatement_paymentDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "initialAmount", "DebtStatement_initialAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "advancePayment", "DebtStatement_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "restAmount", "DebtStatement_restAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "restAmount", "DebtStatement_restAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
 		viewBuilder.addBigDecimalColumn(dataList, "amountFromVouchers", "DebtStatement_amountFromVouchers_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
@@ -115,16 +121,18 @@ public class DebtStatementListView
 		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//		rootPane = viewBuilder.toAnchorPane();
 
-		viewBuilder.addStringColumn(dataListItem, "id", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
-		viewBuilder.addEnumColumn(dataListItem, "invoiceType", "CustomerInvoice_invoiceType_description.title", resourceBundle, invoiceTypeConverter);
-		viewBuilder.addStringColumn(dataListItem, "cashed", "CustomerInvoice_cashed_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataListItem, "salesOrder", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataListItem, "customer", "CustomerInvoice_customer_description.title", resourceBundle,300d);
+
+//		viewBuilder.addEnumColumn(dataListItem, "invoiceType", "CustomerInvoice_invoiceType_description.title", resourceBundle, invoiceTypeConverter);
+//		viewBuilder.addStringColumn(dataListItem, "cashed", "CustomerInvoice_cashed_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataListItem, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		viewBuilder.addStringColumn(dataListItem, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataListItem, "salesOrder", "CustomerInvoice_salesOrder_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataListItem, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataListItem, "salesOrder", "CustomerInvoice_salesOrder_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataListItem, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataListItem, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		buildsearchBar();
 	}
@@ -135,7 +143,7 @@ public class DebtStatementListView
 		procurementOrderNumber.setPrefHeight(40d);
 
 		insurrance =ViewBuilderUtils.newComboBox(null, "insurrance", false);
-		insurrance.setPromptText("Tous les Fournisseur");
+		insurrance.setPromptText("Tous les Assurreurs");
 		insurrance.setPrefHeight(40d);
 		insurrance.setPrefWidth(300d);
 
@@ -206,6 +214,14 @@ public class DebtStatementListView
 
 	public Button getRemoveButton() {
 		return removeButton;
+	}
+	
+	public Button getRemoveInvoiceButton() {
+		return removeInvoiceButton;
+	}
+	
+	public Button getExportToXlsButton() {
+		return exportToXlsButton;
 	}
 
 	public TableView<CustomerInvoice> getDataListItem() {

@@ -256,7 +256,7 @@ public class CashDrawerDisplayView
 		searchPayementButton.setPrefWidth(180d);
 		searchPayementButton.setText("Liste des Payements");
 		
-		closeCashDrawerButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
+		closeCashDrawerButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.EJECT);
 		closeCashDrawerButton.setPrefHeight(25d);
 		closeCashDrawerButton.setPrefWidth(100d);
 		closeCashDrawerButton.setText("Fermer");

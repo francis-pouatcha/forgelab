@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
+import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
@@ -417,7 +419,6 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(!displayedEntity.getAlreadyReturned()){
-
 					orderReturnService.setEntity(displayedEntity).start();
 				}else {
 					Dialogs.create().message("Cette commande a deja fais l'objet dun retour !").showInformation();
@@ -435,7 +436,7 @@ public class SalesOrderDisplayController implements EntityController
 				s.reset();
 				displayedEntity.setAlreadyReturned(so.getAlreadyReturned());
 				workingInfosEvent.fire("Article Returned   successfully !");
-				Action showConfirm = Dialogs.create().message("voulez vs Imprimer l Avoir ?").showConfirm();
+				Action showConfirm = Dialogs.create().message("voulez vs Imprimer l'Avoir ?").showConfirm();
 				if(Dialog.Actions.YES.equals(showConfirm)){
 					salesOrderVoucherPrintRequestEvent.fire(so);
 				}
@@ -475,7 +476,7 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
-		
+
 
 		displayView.getAmountTTC().numberProperty().addListener(new ChangeListener<BigDecimal>() {
 
@@ -670,26 +671,26 @@ public class SalesOrderDisplayController implements EntityController
 				}
 			}
 		});
-		
-//		displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
-//				) {
-//
-//					@Override
-//					public void changed(
-//							ObservableValue<? extends BigDecimal> observable,
-//							BigDecimal oldValue, BigDecimal newValue) {
-//						if(newValue!=null){
-//							BigDecimal ttc = displayView.getAmountTTC().getNumber();
-//							if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
-//								BigDecimal discountRate = (newValue.multiply(BigDecimal.valueOf(100))).divide(ttc, 2, RoundingMode.HALF_EVEN);
-////						        displayedEntity.setDiscountRate(discountRate);
-//								System.out.println(discountRate);
-//						        displayView.getDiscountRate().setNumber(discountRate);
-//							}
-//						}
-//						
-//					}
-//		});
+
+		//		displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
+		//				) {
+		//
+		//					@Override
+		//					public void changed(
+		//							ObservableValue<? extends BigDecimal> observable,
+		//							BigDecimal oldValue, BigDecimal newValue) {
+		//						if(newValue!=null){
+		//							BigDecimal ttc = displayView.getAmountTTC().getNumber();
+		//							if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
+		//								BigDecimal discountRate = (newValue.multiply(BigDecimal.valueOf(100))).divide(ttc, 2, RoundingMode.HALF_EVEN);
+		////						        displayedEntity.setDiscountRate(discountRate);
+		//								System.out.println(discountRate);
+		//						        displayView.getDiscountRate().setNumber(discountRate);
+		//							}
+		//						}
+		//						
+		//					}
+		//		});
 
 		//		
 		displayView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -925,8 +926,6 @@ public class SalesOrderDisplayController implements EntityController
 		//			}
 		//		}
 
-
-
 		return true ;
 	}
 
@@ -1013,6 +1012,15 @@ public class SalesOrderDisplayController implements EntityController
 		ArticleLotVat alVat = al.getVat();
 		PropertyReader.copy(alVat, soiVat);
 		soItem.setVat(soiVat);
+
+		ClearanceConfig clearanceConfig = al.getArticle().getClearanceConfig();
+		if(clearanceConfig!=null&&clearanceConfig.getDiscountRate()!=null){
+			BigDecimal rate = clearanceConfig.getDiscountRate();
+			Date time = clearanceConfig.getEndDate().getTime();
+			BigDecimal discount = (al.getSalesPricePU().multiply(rate)).divide(BigDecimal.valueOf(100));
+			if(clearanceConfig.getEndDate()!=null&&clearanceConfig.getEndDate().getTime().after(new Date()))
+				soItem.setSalesPricePU((al.getSalesPricePU().subtract(discount)));
+		}
 		return soItem;
 	}
 
@@ -1034,11 +1042,21 @@ public class SalesOrderDisplayController implements EntityController
 	public void handleLoginSucceedEvent (@Observes(notifyObserver = Reception.ALWAYS) @LoginSucceededEvent String loginName) {
 		salesOrderManagedLotService.start();
 	}
-	
+
 	public void handleRolesRequestEvent(@Observes @RolesEvent Set<String> roles) {
 		if(roles.contains("MANAGER")){
-//			displayView.getOrderQuantityColumn().setEditable(true);
+			//			displayView.getOrderQuantityColumn().setEditable(true);
 		}
+	}
+
+	public boolean hasReturn(){
+		Iterator<SalesOrderItem> items = displayView.getDataList().getItems().iterator();
+		while (items.hasNext()) {
+			SalesOrderItem orderItem = items.next();
+			if(BigDecimal.ZERO.compareTo(orderItem.getReturnedQty())!=0)
+				return true;
+		}
+		return false;
 	}
 
 }

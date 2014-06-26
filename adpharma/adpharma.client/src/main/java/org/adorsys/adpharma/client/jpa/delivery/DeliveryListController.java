@@ -307,10 +307,12 @@ public class DeliveryListController implements EntityController
 				s.reset();
 				ArrayList<DeliverySupplier> ds = new ArrayList<DeliverySupplier>();
 				List<Supplier> resultList = result.getResultList();
+				Supplier emptySupplier = new Supplier();
+				emptySupplier.setName("TOUS LES FOURNISSEURS");
+				resultList.add(0, emptySupplier);
 				for (Supplier supplier : resultList) {
 					ds.add(new DeliverySupplier(supplier));
 				}
-				ds.add(0, null);
 				listView.getSupplier().getItems().setAll(ds);
 				listView.getSupplier().getSelectionModel().select(0);
 				listView.getChartSupplierList().getItems().setAll(ds);
@@ -542,6 +544,9 @@ public class DeliveryListController implements EntityController
 
 		cell = header.createCell(cellnum++);
 		cell.setCellValue("fournisseur");
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("date");
 
 		if( selectedItem!=null&&sheet!=null){
 			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
@@ -562,10 +567,17 @@ public class DeliveryListController implements EntityController
 					//					cell.setCellValue(item.getStockQuantity().doubleValue());
 
 					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getSalesPricePU().toBigInteger()+" CFA");
+					cell.setCellValue(item.getSalesPricePU().toBigInteger()+"F");
 
 					cell = row.createCell(cellnum++);
 					cell.setCellValue(supllierName);
+					if(item.getCreationDate()!=null){
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"ddMMyy"));
+					}else {
+						cell = row.createCell(cellnum++);
+						cell.setCellValue("");
+					}
 				}
 
 

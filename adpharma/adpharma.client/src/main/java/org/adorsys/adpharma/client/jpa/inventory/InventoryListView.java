@@ -12,6 +12,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -44,17 +46,21 @@ public class InventoryListView
 	private Button printButton;
 	
 	@FXML
-	private Button removeButton;
+	private Button printRepportButton;
 	
+	@FXML
+	private Button removeButton;
+
 	@FXML
 	private Button editButton;
 
 	@FXML
-	HBox searchBar;
+	private HBox searchBar;
 
-	private TextField invoiceNumber ;
+	@FXML
+	private VBox leftBox;
 
-	private CheckBox cashed ;
+	private TextField inventoryNumber ;
 
 	@FXML
 	private TableView<Inventory> dataList;
@@ -117,36 +123,55 @@ public class InventoryListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "gapTotalPurchasePrice", "InventoryItem_gapTotalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		buildsearchBar();
+		buildLeftBox();
 	}
 
 
 	public void buildsearchBar(){
-		invoiceNumber =ViewBuilderUtils.newTextField("customerName", false);
-		invoiceNumber.setPromptText("customer Name");
-		invoiceNumber.setPrefWidth(200d);
-		invoiceNumber.setPrefHeight(40d);
-		cashed = ViewBuilderUtils.newCheckBox(null, "cashed", resourceBundle, false);
-		cashed.setText("Cashed");
-
+		inventoryNumber =ViewBuilderUtils.newTextField("inventoryNumber", false);
+		inventoryNumber.setPromptText("inventory Number");
+		inventoryNumber.setPrefWidth(200d);
+		inventoryNumber.setPrefHeight(40d);
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
+		searchBar.getChildren().addAll(inventoryNumber,searchButton);
+	}
+
+	public void buildLeftBox(){
 
 		createButton =ViewBuilderUtils.newButton("Entity_create.title", "createButton", resourceBundle, AwesomeIcon.ADJUST);
-		createButton.setPrefHeight(40d);
-		
+		createButton.setPrefHeight(30d);
+		createButton.setPrefWidth(150d);
+		createButton.setTextAlignment(TextAlignment.LEFT);
+
 
 		editButton =ViewBuilderUtils.newButton("Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
-		editButton.setPrefHeight(40d);
-		
+		editButton.setPrefHeight(30d);
+		editButton.setPrefWidth(150d);
+		editButton.setTextAlignment(TextAlignment.LEFT);
+
 		removeButton =ViewBuilderUtils.newButton("Entity_delete.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
-		removeButton.setPrefHeight(40d);
+		removeButton.setPrefHeight(30d);
+		removeButton.setPrefWidth(150d);
+		removeButton.setTextAlignment(TextAlignment.LEFT);
+
+		printButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+		printButton.setPrefHeight(30d);
+		printButton.setPrefWidth(150d);
+		printButton.setTextAlignment(TextAlignment.LEFT);
 		
-		printButton =ViewBuilderUtils.newButton("Entity_print.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-		printButton.setPrefHeight(40d);
+		printRepportButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+		printRepportButton.setPrefHeight(30d);
+		printRepportButton.setPrefWidth(150d);
+		printRepportButton.setText("Rapport D'inventaire");
+		printRepportButton.setTextAlignment(TextAlignment.LEFT);
+		
 
 
-		searchBar.getChildren().addAll(invoiceNumber,cashed,searchButton,createButton,editButton,removeButton,printButton);
+		leftBox.getChildren().addAll(createButton,editButton,removeButton,printButton,printRepportButton);
 	}
+
+
 	public Button getCreateButton()
 	{
 		return createButton;
@@ -184,12 +209,7 @@ public class InventoryListView
 
 
 	public TextField getInvoiceNumber() {
-		return invoiceNumber;
-	}
-
-
-	public CheckBox getCashed() {
-		return cashed;
+		return inventoryNumber;
 	}
 
 
@@ -227,5 +247,9 @@ public class InventoryListView
 		return editButton;
 	}
 	
+	public Button getPrintRepportButton() {
+		return printRepportButton;
+	}
+
 
 }

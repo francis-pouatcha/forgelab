@@ -129,7 +129,7 @@ public class CustomerView extends AbstractForm<Customer>
       email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
       creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
       discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
-      serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle,ViewModel.READ_WRITE);
+      serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle);
       gender = viewBuilder.addComboBox("Customer_gender_description.title", "gender", resourceBundle, Gender.values());
       customerType = viewBuilder.addComboBox("Customer_customerType_description.title", "customerType", resourceBundle, CustomerType.values());
       totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);

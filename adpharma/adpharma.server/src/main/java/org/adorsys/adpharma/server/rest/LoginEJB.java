@@ -27,6 +27,7 @@ public class LoginEJB
 
 	public Login create(Login entity)
 	{
+		entity.setPassword("test");
 		return repository.save(attach(entity));
 	}
 

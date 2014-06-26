@@ -234,7 +234,7 @@ public class ArticleLotEndpoint
 
    private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name", "vat.rate");
+   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name", "clearanceConfig","vat.rate");
 
    private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 

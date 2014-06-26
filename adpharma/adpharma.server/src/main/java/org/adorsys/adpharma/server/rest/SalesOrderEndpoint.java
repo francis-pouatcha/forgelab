@@ -25,12 +25,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
-import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrderAdvenceSearchData;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
-import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 
 /**
@@ -180,6 +179,17 @@ public class SalesOrderEndpoint
 				searchInput.getStart(), searchInput.getMax(), attributes);
 		return new SalesOrderSearchResult(count, detach(resultList),
 				detach(searchInput));
+	}
+	
+	@POST
+	@Path("/advenceSearch")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrderSearchResult advenceSearch(SalesOrderAdvenceSearchData data)
+	{
+		List<SalesOrder> resultList = ejb.advenceSearch(data);
+		return new SalesOrderSearchResult(Long.valueOf(1), detach(resultList),
+				detach(new SalesOrderSearchInput()));
 	}
 
 	@POST

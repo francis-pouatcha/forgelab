@@ -23,6 +23,7 @@ import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSe
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchService;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSource;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -55,7 +56,7 @@ public class ModalArticleLotDetailsCreateController {
 	private ArticleLotDetailsService articleLotDetailsService;
 
 	@Inject
-	@EntityCreateDoneEvent
+	@EntityEditDoneEvent
 	private Event<ArticleLot> articleLotCreateDoneEvent;
 
 	@Inject

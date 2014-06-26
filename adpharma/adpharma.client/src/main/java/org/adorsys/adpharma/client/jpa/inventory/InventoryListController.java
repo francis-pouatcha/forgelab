@@ -1,21 +1,16 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
-import java.awt.Desktop;
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -25,15 +20,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchService;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -51,9 +43,6 @@ import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
-
-import com.google.common.collect.Lists;
-import com.lowagie.text.DocumentException;
 
 @Singleton
 public class InventoryListController implements EntityController
@@ -97,11 +86,9 @@ public class InventoryListController implements EntityController
 
 	@Inject
 	private InventorySearchInput searchInput ;
-
-
 	@Inject
-	private SecurityUtil securityUtil;
-
+	@PrintRequestedEvent
+	private Event<InventoryRepportData> printRequest;
 
 
 	@PostConstruct
@@ -144,18 +131,21 @@ public class InventoryListController implements EntityController
 			public void handle(ActionEvent event) {
 				Inventory inventory = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(inventory!=null){
-					Login login = securityUtil.getConnectedUser();
-					LoginAgency agency = securityUtil.getAgency();
-					Iterator<InventoryItem> iterator = listView.getDataListItem().getItems().iterator();
-					try {
-						InventoryComptRepportTemplatePdf repportTemplatePdf = new InventoryComptRepportTemplatePdf(login, agency, inventory);
-						repportTemplatePdf.addItems(Lists.newArrayList(iterator));
-						repportTemplatePdf.closeDocument();
-						Desktop.getDesktop().open(new File(repportTemplatePdf.getFileName()));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					InventoryRepportData inventoryRepportData = new InventoryRepportData(inventory);
+					printRequest.fire(inventoryRepportData);
+				}
+
+			}
+		});
+		listView.getPrintRepportButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Inventory inventory = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(inventory!=null){
+					InventoryRepportData inventoryRepportData = new InventoryRepportData(inventory);
+					inventoryRepportData.setCountRepport(false);
+					printRequest.fire(inventoryRepportData);
 				}
 
 			}

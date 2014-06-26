@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -63,6 +64,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -71,6 +73,7 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -116,6 +119,10 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<SalesOrderSearchResult> entityListPageIndexChangedEvent;
+
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<SalesOrderAdvenceSearchData> advenceSearchRequestEvent;
 
 	private SalesOrderSearchResult searchResult;
 
@@ -169,7 +176,15 @@ public class SalesOrderListController implements EntityController
 		searchInput.setMax(100);
 
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
+		listView.getAdvenceSearchButton().setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) {
+				SalesOrderAdvenceSearchData searchData = new SalesOrderAdvenceSearchData();
+				advenceSearchRequestEvent.fire(searchData);
+
+			}
+		});
 
 		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SalesOrder>() {
 			@Override
@@ -182,7 +197,7 @@ public class SalesOrderListController implements EntityController
 					listView.getPrintVoucherButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getAlreadyReturned()));
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-//					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					//					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
 					sosi.setMax(-1);
 					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
@@ -352,7 +367,7 @@ public class SalesOrderListController implements EntityController
 			public void handle(ActionEvent e)
 			{						
 				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(27);
+				searchInput.setMax(30);
 				salesOrderSearchService.setSearchInputs(searchInput).start();
 
 			}
@@ -404,11 +419,12 @@ public class SalesOrderListController implements EntityController
 				s.reset();
 				ArrayList<SalesOrderCustomer> soc = new ArrayList<SalesOrderCustomer>();
 				List<Customer> resultList = result.getResultList();
+				Customer emptyCustomer = new Customer();
+				emptyCustomer.setFullName("TOUS LES CLIENTS");
+				resultList.add(0,emptyCustomer);
 				for (Customer customer : resultList) {
 					soc.add(new SalesOrderCustomer(customer));
 				}
-				soc.add(0, null);
-				resultList.add(new Customer());
 				listView.getCustomer().getItems().setAll(soc);
 				listView.getCustomer().getSelectionModel().select(0);
 				listView.getChartClientList().getItems().setAll(resultList);
@@ -486,18 +502,18 @@ public class SalesOrderListController implements EntityController
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
 				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					 customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				if(StringUtils.isBlank(customerName)){
 					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
 				}else {
-//					Customer customer = new Customer();
-//					customer.setFirstName(customerName);
-//					customer.setFullName(customerName);
-//					customer.setLastName(customerName);
-//					changeCustomerService.setCustomer(customer);
+					//					Customer customer = new Customer();
+					//					customer.setFirstName(customerName);
+					//					customer.setFullName(customerName);
+					//					customer.setLastName(customerName);
+					//					changeCustomerService.setCustomer(customer);
 					selectedSalesOrderId.setCustomerName(customerName);
 					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
-//					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
+					//					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
 				}
 			}
 		});
@@ -546,8 +562,7 @@ public class SalesOrderListController implements EntityController
 		List<SalesOrder> entities = searchResult.getResultList();
 		if (entities == null)
 			entities = new ArrayList<SalesOrder>();
-		listView.getDataList().getItems().clear();
-		listView.getDataList().getItems().addAll(entities);
+		listView.getDataList().getItems().setAll(entities);
 		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 100;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);

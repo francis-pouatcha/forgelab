@@ -46,15 +46,16 @@ public class InventoryComptRepportTemplatePdf {
 	private Login login ;
 	private PdfPTable reportTable;
 	private String pdfFileName;
-
+	private boolean isCountRepport ;
 
 	public InventoryComptRepportTemplatePdf(
 			Login login, 
 			LoginAgency agency, 
-			Inventory inventory) throws DocumentException {
-		this.inventory = inventory;
+			InventoryRepportData data) throws DocumentException {
+		this.inventory = data.getInventory();
 		this.login = login;
 		this.agency = agency;
+		this.isCountRepport = data.isCountRepport();
 		PropertyReader.copy(login.getAgency(), agency);
 		pdfFileName = "inventory_"+inventory.getInventoryNumber() + ".pdf";
 
@@ -78,23 +79,28 @@ public class InventoryComptRepportTemplatePdf {
 
 	public void addItems(List<InventoryItem> items) {
 		int artNamelenght = 68 ;
+		BigDecimal total = BigDecimal.ZERO;
 		for (InventoryItem item : items) {
 			String articleName = item.getArticle().getArticleName();
 			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
-
-			newTableRow(item.getInternalPic(), 
-					articleName, 
-					item.getExpectedQty(), 
-					"",
-					"");
+			if(isCountRepport){
+				newCountRepportTableRow(item.getInternalPic(), articleName, null, "");
+			}else {
+				newTableRow(item.getInternalPic(), articleName, item.getExpectedQty(), item.getAsseccedQty(), item.getGap(), item.getGapTotalSalePrice());
+				total = total.add(item.getGapTotalSalePrice());
+			}
 		}
+		if(!isCountRepport)
+			newTableRow("", "Total :", null, null, null, total);
+
 	}
 
 	private void newTableRow(String internalPic, 
 			String articleName,
 			BigDecimal expectedQty,
-			String realQty,
-			String observation
+			BigDecimal realQty,
+			Long ecart,
+			BigDecimal montant
 			) {
 
 
@@ -113,7 +119,38 @@ public class InventoryComptRepportTemplatePdf {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(realQty));
+		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(ecart+"")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(montant!=null?montant.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+
+
+	}
+
+	private void newCountRepportTableRow(String internalPic, 
+			String articleName,
+			BigDecimal realQty,
+			String observation
+			) {
+
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(internalPic));
+		reportTable.addCell(pdfPCell);
+		pdfPCell.setFixedHeight(4);
+
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(articleName));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -125,8 +162,9 @@ public class InventoryComptRepportTemplatePdf {
 
 
 
+
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .57f, .1f,.1f,.1f});
+		reportTable = new PdfPTable(new float[]{ .13f, .47f, .1f,.1f,.1f,.1f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -148,6 +186,34 @@ public class InventoryComptRepportTemplatePdf {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Ecart"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Montant"));
+		reportTable.addCell(pdfPCell);
+
+
+	}
+
+	private void fillCountRepportTableHaeder() throws DocumentException {
+		reportTable = new PdfPTable(new float[]{ .13f, .57f, .1f,.2f});
+		reportTable.setWidthPercentage(100);
+		reportTable.setHeaderRows(1);
+
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("CIPM"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Designation"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Stock R"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("OBS"));
 		reportTable.addCell(pdfPCell);
 
@@ -156,7 +222,7 @@ public class InventoryComptRepportTemplatePdf {
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("FICHE DE COMPTAGE INVENTAIRE NUM: "+inventory.getInventoryNumber()));
+		Paragraph paragraph = new Paragraph(new BoldText("FICHE INVENTAIRE NUM: "+inventory.getInventoryNumber()));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
@@ -250,7 +316,11 @@ public class InventoryComptRepportTemplatePdf {
 		if(reportTable!=null)
 			reportTable.getRows().clear();
 		printReportHeader();
-		fillTableHaeder();
+		if(isCountRepport){
+			fillCountRepportTableHaeder();
+		}else {
+			fillTableHaeder();
+		}
 	}
 
 	public void closeReport() {

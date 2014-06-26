@@ -228,5 +228,7 @@ public class SecurityUtil {
 		this.permissions = Collections.emptySet();
 		permissionsEvent.fire(Collections.unmodifiableSet(permissions));
 	}
+	
+	
 
 }

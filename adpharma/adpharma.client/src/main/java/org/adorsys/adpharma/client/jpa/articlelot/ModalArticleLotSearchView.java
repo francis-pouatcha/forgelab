@@ -68,10 +68,12 @@ public class ModalArticleLotSearchView extends ApplicationModal{
 //		viewBuilder.addStringColumn(dataList, "secondaryPic", "ArticleLot_secondaryPic_description.title", resourceBundle);
 		//	      viewBuilder.addStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,300d);
-		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+//		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ArticleLot_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ArticleLot_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addStringColumn(dataList, "article.clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "vat.rate", "ArticleLot_vat_description.title", resourceBundle, NumberType.INTEGER, locale);
+
 		//	      viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "ArticleLot_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//	      viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "ArticleLot_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//	      viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "ArticleLot_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);

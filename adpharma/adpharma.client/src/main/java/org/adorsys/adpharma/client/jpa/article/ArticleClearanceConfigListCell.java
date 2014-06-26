@@ -15,7 +15,7 @@ public class ArticleClearanceConfigListCell extends AbstractToStringListCell<Art
       {
          return "";
       }
-      return PropertyReader.buildToString(item, "startDate", "endDate", "discountRate", "clearanceState");
+      return PropertyReader.buildToString(item,  "discountRate");
    }
 
 }

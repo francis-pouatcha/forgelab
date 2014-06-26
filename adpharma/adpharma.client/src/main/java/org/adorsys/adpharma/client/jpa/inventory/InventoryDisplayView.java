@@ -65,6 +65,12 @@ public class InventoryDisplayView
 
 	@FXML
 	private Button ordonnancierButton;
+	
+	@FXML
+	private Button printRepportButton;
+	
+	@FXML
+	private Button printButton;
 
 
 	@FXML
@@ -146,14 +152,6 @@ public class InventoryDisplayView
 	@FXML
 	private ContextMenu datalistContextMenu;
 
-	//	@FXML
-	//	private MenuItem deleteSOIMenu;
-	//
-	//	@FXML
-	//	private MenuItem editSOIMenu;
-
-	@FXML
-	private MenuItem returnSOIMenu;
 
 	@Inject
 	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
@@ -247,20 +245,17 @@ public class InventoryDisplayView
 	public void bind(Inventory model)
 	{
 		gapPA.numberProperty().bindBidirectional(model.gapPurchaseAmountProperty());
-		//		gap.numberProperty().bindBidirectional(model.());
 		gapPV.numberProperty().bindBidirectional(model.gapSaleAmountProperty());
-		//		tax.valueProperty().bindBidirectional(model.vatProperty());
 		section.valueProperty().bindBidirectional(model.sectionProperty());
 		status.valueProperty().bindBidirectional(model.inventoryStatusProperty());
 		agent.valueProperty().bindBidirectional(model.recordingUserProperty());
 		dataList.itemsProperty().bindBidirectional(model.inventoryItemsProperty());
 		inventoryItemBar.visibleProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		closeButton.disableProperty().bind(model.inventoryStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-//		asseccedQtyColumn.editableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		returnSOIMenu.disableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		code.textProperty().bindBidirectional(model.inventoryNumberProperty());
 		asseccedQtyColumn.editableProperty().bind(model.inventoryStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		//		view.bind(model);
+
 	}
 
 	public void bind(InventoryItem item){
@@ -362,6 +357,14 @@ public class InventoryDisplayView
 	public Button getOkButton() {
 		return okButton;
 	}
+	
+	public Button getPrintRepportButton() {
+		return printRepportButton;
+	}
+	
+	public Button getPrintButton() {
+		return printButton;
+	}
 
 
 
@@ -428,9 +431,6 @@ public class InventoryDisplayView
 	//		return editSOIMenu;
 	//	}
 
-	public MenuItem getReturnSOIMenu() {
-		return returnSOIMenu;
-	}
 
 	public TableColumn<InventoryItem, BigDecimal> getAsseccedQtyColumn() {
 		return asseccedQtyColumn;

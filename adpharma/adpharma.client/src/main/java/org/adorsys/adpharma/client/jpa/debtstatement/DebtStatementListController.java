@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.debtstatement;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,12 +32,17 @@ import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssoc;
+import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocRemoveService;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchInput;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchResult;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchService;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
+import org.adorsys.adpharma.client.jpa.vat.VAT;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -45,15 +51,22 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
-import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 import com.google.common.collect.Lists;
@@ -74,12 +87,12 @@ public class DebtStatementListController implements EntityController
 	private Event<DebtStatement> searchRequestedEvent;
 
 	@Inject
-	@EntityRemoveRequestEvent
-	private Event<DebtStatement> removeRequest;
+	private DebtStatementRemoveService removeService;
+
 
 	@Inject
 	@EntityCreateRequestedEvent
-	private Event<DebtStatement> createRequestedEvent;
+	private Event<DebtStatementProcessingData> createRequestedEvent;
 
 	@Inject
 	@EntityListPageIndexChangedEvent
@@ -107,7 +120,22 @@ public class DebtStatementListController implements EntityController
 	private SecurityUtil securityUtil ;
 
 	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showprogressEvent ;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressEvent ;
+
+	@Inject
 	private DebtStatementCustomerInvoiceAssocSearchService statementCustomerInvoiceAssocSearchService ;
+
+	@Inject
+	private DebtStatementCustomerInvoiceAssocSearchService statementCustomerInvoiceAssocSearchForRemoveServiceService ;
+
+	@Inject
+	private DebtStatementCustomerInvoiceAssocRemoveService statementCustomerInvoiceAssocRemoveService ;
+
 	@Inject
 	private Locale locale ;
 
@@ -115,6 +143,7 @@ public class DebtStatementListController implements EntityController
 	public void postConstruct()
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.getRemoveButton().disableProperty().bind(removeService.runningProperty());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
@@ -124,6 +153,28 @@ public class DebtStatementListController implements EntityController
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
 
+			}
+		});
+
+		listView.getRemoveInvoiceButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				CustomerInvoice invoice = listView.getDataListItem().getSelectionModel().getSelectedItem();
+				DebtStatement debtStatement = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(invoice!=null&&debtStatement!=null&& !DocumentProcessingState.CLOSED.equals(debtStatement.getStatementStatus())){
+					Action showConfirm = Dialogs.create().message("Confirmer la Suppression de cette ligne ").showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						DebtStatementCustomerInvoiceAssocSearchInput dbtsci = new DebtStatementCustomerInvoiceAssocSearchInput();
+						dbtsci.getEntity().setSource(debtStatement);
+						dbtsci.getEntity().setTarget(invoice);
+						dbtsci.getFieldNames().add("source");
+						dbtsci.getFieldNames().add("target");
+						dbtsci.setMax(-1);
+						statementCustomerInvoiceAssocSearchForRemoveServiceService.setSearchInputs(dbtsci).start();
+
+					}
+				}
 			}
 		});
 
@@ -137,9 +188,7 @@ public class DebtStatementListController implements EntityController
 			{
 				if (newValue != null){
 					listView.getRemoveButton().disableProperty().unbind();
-					listView.getRemoveButton().disableProperty().bind(newValue.statementStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					DebtStatementCustomerInvoiceAssocSearchInput dbtsci = new DebtStatementCustomerInvoiceAssocSearchInput();
-					dbtsci.getEntity().setSource(newValue);
 					dbtsci.getEntity().setSource(newValue);
 					dbtsci.getFieldNames().add("source");
 					dbtsci.setMax(-1);
@@ -147,6 +196,36 @@ public class DebtStatementListController implements EntityController
 				}
 			}
 				});
+		statementCustomerInvoiceAssocSearchForRemoveServiceService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DebtStatementCustomerInvoiceAssocSearchService s = (DebtStatementCustomerInvoiceAssocSearchService) event.getSource();
+				DebtStatementCustomerInvoiceAssocSearchResult value = s.getValue();
+				event.consume();
+				s.reset();
+				List<DebtStatementCustomerInvoiceAssoc> resultList = value.getResultList();
+				if(!resultList.isEmpty()){
+					statementCustomerInvoiceAssocRemoveService.setEntity(resultList.iterator().next()).start();
+				}
+			}
+		});
+		statementCustomerInvoiceAssocSearchForRemoveServiceService.setOnFailed(callFailedEventHandler);
+
+
+		statementCustomerInvoiceAssocRemoveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DebtStatementCustomerInvoiceAssocRemoveService s = (DebtStatementCustomerInvoiceAssocRemoveService) event.getSource();
+				DebtStatementCustomerInvoiceAssoc value = s.getValue();
+				event.consume();
+				s.reset();
+				handleEditDoneEvent(value.getSource());
+				listView.getDataListItem().getItems().remove(value.getTarget());
+			}
+		});
+		statementCustomerInvoiceAssocRemoveService.setOnFailed(callFailedEventHandler);
 
 		statementCustomerInvoiceAssocSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -191,8 +270,13 @@ public class DebtStatementListController implements EntityController
 			public void handle(ActionEvent e)
 			{
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null && !DocumentProcessingState.CLOSED.equals(selectedItem.statementStatusProperty()))
-					removeRequest.fire(selectedItem);
+				Action message = Dialogs.create().message("Etes vous sure de vouloir suprimer ?").showConfirm();
+				if(Dialog.Actions.YES.equals(message))
+					if(selectedItem!=null && !DocumentProcessingState.CLOSED.equals(selectedItem.statementStatusProperty())){
+						removeService.setEntity(selectedItem).start();
+						showprogressEvent.fire(new Object());
+						//						listView.getDataList().getItems().remove(selectedItem);
+					}
 			}
 				});
 
@@ -223,6 +307,20 @@ public class DebtStatementListController implements EntityController
 				searchService.setSearchInputs(searchInput).start();
 			}
 				});
+		removeService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DebtStatementRemoveService s = (DebtStatementRemoveService) event.getSource();
+				DebtStatement value = s.getValue();
+				event.consume();
+				s.reset();
+				hideProgressEvent.fire(new Object());
+				listView.getDataListItem().getItems().clear();
+
+			}
+		});
+		removeService.setOnFailed(callFailedEventHandler);
 
 		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -262,6 +360,14 @@ public class DebtStatementListController implements EntityController
 
 			}
 		});
+		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				exportDeliveryToXls();
+
+			}
+		});
 		insurrerSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -293,14 +399,14 @@ public class DebtStatementListController implements EntityController
 			}
 		});
 
-		//		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-		//				{
-		//			@Override
-		//			public void handle(ActionEvent e)
-		//			{
-		//				orderPreparationEventData.fire(new DebtStatementPreparationData());
-		//			}
-		//				});
+		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				createRequestedEvent.fire(new DebtStatementProcessingData());
+			}
+				});
 
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{
@@ -353,8 +459,7 @@ public class DebtStatementListController implements EntityController
 		List<DebtStatement> entities = searchResult.getResultList();
 		if (entities == null)
 			entities = new ArrayList<DebtStatement>();
-		listView.getDataList().getItems().clear();
-		listView.getDataList().getItems().addAll(entities);
+		listView.getDataList().getItems().setAll(entities);
 		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);
@@ -415,7 +520,101 @@ public class DebtStatementListController implements EntityController
 
 	}
 
+
+
 	public void reset() {
 		listView.getDataList().getItems().clear();
+	}
+
+	@SuppressWarnings("resource")
+	public void exportDeliveryToXls(){
+		DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+		String debtStmenetNumber = selectedItem.getStatementNumber(); 
+
+		
+		HSSFWorkbook deleveryXls = new HSSFWorkbook();
+		int rownum = 0 ;
+		int cellnum = 0 ;
+		HSSFCell cell ;
+		HSSFSheet sheet = deleveryXls.createSheet(debtStmenetNumber);
+		HSSFRow head = sheet.createRow(rownum++);
+		
+		cell = head.createCell(cellnum++);
+		cell.setCellValue(selectedItem.getInsurrance().getFullName());
+		
+		 cellnum = 0 ;
+		HSSFRow header = sheet.createRow(rownum++);
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("Facture");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("matricule");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("client");
+
+		//		cell = header.createCell(cellnum++);
+		//		cell.setCellValue("employeur");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("date");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("total");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("montant");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("taux");
+
+		if( selectedItem!=null&&sheet!=null){
+			Iterator<CustomerInvoice> iterator = listView.getDataListItem().getItems().iterator();
+			List<CustomerInvoice> items = Lists.newArrayList(iterator);
+			for (CustomerInvoice item : items) {
+
+					cellnum = 0 ;
+					HSSFRow row = sheet.createRow(rownum++);
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getSalesOrder()+"");
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getInsurance().getCustomer().getSerialNumber());
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getCustomer().getFullName());
+
+					if(item.getCreationDate()!=null){
+						cell = row.createCell(cellnum++);
+						cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"dd-MM-yyyy"));
+					}else {
+						cell = row.createCell(cellnum++);
+						cell.setCellValue("");
+					}
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getNetToPay().toBigInteger()+"");
+
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getInsurranceRestTopay().toBigInteger()+"");
+					
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(item.getInsurance().getCoverageRate().toBigInteger()+"%");
+
+
+
+
+			}
+			try {
+				File file = new File(debtStmenetNumber+".xls");
+				FileOutputStream outputStream = new FileOutputStream(file);
+				deleveryXls.write(outputStream);
+				outputStream.close();
+				Desktop.getDesktop().open(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

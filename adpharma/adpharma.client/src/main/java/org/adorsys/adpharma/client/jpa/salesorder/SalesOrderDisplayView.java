@@ -242,6 +242,8 @@ public class SalesOrderDisplayView
 	}
 
 	public void buildInsurranceGrid(){
+		insurrer.setTooltip(new Tooltip("Assurreur"));
+		client.setTooltip(new Tooltip("CLient"));
 		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.INTEGER,locale,false);
 		discountRate.setEditable(true);
 		rigthGrid.add(discountRate, 1, 3);

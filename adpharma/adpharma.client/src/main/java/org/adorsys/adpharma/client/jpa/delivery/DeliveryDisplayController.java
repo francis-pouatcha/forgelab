@@ -417,7 +417,7 @@ public class DeliveryDisplayController implements EntityController
 				DeliveryItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().add(createdItem);
+				displayView.getDataList().getItems().add(0,createdItem);
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
 				displayView.getMainPic().requestFocus();

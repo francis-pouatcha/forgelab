@@ -10,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
@@ -20,8 +22,10 @@ import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc_;
+import org.adorsys.adpharma.server.jpa.DebtStatementProcessingData;
 import org.adorsys.adpharma.server.jpa.DebtStatement_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.repo.DebtStatementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
@@ -32,117 +36,210 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class DebtStatementEJB
 {
 
-   @Inject
-   private DebtStatementRepository repository;
+	@Inject
+	private DebtStatementRepository repository;
 
-   @Inject
-   private CustomerMerger customerMerger;
+	@Inject
+	private CustomerMerger customerMerger;
 
-   @Inject
-   private DebtStatementCustomerInvoiceAssocMerger debtStatementCustomerInvoiceAssocMerger;
+	@Inject
+	private DebtStatementCustomerInvoiceAssocMerger debtStatementCustomerInvoiceAssocMerger;
 
-   @Inject
-   private AgencyMerger agencyMerger;
-   
-   @EJB
-   private SecurityUtil securityUtil;
+	@Inject
+	private AgencyMerger agencyMerger;
 
-   public DebtStatement create(DebtStatement entity)
-   {
-	   DebtStatement save = repository.save(attach(entity)); 
+	@EJB
+	private SecurityUtil securityUtil;
+
+	@Inject
+	private EntityManager em ;
+
+	public DebtStatement create(DebtStatement entity)
+	{
+		DebtStatement save = repository.save(attach(entity)); 
 		save.setStatementNumber((SequenceGenerator.DEBTS_INVOICE_SEQUENCE_PREFIXE+save.getId()));
-      return repository.save(attach(entity));
-   }
+		return repository.save(attach(entity));
+	}
 
-   public DebtStatement deleteById(Long id)
-   {
-      DebtStatement entity = repository.findBy(id);
-      if (entity != null)
-      {
-         repository.remove(entity);
-      }
-      return entity;
-   }
-
-   public DebtStatement update(DebtStatement entity)
-   {
-      return repository.save(attach(entity));
-   }
-
-   public DebtStatement findById(Long id)
-   {
-      return repository.findBy(id);
-   }
-
-   public List<DebtStatement> listAll(int start, int max)
-   {
-      return repository.findAll(start, max);
-   }
-
-   public Long count()
-   {
-      return repository.count();
-   }
-
-   public List<DebtStatement> findBy(DebtStatement entity, int start, int max, SingularAttribute<DebtStatement, ?>[] attributes)
-   {
-      return repository.findBy(entity, start, max, attributes);
-   }
-
-   public Long countBy(DebtStatement entity, SingularAttribute<DebtStatement, ?>[] attributes)
-   {
-      return repository.count(entity, attributes);
-   }
-
-   public List<DebtStatement> findByLike(DebtStatement entity, int start, int max, SingularAttribute<DebtStatement, ?>[] attributes)
-   {
-      return repository.findByLike(entity, start, max, attributes);
-   }
-
-   public Long countByLike(DebtStatement entity, SingularAttribute<DebtStatement, ?>[] attributes)
-   {
-      return repository.countLike(entity, attributes);
-   }
-
-   private DebtStatement attach(DebtStatement entity)
-   {
-      if (entity == null)
-         return null;
-
-      // aggregated
-      entity.setInsurrance(customerMerger.bindAggregated(entity.getInsurrance()));
-
-      // aggregated
-      entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
-
-      // aggregated collection
-      debtStatementCustomerInvoiceAssocMerger.bindAggregated(entity.getInvoices());
-
-      return entity;
-   }
-
-   @EJB
-   private DebtStatementCustomerInvoiceAssocEJB debtStatementCustomerInvoiceAssocEJB;
-   
-   /**
-    * Processes changes on customer invoices into debt statements.
-    * 
-    * If there is any debt and this invoice is not yet part of an open debt statement,
-    * makes it part of one.
-    * 
-    * @param customerInvoice
-    */
-	public void handleCustomerInvoiceProcessed(@Observes @DocumentProcessedEvent CustomerInvoice customerInvoice){
-		BigDecimal customerRestTopay = customerInvoice.getCustomerRestTopay();
-		if(customerRestTopay!=null && customerRestTopay.compareTo(BigDecimal.ZERO)>0){
-			addToDebtStatement(customerInvoice, customerRestTopay, customerInvoice.getCustomer());
+	public DebtStatement deleteById(Long id)
+	{
+		DebtStatement entity = repository.findBy(id);
+		if (entity != null)
+		{
+			DebtStatementCustomerInvoiceAssoc dcia = new DebtStatementCustomerInvoiceAssoc();
+			dcia.setSource(entity);
+			List<DebtStatementCustomerInvoiceAssoc> dciaFound = debtStatementCustomerInvoiceAssocEJB.findBy(dcia, 0, -1, new SingularAttribute[]{DebtStatementCustomerInvoiceAssoc_.source});
+			for (DebtStatementCustomerInvoiceAssoc debtStatementCustomerInvoiceAssoc : dciaFound) {
+				debtStatementCustomerInvoiceAssocEJB.deleteById(debtStatementCustomerInvoiceAssoc.getId());
+			}
+			repository.remove(entity);
 		}
-		BigDecimal insurranceRestTopay = customerInvoice.getInsurranceRestTopay();
-		if(insurranceRestTopay!=null && insurranceRestTopay.compareTo(BigDecimal.ZERO)>0){
-			addToDebtStatement(customerInvoice, insurranceRestTopay, customerInvoice.getInsurance().getInsurer());
+		return entity;
+	}
+
+	public DebtStatement update(DebtStatement entity)
+	{
+		return repository.save(attach(entity));
+	}
+
+	public DebtStatement findById(Long id)
+	{
+		return repository.findBy(id);
+	}
+
+	public List<DebtStatement> listAll(int start, int max)
+	{
+		return repository.findAll(start, max);
+	}
+
+	public Long count()
+	{
+		return repository.count();
+	}
+
+	public List<DebtStatement> findBy(DebtStatement entity, int start, int max, SingularAttribute<DebtStatement, ?>[] attributes)
+	{
+		return repository.findBy(entity, start, max, attributes);
+	}
+
+	public Long countBy(DebtStatement entity, SingularAttribute<DebtStatement, ?>[] attributes)
+	{
+		return repository.count(entity, attributes);
+	}
+
+	public List<DebtStatement> findByLike(DebtStatement entity, int start, int max, SingularAttribute<DebtStatement, ?>[] attributes)
+	{
+		return repository.findByLike(entity, start, max, attributes);
+	}
+
+	public Long countByLike(DebtStatement entity, SingularAttribute<DebtStatement, ?>[] attributes)
+	{
+		return repository.countLike(entity, attributes);
+	}
+
+	private DebtStatement attach(DebtStatement entity)
+	{
+		if (entity == null)
+			return null;
+
+		// aggregated
+		entity.setInsurrance(customerMerger.bindAggregated(entity.getInsurrance()));
+
+		// aggregated
+		entity.setAgency(agencyMerger.bindAggregated(entity.getAgency()));
+
+		// aggregated collection
+		debtStatementCustomerInvoiceAssocMerger.bindAggregated(entity.getInvoices());
+
+		return entity;
+	}
+
+	@EJB
+	private DebtStatementCustomerInvoiceAssocEJB debtStatementCustomerInvoiceAssocEJB;
+
+
+	public List<CustomerInvoice>  findInvoices(DebtStatementProcessingData data ){
+		List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>() ;
+
+		String query ="SELECT s FROM CustomerInvoice AS s WHERE s.insurance != NULL AND s.salesOrder.cashed = :cashed AND s.invoiceType = :invoiceType ";
+		if(data.getFromDate()!=null)
+			query = query+" AND s.creationDate >= :fromDate ";
+
+		if(data.getToDate()!=null)
+			query = query+" AND s.creationDate <= :toDate ";
+
+		if(data.getCustomer()!=null)
+			query = query+" AND s.insurance.insurer = :insurer ";
+		
+		query = query+" ORDER BY s.creationDate ASC ";
+
+		Query querys = em.createQuery(query) ;
+
+		if(data.getFromDate()!=null)
+			querys.setParameter("fromDate", data.getFromDate());
+
+		if(data.getToDate()!=null)
+			querys.setParameter("toDate", data.getToDate());
+
+		if(data.getCustomer()!=null)
+			querys.setParameter("insurer", data.getCustomer());
+		querys.setParameter("cashed", Boolean.TRUE);
+		querys.setParameter("invoiceType", InvoiceType.CASHDRAWER);
+
+		customerInvoices = (List<CustomerInvoice>) querys.getResultList();
+		return customerInvoices ;
+	}
+
+
+	public DebtStatement createDebtStatement(DebtStatementProcessingData data ){
+		// create the debt statement ofr this invoice
+		Login connectedUser = securityUtil.getConnectedUser();
+		Agency agency = connectedUser.getAgency();
+		// create a new DebtStatement
+		DebtStatement	debtStatement = new DebtStatement();
+		debtStatement.setStatementNumber(RandomStringUtils.randomAlphanumeric(7));
+		debtStatement.setAdvancePayment(BigDecimal.ZERO);
+		debtStatement.setAgency(agency);
+		debtStatement.setAmountFromVouchers(BigDecimal.ZERO);
+		debtStatement.setCanceled(Boolean.FALSE);
+		debtStatement.setInitialAmount(BigDecimal.ZERO);
+		debtStatement.setInsurrance(data.getCustomer());
+		debtStatement.setRestAmount(BigDecimal.ZERO);
+		debtStatement.setSettled(Boolean.FALSE);
+		debtStatement.setUseVoucher(Boolean.TRUE);
+		debtStatement.setStatementStatus(DocumentProcessingState.ONGOING);
+		debtStatement.setPaymentDate(data.getExpectedPayementDate());
+		debtStatement = create(debtStatement);
+
+		List<CustomerInvoice> findInvoices = findInvoices(data);
+		for (CustomerInvoice customerInvoice : findInvoices) {
+			addInvoiceToDebtStatement(customerInvoice, debtStatement);
 		}
-	}   
-	
+		debtStatement.setRestAmount(debtStatement.getInitialAmount().subtract(debtStatement.getAdvancePayment()).subtract(debtStatement.getAmountFromVouchers()));
+
+		return update(debtStatement);
+
+
+	}
+
+
+	public void addInvoiceToDebtStatement(CustomerInvoice customerInvoice,DebtStatement debtStatement){
+		DebtStatementCustomerInvoiceAssoc dcia = new DebtStatementCustomerInvoiceAssoc();
+		dcia.setTarget(customerInvoice);
+		List<DebtStatementCustomerInvoiceAssoc> dciaFound = debtStatementCustomerInvoiceAssocEJB.findBy(dcia, 0, -1, new SingularAttribute[]{DebtStatementCustomerInvoiceAssoc_.target});
+		for (DebtStatementCustomerInvoiceAssoc d : dciaFound) {
+			debtStatement = d.getSource();
+			if(debtStatement.getInsurrance().equals(debtStatement.getInsurrance())) return; // This invoice is part of a debt statement of this payer.
+		}
+		// now add the invoice to the debt statement.
+		DebtStatementCustomerInvoiceAssoc dcas = new DebtStatementCustomerInvoiceAssoc();
+		dcas.setSource(debtStatement);
+		dcas.setTarget(customerInvoice);
+		dcas.setSourceQualifier("invoices");
+		dcas.setTargetQualifier("source");
+		debtStatementCustomerInvoiceAssocEJB.create(dcas);
+		debtStatement.setInitialAmount(debtStatement.getInitialAmount().add(customerInvoice.getInsurranceRestTopay()));
+	}
+
+	/**
+//	 * Processes changes on customer invoices into debt statements.
+//	 * 
+//	 * If there is any debt and this invoice is not yet part of an open debt statement,
+//	 * makes it part of one.
+//	 * 
+//	 * @param customerInvoice
+//	 */
+	//	public void handleCustomerInvoiceProcessed(@Observes @DocumentProcessedEvent CustomerInvoice customerInvoice){
+	//		BigDecimal customerRestTopay = customerInvoice.getCustomerRestTopay();
+	//		if(customerRestTopay!=null && customerRestTopay.compareTo(BigDecimal.ZERO)>0){
+	//			addToDebtStatement(customerInvoice, customerRestTopay, customerInvoice.getCustomer());
+	//		}
+	//		BigDecimal insurranceRestTopay = customerInvoice.getInsurranceRestTopay();
+	//		if(insurranceRestTopay!=null && insurranceRestTopay.compareTo(BigDecimal.ZERO)>0){
+	//			addToDebtStatement(customerInvoice, insurranceRestTopay, customerInvoice.getInsurance().getInsurer());
+	//		}
+	//	}   
+
 	@SuppressWarnings("unchecked")
 	private void addToDebtStatement(CustomerInvoice customerInvoice, BigDecimal restTopay, Customer payer){
 		DebtStatement debtStatement = null;
@@ -157,7 +254,7 @@ public class DebtStatementEJB
 		// create the debt statement ofr this invoice
 		Login connectedUser = securityUtil.getConnectedUser();
 		Agency agency = connectedUser.getAgency();
-		
+
 		// find the debt statement associated with this customer
 		debtStatement = new DebtStatement();
 		debtStatement.setInsurrance(customerInvoice.getCustomer());
@@ -183,7 +280,7 @@ public class DebtStatementEJB
 			debtStatement.setStatementStatus(DocumentProcessingState.ONGOING);
 			debtStatement = create(debtStatement);
 		}
-		
+
 		// now add the invoice to the debt statement.
 		DebtStatementCustomerInvoiceAssoc dcas = new DebtStatementCustomerInvoiceAssoc();
 		dcas.setSource(debtStatement);
@@ -196,11 +293,11 @@ public class DebtStatementEJB
 		debtStatement.setPaymentDate(new Date());
 		update(debtStatement);
 	}
-	
+
 	@Inject
 	@DocumentClosedEvent
 	private Event<DebtStatement> debtStatementClosedEvent;
-	
+
 	/**
 	 * This will close any open debt statement of the given customer.
 	 * 

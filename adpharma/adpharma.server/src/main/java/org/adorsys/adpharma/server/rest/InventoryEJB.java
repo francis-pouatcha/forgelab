@@ -14,14 +14,16 @@ import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
+import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Inventory;
 import org.adorsys.adpharma.server.jpa.InventoryItem;
-import org.adorsys.adpharma.server.jpa.InventorySearchInput;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Section;
+import org.adorsys.adpharma.server.repo.ArticleLotRepository;
+import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.repo.InventoryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
@@ -53,13 +55,19 @@ public class InventoryEJB
 
 	@Inject
 	private InventoryItemEJB inventoryItemEJB ;
-	
+
 	@Inject
 	@DocumentClosedEvent
 	private Event<Inventory>  inventoryCloseRequestEvent ;
 
 	@Inject
 	private EntityManager em ;
+
+	@Inject
+	private ArticleRepository articlerepo ;
+
+	@Inject
+	private ArticleLotRepository articleLotrepo ;
 
 	@Inject
 	private SecurityUtil securityUtil ;
@@ -83,24 +91,26 @@ public class InventoryEJB
 		}
 		return entity;
 	}
-	
+
 	public Inventory closeInventory(Inventory inventory){
 		Inventory original = attach(inventory);
 		if(DocumentProcessingState.CLOSED.equals(original.getInventoryStatus()))
-		         return original ;
+			return original ;
 		Set<InventoryItem> inventoryItems = original.getInventoryItems();
 		original.initAmount();
 		original.setInventoryStatus(DocumentProcessingState.CLOSED);
 		for (InventoryItem item : inventoryItems) {
 			original.setGapPurchaseAmount(original.getGapPurchaseAmount().add(item.getGapTotalPurchasePrice()));
 			original.setGapSaleAmount(original.getGapSaleAmount().add(item.getGapTotalSalePrice()));
+			if(Long.valueOf(0).compareTo(item.getGap())!=0)
+				makeStockCorrection(item);
 		}
 		Inventory save = repository.save(inventory);
-		inventoryCloseRequestEvent.fire(save);
+		//		inventoryCloseRequestEvent.fire(save);
 		return save ;
 	}
-	
-	
+
+
 
 	public Inventory update(Inventory entity)
 	{
@@ -224,5 +234,36 @@ public class InventoryEJB
 		return item ;
 
 
+	}
+
+	public void makeStockCorrection(InventoryItem inventoryItem){
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setInternalPic(inventoryItem.getInternalPic());
+		articleLot.setArticle(inventoryItem.getArticle());
+		@SuppressWarnings("unchecked")
+		List<ArticleLot> found = articleLotrepo.findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+		if(!found.isEmpty()){
+			ArticleLot lot = found.iterator().next();
+			lot.setStockQuantity(inventoryItem.getAsseccedQty());
+			lot.calculateTotalAmout();
+			articleLotrepo.save(lot);
+		}
+		updateArticleStock(inventoryItem);
+	}
+
+	public void updateArticleStock(InventoryItem inventoryItem){
+		Article article = articlerepo.findBy(inventoryItem.getArticle().getId());
+		ArticleLot articleLot = new ArticleLot();
+		articleLot.setArticle(inventoryItem.getArticle());
+		@SuppressWarnings("unchecked")
+		List<ArticleLot> found = articleLotrepo.findByLike(articleLot, 0, -1, new SingularAttribute[]{ArticleLot_.article});
+		if(!found.isEmpty()){
+			BigDecimal lotStock = BigDecimal.ZERO;
+			for (ArticleLot lot : found) {
+				lotStock = lotStock.add(lot.getStockQuantity());
+			}
+			article.setQtyInStock(lotStock);
+			articlerepo.save(article);
+		}
 	}
 }

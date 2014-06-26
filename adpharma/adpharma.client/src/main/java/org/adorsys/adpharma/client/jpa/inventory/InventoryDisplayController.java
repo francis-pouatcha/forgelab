@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -53,9 +54,11 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -80,6 +83,18 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	@EntityRemoveRequestEvent
 	private Event<Inventory> removeRequest;
+
+	@Inject
+	@PrintRequestedEvent
+	private Event<InventoryRepportData> printRequest;
+
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressRequestEvent;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressRequestEvent;
 
 	@Inject
 	@AssocSelectionResponseEvent
@@ -130,7 +145,7 @@ public class InventoryDisplayController implements EntityController
 	{
 		//      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
-
+		displayView.getCloseButton().disableProperty().bind(inventoryCloseService.runningProperty());
 		/*
 		 * listen to search button and fire search requested event.
 		 * 
@@ -150,10 +165,34 @@ public class InventoryDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				inventoryCloseService.setModel(displayedEntity).start();
+				showProgressRequestEvent.fire(new Object());
+
+			}
+		});
+		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity!=null){
+					InventoryRepportData inventoryRepportData = new InventoryRepportData(displayedEntity);
+					printRequest.fire(inventoryRepportData);
+				}
 
 			}
 		});
 
+		displayView.getPrintRepportButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(displayedEntity!=null){
+					InventoryRepportData inventoryRepportData = new InventoryRepportData(displayedEntity);
+					inventoryRepportData.setCountRepport(false);
+					printRequest.fire(inventoryRepportData);
+				}
+
+			}
+		});
 		inventoryCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -162,7 +201,8 @@ public class InventoryDisplayController implements EntityController
 				Inventory closedInventory = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(closedInventory, displayedEntity);
+				handleSelectionEvent(closedInventory);
+				hideProgressRequestEvent.fire(new Object());
 
 			}
 		});

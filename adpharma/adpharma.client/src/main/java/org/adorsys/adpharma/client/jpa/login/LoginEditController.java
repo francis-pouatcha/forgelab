@@ -36,195 +36,220 @@ import org.apache.commons.lang3.StringUtils;
 public class LoginEditController implements EntityController
 {
 
-   @Inject
-   private LoginEditView editView;
+	@Inject
+	private LoginEditView editView;
 
-   @Inject
-   private LoginEditService editService;
-   @Inject
-   private ServiceCallFailedEventHandler editServiceCallFailedEventHandler;
+	@Inject
+	private LoginEditService editService;
+	@Inject
+	private ServiceCallFailedEventHandler editServiceCallFailedEventHandler;
 
-   @Inject
-   private LoginLoadService loadService;
-   @Inject
-   private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
+	@Inject
+	private LoginLoadService loadService;
+	@Inject
+	private ServiceCallFailedEventHandler loadServiceCallFailedEventHandler;
 
-   @Inject
-   @EntityEditCanceledEvent
-   private Event<Login> editCanceledEvent;
+	@Inject
+	@EntityEditCanceledEvent
+	private Event<Login> editCanceledEvent;
 
-   @Inject
-   @EntityEditDoneEvent
-   private Event<Login> editedDoneEvent;
+	@Inject
+	@EntityEditDoneEvent
+	private Event<Login> editedDoneEvent;
 
-   private Login displayedEntity;
+	private Login displayedEntity;
 
-   @Inject
-   private ErrorMessageDialog editErrorMessageDialog;
+	@Inject
+	private ErrorMessageDialog editErrorMessageDialog;
 
-   @Inject
-   private ErrorMessageDialog loadErrorMessageDialog;
+	@Inject
+	private ErrorMessageDialog loadErrorMessageDialog;
 
-   @Inject
-   @Bundle(CrudKeys.class)
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle(CrudKeys.class)
+	private ResourceBundle resourceBundle;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      // Reset
-      editView.getCancelButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent e)
-               {
-                  loadService.setId(displayedEntity.getId()).start();
-               }
-            });
+	@PostConstruct
+	public void postConstruct()
+	{
+		// Reset
+		editView.getCancelButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
+						loadService.setId(displayedEntity.getId()).start();
+					}
+				});
 
-      // Save
-      editView.getSaveButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent e)
-               {
+		// Save
+		editView.getSaveButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
 
-                  Set<ConstraintViolation<Login>> violations = editView.getView().validate(displayedEntity);
-                  if (violations.isEmpty())
-                  {
-                     editService.setLogin(displayedEntity).start();
-                  }
-                  else
-                  {
-                     editErrorMessageDialog.getTitleText().setText(
-                           resourceBundle.getString("Entity_edit_error.title"));
-                     editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
-                     editErrorMessageDialog.display();
-                  }
-               }
-            });
+						Set<ConstraintViolation<Login>> violations = editView.getView().validate(displayedEntity);
+						if (violations.isEmpty())
+						{
+							editService.setLogin(displayedEntity).start();
+						}
+						else
+						{
+							editErrorMessageDialog.getTitleText().setText(
+									resourceBundle.getString("Entity_edit_error.title"));
+							editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
+							editErrorMessageDialog.display();
+						}
+					}
+				});
 
-      // send search result event.
-      editService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            LoginEditService s = (LoginEditService) event.getSource();
-            Login entity = s.getValue();
-            event.consume();
-            s.reset();
-            PropertyReader.copy(entity, displayedEntity);
-            editedDoneEvent.fire(entity);
-         }
-      });
+		// Save
+		editView.getResetPassWordButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
 
-      editServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
-            if (!StringUtils.isBlank(message))
-               editErrorMessageDialog.getDetailText().setText(message);
-            editErrorMessageDialog.display();
-         }
-      });
-      editService.setOnFailed(editServiceCallFailedEventHandler);
-      editErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent event)
-         {
-            editErrorMessageDialog.closeDialog();
-         }
-      });
+						Set<ConstraintViolation<Login>> violations = editView.getView().validate(displayedEntity);
+						if (violations.isEmpty())
+						{
+							displayedEntity.setPassword("test");
+							editService.setLogin(displayedEntity).start();
+						}
+						else
+						{
+							editErrorMessageDialog.getTitleText().setText(
+									resourceBundle.getString("Entity_edit_error.title"));
+							editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
+							editErrorMessageDialog.display();
+						}
+					}
+				});
 
-      // Disable save button during creation
-      editView.getSaveButton().disableProperty()
-            .bind(editService.runningProperty());
 
-      // Handle edit canceld, reloading entity
-      loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            LoginLoadService s = (LoginLoadService) event.getSource();
-            Login entity = s.getValue();
-            event.consume();
-            s.reset();
-            PropertyReader.copy(entity, displayedEntity);
-            editCanceledEvent.fire(displayedEntity);
-         }
-      });
+		// send search result event.
+		editService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent event)
+			{
+				LoginEditService s = (LoginEditService) event.getSource();
+				Login entity = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(entity, displayedEntity);
+				editedDoneEvent.fire(entity);
+			}
+				});
 
-      loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            loadErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_load_error.title"));
-            if (!StringUtils.isBlank(message))
-               loadErrorMessageDialog.getDetailText().setText(message);
-            loadErrorMessageDialog.display();
-         }
-      });
-      loadService.setOnFailed(loadServiceCallFailedEventHandler);
-      loadErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent event)
-         {
-            loadErrorMessageDialog.closeDialog();
-            editCanceledEvent.fire(displayedEntity);
-         }
-      });
+		editServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
+				if (!StringUtils.isBlank(message))
+					editErrorMessageDialog.getDetailText().setText(message);
+				editErrorMessageDialog.display();
+			}
+		});
+		editService.setOnFailed(editServiceCallFailedEventHandler);
+		editErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent event)
+			{
+				editErrorMessageDialog.closeDialog();
+			}
+				});
 
-      editView.getView().addValidators();
-   }
+		// Disable save button during creation
+		editView.getSaveButton().disableProperty()
+		.bind(editService.runningProperty());
 
-   @Override
-   public void display(Pane parent)
-   {
-      editView.getView().validate(displayedEntity);
+		// Handle edit canceld, reloading entity
+		loadService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent event)
+			{
+				LoginLoadService s = (LoginLoadService) event.getSource();
+				Login entity = s.getValue();
+				event.consume();
+				s.reset();
+				PropertyReader.copy(entity, displayedEntity);
+				editCanceledEvent.fire(displayedEntity);
+			}
+				});
 
-      AnchorPane rootPane = editView.getRootPane();
-      ObservableList<Node> children = parent.getChildren();
-      if (!children.contains(rootPane))
-      {
-         children.add(rootPane);
-      }
-   }
+		loadServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				loadErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_load_error.title"));
+				if (!StringUtils.isBlank(message))
+					loadErrorMessageDialog.getDetailText().setText(message);
+				loadErrorMessageDialog.display();
+			}
+		});
+		loadService.setOnFailed(loadServiceCallFailedEventHandler);
+		loadErrorMessageDialog.getOkButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent event)
+			{
+				loadErrorMessageDialog.closeDialog();
+				editCanceledEvent.fire(displayedEntity);
+			}
+				});
 
-   @Override
-   public ViewType getViewType()
-   {
-      return ViewType.EDIT;
-   }
+		editView.getView().addValidators();
+	}
 
-   public void handleEditRequestEvent(
-         @Observes @EntityEditRequestedEvent Login p)
-   {
-      PropertyReader.copy(p, displayedEntity);
-   }
+	@Override
+	public void display(Pane parent)
+	{
+		editView.getView().validate(displayedEntity);
 
-   /**
-    * This is the only time where the bind method is called on this object.
-    * @param model
-    */
-   public void handleNewModelEvent(@Observes @SelectedModelEvent Login model)
-   {
-      this.displayedEntity = model;
-      editView.bind(this.displayedEntity);
-   }
-   
+		AnchorPane rootPane = editView.getRootPane();
+		ObservableList<Node> children = parent.getChildren();
+		if (!children.contains(rootPane))
+		{
+			children.add(rootPane);
+		}
+	}
+
+	@Override
+	public ViewType getViewType()
+	{
+		return ViewType.EDIT;
+	}
+
+	public void handleEditRequestEvent(
+			@Observes @EntityEditRequestedEvent Login p)
+	{
+		PropertyReader.copy(p, displayedEntity);
+	}
+
+	/**
+	 * This is the only time where the bind method is called on this object.
+	 * @param model
+	 */
+	public void handleNewModelEvent(@Observes @SelectedModelEvent Login model)
+	{
+		this.displayedEntity = model;
+		editView.bind(this.displayedEntity);
+	}
+
 	public void reset() {
-	     PropertyReader.copy(new Login(), displayedEntity);
+		PropertyReader.copy(new Login(), displayedEntity);
 	}
 
 
