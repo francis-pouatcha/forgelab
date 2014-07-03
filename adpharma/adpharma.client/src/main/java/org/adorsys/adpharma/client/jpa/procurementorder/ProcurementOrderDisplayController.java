@@ -25,8 +25,11 @@ import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
 import org.adorsys.adpharma.client.events.SalesOrderId;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryFromOrderServeice;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemCreateService;
@@ -36,6 +39,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -70,6 +74,10 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<ProcurementOrder> editRequestEvent;
+	
+	@Inject
+	@ComponentSelectionRequestEvent
+	private Event<ComponentSelectionRequestData> componentSelectionRequestData;
 
 	@Inject
 	@EntityRemoveRequestEvent
@@ -78,6 +86,10 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject 
 	@ModalEntitySearchRequestedEvent
 	private Event<ArticleSearchInput> modalArticleSearchEvent;
+	
+	@Inject 
+	@EntitySelectionEvent
+	private Event<Delivery> deliverySelectionRequestEvent;
 
 
 	@Inject
@@ -102,6 +114,9 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject
 	private ProcurementOrderItemCreateService itemCreateService;
 
+	@Inject
+	private DeliveryFromOrderServeice deliveryFromOrderServeice ;
+
 
 	@Inject
 	private ServiceCallFailedEventHandler serviceCallFailedEventHandler;
@@ -114,7 +129,7 @@ public class ProcurementOrderDisplayController implements EntityController
 
 	@Inject
 	private ProcurementOrderItem item ;
-	
+
 	@Inject
 	@PrintRequestedEvent
 	private Event<ProcurementOrderId> printRequestedEvent;
@@ -145,6 +160,42 @@ public class ProcurementOrderDisplayController implements EntityController
 					itemRemoveService.setEntity(selectedItem).start();
 				} else {
 					selectedItem.setQtyOrdered(newValue);
+					selectedItem.calculateTotalAmout();
+					// update article
+					itemEditService.setProcurementOrderItem(selectedItem).start();
+				}
+			}
+		});
+
+		displayView.getPurchasePricePUColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> puCell) {
+				ProcurementOrderItem selectedItem = puCell.getRowValue();
+				BigDecimal newValue = puCell.getNewValue();
+				if(newValue==null){
+					// reset old value.
+				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+
+				} else {
+					selectedItem.setPurchasePricePU(newValue);
+					selectedItem.calculateTotalAmout();
+					// update article
+					itemEditService.setProcurementOrderItem(selectedItem).start();
+				}
+			}
+		});
+
+		displayView.getSalesPricePUColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> spCell) {
+				ProcurementOrderItem selectedItem = spCell.getRowValue();
+				BigDecimal newValue = spCell.getNewValue();
+				if(newValue==null){
+					// reset old value.
+				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+
+				} else {
+					selectedItem.setSalesPricePU(newValue);
 					selectedItem.calculateTotalAmout();
 					// update article
 					itemEditService.setProcurementOrderItem(selectedItem).start();
@@ -189,7 +240,7 @@ public class ProcurementOrderDisplayController implements EntityController
 				}
 			}
 		});
-		
+
 		/*
 		 * listen to Print button.
 		 */
@@ -242,18 +293,33 @@ public class ProcurementOrderDisplayController implements EntityController
 
 		});
 
-		//      /*
-		//       * listen to search button and fire search requested event.
-		//       */
-		//      displayView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-		//      {
-		//         @Override
-		//         public void handle(ActionEvent e)
-		//         {
-		//            searchRequestedEvent.fire(displayedEntity);
-		//         }
-		//      });
-		//
+		/*
+		 * listen to save button and fire search requested event.
+		 */
+		displayView.getSaveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				deliveryFromOrderServeice.setModel(displayedEntity).start();
+			}
+				});
+
+		deliveryFromOrderServeice.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryFromOrderServeice s = (DeliveryFromOrderServeice) event.getSource();
+				Delivery delivery = s.getValue();
+				event.consume();
+				s.reset();
+				displayView.getDataList().getItems().remove(displayedEntity);
+				deliverySelectionRequestEvent.fire(delivery);
+				componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(Delivery.class.getName()));
+			}
+		});
+		deliveryFromOrderServeice.setOnFailed(serviceCallFailedEventHandler);
+
 		displayView.getCancelButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
@@ -262,6 +328,7 @@ public class ProcurementOrderDisplayController implements EntityController
 				searchRequestedEvent.fire(displayedEntity);
 			}
 				});
+
 
 		itemCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -287,6 +354,7 @@ public class ProcurementOrderDisplayController implements EntityController
 				s.reset();
 				displayView.getDataList().getItems().add(editedItem);
 				PropertyReader.copy(new ProcurementOrderItem(), item);
+				PropertyReader.copy(editedItem.getProcurementOrder(), displayedEntity);
 
 			}
 		});
@@ -302,6 +370,7 @@ public class ProcurementOrderDisplayController implements EntityController
 				s.reset();
 				displayView.getDataList().getItems().remove(removeddItem);
 				PropertyReader.copy(new ProcurementOrderItem(), item);
+				PropertyReader.copy(removeddItem.getProcurementOrder(), displayedEntity);
 
 			}
 		});
@@ -417,6 +486,6 @@ public class ProcurementOrderDisplayController implements EntityController
 	}
 
 	public void reset() {
-	     PropertyReader.copy(new ProcurementOrder(), displayedEntity);
+		PropertyReader.copy(new ProcurementOrder(), displayedEntity);
 	}
 }

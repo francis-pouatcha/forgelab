@@ -17,6 +17,7 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.PhmlOrderBuilder;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;

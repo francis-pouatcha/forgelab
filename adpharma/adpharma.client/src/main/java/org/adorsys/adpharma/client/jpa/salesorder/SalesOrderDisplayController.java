@@ -1005,6 +1005,7 @@ public class SalesOrderDisplayController implements EntityController
 		soItem.setArticle(soia);
 		soItem.setOrderedQty(BigDecimal.ONE);
 		soItem.setSalesPricePU((al.getSalesPricePU()));
+		soItem.setPurchasePricePU(al.getPurchasePricePU());
 		//		soItem.setTotalSalePrice(al.getPurchasePricePU());
 		soItem.setSalesOrder(new SalesOrderItemSalesOrder(displayedEntity));
 		soItem.setInternalPic(al.getInternalPic());

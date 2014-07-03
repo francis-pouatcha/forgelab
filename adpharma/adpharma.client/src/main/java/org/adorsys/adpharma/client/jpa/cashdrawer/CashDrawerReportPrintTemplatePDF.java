@@ -98,8 +98,8 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 					cashDrawer.getInitialAmount(),
 					cashDrawer.getTotalClientVoucher(),
 					cashDrawer.getTotalCashOut(),
-					cashDrawer.getTotalCashIn(),
-					cashDrawer.getTotalCash());
+					cashDrawer.getTotalCash(),
+					cashDrawer.getTotalCashIn());
 		}
 	}
 

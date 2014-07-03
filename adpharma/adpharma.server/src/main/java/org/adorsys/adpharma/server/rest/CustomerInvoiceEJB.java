@@ -280,7 +280,7 @@ public class CustomerInvoiceEJB {
 
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			ArticleLot articleLot = new ArticleLot();
-			articleLot.setInternalPic(salesOrderItem.getInternalPic());
+ 			articleLot.setInternalPic(salesOrderItem.getInternalPic());
 			@SuppressWarnings("unchecked")
 			List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
 			if(found.isEmpty())
@@ -369,6 +369,7 @@ public class CustomerInvoiceEJB {
 			ciItem.setPurchasedQty(salesOrderItem.getDeliveredQty());
 		}
 		ciItem.setSalesPricePU(salesOrderItem.getSalesPricePU());
+		ciItem.setPurchasePricePU(salesOrderItem.getPurchasePricePU());
 		ciItem.setTotalSalesPrice(ciItem.getSalesPricePU().multiply(ciItem.getPurchasedQty()));
 		return customerInvoiceItemEJB.create(ciItem);
 	}

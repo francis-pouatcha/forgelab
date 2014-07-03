@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -51,7 +51,7 @@ public class ProcurementOrderDisplayView
 	@FXML
 	private BorderPane rootPane;
 	@FXML
-	private VBox actionbar ;
+	private HBox actionbar ;
 
 	private Button saveButton;
 
@@ -145,6 +145,10 @@ public class ProcurementOrderDisplayView
 
 	private TableColumn<ProcurementOrderItem, BigDecimal> orderQuantityColumn;
 
+	private TableColumn<ProcurementOrderItem, BigDecimal> salesPricePUColumn;
+
+	private TableColumn<ProcurementOrderItem, BigDecimal> purchasePricePUColumn;
+
 	@Inject
 	@Bundle({ CrudKeys.class, ProcurementOrder.class ,ProcurementOrderItem.class,Delivery.class})
 	private ResourceBundle resourceBundle;
@@ -157,12 +161,12 @@ public class ProcurementOrderDisplayView
 
 		viewBuilder.addStringColumn(dataList, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
-		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
+		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,330d);
 		orderQuantityColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-		//		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		salesPricePUColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.INTEGER, locale);
+		purchasePricePUColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "ProcurementOrderItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		//		viewBuilder.addMainForm(view, ViewType.DISPLAY, true);
@@ -197,6 +201,8 @@ public class ProcurementOrderDisplayView
 		amountNetToPay.numberProperty().bindBidirectional(model.netAmountToPayProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		orderQuantityColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		salesPricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		purchasePricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 	}
 
 	public void bind(ProcurementOrderItem model) {
@@ -230,14 +236,16 @@ public class ProcurementOrderDisplayView
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		saveButton.setPrefWidth(150d);
 		saveButton.setAlignment(Pos.CENTER_LEFT);
+		saveButton.setText("Livrer");
 
 		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
 		cancelButton.setPrefWidth(150d);
 		cancelButton.setAlignment(Pos.CENTER_LEFT);
 
 		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-		printButton.setPrefWidth(150d);
+		printButton.setPrefWidth(220d);
 		printButton.setAlignment(Pos.CENTER_LEFT);
+		printButton.setText("Imprimer la preparation");
 
 		actionbar.getChildren().addAll(saveButton,cancelButton,printButton);
 
@@ -283,10 +291,10 @@ public class ProcurementOrderDisplayView
 		return rootPane;
 	}
 
-	//		public Button getEditButton()
-	//		{
-	//			return editButton;
-	//		}
+	public Button getSaveButton()
+	{
+		return saveButton;
+	}
 
 	public Button getCancelButton()
 	{
@@ -296,7 +304,7 @@ public class ProcurementOrderDisplayView
 	public Button getOkButton(){
 		return okButton ;
 	}
-	
+
 	public Button getPrintButton(){
 		return printButton ;
 	}
@@ -320,6 +328,12 @@ public class ProcurementOrderDisplayView
 
 	public TableColumn<ProcurementOrderItem, BigDecimal> getOrderQuantityColumn() {
 		return orderQuantityColumn;
+	}
+	public TableColumn<ProcurementOrderItem, BigDecimal> getSalesPricePUColumn() {
+		return salesPricePUColumn;
+	}
+	public TableColumn<ProcurementOrderItem, BigDecimal> getPurchasePricePUColumn() {
+		return purchasePricePUColumn;
 	}
 	//
 	//	public Button getConfirmSelectionButton()

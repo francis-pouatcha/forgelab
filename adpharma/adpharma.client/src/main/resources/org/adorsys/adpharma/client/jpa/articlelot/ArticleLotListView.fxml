@@ -11,19 +11,19 @@
 			<children>
 				<ToolBar orientation="VERTICAL" prefHeight="295.0" prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
-						<Button fx:id="moveButton" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_trash_description.title">
+						<Button fx:id="moveButton" layoutX="10.0" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_trash_description.title">
 							<VBox.margin>
 								<Insets bottom="10.0" />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="detailsButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_details_description.title">
+						<Button fx:id="detailsButton" layoutX="10.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_details_description.title">
 							<VBox.margin>
 								<Insets bottom="10.0" />
 							</VBox.margin>
 						</Button>
 						<Button fx:id="moveToWareHouseButton" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_store_description.title" />
-						<Button fx:id="updateLotButton" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="140.0" text="%Entity_update.title" />
-                        <Button fx:id="printButton" layoutX="10.0" layoutY="120.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="140.0" text="%ArticleLot_barecode_description.title" />
+						<Button fx:id="updateLotButton" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_update.title" />
+                        <Button fx:id="printButton" layoutX="10.0" layoutY="120.0" mnemonicParsing="false" prefWidth="140.0" text="%ArticleLot_barecode_description.title" />
 					</items>
 				</ToolBar>
 			</children>

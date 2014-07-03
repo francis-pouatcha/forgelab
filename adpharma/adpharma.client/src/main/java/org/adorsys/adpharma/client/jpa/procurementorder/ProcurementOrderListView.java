@@ -56,8 +56,14 @@ public class ProcurementOrderListView
 	private Button editButton ;
 	
 	@FXML
-	private Button removeButton ;
+	private Button sentButton ;
 	
+	@FXML
+	private Button retreivedButton ;
+
+	@FXML
+	private Button removeButton ;
+
 	@FXML
 	private Button printButton ;
 
@@ -102,16 +108,16 @@ public class ProcurementOrderListView
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "ProcurementOrder_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "ProcurementOrder_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "ProcurementOrder_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
 		//		datalistitem columns
 		viewBuilder.addStringColumn(dataListItem, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataListItem, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
 		viewBuilder.addDateColumn(dataListItem, "expirationDate", "ProcurementOrderItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-		//		viewBuilder.addBigDecimalColumn(dataListItem, "freeQuantity", "ProcurementOrderItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
@@ -159,7 +165,7 @@ public class ProcurementOrderListView
 	{
 		return editButton;
 	}
-	
+
 	public Button getRemoveButton()
 	{
 		return removeButton;
@@ -169,10 +175,20 @@ public class ProcurementOrderListView
 	{
 		return searchButton;
 	}
-	
+
 	public Button getPrintButton()
 	{
 		return printButton;
+	}
+	
+	public Button getSentButton()
+	{
+		return sentButton;
+	}
+	
+	public Button getRetreivedButton()
+	{
+		return retreivedButton;
 	}
 
 	public TableView<ProcurementOrderItem> getDataListItem()

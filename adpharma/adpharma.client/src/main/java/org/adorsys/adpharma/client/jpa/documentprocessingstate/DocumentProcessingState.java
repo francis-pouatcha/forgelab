@@ -14,7 +14,9 @@ public enum DocumentProcessingState
 	SUSPENDED, @Description("DocumentProcessingState_ONGOING_description")
 	ONGOING, @Description("DocumentProcessingState_RESTORED_description")
 	RESTORED, @Description("DocumentProcessingState_CLOSED_description")
-	CLOSED;
+	CLOSED,@Description("DocumentProcessingState_SENT_description") 
+	SENT ,@Description("DocumentProcessingState_RETREIVED_description") 
+	RETREIVED ;
 
 	public static DocumentProcessingState[] valuesWithNull(){
 		DocumentProcessingState[] values = DocumentProcessingState.values();

@@ -195,10 +195,12 @@
 					<jvmProperties>-Xms768m -Xmx768m -XX:PermSize=256M
 						-XX:MaxPermSize=256m</jvmProperties>
 					<vendor>Adorsys S.A</vendor>
+					
 					<!-- only required if signing the jar file for webstart deployment - 
 						if you don't want to deploy to webstart you can delete this. Note that if 
 						you use FXML and want to use webstart then you must sign the JAR. FXML cannot 
 						run in a regular sandboxed browser and needs extra permissions. -->
+						
 					<keyStoreAlias>adorsys</keyStoreAlias>
 					<keyStorePassword>adorsys</keyStorePassword>
 					<allPermissions>true</allPermissions>

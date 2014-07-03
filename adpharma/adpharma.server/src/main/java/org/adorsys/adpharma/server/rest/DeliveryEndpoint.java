@@ -32,6 +32,7 @@ import org.adorsys.adpharma.server.jpa.DeliveryStattisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
@@ -78,6 +79,15 @@ public class DeliveryEndpoint
 		entity.setReceivingAgency(login.getAgency());
 		entity.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		return detach(ejb.create(entity));
+	}
+	
+	@POST
+	@Path("/deliveryFromProcurementOrder")
+	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml" })
+	public Delivery deliveryFromProcurementOrder(ProcurementOrder entity)
+	{
+		return detach(ejb.deliveryFromProcurementOrder(entity));
 	}
 	
 

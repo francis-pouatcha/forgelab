@@ -268,6 +268,7 @@ public class SalesOrderEJB
 		returnSalesEvent.fire(update);
 		return update;
 	}
+	
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			return  findById(salesOrder.getId()) ;

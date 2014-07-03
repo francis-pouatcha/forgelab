@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -17,12 +18,15 @@ import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.ProcurementOrder;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 @Stateless
 public class DeliveryEJB
@@ -147,6 +151,60 @@ public class DeliveryEJB
 		deliveryClosedDoneEvent.fire(closedDelivery);
 		return closedDelivery;
 	}
+
+	@Inject
+	private ProcurementOrderEJB procurementOrderEJB ;
+
+	public Delivery deliveryFromProcurementOrder(ProcurementOrder order){
+		order = procurementOrderEJB.findById(order.getId());
+		if(DocumentProcessingState.CLOSED.equals(order.getPoStatus()))
+			throw new IllegalStateException(" procurement order are aready closed ? ") ;
+		Login login = securityUtil.getConnectedUser();
+		Date creationDate = new Date();
+		Delivery delivery = new Delivery();
+		delivery.setSupplier(order.getSupplier());
+		delivery.setReceivingAgency(login.getAgency());
+		delivery.setDeliverySlipNumber("From Import");
+		delivery.setCreatingUser(login);
+		delivery = create(delivery);
+
+		Set<ProcurementOrderItem> items = order.getProcurementOrderItems();
+		BigDecimal amountHt = BigDecimal.ZERO;
+		for (ProcurementOrderItem item : items) {
+			if(BigDecimal.ZERO.compareTo(item.getAvailableQty())!=0){
+				DeliveryItem deliveryItem = new DeliveryItem();
+				deliveryItem.setArticle(item.getArticle());
+				deliveryItem.setArticleName(item.getArticleName());
+				deliveryItem.setAvailableQty(item.getAvailableQty());
+				deliveryItem.setCreatingUser(login);
+				deliveryItem.setCreationDate(creationDate);
+				deliveryItem.setDelivery(delivery);
+				deliveryItem.setExpirationDate(DateUtils.addYears(creationDate, 2));
+				deliveryItem.setFreeQuantity(BigDecimal.ZERO);
+				deliveryItem.setInternalPic(item.getMainPic());
+				deliveryItem.setSecondaryPic(item.getSecondaryPic());
+				deliveryItem.setMainPic(item.getMainPic());
+				deliveryItem.setPurchasePricePU(item.getPurchasePricePU());
+				deliveryItem.setQtyOrdered(item.getQtyOrdered());
+				deliveryItem.setSalesPricePU(item.getSalesPricePU());
+				deliveryItem.setStockQuantity(item.getAvailableQty());
+				DeliveryItem create = deliveryItemEJB.create(deliveryItem);
+				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
+			}
+
+
+		}
+		order.setPoStatus(DocumentProcessingState.CLOSED);
+		procurementOrderEJB.update(order);
+		delivery.setAmountAfterTax(amountHt);
+		delivery.setAmountBeforeTax(amountHt);
+		delivery.setAmountVat(BigDecimal.ZERO);
+		delivery.setAmountDiscount(BigDecimal.ZERO);
+		delivery.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
+		return repository.save(delivery);
+	}
+
+
 
 
 	public Delivery findById(Long id)

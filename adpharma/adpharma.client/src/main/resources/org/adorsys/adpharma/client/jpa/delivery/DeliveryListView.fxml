@@ -12,27 +12,27 @@
 			<children>
 				<Button fx:id="processButton" mnemonicParsing="false" prefWidth="140.0" text="%Entity_Process.title">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_New.title">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="updateButton" layoutX="58.0" layoutY="76.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_edit.title">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="removeButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_remove.title">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="exportToXlsButton" layoutX="58.0" layoutY="154.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_barecode.title">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 <Button fx:id="printButton" layoutX="23.0" layoutY="179.0" mnemonicParsing="false" prefWidth="140.0" text="%Delivery_print_description.title" />

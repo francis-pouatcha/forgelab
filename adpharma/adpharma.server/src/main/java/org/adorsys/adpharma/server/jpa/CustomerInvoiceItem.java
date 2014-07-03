@@ -25,166 +25,181 @@ import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 @Description("CustomerInvoiceItem_description")
 @ToStringField({ "internalPic", "article.articleName", "purchasedQty" })
 @ListField({ "internalPic", "article.articleName", "purchasedQty", "salesPricePU",
-      "totalSalesPrice" })
+"totalSalesPrice" })
 public class CustomerInvoiceItem implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("CustomerInvoiceItem_internalPic_description")
-   private String internalPic;
+	@Column
+	@Description("CustomerInvoiceItem_internalPic_description")
+	private String internalPic;
 
-   @ManyToOne
-   @Description("CustomerInvoiceItem_article_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
-   private Article article;
+	@ManyToOne
+	@Description("CustomerInvoiceItem_article_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+	private Article article;
 
-   @Column
-   @Description("CustomerInvoiceItem_purchasedQty_description")
-   private BigDecimal purchasedQty = BigDecimal.ZERO;
+	@Column
+	@Description("CustomerInvoiceItem_purchasedQty_description")
+	private BigDecimal purchasedQty = BigDecimal.ZERO;
 
-   @Column
-   @Description("CustomerInvoiceItem_salesPricePU_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU = BigDecimal.ZERO ;
+	@Column
+	@Description("CustomerInvoiceItem_salesPricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal salesPricePU = BigDecimal.ZERO ;
 
-   @Column
-   @Description("CustomerInvoiceItem_totalSalesPrice_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalSalesPrice =  BigDecimal.ZERO;
+	@Column
+	@Description("CustomerInvoiceItem_salesPricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal purchasePricePU = BigDecimal.ZERO ;
 
-   @ManyToOne
-   @Description("CustomerInvoiceItem_invoice_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
-   private CustomerInvoice invoice;
-   
-  
+	@Column
+	@Description("CustomerInvoiceItem_totalSalesPrice_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal totalSalesPrice =  BigDecimal.ZERO;
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@ManyToOne
+	@Description("CustomerInvoiceItem_invoice_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
+	private CustomerInvoice invoice;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
 
-   public int getVersion()
-   {
-      return this.version;
-   }
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((CustomerInvoiceItem) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   public String getInternalPic()
-   {
-      return this.internalPic;
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   public void setInternalPic(final String internalPic)
-   {
-      this.internalPic = internalPic;
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((CustomerInvoiceItem) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public Article getArticle()
-   {
-      return this.article;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setArticle(final Article article)
-   {
-      this.article = article;
-   }
+	public String getInternalPic()
+	{
+		return this.internalPic;
+	}
 
-   public BigDecimal getPurchasedQty()
-   {
-      return this.purchasedQty;
-   }
+	public void setInternalPic(final String internalPic)
+	{
+		this.internalPic = internalPic;
+	}
 
-   public void setPurchasedQty(final BigDecimal purchasedQty)
-   {
-      this.purchasedQty = purchasedQty;
-   }
+	public Article getArticle()
+	{
+		return this.article;
+	}
 
-   public BigDecimal getSalesPricePU()
-   {
-      return this.salesPricePU;
-   }
+	public void setArticle(final Article article)
+	{
+		this.article = article;
+	}
 
-   public void setSalesPricePU(final BigDecimal salesPricePU)
-   {
-      this.salesPricePU = salesPricePU;
-   }
+	public BigDecimal getPurchasedQty()
+	{
+		return this.purchasedQty;
+	}
 
-   public BigDecimal getTotalSalesPrice()
-   {
-      return this.totalSalesPrice;
-   }
+	public void setPurchasedQty(final BigDecimal purchasedQty)
+	{
+		this.purchasedQty = purchasedQty;
+	}
 
-   public void setTotalSalesPrice(final BigDecimal totalSalesPrice)
-   {
-      this.totalSalesPrice = totalSalesPrice;
-   }
+	public BigDecimal getSalesPricePU()
+	{
+		return this.salesPricePU;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (internalPic != null && !internalPic.trim().isEmpty())
-         result += "internalPic: " + internalPic;
-      return result;
-   }
+	public void setSalesPricePU(final BigDecimal salesPricePU)
+	{
+		this.salesPricePU = salesPricePU;
+	}
 
-   public CustomerInvoice getInvoice()
-   {
-      return this.invoice;
-   }
+	public BigDecimal getTotalSalesPrice()
+	{
+		return this.totalSalesPrice;
+	}
 
-   public void setInvoice(final CustomerInvoice invoice)
-   {
-      this.invoice = invoice;
-   }
+	public void setTotalSalesPrice(final BigDecimal totalSalesPrice)
+	{
+		this.totalSalesPrice = totalSalesPrice;
+	}
+
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (internalPic != null && !internalPic.trim().isEmpty())
+			result += "internalPic: " + internalPic;
+		return result;
+	}
+
+	public CustomerInvoice getInvoice()
+	{
+		return this.invoice;
+	}
+
+	public void setInvoice(final CustomerInvoice invoice)
+	{
+		this.invoice = invoice;
+	}
+
+	public BigDecimal getPurchasePricePU() {
+		return purchasePricePU;
+	}
+
+	public void setPurchasePricePU(BigDecimal purchasePricePU) {
+		this.purchasePricePU = purchasePricePU;
+	}
+
+
 }

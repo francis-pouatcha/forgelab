@@ -302,6 +302,7 @@ public class DebtStatementListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
+				listView.getDataListItem().getItems().clear();
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();

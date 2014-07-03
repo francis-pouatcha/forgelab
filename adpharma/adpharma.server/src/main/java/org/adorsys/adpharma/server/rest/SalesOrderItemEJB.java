@@ -62,6 +62,7 @@ public class SalesOrderItemEJB
 			SalesOrderItem existingItem = found.iterator().next();
 			existingItem.setOrderedQty(existingItem.getOrderedQty().add(entity.getOrderedQty()));
 			existingItem.setSalesPricePU(entity.getSalesPricePU());
+			existingItem.setPurchasePricePU(entity.getPurchasePricePU());
 			existingItem.calucateDeliveryQty();
 			existingItem.calculateAmount();
 			existingItem = repository.save(existingItem);

@@ -43,6 +43,9 @@ public class CustomerInvoiceItem implements Cloneable
    @Description("CustomerInvoiceItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> salesPricePU;
+   @Description("CustomerInvoiceItem_purchasePricePU_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private SimpleObjectProperty<BigDecimal> purchasePricePU;
    @Description("CustomerInvoiceItem_totalSalesPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalSalesPrice;
@@ -130,6 +133,24 @@ public class CustomerInvoiceItem implements Cloneable
       this.salesPricePUProperty().set(salesPricePU);
    }
 
+   public SimpleObjectProperty<BigDecimal> purchasePricePUProperty()
+   {
+      if (purchasePricePU == null)
+      {
+    	  purchasePricePU = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+      }
+      return purchasePricePU;
+   }
+
+   public BigDecimal getPurchasePricePU()
+   {
+      return purchasePricePUProperty().get();
+   }
+
+   public final void setPurchasePricePU(BigDecimal purchasePricePU)
+   {
+      this.purchasePricePUProperty().set(purchasePricePU);
+   }
    public SimpleObjectProperty<BigDecimal> totalSalesPriceProperty()
    {
       if (totalSalesPrice == null)

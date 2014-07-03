@@ -16,7 +16,7 @@
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 							</content>
 						</TitledPane>
-						<VBox maxWidth="900.0" prefHeight="160.0" prefWidth="724.0" VBox.vgrow="NEVER">
+						<VBox maxWidth="900.0" prefHeight="130.0" prefWidth="724.0" VBox.vgrow="NEVER">
 							<children>
 								<GridPane hgap="10.0" prefHeight="545.0" prefWidth="690.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 									<columnConstraints>
@@ -139,7 +139,7 @@
 							</rowConstraints>
 						</GridPane>
 						<Separator layoutX="10.0" layoutY="258.0" prefHeight="0.0" prefWidth="167.0" />
-						<TableView fx:id="dataList" prefHeight="246.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
+						<TableView fx:id="dataList" prefHeight="300.0" prefWidth="724.0" VBox.vgrow="ALWAYS">
 							<columns>
 							</columns>
 							<contextMenu>
@@ -156,17 +156,9 @@
 					</BorderPane.margin>
 				</VBox>
 			</center>
-<right><VBox prefHeight="661.0" prefWidth="160.0" BorderPane.alignment="TOP_CENTER">
-<children><VBox fx:id="actionbar" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="NEVER">
-<padding>
-<Insets top="19.0" />
-</padding></VBox>
-<VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
-<VBox.margin>
-<Insets bottom="5.0" />
-</VBox.margin></VBox>
-</children></VBox>
-</right>
+			<bottom>
+				<HBox fx:id="actionbar" alignment="CENTER" prefHeight="40.0" spacing="5.0" BorderPane.alignment="CENTER" />
+			</bottom>
 		</BorderPane>
 	</children>
 </AnchorPane>

@@ -52,6 +52,9 @@ public class SalesOrderItem implements Cloneable
    @Description("SalesOrderItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> salesPricePU;
+   @Description("SalesOrderItem_purchasePricePU_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private SimpleObjectProperty<BigDecimal> purchasePricePU;
    @Description("SalesOrderItem_totalSalePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalSalePrice;
@@ -190,6 +193,26 @@ public class SalesOrderItem implements Cloneable
    {
       this.salesPricePUProperty().set(salesPricePU);
    }
+   
+   public SimpleObjectProperty<BigDecimal> purchasePricePUProperty()
+   {
+      if (purchasePricePU == null)
+      {
+    	  purchasePricePU = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+      }
+      return purchasePricePU;
+   }
+
+   public BigDecimal getPurchasePricePU()
+   {
+      return purchasePricePUProperty().get();
+   }
+
+   public final void setPurchasePricePU(BigDecimal purchasePricePU)
+   {
+      this.purchasePricePUProperty().set(purchasePricePU);
+   }
+
 
    public SimpleObjectProperty<BigDecimal> totalSalePriceProperty()
    {

@@ -11,11 +11,13 @@ import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
 public class PermsService {
+	
 	private String media = MediaType.APPLICATION_JSON;
 
 	@Inject
 	private ClientCookieFilter clientCookieFilter;
 	Client client = ClientBuilder.newClient();
+	
 	@Inject
 	private ServerAddress serverAddress;
 

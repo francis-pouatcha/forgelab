@@ -7,6 +7,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -36,7 +37,7 @@ public class DeliveryService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public Delivery deleteById(Long id) {// @PathParam("id")
-											// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media).delete(Delivery.class);
 	}
 
@@ -125,4 +126,16 @@ public class DeliveryService {
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
 	}
+
+	// @POST
+	// @Path("/countByLike"
+	// @Consumes("application/xml")
+	public Delivery deliveryFromProcurementOrder(ProcurementOrder model) {
+		Entity<ProcurementOrder> searchInputEntity = Entity.entity(
+				model, media);
+		return target().path("deliveryFromProcurementOrder").request()
+				.post(searchInputEntity, Delivery.class);
+	}
+
+
 }

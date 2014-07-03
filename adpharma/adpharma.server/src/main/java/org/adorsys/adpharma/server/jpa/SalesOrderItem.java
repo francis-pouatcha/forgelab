@@ -30,226 +30,232 @@ import org.adorsys.javaext.list.ListField;
 @Entity
 @Description("SalesOrderItem_description")
 @ListField({ "orderedQty", "returnedQty", "deliveredQty", "salesPricePU",
-      "totalSalePrice", "internalPic", "article.articleName", "vat.rate" })
+	"totalSalePrice", "internalPic", "article.articleName", "vat.rate" })
 @ToStringField("article.articleName")
 public class SalesOrderItem implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("SalesOrderItem_orderedQty_description")
-   private BigDecimal orderedQty;
+	@Column
+	@Description("SalesOrderItem_orderedQty_description")
+	private BigDecimal orderedQty;
 
-   @Column
-   @Description("SalesOrderItem_returnedQty_description")
-   private BigDecimal returnedQty;
+	@Column
+	@Description("SalesOrderItem_returnedQty_description")
+	private BigDecimal returnedQty;
 
-   @Column
-   @Description("SalesOrderItem_deliveredQty_description")
-   private BigDecimal deliveredQty;
+	@Column
+	@Description("SalesOrderItem_deliveredQty_description")
+	private BigDecimal deliveredQty;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("SalesOrderItem_recordDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date recordDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("SalesOrderItem_recordDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date recordDate;
 
-   @Column
-   @Description("SalesOrderItem_salesPricePU_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal salesPricePU;
+	@Column
+	@Description("SalesOrderItem_salesPricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal salesPricePU;
 
-   @Column
-   @Description("SalesOrderItem_totalSalePrice_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal totalSalePrice;
 
-   @Column
-   @Description("SalesOrderItem_internalPic_description")
-   @Size(min = 0, message = "SalesOrderItem_internalPic_Size_validation")
-   private String internalPic;
+	@Column
+	@Description("SalesOrderItem_purchasePricePU_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal purchasePricePU = BigDecimal.ZERO ;
 
-   @ManyToOne
-   @Description("SalesOrderItem_article_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
-   @NotNull(message = "SalesOrderItem_article_NotNull_validation")
-   private Article article;
+	@Column
+	@Description("SalesOrderItem_totalSalePrice_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal totalSalePrice;
 
-   @ManyToOne
-   @Description("SalesOrderItem_vat_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
-   private VAT vat;
+	@Column
+	@Description("SalesOrderItem_internalPic_description")
+	@Size(min = 0, message = "SalesOrderItem_internalPic_Size_validation")
+	private String internalPic;
 
-   @ManyToOne
-   @Description("SalesOrderItem_salesOrder_description")
-   @Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrder.class)
-   private SalesOrder salesOrder;
+	@ManyToOne
+	@Description("SalesOrderItem_article_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
+	@NotNull(message = "SalesOrderItem_article_NotNull_validation")
+	private Article article;
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@ManyToOne
+	@Description("SalesOrderItem_vat_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
+	private VAT vat;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	@ManyToOne
+	@Description("SalesOrderItem_salesOrder_description")
+	@Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrder.class)
+	private SalesOrder salesOrder;
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((SalesOrderItem) that).id);
-      }
-      return super.equals(that);
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   public BigDecimal getOrderedQty()
-   {
-      return this.orderedQty;
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((SalesOrderItem) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public void setOrderedQty(final BigDecimal orderedQty)
-   {
-      this.orderedQty = orderedQty;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public BigDecimal getReturnedQty()
-   {
-      return this.returnedQty;
-   }
+	public BigDecimal getOrderedQty()
+	{
+		return this.orderedQty;
+	}
 
-   public void setReturnedQty(final BigDecimal returnedQty)
-   {
-      this.returnedQty = returnedQty;
-   }
+	public void setOrderedQty(final BigDecimal orderedQty)
+	{
+		this.orderedQty = orderedQty;
+	}
 
-   public BigDecimal getDeliveredQty()
-   {
-      return this.deliveredQty;
-   }
+	public BigDecimal getReturnedQty()
+	{
+		return this.returnedQty;
+	}
 
-   public void setDeliveredQty(final BigDecimal deliveredQty)
-   {
-      this.deliveredQty = deliveredQty;
-   }
+	public void setReturnedQty(final BigDecimal returnedQty)
+	{
+		this.returnedQty = returnedQty;
+	}
 
-   public Date getRecordDate()
-   {
-      return this.recordDate;
-   }
+	public BigDecimal getDeliveredQty()
+	{
+		return this.deliveredQty;
+	}
 
-   public void setRecordDate(final Date recordDate)
-   {
-      this.recordDate = recordDate;
-   }
+	public void setDeliveredQty(final BigDecimal deliveredQty)
+	{
+		this.deliveredQty = deliveredQty;
+	}
 
-   public BigDecimal getSalesPricePU()
-   {
-      return this.salesPricePU;
-   }
+	public Date getRecordDate()
+	{
+		return this.recordDate;
+	}
 
-   public void setSalesPricePU(final BigDecimal salesPricePU)
-   {
-      this.salesPricePU = salesPricePU;
-   }
+	public void setRecordDate(final Date recordDate)
+	{
+		this.recordDate = recordDate;
+	}
 
-   public BigDecimal getTotalSalePrice()
-   {
-      return this.totalSalePrice;
-   }
+	public BigDecimal getSalesPricePU()
+	{
+		return this.salesPricePU;
+	}
 
-   public void setTotalSalePrice(final BigDecimal totalSalePrice)
-   {
-      this.totalSalePrice = totalSalePrice;
-   }
+	public void setSalesPricePU(final BigDecimal salesPricePU)
+	{
+		this.salesPricePU = salesPricePU;
+	}
 
-   public String getInternalPic()
-   {
-      return this.internalPic;
-   }
+	public BigDecimal getTotalSalePrice()
+	{
+		return this.totalSalePrice;
+	}
 
-   public void setInternalPic(final String internalPic)
-   {
-      this.internalPic = internalPic;
-   }
+	public void setTotalSalePrice(final BigDecimal totalSalePrice)
+	{
+		this.totalSalePrice = totalSalePrice;
+	}
 
-   @Override
-   public String toString() {
-      String result = getClass().getSimpleName() + " ";
-      if (internalPic != null && !internalPic.trim().isEmpty())
-         result += "internalPic: " + internalPic;
-      return result;
-   }
+	public String getInternalPic()
+	{
+		return this.internalPic;
+	}
 
-   public Article getArticle() {
-      return this.article;
-   }
+	public void setInternalPic(final String internalPic)
+	{
+		this.internalPic = internalPic;
+	}
 
-   public void setArticle(final Article article)
-   {
-      this.article = article;
-   }
+	@Override
+	public String toString() {
+		String result = getClass().getSimpleName() + " ";
+		if (internalPic != null && !internalPic.trim().isEmpty())
+			result += "internalPic: " + internalPic;
+		return result;
+	}
 
-   public VAT getVat()
-   {
-      return this.vat;
-   }
+	public Article getArticle() {
+		return this.article;
+	}
 
-   public void setVat(final VAT vat)
-   {
-      this.vat = vat;
-   }
+	public void setArticle(final Article article)
+	{
+		this.article = article;
+	}
 
-   public SalesOrder getSalesOrder()
-   {
-      return this.salesOrder;
-   }
+	public VAT getVat()
+	{
+		return this.vat;
+	}
 
-   public void setSalesOrder(final SalesOrder salesOrder)
-   {
-      this.salesOrder = salesOrder;
-   }
-   
+	public void setVat(final VAT vat)
+	{
+		this.vat = vat;
+	}
+
+	public SalesOrder getSalesOrder()
+	{
+		return this.salesOrder;
+	}
+
+	public void setSalesOrder(final SalesOrder salesOrder)
+	{
+		this.salesOrder = salesOrder;
+	}
+
 
 	public void calculateAmount(){
 		if(salesPricePU==null|| orderedQty==null) throw new IllegalArgumentException("salesPricePU and ordredQty are requiered");
@@ -263,13 +269,23 @@ public class SalesOrderItem implements Serializable
 		deliveredQty=orderedQty.subtract(returnedQty);
 
 	}
-	
+
 	public boolean hasReturnArticle(){
 		returnedQty = returnedQty!=null?returnedQty:BigDecimal.ZERO;
 		return BigDecimal.ZERO.compareTo(returnedQty)<0 ;
 	}
-   
+
 	public void updateTotalSalesPrice(){
 		setTotalSalePrice(getOrderedQty().multiply(getSalesPricePU()));
 	}
+
+	public BigDecimal getPurchasePricePU() {
+		return purchasePricePU;
+	}
+
+	public void setPurchasePricePU(BigDecimal purchasePricePU) {
+		this.purchasePricePU = purchasePricePU;
+	}
+	
+	
 }

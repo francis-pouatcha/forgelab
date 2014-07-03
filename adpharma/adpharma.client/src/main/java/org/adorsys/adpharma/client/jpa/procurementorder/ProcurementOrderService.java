@@ -34,7 +34,7 @@ public class ProcurementOrderService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public ProcurementOrder deleteById(Long id) {// @PathParam("id")
-													// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(ProcurementOrder.class);
 	}
@@ -128,5 +128,18 @@ public class ProcurementOrderService {
 				searchInput, media);
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
+	}
+
+
+	// @POST
+	// @Path("/sendOrderToPhmlServer")
+	// @Consumes({ "application/json", "application/xml" })
+	// @Produces({ "application/json", "application/xml" })
+	public ProcurementOrder sendOrderToPhmlServer(
+			ProcurementOrder entity) {
+		Entity<ProcurementOrder> ent = Entity.entity(entity,
+				media);
+		return target().path("sendOrderToPhmlServer").request(media)
+				.post(ent, ProcurementOrder.class);
 	}
 }

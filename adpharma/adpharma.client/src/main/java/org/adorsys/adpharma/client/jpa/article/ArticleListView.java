@@ -58,6 +58,12 @@ public class ArticleListView
 
 	@FXML
 	private Button editButton;
+	
+	@FXML
+	private Button deleteButton ;
+	
+	@FXML
+	private Button printButton ;
 
 	@FXML
 	private Button createButton;
@@ -153,6 +159,18 @@ public class ArticleListView
 	{
 		return createButton;
 	}
+	
+	public Button getDeleteButton()
+	{
+		return deleteButton;
+	}
+	
+	public Button getPrintButton()
+	{
+		return printButton;
+	}
+	
+	
 
 	public Button getEditButton()
 	{

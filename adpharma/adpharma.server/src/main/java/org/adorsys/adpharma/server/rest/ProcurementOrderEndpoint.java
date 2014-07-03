@@ -72,6 +72,15 @@ public class ProcurementOrderEndpoint
 	{
 		return detach(ejb.proccessPreparation(entity));
 	}
+	
+	@POST
+	@Path("/sendOrderToPhmlServer")
+	@Consumes({ "application/json", "application/xml" })
+	@Produces({ "application/json", "application/xml" })
+	public ProcurementOrder sendOrderToPhmlServer(ProcurementOrder entity)
+	{
+		return detach(ejb.sendOrderToPhmlServer(entity));
+	}
 
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")

@@ -92,6 +92,8 @@ public class SalesOrderAdvenceSearchController {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				LoginSearchService source = (LoginSearchService) event.getSource();
+				Login login = new Login();
+				login.setLoginName("TOUS LES VENDEURS");
 				List<Login> resultList = source.getValue().getResultList();
 				resultList.sort(new Comparator<Login>() {
 
@@ -101,6 +103,7 @@ public class SalesOrderAdvenceSearchController {
 						return o1.getLoginName().compareTo(o2.getLoginName());
 					}
 				});
+				resultList.add(0,login);
 				view.getSaller().getItems().setAll(resultList);
 			}
 		});

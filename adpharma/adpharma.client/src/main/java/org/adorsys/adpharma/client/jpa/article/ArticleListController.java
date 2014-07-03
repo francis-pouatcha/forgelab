@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,7 +17,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -24,8 +26,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchService;
+import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
@@ -38,13 +40,17 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityRemoveConfirmedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
-import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.lowagie.text.DocumentException;
 
 @Singleton
 public class ArticleListController implements EntityController
@@ -68,9 +74,21 @@ public class ArticleListController implements EntityController
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<ArticleSearchResult> entityListPageIndexChangedEvent;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgress;
+	
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgress;
+
 
 	@Inject
 	private ArticleSearchService searchService;
+
+	@Inject
+	private ArticleSearchService searchForPrintService;
 
 	@Inject
 	private SectionSearchService sectionSearchService;
@@ -80,9 +98,16 @@ public class ArticleListController implements EntityController
 	@Inject
 	private ArticleSearchInput searchInput;
 
+	@Inject
+	@EntityRemoveConfirmedEvent
+	private  Event<Article> removeRequestedEvent;
+
 
 	@Inject
 	private ArticleRegistration registration;
+
+	@Inject
+	private SecurityUtil securityUtil ;
 
 	@PostConstruct
 	public void postConstruct()
@@ -91,6 +116,8 @@ public class ArticleListController implements EntityController
 		listView.bind(searchInput);
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getEditButton().disableProperty().bind(registration.canCreateProperty().not());
+		listView.getPrintButton().disableProperty().bind(searchForPrintService.runningProperty());
+		
 		//
 		//		listView.getDataList().getSelectionModel().selectedItemProperty()
 		//		.addListener(new ChangeListener<Article>()
@@ -106,6 +133,21 @@ public class ArticleListController implements EntityController
 		//				});
 
 		/*
+		 * listen to delete button and 
+		 */
+		listView.getDeleteButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				Article selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null)
+					removeRequestedEvent.fire(selectedItem);
+			}
+				});
+
+
+		/*
 		 * listen to search button and fire search activated event.
 		 */
 		listView.getEditButton().setOnAction(new EventHandler<ActionEvent>()
@@ -118,7 +160,63 @@ public class ArticleListController implements EntityController
 					selectionEvent.fire(selectedItem);
 			}
 				});
+		
+		/*
+		 * listen to search button and fire search activated event.
+		 */
+		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				handlePrintAction();
+				showProgress.fire(new Object());
+			}
+				});
 
+
+		searchForPrintService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ArticleSearchService s = (ArticleSearchService) event.getSource();
+				ArticleSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<Article> articles = result.getResultList();
+				articles.sort(new Comparator<Article>() {
+
+					@Override
+					public int compare(Article o1, Article o2) {
+						return o1.getArticleName().compareTo(o2.getArticleName());
+					}
+					
+				});
+				ArticleSection section = searchInput.getEntity().getSection();
+				Login login = securityUtil.getConnectedUser();
+				ArticleRepportTemplatePdf	worker ;
+				try {
+					worker = new ArticleRepportTemplatePdf(login, login.getAgency(), section!=null?section.getName():"");
+					worker.addItems(articles);
+					worker.closeDocument();
+					File file = new File(worker.getFileName());
+					openFile(file);
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                  hideProgress.fire(new Object());
+
+			}
+		});
+		searchForPrintService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SectionSearchService s = (SectionSearchService) event.getSource();
+				s.reset();				
+			}
+		});
 
 		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -266,6 +364,13 @@ public class ArticleListController implements EntityController
 		searchService.setSearchInputs(searchInput).start();
 
 	}
+	
+	private void handlePrintAction() {
+		searchInput.setFieldNames(readSearchAttributes());
+		searchInput.setMax(-1);
+		searchForPrintService.setSearchInputs(searchInput).start();
+
+	}
 
 	/**
 	 * Handle search results. But the switch of displays is centralized
@@ -351,5 +456,14 @@ public class ArticleListController implements EntityController
 
 	public void reset() {
 		listView.getDataList().getItems().clear();
+	}
+
+
+	private void openFile(File file){
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 }
