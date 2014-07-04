@@ -24,6 +24,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
+import org.adorsys.adpharma.server.utils.DeliveryFromOrderData;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -155,7 +156,7 @@ public class DeliveryEJB
 	@Inject
 	private ProcurementOrderEJB procurementOrderEJB ;
 
-	public Delivery deliveryFromProcurementOrder(ProcurementOrder order){
+	public DeliveryFromOrderData deliveryFromProcurementOrder(ProcurementOrder order){
 		order = procurementOrderEJB.findById(order.getId());
 		if(DocumentProcessingState.CLOSED.equals(order.getPoStatus()))
 			throw new IllegalStateException(" procurement order are aready closed ? ") ;
@@ -195,13 +196,14 @@ public class DeliveryEJB
 
 		}
 		order.setPoStatus(DocumentProcessingState.CLOSED);
-		procurementOrderEJB.update(order);
+		order = procurementOrderEJB.update(order);
 		delivery.setAmountAfterTax(amountHt);
 		delivery.setAmountBeforeTax(amountHt);
 		delivery.setAmountVat(BigDecimal.ZERO);
 		delivery.setAmountDiscount(BigDecimal.ZERO);
 		delivery.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
-		return repository.save(delivery);
+		delivery= repository.save(delivery);
+		return new DeliveryFromOrderData(delivery,order );
 	}
 
 

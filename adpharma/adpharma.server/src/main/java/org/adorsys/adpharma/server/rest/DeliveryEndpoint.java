@@ -27,14 +27,12 @@ import javax.ws.rs.core.Response.Status;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliverySearchInput;
 import org.adorsys.adpharma.server.jpa.DeliverySearchResult;
-import org.adorsys.adpharma.server.jpa.DeliveryStatisticsDataSearchResult;
-import org.adorsys.adpharma.server.jpa.DeliveryStattisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
-import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.DeliveryFromOrderData;
 
 /**
  * 
@@ -68,6 +66,9 @@ public class DeliveryEndpoint
 
 	@EJB
 	private SecurityUtil securityUtil;
+	
+	@Inject
+	private ProcurementOrderItemMerger procurementOrderItemMerger;
 
 	@POST
 	@Consumes({ "application/json", "application/xml" })
@@ -85,7 +86,7 @@ public class DeliveryEndpoint
 	@Path("/deliveryFromProcurementOrder")
 	@Consumes({ "application/json", "application/xml" })
 	@Produces({ "application/json", "application/xml" })
-	public Delivery deliveryFromProcurementOrder(ProcurementOrder entity)
+	public DeliveryFromOrderData deliveryFromProcurementOrder(ProcurementOrder entity)
 	{
 		return detach(ejb.deliveryFromProcurementOrder(entity));
 	}
@@ -251,6 +252,33 @@ public class DeliveryEndpoint
 	private static final List<String> receivingAgencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
 	private static final List<String> deliveryItemsFields = Arrays.asList("internalPic", "mainPic", "secondaryPic", "articleName", "article.articleName", "expirationDate", "qtyOrdered", "freeQuantity", "stockQuantity", "salesPricePU", "purchasePricePU", "totalPurchasePrice");
+	
+	private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
+
+	private static final List<String> procurementOrderItemsFields = Arrays.asList("mainPic", "secondaryPic", "articleName", "article.articleName", "expirationDate", "qtyOrdered", "freeQuantity", "stockQuantity", "salesPricePU", "purchasePricePU", "totalPurchasePrice", "valid");
+
+	public ProcurementOrder detach(ProcurementOrder entity)
+	{
+		if (entity == null)
+			return null;
+
+		// aggregated
+		entity.setCreatingUser(loginMerger.unbind(entity.getCreatingUser(), creatingUserFields));
+
+		// aggregated
+		entity.setSupplier(supplierMerger.unbind(entity.getSupplier(), supplierFields));
+
+		// aggregated
+		entity.setAgency(agencyMerger.unbind(entity.getAgency(), agencyFields));
+
+		// aggregated
+		entity.setVat(vATMerger.unbind(entity.getVat(), vatFields));
+
+		// composed collections
+		entity.setProcurementOrderItems(procurementOrderItemMerger.unbind(entity.getProcurementOrderItems(), procurementOrderItemsFields));
+
+		return entity;
+	}
 
 	private Delivery detach(Delivery entity)
 	{
@@ -294,5 +322,12 @@ public class DeliveryEndpoint
 	{
 		searchInput.setEntity(detach(searchInput.getEntity()));
 		return searchInput;
+	}
+	
+	private DeliveryFromOrderData detach(DeliveryFromOrderData data)
+	{
+		data.setDelivery(detach(data.getDelivery()));
+		data.setOrder(detach(data.getOrder()));
+		return data;
 	}
 }

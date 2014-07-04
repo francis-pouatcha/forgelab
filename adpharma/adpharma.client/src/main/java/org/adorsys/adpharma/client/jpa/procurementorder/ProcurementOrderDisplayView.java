@@ -64,9 +64,6 @@ public class ProcurementOrderDisplayView
 	private Button cancelButton;
 
 	@FXML
-	private MenuItem deleteItemMenu;
-
-	@FXML
 	TableView<ProcurementOrderItem> dataList;
 
 	@FXML
@@ -203,6 +200,9 @@ public class ProcurementOrderDisplayView
 		orderQuantityColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		salesPricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		purchasePricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		saveButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		itemBar.visibleProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+
 	}
 
 	public void bind(ProcurementOrderItem model) {
@@ -319,10 +319,6 @@ public class ProcurementOrderDisplayView
 	}
 	public TableView<ProcurementOrderItem> getDataList(){
 		return dataList ;
-	}
-
-	public MenuItem getDeleteItemMenu() {
-		return deleteItemMenu;
 	}
 
 

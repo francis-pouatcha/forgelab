@@ -7,9 +7,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import org.adorsys.adpharma.client.utils.DeliveryFromOrderData;
 
 @Singleton
-public class DeliveryFromOrderServeice extends Service<Delivery>
+public class DeliveryFromOrderServeice extends Service<DeliveryFromOrderData>
 {
 
 	private ProcurementOrder model;
@@ -24,12 +25,12 @@ public class DeliveryFromOrderServeice extends Service<Delivery>
 	}
 
 	@Override
-	protected Task<Delivery> createTask()
+	protected Task<DeliveryFromOrderData> createTask()
 	{
-		return new Task<Delivery>()
+		return new Task<DeliveryFromOrderData>()
 				{
 			@Override
-			protected Delivery call() throws Exception
+			protected DeliveryFromOrderData call() throws Exception
 			{
 				if (model == null)
 					return null;

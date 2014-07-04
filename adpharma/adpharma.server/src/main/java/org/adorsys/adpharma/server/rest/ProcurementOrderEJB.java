@@ -191,6 +191,7 @@ public class ProcurementOrderEJB
 		procurementOrder.setSupplier(data.getSupplier());
 		List<CustomerInvoiceItem> customerInvoiceItems = customerInvoiceItemEJB.findPreparationDataItem(data);
 		HashMap<Article, ProcurementOrderItem> cashedItem = new  HashMap<Article,ProcurementOrderItem>();
+		
 		for (CustomerInvoiceItem item : customerInvoiceItems) {
 			BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 			if(cashedItem.containsKey(item.getArticle())){
@@ -227,7 +228,8 @@ public class ProcurementOrderEJB
 
 		Collection<ProcurementOrderItem> procurementOrderItems = cashedItem.values();
 		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);
-		return procurementOrder = create(procurementOrder);
+		 procurementOrder = create(procurementOrder);
+		return procurementOrder;
 	}
 
 	public void handleStockMovementEvent(@Observes @DocumentProcessedEvent StockMovement stockMovement){

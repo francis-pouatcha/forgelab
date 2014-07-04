@@ -8,6 +8,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrder;
+import org.adorsys.adpharma.client.utils.DeliveryFromOrderData;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -130,11 +131,11 @@ public class DeliveryService {
 	// @POST
 	// @Path("/countByLike"
 	// @Consumes("application/xml")
-	public Delivery deliveryFromProcurementOrder(ProcurementOrder model) {
+	public DeliveryFromOrderData deliveryFromProcurementOrder(ProcurementOrder model) {
 		Entity<ProcurementOrder> searchInputEntity = Entity.entity(
 				model, media);
 		return target().path("deliveryFromProcurementOrder").request()
-				.post(searchInputEntity, Delivery.class);
+				.post(searchInputEntity, DeliveryFromOrderData.class);
 	}
 
 

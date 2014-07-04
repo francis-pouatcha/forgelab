@@ -174,10 +174,12 @@ public class ProcurementOrderListController implements EntityController
 				if (newValue != null){
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getSentButton().disableProperty().unbind();
-//					listView.getRetreivedButton().disableProperty().unbind();
+					listView.getRetreivedButton().disableProperty().unbind();
 					listView.getRemoveButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					listView.getSentButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.SENT));
-//					listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.RETREIVED));
+					listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.RETREIVED));
+					listView.getSentButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+					listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 
 					ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
 					poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));

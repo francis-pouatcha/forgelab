@@ -20,12 +20,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.events.DeliveryId;
-import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
-import org.adorsys.adpharma.client.events.SalesOrderId;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
@@ -39,7 +35,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.utils.DeliveryFromOrderData;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
@@ -74,7 +70,7 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<ProcurementOrder> editRequestEvent;
-	
+
 	@Inject
 	@ComponentSelectionRequestEvent
 	private Event<ComponentSelectionRequestData> componentSelectionRequestData;
@@ -86,7 +82,7 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject 
 	@ModalEntitySearchRequestedEvent
 	private Event<ArticleSearchInput> modalArticleSearchEvent;
-	
+
 	@Inject 
 	@EntitySelectionEvent
 	private Event<Delivery> deliverySelectionRequestEvent;
@@ -267,22 +263,7 @@ public class ProcurementOrderDisplayController implements EntityController
 
 		});
 
-		/*
-		 * listen to delete menu Item.
-		 */
-
-		displayView.getDeleteItemMenu().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				ProcurementOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null) {
-					itemRemoveService.setEntity(selectedItem).start();
-				}
-
-			}
-		});
-
+	
 		displayView.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -310,11 +291,11 @@ public class ProcurementOrderDisplayController implements EntityController
 			@Override
 			public void handle(WorkerStateEvent event) {
 				DeliveryFromOrderServeice s = (DeliveryFromOrderServeice) event.getSource();
-				Delivery delivery = s.getValue();
+				DeliveryFromOrderData data = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().remove(displayedEntity);
-				deliverySelectionRequestEvent.fire(delivery);
+				PropertyReader.copy(data.getOrder(), displayedEntity);
+				deliverySelectionRequestEvent.fire(data.getDelivery());
 				componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(Delivery.class.getName()));
 			}
 		});
