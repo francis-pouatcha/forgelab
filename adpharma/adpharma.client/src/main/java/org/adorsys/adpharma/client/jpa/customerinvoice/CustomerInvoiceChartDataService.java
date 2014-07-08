@@ -1,16 +1,14 @@
 package org.adorsys.adpharma.client.jpa.customerinvoice;
 
-import java.util.List;
-
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItemService;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInput;
-import org.adorsys.adpharma.client.utils.ChartData;
 
 @Singleton
 public class CustomerInvoiceChartDataService extends Service<SalesStatisticsDataSearchResult>
@@ -19,7 +17,7 @@ public class CustomerInvoiceChartDataService extends Service<SalesStatisticsData
    private SalesStattisticsDataSearchInput model;
 
    @Inject
-   private CustomerInvoiceService remoteService;
+   private CustomerInvoiceItemService remoteService;
 
    public CustomerInvoiceChartDataService setModel(SalesStattisticsDataSearchInput model)
    {

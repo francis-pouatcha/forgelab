@@ -41,290 +41,303 @@ import org.adorsys.javaext.relation.RelationshipEnd;
 public class Login implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column(unique=true)
-   @Description("Login_loginName_description")
-   @NotNull(message = "Login_loginName_NotNull_validation")
-   private String loginName;
+	@Column(unique=true)
+	@Description("Login_loginName_description")
+	@NotNull(message = "Login_loginName_NotNull_validation")
+	private String loginName;
 
-   @Column
-   @Description("Login_email_description")
-   private String email;
+	@Column
+	@Description("Login_email_description")
+	private String email;
 
-   @Column
-   @Description("Login_fullName_description")
-   @NotNull(message = "Login_fullName_NotNull_validation")
-   private String fullName;
+	@Column
+	@Description("Login_fullName_description")
+	@NotNull(message = "Login_fullName_NotNull_validation")
+	private String fullName;
 
-   @Column
-   @Description("Login_password_description")
-   private String password;
+	@Column
+	@Description("Login_password_description")
+	private String password;
 
-   @Column
-   @Description("Login_disableLogin_description")
-   private Boolean disableLogin;
+	@Column
+	@Description("Login_disableLogin_description")
+	private Boolean disableLogin;
 
-   @Column
-   @Description("Login_accountLocked_description")
-   private Boolean accountLocked;
+	@Column
+	@Description("Login_accountLocked_description")
+	private Boolean accountLocked;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Login_credentialExpiration_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date credentialExpiration;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Login_credentialExpiration_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date credentialExpiration;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Login_accountExpiration_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date accountExpiration;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Login_accountExpiration_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date accountExpiration;
 
-   @Column
-   @Description("Login_saleKey_description")
-   private String saleKey;
+	@Column
+	@Description("Login_saleKey_description")
+	private String saleKey;
 
-   @Column
-   @Description("Login_discountRate_description")
-   @NumberFormatType(NumberType.PERCENTAGE)
-   private BigDecimal discountRate;
+	@Column
+	@Description("Login_discountRate_description")
+	@NumberFormatType(NumberType.PERCENTAGE)
+	private BigDecimal discountRate;
 
-   @Column
-   @Description("Login_gender_description")
-   @Enumerated
-   private Gender gender;
+	@Column
+	@Description("Login_simulationRate_description")
+	@NumberFormatType(NumberType.PERCENTAGE)
+	private BigDecimal simulationRate;
 
-   @OneToMany(mappedBy = "source", targetEntity = LoginRoleNameAssoc.class)
-   @Relationship(end = RelationshipEnd.SOURCE, sourceEntity = Login.class, targetEntity = RoleName.class, sourceQualifier = "roleNames")
-   @Description("Login_roleNames_description")
-   @Association(associationType = AssociationType.AGGREGATION, targetEntity = RoleName.class, selectionMode = SelectionMode.FORWARD)
-   private Set<LoginRoleNameAssoc> roleNames = new HashSet<LoginRoleNameAssoc>();
+	@Column
+	@Description("Login_gender_description")
+	@Enumerated
+	private Gender gender;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("Login_recordingDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date recordingDate;
+	@OneToMany(mappedBy = "source", targetEntity = LoginRoleNameAssoc.class)
+	@Relationship(end = RelationshipEnd.SOURCE, sourceEntity = Login.class, targetEntity = RoleName.class, sourceQualifier = "roleNames")
+	@Description("Login_roleNames_description")
+	@Association(associationType = AssociationType.AGGREGATION, targetEntity = RoleName.class, selectionMode = SelectionMode.FORWARD)
+	private Set<LoginRoleNameAssoc> roleNames = new HashSet<LoginRoleNameAssoc>();
 
-   @ManyToOne
-   @Description("Login_agency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   private Agency agency;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("Login_recordingDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date recordingDate;
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@ManyToOne
+	@Description("Login_agency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	private Agency agency;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((Login) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((Login) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public String getLoginName()
-   {
-      return this.loginName;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setLoginName(final String loginName)
-   {
-      this.loginName = loginName;
-   }
+	public String getLoginName()
+	{
+		return this.loginName;
+	}
 
-   public String getEmail()
-   {
-      return this.email;
-   }
+	public void setLoginName(final String loginName)
+	{
+		this.loginName = loginName;
+	}
 
-   public void setEmail(final String email)
-   {
-      this.email = email;
-   }
+	public String getEmail()
+	{
+		return this.email;
+	}
 
-   public String getFullName()
-   {
-      return this.fullName;
-   }
+	public void setEmail(final String email)
+	{
+		this.email = email;
+	}
 
-   public void setFullName(final String fullName)
-   {
-      this.fullName = fullName;
-   }
+	public String getFullName()
+	{
+		return this.fullName;
+	}
 
-   public String getPassword()
-   {
-      return this.password;
-   }
+	public void setFullName(final String fullName)
+	{
+		this.fullName = fullName;
+	}
 
-   public void setPassword(final String password)
-   {
-      this.password = password;
-   }
+	public String getPassword()
+	{
+		return this.password;
+	}
 
-   public Boolean getDisableLogin()
-   {
-      return this.disableLogin;
-   }
+	public void setPassword(final String password)
+	{
+		this.password = password;
+	}
 
-   public void setDisableLogin(final Boolean disableLogin)
-   {
-      this.disableLogin = disableLogin;
-   }
+	public Boolean getDisableLogin()
+	{
+		return this.disableLogin;
+	}
 
-   public Boolean getAccountLocked()
-   {
-      return this.accountLocked;
-   }
+	public void setDisableLogin(final Boolean disableLogin)
+	{
+		this.disableLogin = disableLogin;
+	}
 
-   public void setAccountLocked(final Boolean accountLocked)
-   {
-      this.accountLocked = accountLocked;
-   }
+	public Boolean getAccountLocked()
+	{
+		return this.accountLocked;
+	}
 
-   public Date getCredentialExpiration()
-   {
-      return this.credentialExpiration;
-   }
+	public void setAccountLocked(final Boolean accountLocked)
+	{
+		this.accountLocked = accountLocked;
+	}
 
-   public void setCredentialExpiration(final Date credentialExpiration)
-   {
-      this.credentialExpiration = credentialExpiration;
-   }
+	public Date getCredentialExpiration()
+	{
+		return this.credentialExpiration;
+	}
 
-   public Date getAccountExpiration()
-   {
-      return this.accountExpiration;
-   }
+	public void setCredentialExpiration(final Date credentialExpiration)
+	{
+		this.credentialExpiration = credentialExpiration;
+	}
 
-   public void setAccountExpiration(final Date accountExpiration)
-   {
-      this.accountExpiration = accountExpiration;
-   }
+	public Date getAccountExpiration()
+	{
+		return this.accountExpiration;
+	}
 
-   public String getSaleKey()
-   {
-      return this.saleKey;
-   }
+	public void setAccountExpiration(final Date accountExpiration)
+	{
+		this.accountExpiration = accountExpiration;
+	}
 
-   public void setSaleKey(final String saleKey)
-   {
-      this.saleKey = saleKey;
-   }
+	public String getSaleKey()
+	{
+		return this.saleKey;
+	}
 
-   public BigDecimal getDiscountRate()
-   {
-      return this.discountRate;
-   }
+	public void setSaleKey(final String saleKey)
+	{
+		this.saleKey = saleKey;
+	}
 
-   public void setDiscountRate(final BigDecimal discountRate)
-   {
-      this.discountRate = discountRate;
-   }
+	public BigDecimal getDiscountRate()
+	{
+		return this.discountRate;
+	}
 
-   public Gender getGender()
-   {
-      return this.gender;
-   }
+	public void setDiscountRate(final BigDecimal discountRate)
+	{
+		this.discountRate = discountRate;
+	}
 
-   public void setGender(final Gender gender)
-   {
-      this.gender = gender;
-   }
+	public Gender getGender()
+	{
+		return this.gender;
+	}
 
-   public Set<LoginRoleNameAssoc> getRoleNames()
-   {
-      return this.roleNames;
-   }
+	public void setGender(final Gender gender)
+	{
+		this.gender = gender;
+	}
 
-   public void setRoleNames(final Set<LoginRoleNameAssoc> roleNames)
-   {
-      this.roleNames = roleNames;
-   }
+	public Set<LoginRoleNameAssoc> getRoleNames()
+	{
+		return this.roleNames;
+	}
 
-   public Date getRecordingDate()
-   {
-      return this.recordingDate;
-   }
+	public void setRoleNames(final Set<LoginRoleNameAssoc> roleNames)
+	{
+		this.roleNames = roleNames;
+	}
 
-   public void setRecordingDate(final Date recordingDate)
-   {
-      this.recordingDate = recordingDate;
-   }
+	public Date getRecordingDate()
+	{
+		return this.recordingDate;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (loginName != null && !loginName.trim().isEmpty())
-         result += "loginName: " + loginName;
-      if (email != null && !email.trim().isEmpty())
-         result += ", email: " + email;
-      if (fullName != null && !fullName.trim().isEmpty())
-         result += ", fullName: " + fullName;
-      if (password != null && !password.trim().isEmpty())
-         result += ", password: " + password;
-      if (disableLogin != null)
-         result += ", disableLogin: " + disableLogin;
-      if (accountLocked != null)
-         result += ", accountLocked: " + accountLocked;
-      if (saleKey != null && !saleKey.trim().isEmpty())
-         result += ", saleKey: " + saleKey;
-      return result;
-   }
+	public void setRecordingDate(final Date recordingDate)
+	{
+		this.recordingDate = recordingDate;
+	}
 
-   public Agency getAgency()
-   {
-      return this.agency;
-   }
+	public BigDecimal getSimulationRate() {
+		return simulationRate;
+	}
 
-   public void setAgency(final Agency agency)
-   {
-      this.agency = agency;
-   }
+	public void setSimulationRate(BigDecimal simulationRate) {
+		this.simulationRate = simulationRate;
+	}
+
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (loginName != null && !loginName.trim().isEmpty())
+			result += "loginName: " + loginName;
+		if (email != null && !email.trim().isEmpty())
+			result += ", email: " + email;
+		if (fullName != null && !fullName.trim().isEmpty())
+			result += ", fullName: " + fullName;
+		if (password != null && !password.trim().isEmpty())
+			result += ", password: " + password;
+		if (disableLogin != null)
+			result += ", disableLogin: " + disableLogin;
+		if (accountLocked != null)
+			result += ", accountLocked: " + accountLocked;
+		if (saleKey != null && !saleKey.trim().isEmpty())
+			result += ", saleKey: " + saleKey;
+		return result;
+	}
+
+	public Agency getAgency()
+	{
+		return this.agency;
+	}
+
+	public void setAgency(final Agency agency)
+	{
+		this.agency = agency;
+	}
 }

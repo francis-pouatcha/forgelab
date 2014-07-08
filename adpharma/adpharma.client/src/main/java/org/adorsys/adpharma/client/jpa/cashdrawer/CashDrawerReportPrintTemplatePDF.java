@@ -55,12 +55,13 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	private final Map<Long, Login> logins;
 	private final Calendar startDate;
 	private final Calendar endDate;
+	private final Login login;
 
 	static Font boldFont = FontFactory.getFont("Times-Roman", 12, Font.BOLD);
 	static Font font = FontFactory.getFont("Times-Roman", 12);
 
 	public CashDrawerReportPrintTemplatePDF(CashDrawerReportPrinterData cashDrawerPrinterData, ResourceBundle resourceBundle,
-			Locale locale) throws DocumentException {
+			Locale locale,Login login) throws DocumentException {
 		this.reportPrinter = cashDrawerPrinterData.getLogin();
 		this.resourceBundle = resourceBundle;
 		this.locale = locale;
@@ -68,7 +69,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		this.logins = cashDrawerPrinterData.getLogins();
 		this.startDate = cashDrawerPrinterData.getStartDate();
 		this.endDate = cashDrawerPrinterData.getEndDate();
-
+		this.login =  login ;
 
 		pdfFileName = "caisse du "+DateHelper.format(new Date(), "dd-MM-yyyy") + ".pdf";
 		document = new Document(PageSize.A4.rotate(),5,5,5,5);
@@ -89,17 +90,20 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	}
 
 	public void addItems(List<CashDrawer> cashDrawers) {
+			BigDecimal simulationRate =BigDecimal.ONE ;
+			if(login.getSimulationRate()!=null && login.getSimulationRate().compareTo(BigDecimal.ZERO)!= 0)
+				simulationRate = login.getSimulationRate().divide(BigDecimal.valueOf(100));
 		for (CashDrawer cashDrawer : cashDrawers) {
 			String closindDate = cashDrawer.getClosingDate() ==null ?"":DateHelper.format(cashDrawer.getClosingDate().getTime(),"dd-MM-yyyy HH:mm");
 			newTableRow(cashDrawer.getCashDrawerNumber(),
 					DateHelper.format(cashDrawer.getOpeningDate().getTime(),"dd-MM-yyyy HH:mm"),
 					closindDate,
 					cashDrawer.getCashier().getLoginName(), 
-					cashDrawer.getInitialAmount(),
-					cashDrawer.getTotalClientVoucher(),
-					cashDrawer.getTotalCashOut(),
-					cashDrawer.getTotalCash(),
-					cashDrawer.getTotalCashIn());
+					cashDrawer.getInitialAmount().multiply(simulationRate),
+					cashDrawer.getTotalClientVoucher().multiply(simulationRate),
+					cashDrawer.getTotalCashOut().multiply(simulationRate),
+					cashDrawer.getTotalCash().multiply(simulationRate),
+					cashDrawer.getTotalCashIn().multiply(simulationRate));
 		}
 	}
 

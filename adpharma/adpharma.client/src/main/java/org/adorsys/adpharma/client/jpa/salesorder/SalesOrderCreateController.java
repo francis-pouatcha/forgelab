@@ -194,7 +194,8 @@ public class SalesOrderCreateController implements EntityController
 		//      PropertyReader.copy(templateEntity, model);
 		//      // PropertyReader.cleanIds(model, new HashSet<Object>());
 		//      model.cleanIds();
-
+		if(model ==null)
+			model = templateEntity ;
 		createService.setModel(model).start();
 	}
 

@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.CashDrawerPrintRequest;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.print.PrintDialogPDF;
@@ -49,6 +50,9 @@ public class CashDrawerReportPrinter {
 	
 	@Inject
 	private PrintDialogPDF printDialog;
+	
+	@Inject
+	SecurityUtil securityUtil ;
 	
 	@Inject
 	private CashDrawerReportTimeFrameDialog timeFrameDialog;
@@ -84,7 +88,7 @@ public class CashDrawerReportPrinter {
 	    		CashDrawerReportPrintTemplatePDF worker = (CashDrawerReportPrintTemplatePDF) s.getWorker();
 	    		if(worker==null)
 					try {
-						worker = new CashDrawerReportPrintTemplatePDF(reportData, resourceBundle, locale);
+						worker = new CashDrawerReportPrintTemplatePDF(reportData, resourceBundle, locale,securityUtil.getConnectedUser());
 					} catch (DocumentException e) {
 						throw new IllegalStateException(e);
 					}

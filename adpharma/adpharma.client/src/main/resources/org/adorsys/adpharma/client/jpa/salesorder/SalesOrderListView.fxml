@@ -101,7 +101,7 @@
 </SplitPane>
 					</content>
 				</Tab>
-				<Tab fx:id="turnoverTab" closable="false" text="Chiffre d 'affaire">
+				<Tab fx:id="turnoverTab" closable="false" disable="true" text="Chiffre d 'affaire">
 					<content>
 						<VBox prefHeight="200.0" prefWidth="100.0">
 							<children>
@@ -110,28 +110,28 @@
 										<Insets left="5.0" />
 									</VBox.margin>
 									<children>
-										<ComboBox fx:id="chartClientList" prefHeight="35.0" prefWidth="232.0" promptText="Customer ">
+										<ComboBox fx:id="chartClientList" prefHeight="35.0" prefWidth="250.0" promptText="Tous les Clients ">
 											<HBox.margin>
 												<Insets left="5.0" />
 											</HBox.margin>
 										</ComboBox>
+<ComboBox fx:id="chartArticleList" layoutX="15.0" layoutY="13.0" prefHeight="35.0" prefWidth="400.0" promptText="Tous les Articles " /><CheckBox fx:id="emptyArticle" mnemonicParsing="false" text="Vider" />
 										<ComboBox fx:id="yearList" prefHeight="35.0" prefWidth="115.0" promptText="Years" />
 										<Button fx:id="computeButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="89.0" text="Calculer" />
 									</children>
 								</HBox>
 								<Separator prefWidth="200.0" />
 								<BorderPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-									<left>
-										<VBox prefHeight="539.0" prefWidth="280.0" BorderPane.alignment="CENTER">
-											<children>
-												<TableView fx:id="pieChartData" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-											</children>
-										</VBox>
-									</left>
 									<center>
 										<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-											<children>
-												<PieChart fx:id="pieChart" VBox.vgrow="ALWAYS" />
+											<children><BarChart fx:id="barChart" title="Statistiques des ventes :" VBox.vgrow="ALWAYS">
+  <xAxis>
+    <CategoryAxis side="BOTTOM" />
+  </xAxis>
+  <yAxis>
+    <NumberAxis side="LEFT" />
+  </yAxis>
+</BarChart>
 											</children>
 										</VBox>
 									</center>

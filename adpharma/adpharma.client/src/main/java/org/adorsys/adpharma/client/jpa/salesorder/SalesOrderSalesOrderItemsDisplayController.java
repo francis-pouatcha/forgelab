@@ -33,6 +33,7 @@ public class SalesOrderSalesOrderItemsDisplayController extends SalesOrderSalesO
 
    public void handleSelectionEvent(@Observes @EntitySelectionEvent SalesOrder selectedEntity)
    {
+	   
       loadAssociation();
    }
 }

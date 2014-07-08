@@ -103,16 +103,6 @@ public class CustomerInvoiceEndpoint
 		return Response.ok(detach(found)).build();
 	}
 
-	@POST
-	@Path("/findSalesStatistics")
-	@Produces({ "application/json", "application/xml" })
-	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput chartDataSearchInput)
-	{
-		return ejb.findSalesStatistics(chartDataSearchInput);
-	}
-
-
-
 
 	@GET
 	@Produces({ "application/json", "application/xml" })

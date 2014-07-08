@@ -1,13 +1,14 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.Tab;
@@ -19,8 +20,8 @@ import javafx.scene.layout.HBox;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
-import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
@@ -47,7 +48,7 @@ public class SalesOrderListView
 
 	@FXML
 	private Button createButton;
-
+	
 	@FXML
 	private Button removeButton;
 
@@ -60,18 +61,21 @@ public class SalesOrderListView
 	@FXML
 	private Button printVoucherButton;
 	
+	@FXML
+	private CheckBox emptyArticle ;
 
 	@FXML
 	private Button computeButton;
 
 	@FXML
-	private PieChart pieChart;
+	private BarChart<String, BigDecimal> barChart;
 
-	@FXML
-	private TableView<ChartData> pieChartData;
 
 	@FXML 
 	private ComboBox<Customer> chartClientList;
+	
+	@FXML 
+	private ComboBox<Article> chartArticleList;
 
 	@FXML 
 	private ComboBox<Integer> yearList;
@@ -169,10 +173,6 @@ public class SalesOrderListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 //		viewBuilder.addBigDecimalColumn(dataListItem, "vat", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
-
-		// pie Chart table view
-		viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
-		viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
 	}
@@ -277,11 +277,8 @@ public class SalesOrderListView
 		return salesOrderStatus;
 	}
 
-	public PieChart getPieChart(){
-		return pieChart;
-	}
-	public TableView<ChartData> getPieChartData(){
-		return pieChartData;
+	public BarChart<String, BigDecimal> getPieChart(){
+		return barChart;
 	}
 	public Button getComputeButton(){
 		return computeButton;
@@ -290,7 +287,10 @@ public class SalesOrderListView
 	public ComboBox<Customer> getChartClientList(){
 		return chartClientList ;
 	}
-
+	public ComboBox<Article> getChartArticleList(){
+		return chartArticleList ;
+	}
+	
 	public ComboBox<Integer> getYearList(){
 		return yearList ;
 	}
@@ -298,5 +298,9 @@ public class SalesOrderListView
 	public Tab getTurnoverTab(){
 		return turnoverTab ;
 	}
-
+     
+	
+	public CheckBox getEmptyArticle(){
+		return emptyArticle ;
+	}
 }

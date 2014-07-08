@@ -4,13 +4,12 @@ import java.awt.Desktop;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,8 +18,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.PieChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -28,13 +26,18 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
+import org.adorsys.adpharma.client.events.ReportMenuItem;
 import org.adorsys.adpharma.client.events.SalesOrderId;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
@@ -43,9 +46,6 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceChartDataS
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherPrintTemplatePdf;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchBySalesOrderService;
-import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchInput;
-import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchService;
-import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatementReportPrintTemplatePDF;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
@@ -66,14 +66,16 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -96,6 +98,10 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<SalesOrder> salesOrderCreateRequestEvent;
+
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> articleSearchInput;
 
 	@Inject
 	private SalesOrderSearchService salesOrderSearchService;
@@ -182,6 +188,18 @@ public class SalesOrderListController implements EntityController
 			public void handle(ActionEvent event) {
 				SalesOrderAdvenceSearchData searchData = new SalesOrderAdvenceSearchData();
 				advenceSearchRequestEvent.fire(searchData);
+
+			}
+		});
+
+		listView.getEmptyArticle().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue){
+                   listView.getChartArticleList().setValue(null);
+				}
 
 			}
 		});
@@ -282,11 +300,14 @@ public class SalesOrderListController implements EntityController
 			public void handle(ActionEvent event) {
 				Integer selectedYears = listView.getYearList().getSelectionModel().getSelectedItem();
 				Customer selectedCustomer = listView.getChartClientList().getSelectionModel().getSelectedItem();
+				Article article = listView.getChartArticleList().getSelectionModel().getSelectedItem();
 				if(selectedYears!=null){
 					SalesStattisticsDataSearchInput chartDataSearchInput = new SalesStattisticsDataSearchInput();
 					chartDataSearchInput.setYears(selectedYears);
 					if(selectedCustomer!=null&&selectedCustomer.getId()!=null)
 						chartDataSearchInput.setCustomer(selectedCustomer);
+					if(article!=null&&article.getId()!=null)
+						chartDataSearchInput.setArticle(article);
 					customerInvoiceChartDataService.setModel(chartDataSearchInput).start();
 				}
 
@@ -301,9 +322,8 @@ public class SalesOrderListController implements EntityController
 				event.consume();
 				s.reset();
 				Iterator<ChartData> iterator = result.getChartData().iterator();
-				List<Data> pieChartData = ChartData.toPieChartData( result.getChartData());
+				List<Series<String, BigDecimal>> pieChartData = ChartData.toBarChartData( result.getChartData());
 				listView.getPieChart().getData().setAll(pieChartData);
-				listView.getPieChartData().getItems().setAll( result.getChartData());
 			}
 		});
 		customerInvoiceChartDataService.setOnFailed(chartDataSearchServiceCallFailedEventHandler);
@@ -343,6 +363,15 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(MouseEvent event) {
 				customerSearchService.setSearchInputs(customerSearchInput).start();
+
+			}
+		});
+
+		listView.getChartArticleList().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				articleSearchInput.fire(new ArticleSearchInput());
 
 			}
 		});
@@ -630,6 +659,19 @@ public class SalesOrderListController implements EntityController
 	public void handleCustomerVoucherPrint(@Observes SalesOrder salesOrder){
 		if(salesOrder.getId()!=null){
 			voucherSearchBySalesOrderService.setSalesOrder(salesOrder).start();
+		}
+	}
+
+	public void HandleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article){
+		listView.getChartArticleList().setValue(article);
+		listView.getEmptyArticle().setSelected(false);
+	}
+	
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+			listView.getTurnoverTab().setDisable(false);
+		}else {
+			listView.getTurnoverTab().setDisable(true);
 		}
 	}
 }

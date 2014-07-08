@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.salesorder;
+package org.adorsys.adpharma.client.jpa.directsales;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javafx.beans.property.ObjectProperty;
@@ -43,6 +44,7 @@ import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerLoadOpenService;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchResult;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
@@ -55,7 +57,6 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
@@ -64,7 +65,14 @@ import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSalesOrd
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchInput;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchResult;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchService;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCancelService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawer;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCloseService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsurance;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderManagedLotService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderRegistration;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateService;
@@ -78,6 +86,7 @@ import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.CloseOpenTabRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
@@ -88,6 +97,8 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.RolesEvent;
@@ -99,13 +110,11 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-
 @Singleton
-public class SalesOrderDisplayController implements EntityController
+public class DirectSalesDisplayController implements EntityController
 {
 	@Inject
-	private SalesOrderDisplayView displayView;
+	private DirectSalesDisplayView displayView;
 
 
 	@Inject
@@ -142,8 +151,6 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private VATSearchService vatSearchService;
 
-	@Inject
-	private SalesOrderReturnService orderReturnService;
 
 	@Inject
 	private SalesOrderCancelService orderCancelService;
@@ -215,16 +222,40 @@ public class SalesOrderDisplayController implements EntityController
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
 
+	@Inject
+	@EntityCreateRequestedEvent
+	private Event<SalesOrder> salesOrderCreateRequestEvent; 
+
+	@Inject
+	private CashDrawerLoadOpenService cashDrawerLoadService ;
+
+	@Inject
+	@Bundle({ CrudKeys.class, CashDrawer.class})
+	private ResourceBundle resourceBundle;
+
+	@Inject
+	@CloseOpenTabRequestEvent
+	private Event<Object> closeOpenTabRequestEvent ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
 
-		//		      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
-		//		displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
-
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
+
+		displayView.getInsurrer().valueProperty().addListener(new ChangeListener<SalesOrderInsurance>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends SalesOrderInsurance> observable,
+					SalesOrderInsurance oldValue, SalesOrderInsurance newValue) {
+				if(newValue!=null)
+					resetNetTopay(displayedEntity);
+
+			}
+		});
 
 		salesOrderItemCreateFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -260,6 +291,20 @@ public class SalesOrderDisplayController implements EntityController
 		});
 
 		/*
+		 * listen to cancel button .
+		 */
+		displayView.getCancelButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent e)
+					{
+						salesOrderCreateRequestEvent.fire(new SalesOrder());
+					}
+				});
+
+
+		/*
 		 * listen to Ok button.
 		 */
 		displayView.getOkButton().disableProperty().bind(salesOrderItemCreateService.runningProperty());
@@ -287,67 +332,6 @@ public class SalesOrderDisplayController implements EntityController
 				}
 			}
 		});
-
-
-		/*
-		 * listen to delete menu Item.
-		 */
-		//
-		//		displayView.getDeleteSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-		//
-		//			@Override
-		//			public void handle(ActionEvent event) {
-		//				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-		//				if(selectedItem!=null) {
-		//					salesOrderItemRemoveService.setEntity(selectedItem).start();
-		//				}
-		//
-		//			}
-		//		});
-
-
-
-		/*
-		 * listen to edit menu Item.
-		 */
-		displayView.getReturnSOIMenu().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent event) {
-				SalesOrderItem selectedItem = displayView.getDataList().getSelectionModel().getSelectedItem();
-				if(!displayedEntity.getAlreadyReturned()){
-					if(selectedItem!= null){
-						BigDecimal oderedQty = selectedItem.getOrderedQty();
-						BigDecimal qtyToReturn = getQtyToReturn();
-						if(qtyToReturn.compareTo(oderedQty)>0){
-							Dialogs.create().nativeTitleBar().message("Vous ne pouvez retourner plus de : "+oderedQty +" pour cette ligne !").showInformation();
-						}else {
-							selectedItem.setReturnedQty(qtyToReturn);
-							selectedItem.setDeliveredQty(selectedItem.getOrderedQty().subtract(qtyToReturn));
-						}
-					}
-
-				}else {
-					Dialogs.create().message("cette Commande a deja fais l objet d un retour !").showInformation();
-				}
-			}
-		});
-
-
-		/*
-		 * listen to cancel button .
-		 */
-		displayView.getCancelButton().setOnAction(
-				new EventHandler<ActionEvent>()
-				{
-					@Override
-					public void handle(ActionEvent e)
-					{
-						PropertyReader.copy(new SalesOrder(), displayedEntity);
-						PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-						searchRequestedEvent.fire(displayedEntity);
-					}
-				});
 
 
 		/*
@@ -415,37 +399,7 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
-		displayView.getSaveReturnButton().setOnAction(new EventHandler<ActionEvent>() {
 
-			@Override
-			public void handle(ActionEvent event) {
-				if(!displayedEntity.getAlreadyReturned()){
-					orderReturnService.setEntity(displayedEntity).start();
-				}else {
-					Dialogs.create().message("Cette commande a deja fais l'objet dun retour !").showInformation();
-				}
-			}
-		});
-
-		orderReturnService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				SalesOrderReturnService s = (SalesOrderReturnService) event.getSource();
-				SalesOrder so = s.getValue();
-				event.consume();
-				s.reset();
-				displayedEntity.setAlreadyReturned(so.getAlreadyReturned());
-				workingInfosEvent.fire("Article Returned   successfully !");
-				Action showConfirm = Dialogs.create().message("voulez vs Imprimer l'Avoir ?").showConfirm();
-				if(Dialog.Actions.YES.equals(showConfirm)){
-					salesOrderVoucherPrintRequestEvent.fire(so);
-				}
-
-			}
-		});
-
-		orderReturnService.setOnFailed(callFailedEventHandler);
 
 		displayView.getClient().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -527,6 +481,37 @@ public class SalesOrderDisplayController implements EntityController
 			}
 
 		});
+		cashDrawerLoadService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CashDrawerLoadOpenService s = (CashDrawerLoadOpenService) event.getSource();
+				CashDrawerSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				List<CashDrawer> resultList = result.getResultList();
+				if(resultList==null || resultList.isEmpty()){
+					//					// Display error to user.
+					//					noCashDrawerErrorMessageDialog.getTitleText().setText(
+					//							resourceBundle.getString("CashDrawer_no_opened_for_user.title"));
+					//					noCashDrawerErrorMessageDialog.getDetailText().setText(resourceBundle.getString("CashDrawer_no_opened_for_user.text"));
+					//					noCashDrawerErrorMessageDialog.display();
+					Action showConfirm = Dialogs.create().message("Impossible d'effectuer une vente Rapide \n vous ne disposez d'aucune caisse ouverte !").showError();
+					closeOpenTabRequestEvent.fire(new Object());
+
+
+				} else {
+					CashDrawer cashDrawer = resultList.iterator().next();
+					displayView.getCashDrawer().getItems().clear();
+					displayView.getCashDrawer().setValue(new SalesOrderCashDrawer(cashDrawer) );
+
+				}
+
+			}
+		});
+
+
+		cashDrawerLoadService.setOnFailed(callFailedEventHandler);
 		cashDrawerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -547,10 +532,6 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
-
-		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
-
-
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -780,6 +761,8 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		displayView.getInternalPic().requestFocus();
 		getOpenCashDrawer();
+		if(displayedEntity==null || (displayedEntity!=null && displayedEntity.getId() ==null))
+			salesOrderCreateRequestEvent.fire(new SalesOrder());
 
 	}
 
@@ -798,14 +781,17 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public void getOpenCashDrawer(){
-		CashDrawerSearchInput cdsi = new CashDrawerSearchInput();
-		cdsi.getEntity().setOpened(Boolean.TRUE);
-		CashDrawerAgency cashDrawerAgency = new CashDrawerAgency();
-		PropertyReader.copy(securityUtil.getAgency(), cashDrawerAgency);
-		cdsi.getEntity().setAgency(cashDrawerAgency);
-		cdsi.getFieldNames().addAll(Arrays.asList("opened","agency"));
-		cdsi.setMax(-1);
-		cashDrawerSearchService.setSearchInputs(cdsi).start();
+//		CashDrawerSearchInput cdsi = new CashDrawerSearchInput();
+//		cdsi.getEntity().setOpened(Boolean.TRUE);
+//		CashDrawerAgency cashDrawerAgency = new CashDrawerAgency();
+//		PropertyReader.copy(securityUtil.getAgency(), cashDrawerAgency);
+//		cdsi.getEntity().setAgency(cashDrawerAgency);
+//		cdsi.getFieldNames().addAll(Arrays.asList("opened","agency"));
+//		cdsi.setMax(-1);
+//		cashDrawerSearchService.setSearchInputs(cdsi).start();
+
+		// load user open cash drawer 
+		cashDrawerLoadService.start();
 	}
 
 	/**
@@ -1060,7 +1046,7 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		return false;
 	}
-	
+
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.SUPER_SALLER.name())){
 			displayView.getSalesPricePU().setEditable(true);
@@ -1068,5 +1054,4 @@ public class SalesOrderDisplayController implements EntityController
 			displayView.getSalesPricePU().setEditable(false);
 		}
 	}
-
 }

@@ -72,16 +72,7 @@ public class CustomerInvoiceService {
 				.put(ent, CustomerInvoice.class);
 	}
 
-	//	@GET
-	//	@Path("/findSalesStatistics")
-	//	@Produces({ "application/json", "application/xml" })
-	@SuppressWarnings("unchecked")
-	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStattisticsDataSearchInput entity)
-	{
-		Entity<SalesStattisticsDataSearchInput> ent = Entity.entity(entity, media);
-		return target().path("findSalesStatistics").request(media)
-				.post(ent, SalesStatisticsDataSearchResult.class);
-	}
+	
 
 	// @GET
 	// @Path("/{id:[0-9][0-9]*}")

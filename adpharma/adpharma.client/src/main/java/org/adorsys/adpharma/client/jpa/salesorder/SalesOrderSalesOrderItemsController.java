@@ -300,7 +300,7 @@ public abstract class SalesOrderSalesOrderItemsController
 
    protected void loadAssociation()
    {
-      if (sourceEntity.getId() == null)
+      if (sourceEntity!=null && sourceEntity.getId() == null)
          return;
       SalesOrderItemSearchInput searchInputs = new SalesOrderItemSearchInput();
       SalesOrderItem entity = new SalesOrderItem();

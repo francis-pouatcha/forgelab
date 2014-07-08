@@ -65,6 +65,9 @@ public class Login implements Cloneable
    @Description("Login_discountRate_description")
    @NumberFormatType(NumberType.PERCENTAGE)
    private SimpleObjectProperty<BigDecimal> discountRate;
+   @Description("Login_simulationRate_description")
+   @NumberFormatType(NumberType.PERCENTAGE)
+   private SimpleObjectProperty<BigDecimal> simulationRate;
    @Description("Login_credentialExpiration_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> credentialExpiration;
@@ -277,6 +280,26 @@ public class Login implements Cloneable
    public final void setDiscountRate(BigDecimal discountRate)
    {
       this.discountRateProperty().set(discountRate);
+   }
+   
+   
+   public SimpleObjectProperty<BigDecimal> simulationRateProperty()
+   {
+      if (simulationRate == null)
+      {
+    	  simulationRate = new SimpleObjectProperty<BigDecimal>();
+      }
+      return simulationRate;
+   }
+
+   public BigDecimal getSimulationRate()
+   {
+      return simulationRateProperty().get();
+   }
+
+   public final void setSimulationRate(BigDecimal simulationRate)
+   {
+      this.simulationRateProperty().set(simulationRate);
    }
 
    public SimpleObjectProperty<Calendar> credentialExpirationProperty()

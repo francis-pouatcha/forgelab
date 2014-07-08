@@ -19,12 +19,14 @@ import javax.inject.Inject;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
@@ -92,6 +94,16 @@ public class ProcurementOrderListView
 
 	@Inject
 	private FXMLLoader fxmlLoader ;
+	
+	@Inject
+	private DocumentProcessingStateListCellFatory procurementOrderStatusListCellFatory;
+
+
+	@Inject
+	@Bundle(DocumentProcessingState.class)
+	private ResourceBundle procurementOrderStatusBundle;
+
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -129,6 +141,7 @@ public class ProcurementOrderListView
 		//      rootPane = viewBuilder.toAnchorPane();
 
 		buildsearchBar();
+		ComboBoxInitializer.initialize(state, documentProcessingStateConverter, procurementOrderStatusListCellFatory, procurementOrderStatusBundle);
 	}
 
 	public void buildsearchBar(){

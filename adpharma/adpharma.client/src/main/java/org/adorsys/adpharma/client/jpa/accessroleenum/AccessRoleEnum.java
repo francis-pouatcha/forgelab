@@ -13,5 +13,6 @@ public enum AccessRoleEnum
    MANAGER, @Description("AccessRoleEnum_CASHIER_description")
    CASHIER, @Description("AccessRoleEnum_STOCKS_description")
    STOCKS, @Description("AccessRoleEnum_SALES_description")
-   SALES
+   SALES,@Description("AccessRoleEnum_SUPER_SALLER_description")
+   SUPER_SALLER
 }
