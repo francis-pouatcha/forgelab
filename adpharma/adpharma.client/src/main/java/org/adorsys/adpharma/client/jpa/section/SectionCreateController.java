@@ -185,7 +185,7 @@ public class SectionCreateController implements EntityController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Section templateEntity)
    {
-      PropertyReader.copy(templateEntity, model);
+      PropertyReader.copy(new Section(), model);
       // PropertyReader.cleanIds(model, new HashSet<Object>());
       model.cleanIds();
    }

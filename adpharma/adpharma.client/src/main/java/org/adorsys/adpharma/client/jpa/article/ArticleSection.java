@@ -1,8 +1,11 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.section.SectionAgency;
+
 import javafx.beans.property.SimpleObjectProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,7 +16,6 @@ import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import org.adorsys.adpharma.client.jpa.section.Section;
 
 @XmlRootElement
@@ -29,6 +31,7 @@ public class ArticleSection implements Association<Article, Section>, Cloneable
    private SimpleStringProperty sectionCode;
    private SimpleStringProperty name;
    private SimpleStringProperty position;
+   private SimpleBooleanProperty wareHouse;
 
    public ArticleSection()
    {
@@ -115,6 +118,28 @@ public class ArticleSection implements Association<Article, Section>, Cloneable
    {
       this.positionProperty().set(position);
    }
+   
+   public SimpleBooleanProperty wareHouseProperty()
+   {
+      if (wareHouse == null)
+      {
+    	  wareHouse = new SimpleBooleanProperty();
+      }
+      return wareHouse;
+   }
+
+   public Boolean getWareHouse()
+   {
+      return wareHouseProperty().get();
+   }
+
+   public final void setWareHouse(Boolean wareHouse)
+   {
+      if (wareHouse == null)
+    	  wareHouse = Boolean.FALSE;
+      this.wareHouseProperty().set(wareHouse);
+   }
+
 
    @Override
    public int hashCode()

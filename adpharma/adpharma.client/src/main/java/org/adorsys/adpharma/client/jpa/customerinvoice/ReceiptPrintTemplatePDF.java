@@ -216,13 +216,15 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 					.getString("ReceiptPrintTemplate_salesAgent.title")
 					+ " " + invoiceData.getLogin().getFullName());
 			borderlessCell(invoiceTable, new Paragraph(standardText), invoiceTableColCount,1);
-
+			String customerName = invoiceData.getCustomerInvoice().getCustomer()
+					.getFullName();
+			if(StringUtils.isNotBlank(receiptPrinterData.getCustomerName()))
+				customerName = receiptPrinterData.getCustomerName();
 			Paragraph paragraph = new Paragraph(new StandardText(
 					resourceBundle
 					.getString("ReceiptPrintTemplate_customer.title")
 					+ " "
-					+ invoiceData.getCustomerInvoice().getCustomer()
-					.getFullName()));
+					+ customerName));
 			borderlessCell(invoiceTable, paragraph, invoiceTableColCount,1);
 
 			borderlessCell(invoiceTable, new CenterParagraph(separatorText), invoiceTableColCount,1);

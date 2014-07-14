@@ -56,16 +56,6 @@ public class WareHouseArticleLotEndpoint
    }
    
    @POST
-   @Path("/processTransfer")
-   @Consumes({ "application/json", "application/xml" })
-   @Produces({ "application/json", "application/xml" })
-   public WareHouseArticleLot processTransfer(ArticleLotTransferManager entity)
-   {
-      return detach(ejb.processTransFer(entity));
-   }
-   
-   
-   @POST
    @Path("/processDestocking")
    @Consumes({ "application/json", "application/xml" })
    @Produces({ "application/json", "application/xml" })

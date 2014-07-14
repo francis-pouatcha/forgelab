@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -100,6 +101,7 @@ public class ArticleCreateController implements EntityController
             Set<ConstraintViolation<Article>> violations = createView.getView().validate(model);
             if (violations.isEmpty())
             {
+            	model.setQtyInStock(BigDecimal.ZERO);
                createService.setModel(model).start();
             }
             else

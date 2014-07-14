@@ -28,6 +28,7 @@
 								<Insets />
 							</VBox.margin>
 						</Button>
+<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Recu de paiement" />
 						<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Suprimer">
 							<VBox.margin>
 								<Insets />

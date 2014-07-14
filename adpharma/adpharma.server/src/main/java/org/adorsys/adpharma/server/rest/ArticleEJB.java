@@ -1,7 +1,6 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -21,15 +20,11 @@ import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
+import org.adorsys.adpharma.server.jpa.Article_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
-import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
-import org.adorsys.adpharma.server.jpa.StockMovement;
-import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
-import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
 
 @Stateless
@@ -40,7 +35,7 @@ public class ArticleEJB
 	private ArticleRepository repository;
 
 	@Inject
-	private ProductFamilyMerger productFamilyMerger;
+	private ProductFamilyMerger productFamilyMerger ;
 
 	@Inject
 	private AgencyMerger agencyMerger;
@@ -69,7 +64,15 @@ public class ArticleEJB
 
 	public Article create(Article entity)
 	{
-		return repository.save(attach(entity));
+		Article article = new Article();
+		article.setPic(entity.getPic());
+		article.setSection(entity.getSection());
+
+		List<Article> found = findBy(article, 0, 1, new SingularAttribute[]{Article_.pic,Article_.section});
+		if(found.isEmpty())
+			entity =  repository.save(entity);
+
+		return attach(entity) ;
 	}
 
 	public Article deleteById(Long id)
@@ -140,6 +143,8 @@ public class ArticleEJB
 		repository.save(original);
 
 	}
+
+
 
 	private Article attach(Article entity)
 	{

@@ -761,8 +761,8 @@ public class DirectSalesDisplayController implements EntityController
 		}
 		displayView.getInternalPic().requestFocus();
 		getOpenCashDrawer();
-		if(displayedEntity==null || (displayedEntity!=null && displayedEntity.getId() ==null))
-			salesOrderCreateRequestEvent.fire(new SalesOrder());
+//		if(displayedEntity==null || (displayedEntity!=null && displayedEntity.getId() ==null))
+//			salesOrderCreateRequestEvent.fire(new SalesOrder());
 
 	}
 

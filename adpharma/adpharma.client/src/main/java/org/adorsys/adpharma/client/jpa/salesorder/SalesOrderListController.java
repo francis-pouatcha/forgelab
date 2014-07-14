@@ -31,9 +31,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
-import org.adorsys.adpharma.client.events.ReportMenuItem;
+import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
@@ -42,12 +43,22 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceChartDataService;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSalesOrder;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherPrintTemplatePdf;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucherSearchBySalesOrderService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssoc;
+import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchInput;
+import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchResult;
+import org.adorsys.adpharma.client.jpa.paymentcustomerinvoiceassoc.PaymentCustomerInvoiceAssocSearchService;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSearchInput;
@@ -100,6 +111,9 @@ public class SalesOrderListController implements EntityController
 	private Event<SalesOrder> salesOrderCreateRequestEvent;
 
 	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService ;
+
+	@Inject
 	@ModalEntitySearchRequestedEvent
 	private Event<ArticleSearchInput> articleSearchInput;
 
@@ -132,11 +146,21 @@ public class SalesOrderListController implements EntityController
 
 	private SalesOrderSearchResult searchResult;
 
+	@Inject
+	private PaymentCustomerInvoiceAssocSearchService paymentCustomerInvoiceAssocSearchService ;
+
+	@Inject
+	private PaymentCustomerInvoiceAssocSearchInput assocSearchInput ;
+
 	@Inject 
 	SalesOrderSearchInput searchInput;
 
 	@Inject
 	CustomerSearchInput customerSearchInput ;
+
+	@Inject
+	@PrintPaymentReceiptRequestedEvent
+	private Event<PaymentId> printPaymentReceiptRequestedEvent;
 
 
 	@Inject
@@ -198,7 +222,7 @@ public class SalesOrderListController implements EntityController
 			public void changed(ObservableValue<? extends Boolean> observable,
 					Boolean oldValue, Boolean newValue) {
 				if(newValue){
-                   listView.getChartArticleList().setValue(null);
+					listView.getChartArticleList().setValue(null);
 				}
 
 			}
@@ -212,10 +236,13 @@ public class SalesOrderListController implements EntityController
 					selectedSalesOrderId = new SalesOrderId(newValue.getId());
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getPrintInvoiceButtonn().disableProperty().unbind();
+					listView.getPrintTicketButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getAlreadyReturned()));
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					//					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getPrintTicketButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getCashed()));
+
 					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
 					sosi.setMax(-1);
 					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
@@ -532,18 +559,73 @@ public class SalesOrderListController implements EntityController
 				String customerName = null;
 				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
 					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
-				if(StringUtils.isBlank(customerName)){
-					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);				
-				}else {
-					//					Customer customer = new Customer();
-					//					customer.setFirstName(customerName);
-					//					customer.setFullName(customerName);
-					//					customer.setLastName(customerName);
-					//					changeCustomerService.setCustomer(customer);
-					selectedSalesOrderId.setCustomerName(customerName);
-					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
-					//					changeCustomerService.setSalesId(selectedSalesOrderId.getId()).start();
+				selectedSalesOrderId.setCustomerName(customerName);
+				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
+			}
+		});
+
+		listView.getPrintTicketButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					CustomerInvoiceSearchInput invoiceSearchInput = new CustomerInvoiceSearchInput();
+					invoiceSearchInput.getEntity().setSalesOrder(new CustomerInvoiceSalesOrder(selectedItem));
+					invoiceSearchInput.getFieldNames().add("salesOrder");
+					customerInvoiceSearchService.setSearchInputs(invoiceSearchInput).start();
+
 				}
+			}
+		});
+
+		customerInvoiceSearchService.setOnFailed(serviceCallFailedEventHandler);
+		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				CustomerInvoiceSearchResult results = s.getValue();
+				event.consume();
+				s.reset();
+				List<CustomerInvoice> resultList = results.getResultList();
+				if(!resultList.isEmpty()){
+					for (CustomerInvoice customerInvoice : resultList) {
+						if(customerInvoice.getCashed()){
+							assocSearchInput.getEntity().setTarget(customerInvoice);
+							assocSearchInput.getFieldNames().add("target");
+							paymentCustomerInvoiceAssocSearchService.setSearchInputs(assocSearchInput).start();
+							break;
+						}
+					}
+				}
+
+			}
+		});
+
+		paymentCustomerInvoiceAssocSearchService.setOnFailed(serviceCallFailedEventHandler);
+		paymentCustomerInvoiceAssocSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				PaymentCustomerInvoiceAssocSearchService s = (PaymentCustomerInvoiceAssocSearchService) event.getSource();
+				PaymentCustomerInvoiceAssocSearchResult results = s.getValue();
+				event.consume();
+				s.reset();
+				List<PaymentCustomerInvoiceAssoc> resultList = results.getResultList();
+				if(!resultList.isEmpty()){
+					PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc = resultList.iterator().next();
+					Payment payment = paymentCustomerInvoiceAssoc.getSource();
+					PaymentId paymentId = new PaymentId(payment.getId());
+					SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+					String customerName = null;
+					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					paymentId.setCustomerName(customerName);
+					printPaymentReceiptRequestedEvent.fire(paymentId);
+
+				}
+
+
 			}
 		});
 
@@ -666,7 +748,7 @@ public class SalesOrderListController implements EntityController
 		listView.getChartArticleList().setValue(article);
 		listView.getEmptyArticle().setSelected(false);
 	}
-	
+
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
 			listView.getTurnoverTab().setDisable(false);

@@ -7,6 +7,8 @@ public class ArticleLotTransferManager {
 	   private ArticleLot lotToTransfer;
 	   
 	   private WareHouse wareHouse;
+	   
+	   private Section targetSection ;
 	  
 	   private BigDecimal qtyToTransfer;
 	   
@@ -42,6 +44,14 @@ public class ArticleLotTransferManager {
 
 	public void setLotQty(BigDecimal lotQty) {
 		this.lotQty = lotQty;
+	}
+
+	public Section getTargetSection() {
+		return targetSection;
+	}
+
+	public void setTargetSection(Section targetSection) {
+		this.targetSection = targetSection;
 	}
 	   
 	  

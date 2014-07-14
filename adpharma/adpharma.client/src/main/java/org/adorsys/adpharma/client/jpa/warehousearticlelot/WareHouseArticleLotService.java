@@ -98,16 +98,6 @@ public class WareHouseArticleLotService {
 				.post(searchInputEntity, Long.class);
 	}
 
-	// @POST
-	// @Path("/processTransfer")
-	// @Consumes("application/xml")
-	public WareHouseArticleLot processTransfer(
-			ArticleLotTransferManager transferManager) {
-		Entity<ArticleLotTransferManager> entity = Entity.entity(
-				transferManager, media);
-		return target().path("processTransfer").request()
-				.post(entity, WareHouseArticleLot.class);
-	}
 
 	// @POST
 	// @Path("/processDestocking")

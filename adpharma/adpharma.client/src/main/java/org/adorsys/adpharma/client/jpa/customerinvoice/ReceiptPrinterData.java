@@ -11,6 +11,11 @@ import org.adorsys.adpharma.client.jpa.payment.Payment;
 
 public class ReceiptPrinterData {
 
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	private final String customerName ;
 	private final Payment payment;
 	private final Agency agency;
 	private final Company company;
@@ -18,12 +23,13 @@ public class ReceiptPrinterData {
 	private  String salesOrderNumber;
 	private final List<CustomerInvoicePrinterData> invoiceData = new ArrayList<CustomerInvoicePrinterData>();
 	private final List<CustomerVoucher> usedVouchers  = new ArrayList<CustomerVoucher>() ;
-	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier) {
+	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier,String customerName) {
 		super();
 		this.payment = payment;
 		this.agency = agency;
 		this.company = company;
 		this.cashier = cashier;
+		this.customerName = customerName;
 	}
 
 	public List<CustomerInvoicePrinterData> getInvoiceData() {

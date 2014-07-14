@@ -11,14 +11,12 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.WareHouse;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot_;
+import org.adorsys.adpharma.server.repo.VATRepository;
 import org.adorsys.adpharma.server.repo.WareHouseArticleLotRepository;
-import org.apache.commons.lang3.text.WordUtils;
 
 @Stateless
 public class WareHouseArticleLotEJB
@@ -108,6 +106,9 @@ public class WareHouseArticleLotEJB
 	@DocumentProcessedEvent
 	private Event<ArticleLotTransferManager> articleLotTransferEvent ;
 
+	@Inject
+	VATRepository vatRepository ;
+	
 	public WareHouseArticleLot processTransFer(ArticleLotTransferManager lotTransferManager){
 		ArticleLot articleLot = articleLotEJB.findById(lotTransferManager.getLotToTransfer().getId());
 		WareHouse wareHouse = lotTransferManager.getWareHouse();

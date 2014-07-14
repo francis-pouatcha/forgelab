@@ -28,8 +28,10 @@ import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
 import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
+import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 
 /**
  * 
@@ -69,6 +71,16 @@ public class ArticleLotEndpoint
          return Response.status(Status.NOT_FOUND).build();
 
       return Response.ok(detach(deleted)).build();
+   }
+   
+   
+   @POST
+   @Path("/processTransfer")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json", "application/xml" })
+   public ArticleLot processTransfer(ArticleLotTransferManager entity)
+   {
+      return detach(ejb.processTransFer(entity));
    }
 
    @PUT
@@ -234,7 +246,7 @@ public class ArticleLotEndpoint
 
    private static final List<String> agencyFields = Arrays.asList("agencyNumber", "name", "active", "name", "name", "phone", "fax");
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name", "clearanceConfig","vat.rate");
+   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name", "clearanceConfig","section","vat.rate");
 
    private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 

@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.section;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -42,6 +43,8 @@ public class Section implements Cloneable
    @Description("Section_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<SectionAgency> agency;
+   @Description("Article_wareHouse_description")
+   private SimpleBooleanProperty wareHouse;
 
    public Long getId()
    {
@@ -163,6 +166,27 @@ public class Section implements Cloneable
       }
       PropertyReader.copy(agency, getAgency());
       agencyProperty().setValue(ObjectUtils.clone(getAgency()));
+   }
+   
+   public SimpleBooleanProperty wareHouseProperty()
+   {
+      if (wareHouse == null)
+      {
+    	  wareHouse = new SimpleBooleanProperty();
+      }
+      return wareHouse;
+   }
+
+   public Boolean getWareHouse()
+   {
+      return wareHouseProperty().get();
+   }
+
+   public final void setWareHouse(Boolean wareHouse)
+   {
+      if (wareHouse == null)
+    	  wareHouse = Boolean.FALSE;
+      this.wareHouseProperty().set(wareHouse);
    }
 
    @Override

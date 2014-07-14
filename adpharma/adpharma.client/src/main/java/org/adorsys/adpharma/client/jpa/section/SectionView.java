@@ -1,9 +1,11 @@
 package org.adorsys.adpharma.client.jpa.section;
 
+import java.awt.Checkbox;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +31,8 @@ public class SectionView extends AbstractForm<Section>
    private TextField position;
 
    private TextField geoCode;
+   
+   private CheckBox wareHouse ;
 
    @Inject
    private SectionAgencyForm sectionAgencyForm;
@@ -55,6 +59,7 @@ public class SectionView extends AbstractForm<Section>
       viewBuilder.addTitlePane("Section_agency_description.title", resourceBundle);
       viewBuilder.addSubForm("Section_agency_description.title", "agency", resourceBundle, sectionAgencyForm, ViewModel.READ_ONLY);
       viewBuilder.addSubForm("Section_agency_description.title", "agency", resourceBundle, sectionAgencySelection, ViewModel.READ_WRITE);
+      wareHouse = viewBuilder.addCheckBox("Section_wareHouse_description.title", "wareHouse", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -79,6 +84,7 @@ public class SectionView extends AbstractForm<Section>
       name.textProperty().bindBidirectional(model.nameProperty());
       position.textProperty().bindBidirectional(model.positionProperty());
       geoCode.textProperty().bindBidirectional(model.geoCodeProperty());
+      wareHouse.selectedProperty().bindBidirectional(model.wareHouseProperty());
       sectionAgencyForm.bind(model);
       sectionAgencySelection.bind(model);
    }

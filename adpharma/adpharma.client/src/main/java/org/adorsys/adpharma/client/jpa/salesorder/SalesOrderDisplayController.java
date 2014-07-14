@@ -821,6 +821,7 @@ public class SalesOrderDisplayController implements EntityController
 		getCustomerInsurance(customer);
 		setDiscountt(selectedEntity);
 		resetNetTopay(selectedEntity);
+		displayView.getNumBon().setText(null);
 	}
 
 	public void setDiscountt(SalesOrder selectedEntity){

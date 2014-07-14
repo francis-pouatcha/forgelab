@@ -195,7 +195,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Solde "));
+		pdfPCell.addElement(new StandardText("Encaissement "));
 		reportTable.addCell(pdfPCell);
 
 	}

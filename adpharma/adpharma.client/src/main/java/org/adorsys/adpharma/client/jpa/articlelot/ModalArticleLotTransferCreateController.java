@@ -1,11 +1,10 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,12 +15,12 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
-import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchInput;
-import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchResult;
-import org.adorsys.adpharma.client.jpa.warehouse.WareHouseSearchService;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchResult;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchService;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
-import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLotTransferService;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -43,16 +42,16 @@ public class ModalArticleLotTransferCreateController {
 	ArticleLotTransferManager model ;
 
 	@Inject
-	private WareHouseSearchService wareHouseSearchService;
+	private ArticleSearchService articleSearchService;
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler;
 
 	@Inject
-	private WareHouseSearchInput searchInput;
+	private ArticleSearchInput searchInput;
 
 	@Inject
-	private WareHouseArticleLotTransferService articleLotTransferService;
+	private ArticleLotTransferService articleLotTransferService;
 
 	@Inject
 	@EntityCreateDoneEvent
@@ -94,8 +93,7 @@ public class ModalArticleLotTransferCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				Set<ConstraintViolation<ArticleLotTransferManager>> validate = lotTransferCreateView.validate(model);
-				WareHouse wareHouse = lotTransferCreateView.getWareHouse().getSelectionModel().getSelectedItem();
-				if(validate.isEmpty()){
+				if(validate.isEmpty()&& isValide(model)){
 					Action showConfirm = Dialogs.create().nativeTitleBar().message(resourceBundle.getString("ArticleLot_details_confirmation_description.title")).showConfirm();
 					if(Dialog.Actions.YES.equals(showConfirm)){
 						articleLotTransferService.setModel(model).start();
@@ -111,11 +109,11 @@ public class ModalArticleLotTransferCreateController {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				WareHouseArticleLotTransferService s = (WareHouseArticleLotTransferService) event.getSource();
-				WareHouseArticleLot ent = s.getValue();
+				ArticleLotTransferService s = (ArticleLotTransferService) event.getSource();
+				ArticleLot ent = s.getValue();
 				event.consume();
 				s.reset();
-				wareHouseArticleLotCreateDoneEvent.fire(ent);
+//				wareHouseArticleLotCreateDoneEvent.fire(ent);
 				workingEvent.fire("Lot transfered successfuly !");
 				lotTransferCreateView.closeDialog();
 
@@ -123,20 +121,29 @@ public class ModalArticleLotTransferCreateController {
 		});
 		articleLotTransferService.setOnFailed(callFailedEventHandler);
 
-		wareHouseSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		articleSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				WareHouseSearchService s = (WareHouseSearchService) event.getSource();
-				WareHouseSearchResult searchResult = s.getValue();
+				ArticleSearchService s = (ArticleSearchService) event.getSource();
+				ArticleSearchResult searchResult = s.getValue();
 				event.consume();
 				s.reset();
-				List<WareHouse> resultList = searchResult.getResultList();
-				lotTransferCreateView.getWareHouse().getItems().setAll(resultList);
+				List<Article> resultList = searchResult.getResultList();
+				Section sourceSection = model.getLotToTransfer().getArticle().getSection();
+				List<Section> targetSections = new ArrayList<Section>();
+				for (Article article : resultList) {
+					Section section = new Section();
+					PropertyReader.copy(article.getSection(), section);
+					if(sourceSection.equals(section))
+						continue ;
+					targetSections.add(section);
+				}
+				lotTransferCreateView.getTargetSection().getItems().setAll(targetSections);
 
 			}
 		});
-		wareHouseSearchService.setOnFailed(callFailedEventHandler);
+		articleSearchService.setOnFailed(callFailedEventHandler);
 
 		lotTransferCreateView.addValidators();
 	}
@@ -146,7 +153,23 @@ public class ModalArticleLotTransferCreateController {
 		lotTransferCreateView.bind(model);
 
 		lotTransferCreateView.showDiaLog();
-		wareHouseSearchService.setSearchInputs(searchInput).start();
+		searchInput.getEntity().setPic(model.getLotToTransfer().getMainPic());
+		searchInput.getFieldNames().add("pic");
+		articleSearchService.setSearchInputs(searchInput).start();
+	}
+	
+	public boolean isValide(ArticleLotTransferManager data){
+		
+		if(data .getQtyToTransfer()!=null && data.getQtyToTransfer().compareTo(data.getLotQty())>0){
+			Dialogs.create().message("La quantite a transferer dois etre inferieur a : "+ data.getLotQty()).showError() ;
+			return false ;
+		}
+		Section section = data .getLotToTransfer().getArticle().getSection();
+		if(section!=null && section.equals(data.getTargetSection())){
+			Dialogs.create().message("Impossible de transfere vers le meme emplacement ! "+ data.getLotQty()).showError() ;
+			return false ;
+		}
+		return true ;
 	}
 
 }

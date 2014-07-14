@@ -3,29 +3,39 @@ package org.adorsys.adpharma.server.rest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
+import org.adorsys.adpharma.server.events.ProcessTransferRequestEvent;
+import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 import org.adorsys.adpharma.server.jpa.VAT;
+import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.DeliveryFromOrderData;
+import org.adorsys.adpharma.server.utils.PropertyReader;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -151,6 +161,45 @@ public class DeliveryEJB
 		Delivery closedDelivery = update(delivery);
 		deliveryClosedDoneEvent.fire(closedDelivery);
 		return closedDelivery;
+	}
+
+	@Inject
+	private ArticleRepository articleRepository ;
+
+	public void handleDeliveryCreationForTransfer(@Observes @ProcessTransferRequestEvent ArticleLotTransferManager lotTransferManager ){
+		ArticleLot lotToTransfer = lotTransferManager.getLotToTransfer();
+		BigDecimal qtyToTransfer = lotTransferManager.getQtyToTransfer();
+		lotTransferManager.getTargetSection() ;
+		DeliveryItem deliveryItem = new DeliveryItem();
+		deliveryItem.setArticle(lotToTransfer.getArticle());
+		deliveryItem.setMainPic(lotToTransfer.getMainPic());
+		List<DeliveryItem> found = deliveryItemEJB.findBy(deliveryItem, 0, 1, new SingularAttribute[]{DeliveryItem_.mainPic,DeliveryItem_.article});
+		if(found.isEmpty()) throw new RuntimeException("Delivery Item not found") ;
+		DeliveryItem sourceDi = found.iterator().next() ;
+		Delivery sourceD = sourceDi.getDelivery();
+		DeliveryItem newItem = new DeliveryItem();
+		Delivery delivery = new Delivery();
+		try {
+			BeanUtils.copyProperties(delivery, sourceD);
+			BeanUtils.copyProperties(newItem, sourceDi);
+			
+		} catch (Exception e) {
+			throw new RuntimeException("Impossible to copy fileds") ;
+		}
+		 List<Article> articles = articleRepository.findBySectionAndPic(lotToTransfer.getMainPic() ,lotTransferManager.getTargetSection());
+
+		delivery.setId(null);
+		delivery.setDeliveryItems(new HashSet<DeliveryItem>());
+		delivery = create(delivery);
+		newItem.setDelivery(delivery);
+		newItem.setId(null);
+		newItem.setQtyOrdered(qtyToTransfer);
+		newItem.setArticle(articles.iterator().next());
+		newItem.setStockQuantity(qtyToTransfer);
+		newItem = deliveryItemEJB.create(newItem);
+		delivery.getDeliveryItems().add(newItem);
+		saveAndClose(delivery);
+		
 	}
 
 	@Inject

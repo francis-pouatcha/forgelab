@@ -241,7 +241,7 @@ public class InventoryEJB
 		articleLot.setInternalPic(inventoryItem.getInternalPic());
 		articleLot.setArticle(inventoryItem.getArticle());
 		@SuppressWarnings("unchecked")
-		List<ArticleLot> found = articleLotrepo.findByLike(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
+		List<ArticleLot> found = articleLotrepo.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic,ArticleLot_.article});
 		if(!found.isEmpty()){
 			ArticleLot lot = found.iterator().next();
 			lot.setStockQuantity(inventoryItem.getAsseccedQty());

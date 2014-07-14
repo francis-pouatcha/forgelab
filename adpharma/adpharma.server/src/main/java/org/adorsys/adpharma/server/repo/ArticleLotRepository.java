@@ -1,20 +1,15 @@
 package org.adorsys.adpharma.server.repo;
 
-import java.math.BigDecimal;
-
-import javax.persistence.metamodel.SingularAttribute;
-
-import org.apache.deltaspike.data.api.EntityRepository;
-import org.apache.deltaspike.data.api.Modifying;
-import org.apache.deltaspike.data.api.Query;
-import org.apache.deltaspike.data.api.Repository;
-import org.apache.deltaspike.data.api.criteria.Criteria;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.ArticleLot_;
-import org.adorsys.adpharma.server.utils.PropertyReader;
+import org.adorsys.adpharma.server.jpa.Section;
+import org.apache.deltaspike.data.api.EntityRepository;
+import org.apache.deltaspike.data.api.Query;
+import org.apache.deltaspike.data.api.QueryResult;
+import org.apache.deltaspike.data.api.Repository;
 
 @Repository(forEntity = ArticleLot.class)
-public abstract class ArticleLotRepository extends AdpharmaEntityRepository<ArticleLot, Long>
+public interface  ArticleLotRepository extends EntityRepository<ArticleLot, Long>
 {
-	
+	@Query("select e from ArticleLot e where e.mainPic = ?1 AND  e.article.section = ?2")
+    QueryResult<ArticleLot> findByPicAndSection(String pic , Section section);
 }

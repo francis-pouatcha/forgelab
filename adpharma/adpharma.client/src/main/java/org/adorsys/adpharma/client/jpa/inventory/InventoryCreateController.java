@@ -197,7 +197,7 @@ public class InventoryCreateController implements EntityController
     */
    public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Inventory templateEntity)
    {
-      PropertyReader.copy(templateEntity, model);
+      PropertyReader.copy(new Inventory(), model);
       // PropertyReader.cleanIds(model, new HashSet<Object>());
       model.cleanIds();
    }

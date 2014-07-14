@@ -8,6 +8,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -142,6 +143,17 @@ public class ArticleLotService
 	}
 
 	// @POST
+	// @Path("/processTransfer")
+	// @Consumes("application/xml")
+	public ArticleLot processTransfer(
+			ArticleLotTransferManager transferManager) {
+		Entity<ArticleLotTransferManager> entity = Entity.entity(
+				transferManager, media);
+		return target().path("processTransfer").request()
+				.post(entity, ArticleLot.class);
+	}
+
+	// @POST
 	// @Path("/countByLike"
 	// @Consumes("application/xml")
 	public Long countByLike(ArticleLotSearchInput searchInput)
@@ -175,7 +187,7 @@ public class ArticleLotService
 				.request(media).put(ent, ArticleLot.class);
 	}
 
-	
+
 
 
 	// @POST

@@ -7,8 +7,12 @@ import org.apache.deltaspike.data.api.Modifying;
 import org.apache.deltaspike.data.api.Query;
 import org.apache.deltaspike.data.api.Repository;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.Section;
+import org.adorsys.adpharma.server.jpa.VAT;
 
 @Repository(forEntity = Article.class)
-public abstract class ArticleRepository extends AdpharmaEntityRepository<Article, Long>
+public interface ArticleRepository extends EntityRepository<Article, Long>
 {
+	@Query("SELECT a FROM Article AS a WHERE a.pic = ?1 AND a.section = ?2 ")
+	public List<Article> findBySectionAndPic(String pic ,Section section) ;
 }

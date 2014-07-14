@@ -1,19 +1,27 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
+
 import javax.validation.constraints.NotNull;
+
 import org.adorsys.adpharma.server.jpa.Agency;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
@@ -25,151 +33,163 @@ import org.adorsys.javaext.display.AssociationType;
 public class Section implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("Section_sectionCode_description")
-   private String sectionCode;
+	@Column
+	@Description("Section_sectionCode_description")
+	private String sectionCode;
 
-   @Column
-   @Description("Section_name_description")
-   @NotNull(message = "Section_name_NotNull_validation")
-   private String name;
+	@Column
+	@Description("Section_name_description")
+	@NotNull(message = "Section_name_NotNull_validation")
+	private String name;
 
-   @Column
-   @Description("Section_position_description")
-   private String position;
+	@Column
+	@Description("Section_position_description")
+	private String position;
 
-   @Column
-   @Description("Section_geoCode_description")
-   private String geoCode;
+	@Column
+	@Description("Section_geoCode_description")
+	private String geoCode;
 
-   @ManyToOne
-   @Description("Section_agency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   @NotNull(message = "Section_agency_NotNull_validation")
-   private Agency agency;
+	@ManyToOne
+	@Description("Section_agency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	@NotNull(message = "Section_agency_NotNull_validation")
+	private Agency agency;
 
-   public Long getId()
-   {
-      return this.id;
-   }
+	@Column
+	@Description("Article_wareHouse_description")
+	private Boolean wareHouse = Boolean.TRUE;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((Section) that).id);
-      }
-      return super.equals(that);
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((Section) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public String getSectionCode()
-   {
-      return this.sectionCode;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
 
-   public void setSectionCode(final String sectionCode)
-   {
-      this.sectionCode = sectionCode;
-   }
+	public String getSectionCode()
+	{
+		return this.sectionCode;
+	}
 
-   public String getName()
-   {
-      return this.name;
-   }
+	public void setSectionCode(final String sectionCode)
+	{
+		this.sectionCode = sectionCode;
+	}
 
-   public void setName(final String name)
-   {
-      this.name = name;
-   }
+	public String getName()
+	{
+		return this.name;
+	}
 
-   public String getPosition()
-   {
-      return this.position;
-   }
+	public void setName(final String name)
+	{
+		this.name = name;
+	}
 
-   public void setPosition(final String position)
-   {
-      this.position = position;
-   }
+	public String getPosition()
+	{
+		return this.position;
+	}
 
-   public String getGeoCode()
-   {
-      return this.geoCode;
-   }
+	public void setPosition(final String position)
+	{
+		this.position = position;
+	}
 
-   public void setGeoCode(final String geoCode)
-   {
-      this.geoCode = geoCode;
-   }
+	public String getGeoCode()
+	{
+		return this.geoCode;
+	}
 
-   @Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (sectionCode != null && !sectionCode.trim().isEmpty())
-         result += "sectionCode: " + sectionCode;
-      if (name != null && !name.trim().isEmpty())
-         result += ", name: " + name;
-      if (position != null && !position.trim().isEmpty())
-         result += ", position: " + position;
-      if (geoCode != null && !geoCode.trim().isEmpty())
-         result += ", geoCode: " + geoCode;
-      return result;
-   }
+	public void setGeoCode(final String geoCode)
+	{
+		this.geoCode = geoCode;
+	}
 
-   public Agency getAgency()
-   {
-      return this.agency;
-   }
+	public Boolean getWareHouse() {
+		return wareHouse;
+	}
 
-   public void setAgency(final Agency agency)
-   {
-      this.agency = agency;
-   }
+	public void setWareHouse(Boolean salable) {
+		this.wareHouse = wareHouse;
+	}
+
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (sectionCode != null && !sectionCode.trim().isEmpty())
+			result += "sectionCode: " + sectionCode;
+		if (name != null && !name.trim().isEmpty())
+			result += ", name: " + name;
+		if (position != null && !position.trim().isEmpty())
+			result += ", position: " + position;
+		if (geoCode != null && !geoCode.trim().isEmpty())
+			result += ", geoCode: " + geoCode;
+		return result;
+	}
+
+	public Agency getAgency()
+	{
+		return this.agency;
+	}
+
+	public void setAgency(final Agency agency)
+	{
+		this.agency = agency;
+	}
 }

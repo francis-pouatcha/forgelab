@@ -4,7 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.adorsys.adpharma.server.jpa.ProductFamily;
 import org.adorsys.adpharma.server.repo.ProductFamilyRepository;
 

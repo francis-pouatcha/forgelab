@@ -12,6 +12,7 @@ import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
@@ -103,8 +104,8 @@ public class SectionController extends DomainComponentController
       // else display list of sections.
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(displayController);
+//      displayedViews.add(listController);
+      displayedViews.add(editController);
 
       displayComponent();
    }
@@ -134,7 +135,7 @@ public class SectionController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -145,7 +146,7 @@ public class SectionController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(listController);
+//      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }
@@ -154,8 +155,8 @@ public class SectionController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
+      displayedViews.add(searchController);
       displayedViews.add(listController);
-      displayedViews.add(displayController);
 
       displayComponent();
    }
@@ -164,8 +165,18 @@ public class SectionController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
+      displayedViews.add(searchController);
       displayedViews.add(listController);
-      displayedViews.add(displayController);
+
+      displayComponent();
+   }
+   
+   public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Section selectedEntity)
+   {
+      List<EntityController> displayedViews = getDisplayedViews();
+      displayedViews.clear();
+      displayedViews.add(searchController);
+      displayedViews.add(listController);
 
       displayComponent();
    }

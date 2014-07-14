@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -20,6 +20,9 @@ public class ArticleLotTransferManager  {
 	   
 	   @Description("ArtilceLotDetailsManager_wareHouse_description")
 	   private SimpleObjectProperty<WareHouse> wareHouse;
+	   
+	   @Description("ArtilceLotDetailsManager_targetSection_description")
+	   private SimpleObjectProperty<Section> targetSection;
 	   
 	   @Description("ArtilceLotDetailsManager_qtyToTransfer_description")
 	   private SimpleObjectProperty<BigDecimal> qtyToTransfer;
@@ -96,6 +99,31 @@ public class ArticleLotTransferManager  {
 	      }
 	      PropertyReader.copy(wareHouse, getWareHouse());
 	      wareHouseProperty().setValue(ObjectUtils.clone(wareHouse));
+	   }
+	   
+	   public SimpleObjectProperty<Section> targetSectionProperty()
+	   {
+	      if (targetSection == null)
+	      {
+	    	  targetSection = new SimpleObjectProperty<Section>(new Section());
+	      }
+	      return targetSection;
+	   }
+
+	   @NotNull
+	   public Section getTargetSection()
+	   {
+	      return targetSectionProperty().get();
+	   }
+
+	   public final void setTargetSection(Section targetSection)
+	   {
+	      if (targetSection == null)
+	      {
+	    	  targetSection = new Section();
+	      }
+	      PropertyReader.copy(targetSection, getTargetSection());
+	      targetSectionProperty().setValue(ObjectUtils.clone(targetSection));
 	   }
 	   
 	   

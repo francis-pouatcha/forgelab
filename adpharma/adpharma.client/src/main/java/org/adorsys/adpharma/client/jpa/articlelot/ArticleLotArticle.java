@@ -1,43 +1,23 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
-import javafx.beans.property.SimpleStringProperty;
-
-import org.adorsys.adpharma.client.jpa.section.Section;
-import org.adorsys.adpharma.client.jpa.article.ArticleSection;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-import org.adorsys.adpharma.client.jpa.article.ArticleFamily;
-
 import java.math.BigDecimal;
-import java.util.Calendar;
 
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
-import org.adorsys.adpharma.client.jpa.article.ArticleDefaultSalesMargin;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
-import org.adorsys.adpharma.client.jpa.article.ArticlePackagingMode;
-
-import javafx.beans.property.SimpleLongProperty;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-import org.adorsys.adpharma.client.jpa.article.ArticleClearanceConfig;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
-import org.adorsys.adpharma.client.jpa.article.ArticleVat;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.adorsys.adpharma.client.jpa.article.Article;
 import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -57,6 +37,7 @@ public class ArticleLotArticle implements Association<ArticleLot, Article>, Clon
    private SimpleObjectProperty<BigDecimal> qtyInStock;
    private SimpleObjectProperty<BigDecimal> sppu;
    private SimpleObjectProperty<ClearanceConfig> clearanceConfig;
+   private SimpleObjectProperty<Section> section;
 
   
    public ArticleLotArticle()
@@ -271,6 +252,30 @@ public class ArticleLotArticle implements Association<ArticleLot, Article>, Clon
       }
       PropertyReader.copy(clearanceConfig, getClearanceConfig());
       clearanceConfigProperty().setValue(ObjectUtils.clone(getClearanceConfig()));
+   }
+   
+   public SimpleObjectProperty<Section> sectionProperty()
+   {
+      if (section == null)
+      {
+         section = new SimpleObjectProperty<Section>(new Section());
+      }
+      return section;
+   }
+
+   public Section getSection()
+   {
+      return sectionProperty().get();
+   }
+
+   public final void setSection(Section section)
+   {
+      if (section == null)
+      {
+         section = new Section();
+      }
+      PropertyReader.copy(section, getSection());
+      sectionProperty().setValue(ObjectUtils.clone(getSection()));
    }
 
    public String toString()

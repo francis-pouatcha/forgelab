@@ -84,10 +84,12 @@ public class ArticleLotListView
 		FXMLLoaderUtils.load(fxmlLoader, this, resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
-		viewBuilder.addStringColumn(dataList, "mainPic", "ArticleLot_mainPic_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "mainPic", "ArticleLot_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "internalPic", "ArticleLot_internalPic_description.title", resourceBundle);
 		//		viewBuilder.addStringColumn(dataList, "agency", "ArticleLot_agency_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,350d);
+		ViewBuilderUtils.newStringColumn(dataList, "article.section", "Article_section_description.title", resourceBundle,250d);
+
 		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ArticleLot_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ArticleLot_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);

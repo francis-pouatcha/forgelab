@@ -382,6 +382,7 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
       PropertyReader.copy(article, getArticle());
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
       getArticle().setClearanceConfig(article.getClearanceConfig());
+      getArticle().setSection(article.getSection());
    }
 
    public SimpleObjectProperty<ArticleLotVat> vatProperty()

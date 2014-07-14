@@ -24,6 +24,15 @@ public class PropertyReader {
 		return value ;
 		
 	}
+	
+	public static <T> void copyFields(T source, T target) throws Exception{
+	    Class<?> clazz = source.getClass();
+
+	    for (Field field : clazz.getFields()) {
+	        Object value = field.get(source);
+	        field.set(target, value);
+	    }
+	}
 
 	
 

@@ -158,7 +158,7 @@ public class ModalArticleLotSearchController  {
 
 		});
 
-		
+
 	}
 
 
@@ -185,8 +185,12 @@ public class ModalArticleLotSearchController  {
 			Map<String, Set<ArticleLot>> lotMap = new HashMap<String, Set<ArticleLot>>();
 			// Group by internal pic always taking the article
 			for (ArticleLot articleLot : resultList) {
-//				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
-//					continue ;
+				if(articleLot.getArticle()!=null&& articleLot.getArticle().getSection()!=null){
+					if(articleLot.getArticle().getSection().getWareHouse())
+						continue;
+				}
+				//				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
+				//					continue ;
 				String internalPic = articleLot.getInternalPic();
 				if(!resultOrder.contains(internalPic)) resultOrder.add(internalPic);
 				// the internal pic is unique per product.
@@ -220,7 +224,8 @@ public class ModalArticleLotSearchController  {
 			int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 			int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 			view.getPagination().setCurrentPageIndex(pageIndex);
-			view.getDataList().getItems().setAll(lotList);
+//			view.getDataList().getItems().setAll(lotList);
+			view.getDataList().getItems().setAll(resultList);
 			if(!view.isDisplayed())
 				view.showDiaLog();
 		}

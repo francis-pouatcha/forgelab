@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfig;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.warehouse.WareHouse;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.ViewModel;
@@ -34,7 +34,8 @@ import de.jensd.fx.fontawesome.AwesomeIcon;
 public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	private AnchorPane rootPane;
 	private ComboBox<ArticleLot> lotToTransfer;
-	private ComboBox<WareHouse> wareHouse;
+	private ComboBox<Section> sourceSection;
+	private ComboBox<Section> targetSection;
 	private BigDecimalField qtyToTransfer;
 	private BigDecimalField lotQty;
 	private Button saveButton ;
@@ -57,10 +58,14 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	public void postConstruct(){
 		LazyViewBuilder lvb = new LazyViewBuilder();
 		lotToTransfer = lvb.addComboBox("ArticleLotTransferManager_lotToTransfer_description.title", "lotToTransfer", resourceBundle);
+		lotToTransfer.setPrefWidth(450d);
 		lotQty =lvb.addBigDecimalField("ArticleLotTransferManager_lotQty_description.title", "lotQty", resourceBundle, NumberType.INTEGER, locale,ViewModel.READ_ONLY);
-		wareHouse = lvb.addComboBox("ArticleLotTransferManager_wareHouse_description.title", "wareHouse", resourceBundle);
+		sourceSection = lvb.addComboBox("ArticleLotTransferManager_sourceSection_description.title", "sourceSection", resourceBundle);
+		sourceSection.setPrefWidth(450d);
 		qtyToTransfer =lvb.addBigDecimalField("ArticleLotTransferManager_qtyToTransfer_description.title", "qtyToTransfer", resourceBundle, NumberType.INTEGER, locale);
-
+		targetSection = lvb.addComboBox("ArticleLotTransferManager_targetSection_description.title", "targetSection", resourceBundle);
+		targetSection.setPrefWidth(450d);
+		
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lvb.toRows(),ViewType.CREATE, false);
 		viewBuilder.addSeparator();
@@ -75,15 +80,17 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	public void bind(ArticleLotTransferManager model)
 	{
 		lotToTransfer.valueProperty().bindBidirectional(model.lotToTransferProperty());
-		wareHouse.valueProperty().bindBidirectional(model.wareHouseProperty());
+		sourceSection.valueProperty().bindBidirectional(model.getLotToTransfer().getArticle().sectionProperty());
 		qtyToTransfer.numberProperty().bindBidirectional(model.qtyToTransferProperty());
 		lotQty.numberProperty().bindBidirectional(model.lotQtyProperty());
+		targetSection.valueProperty().bindBidirectional(model.targetSectionProperty());
+
 	}
 
 	public void addValidators()
 	{
 		qtyToTransfer.focusedProperty().addListener(new TextInputControlFoccusChangedListener<ArticleLotTransferManager>(textInputControlValidator, qtyToTransfer, ArticleLotTransferManager.class, "qtyToTransfer", resourceBundle));
-		
+
 		// no active validator
 		// no active validator
 	}
@@ -92,7 +99,9 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 	{
 		Set<ConstraintViolation<ArticleLotTransferManager>> violations = new HashSet<ConstraintViolation<ArticleLotTransferManager>>();
 		violations.addAll(textInputControlValidator.validate(qtyToTransfer, ArticleLotTransferManager.class, "qtyToTransfer", resourceBundle));
-		violations.addAll(toOneAggreggationFieldValidator.validate(wareHouse, model.getWareHouse(), ArticleLotTransferManager.class, "wareHouse", resourceBundle));
+//		violations.addAll(toOneAggreggationFieldValidator.validate(wareHouse, model.getWareHouse(), ArticleLotTransferManager.class, "wareHouse", resourceBundle));
+		violations.addAll(toOneAggreggationFieldValidator.validate(targetSection, model.getTargetSection(), ArticleLotTransferManager.class, "targetSection", resourceBundle));
+
 		return violations;
 	}
 
@@ -124,9 +133,13 @@ public class ModalArticleLotTransferCreateView extends ApplicationModal{
 
 	}
 
-	public ComboBox<WareHouse> getWareHouse()
+	public ComboBox<Section> getSourceSection()
 	{
-		return wareHouse;
+		return sourceSection;
+	}
+	public ComboBox<Section> getTargetSection()
+	{
+		return targetSection;
 	}
 	public ComboBox<ArticleLot> getLotToTransfer()
 	{

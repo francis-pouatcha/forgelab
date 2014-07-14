@@ -128,7 +128,13 @@
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.1</version>
+		</dependency>
 	</dependencies>
+
 	<repositories>
 		<repository>
 			<id>JBOSS_NEXUS</id>

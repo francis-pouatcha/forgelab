@@ -12,6 +12,7 @@ import org.adorsys.javafx.crud.extensions.DomainComponentController;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditCanceledEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
@@ -22,6 +23,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.SearchModelEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.section.Section;
 
 @Singleton
 public class ArticleController extends DomainComponentController
@@ -167,6 +169,14 @@ public class ArticleController extends DomainComponentController
       displayedViews.clear();
       displayedViews.add(listController);
 //      displayedViews.add(displayController);
+
+      displayComponent();
+   }
+   public void handleCreateDoneEvent(@Observes @EntityCreateDoneEvent Article selectedEntity)
+   {
+      List<EntityController> displayedViews = getDisplayedViews();
+      displayedViews.clear();
+      displayedViews.add(listController);
 
       displayComponent();
    }
