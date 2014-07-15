@@ -847,16 +847,18 @@ public class SalesOrderDisplayController implements EntityController
 	public boolean isValidSalesOrderItem(){
 		BigDecimal orderedQty = salesOrderItem.getOrderedQty();
 		SalesOrderItemArticle article = salesOrderItem.getArticle();
+		
 		if(article==null || article.getId()==null){
 			Dialogs.create().nativeTitleBar().message("vous devez selection un article ").showError();
 			return false;
 		}
+		
 		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
 			Dialogs.create().nativeTitleBar().message("la Qte est Requis ").showError();
 			displayView.getOrderedQty().requestFocus();
 			return false;
 		}
-
+		
 		return true;
 
 	}

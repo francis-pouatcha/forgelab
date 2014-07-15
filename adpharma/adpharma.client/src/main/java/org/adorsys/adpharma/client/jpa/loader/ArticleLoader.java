@@ -18,6 +18,8 @@ import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
+import jxl.CellType;
+
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
@@ -98,6 +100,7 @@ public class ArticleLoader extends Service<List<Article>> {
 
 
 			cell = row.getCell(1);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setPic(cell.getStringCellValue().trim());
 				if(StringUtils.isBlank(entity.getArticleName()))
@@ -106,12 +109,33 @@ public class ArticleLoader extends Service<List<Article>> {
 
 			if (StringUtils.isBlank(entity.getPic()))
 				continue;
-
+			
+			cell = row.getCell(14);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+				String sc = cell.getStringCellValue().trim();
+				List<Section> ss = dataMap.getSections();
+				Section sec = null;
+				for (Section s : ss) {
+					if(sc.equalsIgnoreCase(s.getSectionCode())){
+						sec = s;
+						break;
+					}
+				}
+				if(sec!=null){
+					entity.setSection(new ArticleSection(sec));
+				} else {
+					continue ;
+				}
+			}else {
+				continue ;
+			}
 
 			ArticleSearchInput searchInput = new ArticleSearchInput();
 			searchInput.setEntity(entity);
+			searchInput.getFieldNames().add("section");
 			searchInput.getFieldNames().add("pic");
-
+//check heare
 			ArticleSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
 				continue;
@@ -119,6 +143,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			Platform.runLater(pgRunner.setText(progressText + " : " + entity.getArticleName()));
 
 			cell = row.getCell(2);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setManufacturer(cell.getStringCellValue().trim());
 
@@ -145,6 +170,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			}
 
 			cell = row.getCell(7);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
 				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
@@ -152,6 +178,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			}
 
 			cell = row.getCell(8);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
 				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
@@ -207,6 +234,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			entity.setRecordingDate(new GregorianCalendar());
 
 			cell = row.getCell(14);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				String sectionCode = cell.getStringCellValue().trim();
 				List<Section> sections = dataMap.getSections();
@@ -227,6 +255,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			}
 
 			cell = row.getCell(18);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			String agencyNumber = "AG-0001" ;
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				agencyNumber = cell.getStringCellValue().trim();

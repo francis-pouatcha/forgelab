@@ -94,6 +94,7 @@ public class CustomerEditController implements EntityController
                   Set<ConstraintViolation<Customer>> violations = editView.getView().validate(displayedEntity);
                   if (violations.isEmpty())
                   {
+                	  
                      editService.setCustomer(displayedEntity).start();
                   }
                   else

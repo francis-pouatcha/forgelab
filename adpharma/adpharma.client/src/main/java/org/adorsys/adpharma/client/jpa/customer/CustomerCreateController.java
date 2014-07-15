@@ -38,174 +38,176 @@ import org.adorsys.adpharma.client.jpa.customer.Customer;
 public class CustomerCreateController implements EntityController
 {
 
-   @Inject
-   private CustomerCreateView createView;
+	@Inject
+	private CustomerCreateView createView;
 
-   @Inject
-   private CustomerCreateService createService;
-   @Inject
-   private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
+	@Inject
+	private CustomerCreateService createService;
+	@Inject
+	private ServiceCallFailedEventHandler createServiceCallFailedEventHandler;
 
-   @Inject
-   @EntityCreateDoneEvent
-   private Event<Customer> createDoneEvent;
+	@Inject
+	@EntityCreateDoneEvent
+	private Event<Customer> createDoneEvent;
 
-   @Inject
-   @EntitySearchRequestedEvent
-   private Event<Customer> searchRequestedEvent;
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<Customer> searchRequestedEvent;
 
-   /**
-    * The create page has it own model object.
-    */
-   Customer model;
+	/**
+	 * The create page has it own model object.
+	 */
+	Customer model;
 
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
 
-   @Inject
-   @Bundle(CrudKeys.class)
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle(CrudKeys.class)
+	private ResourceBundle resourceBundle;
 
-   /**
-    * Do not try the put this widget in his parent component yet. We can not 
-    * determine the order of post construct.
-    * 
-    * We will put the widget in the parent just before display occurs.
-    */
-   @PostConstruct
-   public void init()
-   {
-      // Reset
-      createView.getResetButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            PropertyReader.copy(new Customer(), model);
-         }
-      });
+	/**
+	 * Do not try the put this widget in his parent component yet. We can not 
+	 * determine the order of post construct.
+	 * 
+	 * We will put the widget in the parent just before display occurs.
+	 */
+	@PostConstruct
+	public void init()
+	{
+		// Reset
+		createView.getResetButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				PropertyReader.copy(new Customer(), model);
+			}
+				});
 
-      // Save
-      createView.getSaveButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            Set<ConstraintViolation<Customer>> violations = createView.getView().validate(model);
-            if (violations.isEmpty())
-            {
-               createService.setModel(model).start();
-            }
-            else
-            {
-               errorMessageDialog.getTitleText().setText(
-                     resourceBundle.getString("Entity_create_error.title"));
-               errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
-               errorMessageDialog.display();
-            }
-         }
-      });
+		// Save
+		createView.getSaveButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				Set<ConstraintViolation<Customer>> violations = createView.getView().validate(model);
+				if (violations.isEmpty())
+				{
+					if(StringUtils.equals("000000001", model.getSerialNumber()))
+						model.setSerialNumber("");
+					createService.setModel(model).start();
+				}
+				else
+				{
+					errorMessageDialog.getTitleText().setText(
+							resourceBundle.getString("Entity_create_error.title"));
+					errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
+					errorMessageDialog.display();
+				}
+			}
+				});
 
-      // send search result event.
-      createService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            CustomerCreateService s = (CustomerCreateService) event.getSource();
-            Customer ent = s.getValue();
-            event.consume();
-            s.reset();
-            createDoneEvent.fire(ent);
-         }
-      });
-      createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_create_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      createService.setOnFailed(createServiceCallFailedEventHandler);
-      errorMessageDialog.getOkButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  errorMessageDialog.closeDialog();
-               }
-            });
+		// send search result event.
+		createService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent event)
+			{
+				CustomerCreateService s = (CustomerCreateService) event.getSource();
+				Customer ent = s.getValue();
+				event.consume();
+				s.reset();
+				createDoneEvent.fire(ent);
+			}
+				});
+		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(
+						resourceBundle.getString("Entity_create_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
+		createService.setOnFailed(createServiceCallFailedEventHandler);
+		errorMessageDialog.getOkButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						errorMessageDialog.closeDialog();
+					}
+				});
 
-      // Disable save button during creation
-      createView.getSaveButton().disableProperty().bind(createService.runningProperty());
+		// Disable save button during creation
+		createView.getSaveButton().disableProperty().bind(createService.runningProperty());
 
-      /*
-       * listen to search button and fire search activated event.
-       */
-      createView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            searchRequestedEvent.fire(model);
-         }
-      });
+		/*
+		 * listen to search button and fire search activated event.
+		 */
+		createView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				searchRequestedEvent.fire(model);
+			}
+				});
 
-      createView.getView().addValidators();
-   }
+		createView.getView().addValidators();
+	}
 
-   @Override
-   public void display(Pane parent)
-   {
-      createView.getView().validate(model);
+	@Override
+	public void display(Pane parent)
+	{
+		createView.getView().validate(model);
 
-      AnchorPane rootPane = createView.getRootPane();
-      ObservableList<Node> children = parent.getChildren();
-      if (!children.contains(rootPane))
-      {
-         children.add(rootPane);
-      }
-   }
+		AnchorPane rootPane = createView.getRootPane();
+		ObservableList<Node> children = parent.getChildren();
+		if (!children.contains(rootPane))
+		{
+			children.add(rootPane);
+		}
+	}
 
-   @Override
-   public ViewType getViewType()
-   {
-      return ViewType.CREATE;
-   }
+	@Override
+	public ViewType getViewType()
+	{
+		return ViewType.CREATE;
+	}
 
-   /**
-    * Cleanup search inputs.
-    * 
-    * @param null
-    */
-   public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Customer templateEntity)
-   {
-      PropertyReader.copy(templateEntity, model);
-      // PropertyReader.cleanIds(model, new HashSet<Object>());
-      model.cleanIds();
-   }
+	/**
+	 * Cleanup search inputs.
+	 * 
+	 * @param null
+	 */
+	public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Customer templateEntity)
+	{
+		PropertyReader.copy(templateEntity, model);
+		// PropertyReader.cleanIds(model, new HashSet<Object>());
+		model.cleanIds();
+	}
 
-   /**
-    * Reset form on successful creation of the component.
-    * 
-    * @param createdEntity
-    */
-   public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Customer createdEntity)
-   {
-      PropertyReader.copy(new Customer(), model);
-   }
+	/**
+	 * Reset form on successful creation of the component.
+	 * 
+	 * @param createdEntity
+	 */
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Customer createdEntity)
+	{
+		PropertyReader.copy(new Customer(), model);
+	}
 
-   public void handleNewModelEvent(@Observes @CreateModelEvent Customer model)
-   {
-      this.model = model;
-      createView.bind(this.model);
-   }
+	public void handleNewModelEvent(@Observes @CreateModelEvent Customer model)
+	{
+		this.model = model;
+		createView.bind(this.model);
+	}
 
 }

@@ -25,122 +25,122 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class InsurranceInsurerController
 {
-   @Inject
-   private CustomerSearchService searchService;
-   @Inject
-   private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
+	@Inject
+	private CustomerSearchService searchService;
+	@Inject
+	private ServiceCallFailedEventHandler searchServiceCallFailedEventHandler;
 
-   private CustomerSearchResult targetSearchResult;
+	private CustomerSearchResult targetSearchResult;
 
-   @Inject
-   @Bundle({ CrudKeys.class, Customer.class, Insurrance.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, Customer.class, Insurrance.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
 
-   protected Insurrance sourceEntity;
+	protected Insurrance sourceEntity;
 
-   protected void disableButton(final InsurranceInsurerSelection selection)
-   {
-      selection.getInsurer().setDisable(true);
-   }
+	protected void disableButton(final InsurranceInsurerSelection selection)
+	{
+		selection.getInsurer().setDisable(true);
+	}
 
-   protected void activateButton(final InsurranceInsurerSelection selection)
-   {
-   }
+	protected void activateButton(final InsurranceInsurerSelection selection)
+	{
+	}
 
-   protected void bind(final InsurranceInsurerSelection selection, final InsurranceInsurerForm form)
-   {
+	protected void bind(final InsurranceInsurerSelection selection, final InsurranceInsurerForm form)
+	{
 
-      //	    selection.getInsurer().valueProperty().bindBidirectional(sourceEntity.insurerProperty());
+		//	    selection.getInsurer().valueProperty().bindBidirectional(sourceEntity.insurerProperty());
 
-      // send search result event.
-      searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent event)
-         {
-            CustomerSearchService s = (CustomerSearchService) event
-                  .getSource();
-            targetSearchResult = s.getValue();
-            event.consume();
-            s.reset();
-            List<Customer> entities = targetSearchResult.getResultList();
-            entities.sort(new Comparator<Customer>() {
+		// send search result event.
+		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent event)
+			{
+				CustomerSearchService s = (CustomerSearchService) event
+						.getSource();
+				targetSearchResult = s.getValue();
+				event.consume();
+				s.reset();
+				List<Customer> entities = targetSearchResult.getResultList();
+				entities.sort(new Comparator<Customer>() {
 
-				@Override
-				public int compare(Customer o1, Customer o2) {
-					o1.setFullName(o1.getFirstName());
-					o2.setFullName(o2.getFirstName());
-					
-					return o1.getFirstName().compareTo(o2.getFirstName());
+					@Override
+					public int compare(Customer o1, Customer o2) {
+//											o1.setFullName(o1.getFirstName());
+//											o2.setFullName(o2.getFirstName());
+
+						return o1.getFirstName().compareTo(o2.getFirstName());
+					}
+				});
+				selection.getInsurer().getItems().clear();
+				selection.getInsurer().getItems().add(new InsurranceInsurer());
+				for (Customer entity : entities)
+				{
+					if("000000001".equals(entity.getSerialNumber()))
+						continue ;
+					selection.getInsurer().getItems().add(new InsurranceInsurer(entity));
 				}
-			});
-            selection.getInsurer().getItems().clear();
-            selection.getInsurer().getItems().add(new InsurranceInsurer());
-            for (Customer entity : entities)
-            {
-            	if("000000001".equals(entity.getSerialNumber()))
-            		continue ;
-               selection.getInsurer().getItems().add(new InsurranceInsurer(entity));
-            }
-         }
-      });
-      searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_search_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      searchService.setOnFailed(searchServiceCallFailedEventHandler);
+			}
+				});
+		searchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(
+						resourceBundle.getString("Entity_search_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
+		searchService.setOnFailed(searchServiceCallFailedEventHandler);
 
-      errorMessageDialog.getOkButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  errorMessageDialog.closeDialog();
-               }
-            });
+		errorMessageDialog.getOkButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						errorMessageDialog.closeDialog();
+					}
+				});
 
-      selection.getInsurer().valueProperty().addListener(new ChangeListener<InsurranceInsurer>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends InsurranceInsurer> ov, InsurranceInsurer oldValue,
-               InsurranceInsurer newValue)
-         {
-            if (sourceEntity != null)
-               form.update(newValue);
-            //                sourceEntity.setInsurer(newValue);
-         }
-      });
+		selection.getInsurer().valueProperty().addListener(new ChangeListener<InsurranceInsurer>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends InsurranceInsurer> ov, InsurranceInsurer oldValue,
+					InsurranceInsurer newValue)
+			{
+				if (sourceEntity != null)
+					form.update(newValue);
+				//                sourceEntity.setInsurer(newValue);
+			}
+				});
 
-      selection.getInsurer().armedProperty().addListener(new ChangeListener<Boolean>()
-      {
+		selection.getInsurer().armedProperty().addListener(new ChangeListener<Boolean>()
+				{
 
-         @Override
-         public void changed(ObservableValue<? extends Boolean> observableValue,
-               Boolean oldValue, Boolean newValue)
-         {
-            if (newValue)
-               load();
-         }
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observableValue,
+					Boolean oldValue, Boolean newValue)
+			{
+				if (newValue)
+					load();
+			}
 
-      });
-   }
+				});
+	}
 
-   public void load()
-   {
-      searchService.setSearchInputs(new CustomerSearchInput()).start();
-   }
+	public void load()
+	{
+		searchService.setSearchInputs(new CustomerSearchInput()).start();
+	}
 
 }

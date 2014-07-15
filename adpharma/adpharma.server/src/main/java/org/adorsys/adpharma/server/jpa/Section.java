@@ -66,7 +66,7 @@ public class Section implements Serializable
 
 	@Column
 	@Description("Article_wareHouse_description")
-	private Boolean wareHouse = Boolean.TRUE;
+	private Boolean wareHouse = Boolean.FALSE;
 
 	public Long getId()
 	{

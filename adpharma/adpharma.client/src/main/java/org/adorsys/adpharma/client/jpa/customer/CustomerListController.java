@@ -198,11 +198,8 @@ public class CustomerListController implements EntityController
 			{
 				Customer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if (selectedItem != null)
-					if("000000001".equals(selectedItem.getSerialNumber())){
-						Dialogs.create().masthead("Impossible de modifier ce client ").showError();
-					}else {
-						customerEditRequetedEvent.fire(selectedItem);
-					}
+
+					customerEditRequetedEvent.fire(selectedItem);
 			}
 				});
 
@@ -319,6 +316,6 @@ public class CustomerListController implements EntityController
 	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		}
+		listView.getDataList().getItems().clear();
+	}
 }
