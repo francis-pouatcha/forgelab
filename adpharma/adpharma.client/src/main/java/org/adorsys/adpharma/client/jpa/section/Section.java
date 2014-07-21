@@ -218,7 +218,7 @@ public class Section implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "name","sectionCode");
+      return PropertyReader.buildToString(this, "name","id");
    }
 
    public void cleanIds()

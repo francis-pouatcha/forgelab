@@ -90,32 +90,53 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	}
 
 	public void addItems(List<CashDrawer> cashDrawers) {
-			BigDecimal simulationRate =BigDecimal.ONE ;
-			if(login.getSimulationRate()!=null && login.getSimulationRate().compareTo(BigDecimal.ZERO)!= 0)
-				simulationRate = login.getSimulationRate().divide(BigDecimal.valueOf(100));
+		BigDecimal simulationRate =BigDecimal.ONE ;
+		BigDecimal drugVoucherT = BigDecimal.ZERO ;
+		BigDecimal cashOutT = BigDecimal.ZERO ;
+		BigDecimal cashInT = BigDecimal.ZERO ;
+		if(login.getSimulationRate()!=null && login.getSimulationRate().compareTo(BigDecimal.ZERO)!= 0)
+			simulationRate = login.getSimulationRate().divide(BigDecimal.valueOf(100));
+
 		for (CashDrawer cashDrawer : cashDrawers) {
+
+			BigDecimal initialAmount = cashDrawer.getInitialAmount() !=null ? cashDrawer.getInitialAmount() : BigDecimal.ZERO;
+			BigDecimal drugVoucher = cashDrawer.getTotalDrugVoucher() !=null ? cashDrawer.getTotalDrugVoucher() : BigDecimal.ZERO;
 			String closindDate = cashDrawer.getClosingDate() ==null ?"":DateHelper.format(cashDrawer.getClosingDate().getTime(),"dd-MM-yyyy HH:mm");
+
+			drugVoucherT=drugVoucherT.add(drugVoucher.multiply(simulationRate));
+			cashOutT =cashOutT.add(cashDrawer.getTotalCashOut().multiply(simulationRate));
+			cashInT =cashInT.add(cashDrawer.getTotalCash().multiply(simulationRate));
 			newTableRow(cashDrawer.getCashDrawerNumber(),
 					DateHelper.format(cashDrawer.getOpeningDate().getTime(),"dd-MM-yyyy HH:mm"),
 					closindDate,
 					cashDrawer.getCashier().getLoginName(), 
-					cashDrawer.getInitialAmount().multiply(simulationRate),
+					drugVoucher.multiply(simulationRate),
+					initialAmount.multiply(simulationRate),
 					cashDrawer.getTotalClientVoucher().multiply(simulationRate),
 					cashDrawer.getTotalCashOut().multiply(simulationRate),
-					cashDrawer.getTotalCash().multiply(simulationRate),
-					cashDrawer.getTotalCashIn().multiply(simulationRate));
+					cashDrawer.getTotalCash().multiply(simulationRate));
+
 		}
+		newTableRow("",
+				"",
+				"",
+				"TOTAUX : ", 
+				drugVoucherT,
+				null,
+				null,
+				cashOutT,
+				cashInT);
 	}
 
 	private void newTableRow(String cashDrawerNumber, 
 			String opendDate,
 			String closedDate,
 			String cashierLoginName,
+			BigDecimal drugVoucher,
 			BigDecimal fond,
 			BigDecimal totalClientVoucher,
 			BigDecimal cashOut,
-			BigDecimal totalCash,
-			BigDecimal solde) {
+			BigDecimal totalCash) {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(cashDrawerNumber));
 		reportTable.addCell(pdfPCell);
@@ -133,6 +154,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		pdfPCell.addElement(new StandardText(cashierLoginName));
 		reportTable.addCell(pdfPCell);
 
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(drugVoucher))));
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(fond))));
@@ -150,13 +174,13 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCash))));
 		reportTable.addCell(pdfPCell);
 
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(solde))));
-		reportTable.addCell(pdfPCell);
+		//		pdfPCell = new PdfPCell();
+		//		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(solde))));
+		//		reportTable.addCell(pdfPCell);
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.10f,.13f,.13f,.10f,.10f,.10f,.10f,.12f,.12f});
+		reportTable = new PdfPTable(new float[]{.11f,.11f,.11f,.11f,.11f,.11f,.11f,.11f,.12f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -179,6 +203,11 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Bon Med "));
+		reportTable.addCell(pdfPCell);
+
+
+		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Fond "));
 		reportTable.addCell(pdfPCell);
 
@@ -194,9 +223,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCash.title")));
 		reportTable.addCell(pdfPCell);
 
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Encaissement "));
-		reportTable.addCell(pdfPCell);
+		//		pdfPCell = new PdfPCell();
+		//		pdfPCell.addElement(new StandardText("Encaissement "));
+		//		reportTable.addCell(pdfPCell);
 
 	}
 

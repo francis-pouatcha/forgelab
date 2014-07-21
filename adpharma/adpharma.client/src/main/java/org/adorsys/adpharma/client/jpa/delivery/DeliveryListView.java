@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
@@ -143,13 +142,13 @@ public class DeliveryListView
 		viewBuilder.addStringColumn(dataList, "receivingAgency", "Delivery_receivingAgency_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle);
 
-		//		pagination = viewBuilder.addPagination();
-		//		viewBuilder.addSeparator();
-		//
-		//		HBox buttonBar = viewBuilder.addButtonBar();
-		//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		//		rootPane = viewBuilder.toAnchorPane();
+				pagination = viewBuilder.addPagination();
+				viewBuilder.addSeparator();
+		
+//				HBox buttonBar = viewBuilder.addButtonBar();
+//				createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+//				searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+//				rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 

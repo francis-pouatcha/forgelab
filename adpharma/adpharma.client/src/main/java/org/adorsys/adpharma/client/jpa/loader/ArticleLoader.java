@@ -94,6 +94,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			Platform.runLater(pgRunner.setText(working));
 
 			Cell cell = row.getCell(0);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setArticleName(cell.getStringCellValue().trim());
 
@@ -113,7 +114,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(14);
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String sc = cell.getStringCellValue().trim();
+				String sc = "RAY-0061" ; // cell.getStringCellValue().trim();
 				List<Section> ss = dataMap.getSections();
 				Section sec = null;
 				for (Section s : ss) {
@@ -170,17 +171,17 @@ public class ArticleLoader extends Service<List<Article>> {
 			}
 
 			cell = row.getCell(7);
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setPppu(decimal);
 			}
 
 			cell = row.getCell(8);
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
 				entity.setSppu(decimal);
 			}
@@ -236,7 +237,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(14);
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String sectionCode = cell.getStringCellValue().trim();
+				String sectionCode = "RAY-0061" ; //cell.getStringCellValue().trim();
 				List<Section> sections = dataMap.getSections();
 				Section section = null;
 				for (Section s : sections) {

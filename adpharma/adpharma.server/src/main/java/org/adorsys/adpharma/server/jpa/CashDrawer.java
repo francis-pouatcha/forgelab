@@ -117,6 +117,11 @@ public class CashDrawer implements Serializable
 	private BigDecimal totalClientVoucher;
 	
 	@Column
+	@Description("CashDrawer_totalDrugVoucher_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal totalDrugVoucher;
+	
+	@Column
 	@Description("CashDrawer_opened_description")
 	private Boolean opened=Boolean.TRUE;
 
@@ -341,7 +346,15 @@ public class CashDrawer implements Serializable
 	{
 		this.opened = opened;
 	}
+	
+	
 
+	public BigDecimal getTotalDrugVoucher() {
+		return totalDrugVoucher;
+	}
+	public void setTotalDrugVoucher(BigDecimal totalDrugVoucher) {
+		this.totalDrugVoucher = totalDrugVoucher;
+	}
 	@Override
 	public String toString()
 	{
@@ -352,4 +365,5 @@ public class CashDrawer implements Serializable
 			result += ", opened: " + opened;
 		return result;
 	}
+	
 }

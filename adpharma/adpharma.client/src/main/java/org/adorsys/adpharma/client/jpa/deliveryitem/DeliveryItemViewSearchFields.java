@@ -16,59 +16,59 @@ import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 public class DeliveryItemViewSearchFields extends AbstractForm<DeliveryItem>
 {
 
-   private TextField internalPic;
+	private TextField internalPic;
 
-   private TextField mainPic;
+	private TextField mainPic;
 
-   private TextField secondaryPic;
+	private TextField secondaryPic;
 
-   private TextField articleName;
+	private TextField articleName;
 
-   @Inject
-   @Bundle({ CrudKeys.class, DeliveryItem.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, DeliveryItem.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   private Locale locale;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      internalPic = viewBuilder.addTextField("DeliveryItem_internalPic_description.title", "internalPic", resourceBundle);
-      mainPic = viewBuilder.addTextField("DeliveryItem_mainPic_description.title", "mainPic", resourceBundle);
-      secondaryPic = viewBuilder.addTextField("DeliveryItem_secondaryPic_description.title", "secondaryPic", resourceBundle);
-      articleName = viewBuilder.addTextField("DeliveryItem_articleName_description.title", "articleName", resourceBundle);
+	@PostConstruct
+	public void postConstruct()
+	{
+		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		//      internalPic = viewBuilder.addTextField("DeliveryItem_internalPic_description.title", "internalPic", resourceBundle);
+		mainPic = viewBuilder.addTextField("DeliveryItem_mainPic_description.title", "mainPic", resourceBundle);
+		//      secondaryPic = viewBuilder.addTextField("DeliveryItem_secondaryPic_description.title", "secondaryPic", resourceBundle);
+		articleName = viewBuilder.addTextField("DeliveryItem_articleName_description.title", "articleName", resourceBundle);
 
-      gridRows = viewBuilder.toRows();
-   }
+		gridRows = viewBuilder.toRows();
+	}
 
-   public void bind(DeliveryItem model)
-   {
-      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
-      mainPic.textProperty().bindBidirectional(model.mainPicProperty());
-      secondaryPic.textProperty().bindBidirectional(model.secondaryPicProperty());
-      articleName.textProperty().bindBidirectional(model.articleNameProperty());
+	public void bind(DeliveryItem model)
+	{
+		//      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
+		mainPic.textProperty().bindBidirectional(model.mainPicProperty());
+		//      secondaryPic.textProperty().bindBidirectional(model.secondaryPicProperty());
+		articleName.textProperty().bindBidirectional(model.articleNameProperty());
 
-   }
+	}
 
-   public TextField getInternalPic()
-   {
-      return internalPic;
-   }
+	public TextField getInternalPic()
+	{
+		return internalPic;
+	}
 
-   public TextField getMainPic()
-   {
-      return mainPic;
-   }
+	public TextField getMainPic()
+	{
+		return mainPic;
+	}
 
-   public TextField getSecondaryPic()
-   {
-      return secondaryPic;
-   }
+	public TextField getSecondaryPic()
+	{
+		return secondaryPic;
+	}
 
-   public TextField getArticleName()
-   {
-      return articleName;
-   }
+	public TextField getArticleName()
+	{
+		return articleName;
+	}
 }

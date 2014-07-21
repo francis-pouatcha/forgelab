@@ -56,95 +56,95 @@ public class DirectSalesController extends DomainComponentController
       selectedModelEvent.fire(selectedModel);
    }
 
-   /**
-    * Listen to search result and display.
-    * @param entities
-    */
-   public void handleSearchResult(@Observes @EntitySearchDoneEvent List<DirectSales> entities)
-   {
-      if (!registration.canRead())
-         return;
-
-      // if result is empty: display no result.
-      if (!getDisplayedViews().contains(displayController))
-      {
-         getDisplayedViews().add(displayController);
-      }
-
-      displayComponent();
-   }
-
-   /**
-    * Listens to list selection events and display
-    */
-   public void handleSelectionEvent(@Observes @EntitySelectionEvent DirectSales selectedEntity)
-   {
-      if (!registration.canRead())
-         return;
-      // if result is empty: display no result.
-      // else display list of vATs.
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-
-      displayComponent();
-   }
-
-   /**
-    * Display the search and list panel
-    * @param selectedEntity
-    */
-   public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent DirectSales selectedEntity)
-   {
-      if (!registration.canRead())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-      displayComponent();
-   }
-
-   /**
-    * Display search form.
-    * @param selectedVAT
-    */
-   public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent DirectSales templateEntity)
-   {
-      if (!registration.canCreate())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-      displayComponent();
-   }
-
-   public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent DirectSales selectedEntity)
-   {
-      if (!registration.canEdit())
-         return;
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-      displayComponent();
-   }
-
-   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent DirectSales selectedEntity)
-   {
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-
-      displayComponent();
-   }
-
-   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent DirectSales selectedEntity)
-   {
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(displayController);
-
-      displayComponent();
-   }
+//   /**
+//    * Listen to search result and display.
+//    * @param entities
+//    */
+//   public void handleSearchResult(@Observes @EntitySearchDoneEvent List<DirectSales> entities)
+//   {
+//      if (!registration.canRead())
+//         return;
+//
+//      // if result is empty: display no result.
+//      if (!getDisplayedViews().contains(displayController))
+//      {
+//         getDisplayedViews().add(displayController);
+//      }
+//
+//      displayComponent();
+//   }
+//
+//   /**
+//    * Listens to list selection events and display
+//    */
+//   public void handleSelectionEvent(@Observes @EntitySelectionEvent DirectSales selectedEntity)
+//   {
+//      if (!registration.canRead())
+//         return;
+//      // if result is empty: display no result.
+//      // else display list of vATs.
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//
+//      displayComponent();
+//   }
+//
+//   /**
+//    * Display the search and list panel
+//    * @param selectedEntity
+//    */
+//   public void handleSearchRequestedEvent(@Observes @EntitySearchRequestedEvent DirectSales selectedEntity)
+//   {
+//      if (!registration.canRead())
+//         return;
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//      displayComponent();
+//   }
+//
+//   /**
+//    * Display search form.
+//    * @param selectedVAT
+//    */
+//   public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent DirectSales templateEntity)
+//   {
+//      if (!registration.canCreate())
+//         return;
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//      displayComponent();
+//   }
+//
+//   public void handleEditRequestedEvent(@Observes @EntityEditRequestedEvent DirectSales selectedEntity)
+//   {
+//      if (!registration.canEdit())
+//         return;
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//      displayComponent();
+//   }
+//
+//   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent DirectSales selectedEntity)
+//   {
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//
+//      displayComponent();
+//   }
+//
+//   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent DirectSales selectedEntity)
+//   {
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(displayController);
+//
+//      displayComponent();
+//   }
 
    @Override
    protected void selectDisplay()

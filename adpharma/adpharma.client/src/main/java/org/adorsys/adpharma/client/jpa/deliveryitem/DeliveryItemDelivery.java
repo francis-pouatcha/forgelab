@@ -6,14 +6,19 @@ import java.util.Calendar;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.delivery.DeliverySupplier;
+import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
+import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -33,9 +38,34 @@ public class DeliveryItemDelivery implements Association<DeliveryItem, Delivery>
    private SimpleObjectProperty<BigDecimal> amountDiscount;
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
    private SimpleObjectProperty<Calendar> dateOnDeliverySlip;
+   private SimpleObjectProperty<DeliverySupplier> supplier;
 
    public DeliveryItemDelivery()
    {
+   }
+   
+   public SimpleObjectProperty<DeliverySupplier> supplierProperty()
+   {
+      if (supplier == null)
+      {
+         supplier = new SimpleObjectProperty<DeliverySupplier>(new DeliverySupplier());
+      }
+      return supplier;
+   }
+
+   public DeliverySupplier getSupplier()
+   {
+      return supplierProperty().get();
+   }
+
+   public final void setSupplier(DeliverySupplier supplier)
+   {
+      if (supplier == null)
+      {
+         supplier = new DeliverySupplier();
+      }
+      PropertyReader.copy(supplier, getSupplier());
+      supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
    }
 
    public DeliveryItemDelivery(Delivery entity)

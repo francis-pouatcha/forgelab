@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -42,13 +43,16 @@ public class ProductDetailConfigListView
 
 	@FXML
 	private Button editButton;
+	
+	@FXML
+	private Button resetButton;
 
 	@FXML
 	private TableView<ProductDetailConfig> dataList;
 
-	private TextField articleOriginName ;
+	private ComboBox<ProductDetailConfigSource> articleOriginName ;
 
-	private TextField articleTargetName ;
+	private  ComboBox<ProductDetailConfigTarget> articleTargetName ;
 
 	@Inject
 	private Locale locale;
@@ -92,20 +96,30 @@ public class ProductDetailConfigListView
 
 	public void buildsearchBar(){
 
-		articleOriginName =ViewBuilderUtils.newTextField("articleOriginName", false);
+		articleOriginName =ViewBuilderUtils.newComboBox("ProductDetailConfig_source_description.title", "articleTargetName", false);
+
 		articleOriginName.setPromptText("Article Origin Name");
 		articleOriginName.setPrefHeight(40d);
-		articleOriginName.setPrefWidth(300d);
+		articleOriginName.setPrefWidth(400d);
 
-		articleTargetName =ViewBuilderUtils.newTextField("articleTargetName", false);
+		articleTargetName =ViewBuilderUtils.newComboBox("ProductDetailConfig_source_description.title", "articleTargetName", false);
 		articleTargetName.setPromptText("Article Target Name");
 		articleTargetName.setPrefHeight(40d);
-		articleTargetName.setPrefWidth(300d);
+		articleTargetName.setPrefWidth(400d);
 
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(articleOriginName,articleTargetName,searchButton);
+		
+		resetButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		resetButton.setPrefHeight(40d);
+		resetButton.setText("Vider");
+		searchBar.getChildren().addAll(articleOriginName,articleTargetName,resetButton,searchButton);
+	}
+	
+	public void bindSearchInput(ProductDetailConfigSearchInput searchInput){
+		articleOriginName.valueProperty().bindBidirectional(searchInput.getEntity().sourceProperty());
+		articleTargetName.valueProperty().bindBidirectional(searchInput.getEntity().targetProperty());
 	}
 
 	public Button getCreateButton()
@@ -121,6 +135,11 @@ public class ProductDetailConfigListView
 	public Button getEditButton()
 	{
 		return editButton;
+	}
+	
+	public Button getResetButton()
+	{
+		return resetButton;
 	}
 
 	public TableView<ProductDetailConfig> getDataList()
@@ -138,11 +157,11 @@ public class ProductDetailConfigListView
 		return pagination;
 	}
 
-	public TextField getArticleOriginName(){
+	public ComboBox<ProductDetailConfigSource> getArticleOriginName(){
 		return articleOriginName ;
 	}
 
-	public TextField getArticleTargetName(){
+	public ComboBox<ProductDetailConfigTarget> getArticleTargetName(){
 		return articleTargetName ;
 	}
 

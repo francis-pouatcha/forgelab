@@ -42,7 +42,7 @@ public class SalesOrderReportPrintTemplatePDF {
 	private Login login ;
 	private PdfPTable reportTable;
 	private String pdfFileName;
-private PeriodicalDataSearchInput model;
+	private PeriodicalDataSearchInput model;
 
 	public SalesOrderReportPrintTemplatePDF(
 			Login login,LoginAgency agency,PeriodicalDataSearchInput model
@@ -75,22 +75,28 @@ private PeriodicalDataSearchInput model;
 		int artNamelenght = 68 ;
 		BigDecimal totalQty = BigDecimal.ZERO ;
 		BigDecimal totalPrice = BigDecimal.ZERO ;
-		
+		BigDecimal totalPurchasePrice = BigDecimal.ZERO ;
+
 		for (SalesOrderItem item : items) {
 			String articleName = item.getArticle().getArticleName();
 			totalQty = totalQty.add(item.getDeliveredQty());
 			totalPrice = totalPrice.add(item.getTotalSalePrice());
+			BigDecimal ppp = item.getDeliveredQty().multiply(item.getPurchasePricePU());
+			totalPurchasePrice.add(ppp);
+			totalPurchasePrice = totalPurchasePrice.add(ppp);
 			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
 
 			newTableRow(item.getInternalPic(), 
 					articleName, 
 					item.getDeliveredQty(),
+					ppp,
 					item.getTotalSalePrice()
 					);
 		}
 		newTableRow("", 
 				"TOTAL :", 
 				totalQty,
+				totalPurchasePrice,
 				totalPrice
 				);
 	}
@@ -98,6 +104,7 @@ private PeriodicalDataSearchInput model;
 	private void newTableRow(String internalPic, 
 			String articleName,
 			BigDecimal stockQuantity,
+			BigDecimal purchasePricePU,
 			BigDecimal salesPricePU) {
 
 
@@ -114,6 +121,10 @@ private PeriodicalDataSearchInput model;
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?purchasePricePU.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?salesPricePU.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
@@ -122,7 +133,7 @@ private PeriodicalDataSearchInput model;
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .61f, .13f,.13f });
+		reportTable = new PdfPTable(new float[]{ .10f, .51f, .13f,.13f,.13f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -140,7 +151,11 @@ private PeriodicalDataSearchInput model;
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Montant"));
+		pdfPCell.addElement(new StandardText("Achat"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Vente"));
 		reportTable.addCell(pdfPCell);
 	}
 

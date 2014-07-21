@@ -203,7 +203,7 @@ public class DeliveryItemEndpoint
 
 	private static final List<String> emptyList = Collections.emptyList();
 
-	private static final List<String> deliveryFields = Arrays.asList("deliveryNumber", "deliverySlipNumber", "dateOnDeliverySlip", "amountBeforeTax", "amountAfterTax", "amountDiscount", "netAmountToPay", "vat.rate", "receivingAgency.name");
+	private static final List<String> deliveryFields = Arrays.asList("deliveryNumber", "deliverySlipNumber", "dateOnDeliverySlip", "amountBeforeTax", "amountAfterTax", "amountDiscount", "netAmountToPay","supplier", "vat.rate", "receivingAgency.name");
 
 	private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
 

@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -51,7 +52,7 @@ public class DeliveryItemListView
 	@Inject
 	@Bundle({ CrudKeys.class
 		, DeliveryItem.class
-		, Article.class
+		, Article.class,Delivery.class
 	})
 	private ResourceBundle resourceBundle;
 
@@ -61,25 +62,28 @@ public class DeliveryItemListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataList, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
 		//      viewBuilder.addStringColumn(dataList, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "delivery.supplier", "Delivery_supplier_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "articleName", "DeliveryItem_articleName_description.title", resourceBundle,250d);
 		//      viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
 		//      viewBuilder.addDateColumn(dataList, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
-//		viewBuilder.addBigDecimalColumn(dataList, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-//		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "qtyOrdered", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		pagination = viewBuilder.addPagination();
-		deliveryNumber = ViewBuilderUtils.newTextField("deliveryNumber", false);
-		viewBuilder.addSeparator();
+//		      viewBuilder.addDateColumn(dataList, "delivery", "DeliveryItem_creationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 
-		HBox buttonBar = viewBuilder.addButtonBar();
-		 viewBuilder.addControl(buttonBar,new Label("Numero de la Livraison : "));
-		 viewBuilder.addControl(buttonBar, deliveryNumber);
-		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		pagination = viewBuilder.addPagination();
+//		deliveryNumber = ViewBuilderUtils.newTextField("deliveryNumber", false);
+//		viewBuilder.addSeparator();
+//
+//		HBox buttonBar = viewBuilder.addButtonBar();
+//		viewBuilder.addControl(buttonBar,new Label("Numero de la Livraison : "));
+//		viewBuilder.addControl(buttonBar, deliveryNumber);
+//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		rootPane = viewBuilder.toAnchorPane();
 	}
 

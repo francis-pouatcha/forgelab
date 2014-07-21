@@ -398,6 +398,7 @@ public class DeliveryItem implements Cloneable
 		}
 		PropertyReader.copy(delivery, getDelivery());
 		deliveryProperty().setValue(ObjectUtils.clone(getDelivery()));
+		getDelivery().setSupplier(delivery.getSupplier());
 	}
 
 	public SimpleObjectProperty<DeliveryItemArticle> articleProperty()

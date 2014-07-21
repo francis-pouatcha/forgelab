@@ -94,6 +94,7 @@ public class SectionEditController implements EntityController
                   Set<ConstraintViolation<Section>> violations = editView.getView().validate(displayedEntity);
                   if (violations.isEmpty())
                   {
+                	  
                      editService.setSection(displayedEntity).start();
                   }
                   else
@@ -116,7 +117,7 @@ public class SectionEditController implements EntityController
             Section entity = s.getValue();
             event.consume();
             s.reset();
-            PropertyReader.copy(entity, displayedEntity);
+            PropertyReader.copy(new Section(), displayedEntity);
             editedDoneEvent.fire(entity);
          }
       });

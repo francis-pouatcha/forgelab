@@ -118,7 +118,9 @@ public class DeliveryEJB
 		for (DeliveryItem deliveryItem : deliveryItems) {
 			//			String internalPic = deliveryItem.getMainPic() ;
 			//			if(isManagedLot)
-			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
+			deliveryItem = deliveryItemEJB.findById(deliveryItem.getId());
+			Long sectionId = deliveryItem.getArticle().getSection().getId();
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic())+"-"+sectionId;
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){
@@ -182,13 +184,14 @@ public class DeliveryEJB
 		try {
 			BeanUtils.copyProperties(delivery, sourceD);
 			BeanUtils.copyProperties(newItem, sourceDi);
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to copy fileds") ;
 		}
-		 List<Article> articles = articleRepository.findBySectionAndPic(lotToTransfer.getMainPic() ,lotTransferManager.getTargetSection());
+		List<Article> articles = articleRepository.findBySectionAndPic(lotToTransfer.getMainPic() ,lotTransferManager.getTargetSection());
 
 		delivery.setId(null);
+		delivery.setDeliveryNumber(null);
 		delivery.setDeliveryItems(new HashSet<DeliveryItem>());
 		delivery = create(delivery);
 		newItem.setDelivery(delivery);
@@ -199,7 +202,7 @@ public class DeliveryEJB
 		newItem = deliveryItemEJB.create(newItem);
 		delivery.getDeliveryItems().add(newItem);
 		saveAndClose(delivery);
-		
+
 	}
 
 	@Inject

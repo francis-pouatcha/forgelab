@@ -289,7 +289,6 @@ public class ArticleLotArticle implements Association<ArticleLot, Article>, Clon
       ArticleLotArticle a = new ArticleLotArticle();
       a.id = id;
       a.version = version;
-
       a.articleName = articleName;
       a.pic = pic;
       a.manufacturer = manufacturer;

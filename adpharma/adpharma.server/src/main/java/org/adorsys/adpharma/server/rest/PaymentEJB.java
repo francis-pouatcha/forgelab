@@ -21,7 +21,9 @@ import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.repo.PaymentRepository;
+import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -59,11 +61,16 @@ public class PaymentEJB
 
 	@EJB
 	private CustomerInvoiceEJB customerInvoiceEJB;
+	
+	@Inject
+	private SalesOrderRepository salesOrderRepository ;
 
 	public Payment create(Payment entity)
 	{
 		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
 		Payment payment = attach(entity);
+		Login cashier = securityUtil.getConnectedUser();
+		CashDrawer cashDrawer = payment.getCashDrawer();
 		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
 			if(paymentCustomerInvoiceAssoc.getTarget()!=null && paymentCustomerInvoiceAssoc.getTarget().getCashed())
 				continue;
@@ -72,12 +79,13 @@ public class PaymentEJB
 			i.setSourceQualifier("invoices");
 			CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
 			CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
+			SalesOrder salesOrder = customerInvoice.getSalesOrder();
+			salesOrder.setCashDrawer(cashDrawer);
+			salesOrderRepository.save(salesOrder);
 			i.setTarget(customerInvoice);
 			i.setTargetQualifier("payments");
 			payment.getInvoices().add(i);
 		}
-		Login cashier = securityUtil.getConnectedUser();
-		CashDrawer cashDrawer = payment.getCashDrawer();
 		// Is the cashier the owner of this cashdrawer
 		//	   if(!cashDrawer.getCashier().equals(cashier)){
 		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);

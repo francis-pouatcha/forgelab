@@ -85,6 +85,7 @@ public class LoginLoader extends Service<List<Login>> {
 			Login entity = new Login();
 
 			Cell cell = row.getCell(0);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setLoginName(cell.getStringCellValue().trim());
 
@@ -101,15 +102,18 @@ public class LoginLoader extends Service<List<Login>> {
 				continue;
 			}
 
-			cell = row.getCell(1);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setEmail(cell.getStringCellValue().trim());
+//			cell = row.getCell(1);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setEmail(cell.getStringCellValue().trim());
 
 			cell = row.getCell(2);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setFullName(cell.getStringCellValue().trim());
 
 			cell = row.getCell(3);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setPassword(cell.getStringCellValue().trim());
 
@@ -152,6 +156,7 @@ public class LoginLoader extends Service<List<Login>> {
 //			}
 
 			cell = row.getCell(8);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setSaleKey(cell.getStringCellValue().trim());
 
@@ -170,6 +175,7 @@ public class LoginLoader extends Service<List<Login>> {
 			entity.setRecordingDate(new GregorianCalendar());
 
 			cell = row.getCell(12);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			String agencyNumber = "AG-0001";
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				agencyNumber = cell.getStringCellValue().trim();
@@ -191,6 +197,7 @@ public class LoginLoader extends Service<List<Login>> {
 			entity = remoteService.create(entity);
 
 			cell = row.getCell(13);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				String modelLoginName = cell.getStringCellValue().trim();
 				LoginSearchInput loginSearchInput = new LoginSearchInput();

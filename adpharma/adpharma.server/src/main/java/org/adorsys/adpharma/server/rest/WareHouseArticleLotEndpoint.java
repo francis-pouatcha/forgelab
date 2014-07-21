@@ -25,9 +25,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
-import org.adorsys.adpharma.server.jpa.WareHouseArticleLot_;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLotSearchInput;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLotSearchResult;
+import org.adorsys.adpharma.server.jpa.WareHouseArticleLot_;
 
 /**
  * 

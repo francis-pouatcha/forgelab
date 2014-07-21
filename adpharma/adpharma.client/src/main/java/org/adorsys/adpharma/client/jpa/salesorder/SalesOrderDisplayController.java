@@ -567,14 +567,15 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
+				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				int indexOf = displayView.getDataList().getItems().indexOf(createdItem);
 				if(indexOf>=0){
 					PropertyReader.copy(createdItem, displayView.getDataList().getItems().get(indexOf));
 				}else {
 					displayView.getDataList().getItems().add(0,createdItem);
 				}
-				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
+				resetSearchBar();
 				displayView.getInternalPic().requestFocus();
 
 			}
@@ -796,7 +797,13 @@ public class SalesOrderDisplayController implements EntityController
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
 		}
 	}
-
+	public void resetSearchBar(){
+		displayView.getInternalPic().setText("");
+		displayView.getArticleName().setText("");
+		displayView.getSalesPricePU().setText("");
+		displayView.getTotalSalePrice().setText("");
+	}
+	
 	public void getOpenCashDrawer(){
 		CashDrawerSearchInput cdsi = new CashDrawerSearchInput();
 		cdsi.getEntity().setOpened(Boolean.TRUE);

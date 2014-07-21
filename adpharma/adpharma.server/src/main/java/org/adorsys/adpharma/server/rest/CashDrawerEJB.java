@@ -21,6 +21,7 @@ import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
+import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 
@@ -38,7 +39,7 @@ public class CashDrawerEJB
 
 	@Inject
 	private SecurityUtil securityUtil;
-	
+
 	@Inject 
 	@DocumentProcessedEvent
 	private Event<PaymentItem> paymentItemProcessEvent;
@@ -52,7 +53,7 @@ public class CashDrawerEJB
 	save.setCashDrawerNumber(SequenceGenerator.CASHDRAWER_SEQUENCE_PREFIXE+save.getId());
 	return repository.save(save);
 	}
-	
+
 	public CashDrawer deleteById(Long id)
 	{
 		CashDrawer entity = repository.findBy(id);
@@ -170,7 +171,7 @@ public class CashDrawerEJB
 		cashDrawer.setAgency(agency);
 		return findBy(cashDrawer, 0, -1, new SingularAttribute[]{CashDrawer_.agency});
 	}
-	
+
 	public List<CashDrawer> agencyOpenDrawers() {
 		Login cashier = securityUtil.getConnectedUser();
 		Agency agency = cashier.getAgency();
@@ -189,11 +190,22 @@ public class CashDrawerEJB
 		cashDrawer.setClosingDate(new Date());
 		return update(cashDrawer);
 	}
-	
+
+	@Inject
+	private SalesOrderRepository salesOrderRepository ;
+
 	public List<CashDrawer> findByClosingDateBetween(Date startClosingDate, Date endClosingDate, int start, int max){
-		return repository.findByClosingDateBetween(startClosingDate, endClosingDate, start, max);
+		List<CashDrawer> cashDrawers = repository.findByClosingDateBetween(startClosingDate, endClosingDate, start, max);
+
+		for (CashDrawer cashDrawer : cashDrawers) {
+			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer);
+			if(totalDrugVoucher!=null)
+				cashDrawer.setTotalDrugVoucher(totalDrugVoucher);
+		}
+
+		return cashDrawers ;
 	}
-	
+
 	public Long countByClosingDateBetween(Date startClosingDate, Date endClosingDate){
 		return repository.countByClosingDateBetween(startClosingDate, endClosingDate);
 	}

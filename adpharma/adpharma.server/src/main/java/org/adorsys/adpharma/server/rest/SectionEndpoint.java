@@ -69,7 +69,8 @@ public class SectionEndpoint
    @Consumes({ "application/json", "application/xml" })
    public Section update(Section entity)
    {
-      return detach(ejb.update(entity));
+	   Section update = ejb.update(entity);
+      return detach(update);
    }
 
    @GET

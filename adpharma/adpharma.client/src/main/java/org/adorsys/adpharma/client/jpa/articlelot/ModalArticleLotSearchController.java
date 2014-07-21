@@ -170,7 +170,8 @@ public class ModalArticleLotSearchController  {
 			ArticleLot articleLot2 = articleLotSearchResult.getResultList().iterator().next();
 			PropertyReader.copy(new ArticleLot(), articleLot);
 			view.closeDialog();
-			modalArticleLotSearchDoneEvent.fire(articleLot2);
+			if(Boolean.FALSE.equals(articleLot2.getArticle().getSection().getWareHouse()))
+				modalArticleLotSearchDoneEvent.fire(articleLot2);
 		}else {
 			this.searchResult = articleLotSearchResult;
 			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
@@ -186,7 +187,7 @@ public class ModalArticleLotSearchController  {
 			// Group by internal pic always taking the article
 			for (ArticleLot articleLot : resultList) {
 				if(articleLot.getArticle()!=null&& articleLot.getArticle().getSection()!=null){
-					if(articleLot.getArticle().getSection().getWareHouse())
+					if(	Boolean.TRUE.equals(articleLot.getArticle().getSection().getWareHouse()))
 						continue;
 				}
 				//				if(BigDecimal.ZERO.compareTo(articleLot.getStockQuantity())>=0)
@@ -224,7 +225,7 @@ public class ModalArticleLotSearchController  {
 			int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 			int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 			view.getPagination().setCurrentPageIndex(pageIndex);
-//			view.getDataList().getItems().setAll(lotList);
+			//			view.getDataList().getItems().setAll(lotList);
 			view.getDataList().getItems().setAll(resultList);
 			if(!view.isDisplayed())
 				view.showDiaLog();
