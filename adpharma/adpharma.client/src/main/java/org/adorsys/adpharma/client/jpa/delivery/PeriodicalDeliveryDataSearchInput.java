@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,7 +11,9 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
 public class PeriodicalDeliveryDataSearchInput {
 
-	 private SimpleObjectProperty<Calendar> beginDate;
+	
+
+	private SimpleObjectProperty<Calendar> beginDate;
 	 
 	 private SimpleObjectProperty<Calendar> endDate;
 	 

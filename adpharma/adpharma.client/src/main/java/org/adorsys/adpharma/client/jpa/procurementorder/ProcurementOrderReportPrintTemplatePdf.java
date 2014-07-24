@@ -40,7 +40,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	
 
 	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 8);
+	static Font font = FontFactory.getFont("Times-Roman", 5);
 
 	public ProcurementOrderReportPrintTemplatePdf(ProcurementOrderReportPrinterData data, Agency agency,Login login,ResourceBundle resourceBundle) throws DocumentException {
 		this.agency = agency ;
@@ -168,12 +168,16 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		paragraph = new Paragraph(new StandardText("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
+		
+//		paragraph= new Paragraph(new StandardText("Periode: "));
+//		paragraph.setAlignment(Element.ALIGN_LEFT);
+//		document.add(paragraph);
 
 		document.add(Chunk.NEWLINE);
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText("Print By : "+login.getFullName()));
+		paragraph = new Paragraph(new StandardText("Imprime par : "+login.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
