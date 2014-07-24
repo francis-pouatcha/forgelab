@@ -1,10 +1,12 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -57,8 +59,8 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	private final Calendar endDate;
 	private final Login login;
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 12, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 12);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 8);
 
 	public CashDrawerReportPrintTemplatePDF(CashDrawerReportPrinterData cashDrawerPrinterData, ResourceBundle resourceBundle,
 			Locale locale,Login login) throws DocumentException {
@@ -90,26 +92,37 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	}
 
 	public void addItems(List<CashDrawer> cashDrawers) {
+		cashDrawers.sort(new Comparator<CashDrawer>() {
+
+			@Override
+			public int compare(CashDrawer o1, CashDrawer o2) {
+				// TODO Auto-generated method stub
+				return o1.getOpeningDate().compareTo(o2.getOpeningDate());
+			}
+		});
 		BigDecimal simulationRate =BigDecimal.ONE ;
 		BigDecimal drugVoucherT = BigDecimal.ZERO ;
 		BigDecimal cashOutT = BigDecimal.ZERO ;
 		BigDecimal cashInT = BigDecimal.ZERO ;
+		BigDecimal purchaseT = BigDecimal.ZERO ;
 		if(login.getSimulationRate()!=null && login.getSimulationRate().compareTo(BigDecimal.ZERO)!= 0)
 			simulationRate = login.getSimulationRate().divide(BigDecimal.valueOf(100));
-
 		for (CashDrawer cashDrawer : cashDrawers) {
 
 			BigDecimal initialAmount = cashDrawer.getInitialAmount() !=null ? cashDrawer.getInitialAmount() : BigDecimal.ZERO;
 			BigDecimal drugVoucher = cashDrawer.getTotalDrugVoucher() !=null ? cashDrawer.getTotalDrugVoucher() : BigDecimal.ZERO;
+			BigDecimal purchaseP = cashDrawer.getTotalCompanyVoucher() !=null ? cashDrawer.getTotalCompanyVoucher() : BigDecimal.ZERO;
 			String closindDate = cashDrawer.getClosingDate() ==null ?"":DateHelper.format(cashDrawer.getClosingDate().getTime(),"dd-MM-yyyy HH:mm");
 
 			drugVoucherT=drugVoucherT.add(drugVoucher.multiply(simulationRate));
 			cashOutT =cashOutT.add(cashDrawer.getTotalCashOut().multiply(simulationRate));
 			cashInT =cashInT.add(cashDrawer.getTotalCash().multiply(simulationRate));
+			purchaseT =purchaseT.add(cashDrawer.getTotalCompanyVoucher().multiply(simulationRate));
 			newTableRow(cashDrawer.getCashDrawerNumber(),
 					DateHelper.format(cashDrawer.getOpeningDate().getTime(),"dd-MM-yyyy HH:mm"),
 					closindDate,
 					cashDrawer.getCashier().getLoginName(), 
+					purchaseP.multiply(simulationRate),
 					drugVoucher.multiply(simulationRate),
 					initialAmount.multiply(simulationRate),
 					cashDrawer.getTotalClientVoucher().multiply(simulationRate),
@@ -121,6 +134,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				"",
 				"",
 				"TOTAUX : ", 
+				purchaseT,
 				drugVoucherT,
 				null,
 				null,
@@ -132,45 +146,61 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			String opendDate,
 			String closedDate,
 			String cashierLoginName,
+			BigDecimal purchasePrice,
 			BigDecimal drugVoucher,
 			BigDecimal fond,
 			BigDecimal totalClientVoucher,
 			BigDecimal cashOut,
 			BigDecimal totalCash) {
+		
 		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(cashDrawerNumber));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(opendDate));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(closedDate));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(cashierLoginName));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(purchasePrice))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(drugVoucher))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(fond))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(cashOut))));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalCash))));
 		reportTable.addCell(pdfPCell);
 
@@ -180,46 +210,62 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.11f,.11f,.11f,.11f,.11f,.11f,.11f,.11f,.12f});
+		reportTable = new PdfPTable(new float[]{.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 
 		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_cashDrawerNumber.title")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Date Ouverture"));
+		pdfPCell.setFixedHeight(22f);
+		pdfPCell.addElement(new StandardText("Ouverte Le"));
 		reportTable.addCell(pdfPCell);
+		
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Date Fermeture"));
+		pdfPCell.setFixedHeight(22f);
+		pdfPCell.addElement(new StandardText("Fermee Le"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_cashier.title")));
 		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
+		pdfPCell.addElement(new StandardText("Achats "));
+		reportTable.addCell(pdfPCell);
+
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Bon Med "));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Fond "));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalClientVoucher.title")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Decaissement"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCash.title")));
 		reportTable.addCell(pdfPCell);
 

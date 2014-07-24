@@ -107,26 +107,31 @@ public class InventoryComptRepportTemplatePdf {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(internalPic));
 		reportTable.addCell(pdfPCell);
-		pdfPCell.setFixedHeight(4);
+		pdfPCell.setFixedHeight(22f);
 
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(articleName));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(expectedQty!=null?expectedQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(ecart+"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(montant!=null?montant.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
@@ -142,18 +147,21 @@ public class InventoryComptRepportTemplatePdf {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(internalPic));
 		reportTable.addCell(pdfPCell);
-		pdfPCell.setFixedHeight(4);
+		pdfPCell.setFixedHeight(22f);
 
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(articleName));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText(observation));
 		reportTable.addCell(pdfPCell);
 
@@ -169,28 +177,34 @@ public class InventoryComptRepportTemplatePdf {
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("CIPM"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Designation"));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Stock M"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Stock R"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Ecart"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Montant"));
+		pdfPCell.setFixedHeight(22f);
+		pdfPCell.addElement(new StandardText("T Ecart"));
 		reportTable.addCell(pdfPCell);
 
 
@@ -202,18 +216,22 @@ public class InventoryComptRepportTemplatePdf {
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("CIPM"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Designation"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("Stock R"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(22f);
 		pdfPCell.addElement(new StandardText("OBS"));
 		reportTable.addCell(pdfPCell);
 
@@ -241,16 +259,21 @@ public class InventoryComptRepportTemplatePdf {
 		paragraph = new Paragraph(new StandardText("RAYON : "+inventory.getSection()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
+		
+		paragraph = new Paragraph(new StandardText("INVENTAIRE DU :"+org.adorsys.adpharma.client.utils.DateHelper.format(inventory.getInventoryDate().getTime(), "EEEE dd MMMMM yyyy")));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new StandardText("Imprime le  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
+		
 
 		document.add(Chunk.NEWLINE);
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText("Print By : "+login.getFullName()));
+		paragraph = new Paragraph(new StandardText("Imprime Par : "+login.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 

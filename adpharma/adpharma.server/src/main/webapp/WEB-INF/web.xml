@@ -28,7 +28,7 @@
       <form-login-page>/login</form-login-page>
       <form-error-page>/login-failed</form-error-page>
     </form-login-config>
-  </login-config>
+  </login-config> 
   <welcome-file-list>
     <welcome-file>/index.html</welcome-file>
   </welcome-file-list>

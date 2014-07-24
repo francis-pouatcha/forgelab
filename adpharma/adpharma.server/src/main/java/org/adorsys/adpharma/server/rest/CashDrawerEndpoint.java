@@ -278,8 +278,8 @@ public class CashDrawerEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public CashDrawerSearchResult findByClosingDateBetween(AdTimeFrameBasedSearchInput searchInput)
 	{
-		Long count = ejb.countByClosingDateBetween(searchInput.getTimeFrame().getStartTime(), searchInput.getTimeFrame().getEndTime());
-		List<CashDrawer> resultList = ejb.findByClosingDateBetween(searchInput.getTimeFrame().getStartTime(), 
+		Long count = ejb.countByOpeningDateBetween(searchInput.getTimeFrame().getStartTime(), searchInput.getTimeFrame().getEndTime());
+		List<CashDrawer> resultList = ejb.findByOpeningDateBetween(searchInput.getTimeFrame().getStartTime(), 
 				searchInput.getTimeFrame().getEndTime(), searchInput.getStart(), searchInput.getMax());
 		return new CashDrawerSearchResult(count, detach(resultList),null);
 	}

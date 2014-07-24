@@ -1012,6 +1012,7 @@ public class SalesOrderDisplayController implements EntityController
 		soia.setArticleName(al.getArticle().getArticleName());
 		soia.setVersion(al.getArticle().getVersion());
 		soia.setPic(al.getArticle().getPic());
+		
 		soItem.setInternalPic((al.getInternalPic()));
 		soItem.setArticle(soia);
 		soItem.setOrderedQty(BigDecimal.ONE);

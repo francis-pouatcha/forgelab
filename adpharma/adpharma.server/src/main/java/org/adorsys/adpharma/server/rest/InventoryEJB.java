@@ -76,6 +76,7 @@ public class InventoryEJB
 	{
 		Login user = securityUtil.getConnectedUser();
 		Inventory attach = attach(entity);
+		attach.setInventoryDate(new Date()); 
 		attach.setRecordingUser(user);
 		attach.setInventoryStatus(DocumentProcessingState.ONGOING);
 		Inventory save = repository.save(attach);

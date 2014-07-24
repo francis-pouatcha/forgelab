@@ -21,7 +21,86 @@
 		</div>
 		<!--Start Content-->
 		<div id="content" class="col-xs-12 col-sm-10">
-                    <input type="text"  width="300"/>
-		</div>
+                    <div class="row-fluid">
+                        <div class="col-md-5">
+                            <div class="row-fluid">
+                            <label class="col-md-4 control-margin-bottom" >Client :</label>
+                            <input class="col-md-8 control-margin-bottom"   type="text" />
+                            </div>
+                            <div class="row-fluid">
+                             <label class="col-md-4 control-margin-bottom" >Num Vente :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                            </div>
+                            <div class="row-fluid">
+                            <label class="col-md-4 control-margin-bottom" >Vendeur :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                            </div>
+                            <div class="row-fluid">
+                            <label class="col-md-4 control-margin-bottom" >Status :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                            </div>
+                        </div>
+                         <div class="col-md-5">
+                            <label class="col-md-4 control-margin-bottom " >Montant Ht :</label>
+                            <input class="col-md-8 control-margin-bottom"   type="text" />
+                             <label class="col-md-4 control-margin-bottom" >Remise :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                            <label class="col-md-4 control-margin-bottom" >Tva :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                            <label class="col-md-4 control-margin-bottom" >Montant Ttc :</label>
+                            <input class="col-md-8 control-margin-bottom" type="text" />
+                        </div>
+                            <div class="col-md-2">
+                             <h5 class="col-md-12 control-margin-bottom " >Net A payer :</h5>
+                            <input class="col-md-12 control-margin-bottom"   type="text" />
+                         <input class="col-md-12 control-margin-bottom btn-danger" type="button" value="Anuller" />
+                        <input class="col-md-12 control-margin-bottom btn-primary" type="button" value="Cloturer" />
+                       
+                        </div>
+                     
+</div>
+                    <div class="col-md-12 control-margin-bottom"  style="background-color: #46b8da; height: 3px;"></div>
+                    <div class="row-fluid ">
+                        <input class="col-md-2" type="text" placeholder="Code Bare" />
+                         <input class="col-md-4" type="text" placeholder="Designation" />
+                         <input class="col-md-1" type="text" placeholder="Qte" />
+                         <input class="col-md-2" type="text" placeholder="Prix Unitaire" />
+                         <input class="col-md-2" type="text" placeholder="Prix Total" />
+                         <input style="height: 27px;" class="col-md-1 btn-primary" type="button" value="OK" />
+                        
+                    </div>
+                     <div class="col-md-12 control-margin-top"  style="background-color: #46b8da; height: 3px;"></div>
+                     <div class=" row-fluid control-margin-top  " style="height: 400px;">
+                         <table class="table table-striped col-md-12" style="margin-top: 10px;">
+			<thead>
+                            <tr class="info">
+					<td class="col-md-2">Code Bare</td>
+					<td class="col-md-4">Designation</td>
+					<td class="col-md-1">Qté</td>
+					<td class="col-md-2">Prix Unitaire</td>
+					<td class="col-md-2">Prix Total</td>
+					<td class="col-md-1">Action</td>
+				</tr>
+
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="order in salesOrders">
+					<td>{{order.soNumber}}</td>
+					<td>{{order.customer.fullName}}</td>
+					<td>{{order.salesAgent.loginName}}</td>
+					<td>{{order.salesOrderStatus}}</td>
+					<td>{{order.creationDate}}</td>
+					<td>{{order.amountDiscount}}</td>
+					<td>{{order.amountAfterTax}}</td>
+					<td>{{order.cashed}}</td>
+					<td>{{order.alreadyReturned}}</td>
+				</tr>
+			</tbody>
+
+
+		</table>
+                    </div>
+                </div>
 		<!--End Content-->
 	</div>

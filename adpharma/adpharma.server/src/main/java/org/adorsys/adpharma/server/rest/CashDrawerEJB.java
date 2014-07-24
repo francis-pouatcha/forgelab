@@ -21,6 +21,7 @@ import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
+import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
@@ -193,21 +194,27 @@ public class CashDrawerEJB
 
 	@Inject
 	private SalesOrderRepository salesOrderRepository ;
+	
+	@Inject
+	private SalesOrderItemRepository salesOrderItemRepository ;
 
-	public List<CashDrawer> findByClosingDateBetween(Date startClosingDate, Date endClosingDate, int start, int max){
-		List<CashDrawer> cashDrawers = repository.findByClosingDateBetween(startClosingDate, endClosingDate, start, max);
+	public List<CashDrawer> findByOpeningDateBetween(Date startClosingDate, Date endClosingDate, int start, int max){
+		List<CashDrawer> cashDrawers = repository.findByOpeningDateBetween(startClosingDate, endClosingDate,Boolean.FALSE, start, max);
 
 		for (CashDrawer cashDrawer : cashDrawers) {
 			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer);
 			if(totalDrugVoucher!=null)
 				cashDrawer.setTotalDrugVoucher(totalDrugVoucher);
+			BigDecimal purchasePriceValue = salesOrderItemRepository.getPurchasePriceValueByCashdrawer(cashDrawer,Boolean.TRUE);
+			if(purchasePriceValue!=null)
+				cashDrawer.setTotalCompanyVoucher(purchasePriceValue);
 		}
 
 		return cashDrawers ;
 	}
 
-	public Long countByClosingDateBetween(Date startClosingDate, Date endClosingDate){
-		return repository.countByClosingDateBetween(startClosingDate, endClosingDate);
+	public Long countByOpeningDateBetween(Date startClosingDate, Date endClosingDate){
+		return repository.countByOpeningDateBetween(startClosingDate, endClosingDate,Boolean.FALSE);
 	}
 
 	/**
