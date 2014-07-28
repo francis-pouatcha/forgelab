@@ -8,10 +8,6 @@ angular.module('adpharma').service('SalesOrderService', ['$http', function($http
             return $http.post(urlBase,saleOrder);
         };
 
-        this.update = function (saleOrder) {
-            return $http.put(urlBase ,saleOrder);
-        };
-
         this.listAll = function (start, max) {
 
             return $http({
@@ -24,5 +20,7 @@ angular.module('adpharma').service('SalesOrderService', ['$http', function($http
         this.findBy = function (searchInput) {
             return $http.post(url ,searchInput);
         };
+
+
 }]);
 

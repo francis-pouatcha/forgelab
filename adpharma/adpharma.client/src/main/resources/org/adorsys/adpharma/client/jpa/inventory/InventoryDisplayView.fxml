@@ -78,7 +78,7 @@
 																<Insets left="5.0" />
 															</GridPane.margin>
 														</Label>
-														<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="Taux de remise :" GridPane.rowIndex="3">
+														<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="Total Ecart :" GridPane.rowIndex="3">
 															<GridPane.margin>
 																<Insets left="5.0" />
 															</GridPane.margin>

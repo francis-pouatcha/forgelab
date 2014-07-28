@@ -16,6 +16,7 @@ import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
+import org.adorsys.adpharma.server.jpa.Disbursement;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
@@ -154,6 +155,15 @@ public class CashDrawerEJB
 				throw new IllegalStateException("Unknown payment mode: "+paymentMode);
 			}
 		}
+		update(cashDrawer);
+	}
+	
+	public void processDisbursment(@Observes @DocumentProcessedEvent Disbursement disbursement){
+		CashDrawer cashDrawer = disbursement.getCashDrawer();
+		BigDecimal amount = disbursement.getAmount();
+		BigDecimal cashOut = cashDrawer.getTotalCashOut() !=null ?cashDrawer.getTotalCashOut():BigDecimal.ZERO;
+		cashOut = cashOut.add(amount);
+		cashDrawer.setTotalCashOut(cashOut);
 		update(cashDrawer);
 	}
 

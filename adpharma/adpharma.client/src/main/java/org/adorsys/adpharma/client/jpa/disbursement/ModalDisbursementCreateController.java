@@ -1,8 +1,11 @@
 package org.adorsys.adpharma.client.jpa.disbursement;
 
+import java.math.BigDecimal;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,9 +20,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleCreateService;
 import org.adorsys.adpharma.client.jpa.article.ModalArticleCreateView;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
@@ -59,6 +64,10 @@ public class ModalDisbursementCreateController {
 	@Inject
 	@ModalEntityCreateDoneEvent
 	private Event<Disbursement> modalCashOutCreateDoneEvent;
+	
+	@Inject
+	@PrintRequestedEvent
+	private Event<Disbursement> printDisbursementRequestEvent;
 
 	@PostConstruct
 	public void postConstruct(){          
@@ -72,6 +81,7 @@ public class ModalDisbursementCreateController {
 
 			}
 		});
+		
 		//  handele create action
 		modalCashOutCreateView.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
 
@@ -119,8 +129,9 @@ public class ModalDisbursementCreateController {
 				event.consume();
 				s.reset();
 				modalCashOutCreateView.closeDialog();
-				Dialogs.create().message("Cash Out maked whith sucess !").showInformation();
+				Dialogs.create().message("Decaissement Effectue avec succes !").showInformation();
 				modalCashOutCreateDoneEvent.fire(cashOutCreateResult);
+				printDisbursementRequestEvent.fire(cashOutCreateResult);
 
 			}
 		});

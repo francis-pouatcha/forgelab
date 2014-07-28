@@ -38,6 +38,12 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextField endDate;
 
 	private CheckBox check;
+	
+	private CheckBox taxableSalesOnly;
+	
+	private CheckBox nonTaxableSalesOnly;
+	
+	private CheckBox twentyOverHeightySalesOnly;
 
 	private Button saveButton;
 
@@ -59,8 +65,15 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		LazyViewBuilder lazyviewBuilder = new LazyViewBuilder();
 		beginDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_fromDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
+		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
+		taxableSalesOnly.setText("Taxable Uniquement ?");
+		nonTaxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "nonTaxableSalesOnly", resourceBundle);
+		nonTaxableSalesOnly.setText("Non Taxable Uniquement ?");
+		twentyOverHeightySalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightySalesOnly", resourceBundle);
+		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
 		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
-		check.setText(resourceBundle.getString("SalesOrder_repport_check_description.title"));
+		check.setText("Resultat Groupé Par cip ?");
+		
 
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lazyviewBuilder.toRows(), ViewType.CREATE, false);
@@ -79,6 +92,10 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
 		endDate.calendarProperty().bindBidirectional(model.endDateProperty());
 		check.selectedProperty().bindBidirectional(model.checkProperty());
+		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
+		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
+		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
+		
 	}
 
 	public void addValidators()
@@ -110,6 +127,54 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 	public Locale getLocale() {
 		return locale;
+	}
+
+
+
+	public CalendarTextField getBeginDate() {
+		return beginDate;
+	}
+
+
+
+	public CalendarTextField getEndDate() {
+		return endDate;
+	}
+
+
+
+	public CheckBox getCheck() {
+		return check;
+	}
+
+
+
+	public CheckBox getTaxableSalesOnly() {
+		return taxableSalesOnly;
+	}
+
+
+
+	public CheckBox getNonTaxableSalesOnly() {
+		return nonTaxableSalesOnly;
+	}
+
+
+
+	public CheckBox getTwentyOverHeightySalesOnly() {
+		return twentyOverHeightySalesOnly;
+	}
+
+
+
+	public CalendarTextFieldValidator getCalendarControlValidator() {
+		return calendarControlValidator;
+	}
+
+
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
 	}
 
 

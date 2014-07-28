@@ -47,15 +47,6 @@ public class DisbursementService {
 				.put(ent, Disbursement.class);
 	}
 
-	// @PUT
-	// @Path("/{id:[0-9][0-9]*}")
-	// @Consumes("application/xml")
-	public Disbursement processCashOut(Disbursement entity) {
-		Entity<Disbursement> ent = Entity.entity(entity, media);
-		return target().path("/processDisbursements").request(media)
-				.put(ent, Disbursement.class);
-	}
-
 	// @GET
 	// @Path("/{id:[0-9][0-9]*}")
 	// @Produces("application/xml")

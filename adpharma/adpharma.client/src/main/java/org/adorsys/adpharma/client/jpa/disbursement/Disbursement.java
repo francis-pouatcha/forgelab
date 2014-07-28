@@ -35,7 +35,8 @@ public class Disbursement implements Cloneable{
 	private SimpleObjectProperty<DisbursementCashDrawer> cashDrawer;
 	private SimpleObjectProperty<DisbursementAgency> agency;
 	private SimpleObjectProperty<Calendar> creationDate;
-
+	private SimpleStringProperty voucherNumber;
+	private SimpleObjectProperty<BigDecimal> voucherAmount;
 
 
 	public Long getId()
@@ -56,6 +57,25 @@ public class Disbursement implements Cloneable{
 	public final void setVersion(int version)
 	{
 		this.version = version;
+	}
+
+	public SimpleStringProperty voucherNumberProperty()
+	{
+		if (voucherNumber == null)
+		{
+			voucherNumber = new SimpleStringProperty();
+		}
+		return voucherNumber;
+	}
+
+	public String getVoucherNumber()
+	{
+		return voucherNumberProperty().get();
+	}
+
+	public final void setVoucherNumber(String voucherNumber)
+	{
+		this.voucherNumberProperty().set(voucherNumber);
 	}
 
 	public SimpleStringProperty raisonProperty()
@@ -96,6 +116,25 @@ public class Disbursement implements Cloneable{
 	public final void setAmount(BigDecimal amount)
 	{
 		this.amountProperty().set(amount);
+	}
+	
+	public SimpleObjectProperty<BigDecimal> voucherAmountProperty()
+	{
+		if (voucherAmount == null)
+		{
+			voucherAmount = new SimpleObjectProperty<BigDecimal>();
+		}
+		return voucherAmount;
+	}
+
+	public BigDecimal getVoucherAmount()
+	{
+		return voucherAmountProperty().get();
+	}
+
+	public final void setVoucherAmount(BigDecimal voucherAmount)
+	{
+		this.voucherAmountProperty().set(voucherAmount);
 	}
 
 	public SimpleObjectProperty<PaymentMode> paymentModeProperty()
@@ -211,10 +250,6 @@ public class Disbursement implements Cloneable{
 	{
 		this.creationDateProperty().set(creationDate);
 	}
-
-
-
-
 
 	@Override
 	public int hashCode()

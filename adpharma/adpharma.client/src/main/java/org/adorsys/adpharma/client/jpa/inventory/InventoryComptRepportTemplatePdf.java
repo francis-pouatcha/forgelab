@@ -260,7 +260,7 @@ public class InventoryComptRepportTemplatePdf {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 		
-		paragraph = new Paragraph(new StandardText("INVENTAIRE DU :"+org.adorsys.adpharma.client.utils.DateHelper.format(inventory.getInventoryDate().getTime(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new StandardText("INVENTAIRE DU :"+org.adorsys.adpharma.client.utils.DateHelper.format(inventory.getInventoryDate()!=null ?inventory.getInventoryDate().getTime():new Date(), "EEEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 

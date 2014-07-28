@@ -83,7 +83,7 @@ public class CashDrawerListController implements EntityController
 
 	@Inject
 	private CashDrawerSearchInput searchInput ;
-	
+
 	@Inject
 	@ModalEntitySearchRequestedEvent
 	private Event<PaymentSearchInput> paymentSearchInputRequestEvent;
@@ -109,7 +109,7 @@ public class CashDrawerListController implements EntityController
 	@Inject
 	private ServiceCallFailedEventHandler serviceFailedHandler;
 
-	
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -164,11 +164,11 @@ public class CashDrawerListController implements EntityController
 			{
 				CashDrawer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-				PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
-				paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(selectedItem));
-				paymentSearchInput.setMax(-1);
-				paymentSearchInput.getFieldNames().add("cashDrawer");
-				paymentSearchInputRequestEvent.fire(paymentSearchInput);
+					PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
+					paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(selectedItem));
+					paymentSearchInput.setMax(-1);
+					paymentSearchInput.getFieldNames().add("cashDrawer");
+					paymentSearchInputRequestEvent.fire(paymentSearchInput);
 				}
 			}
 		});
@@ -182,7 +182,7 @@ public class CashDrawerListController implements EntityController
 				s.reset();
 				List<Login> resultList = result.getResultList();
 				ArrayList<CashDrawerCashier> arrayList = new ArrayList<CashDrawerCashier>();
-				
+
 				resultList.sort(new Comparator<Login>() {
 
 					@Override
@@ -245,7 +245,7 @@ public class CashDrawerListController implements EntityController
 
 			}
 		});
-		
+
 		listView.getCashDrawerNumber().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -311,7 +311,7 @@ public class CashDrawerListController implements EntityController
 			}
 				});
 	}
-	
+
 	public void handleSearchAction(){
 		searchInput.setFieldNames(readSearchAttributes());
 		searchInput.setMax(30);

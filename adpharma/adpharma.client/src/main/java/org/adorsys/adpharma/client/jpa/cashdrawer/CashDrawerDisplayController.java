@@ -1034,7 +1034,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getPaymentItemDataList().getItems().clear();
 		// print receipt???
 		displayView.getCashButon().setDisable(true);
-		displayView.getCashOutButton().setDisable(true);
+//		displayView.getCashOutButton().setDisable(true);
 	}
 
 	public void clearPaymentDataList(){

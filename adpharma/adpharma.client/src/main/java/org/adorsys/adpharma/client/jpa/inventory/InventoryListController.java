@@ -40,6 +40,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -96,8 +97,7 @@ public class InventoryListController implements EntityController
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getSearchButton().disableProperty().bind(inventorySearchService.runningProperty());
-		listView.getSearchButton().disableProperty().bind(itemSearchService.runningProperty());
-
+		listView.getRemoveButton().disableProperty().bind(inventoryRemoveService.runningProperty());
 		listView.getDataList().getSelectionModel().selectedItemProperty()
 		.addListener(new ChangeListener<Inventory>()
 				{
@@ -176,7 +176,7 @@ public class InventoryListController implements EntityController
 				source.reset();
 				event.consume();
 				listView.getDataListItem().getItems().clear();
-				listView.getDataList().getItems().remove(result);
+				listView.getDataList().getItems().clear();
 
 
 			}
@@ -202,7 +202,14 @@ public class InventoryListController implements EntityController
 				{
 			@Override
 			public void handle(ActionEvent e)
-			{
+			{ 
+				String inventoryNumber = listView.getInvoiceNumber().getText();
+				searchInput.getFieldNames().clear();
+				if(StringUtils.isNotBlank(inventoryNumber)){
+					searchInput.getEntity().setInventoryNumber(inventoryNumber);
+					searchInput.getFieldNames().add("inventoryNumber");
+					
+				}
 				inventorySearchService.setSearchInputs(searchInput).start();
 			}
 				});
