@@ -80,6 +80,7 @@ public class InventoryComptRepportTemplatePdf {
 	public void addItems(List<InventoryItem> items) {
 		int artNamelenght = 68 ;
 		BigDecimal total = BigDecimal.ZERO;
+		Long ecart = Long.valueOf(0);
 		for (InventoryItem item : items) {
 			String articleName = item.getArticle().getArticleName();
 			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
@@ -88,10 +89,11 @@ public class InventoryComptRepportTemplatePdf {
 			}else {
 				newTableRow(item.getInternalPic(), articleName, item.getExpectedQty(), item.getAsseccedQty(), item.getGap(), item.getGapTotalSalePrice());
 				total = total.add(item.getGapTotalSalePrice());
+				ecart = ecart.sum(ecart, item.getGap());
 			}
 		}
 		if(!isCountRepport)
-			newTableRow("", "Total :", null, null, null, total);
+			newTableRow("", "Total :", null, null, ecart, total);
 
 	}
 

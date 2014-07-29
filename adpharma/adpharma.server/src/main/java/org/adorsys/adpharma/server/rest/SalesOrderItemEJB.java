@@ -59,6 +59,9 @@ public class SalesOrderItemEJB
 		orderItem.setSalesOrder(entity.getSalesOrder());
 		orderItem.setInternalPic(entity.getInternalPic());
 		orderItem.setArticle(entity.getArticle());
+		VAT vat = entity.getArticle().getVat();
+		if(vat!=null)
+			orderItem.setVat(vat);
 
 		List<SalesOrderItem> found = findBy(orderItem, 0, 1, new SingularAttribute[]{SalesOrderItem_.internalPic,SalesOrderItem_.article,SalesOrderItem_.salesOrder});
 		if(!found.isEmpty()){
@@ -118,15 +121,15 @@ public class SalesOrderItemEJB
 				if(BigDecimal.ZERO.compareTo(item.getVatValue())!=0)
 					continue ;
 			}
-			
-//			if(searchInput.getTaxableSalesOnly()){
-//				if(vat!=null && BigDecimal.ZERO.compareTo(vat.getRate())!=0){
-//					vat.getRate().multiply(price).divide(BigDecimal.valueOf(1000));
-////					BigDecimal amountBeforeTax = CurencyUtil.round(totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 2, RoundingMode.HALF_EVEN));
-//					
-//				}
-//			}
-            
+
+			//			if(searchInput.getTaxableSalesOnly()){
+			//				if(vat!=null && BigDecimal.ZERO.compareTo(vat.getRate())!=0){
+			//					vat.getRate().multiply(price).divide(BigDecimal.valueOf(1000));
+			////					BigDecimal amountBeforeTax = CurencyUtil.round(totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 2, RoundingMode.HALF_EVEN));
+			//					
+			//				}
+			//			}
+
 			item.setInternalPic(internalPic);
 			item.setArticle(article);
 			item.setDeliveredQty(qty);
@@ -146,13 +149,13 @@ public class SalesOrderItemEJB
 		return entity;
 	}
 
-//	public SalesOrderItem update(SalesOrderItem entity)
-//	{
-//		entity.updateTotalSalesPrice();
-//		entity = repository.save(attach(entity));
-//		salesOrderItemProcessedEvent.fire(entity);
-//		return entity;
-//	}
+	//	public SalesOrderItem update(SalesOrderItem entity)
+	//	{
+	//		entity.updateTotalSalesPrice();
+	//		entity = repository.save(attach(entity));
+	//		salesOrderItemProcessedEvent.fire(entity);
+	//		return entity;
+	//	}
 
 	public SalesOrderItem update(SalesOrderItem entity)
 	{

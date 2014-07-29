@@ -235,7 +235,6 @@ public class SalesOrderDisplayController implements EntityController
 		});
 
 
-
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
 			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {
@@ -670,6 +669,11 @@ public class SalesOrderDisplayController implements EntityController
 					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
 					modalArticleLotSearchEvent.fire(asi);
+				}
+				
+				if(code== KeyCode.DELETE){
+					 displayView.getArticleName().setText("");
+					
 				}
 			}
 		});

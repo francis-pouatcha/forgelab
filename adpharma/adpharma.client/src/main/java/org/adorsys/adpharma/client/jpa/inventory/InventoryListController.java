@@ -90,6 +90,8 @@ public class InventoryListController implements EntityController
 	@Inject
 	@PrintRequestedEvent
 	private Event<InventoryRepportData> printRequest;
+	
+	
 
 
 	@PostConstruct
@@ -98,6 +100,7 @@ public class InventoryListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getSearchButton().disableProperty().bind(inventorySearchService.runningProperty());
 		listView.getRemoveButton().disableProperty().bind(inventoryRemoveService.runningProperty());
+		searchInput.setMax(30);
 		listView.getDataList().getSelectionModel().selectedItemProperty()
 		.addListener(new ChangeListener<Inventory>()
 				{
@@ -208,6 +211,7 @@ public class InventoryListController implements EntityController
 				if(StringUtils.isNotBlank(inventoryNumber)){
 					searchInput.getEntity().setInventoryNumber(inventoryNumber);
 					searchInput.getFieldNames().add("inventoryNumber");
+					searchInput.setMax(30);
 					
 				}
 				inventorySearchService.setSearchInputs(searchInput).start();

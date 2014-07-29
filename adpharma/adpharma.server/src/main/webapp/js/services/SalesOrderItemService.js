@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('adpharma').service('SalesOrderItemService', ['$http', function($http){
-	 var urlBase = 'http://localhost:8080/adpharma.server/rest/salesorders';
+	 var urlBase = '/adpharma.server/rest/salesorders';
 
         this.create = function (saleOrder) {
             return $http.post(urlBase,saleOrder);

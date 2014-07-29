@@ -8,14 +8,11 @@ angular.module('adpharma', [
   'ngResource',
   'ngCookies',
   'ngSanitize',
-  'ngAnimate',
-  'adpharma.filters'
+  'ngAnimate'
 ]).config(function ($routeProvider, $httpProvider) {
-  $httpProvider.responseInterceptors.push('httpInterceptor');
-  
   $routeProvider.when('/salesOderList', {templateUrl: 'views/salesOrderList.html', controller: 'SalesOrderListController'});
   $routeProvider.when('/salesOrderEdit', {templateUrl: 'views/salesOrderEdit.html', controller: 'SalesOrderEditController'});
   $routeProvider.when('/login', {templateUrl: 'views/login.html', controller: 'auth'});
-  $routeProvider.otherwise({redirectTo: '/salesOrderEdit'});
+  $routeProvider.otherwise({redirectTo: '/login'});
 });
 

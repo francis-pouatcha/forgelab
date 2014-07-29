@@ -14,7 +14,7 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
 	$scope.processingSales.vat = {};
 	$scope.processingSales.salesAgent = {};
 	$scope.processingSales.agency = {};
-  $scope.processingSales.id = null;
+    $scope.processingSales.id = null;
 
 	// article lot search input 
 	$scope.articleLotSearchInput = {} ;
@@ -28,7 +28,7 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
 
 	listAll();
 	salesOrderItem();
-	newSalesOrder();
+//	newSalesOrder();
 
 	/*
 create anew sales order item 
