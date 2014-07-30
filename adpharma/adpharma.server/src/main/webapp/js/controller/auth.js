@@ -10,16 +10,19 @@ angular.module('adpharma').controller('auth', ['$scope','$window','$http','$loca
     $http({
     method: 'POST',
     url: loginAdress,
-    data: $scope.user,
+//    data: $scope.user, use jquery to send form url encoded. Not yet supported by angular.
+    data: jQuery.param($scope.user),
     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 }).success(function (data, status, headers, config) {
-        $window.sessionStorage.token = data;
+		// Form authentication uses the cookie named jsessionid.
+//        $window.sessionStorage.token = data;
         $scope.message = 'Welcome';
         $location.path('/salesOderList');
       })
       .error(function (data, status, headers, config) {
+    	// Form authentication uses the cookie named jsessionid.
         // Erase the token if the user fails to log in
-        delete $window.sessionStorage.token;
+//        delete $window.sessionStorage.token;
 
         // Handle login errors here
         $scope.message = 'Error: Invalid user or password';
