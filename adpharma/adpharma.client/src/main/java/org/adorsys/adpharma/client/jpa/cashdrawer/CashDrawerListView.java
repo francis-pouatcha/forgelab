@@ -53,7 +53,7 @@ public class CashDrawerListView
 	HBox searchBar;
 
 	private TextField cashDrawerNumber ;
-	
+
 	private ComboBox<CashDrawerCashier> cashier ;
 
 	private CheckBox opened ;
@@ -99,17 +99,17 @@ public class CashDrawerListView
 		viewBuilder.addBigDecimalColumn(dataList, "totalCreditCard", "CashDrawer_totalCreditCard_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalCompanyVoucher", "CashDrawer_totalCompanyVoucher_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalClientVoucher", "CashDrawer_totalClientVoucher_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		// Field not displayed in table
-//		pagination = viewBuilder.addPagination();
-//		viewBuilder.addSeparator();
-//
-//		HBox buttonBar = viewBuilder.addButtonBar();
-//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-//		rootPane = viewBuilder.toAnchorPane();
+		//		// Field not displayed in table
+		//		pagination = viewBuilder.addPagination();
+		//		viewBuilder.addSeparator();
+		//
+		//		HBox buttonBar = viewBuilder.addButtonBar();
+		//		createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+		//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//		rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
 	}
-	
+
 	public void bind(CashDrawerSearchInput searchInput)
 	{
 
@@ -124,7 +124,7 @@ public class CashDrawerListView
 		cashDrawerNumber.setPrefWidth(200d);
 		opened = ViewBuilderUtils.newCheckBox(null, "cashed", resourceBundle, false);
 		opened.setText(resourceBundle.getString("CashDrawer_opened_description.title")+" ?");
-		
+
 		cashier = ViewBuilderUtils.newComboBox("cashier", "cashier", false) ;
 		cashier.setPrefWidth(250d);
 		cashier.setPromptText(resourceBundle.getString("CashDrawer_cashier_description.title"));
@@ -136,7 +136,7 @@ public class CashDrawerListView
 	{
 		return openButton;
 	}
-	
+
 	public Button getCloseButton()
 	{
 		return closeButton;
@@ -192,7 +192,7 @@ public class CashDrawerListView
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
-	
-	
+
+
 
 }

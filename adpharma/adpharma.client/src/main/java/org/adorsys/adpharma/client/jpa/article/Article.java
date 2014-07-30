@@ -66,6 +66,8 @@ public class Article implements Cloneable
    private SimpleBooleanProperty authorizedSale;
    @Description("Article_maxStockQty_description")
    private SimpleObjectProperty<BigDecimal> maxStockQty;
+   @Description("Article_minStockQty_description")
+   private SimpleObjectProperty<BigDecimal> minStockQty;
    @Description("Article_qtyInStock_description")
    private SimpleObjectProperty<BigDecimal> qtyInStock;
    @Description("Article_pppu_description")
@@ -248,6 +250,25 @@ public class Article implements Cloneable
    public final void setMaxStockQty(BigDecimal maxStockQty)
    {
       this.maxStockQtyProperty().set(maxStockQty);
+   }
+   
+   public SimpleObjectProperty<BigDecimal> minStockQtyProperty()
+   {
+      if (minStockQty == null)
+      {
+    	  minStockQty = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+      }
+      return minStockQty;
+   }
+
+   public BigDecimal getMinStockQty()
+   {
+      return minStockQtyProperty().get();
+   }
+
+   public final void setMinStockQty(BigDecimal minStockQty)
+   {
+      this.minStockQtyProperty().set(minStockQty);
    }
 
    public SimpleObjectProperty<BigDecimal> qtyInStockProperty()

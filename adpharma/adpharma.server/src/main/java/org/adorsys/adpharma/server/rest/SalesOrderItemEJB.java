@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,9 @@ import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
+import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
+import org.adorsys.adpharma.server.utils.CurencyUtil;
 import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 
 @Stateless
@@ -56,6 +59,9 @@ public class SalesOrderItemEJB
 		orderItem.setSalesOrder(entity.getSalesOrder());
 		orderItem.setInternalPic(entity.getInternalPic());
 		orderItem.setArticle(entity.getArticle());
+		VAT vat = entity.getArticle().getVat();
+		if(vat!=null)
+			orderItem.setVat(vat);
 
 		List<SalesOrderItem> found = findBy(orderItem, 0, 1, new SingularAttribute[]{SalesOrderItem_.internalPic,SalesOrderItem_.article,SalesOrderItem_.salesOrder});
 		if(!found.isEmpty()){
@@ -98,8 +104,31 @@ public class SalesOrderItemEJB
 			SalesOrderItem item = new SalesOrderItem();
 			String internalPic = (String) objects[0];
 			Article article = (Article) objects[1];
+			VAT vat = article.getVat();
+			BigDecimal vatAmount = BigDecimal.ZERO ;	
 			BigDecimal qty = (BigDecimal) objects[2];
 			BigDecimal price = (BigDecimal) objects[3];
+			if(vat!=null )
+				vatAmount =	vat.getRate().multiply(price).divide(BigDecimal.valueOf(100));
+			item.setVatValue(vatAmount);
+			// remove non taxable sales
+			if(searchInput.getTaxableSalesOnly()){
+				if(BigDecimal.ZERO.compareTo(item.getVatValue())==0)
+					continue ;
+			}
+			// remove taxable sales 
+			if(searchInput.getNonTaxableSalesOnly()){
+				if(BigDecimal.ZERO.compareTo(item.getVatValue())!=0)
+					continue ;
+			}
+
+			//			if(searchInput.getTaxableSalesOnly()){
+			//				if(vat!=null && BigDecimal.ZERO.compareTo(vat.getRate())!=0){
+			//					vat.getRate().multiply(price).divide(BigDecimal.valueOf(1000));
+			////					BigDecimal amountBeforeTax = CurencyUtil.round(totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 2, RoundingMode.HALF_EVEN));
+			//					
+			//				}
+			//			}
 
 			item.setInternalPic(internalPic);
 			item.setArticle(article);
@@ -120,13 +149,13 @@ public class SalesOrderItemEJB
 		return entity;
 	}
 
-//	public SalesOrderItem update(SalesOrderItem entity)
-//	{
-//		entity.updateTotalSalesPrice();
-//		entity = repository.save(attach(entity));
-//		salesOrderItemProcessedEvent.fire(entity);
-//		return entity;
-//	}
+	//	public SalesOrderItem update(SalesOrderItem entity)
+	//	{
+	//		entity.updateTotalSalesPrice();
+	//		entity = repository.save(attach(entity));
+	//		salesOrderItemProcessedEvent.fire(entity);
+	//		return entity;
+	//	}
 
 	public SalesOrderItem update(SalesOrderItem entity)
 	{

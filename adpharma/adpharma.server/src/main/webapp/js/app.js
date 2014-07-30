@@ -8,8 +8,7 @@ angular.module('adpharma', [
   'ngResource',
   'ngCookies',
   'ngSanitize',
-  'ngAnimate',
-  'adpharma.filters'
+  'ngAnimate'
 ]).config(function ($routeProvider, $httpProvider) {
   $httpProvider.defaults.withCredentials = true;
   $httpProvider.responseInterceptors.push('httpInterceptor');

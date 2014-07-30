@@ -314,6 +314,7 @@ public class ArticleLotEJB
 		al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
 		al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(), 4, RoundingMode.HALF_EVEN));
 		al.setSalesPricePU(detailConfig.getSalesPrice());
+		al.setVat(detailConfig.getTarget().getVat());
 		al.calculateTotalAmout();
 		return al ;
 	}

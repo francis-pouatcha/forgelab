@@ -50,6 +50,7 @@ import org.adorsys.javafx.crud.extensions.events.AssocSelectionRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
@@ -79,6 +80,10 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Inventory> editRequestEvent;
+	
+	@Inject
+	@EntityEditDoneEvent
+	private Event<Inventory>  inventoryEditDoneRequestEVent ;
 
 	@Inject
 	@EntityRemoveRequestEvent
@@ -169,6 +174,7 @@ public class InventoryDisplayController implements EntityController
 
 			}
 		});
+		
 		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -490,7 +496,7 @@ public class InventoryDisplayController implements EntityController
 			Dialogs.create().nativeTitleBar().message("vous devez selection un article ").showError();
 			return false;
 		}
-		if(realQty==null || realQty.compareTo(BigDecimal.ZERO)==0){
+		if(realQty==null){
 			Dialogs.create().nativeTitleBar().message("la Qte est Requis ").showError();
 			displayView.getAsseccedQty().requestFocus();
 			return false;

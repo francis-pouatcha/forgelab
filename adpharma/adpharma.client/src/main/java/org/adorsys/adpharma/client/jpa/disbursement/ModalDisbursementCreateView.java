@@ -1,7 +1,10 @@
 package org.adorsys.adpharma.client.jpa.disbursement;
 
+import java.math.BigDecimal;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -11,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -61,7 +65,28 @@ public class ModalDisbursementCreateView extends ApplicationModal{
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
 		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.TRASH_ALT);
 		rootPane = viewBuilder.toAnchorPane();
-		rootPane.setPrefWidth(600d);
+		rootPane.setPrefWidth(450d);
+		
+		getView().getPaymentMode().valueProperty().addListener(new ChangeListener<PaymentMode>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends PaymentMode> observable,
+					PaymentMode oldValue, PaymentMode newValue) {
+				if(newValue!=null){
+                     if(PaymentMode.VOUCHER.equals(newValue)){
+                    	 getView().getVoucherAmount().setDisable(false);
+                    	 getView().getVoucherNumber().setDisable(false);
+                     }else {
+                    	 getView().getVoucherAmount().setDisable(true);
+                    	 getView().getVoucherNumber().setDisable(true);
+					}
+                     getView().getVoucherAmount().setNumber(BigDecimal.ZERO);
+                	 getView().getVoucherNumber().setText(null);
+				}
+
+			}
+		});
 
 	}
 

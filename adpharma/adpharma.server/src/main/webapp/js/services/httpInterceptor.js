@@ -16,9 +16,7 @@ angular.module('adpharma').factory('httpInterceptor', function httpInterceptor (
           } else {
         	  return $q.reject(response);
           }
-
       };
-
       return promise.then(success, error);
   };
 });

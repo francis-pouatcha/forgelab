@@ -64,6 +64,12 @@ public class ArticleListView
 	
 	@FXML
 	private Button printButton ;
+	
+	@FXML
+	private Button sectionChangeBtn ;
+	
+	@FXML
+	private Button vatChangeBtn ;
 
 	@FXML
 	private Button createButton;
@@ -78,6 +84,8 @@ public class ArticleListView
 	private Locale locale;
 	
 	private ComboBox<ArticleSection> section ;
+	
+	private ComboBox<ArticleVat> vat ;
 
 	private TextField articleName ;
 	
@@ -104,9 +112,10 @@ public class ArticleListView
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,300d);
-		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle,300d);
+		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle,250d);
 //		viewBuilder.addStringColumn(dataList, "manufacturer", "Article_manufacturer_description.title", resourceBundle);
 		// Field not displayed in table
+		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "pppu", "Article_pppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -114,7 +123,8 @@ public class ArticleListView
 //		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //		// Field not displayed in table
-		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
+		viewBuilder.addBigDecimalColumn(dataList, "minStockQty", "Article_minStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "maxStockQty", "Article_maxStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addStringColumn(dataList, "clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
 
 		//		pagination = viewBuilder.addPagination();
@@ -129,14 +139,19 @@ public class ArticleListView
 	
 	public void buildsearchBar(){
 		section =ViewBuilderUtils.newComboBox(null,"section", false);
-		section.setPromptText("ALL SECTION ");
+		section.setPromptText("TOUS LES RAYONS ");
 		section.setPrefHeight(30d);
 		section.setPrefWidth(300d);
+		
+		vat =ViewBuilderUtils.newComboBox(null,"vat", false);
+		vat.setPromptText("TAXE ");
+		vat.setPrefHeight(30d);
+		vat.setPrefWidth(100d);
 
 		articleName =ViewBuilderUtils.newTextField("articleName", false);
 		articleName.setPromptText("Article Name");
 		articleName.setPrefHeight(30d);
-		articleName.setPrefWidth(400d);
+		articleName.setPrefWidth(300d);
 		
 		mainPic =ViewBuilderUtils.newTextField("mainPic", false);
 		mainPic.setPromptText("mainPic");
@@ -144,7 +159,7 @@ public class ArticleListView
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(30d);
-		searchBar.getChildren().addAll(mainPic,articleName,section,searchButton);
+		searchBar.getChildren().addAll(mainPic,articleName,section,vat,searchButton);
 	}
 
 	public void bind(ArticleSearchInput searchInput)
@@ -153,6 +168,7 @@ public class ArticleListView
 		mainPic.textProperty().bindBidirectional(searchInput.getEntity().picProperty());
 		articleName.textProperty().bindBidirectional(searchInput.getEntity().articleNameProperty());
 		section.valueProperty().bindBidirectional(searchInput.getEntity().sectionProperty());
+		vat.valueProperty().bindBidirectional(searchInput.getEntity().vatProperty());
 	}
 
 	public Button getCreateButton()
@@ -208,6 +224,34 @@ public class ArticleListView
 	public ComboBox<ArticleSection> getSection()
 	{
 		return section;
+	}
+
+	public HBox getSearchBar() {
+		return searchBar;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public ComboBox<ArticleVat> getVat() {
+		return vat;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+
+	public Button getSectionChangeBtn() {
+		return sectionChangeBtn;
+	}
+
+	public Button getVatChangeBtn() {
+		return vatChangeBtn;
 	}
 	
 	

@@ -16,6 +16,12 @@ public class PeriodicalDataSearchInput {
 	private SimpleObjectProperty<Calendar> endDate;
 
 	private SimpleBooleanProperty check;
+	
+	private SimpleBooleanProperty taxableSalesOnly ;
+	 
+	private SimpleBooleanProperty nonTaxableSalesOnly  ;
+	
+	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
 
 
 	public SimpleObjectProperty<Calendar> beginDateProperty()
@@ -75,6 +81,69 @@ public class PeriodicalDataSearchInput {
 		if (check == null)
 			check = Boolean.FALSE;
 		this.checkProperty().set(check);
+	}
+	
+	public SimpleBooleanProperty twentyOverHeightySalesOnlyProperty()
+	{
+		if (twentyOverHeightySalesOnly == null)
+		{
+			twentyOverHeightySalesOnly = new SimpleBooleanProperty();
+		}
+		return twentyOverHeightySalesOnly;
+	}
+
+	public Boolean getTwentyOverHeightySalesOnly()
+	{
+		return twentyOverHeightySalesOnlyProperty().get();
+	}
+
+	public final void setTwentyOverHeightySalesOnly(Boolean twentyOverHeightySalesOnly)
+	{
+		if (twentyOverHeightySalesOnly == null)
+			twentyOverHeightySalesOnly = Boolean.FALSE;
+		this.twentyOverHeightySalesOnlyProperty().set(twentyOverHeightySalesOnly);
+	}
+	
+	public SimpleBooleanProperty nonTaxableSalesOnlyProperty()
+	{
+		if (nonTaxableSalesOnly == null)
+		{
+			nonTaxableSalesOnly = new SimpleBooleanProperty();
+		}
+		return nonTaxableSalesOnly;
+	}
+
+	public Boolean getNonTaxableSalesOnly()
+	{
+		return nonTaxableSalesOnlyProperty().get();
+	}
+
+	public final void setNonTaxableSalesOnly(Boolean nonTaxableSalesOnly)
+	{
+		if (nonTaxableSalesOnly == null)
+			nonTaxableSalesOnly = Boolean.FALSE;
+		this.nonTaxableSalesOnlyProperty().set(nonTaxableSalesOnly);
+	}
+	
+	public SimpleBooleanProperty taxableSalesOnlyProperty()
+	{
+		if (taxableSalesOnly == null)
+		{
+			taxableSalesOnly = new SimpleBooleanProperty();
+		}
+		return taxableSalesOnly;
+	}
+
+	public Boolean getTaxableSalesOnly()
+	{
+		return taxableSalesOnlyProperty().get();
+	}
+
+	public final void setTaxableSalesOnly(Boolean taxableSalesOnly)
+	{
+		if (taxableSalesOnly == null)
+			taxableSalesOnly = Boolean.FALSE;
+		this.taxableSalesOnlyProperty().set(taxableSalesOnly);
 	}
 
 	 public String toString()

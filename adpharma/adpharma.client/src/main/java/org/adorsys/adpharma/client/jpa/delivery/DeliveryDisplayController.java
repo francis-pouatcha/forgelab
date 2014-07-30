@@ -143,7 +143,6 @@ public class DeliveryDisplayController implements EntityController
 	public void postConstruct()
 	{
 		displayView.getDeleteButton().disableProperty().bind(registration.canEditProperty().not());
-		displayView.getEditButton().disableProperty().bind(registration.canNavigateProperty().not());
 
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
@@ -606,6 +605,14 @@ public class DeliveryDisplayController implements EntityController
 	}
 	public void reset() {
 		PropertyReader.copy(new Delivery(), displayedEntity);
+	}
+	
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+			displayView.getEditButton().setVisible(true);
+		}else {
+			displayView.getEditButton().setVisible(false);
+		}
 	}
 
 
