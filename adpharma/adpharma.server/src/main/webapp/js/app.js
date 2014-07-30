@@ -11,10 +11,11 @@ angular.module('adpharma', [
   'ngAnimate',
   'adpharma.filters'
 ]).config(function ($routeProvider, $httpProvider) {
+  $httpProvider.defaults.withCredentials = true;
   $httpProvider.responseInterceptors.push('httpInterceptor');
   $routeProvider.when('/salesOderList', {templateUrl: 'views/salesOrderList.html', controller: 'SalesOrderListController'});
   $routeProvider.when('/salesOrderEdit', {templateUrl: 'views/salesOrderEdit.html', controller: 'SalesOrderEditController'});
   $routeProvider.when('/login', {templateUrl: 'views/login.html', controller: 'auth'});
-  $routeProvider.otherwise({redirectTo: '/login'});
+  $routeProvider.otherwise({redirectTo: '/salesOderList'});
 });
 
