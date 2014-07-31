@@ -52,6 +52,10 @@ table > tr :HOVER {
 	background-color: #7BC5D3 ;
 }
 
+a:hover{
+    cursor: pointer;
+}
+
 tr:HOVER{
 	background-color: #7BC5D3 ;
 }

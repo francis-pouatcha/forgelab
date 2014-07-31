@@ -55,9 +55,8 @@
 						<ul class="nav navbar-nav pull-right panel-menu">
 							
 							<li class="hidden-xs">
-								<a href="#/login" class="ajax-link">
-									<i class="fa fa-envelope"></i>
-									<span class="badge">7</span>
+								<a ng-click="Security.logout()" class="ajax-link">
+									Deconnection
 								</a>
 							</li>
 							
@@ -92,6 +91,7 @@
   <script src="js/services/SalesOrderService.js"></script>
  <script src="js/services/SalesOrderItemService.js"></script>
   <script src="js/services/httpInterceptor.js"></script>
+ <script src="js/services/LogoutService.js"></script>
   <script src="js/controller/SalesOrderEditController.js"></script>
   <script src="js/controller/SalesOrderListController.js"></script>
   <script src="js/controller/auth.js"></script>

@@ -16,5 +16,7 @@ angular.module('adpharma', [
   $routeProvider.when('/salesOrderEdit', {templateUrl: 'views/salesOrderEdit.html', controller: 'SalesOrderEditController'});
   $routeProvider.when('/login', {templateUrl: 'views/login.html', controller: 'auth'});
   $routeProvider.otherwise({redirectTo: '/salesOrderEdit'});
+}).run(function($rootScope, LogoutService) {
+    $rootScope.Security = LogoutService;
 });
 
