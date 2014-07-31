@@ -1,31 +1,44 @@
 'use strict';
 
-angular.module('adpharma').service('SalesOrderItemService', ['$http', function($http){
-	 var urlBase = '/adpharma.server/rest/salesorders';
+ angular.module('adpharma').service('SalesOrderItemService', ['$http', function($http){
+	 var urlBase = '/adpharma.server/rest/salesorderitems';
 
-        this.create = function (saleOrder) {
-            return $http.post(urlBase,saleOrder);
+         this.create = function (saleOrderItem) {
+            return $http.post(urlBase,saleOrderItem);
+         };
+
+         this.update = function (saleOrderItem) {
+            return $http.put(urlBase+'/'+saleOrderItem.id ,saleOrderItem);
+         };
+
+         this.findBy = function (salesOrderItemSearchInput) {
+
+             return $http.post(urlBase+'/findBy' ,salesOrderItemSearchInput);
         };
 
-        this.update = function (saleOrder) {
-            return $http.put(urlBase ,saleOrder);
-        };
+       this.deleteById = function (id) {
 
-        this.listAll = function (start, max) {
+         return $http.delete(urlBase+'/'+id);
+       };
 
-            return $http({
-                          url: urlBase, 
-                          method: "GET",
-                          params: {start: start, max: max}
-                          });
-        };
+     // create a new sales order item
+     this.newSalesOrderItem = function(){
+         return {
+             article : {},
+             vat : {},
+             salesOrder : {}
+         } ;
+     };
 
-        this.urlBase = function(){
-           
-        }
-
-
-        
+     // create a new sales order item
+     this.newSalesOrderSearchInput = function(){
+         return {
+             entity : {},
+             fieldNames : [],
+             max : 100,
+             start : 0
+         } ;
+     };
 }]);
 
 

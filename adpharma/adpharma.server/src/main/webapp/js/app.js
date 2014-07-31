@@ -15,6 +15,6 @@ angular.module('adpharma', [
   $routeProvider.when('/salesOderList', {templateUrl: 'views/salesOrderList.html', controller: 'SalesOrderListController'});
   $routeProvider.when('/salesOrderEdit', {templateUrl: 'views/salesOrderEdit.html', controller: 'SalesOrderEditController'});
   $routeProvider.when('/login', {templateUrl: 'views/login.html', controller: 'auth'});
-  $routeProvider.otherwise({redirectTo: '/salesOderList'});
+  $routeProvider.otherwise({redirectTo: '/salesOrderEdit'});
 });
 

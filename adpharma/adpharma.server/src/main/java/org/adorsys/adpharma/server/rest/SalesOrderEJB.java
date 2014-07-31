@@ -270,13 +270,14 @@ public class SalesOrderEJB
 	}
 	
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+		System.out.println(salesOrder);
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			return  findById(salesOrder.getId()) ;
 		Login realSaller = getRealSaller(salesOrder.getSalesKey());
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
-
+		System.out.println(salesOrder);
 		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
 		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
 		//		salesOrder.setAmountVAT(original.getAmountVAT());

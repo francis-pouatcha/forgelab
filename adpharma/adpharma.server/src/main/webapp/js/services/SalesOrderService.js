@@ -2,7 +2,6 @@
 
 angular.module('adpharma').service('SalesOrderService', ['$http', function($http){
 	 var urlBase = '/adpharma.server/rest/salesorders';
-   var url = '/adpharma.server/rest/articlelots/findByLike';
 
         this.create = function (saleOrder) {
             return $http.post(urlBase,saleOrder);
@@ -17,10 +16,21 @@ angular.module('adpharma').service('SalesOrderService', ['$http', function($http
                           });
         };
 
-        this.findBy = function (searchInput) {
-            return $http.post(url ,searchInput);
-        };
+       this.saveAndClose = function (salesOrder) {
+        return $http.put(urlBase+'/saveAndClose/'+salesOrder.id,salesOrder);
+       };
 
-
+    // create a new sales order search input
+      this.newSalesOrder = function(){
+        return {
+                salesOrderItems :[],
+                cashDrawer : {},
+                customer : {},
+                insurance : {},
+                vat : {},
+                salesAgent : {},
+                agency : {}
+            } ;
+       };
 }]);
 

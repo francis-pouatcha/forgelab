@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.debtstatement;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,7 +51,7 @@ public class DebtStatementReportPrintTemplatePDF {
 	private final Locale locale;
 	private final  DebtStatementAgency agency;
 	private final DebtStatement debtStatement ;	
-	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD,Color.BLUE);
 	static Font font = FontFactory.getFont("Times-Roman", 8);
 
 	public DebtStatementReportPrintTemplatePDF(DebtStatement debtStatement, ResourceBundle resourceBundle,
@@ -65,7 +66,7 @@ public class DebtStatementReportPrintTemplatePDF {
 		pdfFileName = "DebtStatement" + ".pdf";
 		document = new Document();
 		document.setMargins(5f, 5f, 5f, 0);
-		
+
 		File file = new File(pdfFileName);
 		try {
 			fos = new FileOutputStream(file);
@@ -84,20 +85,28 @@ public class DebtStatementReportPrintTemplatePDF {
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal instotal = BigDecimal.ZERO;
 		for (CustomerInvoice inoice : invoices) {
-			newTableRow(inoice.getInvoiceNumber(), 
-					inoice.getInsurance().getCustomer().getFullName(),
-					DateHelper.format(inoice.getCreationDate().getTime(),DateHelper.DATE_FORMAT),
-					inoice.getNetToPay(),
-					inoice.getInsurranceRestTopay(),
-					inoice.getInsurance().getCoverageRate() );
-		
+			String societe = null ;
+			if(inoice.getCustomer()!=null)
+				newTableRow(inoice.getInvoiceNumber(), 
+						societe,
+						inoice.getCustomer().getSerialNumber(),
+						inoice.getSalesOrder().getPatientMatricle(),
+						inoice.getInsurance().getCustomer().getFullName(),
+						DateHelper.format(inoice.getCreationDate().getTime(),DateHelper.DATE_FORMAT),
+						inoice.getNetToPay(),
+						inoice.getInsurranceRestTopay(),
+						inoice.getInsurance().getCoverageRate() );
+
 			total = total.add(inoice.getNetToPay());
-		instotal =	instotal.add(inoice.getInsurranceRestTopay());
+			instotal =	instotal.add(inoice.getInsurranceRestTopay());
 		}
-		newTableRow(null, null, "TOTAUX :",total, instotal, null);
+		newTableRow(null,null,null,null, null, "TOTAUX :",total, instotal, null);
 	}
 
 	private void newTableRow(String invoiceNumber, 
+			String societe,
+			String matPrinc,
+			String matMal,
 			String client,
 			String date,
 			BigDecimal totalAmount,
@@ -108,6 +117,18 @@ public class DebtStatementReportPrintTemplatePDF {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(invoiceNumber));
 		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(societe));
+		reportTable.addCell(societe);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(matPrinc));
+		reportTable.addCell(matPrinc);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(matMal));
+		reportTable.addCell(matMal);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(client));
@@ -130,15 +151,27 @@ public class DebtStatementReportPrintTemplatePDF {
 		reportTable.addCell(pdfPCell);
 
 	}
-	
+
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.11f,.45f,.15f,.14f,.14f,.08f});
+		reportTable = new PdfPTable(new float[]{.1f,.1f,.1f,.1f,.35f,.08f,.08f,.08f,.08f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_invoice_description.title")));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Societe"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Mat. Princ"));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Mat. Malade"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -152,6 +185,10 @@ public class DebtStatementReportPrintTemplatePDF {
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_amount_description.title")));
 		reportTable.addCell(pdfPCell);
+
+		//		pdfPCell = new PdfPCell();
+		//		pdfPCell.addElement(new StandardText("Ticket Mod."));
+		//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_insurrance_amount_description.title")));
@@ -254,7 +291,7 @@ public class DebtStatementReportPrintTemplatePDF {
 	public String getFileName() {
 		return pdfFileName;
 	}
-	
+
 	public void resetDocument() throws DocumentException{
 		document.open();
 		if(reportTable!=null)

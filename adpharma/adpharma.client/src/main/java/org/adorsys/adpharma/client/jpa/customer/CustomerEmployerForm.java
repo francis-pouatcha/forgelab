@@ -52,9 +52,10 @@ public class CustomerEmployerForm extends AbstractToOneAssociation<Customer, Emp
    }
 
    public void update(CustomerEmployer data)
-   {
+   {if(data!=null){
       name.textProperty().set(data.nameProperty().get());
       phone.textProperty().set(data.phoneProperty().get());
+   }
    }
 
    public TextField getName()

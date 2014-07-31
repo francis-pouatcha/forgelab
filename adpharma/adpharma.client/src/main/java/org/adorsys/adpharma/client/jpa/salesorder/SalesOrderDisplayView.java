@@ -99,7 +99,7 @@ public class SalesOrderDisplayView
 	private TextField clientPhone;
 
 	@FXML
-	private TextField clientAdresse;
+	private TextField patientMatricule;
 
 	@FXML
 	private ComboBox<DocumentProcessingState> salesStatus;
@@ -293,7 +293,7 @@ public class SalesOrderDisplayView
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
-		clientAdresse.textProperty().bindBidirectional(model.getCustomer().faxProperty());
+		patientMatricule.textProperty().bindBidirectional(model.patientMatricleProperty());
 		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		salesStatus.valueProperty().bindBidirectional(model.salesOrderStatusProperty());
 		dataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
@@ -452,8 +452,8 @@ public class SalesOrderDisplayView
 	}
 
 
-	public TextField getClientAdresse() {
-		return clientAdresse;
+	public TextField getPatientMatricule() {
+		return patientMatricule;
 	}
 
 
@@ -653,9 +653,6 @@ public class SalesOrderDisplayView
 		this.clientPhone = clientPhone;
 	}
 
-	public void setClientAdresse(TextField clientAdresse) {
-		this.clientAdresse = clientAdresse;
-	}
 
 	public void setSalesStatus(ComboBox<DocumentProcessingState> salesStatus) {
 		this.salesStatus = salesStatus;

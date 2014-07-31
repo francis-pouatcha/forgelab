@@ -209,7 +209,7 @@ public class CashDrawerEJB
 	private SalesOrderItemRepository salesOrderItemRepository ;
 
 	public List<CashDrawer> findByOpeningDateBetween(Date startClosingDate, Date endClosingDate, int start, int max){
-		List<CashDrawer> cashDrawers = repository.findByOpeningDateBetween(startClosingDate, endClosingDate,Boolean.FALSE, start, max);
+		List<CashDrawer> cashDrawers = repository.findByOpeningDateBetween(startClosingDate, endClosingDate, start, max);
 
 		for (CashDrawer cashDrawer : cashDrawers) {
 			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer);
@@ -224,7 +224,7 @@ public class CashDrawerEJB
 	}
 
 	public Long countByOpeningDateBetween(Date startClosingDate, Date endClosingDate){
-		return repository.countByOpeningDateBetween(startClosingDate, endClosingDate,Boolean.FALSE);
+		return repository.countByOpeningDateBetween(startClosingDate, endClosingDate);
 	}
 
 	/**

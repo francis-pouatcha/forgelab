@@ -566,7 +566,6 @@ public class SalesOrderDisplayController implements EntityController
 				SalesOrderItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				int indexOf = displayView.getDataList().getItems().indexOf(createdItem);
 				if(indexOf>=0){
 					PropertyReader.copy(createdItem, displayView.getDataList().getItems().get(indexOf));
@@ -575,6 +574,7 @@ public class SalesOrderDisplayController implements EntityController
 				}
 				updateSalesOrder(createdItem);
 				resetSearchBar();
+				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				displayView.getInternalPic().requestFocus();
 
 			}

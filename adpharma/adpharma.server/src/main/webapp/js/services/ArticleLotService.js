@@ -1,26 +1,21 @@
 'use strict';
 
 angular.module('adpharma').service('ArticleLotService', ['$http', function($http){
-	 var url = '/adpharma.server/rest/articlelots';
-
-        this.create = function (saleOrder) {
-            return $http.post(url,saleOrder);
-        };
-
-        this.update = function (saleOrder) {
-            return $http.put(url ,saleOrder);
-        };
+	 var urlBase = '/adpharma.server/rest/articlelots';
 
         this.findBy = function (searchInput) {
-            return $http.post(url ,searchInput);
+        return $http.post(urlBase+'/findByLike' ,searchInput);
         };
 
-        this.urlBase = function(){
-           
-        }
-
-
-        
+    // create a new article lot Search input
+    this.newArticleLotSearchInput = function(){
+        return {
+            entity : {},
+            fieldNames : [],
+            max : 100,
+            start : 0
+        } ;
+    };
 }]);
 
 

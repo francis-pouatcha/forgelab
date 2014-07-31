@@ -19,14 +19,17 @@ import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Inventory;
+import org.adorsys.adpharma.server.jpa.InventoryAdvenceSearchData;
 import org.adorsys.adpharma.server.jpa.InventoryItem;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.repo.InventoryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class InventoryEJB
@@ -181,6 +184,47 @@ public class InventoryEJB
 		return entity;
 	}
 
+	public List<SalesOrder> advenceSearch(InventoryAdvenceSearchData data){
+		List<SalesOrder> sales = new ArrayList<SalesOrder>();
+		String query ="SELECT s  FROM Inventory AS s WHERE s.id != NULL  ";
+		if(data.getFromDate()!=null)
+			query = query+" AND s.inventoryDate >= :fromDate ";
+
+		if(data.getToDate()!=null)
+			query = query+" AND s.inventoryDate <= :toDate ";
+
+		if(data.getAgent()!=null)
+			query = query+" AND s.recordingUser = :recordingUser ";
+
+		if(data.getSate()!=null)
+			query = query+" AND s.inventoryStatus = :inventoryStatus ";
+
+		if(data.getSection()!=null)
+			query = query+" AND s.section = :section ";
+
+
+		Query querys = em.createQuery(query) ;
+
+		if(data.getFromDate()!=null)
+			querys.setParameter("fromDate", data.getFromDate());
+
+		if(data.getToDate()!=null)
+			querys.setParameter("toDate", data.getToDate());
+
+		if(data.getAgent()!=null)
+			querys.setParameter("recordingUser", data.getAgent());
+
+		if(data.getSate()!=null)
+			querys.setParameter("inventoryStatus", data.getSate());
+
+		if(data.getSection()!=null)
+			querys.setParameter("section", data.getSection());
+
+		sales = (List<SalesOrder>) querys.getResultList();
+
+		return sales;
+	}
+
 	public Inventory initInventory(Inventory inventory,Login user){
 		List<ArticleLot> lotForInventory = lotForInventory(inventory);
 		for (ArticleLot articleLot : lotForInventory) {
@@ -212,7 +256,6 @@ public class InventoryEJB
 
 		if(section!=null && section.getId()!=null)
 			querys.setParameter("section",section);
-
 
 		lotForInventorys = querys.getResultList();
 

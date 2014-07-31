@@ -33,6 +33,12 @@
     margin-bottom: 5px;
 }
 
+.focus-amount{
+    color: blue;
+    font-weight: bold;
+    font-size: 25px;
+}
+
 .control-margin-top{
     margin-top: 5px;
 }

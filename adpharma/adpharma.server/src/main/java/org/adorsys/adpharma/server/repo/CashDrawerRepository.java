@@ -13,9 +13,9 @@ import org.apache.deltaspike.data.api.Repository;
 @Repository(forEntity = CashDrawer.class)
 public interface CashDrawerRepository extends EntityRepository<CashDrawer, Long>
 {
-	@Query("select c from CashDrawer AS c where c.openingDate >= ?1 AND c.openingDate <= ?2 And c.opened = ?3")
-	public List<CashDrawer> findByOpeningDateBetween(Date minOpeningDate, Date maxOpeningDate,Boolean opened,@FirstResult int start, @MaxResults int max);
+	@Query("select c from CashDrawer AS c where c.openingDate >= ?1 AND c.openingDate <= ?2 ")
+	public List<CashDrawer> findByOpeningDateBetween(Date minOpeningDate, Date maxOpeningDate,@FirstResult int start, @MaxResults int max);
 	
-	@Query("select count(c) from CashDrawer AS c where  c.openingDate >= ?1 AND c.openingDate <= ?2 And c.opened = ?3")
-	public Long countByOpeningDateBetween(Date minOpeningDate, Date maxOpeningDate,Boolean opened);
+	@Query("select count(c) from CashDrawer AS c where  c.openingDate >= ?1 AND c.openingDate <= ?2 ")
+	public Long countByOpeningDateBetween(Date minOpeningDate, Date maxOpeningDate);
 }

@@ -52,6 +52,7 @@ import org.adorsys.adpharma.server.repo.PaymentItemCustomerInvoiceAssocRepositor
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class CustomerInvoiceEJB {
@@ -394,6 +395,8 @@ public class CustomerInvoiceEJB {
 		ci.setInvoiceType(invoiceType);
 		ci.setSalesOrder(salesOrder);
 		ci.setAdvancePayment(BigDecimal.ZERO);
+		String patientMatricle = StringUtils.isNotBlank(salesOrder.getPatientMatricle())?salesOrder.getPatientMatricle():salesOrder.getCustomer().getSerialNumber();
+		ci.setPatientMatricle(patientMatricle);
 		return create(ci);
 
 	}

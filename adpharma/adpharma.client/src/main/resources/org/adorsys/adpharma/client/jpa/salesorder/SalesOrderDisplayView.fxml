@@ -59,14 +59,14 @@
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientPhone" editable="false" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-												<Label layoutX="15.0" layoutY="62.0" text="Adresse :" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Num CMD  :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<TextField fx:id="clientAdresse" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 												<ComboBox fx:id="client" layoutX="168.0" layoutY="21.0" prefHeight="26.0" prefWidth="236.0" promptText="CLient" GridPane.columnSpan="2" />
 												<ComboBox fx:id="salesStatus" prefHeight="26.0" prefWidth="215.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+												<TextField fx:id="numcmd" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 											</children>
 											<padding>
 												<Insets top="10.0" />
@@ -94,16 +94,16 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="15.0" layoutY="62.0" text="Num. Cmd :" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="Matricule :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
 												<ComboBox fx:id="insurrer" prefHeight="26.0" prefWidth="236.0" promptText="Assurreur" GridPane.columnSpan="2" />
 												<TextField fx:id="numBon" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-												<TextField fx:id="numcmd" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 												<TextField fx:id="discountRate" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 <Label layoutX="15.0" layoutY="91.0" text=" " />
+<TextField fx:id="patientMatricule" layoutX="106.0" layoutY="53.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 											</children>
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />

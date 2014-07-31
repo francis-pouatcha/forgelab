@@ -37,6 +37,7 @@ public class CustomerInvoiceSalesOrder implements Association<CustomerInvoice, S
    private SimpleObjectProperty<BigDecimal> amountDiscount;
    private SimpleObjectProperty<BigDecimal> totalReturnAmount;
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
+   private SimpleStringProperty patientMatricle;
 
    public CustomerInvoiceSalesOrder()
    {
@@ -66,7 +67,24 @@ public class CustomerInvoiceSalesOrder implements Association<CustomerInvoice, S
    {
       this.version = version;
    }
+   public SimpleStringProperty patientMatricleProperty()
+	{
+		if (patientMatricle == null)
+		{
+			patientMatricle = new SimpleStringProperty();
+		}
+		return patientMatricle;
+	}
 
+	public String getPatientMatricle()
+	{
+		return patientMatricleProperty().get();
+	}
+
+	public final void setPatientMatricle(String patientMatricle)
+	{
+		this.patientMatricleProperty().set(patientMatricle);
+	}
    public SimpleStringProperty soNumberProperty()
    {
       if (soNumber == null)

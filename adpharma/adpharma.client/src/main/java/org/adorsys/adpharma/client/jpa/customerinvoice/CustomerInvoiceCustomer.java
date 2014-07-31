@@ -31,6 +31,7 @@ public class CustomerInvoiceCustomer implements Association<CustomerInvoice, Cus
    private SimpleStringProperty mobile;
    private SimpleStringProperty fax;
    private SimpleStringProperty email;
+   private SimpleStringProperty serialNumber;
    private SimpleBooleanProperty creditAuthorized;
    private SimpleBooleanProperty discountAuthorized;
    private SimpleObjectProperty<Calendar> birthDate;
@@ -62,6 +63,25 @@ public class CustomerInvoiceCustomer implements Association<CustomerInvoice, Cus
    public final void setVersion(int version)
    {
       this.version = version;
+   }
+   
+   public SimpleStringProperty serialNumberProperty()
+   {
+      if (serialNumber == null)
+      {
+    	  serialNumber = new SimpleStringProperty();
+      }
+      return serialNumber;
+   }
+
+   public String getSerialNumber()
+   {
+      return serialNumberProperty().get();
+   }
+
+   public final void setSerialNumber(String serialNumber)
+   {
+      this.serialNumberProperty().set(serialNumber);
    }
 
    public SimpleStringProperty fullNameProperty()

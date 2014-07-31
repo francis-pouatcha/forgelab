@@ -60,6 +60,9 @@ public class SalesOrder implements Cloneable
 	@Description("SalesOrder_soNumber_description")
 	private SimpleStringProperty soNumber;
 	
+	@Description("SalesOrder_patientMatricle_description")
+	private SimpleStringProperty patientMatricle;
+	
 	@Description("SalesOrder_salesKey_description")
 	private SimpleStringProperty salesKey;
 	
@@ -140,6 +143,24 @@ public class SalesOrder implements Cloneable
 	public final void setVersion(int version)
 	{
 		this.version = version;
+	}
+	public SimpleStringProperty patientMatricleProperty()
+	{
+		if (patientMatricle == null)
+		{
+			patientMatricle = new SimpleStringProperty();
+		}
+		return patientMatricle;
+	}
+
+	public String getPatientMatricle()
+	{
+		return patientMatricleProperty().get();
+	}
+
+	public final void setPatientMatricle(String patientMatricle)
+	{
+		this.patientMatricleProperty().set(patientMatricle);
 	}
 
 	public SimpleStringProperty soNumberProperty()

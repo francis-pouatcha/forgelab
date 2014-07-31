@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -19,12 +19,16 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateConverter;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingStateListCellFatory;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
@@ -44,10 +48,10 @@ public class InventoryListView
 
 	@FXML
 	private Button printButton;
-	
+
 	@FXML
 	private Button printRepportButton;
-	
+
 	@FXML
 	private Button removeButton;
 
@@ -68,6 +72,8 @@ public class InventoryListView
 	@FXML
 	private TableView<InventoryItem> dataListItem;
 
+	private ComboBox<InventorySection> inventorySection;
+
 	@Inject
 	private Locale locale;
 
@@ -84,6 +90,16 @@ public class InventoryListView
 	@Inject
 	private DocumentProcessingStateConverter documentProcessingStateConverter;
 
+	private ComboBox<DocumentProcessingState> inventoryStatus;
+
+	@Inject
+	@Bundle(DocumentProcessingState.class)
+	private ResourceBundle statusBundle;
+
+	@Inject
+	private DocumentProcessingStateListCellFatory statusListCellFatory;
+
+
 	@Inject
 	private FXMLLoader fxmlLoader;
 
@@ -94,7 +110,7 @@ public class InventoryListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "inventoryNumber", "Inventory_inventoryNumber_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "agency", "Inventory_agency_description.title", resourceBundle);
+		viewBuilder.addEnumColumn(dataList, "inventoryStatus", "Inventory_inventoryStatus_description.title", resourceBundle, documentProcessingStateConverter);
 		viewBuilder.addStringColumn(dataList, "section", "Inventory_section_description.title", resourceBundle,300d);
 		viewBuilder.addStringColumn(dataList, "recordingUser", "Inventory_recordingUser_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataList, "inventoryDate", "Inventory_inventoryDate_description.title", resourceBundle,"dd-MM-yyyy",locale);
@@ -103,7 +119,6 @@ public class InventoryListView
 
 		viewBuilder.addBigDecimalColumn(dataList, "gapSaleAmount", "Inventory_gapSaleAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "gapPurchaseAmount", "Inventory_gapPurchaseAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addEnumColumn(dataList, "inventoryStatus", "Inventory_inventoryStatus_description.title", resourceBundle, documentProcessingStateConverter);
 		//		pagination = viewBuilder.addPagination();
 		//		viewBuilder.addSeparator();
 
@@ -124,6 +139,8 @@ public class InventoryListView
 
 		buildsearchBar();
 		buildLeftBox();
+		ComboBoxInitializer.initialize(inventoryStatus, documentProcessingStateConverter, statusListCellFatory, statusBundle);
+
 	}
 
 
@@ -132,9 +149,19 @@ public class InventoryListView
 		inventoryNumber.setPromptText("inventory Number");
 		inventoryNumber.setPrefWidth(200d);
 		inventoryNumber.setPrefHeight(40d);
+
+		inventoryStatus =ViewBuilderUtils.newComboBox(null, "inventoryStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
+		inventoryStatus.setPromptText(resourceBundle.getString("Inventory_inventoryStatus_description.title"));
+		inventoryStatus.setPrefHeight(30d);
+
+		inventorySection =ViewBuilderUtils.newComboBox(null, "inventorySection", false);
+		inventorySection.setPromptText(resourceBundle.getString("Inventory_section_description.title"));
+		inventorySection.setPrefWidth(300d);
+		inventorySection.setPrefHeight(30d);
+		
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(inventoryNumber,searchButton);
+		searchBar.getChildren().addAll(inventoryNumber,inventorySection,inventoryStatus,searchButton);
 	}
 
 	public void buildLeftBox(){
@@ -159,16 +186,24 @@ public class InventoryListView
 		printButton.setPrefHeight(30d);
 		printButton.setPrefWidth(150d);
 		printButton.setTextAlignment(TextAlignment.LEFT);
-		
+
 		printRepportButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
 		printRepportButton.setPrefHeight(30d);
 		printRepportButton.setPrefWidth(150d);
 		printRepportButton.setText("Rapport D'inventaire");
 		printRepportButton.setTextAlignment(TextAlignment.LEFT);
-		
+
 
 
 		leftBox.getChildren().addAll(createButton,editButton,removeButton,printButton,printRepportButton);
+	}
+	
+	public void bind(InventorySearchInput searchInput)
+	{
+
+		inventoryNumber.textProperty().bindBidirectional(searchInput.getEntity().inventoryNumberProperty());
+		inventoryStatus.valueProperty().bindBidirectional(searchInput.getEntity().inventoryStatusProperty());
+		inventorySection.valueProperty().bindBidirectional(searchInput.getEntity().sectionProperty());
 	}
 
 
@@ -207,12 +242,6 @@ public class InventoryListView
 		return searchBar;
 	}
 
-
-	public TextField getInvoiceNumber() {
-		return inventoryNumber;
-	}
-
-
 	public TableView<InventoryItem> getDataListItem() {
 		return dataListItem;
 	}
@@ -246,9 +275,39 @@ public class InventoryListView
 	public Button getEditButton() {
 		return editButton;
 	}
-	
+
 	public Button getPrintRepportButton() {
 		return printRepportButton;
+	}
+
+
+	public VBox getLeftBox() {
+		return leftBox;
+	}
+
+
+	public TextField getInventoryNumber() {
+		return inventoryNumber;
+	}
+
+
+	public ComboBox<InventorySection> getInventorySection() {
+		return inventorySection;
+	}
+
+
+	public ComboBox<DocumentProcessingState> getInventoryStatus() {
+		return inventoryStatus;
+	}
+
+
+	public ResourceBundle getStatusBundle() {
+		return statusBundle;
+	}
+
+
+	public DocumentProcessingStateListCellFatory getStatusListCellFatory() {
+		return statusListCellFatory;
 	}
 
 

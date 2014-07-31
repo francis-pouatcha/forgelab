@@ -61,8 +61,6 @@ public class SalesOrderListView
 	@FXML
 	private Button printTicketButton;
 	
-	
-	
 	@FXML
 	private Button printVoucherButton;
 	
@@ -190,10 +188,10 @@ public class SalesOrderListView
 	}
 
 	public void buildsearchBar(){
+		
 		soNumber =ViewBuilderUtils.newTextField("soNumber", false);
 		soNumber.setPromptText(resourceBundle.getString("SalesOrder_soNumber_description.title"));
 		soNumber.setPrefHeight(30d);
-
 
 		customer =ViewBuilderUtils.newComboBox(null, "customer", false);
 		customer.setPromptText(resourceBundle.getString("SalesOrder_all_supplier_description.title"));
@@ -208,6 +206,7 @@ public class SalesOrderListView
 		searchButton.setPrefHeight(30d);
 		searchBar.getChildren().addAll(soNumber,customer,salesOrderStatus,searchButton);
 	}
+	
 	public Button getCreateButton()
 	{
 		return createButton;

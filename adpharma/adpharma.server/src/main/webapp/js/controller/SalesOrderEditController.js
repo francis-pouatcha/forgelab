@@ -1,79 +1,103 @@
 'use strict';
 
-angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$window','SalesOrderService', function($scope,$window,SalesOrderService){
-	$scope.salesOrder = [];
+angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$window','$log','SalesOrderService','SalesOrderItemService','ArticleLotService', function($scope,$window,$log,SalesOrderService,SalesOrderItemService,ArticleLotService){
+  var  discountRate = 0.05 ;
+    $scope.articleLots = [];
+    $scope.alerts = [];
 	$scope.lot = {};
 	$scope.status ;
 
-	// processing sales order
-	$scope.processingSales = {};
-	$scope.processingSales.salesOrderItems = [];
-	$scope.processingSales.cashDrawer = {};
-	$scope.processingSales.customer = {};
-	$scope.processingSales.insurance = {};
-	$scope.processingSales.vat = {};
-	$scope.processingSales.salesAgent = {};
-	$scope.processingSales.agency = {};
-    $scope.processingSales.id = null;
+	// init  processing sales order
+	$scope.processingSales = SalesOrderService.newSalesOrder();
 
-	// article lot search input 
-	$scope.articleLotSearchInput = {} ;
-	$scope.articleLotSearchInput.entity = {} ;
-	$scope.articleLotSearchInput.fieldNames = [];
-	$scope.articleLotSearchInput.max = 30;
-	$scope.articleLotSearchInput.start = 0;
-	$scope.states = [] ;
-	$scope.selected = undefined;
+	// init  article lot search input
+	$scope.articleLotSearchInput = ArticleLotService.newArticleLotSearchInput();
+
+    //init sales order item search input
+    $scope.orderItemSearchInput = SalesOrderItemService.newSalesOrderSearchInput();
+
+    // init sales order Item
+    $scope.salesOrderItem = SalesOrderItemService.newSalesOrderItem();
+    newSalesOrder();
+
+    /*
+     create a new sales order
+     */
+
+   $scope.createSalesOrder = function (){
+       $scope.salesOrderItem = SalesOrderItemService.newSalesOrderItem();
+        newSalesOrder();
+    };
 
 
-	listAll();
-	salesOrderItem();
-//	newSalesOrder();
+    /*
+     load processing sale order item
+     */
 
-	/*
-create anew sales order item 
-	 */
-	function salesOrderItem(){
-		$scope.salesOrderItem = {} ;
-		$scope.salesOrderItem.article = {} ;
-		$scope.salesOrderItem.vat={};
-	};
+    $scope.loadProcessingSaleItem = function(){
+        $scope.orderItemSearchInput.entity.salesOrder = $scope.processingSales ;
+        $scope.orderItemSearchInput.fieldNames= [] ;
+        $scope.orderItemSearchInput.fieldNames.push("salesOrder") ;
+
+        SalesOrderItemService.findBy($scope.orderItemSearchInput).success(function (searchResult) {
+            $scope.processingSales.salesOrderItems = searchResult.resultList;
+        }).error(function (data,status) {
+                $scope.status = 'Unable to load sales orders item  data: ' + data.message;
+                $window.alert(status+data);
+            });
+    };
 
 	function newSalesOrder(){
-		SalesOrderService.create($scope.processingSales)
-		.success(function (salesOrder) {
-			if(salesOrder){
-				$scope.processingSales = salesOrder ;
-         
-			}
-		}).error(function (data,status) {
-	    	$window.alert(data);
-    });
 
-	};
+            SalesOrderService.create(SalesOrderService.newSalesOrder())
+                .success(function (salesOrder) {
+                    if (salesOrder) {
+                       angular.copy(salesOrder,$scope.processingSales);
+                        //$scope.loadProcessingSaleItem();
+                    }
+                }).error(function (data, status) {
+                    $window.alert("Error during sales order creation ");
+                });
 
-
-	function listAll() {
-		SalesOrderService.listAll(1,10)
-		.success(function (SalesOrderSearchResult) {
-			$scope.salesOrder = SalesOrderSearchResult.resultList;
-		})
-		.error(function (data,status) {
-			$scope.status = 'Unable to load sales orders data: ' + data.message;
-			$window.alert(status+data);
-		});
-	} ;
-	/*
-   reset sales order item object 
-	 */
-	$scope.newSalesOrderItem =  function(){
-		salesOrderItem();
 	};
 
 	$scope.newSalesOrder = function(){
 		newSalesOrder();
 	};
 
+    $scope.addSalesOrderItem = function (){
+        if($scope.salesOrderItem.id){
+            SalesOrderItemService.update($scope.salesOrderItem)
+                .success(function (editedItem) {
+                    handleSalesItemCreateOrEditDone(editedItem) ;
+                })
+                .error(function (data,status) {
+                    $scope.status = 'Unable to delete item : ' + data.message;
+
+                });
+        }else{
+            SalesOrderItemService.create($scope.salesOrderItem)
+                .success(function (createdItem) {
+                    handleSalesItemCreateOrEditDone(createdItem) ;
+                })
+                .error(function (data,status) {
+                    $scope.status = 'Unable to delete item : ' + data.message;
+
+                });
+        }
+
+    };
+
+    function handleSalesItemCreateOrEditDone(salesOrderItem){
+        $scope.processingSales.version = salesOrderItem.salesOrder.version ;
+        $scope.processingSales.amountAfterTax = salesOrderItem.salesOrder.amountAfterTax ;
+        $scope.processingSales.amountBeforeTax = salesOrderItem.salesOrder.amountBeforeTax ;
+        $scope.processingSales.amountVAT = salesOrderItem.salesOrder.amountVAT ;
+        $scope.processingSales.salesOrderStatus = salesOrderItem.salesOrder.salesOrderStatus ;
+        $scope.loadProcessingSaleItem();
+        // reset sales order item
+        $scope.salesOrderItem = SalesOrderItemService.newSalesOrderItem();
+    }
 	$scope.salesItemFromLot =  function(item,model,label){
 		if(model){
 			$scope.salesOrderItem.article.id = model.article.id;
@@ -90,6 +114,7 @@ create anew sales order item
 			$scope.salesOrderItem.salesPricePU = model.salesPricePU;
 			$scope.salesOrderItem.purchasePricePU = model.purchasePricePU;
 			$scope.salesOrderItem.totalSalePrice = model.salesPricePU;
+            $scope.salesOrderItem.salesOrder = $scope.processingSales ;
 		}
 	};
 
@@ -99,49 +124,79 @@ create anew sales order item
 	};
 
 	$scope.handleItemSelection =  function(index){
+        $log.info(index);
+        index = index ? index : 0 ;
+        angular.copy($scope.processingSales.salesOrderItems[index],$scope.salesOrderItem ) ;
 
-		if(index){
-			$scope.salesOrderItem.article.articleName = $scope.salesOrder[index].customer.fullName ;
-			$scope.salesOrderItem.internalPic = $scope.salesOrder[index].soNumber ;
-			$scope.salesOrderItem.orderedQty = 1;
-			$scope.salesOrderItem.salesPricePU =  $scope.salesOrder[index].amountBeforeTax ;
-			$scope.salesOrderItem.purchasePricePU = $scope.salesOrder[index].amountAfterTax ;
-		}
 	};
+
+    $scope.saveAndClose = function(){
+        var salesKey = window.prompt('Saisir Votre cle de vente :');
+        $scope.processingSales.salesKey = salesKey ;
+        SalesOrderService.saveAndClose($scope.processingSales)
+            .success(function (closedSalesOrder) {
+                $scope.createSalesOrder();
+            })
+            .error(function (data,status) {
+                $scope.addAlert({msg:'la cle de vente est incorect ',type:'danger'}) ;
+                $scope.saveAndClose();
+
+            });
+    };
 
 	$scope.handleItemRevoved =  function(index){
-
-		if(index){
+        index = index ? index : 0 ;
 			$scope.salesOrder.splice(index,1);
-		}
+            SalesOrderItemService.deleteById($scope.processingSales.salesOrderItems[index].id)
+                .success(function (deletedItem) {
+                    $scope.processingSales = deletedItem.salesOrder ;
+                    $scope.loadProcessingSaleItem();
+                })
+                .error(function (data,status) {
+                    $scope.addAlert({msg:'Unable to delete item : ',type:'danger'}) ;
+
+                });
 	};
 
+
 	$scope.handleArticleNameChange =  function(articleName){
-		var articleLots = [];
-		var addresses = [];
+        $scope.articleLots = [];
 		if(articleName){
 			$scope.articleLotSearchInput.entity.articleName = $scope.salesOrderItem.article.articleName ;
 			$scope.articleLotSearchInput.fieldNames= [] ;
 			$scope.articleLotSearchInput.fieldNames.push("articleName") ;
-			SalesOrderService.findBy($scope.articleLotSearchInput)
+			ArticleLotService.findBy($scope.articleLotSearchInput)
 			.success(function (articleLotSearchResult) {
-				articleLots = articleLotSearchResult.resultList ;
-
-				angular.forEach(articleLots, function(item){
-					$scope.states.push(item);
-				});
+                    $scope.articleLots = articleLotSearchResult.resultList ;
 			})
 			.error(function (data,status) {
 				$scope.status = 'Unable to load sales orders data: ' + data.message;
-				$scope.states =  [] ;
+                    $scope.addAlert({msg:'Unable to load sales orders data: ',type:'danger'}) ;
 			});
 		}else{
 			$scope.articleLotSearchInput.fieldNames= [] ;
-			addresses =  [] ;
 		}
 
 
 	};
 
+    $scope.handleAmontDiscountChange =  function(){
+      var discount =   $scope.processingSales.amountAfterTax * discountRate ;
+        if (discount < $scope.processingSales.amountDiscount ){
+            $scope.processingSales.amountDiscount = 0 ;
+        }else{
+            // calculate net to pay
+        }
+    };
+
+    $scope.closeAlert = function(index){
+        index = index ? index : 0 ;
+        $scope.alerts.splice(index, 1);
+    };
+
+    $scope.addAlert = function(alert){
+        $scope.alerts = [];
+        $scope.alerts.push(alert);
+    };
 
 }]) ;
