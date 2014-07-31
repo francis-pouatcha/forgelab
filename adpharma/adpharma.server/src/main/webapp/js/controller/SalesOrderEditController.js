@@ -136,6 +136,7 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
         SalesOrderService.saveAndClose($scope.processingSales)
             .success(function (closedSalesOrder) {
                 $scope.createSalesOrder();
+                $scope.alerts = [];
             })
             .error(function (data,status) {
                 $scope.addAlert({msg:'la cle de vente est incorect ',type:'danger'}) ;
@@ -146,7 +147,7 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
 
 	$scope.handleItemRevoved =  function(index){
         index = index ? index : 0 ;
-			$scope.salesOrder.splice(index,1);
+			$scope.processingSales.salesOrderItems.splice(index,1);
             SalesOrderItemService.deleteById($scope.processingSales.salesOrderItems[index].id)
                 .success(function (deletedItem) {
                     $scope.processingSales = deletedItem.salesOrder ;

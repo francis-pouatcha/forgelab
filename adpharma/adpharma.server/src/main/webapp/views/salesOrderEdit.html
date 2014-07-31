@@ -12,12 +12,6 @@
 <div class="row">
 	<div id="sidebar-left" class="col-xs-2 col-sm-2">
 		<ul class="nav main-menu">
-			<li><a href="#/salesOderList" class="active ajax-link"> <i
-					class="fa fa-dashboard"></i> <span class="hidden-xs">Liste
-						des Ventes</span>
-			</a></li>
-
-
 			<li><a class="ajax-link" href="#/salesOrderEdit"> <i
 					class="fa fa-font"></i> <span class="hidden-xs">Nouvelle
 						Vente</span>
@@ -28,7 +22,7 @@
 	</div>
 	<!--Start Content-->
 	<div id="content" class="col-xs-12 col-sm-10">
-        <div  ng-hide="alerts.length" class="row-fluid">
+        <div class="row-fluid">
             <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
         </div>
 		<div class="row-fluid">

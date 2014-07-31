@@ -6,16 +6,6 @@ angular.module('adpharma').service('SalesOrderService', ['$http', function($http
         this.create = function (saleOrder) {
             return $http.post(urlBase,saleOrder);
         };
-
-        this.listAll = function (start, max) {
-
-            return $http({
-                          url: urlBase, 
-                          method: "GET",
-                          params: {start: start, max: max}
-                          });
-        };
-
        this.saveAndClose = function (salesOrder) {
         return $http.put(urlBase+'/saveAndClose/'+salesOrder.id,salesOrder);
        };

@@ -13,9 +13,13 @@ angular.module('adpharma').factory('httpInterceptor', function httpInterceptor (
         	  // the application will display an error.
               $location.url('/login');
               return response;
-          } else {
-        	  return $q.reject(response);
+          }else  if(response.status === 400){
+              $location.url('/salesOrderEdit');
+              return response;
+          }else{
+              return $q.reject(response);
           }
+
       };
       return promise.then(success, error);
   };
