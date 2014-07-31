@@ -22,6 +22,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchInput;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc_;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssocSearchInput;
@@ -96,6 +101,7 @@ public class DebtStatementCustomerInvoiceAssocEndpoint
       return new DebtStatementCustomerInvoiceAssocSearchResult((long) resultList.size(),
             detach(resultList), detach(searchInput));
    }
+   
 
    @GET
    @Path("/count")
@@ -186,7 +192,7 @@ public class DebtStatementCustomerInvoiceAssocEndpoint
 
    private static final List<String> s_invoices_t_source_sourceFields = Arrays.asList("statementNumber", "insurrance.fullName", "agency.name", "paymentDate", "initialAmount", "advancePayment", "restAmount", "settled", "amountFromVouchers", "canceled", "useVoucher");
 
-   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType", "invoiceNumber", "creationDate", "customer.fullName", "insurance", "insurance.insurer.fullName", "creatingUser.fullName", "agency.name", "salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
+   private static final List<String> s_invoices_t_source_targetFields = Arrays.asList("invoiceType","patientMatricle", "invoiceNumber", "creationDate", "customer", "insurance", "insurance", "creatingUser.fullName","creatingUser.loginName", "agency", "salesOrder", "settled", "amountBeforeTax", "taxAmount", "amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay", "insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay");
 
    private DebtStatementCustomerInvoiceAssoc detach(DebtStatementCustomerInvoiceAssoc entity)
    {

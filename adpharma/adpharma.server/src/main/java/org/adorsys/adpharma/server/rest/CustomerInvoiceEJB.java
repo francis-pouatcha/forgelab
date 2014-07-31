@@ -33,6 +33,7 @@ import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
+import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.Insurrance;
 import org.adorsys.adpharma.server.jpa.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
@@ -48,6 +49,7 @@ import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
+import org.adorsys.adpharma.server.repo.DebtStatementCustomerInvoiceAssocRepository;
 import org.adorsys.adpharma.server.repo.PaymentItemCustomerInvoiceAssocRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.ChartData;
@@ -118,6 +120,11 @@ public class CustomerInvoiceEJB {
 	@Inject
 	private EntityManager em ;
 
+	@Inject
+	DebtStatementCustomerInvoiceAssocRepository dsciar ;
+	public List<CustomerInvoice> findCustomerInvoiceBySource(DebtStatement source){
+		return dsciar.findCustomerInvoiceBySource(source);
+	}
 
 	public List<CustomerInvoice> findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput){
 		if(searchInput.getAgency()==null||searchInput.getAgency().getId()==null)

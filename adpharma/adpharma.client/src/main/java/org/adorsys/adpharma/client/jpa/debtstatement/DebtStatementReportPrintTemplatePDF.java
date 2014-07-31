@@ -23,6 +23,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
@@ -64,7 +65,7 @@ public class DebtStatementReportPrintTemplatePDF {
 
 
 		pdfFileName = "DebtStatement" + ".pdf";
-		document = new Document();
+		document = new Document(PageSize.A4.rotate());
 		document.setMargins(5f, 5f, 5f, 0);
 
 		File file = new File(pdfFileName);
@@ -84,23 +85,26 @@ public class DebtStatementReportPrintTemplatePDF {
 	public void addItems(List<CustomerInvoice> invoices) {
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal instotal = BigDecimal.ZERO;
+		BigDecimal ticketMt = BigDecimal.ZERO;
 		for (CustomerInvoice inoice : invoices) {
 			String societe = null ;
 			if(inoice.getCustomer()!=null)
 				newTableRow(inoice.getInvoiceNumber(), 
 						societe,
-						inoice.getCustomer().getSerialNumber(),
-						inoice.getSalesOrder().getPatientMatricle(),
+						inoice.getInsurance().getCustomer().getSerialNumber(),
+						inoice.getPatientMatricle(),
 						inoice.getInsurance().getCustomer().getFullName(),
-						DateHelper.format(inoice.getCreationDate().getTime(),DateHelper.DATE_FORMAT),
+						DateHelper.format(inoice.getCreationDate().getTime(),"dd-MM-yyyy HH:mm"),
 						inoice.getNetToPay(),
+						inoice.getNetToPay().subtract(inoice.getInsurranceRestTopay()),
 						inoice.getInsurranceRestTopay(),
 						inoice.getInsurance().getCoverageRate() );
 
 			total = total.add(inoice.getNetToPay());
 			instotal =	instotal.add(inoice.getInsurranceRestTopay());
+			ticketMt = ticketMt.add(inoice.getNetToPay().subtract(inoice.getInsurranceRestTopay()));
 		}
-		newTableRow(null,null,null,null, null, "TOTAUX :",total, instotal, null);
+		newTableRow(null,null,null,null, null, "TOTAUX :",total,ticketMt, instotal, null);
 	}
 
 	private void newTableRow(String invoiceNumber, 
@@ -110,6 +114,7 @@ public class DebtStatementReportPrintTemplatePDF {
 			String client,
 			String date,
 			BigDecimal totalAmount,
+			BigDecimal ticketm,
 			BigDecimal amount, 
 			BigDecimal rate
 			) {
@@ -141,6 +146,10 @@ public class DebtStatementReportPrintTemplatePDF {
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmount))));
 		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(ticketm))));
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(amount))));
@@ -153,7 +162,7 @@ public class DebtStatementReportPrintTemplatePDF {
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.1f,.1f,.1f,.1f,.35f,.08f,.08f,.08f,.08f});
+		reportTable = new PdfPTable(new float[]{.1f,.15f,.1f,.1f,.25f,.14f,.07f,.07f,.07f,.05f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -163,7 +172,7 @@ public class DebtStatementReportPrintTemplatePDF {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Societe"));
+		pdfPCell.addElement(new StandardText("Employeur"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -183,12 +192,12 @@ public class DebtStatementReportPrintTemplatePDF {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_amount_description.title")));
+		pdfPCell.addElement(new StandardText("M.Brut"));
 		reportTable.addCell(pdfPCell);
 
-		//		pdfPCell = new PdfPCell();
-		//		pdfPCell.addElement(new StandardText("Ticket Mod."));
-		//		reportTable.addCell(pdfPCell);
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("Ticket M."));
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_insurrance_amount_description.title")));
@@ -203,7 +212,7 @@ public class DebtStatementReportPrintTemplatePDF {
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("DebtStatement_Print_header_description.title")));
+		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("DebtStatement_Print_header_description.title")+" No :"+debtStatement.getStatementNumber()));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 

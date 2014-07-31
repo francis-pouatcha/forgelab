@@ -27,6 +27,7 @@ import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesStatisticsDataSearchResult;
@@ -160,6 +161,18 @@ public class CustomerInvoiceEndpoint
 		return new CustomerInvoiceSearchResult(count, detach(resultList),
 				detach(searchInput));
 	}
+	
+
+    @POST
+  	@Path("/findCustomerInvoiceBySource")
+  	@Produces({ "application/json", "application/xml" })
+  	@Consumes({ "application/json", "application/xml" })
+  	public CustomerInvoiceSearchResult findCustomerInvoiceBySource(DebtStatement source)
+  	{
+  		List<CustomerInvoice> resultList = ejb.findCustomerInvoiceBySource(source);
+  		return new CustomerInvoiceSearchResult(Long.valueOf(1), detach(resultList),
+  				detach(new CustomerInvoiceSearchInput()));
+  	}
 
 	@POST
 	@Path("/countBy")
@@ -226,9 +239,9 @@ public class CustomerInvoiceEndpoint
 
 	private static final List<String> emptyList = Collections.emptyList();
 
-	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","serialNumber","employer");
+	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","serialNumber","employer.name");
 
-	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.fullName", "insurer.fullName", "coverageRate");
+	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer" ,"insurer.fullName", "coverageRate");
 
 	private static final List<String> creatingUserFields = Arrays.asList("loginName", "email", "gender");
 
