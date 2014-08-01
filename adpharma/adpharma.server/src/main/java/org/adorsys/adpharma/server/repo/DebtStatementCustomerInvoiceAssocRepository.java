@@ -12,6 +12,6 @@ import org.apache.deltaspike.data.api.Repository;
 @Repository(forEntity = DebtStatementCustomerInvoiceAssoc.class)
 public interface DebtStatementCustomerInvoiceAssocRepository extends EntityRepository<DebtStatementCustomerInvoiceAssoc, Long>
 {
-	@Query("select d.target from DebtStatementCustomerInvoiceAssoc as d where d.source = ?1 ")
+	@Query("select d.target from DebtStatementCustomerInvoiceAssoc as d where d.source = ?1 ORDER BY d.target.customer.societe ,d.target.customer.serialNumber")
 	public List<CustomerInvoice> findCustomerInvoiceBySource(DebtStatement source);
 }

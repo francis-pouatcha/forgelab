@@ -48,13 +48,13 @@ public class ModalCustomerSearchController  {
 
 	@Inject
 	Customer customer;
-	
+
 	private CustomerSearchResult searchResult;
 
 
 	@PostConstruct
 	public void postConstruct(){
-		
+
 		view.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{
 			@Override
@@ -84,7 +84,7 @@ public class ModalCustomerSearchController  {
 				view.closeDialog();
 			}
 		});
-		
+
 		view.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Customer>() {
 
 			@Override
@@ -94,10 +94,10 @@ public class ModalCustomerSearchController  {
 				if(newValue!=null){
 					modalCustomerSearchDoneEvent.fire(newValue);
 					view.closeDialog();
-					
+
 				}
-					
-				
+
+
 			}
 		});
 		view.getCustomerName().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -157,7 +157,7 @@ public class ModalCustomerSearchController  {
 			if(!view.isDisplayed())
 				view.showDiaLog();
 		}
-		
+
 	}
 
 
@@ -167,7 +167,7 @@ public class ModalCustomerSearchController  {
 
 	public void handleCustomerSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent CustomerSearchInput customerSearchInput){
 		if(customerSearchInput!=null)
-		customerSearchInput.setMax(30);
+			customerSearchInput.setMax(30);
 		customerSearchService.setSearchInputs(customerSearchInput).start();
 	}
 

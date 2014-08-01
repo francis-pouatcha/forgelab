@@ -477,6 +477,7 @@ public class CustomerInvoice implements Cloneable
 		}
 		PropertyReader.copy(customer, getCustomer());
 		customerProperty().setValue(ObjectUtils.clone(getCustomer()));
+		getCustomer().setSociete(customer.getSociete());
 	}
 
 	public SimpleObjectProperty<CustomerInvoiceInsurance> insuranceProperty()

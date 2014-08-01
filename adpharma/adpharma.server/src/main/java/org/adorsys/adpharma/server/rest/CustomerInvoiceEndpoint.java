@@ -239,9 +239,9 @@ public class CustomerInvoiceEndpoint
 
 	private static final List<String> emptyList = Collections.emptyList();
 
-	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","serialNumber","employer.name");
+	private static final List<String> customerFields = Arrays.asList("fullName", "birthDate", "landLinePhone", "mobile", "fax", "email", "creditAuthorized", "discountAuthorized","serialNumber","societe");
 
-	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer" ,"insurer.fullName", "coverageRate");
+	private static final List<String> insuranceFields = Arrays.asList("beginDate", "endDate", "customer.serialNumber", "customer.societe","customer.fullName" ,"insurer.fullName", "coverageRate");
 
 	private static final List<String> creatingUserFields = Arrays.asList("loginName", "email", "gender");
 

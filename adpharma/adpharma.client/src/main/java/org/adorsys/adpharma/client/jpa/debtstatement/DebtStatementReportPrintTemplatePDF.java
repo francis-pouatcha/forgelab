@@ -90,7 +90,7 @@ public class DebtStatementReportPrintTemplatePDF {
 			String societe = null ;
 			if(inoice.getCustomer()!=null)
 				newTableRow(inoice.getInvoiceNumber(), 
-						societe,
+						inoice.getCustomer().getSociete()+"",
 						inoice.getInsurance().getCustomer().getSerialNumber(),
 						inoice.getPatientMatricle(),
 						inoice.getInsurance().getCustomer().getFullName(),

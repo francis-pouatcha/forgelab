@@ -54,7 +54,7 @@ public class DeliveryListView
 	private ComboBox<DocumentProcessingState> deliveryProcessingState;
 
 	private Button searchButton;
-	
+
 	@FXML
 	private Button computeButton;
 
@@ -69,17 +69,17 @@ public class DeliveryListView
 
 	@FXML 
 	private ComboBox<Integer> yearList;
-	
+
 
 	@FXML
 	private Button createButton;
 
 	@FXML
 	private Button updateButton;
-	
+
 	@FXML
 	private Button exportToXlsButton;
-	
+
 	@FXML
 	private Button printButton;
 
@@ -142,13 +142,13 @@ public class DeliveryListView
 		viewBuilder.addStringColumn(dataList, "receivingAgency", "Delivery_receivingAgency_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle);
 
-				pagination = viewBuilder.addPagination();
-				viewBuilder.addSeparator();
-		
-//				HBox buttonBar = viewBuilder.addButtonBar();
-//				createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
-//				searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-//				rootPane = viewBuilder.toAnchorPane();
+		//				pagination = viewBuilder.addPagination();
+		//				viewBuilder.addSeparator();
+
+		//				HBox buttonBar = viewBuilder.addButtonBar();
+		//				createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+		//				searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		//				rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
 		ComboBoxInitializer.initialize(deliveryProcessingState, deliveryProcessingStateConverter, deliveryProcessingStateListCellFatory, deliveryProcessingStateBundle);
 
@@ -156,8 +156,8 @@ public class DeliveryListView
 		//deliveryitem
 
 		viewBuilder.addStringColumn(dataListItem, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
-//		viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
-//		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataListItem, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataListItem, "article", "DeliveryItem_article_description.title", resourceBundle,350d);
 		viewBuilder.addDateColumn(dataListItem, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "stockQuantity", "DeliveryItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -168,8 +168,8 @@ public class DeliveryListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		// pie Chart table view
-				viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
-				viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addStringColumn(pieChartData, "name", "ChartData_name_description.title", resourceBundle);
+		viewBuilder.addBigDecimalColumn(pieChartData, "value", "ChartData_value_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 	}
 
@@ -268,7 +268,7 @@ public class DeliveryListView
 	public Button getUpdateButton() {
 		return updateButton;
 	}
-	
+
 	public Button getExportToXlsButton() {
 		return exportToXlsButton;
 	}
@@ -284,7 +284,7 @@ public class DeliveryListView
 	public Button getComputeButton() {
 		return computeButton;
 	}
-	
+
 	public Button getPrintButton() {
 		return printButton;
 	}

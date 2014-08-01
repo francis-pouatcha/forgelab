@@ -35,7 +35,7 @@ public class DeliveryItemViewSearchFields extends AbstractForm<DeliveryItem>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		//      internalPic = viewBuilder.addTextField("DeliveryItem_internalPic_description.title", "internalPic", resourceBundle);
+		      internalPic = viewBuilder.addTextField("DeliveryItem_internalPic_description.title", "internalPic", resourceBundle);
 		mainPic = viewBuilder.addTextField("DeliveryItem_mainPic_description.title", "mainPic", resourceBundle);
 		//      secondaryPic = viewBuilder.addTextField("DeliveryItem_secondaryPic_description.title", "secondaryPic", resourceBundle);
 		articleName = viewBuilder.addTextField("DeliveryItem_articleName_description.title", "articleName", resourceBundle);
@@ -45,7 +45,7 @@ public class DeliveryItemViewSearchFields extends AbstractForm<DeliveryItem>
 
 	public void bind(DeliveryItem model)
 	{
-		//      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
+		      internalPic.textProperty().bindBidirectional(model.internalPicProperty());
 		mainPic.textProperty().bindBidirectional(model.mainPicProperty());
 		//      secondaryPic.textProperty().bindBidirectional(model.secondaryPicProperty());
 		articleName.textProperty().bindBidirectional(model.articleNameProperty());

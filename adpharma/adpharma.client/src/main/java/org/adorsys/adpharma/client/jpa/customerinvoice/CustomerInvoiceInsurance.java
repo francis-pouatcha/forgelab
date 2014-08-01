@@ -150,6 +150,7 @@ public class CustomerInvoiceInsurance implements Association<CustomerInvoice, In
 		PropertyReader.copy(customer, getCustomer());
 		customerProperty().setValue(ObjectUtils.clone(getCustomer()));
 		getCustomer().setSerialNumber(customer.getSerialNumber());
+		getCustomer().setSociete(customer.getSociete());
 	}
 
 	public SimpleObjectProperty<InsurranceInsurer> insurerProperty()

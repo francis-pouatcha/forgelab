@@ -94,7 +94,7 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="15.0" layoutY="62.0" text="Matricule :" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="M. Patient :" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>

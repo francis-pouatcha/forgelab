@@ -56,11 +56,13 @@ public class DeliveryReceivingAgencyForm extends AbstractToOneAssociation<Delive
 
    public void update(DeliveryReceivingAgency data)
    {
+	   if(data!=null){
       agencyNumber.textProperty().set(data.agencyNumberProperty().get());
       name.textProperty().set(data.nameProperty().get());
       active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
       phone.textProperty().set(data.phoneProperty().get());
       fax.textProperty().set(data.faxProperty().get());
+	   }
    }
 
    public TextField getAgencyNumber()

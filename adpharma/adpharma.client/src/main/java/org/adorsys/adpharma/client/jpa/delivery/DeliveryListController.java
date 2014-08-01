@@ -150,6 +150,7 @@ public class DeliveryListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getUpdateButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.bind(searchInput);
+		searchInput.setMax(30);
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
 
 		chartDataSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
@@ -272,7 +273,6 @@ public class DeliveryListController implements EntityController
 			public void handle(ActionEvent e)
 			{							
 				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
 
 			}
@@ -457,7 +457,7 @@ public class DeliveryListController implements EntityController
 			entities = new ArrayList<Delivery>();
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(entities);
-		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 50;
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 100;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;

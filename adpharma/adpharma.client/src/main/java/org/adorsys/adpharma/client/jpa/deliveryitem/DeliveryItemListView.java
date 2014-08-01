@@ -65,6 +65,8 @@ public class DeliveryItemListView
 		//		viewBuilder.addStringColumn(dataList, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
 		//      viewBuilder.addStringColumn(dataList, "secondaryPic", "DeliveryItem_secondaryPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "delivery.supplier", "Delivery_supplier_description.title", resourceBundle,250d);
+		viewBuilder.addStringColumn(dataList, "delivery.deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle,100d);
+
 		viewBuilder.addStringColumn(dataList, "articleName", "DeliveryItem_articleName_description.title", resourceBundle,250d);
 		//      viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle);
 		//      viewBuilder.addDateColumn(dataList, "expirationDate", "DeliveryItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
@@ -73,17 +75,17 @@ public class DeliveryItemListView
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		      viewBuilder.addDateColumn(dataList, "delivery", "DeliveryItem_creationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addDateColumn(dataList, "delivery.recordingDate", "DeliveryItem_creationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 
 		//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		pagination = viewBuilder.addPagination();
 //		deliveryNumber = ViewBuilderUtils.newTextField("deliveryNumber", false);
-//		viewBuilder.addSeparator();
-//
-//		HBox buttonBar = viewBuilder.addButtonBar();
+		viewBuilder.addSeparator();
+
+		HBox buttonBar = viewBuilder.addButtonBar();
 //		viewBuilder.addControl(buttonBar,new Label("Numero de la Livraison : "));
 //		viewBuilder.addControl(buttonBar, deliveryNumber);
-//		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+		searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		rootPane = viewBuilder.toAnchorPane();
 	}
 

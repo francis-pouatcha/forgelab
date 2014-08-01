@@ -140,7 +140,6 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
             })
             .error(function (data,status) {
                 $scope.addAlert({msg:'la cle de vente est incorect ',type:'danger'}) ;
-                $scope.saveAndClose();
 
             });
     };
