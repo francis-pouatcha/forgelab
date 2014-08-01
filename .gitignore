@@ -10,9 +10,12 @@
 target/
 */target/
 */.forge_settings
-*/.settings
+*/.settings/
+*/*/.settings/
 */bin/
 *.prefs
-*/.classpath
-*/*/.classpath
+*/.classpath/
+*/*/.classpath/
+adpharma/*/.classpath
 */*/.forge_settings
+
