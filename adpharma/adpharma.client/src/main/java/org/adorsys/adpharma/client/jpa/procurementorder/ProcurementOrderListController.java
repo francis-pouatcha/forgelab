@@ -151,16 +151,16 @@ public class ProcurementOrderListController implements EntityController
 				if(selectedItem!=null)
 					poPrintRequestEvent.fire(new ProcurementOrderId(selectedItem.getId()));
 
-
-				Iterator<ProcurementOrderItem> iterator = listView.getDataListItem().getItems().iterator();
-				List<ProcurementOrderItem> items = Lists.newArrayList(iterator);
-				selectedItem.setProcurementOrderItems(items);
-				try {
-					orderBuilder.build(selectedItem);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//
+//				Iterator<ProcurementOrderItem> iterator = listView.getDataListItem().getItems().iterator();
+//				List<ProcurementOrderItem> items = Lists.newArrayList(iterator);
+//				selectedItem.setProcurementOrderItems(items);
+//				try {
+//					orderBuilder.build(selectedItem);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 		});
 		listView.getDataList().getSelectionModel().selectedItemProperty()

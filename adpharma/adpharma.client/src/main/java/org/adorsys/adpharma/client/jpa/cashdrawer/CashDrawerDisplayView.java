@@ -144,12 +144,13 @@ public class CashDrawerDisplayView
 	private ResourceBundle paymentModeBundle;
 	@Inject
 	private PaymentModeConverter paymentModeConverter;
+	
+	@Inject
+	private PaymentModeListCellFatory paymentModeListCellFatory;
+	
 	@Inject
 	@Bundle({ Payment.class, PaymentItem.class, CrudKeys.class, Customer.class })
 	private ResourceBundle paymentResourceBundle;
-
-	@Inject
-	private PaymentModeListCellFatory paymentModeListCellFatory;
 
 	@PostConstruct
 	public void postConstruct()

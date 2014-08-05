@@ -47,7 +47,8 @@ public class DebtStatementCreateController implements EntityController
    @Inject
    @EntityCreateDoneEvent
    private Event<DebtStatement> createDoneEvent;
-
+   
+   
    @Inject
    @EntitySearchRequestedEvent
    private Event<DebtStatement> searchRequestedEvent;

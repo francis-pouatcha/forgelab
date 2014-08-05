@@ -24,4 +24,10 @@ public enum PaymentMode
 		return valuesForDisbursement ;
 
 	}
+	
+	public static PaymentMode[] valuesForDebtstatement(){
+		PaymentMode[] valuesForDisbursement = (PaymentMode[]) Arrays.asList(PaymentMode.CASH,PaymentMode.CHECK,PaymentMode.CREDIT_CARD).toArray();
+		return valuesForDisbursement ;
+
+	}
 }

@@ -59,9 +59,11 @@ public class ArticleVatForm extends AbstractToOneAssociation<Article, VAT>
 
    public void update(ArticleVat data)
    {
+	   if(data!=null){
       name.textProperty().set(data.nameProperty().get());
       active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
       rate.numberProperty().set(data.rateProperty().get());
+	   }
    }
 
    public TextField getName()

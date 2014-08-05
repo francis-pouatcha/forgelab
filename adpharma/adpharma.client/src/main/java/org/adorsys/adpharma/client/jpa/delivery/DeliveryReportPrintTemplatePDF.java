@@ -74,7 +74,7 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 	}
 
 	static Font boldFont = FontFactory.getFont("latin", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("latin", 8);
+	static Font font = FontFactory.getFont("latin", 7);
 	
 	public void addItems(List<DeliveryItem> deliveryItems) {
 	int artNamelenght = 68 ;
@@ -102,31 +102,38 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(internalPic));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new Phrase(internalPic,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(articleName));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new Phrase(articleName,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(stockQuantity!=null?stockQuantity.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(stockQuantity!=null?stockQuantity.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(purchasePricePU!=null?purchasePricePU.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(purchasePricePU!=null?purchasePricePU.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(qtyOrdered!=null?qtyOrdered.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(qtyOrdered!=null?qtyOrdered.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?salesPricePU.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(salesPricePU!=null?salesPricePU.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(totalPurchasePrice!=null?totalPurchasePrice.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(14f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(totalPurchasePrice!=null?totalPurchasePrice.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 	}
 	
@@ -138,32 +145,33 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_internalPic.title")));
+		pdfPCell.setFixedHeight(15f);
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_internalPic.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_articleName.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_articleName.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_stockQuantity.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_stockQuantity.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_purchasePricePU.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_purchasePricePU.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_qtyOrdered.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title")));
+		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 	}

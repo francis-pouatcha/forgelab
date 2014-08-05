@@ -36,88 +36,90 @@ import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessin
 public class ArticleClearanceConfigForm extends AbstractToOneAssociation<Article, ClearanceConfig>
 {
 
-   private CheckBox active;
+	private CheckBox active;
 
-   private ComboBox<DocumentProcessingState> clearanceState;
+	private ComboBox<DocumentProcessingState> clearanceState;
 
-   private BigDecimalField discountRate;
+	private BigDecimalField discountRate;
 
-   private CalendarTextField startDate;
+	private CalendarTextField startDate;
 
-   private CalendarTextField endDate;
+	private CalendarTextField endDate;
 
-   @Inject
-   @Bundle({ CrudKeys.class, ClearanceConfig.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, ClearanceConfig.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   @Bundle(DocumentProcessingState.class)
-   private ResourceBundle clearanceStateBundle;
+	@Inject
+	@Bundle(DocumentProcessingState.class)
+	private ResourceBundle clearanceStateBundle;
 
-   @Inject
-   private DocumentProcessingStateConverter clearanceStateConverter;
+	@Inject
+	private DocumentProcessingStateConverter clearanceStateConverter;
 
-   @Inject
-   private DocumentProcessingStateListCellFatory clearanceStateListCellFatory;
+	@Inject
+	private DocumentProcessingStateListCellFatory clearanceStateListCellFatory;
 
-   @Inject
-   private Locale locale;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      active = viewBuilder.addCheckBox("ClearanceConfig_active_description.title", "active", resourceBundle);
-      clearanceState = viewBuilder.addComboBox("ClearanceConfig_clearanceState_description.title", "clearanceState", resourceBundle, DocumentProcessingState.values());
-      discountRate = viewBuilder.addBigDecimalField("ClearanceConfig_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
-      startDate = viewBuilder.addCalendarTextField("ClearanceConfig_startDate_description.title", "startDate", resourceBundle, "dd-MM-yyyy", locale);
-      endDate = viewBuilder.addCalendarTextField("ClearanceConfig_endDate_description.title", "endDate", resourceBundle, "dd-MM-yyyy", locale);
+	@PostConstruct
+	public void postConstruct()
+	{
+		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		active = viewBuilder.addCheckBox("ClearanceConfig_active_description.title", "active", resourceBundle);
+		clearanceState = viewBuilder.addComboBox("ClearanceConfig_clearanceState_description.title", "clearanceState", resourceBundle, DocumentProcessingState.values());
+		discountRate = viewBuilder.addBigDecimalField("ClearanceConfig_discountRate_description.title", "discountRate", resourceBundle, NumberType.PERCENTAGE, locale);
+		startDate = viewBuilder.addCalendarTextField("ClearanceConfig_startDate_description.title", "startDate", resourceBundle, "dd-MM-yyyy", locale);
+		endDate = viewBuilder.addCalendarTextField("ClearanceConfig_endDate_description.title", "endDate", resourceBundle, "dd-MM-yyyy", locale);
 
-      ComboBoxInitializer.initialize(clearanceState, clearanceStateConverter, clearanceStateListCellFatory, clearanceStateBundle);
+		ComboBoxInitializer.initialize(clearanceState, clearanceStateConverter, clearanceStateListCellFatory, clearanceStateBundle);
 
-      gridRows = viewBuilder.toRows();
-   }
+		gridRows = viewBuilder.toRows();
+	}
 
-   public void bind(Article model)
-   {
-      active.textProperty().bindBidirectional(model.getClearanceConfig().activeProperty(), new BooleanStringConverter());
-      clearanceState.valueProperty().bindBidirectional(model.getClearanceConfig().clearanceStateProperty());
-      discountRate.numberProperty().bindBidirectional(model.getClearanceConfig().discountRateProperty());
-      startDate.calendarProperty().bindBidirectional(model.getClearanceConfig().startDateProperty());
-      endDate.calendarProperty().bindBidirectional(model.getClearanceConfig().endDateProperty());
-   }
+	public void bind(Article model)
+	{
+		active.textProperty().bindBidirectional(model.getClearanceConfig().activeProperty(), new BooleanStringConverter());
+		clearanceState.valueProperty().bindBidirectional(model.getClearanceConfig().clearanceStateProperty());
+		discountRate.numberProperty().bindBidirectional(model.getClearanceConfig().discountRateProperty());
+		startDate.calendarProperty().bindBidirectional(model.getClearanceConfig().startDateProperty());
+		endDate.calendarProperty().bindBidirectional(model.getClearanceConfig().endDateProperty());
+	}
 
-   public void update(ArticleClearanceConfig data)
-   {
-      active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
-      clearanceState.valueProperty().set(data.clearanceStateProperty().get());
-      discountRate.numberProperty().set(data.discountRateProperty().get());
-      startDate.calendarProperty().set(data.startDateProperty().get());
-      endDate.calendarProperty().set(data.endDateProperty().get());
-   }
+	public void update(ArticleClearanceConfig data)
+	{
+		if(data!=null){
+			active.textProperty().set(new BooleanStringConverter().toString(data.activeProperty().get()));
+			clearanceState.valueProperty().set(data.clearanceStateProperty().get());
+			discountRate.numberProperty().set(data.discountRateProperty().get());
+			startDate.calendarProperty().set(data.startDateProperty().get());
+			endDate.calendarProperty().set(data.endDateProperty().get());
+		}
+	}
 
-   public CheckBox getActive()
-   {
-      return active;
-   }
+	public CheckBox getActive()
+	{
+		return active;
+	}
 
-   public ComboBox<DocumentProcessingState> getClearanceState()
-   {
-      return clearanceState;
-   }
+	public ComboBox<DocumentProcessingState> getClearanceState()
+	{
+		return clearanceState;
+	}
 
-   public BigDecimalField getDiscountRate()
-   {
-      return discountRate;
-   }
+	public BigDecimalField getDiscountRate()
+	{
+		return discountRate;
+	}
 
-   public CalendarTextField getStartDate()
-   {
-      return startDate;
-   }
+	public CalendarTextField getStartDate()
+	{
+		return startDate;
+	}
 
-   public CalendarTextField getEndDate()
-   {
-      return endDate;
-   }
+	public CalendarTextField getEndDate()
+	{
+		return endDate;
+	}
 }

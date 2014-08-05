@@ -60,9 +60,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	private final Calendar endDate;
 	private final Login login;
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 13,Font.BOLD);
-	static Font blueBoldFont = FontFactory.getFont("Times-Roman", 12, Font.BOLD,Color.BLUE);
-	static Font font = FontFactory.getFont("Times-Roman", 10);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 8,Font.BOLD);
+	static Font blueBoldFont = FontFactory.getFont("Times-Roman", 7, Font.BOLD,Color.BLUE);
+	static Font font = FontFactory.getFont("Times-Roman", 7);
 
 	public CashDrawerReportPrintTemplatePDF(CashDrawerReportPrinterData cashDrawerPrinterData, ResourceBundle resourceBundle,
 			Locale locale,Login login) throws DocumentException {
@@ -199,105 +199,105 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			BigDecimal totalCash,boolean colored) {
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new Phrase(cashDrawerNumber,blueBoldFont));
 
 		}else {
-			pdfPCell.addElement(new StandardText(cashDrawerNumber));
+			pdfPCell.addElement(new Phrase(cashDrawerNumber,font));
 			
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new Phrase(opendDate,blueBoldFont));
 
 		}else {
-			pdfPCell.addElement(new StandardText(opendDate));
+			pdfPCell.addElement(new Phrase(opendDate,font));
 			
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new Phrase(closedDate,blueBoldFont));
 
 		}else {
-			pdfPCell.addElement(new StandardText(closedDate));
+			pdfPCell.addElement(new Phrase(closedDate,font));
 			
 		}
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new Phrase(cashierLoginName,blueBoldFont));
 
 		}else {
-			pdfPCell.addElement(new StandardText(cashierLoginName));
+			pdfPCell.addElement(new Phrase(cashierLoginName,font));
 			
 		}
 		reportTable.addCell(pdfPCell);
 
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(purchasePrice),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(purchasePrice))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(purchasePrice),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(drugVoucher),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(drugVoucher))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(drugVoucher),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalClientVoucher),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(cashOut),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(cashOut))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(cashOut),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(13f);
 		if(colored){
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalCash),blueBoldFont)));
 		}else {
-			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalCash))));
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(totalCash),font)));
 		}
 		reportTable.addCell(pdfPCell);
 
@@ -313,56 +313,56 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("CashDrawerReportPrintTemplate_cashDrawerNumber.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Ouverte Le",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Fermee Le",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("CashDrawerReportPrintTemplate_cashier.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Achats",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Bon Med ",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Fond ",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("CashDrawerReportPrintTemplate_totalClientVoucher.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase("Decaissement",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(15f);
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("CashDrawerReportPrintTemplate_totalCash.title"),boldFont));
 		reportTable.addCell(pdfPCell);
 
