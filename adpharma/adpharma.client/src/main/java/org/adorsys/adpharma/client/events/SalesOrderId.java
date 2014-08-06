@@ -9,6 +9,9 @@ package org.adorsys.adpharma.client.events;
 public class SalesOrderId extends DomainObjectId {
 	
 	private String customerName ;
+	
+	private boolean isProformat = false ;
+	
 	public SalesOrderId(Long id) {
 		super(id);
 	}
@@ -18,6 +21,14 @@ public class SalesOrderId extends DomainObjectId {
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
 	}
+	public boolean isProformat() {
+		return isProformat;
+	}
+	public void setProformat(boolean isProformat) {
+		this.isProformat = isProformat;
+	}
+	
+	
 	
 	
 }

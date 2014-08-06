@@ -35,6 +35,7 @@ import de.jensd.fx.fontawesome.AwesomeIcon;
 public class ProcurementOrderListView
 {
 
+	
 
 	@FXML
 	BorderPane rootPane;
@@ -50,6 +51,9 @@ public class ProcurementOrderListView
 
 	@FXML
 	private Button searchButton;
+	
+	@FXML
+	private Button printXlsButton ;
 
 	@FXML
 	private Button createButton;
@@ -192,6 +196,11 @@ public class ProcurementOrderListView
 	public Button getPrintButton()
 	{
 		return printButton;
+	}
+	
+	public Button getPrintXlsButton()
+	{
+		return printXlsButton;
 	}
 	
 	public Button getSentButton()

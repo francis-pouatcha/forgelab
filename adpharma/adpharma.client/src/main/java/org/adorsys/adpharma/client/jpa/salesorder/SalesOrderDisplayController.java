@@ -235,6 +235,26 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getPrintProformaButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Boolean cashed = displayedEntity.getCashed();
+				if(!cashed){
+					SalesOrderId selectedSalesOrderId = new SalesOrderId(displayedEntity.getId());
+					if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+					String customerName = null;
+					if(displayedEntity!=null && "000000001".equals(displayedEntity.getCustomer().getSerialNumber()))
+						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					selectedSalesOrderId.setCustomerName(customerName);
+					selectedSalesOrderId.setProformat(true);
+					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);
+
+				}else {
+					Dialogs.create().message("Impossible d'editer une proforma facture deja encaissee").showInformation();
+				}
+
+			}
+		});
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -548,6 +568,7 @@ public class SalesOrderDisplayController implements EntityController
 
 			}
 		});
+		
 
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
 

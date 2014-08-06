@@ -236,13 +236,14 @@ public class SalesOrderListController implements EntityController
 					selectedSalesOrderId = new SalesOrderId(newValue.getId());
 					listView.getRemoveButton().disableProperty().unbind();
 					listView.getPrintInvoiceButtonn().disableProperty().unbind();
+					listView.getPrintProformaButton().disableProperty().unbind();
 					listView.getPrintTicketButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().unbind();
 					listView.getPrintVoucherButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getAlreadyReturned()));
 					listView.getRemoveButton().disableProperty().bind(newValue.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 					//					listView.getPrintInvoiceButtonn().disableProperty().bind(newValue.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 					listView.getPrintTicketButton().disableProperty().bind(new SimpleBooleanProperty(!newValue.getCashed()));
-
+					listView.getPrintProformaButton().disableProperty().bind(new SimpleBooleanProperty(newValue.getCashed()));
 					SalesOrderItemSearchInput sosi = new SalesOrderItemSearchInput();
 					sosi.setMax(-1);
 					sosi.getEntity().setSalesOrder(new SalesOrderItemSalesOrder(newValue));
@@ -560,6 +561,21 @@ public class SalesOrderListController implements EntityController
 				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
 					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
+				selectedSalesOrderId.setProformat(false);
+				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
+			}
+		});
+		
+		listView.getPrintProformaButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				String customerName = null;
+				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				selectedSalesOrderId.setCustomerName(customerName);
+				selectedSalesOrderId.setProformat(true);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
 			}
 		});

@@ -128,7 +128,7 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
       return internalPic;
    }
 
-   @Size(min = 7, message = "ArticleLot_internalPic_Size_validation")
+   @Size(min = 1, message = "ArticleLot_internalPic_Size_validation")
    @NotNull(message = "ArticleLot_internalPic_NotNull_validation")
    public String getInternalPic()
    {
@@ -169,7 +169,7 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
       return secondaryPic;
    }
 
-   @Size(min = 7, message = "ArticleLot_secondaryPic_Size_validation")
+   @Size(min = 1, message = "ArticleLot_secondaryPic_Size_validation")
    public String getSecondaryPic()
    {
       return secondaryPicProperty().get();

@@ -6,38 +6,53 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="rootPane" prefHeight="644.0" prefWidth="966.0"
+	AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+	AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<right>
-		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
+		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0"
+			prefWidth="165.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="350.0" prefWidth="152.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="450.0"
+					prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
-						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="Recherche Avancee" />
-						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">
+						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Recherche Avancee" />
+						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Nouvelle vente">
+						<Button fx:id="createButton" layoutX="58.0" layoutY="102.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Nouvelle vente">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Imp la facture">
+						<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Facture">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Recu de paiement" />
-						<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Suprimer">
+						<Button fx:id="printProformaButton" layoutX="10.0" layoutY="100.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Facture Proforma" />
+						<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Recu de paiement" />
+						<Button fx:id="removeButton" mnemonicParsing="false"
+							prefWidth="140.0" text="Suprimer">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-<Button fx:id="printVoucherButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Imp l'Avoir" />
+						<Button fx:id="printVoucherButton" layoutX="10.0" layoutY="100.0"
+							mnemonicParsing="false" prefWidth="140.0" text="Imp l'Avoir" />
 					</items>
 				</ToolBar>
-				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
+				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0"
+					styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets bottom="50.0" left="5.0" />
 					</VBox.margin>
@@ -56,83 +71,103 @@
 			<tabs>
 				<Tab closable="false" text="Liste des ventes">
 					<content>
-<SplitPane orientation="VERTICAL">
-<items>
-						<VBox spacing="2.0">
-							<children>
-								<Separator prefWidth="200.0" />
-								<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0" layoutY="-50.0" prefHeight="50.0" prefWidth="801.0" spacing="5.0" VBox.vgrow="NEVER">
-									<padding>
-										<Insets left="10.0" />
-									</padding>
-									<VBox.margin>
-										<Insets left="5.0" />
-									</VBox.margin>
-								</HBox>
-								<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-								<TableView fx:id="dataList" prefHeight="291.0" prefWidth="796.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-									<columns>
-									</columns>
-									<VBox.margin>
-										<Insets left="5.0" />
-									</VBox.margin>
-								</TableView>
-								<TitledPane animated="false" text="Details">
-									<VBox.margin>
-										<Insets left="5.0" />
-									</VBox.margin>
-								</TitledPane>
-							</children>
-						</VBox>
-<VBox>
-<children>
-								<TableView fx:id="dataListItem" prefHeight="389.0" prefWidth="796.0" VBox.vgrow="ALWAYS">
-									<VBox.margin>
-										<Insets left="5.0" />
-									</VBox.margin>
-								</TableView>
-								<HBox alignment="CENTER" prefHeight="30.0" prefWidth="801.0" VBox.vgrow="NEVER">
+						<SplitPane orientation="VERTICAL">
+							<items>
+								<VBox spacing="2.0">
 									<children>
-										<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
+										<Separator prefWidth="200.0" />
+										<HBox fx:id="searchBar" alignment="CENTER_LEFT" layoutX="51.0"
+											layoutY="-50.0" prefHeight="50.0" prefWidth="801.0" spacing="5.0"
+											VBox.vgrow="NEVER">
+											<padding>
+												<Insets left="10.0" />
+											</padding>
+											<VBox.margin>
+												<Insets left="5.0" />
+											</VBox.margin>
+										</HBox>
+										<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
+										<TableView fx:id="dataList" prefHeight="291.0"
+											prefWidth="796.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+											<columns>
+											</columns>
+											<VBox.margin>
+												<Insets left="5.0" />
+											</VBox.margin>
+										</TableView>
+										<TitledPane animated="false" text="Details">
+											<VBox.margin>
+												<Insets left="5.0" />
+											</VBox.margin>
+										</TitledPane>
 									</children>
-								</HBox>
-</children>
-</VBox>
-</items>
-</SplitPane>
+								</VBox>
+								<VBox>
+									<children>
+										<TableView fx:id="dataListItem" prefHeight="389.0"
+											prefWidth="796.0" VBox.vgrow="ALWAYS">
+											<VBox.margin>
+												<Insets left="5.0" />
+											</VBox.margin>
+										</TableView>
+										<HBox alignment="CENTER" prefHeight="30.0" prefWidth="801.0"
+											VBox.vgrow="NEVER">
+											<children>
+												<Pagination fx:id="pagination"
+													maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0"
+													prefWidth="174.0" />
+											</children>
+										</HBox>
+									</children>
+								</VBox>
+							</items>
+						</SplitPane>
 					</content>
 				</Tab>
-				<Tab fx:id="turnoverTab" closable="false" disable="true" text="Chiffre d 'affaire">
+				<Tab fx:id="turnoverTab" closable="false" disable="true"
+					text="Chiffre d 'affaire">
 					<content>
 						<VBox prefHeight="200.0" prefWidth="100.0">
 							<children>
-								<HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="801.0" spacing="5.0" VBox.vgrow="NEVER">
+								<HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="801.0"
+									spacing="5.0" VBox.vgrow="NEVER">
 									<VBox.margin>
 										<Insets left="5.0" />
 									</VBox.margin>
 									<children>
-										<ComboBox fx:id="chartClientList" prefHeight="35.0" prefWidth="250.0" promptText="Tous les Clients ">
+										<ComboBox fx:id="chartClientList" prefHeight="35.0"
+											prefWidth="250.0" promptText="Tous les Clients ">
 											<HBox.margin>
 												<Insets left="5.0" />
 											</HBox.margin>
 										</ComboBox>
-<ComboBox fx:id="chartArticleList" layoutX="15.0" layoutY="13.0" prefHeight="35.0" prefWidth="400.0" promptText="Tous les Articles " /><CheckBox fx:id="emptyArticle" mnemonicParsing="false" text="Vider" />
-										<ComboBox fx:id="yearList" prefHeight="35.0" prefWidth="115.0" promptText="Years" />
-										<Button fx:id="computeButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="89.0" text="Calculer" />
+										<ComboBox fx:id="chartArticleList" layoutX="15.0"
+											layoutY="13.0" prefHeight="35.0" prefWidth="400.0"
+											promptText="Tous les Articles " />
+										<CheckBox fx:id="emptyArticle" mnemonicParsing="false"
+											text="Vider" />
+										<ComboBox fx:id="yearList" prefHeight="35.0"
+											prefWidth="115.0" promptText="Years" />
+										<Button fx:id="computeButton" mnemonicParsing="false"
+											prefHeight="35.0" prefWidth="89.0" text="Calculer" />
 									</children>
 								</HBox>
 								<Separator prefWidth="200.0" />
-								<BorderPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+								<BorderPane prefHeight="200.0" prefWidth="200.0"
+									VBox.vgrow="ALWAYS">
 									<center>
-										<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
-											<children><BarChart fx:id="barChart" title="Statistiques des ventes :" VBox.vgrow="ALWAYS">
-  <xAxis>
-    <CategoryAxis side="BOTTOM" />
-  </xAxis>
-  <yAxis>
-    <NumberAxis side="LEFT" />
-  </yAxis>
-</BarChart>
+										<VBox prefHeight="200.0" prefWidth="100.0"
+											BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+											<children>
+												<BarChart fx:id="barChart" title="Statistiques des ventes :"
+													VBox.vgrow="ALWAYS">
+													<xAxis>
+														<CategoryAxis side="BOTTOM" />
+													</xAxis>
+													<yAxis>
+														<NumberAxis side="LEFT" />
+													</yAxis>
+												</BarChart>
 											</children>
 										</VBox>
 									</center>

@@ -221,22 +221,23 @@
 						<HBox alignment="CENTER" prefHeight="33.0" prefWidth="740.0" spacing="10.0" VBox.vgrow="NEVER">
 							<children>
 								<ComboBox fx:id="cashDrawer" prefHeight="26.0" prefWidth="220.0" promptText="cashDrawer" />
-								<Button fx:id="closeButton" mnemonicParsing="false" prefWidth="150.0" text="cloturer la vente">
+								<Button fx:id="closeButton" mnemonicParsing="false" text="cloturer la vente">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="ordonnancierButton" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" prefWidth="150.0" text="Ordonnancier">
+								<Button fx:id="ordonnancierButton" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" text="Ordonnancier">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" prefWidth="150.0" text="Annuler la saisie">
+								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" text="Annuler la saisie">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" prefWidth="150.0" text="Enrg. Le retour" />
+								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" text="Enrg. Le retour" />
+<Button fx:id="printProformaButton" layoutX="762.0" layoutY="13.0" mnemonicParsing="false" text="Facture Proforma" />
 							</children>
 							<padding>
 								<Insets bottom="2.0" />

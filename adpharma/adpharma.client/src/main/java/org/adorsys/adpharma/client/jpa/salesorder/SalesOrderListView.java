@@ -57,6 +57,9 @@ public class SalesOrderListView
 
 	@FXML
 	private Button printInvoiceButton;
+	
+	@FXML
+	private Button printProformaButton;
 
 	@FXML
 	private Button printTicketButton;
@@ -248,6 +251,10 @@ public class SalesOrderListView
 
 	public Button getPrintInvoiceButtonn() {
 		return printInvoiceButton;
+	}
+	
+	public Button getPrintProformaButton() {
+		return printProformaButton;
 	}
 
 	public Button getPrintTicketButton() {

@@ -351,8 +351,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 
 
 			borderlessCell(paymentPane,new RightParagraph(new StandardText(
-					DefaultBigDecimalFormatCM.getinstance().format(
-							totalAmountInvoices.subtract(insurranceRest)))));
+					DefaultBigDecimalFormatCM.getinstance().format(customerRest))));
 		}
 
 		borderlessCell(paymentPane,new StandardText(resourceBundle

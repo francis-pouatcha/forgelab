@@ -60,6 +60,9 @@ public class SalesOrderDisplayView
 
 	@FXML
 	private Button cancelButton;
+	
+	@FXML
+	private Button printProformaButton ;
 
 	@FXML
 	private Button ordonnancierButton;
@@ -430,6 +433,10 @@ public class SalesOrderDisplayView
 
 	public Button getOkButton() {
 		return okButton;
+	}
+	
+	public Button getPrintProformaButton() {
+		return printProformaButton;
 	}
 
 	public Button getSaveReturnButton() {

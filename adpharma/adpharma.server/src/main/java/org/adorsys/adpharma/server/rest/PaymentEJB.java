@@ -16,6 +16,8 @@ import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.DebtStatement;
+import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
@@ -61,7 +63,11 @@ public class PaymentEJB
 
 	@EJB
 	private CustomerInvoiceEJB customerInvoiceEJB;
-	
+
+	@EJB
+	private DebtStatementCustomerInvoiceAssocEJB debtStatementCustomerInvoiceAssocEJB ;
+
+
 	@Inject
 	private SalesOrderRepository salesOrderRepository ;
 
@@ -122,6 +128,87 @@ public class PaymentEJB
 		paymentProcessedEvent.fire(payment);
 		return payment;
 	}
+
+	private List<CustomerInvoice> getPayableInvoicesFromDebtStatement(DebtStatement debtStatement){
+		BigDecimal amountToPay = debtStatement.getPayAmount();
+		if(debtStatement==null || amountToPay==null) throw new IllegalArgumentException("Debstatement and amountTopay is required !");
+		Set<DebtStatementCustomerInvoiceAssoc> invoices = debtStatement.getInvoices();
+		List<CustomerInvoice> payableInvoices = new ArrayList<CustomerInvoice>();
+		BigDecimal processingAmount = BigDecimal.ZERO;
+		for (DebtStatementCustomerInvoiceAssoc dsa : invoices) {
+			CustomerInvoice invoice = dsa.getTarget();
+			if(invoice.getSettled())
+				continue ;
+			if(processingAmount.compareTo(amountToPay)>0)
+				break ;
+			processingAmount= processingAmount.add( invoice.getTotalRestToPay());
+			payableInvoices.add(invoice);
+		}
+		return payableInvoices ;
+	}
+
+//	public Payment createDebtstatementPayment(DebtStatement entity)
+//	{
+//		List<CustomerInvoice> InvoicesToPay = getPayableInvoicesFromDebtStatement(entity);
+//		
+//		// create payment for debtstatement 
+//		Payment payment2 = new Payment();
+//		payment2.get
+//		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
+//		Payment payment = attach(entity);
+//		Login cashier = securityUtil.getConnectedUser();
+//		CashDrawer cashDrawer = payment.getCashDrawer();
+//		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+//			if(paymentCustomerInvoiceAssoc.getTarget()!=null && paymentCustomerInvoiceAssoc.getTarget().getCashed())
+//				continue;
+//			PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
+//			i.setSource(payment);
+//			i.setSourceQualifier("invoices");
+//			CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
+//			CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
+//			SalesOrder salesOrder = customerInvoice.getSalesOrder();
+//			salesOrder.setCashDrawer(cashDrawer);
+//			salesOrderRepository.save(salesOrder);
+//			i.setTarget(customerInvoice);
+//			i.setTargetQualifier("payments");
+//			payment.getInvoices().add(i);
+//		}
+//		// Is the cashier the owner of this cashdrawer
+//		//	   if(!cashDrawer.getCashier().equals(cashier)){
+//		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
+//		//	   }
+//		payment.setAgency(cashDrawer.getAgency());
+//		payment.setCashier(cashDrawer.getCashier());
+//		Date now = new Date();
+//		payment.setPaymentDate(now);
+//		payment.setRecordDate(now);
+//		payment.setPaymentNumber("PY-"+RandomStringUtils.randomAlphanumeric(5));
+//		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+//		BigDecimal amount = BigDecimal.ZERO;
+//		BigDecimal receivedAmount = BigDecimal.ZERO;
+//		BigDecimal difference = BigDecimal.ZERO;
+//		PaymentMode paymentMode = null;
+//		for (PaymentItem paymentItem : paymentItems) {
+//			BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
+//			amount = amount.add(piAmount);
+//			BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
+//			receivedAmount = receivedAmount.add(piReceivedAmount);
+//			difference = difference.add(piReceivedAmount.subtract(piAmount));
+//			paymentMode = paymentItem.getPaymentMode();
+//		}
+//
+//		payment.setAmount(amount);
+//		payment.setReceivedAmount(receivedAmount);
+//		payment.setDifference(difference);
+//		payment.setPaymentMode(paymentMode);
+//
+//
+//		payment = repository.save(payment);
+//		payment.setPaymentNumber(SequenceGenerator.PAYMENT_SEQUENCE_PREFIX+payment.getId());
+//		payment = update(payment);
+//		paymentProcessedEvent.fire(payment);
+//		return payment;
+//	}
 
 	public Payment deleteById(Long id)
 	{

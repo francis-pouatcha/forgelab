@@ -273,6 +273,27 @@ public class ProcurementOrderDisplayController implements EntityController
 			}
 
 		});
+		
+
+
+		/*
+		 * listen to printXls button and fire search requested event.
+		 */
+		displayView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				if(displayedEntity!=null&&displayView.getDataList().getItems().iterator().hasNext()){
+					ProcurementOrderXlsExporter.exportProcurementToXls(displayView.getDataList().getItems().iterator());
+				}else {
+					Dialogs.create().message("La  commande dois avoir au moins une ligne  ").showInformation();
+				}
+				
+			}
+				});
+		
+		
 
 		/*
 		 * listen to save button and fire search requested event.
