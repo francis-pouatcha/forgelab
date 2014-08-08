@@ -565,7 +565,6 @@ public class SalesOrderDisplayController implements EntityController
 					}
 					displayView.getCashDrawer().getSelectionModel().select(0);
 				}
-
 			}
 		});
 		
@@ -701,25 +700,22 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
-		//		displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
-		//				) {
-		//
-		//					@Override
-		//					public void changed(
-		//							ObservableValue<? extends BigDecimal> observable,
-		//							BigDecimal oldValue, BigDecimal newValue) {
-		//						if(newValue!=null){
-		//							BigDecimal ttc = displayView.getAmountTTC().getNumber();
-		//							if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
-		//								BigDecimal discountRate = (newValue.multiply(BigDecimal.valueOf(100))).divide(ttc, 2, RoundingMode.HALF_EVEN);
-		////						        displayedEntity.setDiscountRate(discountRate);
-		//								System.out.println(discountRate);
-		//						        displayView.getDiscountRate().setNumber(discountRate);
-		//							}
-		//						}
-		//						
-		//					}
-		//		});
+				displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
+						) {
+		
+							@Override
+							public void changed(
+									ObservableValue<? extends BigDecimal> observable,
+									BigDecimal oldValue, BigDecimal newValue) {
+								if(newValue!=null){
+									BigDecimal ttc = displayView.getAmountTTC().getNumber();
+									if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
+										displayView.getNetClientText().setText(ttc.subtract(newValue).toBigInteger()+"");
+									}
+								}
+								
+							}
+				});
 
 		//		
 		displayView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {

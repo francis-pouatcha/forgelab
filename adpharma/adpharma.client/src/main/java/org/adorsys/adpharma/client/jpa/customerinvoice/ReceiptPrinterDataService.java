@@ -72,7 +72,7 @@ Service<ReceiptPrinterData> {
 				Company company = companyService.findById(agency.getCompany().getId());
 				Login cashier = loginService.findById(payment.getCashier().getId());
 				List<CustomerVoucher> usedVoucher = voucherService.findByPaiementId(paymentId.getId()).getResultList();
-				ReceiptPrinterData result = new ReceiptPrinterData(payment, agency, company, cashier,paymentId.getCustomerName());
+				ReceiptPrinterData result = new ReceiptPrinterData(payment, agency, company, cashier,paymentId.getCustomerName(),paymentId.isPrintWhithoutDiscount());
 				result.getUsedVouchers().addAll(usedVoucher);
 				PaymentCustomerInvoiceAssocSearchInput searchInput = new PaymentCustomerInvoiceAssocSearchInput();
 				int max = 100;

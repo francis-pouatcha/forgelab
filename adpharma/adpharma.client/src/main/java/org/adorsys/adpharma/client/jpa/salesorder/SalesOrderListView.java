@@ -54,6 +54,9 @@ public class SalesOrderListView
 
 	@FXML
 	private Button advenceSearchButton;
+	
+	@FXML
+	private Button unDiscountReceipt ;
 
 	@FXML
 	private Button printInvoiceButton;
@@ -145,7 +148,7 @@ public class SalesOrderListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//      dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "soNumber", "SalesOrder_soNumber_description.title", resourceBundle); 
-		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_customer_description.title", resourceBundle,250d);
+		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_insurance_description.title", resourceBundle,250d);
 		//		viewBuilder.addStringColumn(dataList, "cashDrawer", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "salesAgent", "SalesOrder_salesAgent_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
@@ -262,6 +265,9 @@ public class SalesOrderListView
 	}
 	public Button getPrintVoucherButton() {
 		return printVoucherButton;
+	}
+	public Button getUnDiscountReceipt() {
+		return unDiscountReceipt;
 	}
 	public void setRemoveButton(Button removeButton) {
 		this.removeButton = removeButton;

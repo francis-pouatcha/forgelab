@@ -78,8 +78,8 @@ public class CashDrawerDisplayView
 	@FXML
 	private TableView<PaymentItem> paymentItemDataList ;
 
-//	@FXML
-//	private GridPane invoiceHeadGrid ;
+	//	@FXML
+	//	private GridPane invoiceHeadGrid ;
 
 	private TextField invoiceNumber;
 
@@ -103,7 +103,7 @@ public class CashDrawerDisplayView
 
 
 	private Button searchButton;
-	
+
 	private Button searchPayementButton;
 
 	@Inject
@@ -144,10 +144,10 @@ public class CashDrawerDisplayView
 	private ResourceBundle paymentModeBundle;
 	@Inject
 	private PaymentModeConverter paymentModeConverter;
-	
+
 	@Inject
 	private PaymentModeListCellFatory paymentModeListCellFatory;
-	
+
 	@Inject
 	@Bundle({ Payment.class, PaymentItem.class, CrudKeys.class, Customer.class })
 	private ResourceBundle paymentResourceBundle;
@@ -167,7 +167,7 @@ public class CashDrawerDisplayView
 
 	}
 	public void buildInvoiceItemDataList(ViewBuilder viewBuilder){
-//		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,100d);
+		//		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,100d);
 		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle ,250d);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "orderedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -182,15 +182,15 @@ public class CashDrawerDisplayView
 	}
 
 	public void buildSalesOrderDataList(ViewBuilder viewBuilder){
-//		viewBuilder.addEnumColumn(salesOrderDataList, "salesOrderType", "CustomerInvoice_invoiceType_description.title", resourceBundle, salesOrderTypeConverter);
+		//		viewBuilder.addEnumColumn(salesOrderDataList, "salesOrderType", "CustomerInvoice_invoiceType_description.title", resourceBundle, salesOrderTypeConverter);
 		viewBuilder.addStringColumn(salesOrderDataList, "soNumber", "CustomerInvoice_invoiceNumber_description.title", resourceBundle);
-//		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		//		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle,100d);
 		viewBuilder.addStringColumn(salesOrderDataList, "customer", "CustomerInvoice_customer_description.title", resourceBundle,150d);
 		// Field not displayed in table
-//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addStringColumn(salesOrderDataList, "insurance", "CustomerInvoice_insurance_description.title", resourceBundle,250d);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountDiscount", "CustomerInvoice_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(salesOrderDataList, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -251,49 +251,49 @@ public class CashDrawerDisplayView
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchButton.setPrefHeight(25d);
 		searchButton.setPrefWidth(150d);
-		
+
 		searchPayementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchPayementButton.setPrefHeight(25d);
 		searchPayementButton.setPrefWidth(180d);
 		searchPayementButton.setText("Liste des Payements");
-		
+
 		closeCashDrawerButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.EJECT);
 		closeCashDrawerButton.setPrefHeight(25d);
 		closeCashDrawerButton.setPrefWidth(100d);
 		closeCashDrawerButton.setText("Fermer");
-		
-		
+
+
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
 		cancelButton.setPrefWidth(100d);
 		HBox hBox = new HBox();
 		hBox.setSpacing(5d);
 		hBox.getChildren().addAll(cancelButton,closeCashDrawerButton,searchPayementButton);
 		invoiceSearchBox.setMargin(hBox, new Insets(0, 0, 0, 100));
-		
+
 		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton,hBox);
 	}
 
 	public void buildinvoiceHeadGrid(){
-//		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", false);
-//		invoiceNumber.setEditable(false);
-//
-//		//		creatingUser = ViewBuilderUtils.newComboBox(null,"creatingUser", false);
-//		//		creatingUser.setPrefWidth(200d);
-//
-//		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
-//		amountDiscount.setEditable(false);
-//
-//		customerRestTopay = ViewBuilderUtils.newBigDecimalField( "customerRestTopay", NumberType.CURRENCY, locale,false);
-//		customerRestTopay.setEditable(false);
-//
-//		insurranceRestTopay = ViewBuilderUtils.newBigDecimalField( "insurranceRestTopay", NumberType.CURRENCY, locale,false);
-//		insurranceRestTopay.setEditable(false);
-//
-//		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
-//
-//		invoiceHeadGrid.addRow(0,new Label("invoiceNumber"),new Label("discount"),new Label("Customer part"),new Label("Insurrance part"));
-//		invoiceHeadGrid.addRow(1,invoiceNumber,amountDiscount,customerRestTopay,insurranceRestTopay,cancelButton);
-//		invoiceHeadGrid.setGridLinesVisible(true);
+		//		invoiceNumber = ViewBuilderUtils.newTextField( "invoiceNumber", false);
+		//		invoiceNumber.setEditable(false);
+		//
+		//		//		creatingUser = ViewBuilderUtils.newComboBox(null,"creatingUser", false);
+		//		//		creatingUser.setPrefWidth(200d);
+		//
+		//		amountDiscount = ViewBuilderUtils.newBigDecimalField("amountDiscount", NumberType.CURRENCY, locale,false);
+		//		amountDiscount.setEditable(false);
+		//
+		//		customerRestTopay = ViewBuilderUtils.newBigDecimalField( "customerRestTopay", NumberType.CURRENCY, locale,false);
+		//		customerRestTopay.setEditable(false);
+		//
+		//		insurranceRestTopay = ViewBuilderUtils.newBigDecimalField( "insurranceRestTopay", NumberType.CURRENCY, locale,false);
+		//		insurranceRestTopay.setEditable(false);
+		//
+		//		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
+		//
+		//		invoiceHeadGrid.addRow(0,new Label("invoiceNumber"),new Label("discount"),new Label("Customer part"),new Label("Insurrance part"));
+		//		invoiceHeadGrid.addRow(1,invoiceNumber,amountDiscount,customerRestTopay,insurranceRestTopay,cancelButton);
+		//		invoiceHeadGrid.setGridLinesVisible(true);
 	}
 
 	public void bind(CashDrawer model)
@@ -302,18 +302,18 @@ public class CashDrawerDisplayView
 	}
 
 	public void bindInvoice(final SalesOrder model){
-//		invoiceNumber.textProperty().bindBidirectional(model.soNumberProperty());
-//		//		creatingUser.valueProperty().bindBidirectional(model.salesAgentProperty());
-//		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
-//		model.amountAfterTaxProperty().addListener(new ChangeListener<BigDecimal>() {
-//			@Override
-//			public void changed(ObservableValue<? extends BigDecimal> source,
-//					BigDecimal oldValue, BigDecimal newValue) {
-//				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(model);
-//				customerRestTopay.setNumber(model.getCustomerRestTopay());
-//				insurranceRestTopay.setNumber(model.getInsurranceRestTopay());
-//			}
-//		});
+		//		invoiceNumber.textProperty().bindBidirectional(model.soNumberProperty());
+		//		//		creatingUser.valueProperty().bindBidirectional(model.salesAgentProperty());
+		//		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
+		//		model.amountAfterTaxProperty().addListener(new ChangeListener<BigDecimal>() {
+		//			@Override
+		//			public void changed(ObservableValue<? extends BigDecimal> source,
+		//					BigDecimal oldValue, BigDecimal newValue) {
+		//				SalesOrderRestToPay restToPay = new SalesOrderRestToPay(model);
+		//				customerRestTopay.setNumber(model.getCustomerRestTopay());
+		//				insurranceRestTopay.setNumber(model.getInsurranceRestTopay());
+		//			}
+		//		});
 		invoiceItemDataList.itemsProperty().bindBidirectional(model.salesOrderItemsProperty());
 	}
 
@@ -367,7 +367,7 @@ public class CashDrawerDisplayView
 	public Button getCloseCashDrawerButton(){
 		return closeCashDrawerButton ;
 	}
-	
+
 	public Button getSearchPayementButton(){
 		return searchPayementButton ;
 	}

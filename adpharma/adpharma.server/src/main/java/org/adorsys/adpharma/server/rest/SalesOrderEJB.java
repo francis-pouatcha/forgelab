@@ -286,6 +286,7 @@ public class SalesOrderEJB
 		//			salesOrder.setAmountDiscount(BigDecimal.ZERO);
 
 		salesOrder.setSalesAgent(realSaller);
+		salesOrder = repository.save(salesOrder);
 		rebuildSaleOrder(salesOrder);
 		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		SalesOrder closedSales = update(salesOrder);

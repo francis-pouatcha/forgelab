@@ -34,8 +34,11 @@ public class ModalPaymentSearchView extends ApplicationModal{
 	private TextField paymentNumber;
 
 	@FXML Button cancelButton;
+	
 	@FXML Button printButton;
-
+	
+	@FXML Button unDiscountReceiptBtn;
+	
 	@FXML
 	Pagination pagination;
 
@@ -85,6 +88,10 @@ public class ModalPaymentSearchView extends ApplicationModal{
 
 	public Button getPrintButton() {
 		return printButton;
+	}
+	
+	public Button getunDiscountReceiptBtn() {
+		return unDiscountReceiptBtn;
 	}
 
 	public Button getCancelButton() {

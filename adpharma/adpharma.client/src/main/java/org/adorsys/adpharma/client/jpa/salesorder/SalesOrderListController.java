@@ -194,6 +194,8 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private Locale locale;
+	
+	boolean printWhithDiscount = true;
 
 	@Inject
 	private SecurityUtil securityUtil;
@@ -588,11 +590,29 @@ public class SalesOrderListController implements EntityController
 					CustomerInvoiceSearchInput invoiceSearchInput = new CustomerInvoiceSearchInput();
 					invoiceSearchInput.getEntity().setSalesOrder(new CustomerInvoiceSalesOrder(selectedItem));
 					invoiceSearchInput.getFieldNames().add("salesOrder");
+					printWhithDiscount = true;
 					customerInvoiceSearchService.setSearchInputs(invoiceSearchInput).start();
 
 				}
 			}
 		});
+		
+		listView.getUnDiscountReceipt().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					printWhithDiscount = false;
+					CustomerInvoiceSearchInput invoiceSearchInput = new CustomerInvoiceSearchInput();
+					invoiceSearchInput.getEntity().setSalesOrder(new CustomerInvoiceSalesOrder(selectedItem));
+					invoiceSearchInput.getFieldNames().add("salesOrder");
+					customerInvoiceSearchService.setSearchInputs(invoiceSearchInput).start();
+
+				}
+			}
+		});
+		
+		
 
 		customerInvoiceSearchService.setOnFailed(serviceCallFailedEventHandler);
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -637,6 +657,8 @@ public class SalesOrderListController implements EntityController
 					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
 						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 					paymentId.setCustomerName(customerName);
+					paymentId.setPrintWhithoutDiscount(printWhithDiscount);
+					
 					printPaymentReceiptRequestedEvent.fire(paymentId);
 
 				}
