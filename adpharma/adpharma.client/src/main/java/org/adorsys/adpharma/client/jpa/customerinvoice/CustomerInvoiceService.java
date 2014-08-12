@@ -7,6 +7,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesStatisticsDataSearchResult;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
@@ -40,11 +41,11 @@ public class CustomerInvoiceService {
 		return target().path("" + id).request(media)
 				.delete(CustomerInvoice.class);
 	}
-	
 
-//	@GET
-//	@Path("/findByAgencyAndDateBetween")
-//	@Produces({ "application/json", "application/xml" })
+
+	//	@GET
+	//	@Path("/findByAgencyAndDateBetween")
+	//	@Produces({ "application/json", "application/xml" })
 	public CustomerInvoiceSearchResult findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput)
 	{
 		Entity<InvoiceByAgencyPrintInput> searchInputEntity = Entity.entity(
@@ -52,9 +53,9 @@ public class CustomerInvoiceService {
 		return target().path("/findByAgencyAndDateBetween").request(media)
 				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
 	}
-//	@GET
-//	@Path("/findByAgencyAndDateBetween")
-//	@Produces({ "application/json", "application/xml" })
+	//	@GET
+	//	@Path("/findByAgencyAndDateBetween")
+	//	@Produces({ "application/json", "application/xml" })
 	public CustomerInvoiceSearchResult customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput)
 	{
 		Entity<InvoiceByAgencyPrintInput> searchInputEntity = Entity.entity(
@@ -72,7 +73,7 @@ public class CustomerInvoiceService {
 				.put(ent, CustomerInvoice.class);
 	}
 
-	
+
 
 	// @GET
 	// @Path("/{id:[0-9][0-9]*}")
@@ -141,5 +142,17 @@ public class CustomerInvoiceService {
 				searchInput, media);
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
+	}
+
+	// @POST
+	// @Path("/findCustomerInvoiceBySource"
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public CustomerInvoiceSearchResult findCustomerInvoiceBySource(
+			DebtStatement source) {
+		Entity<DebtStatement> sourceEntity = Entity.entity(
+				source, media);
+		return target().path("findCustomerInvoiceBySource").request(media)
+				.post(sourceEntity, CustomerInvoiceSearchResult.class);
 	}
 }

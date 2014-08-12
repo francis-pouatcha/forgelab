@@ -18,6 +18,8 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Disbursement_description")
@@ -32,10 +34,17 @@ public class Disbursement implements Cloneable{
 	private SimpleObjectProperty<BigDecimal> amount;
 	private SimpleObjectProperty<PaymentMode> paymentMode;
 	private SimpleObjectProperty<DisbursementCashier> cashier;
+	
+	/**
+	 * The receipt's amount
+	 */
+	private SimpleStringProperty receipt;
+	
 	private SimpleObjectProperty<DisbursementCashDrawer> cashDrawer;
 	private SimpleObjectProperty<DisbursementAgency> agency;
 	private SimpleObjectProperty<Calendar> creationDate;
-
+	private SimpleStringProperty voucherNumber;
+	private SimpleObjectProperty<BigDecimal> voucherAmount;
 
 
 	public Long getId()
@@ -58,6 +67,25 @@ public class Disbursement implements Cloneable{
 		this.version = version;
 	}
 
+	public SimpleStringProperty voucherNumberProperty()
+	{
+		if (voucherNumber == null)
+		{
+			voucherNumber = new SimpleStringProperty();
+		}
+		return voucherNumber;
+	}
+
+	public String getVoucherNumber()
+	{
+		return voucherNumberProperty().get();
+	}
+
+	public final void setVoucherNumber(String voucherNumber)
+	{
+		this.voucherNumberProperty().set(voucherNumber);
+	}
+
 	public SimpleStringProperty raisonProperty()
 	{
 		if (raison == null)
@@ -76,6 +104,20 @@ public class Disbursement implements Cloneable{
 	{
 		this.raisonProperty().set(raison);
 	}
+	
+	
+	public SimpleStringProperty receiptProperty(){
+		if(receipt==null) receipt= new SimpleStringProperty();
+		return receipt;
+	}
+	
+	public String getReceipt() {
+		return receiptProperty().get();
+	}
+	
+   public void setReceipt(String receipt) {
+	this.receiptProperty().set(receipt);
+   }
 
 
 
@@ -96,6 +138,25 @@ public class Disbursement implements Cloneable{
 	public final void setAmount(BigDecimal amount)
 	{
 		this.amountProperty().set(amount);
+	}
+	
+	public SimpleObjectProperty<BigDecimal> voucherAmountProperty()
+	{
+		if (voucherAmount == null)
+		{
+			voucherAmount = new SimpleObjectProperty<BigDecimal>();
+		}
+		return voucherAmount;
+	}
+
+	public BigDecimal getVoucherAmount()
+	{
+		return voucherAmountProperty().get();
+	}
+
+	public final void setVoucherAmount(BigDecimal voucherAmount)
+	{
+		this.voucherAmountProperty().set(voucherAmount);
 	}
 
 	public SimpleObjectProperty<PaymentMode> paymentModeProperty()
@@ -211,10 +272,6 @@ public class Disbursement implements Cloneable{
 	{
 		this.creationDateProperty().set(creationDate);
 	}
-
-
-
-
 
 	@Override
 	public int hashCode()

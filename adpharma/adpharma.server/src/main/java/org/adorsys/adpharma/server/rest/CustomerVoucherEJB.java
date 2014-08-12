@@ -14,10 +14,12 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
+import org.adorsys.adpharma.server.jpa.Disbursement;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
@@ -80,6 +82,20 @@ public class CustomerVoucherEJB
 		}
 		return usedVouchers;
 	}
+
+	public void processDisbursment(@Observes @DocumentProcessedEvent Disbursement disbursement){
+		if(PaymentMode.VOUCHER.equals(disbursement.getPaymentMode())){
+			CustomerVoucher voucher = new CustomerVoucher();
+			voucher.setVoucherNumber(disbursement.getVoucherNumber());
+			voucher.setAmount(disbursement.getVoucherAmount());
+			List<CustomerVoucher> found = findBy(voucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber,CustomerVoucher_.amount});
+			if(found.isEmpty()) throw new RuntimeException("Voucher not found whith this number") ;
+			voucher = found.iterator().next();
+			voucher.setAmount(voucher.getAmount().subtract(disbursement.getAmount()));
+			update(voucher);
+		}
+	}
+
 
 	public CustomerVoucher deleteById(Long id)
 	{

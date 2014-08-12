@@ -69,7 +69,6 @@ public class SalesOrderAdvenceSearchController {
 			@Override
 			public void handle(ActionEvent event) {
 				view.closeDialog();
-
 			}
 		});
 
@@ -139,7 +138,6 @@ public class SalesOrderAdvenceSearchController {
 				source.reset();
 				hideProgressEvent.fire(new Object());
 				view.closeDialog();
-
 			}
 		});
 	}

@@ -49,7 +49,6 @@ public class DebtStatementCustomerInvoiceAssocEJB
 		return entity;
 	}
 
-
 	public DebtStatementCustomerInvoiceAssoc update(DebtStatementCustomerInvoiceAssoc entity)
 	{
 		return repository.save(attach(entity));

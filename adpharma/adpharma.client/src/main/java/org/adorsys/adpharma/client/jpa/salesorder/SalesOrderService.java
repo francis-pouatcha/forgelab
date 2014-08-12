@@ -75,6 +75,7 @@ public class SalesOrderService {
 	// @Path("/saveAndClose/{id:[0-9][0-9]*}")
 	// @Consumes("application/xml")
 	public SalesOrder saveAndClose(SalesOrder entity) {
+		
 		Entity<SalesOrder> ent = Entity.entity(entity, media);
 		return target().path(SAVE_AND_CLOSE_PATH + entity.getId())
 				.request(media).put(ent, SalesOrder.class);

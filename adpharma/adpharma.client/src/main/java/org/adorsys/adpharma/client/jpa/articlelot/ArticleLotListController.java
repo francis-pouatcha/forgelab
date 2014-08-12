@@ -29,7 +29,12 @@ import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -46,6 +51,7 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -91,8 +97,11 @@ public class ArticleLotListController implements EntityController
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
 	@Inject
+	private DeliveryItemSearchService deliveryItemSearchService ;
+
+	@Inject
 	private ArticleLotRegistration registration;
-	
+
 	@Inject
 	@Bundle({ CrudKeys.class,DeliveryItem.class})
 	private ResourceBundle resourceBundle;
@@ -117,18 +126,49 @@ public class ArticleLotListController implements EntityController
 		});
 
 		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
-				String textInput = Dialogs.create().message("Quantite : ").showTextInput();
+			
 				try {
-					Long valueOf = Long.valueOf(textInput);
-					exportDeliveryToXls(valueOf.intValue());
+					ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+					if(selectedItem!=null){
+						DeliveryItemSearchInput itemSearchInput = new DeliveryItemSearchInput();
+						itemSearchInput.getEntity().setMainPic(selectedItem.getMainPic());
+						ArticleLotArticle article = selectedItem.getArticle();
+						DeliveryItemArticle deliveryItemArticle = new DeliveryItemArticle();
+						PropertyReader.copy(selectedItem.getArticle(), deliveryItemArticle);
+						itemSearchInput.getEntity().setArticle(deliveryItemArticle);
+						itemSearchInput.setMax(100);
+						itemSearchInput.getFieldNames().add("article") ;
+						itemSearchInput.getFieldNames().add("mainPic") ;
+						deliveryItemSearchService.setSearchInputs(itemSearchInput).start();
+					}
+
 				} catch (Exception e) {
 				}
-				
+
 			}
 		});
+		deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
+				DeliveryItemSearchResult searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				if(!searchResult.getResultList().isEmpty()){
+					DeliveryItem deliveryItem = searchResult.getResultList().iterator().next();
+					String textInput = Dialogs.create().message("Quantite : ").showTextInput();
+					Long valueOf = Long.valueOf(textInput);
+					exportDeliveryToXls(valueOf.intValue(),deliveryItem);
+				}
+
+			}
+		});
+		deliveryItemSearchService.setOnFailed(callFailedEventHandler);
+
 		listView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -136,7 +176,7 @@ public class ArticleLotListController implements EntityController
 				if(KeyCode.ENTER.equals(event.getCode())){
 					handleSearchAction();
 				}
-				
+
 			}
 		});
 		listView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -146,7 +186,7 @@ public class ArticleLotListController implements EntityController
 				if(KeyCode.ENTER.equals(event.getCode())){
 					handleSearchAction();
 				}
-				
+
 			}
 		});
 		listView.getUpdateLotButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -204,10 +244,10 @@ public class ArticleLotListController implements EntityController
 				ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
 					if(BigDecimal.ZERO.compareTo(selectedItem.getStockQuantity())<0){
-					ArticleLotDetailsManager lotDetailsManager = new ArticleLotDetailsManager();
-					lotDetailsManager.setLotToDetails(selectedItem);
-					lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
-					detailscreateRequestedEvent.fire(lotDetailsManager);
+						ArticleLotDetailsManager lotDetailsManager = new ArticleLotDetailsManager();
+						lotDetailsManager.setLotToDetails(selectedItem);
+						lotDetailsManager.setLotQty(selectedItem.getStockQuantity());
+						detailscreateRequestedEvent.fire(lotDetailsManager);
 					}else {
 						Dialogs.create().message("imppossible de Decomposer Quantite insuffisante !").showError();
 					}
@@ -310,7 +350,7 @@ public class ArticleLotListController implements EntityController
 		listView.getPagination().setCurrentPageIndex(pageIndex);
 
 	}
-	
+
 	public void handleSearchAction(){
 		searchInput.setFieldNames(readSearchAttributes());
 		searchInput.setMax(30);
@@ -374,20 +414,21 @@ public class ArticleLotListController implements EntityController
 	public void handleArticleLotMovetToTrashDone(@Observes  @ArticlelotMovedDoneRequestEvent ArticleLot articleLot){
 		int indexOf = listView.getDataList().getItems().indexOf(articleLot);
 		handleEditDoneEvent(articleLot);
-//		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
-		
+		//		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
+
 	}
 
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
-	
-	@SuppressWarnings("resource")
-	public void exportDeliveryToXls(int qty){
-		ArticleLot item = listView.getDataList().getSelectionModel().getSelectedItem();
-		String supllierName = "ALL"; 
 
-		
+	@SuppressWarnings("resource")
+	public void exportDeliveryToXls(int qty,DeliveryItem item){
+		String supllierName = item.getDelivery().getSupplier().getName();
+		if(StringUtils.isNotBlank(supllierName))
+			if(supllierName.length()>4)
+				supllierName = StringUtils.substring(supllierName, 0, 3);
+
 
 		HSSFWorkbook deleveryXls = new HSSFWorkbook();
 		int rownum = 0 ;
@@ -397,49 +438,60 @@ public class ArticleLotListController implements EntityController
 		HSSFRow header = sheet.createRow(rownum++);
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_internalPic_description.title"));
+		cell.setCellValue("cipm");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_articleName_description.title"));
+		cell.setCellValue("designation");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue(resourceBundle.getString("DeliveryItem_salesPricePU_description.title"));
+		cell.setCellValue("pv");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue("Fournisseur");
+		cell.setCellValue("fournisseur");
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("date");
 
 		if( item!=null&&sheet!=null){
 
-				for (int i = 0; i < qty; i++) {
-					cellnum = 0 ;
-					HSSFRow row = sheet.createRow(rownum++);
+			for (int i = 0; i < qty; i++) {
+				cellnum = 0 ;
+				HSSFRow row = sheet.createRow(rownum++);
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getInternalPic());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getArticle().getArticleName());
+				//
+				//					cell = row.createCell(cellnum++);
+				//					cell.setCellValue(item.getStockQuantity().doubleValue());
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getSalesPricePU().toBigInteger()+"F");
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(supllierName);
+				
+				if(item.getCreationDate()!=null){
 					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getInternalPic());
-
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getArticle().getArticleName());
-					//
-					//					cell = row.createCell(cellnum++);
-					//					cell.setCellValue(item.getStockQuantity().doubleValue());
-
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getSalesPricePU().toBigInteger()+" CFA");
-
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(supllierName);
-				}
-
-
-
+					cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"ddMMyy"));
+					}else {
+						cell = row.createCell(cellnum++);
+						cell.setCellValue("");
+					}
 			}
-			try {
-				File file = new File("delivery.xls");
-				FileOutputStream outputStream = new FileOutputStream(file);
-				deleveryXls.write(outputStream);
-				outputStream.close();
-				Desktop.getDesktop().open(file);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
+
+
 		}
+		try {
+			File file = new File("delivery.xls");
+			FileOutputStream outputStream = new FileOutputStream(file);
+			deleveryXls.write(outputStream);
+			outputStream.close();
+			Desktop.getDesktop().open(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

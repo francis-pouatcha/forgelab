@@ -30,7 +30,7 @@ public class DisbursementProcessService extends Service<Disbursement>{
 	         {
 	            if (model == null)
 	               return null;
-	            return remoteService.processCashOut(model);
+	            return remoteService.create(model);
 	         }
 	      };
 	   }

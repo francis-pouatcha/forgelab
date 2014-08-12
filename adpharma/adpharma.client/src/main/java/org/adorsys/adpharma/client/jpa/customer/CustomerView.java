@@ -47,236 +47,240 @@ import org.adorsys.adpharma.client.jpa.customertype.CustomerTypeListCellFatory;
 public class CustomerView extends AbstractForm<Customer>
 {
 
-   private TextField firstName;
+	private TextField firstName;
 
-   private TextField lastName;
+	private TextField societe;
 
-   private TextField fullName;
+	private TextField lastName;
 
-   private TextField landLinePhone;
+	private TextField fullName;
 
-   private TextField mobile;
+	private TextField landLinePhone;
 
-   private TextField fax;
+	private TextField mobile;
 
-   private TextField email;
+	private TextField fax;
 
-   private CheckBox creditAuthorized;
+	private TextField email;
 
-   private CheckBox discountAuthorized;
+	private CheckBox creditAuthorized;
 
-   private TextField serialNumber;
+	private CheckBox discountAuthorized;
 
-   private ComboBox<Gender> gender;
+	private TextField serialNumber;
 
-   private ComboBox<CustomerType> customerType;
+	private ComboBox<Gender> gender;
 
-   private BigDecimalField totalCreditLine;
+	private ComboBox<CustomerType> customerType;
 
-   private BigDecimalField totalDebt;
+	private BigDecimalField totalCreditLine;
 
-   private CalendarTextField birthDate;
+	private BigDecimalField totalDebt;
 
-   @Inject
-   private CustomerEmployerForm customerEmployerForm;
-   @Inject
-   private CustomerEmployerSelection customerEmployerSelection;
+	private CalendarTextField birthDate;
 
-   @Inject
-   private CustomerCustomerCategoryForm customerCustomerCategoryForm;
-   @Inject
-   private CustomerCustomerCategorySelection customerCustomerCategorySelection;
+	@Inject
+	private CustomerEmployerForm customerEmployerForm;
+	@Inject
+	private CustomerEmployerSelection customerEmployerSelection;
 
-   @Inject
-   @Bundle({ CrudKeys.class, Customer.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	private CustomerCustomerCategoryForm customerCustomerCategoryForm;
+	@Inject
+	private CustomerCustomerCategorySelection customerCustomerCategorySelection;
 
-   @Inject
-   @Bundle(Gender.class)
-   private ResourceBundle genderBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, Customer.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   private GenderConverter genderConverter;
+	@Inject
+	@Bundle(Gender.class)
+	private ResourceBundle genderBundle;
 
-   @Inject
-   private GenderListCellFatory genderListCellFatory;
-   @Inject
-   @Bundle(CustomerType.class)
-   private ResourceBundle customerTypeBundle;
+	@Inject
+	private GenderConverter genderConverter;
 
-   @Inject
-   private CustomerTypeConverter customerTypeConverter;
+	@Inject
+	private GenderListCellFatory genderListCellFatory;
+	@Inject
+	@Bundle(CustomerType.class)
+	private ResourceBundle customerTypeBundle;
 
-   @Inject
-   private CustomerTypeListCellFatory customerTypeListCellFatory;
+	@Inject
+	private CustomerTypeConverter customerTypeConverter;
 
-   @Inject
-   private Locale locale;
+	@Inject
+	private CustomerTypeListCellFatory customerTypeListCellFatory;
 
-   @Inject
-   private TextInputControlValidator textInputControlValidator;
+	@Inject
+	private Locale locale;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      LazyViewBuilder viewBuilder = new LazyViewBuilder();
-      firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
-      lastName = viewBuilder.addTextField("Customer_lastName_description.title", "lastName", resourceBundle);
-      fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
-      landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
-      mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
-      fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
-      email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
-      creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
-      discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
-      serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle);
-      gender = viewBuilder.addComboBox("Customer_gender_description.title", "gender", resourceBundle, Gender.values());
-      customerType = viewBuilder.addComboBox("Customer_customerType_description.title", "customerType", resourceBundle, CustomerType.values());
-      totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
-      totalDebt = viewBuilder.addBigDecimalField("Customer_totalDebt_description.title", "totalDebt", resourceBundle, NumberType.CURRENCY, locale);
-      birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
-//      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
-//      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerSelection, ViewModel.READ_WRITE);
-//      viewBuilder.addTitlePane("Customer_customerCategory_description.title", resourceBundle);
-//      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategoryForm, ViewModel.READ_ONLY);
-      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategorySelection, ViewModel.READ_WRITE);
+	@Inject
+	private TextInputControlValidator textInputControlValidator;
 
-      ComboBoxInitializer.initialize(gender, genderConverter, genderListCellFatory, genderBundle);
-      ComboBoxInitializer.initialize(customerType, customerTypeConverter, customerTypeListCellFatory, customerTypeBundle);
+	@PostConstruct
+	public void postConstruct()
+	{
+		LazyViewBuilder viewBuilder = new LazyViewBuilder();
+		firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
+		lastName = viewBuilder.addTextField("Customer_lastName_description.title", "lastName", resourceBundle);
+		fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
+		landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
+		mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
+		fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
+		email = viewBuilder.addTextField("Customer_email_description.title", "email", resourceBundle);
+		creditAuthorized = viewBuilder.addCheckBox("Customer_creditAuthorized_description.title", "creditAuthorized", resourceBundle);
+		discountAuthorized = viewBuilder.addCheckBox("Customer_discountAuthorized_description.title", "discountAuthorized", resourceBundle);
+		serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle);
+		gender = viewBuilder.addComboBox("Customer_gender_description.title", "gender", resourceBundle, Gender.values());
+		customerType = viewBuilder.addComboBox("Customer_customerType_description.title", "customerType", resourceBundle, CustomerType.values());
+		totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
+		totalDebt = viewBuilder.addBigDecimalField("Customer_totalDebt_description.title", "totalDebt", resourceBundle, NumberType.CURRENCY, locale);
+		birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
+		//      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
+		societe = viewBuilder.addTextField("Customer_societe_description.title", "societe", resourceBundle);
+		//      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerForm, ViewModel.READ_ONLY);
+		//      viewBuilder.addSubForm("Customer_employer_description.title", "employer", resourceBundle, customerEmployerSelection);
+		//      viewBuilder.addTitlePane("Customer_customerCategory_description.title", resourceBundle);
+		//      viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategoryForm, ViewModel.READ_ONLY);
+		viewBuilder.addSubForm("Customer_customerCategory_description.title", "customerCategory", resourceBundle, customerCustomerCategorySelection, ViewModel.READ_WRITE);
 
-      gridRows = viewBuilder.toRows();
-   }
+		ComboBoxInitializer.initialize(gender, genderConverter, genderListCellFatory, genderBundle);
+		ComboBoxInitializer.initialize(customerType, customerTypeConverter, customerTypeListCellFatory, customerTypeBundle);
 
-   public void addValidators()
-   {
-      lastName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, lastName, Customer.class, "lastName", resourceBundle));
-      fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, fullName, Customer.class, "fullName", resourceBundle));
-   }
+		gridRows = viewBuilder.toRows();
+	}
 
-   public Set<ConstraintViolation<Customer>> validate(Customer model)
-   {
-      Set<ConstraintViolation<Customer>> violations = new HashSet<ConstraintViolation<Customer>>();
-      violations.addAll(textInputControlValidator.validate(lastName, Customer.class, "lastName", resourceBundle));
-      violations.addAll(textInputControlValidator.validate(fullName, Customer.class, "fullName", resourceBundle));
-      return violations;
-   }
+	public void addValidators()
+	{
+		lastName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, lastName, Customer.class, "lastName", resourceBundle));
+		fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, fullName, Customer.class, "fullName", resourceBundle));
+	}
 
-   public void bind(Customer model)
-   {
-      firstName.textProperty().bindBidirectional(model.firstNameProperty());
-      lastName.textProperty().bindBidirectional(model.lastNameProperty());
-      fullName.textProperty().bindBidirectional(model.fullNameProperty());
-      landLinePhone.textProperty().bindBidirectional(model.landLinePhoneProperty());
-      mobile.textProperty().bindBidirectional(model.mobileProperty());
-      fax.textProperty().bindBidirectional(model.faxProperty());
-      email.textProperty().bindBidirectional(model.emailProperty());
-      creditAuthorized.textProperty().bindBidirectional(model.creditAuthorizedProperty(), new BooleanStringConverter());
-      discountAuthorized.textProperty().bindBidirectional(model.discountAuthorizedProperty(), new BooleanStringConverter());
-      serialNumber.textProperty().bindBidirectional(model.serialNumberProperty());
-      gender.valueProperty().bindBidirectional(model.genderProperty());
-      customerType.valueProperty().bindBidirectional(model.customerTypeProperty());
-      totalCreditLine.numberProperty().bindBidirectional(model.totalCreditLineProperty());
-      totalDebt.numberProperty().bindBidirectional(model.totalDebtProperty());
-      birthDate.calendarProperty().bindBidirectional(model.birthDateProperty());
-      customerEmployerForm.bind(model);
-      customerEmployerSelection.bind(model);
-      customerCustomerCategoryForm.bind(model);
-      customerCustomerCategorySelection.bind(model);
-   }
+	public Set<ConstraintViolation<Customer>> validate(Customer model)
+	{
+		Set<ConstraintViolation<Customer>> violations = new HashSet<ConstraintViolation<Customer>>();
+		violations.addAll(textInputControlValidator.validate(lastName, Customer.class, "lastName", resourceBundle));
+		violations.addAll(textInputControlValidator.validate(fullName, Customer.class, "fullName", resourceBundle));
+		return violations;
+	}
 
-   public TextField getFirstName()
-   {
-      return firstName;
-   }
+	public void bind(Customer model)
+	{
+		firstName.textProperty().bindBidirectional(model.firstNameProperty());
+		societe.textProperty().bindBidirectional(model.societeProperty());
+		lastName.textProperty().bindBidirectional(model.lastNameProperty());
+		fullName.textProperty().bindBidirectional(model.fullNameProperty());
+		landLinePhone.textProperty().bindBidirectional(model.landLinePhoneProperty());
+		mobile.textProperty().bindBidirectional(model.mobileProperty());
+		fax.textProperty().bindBidirectional(model.faxProperty());
+		email.textProperty().bindBidirectional(model.emailProperty());
+		creditAuthorized.textProperty().bindBidirectional(model.creditAuthorizedProperty(), new BooleanStringConverter());
+		discountAuthorized.textProperty().bindBidirectional(model.discountAuthorizedProperty(), new BooleanStringConverter());
+		serialNumber.textProperty().bindBidirectional(model.serialNumberProperty());
+		gender.valueProperty().bindBidirectional(model.genderProperty());
+		customerType.valueProperty().bindBidirectional(model.customerTypeProperty());
+		totalCreditLine.numberProperty().bindBidirectional(model.totalCreditLineProperty());
+		totalDebt.numberProperty().bindBidirectional(model.totalDebtProperty());
+		birthDate.calendarProperty().bindBidirectional(model.birthDateProperty());
+		customerEmployerForm.bind(model);
+		customerEmployerSelection.bind(model);
+		customerCustomerCategoryForm.bind(model);
+		customerCustomerCategorySelection.bind(model);
+	}
 
-   public TextField getLastName()
-   {
-      return lastName;
-   }
+	public TextField getFirstName()
+	{
+		return firstName;
+	}
 
-   public TextField getFullName()
-   {
-      return fullName;
-   }
+	public TextField getLastName()
+	{
+		return lastName;
+	}
 
-   public TextField getLandLinePhone()
-   {
-      return landLinePhone;
-   }
+	public TextField getFullName()
+	{
+		return fullName;
+	}
 
-   public TextField getMobile()
-   {
-      return mobile;
-   }
+	public TextField getLandLinePhone()
+	{
+		return landLinePhone;
+	}
 
-   public TextField getFax()
-   {
-      return fax;
-   }
+	public TextField getMobile()
+	{
+		return mobile;
+	}
 
-   public TextField getEmail()
-   {
-      return email;
-   }
+	public TextField getFax()
+	{
+		return fax;
+	}
 
-   public CheckBox getCreditAuthorized()
-   {
-      return creditAuthorized;
-   }
+	public TextField getEmail()
+	{
+		return email;
+	}
 
-   public CheckBox getDiscountAuthorized()
-   {
-      return discountAuthorized;
-   }
+	public CheckBox getCreditAuthorized()
+	{
+		return creditAuthorized;
+	}
 
-   public TextField getSerialNumber()
-   {
-      return serialNumber;
-   }
+	public CheckBox getDiscountAuthorized()
+	{
+		return discountAuthorized;
+	}
 
-   public ComboBox<Gender> getGender()
-   {
-      return gender;
-   }
+	public TextField getSerialNumber()
+	{
+		return serialNumber;
+	}
 
-   public ComboBox<CustomerType> getCustomerType()
-   {
-      return customerType;
-   }
+	public ComboBox<Gender> getGender()
+	{
+		return gender;
+	}
 
-   public BigDecimalField getTotalCreditLine()
-   {
-      return totalCreditLine;
-   }
+	public ComboBox<CustomerType> getCustomerType()
+	{
+		return customerType;
+	}
 
-   public BigDecimalField getTotalDebt()
-   {
-      return totalDebt;
-   }
+	public BigDecimalField getTotalCreditLine()
+	{
+		return totalCreditLine;
+	}
 
-   public CalendarTextField getBirthDate()
-   {
-      return birthDate;
-   }
+	public BigDecimalField getTotalDebt()
+	{
+		return totalDebt;
+	}
 
-   public CustomerEmployerForm getCustomerEmployerForm()
-   {
-      return customerEmployerForm;
-   }
+	public CalendarTextField getBirthDate()
+	{
+		return birthDate;
+	}
 
-   public CustomerEmployerSelection getCustomerEmployerSelection()
-   {
-      return customerEmployerSelection;
-   }
+	public CustomerEmployerForm getCustomerEmployerForm()
+	{
+		return customerEmployerForm;
+	}
 
-   public CustomerCustomerCategoryForm getCustomerCustomerCategoryForm()
-   {
-      return customerCustomerCategoryForm;
-   }
+	public CustomerEmployerSelection getCustomerEmployerSelection()
+	{
+		return customerEmployerSelection;
+	}
 
-   public CustomerCustomerCategorySelection getCustomerCustomerCategorySelection()
-   {
-      return customerCustomerCategorySelection;
-   }
+	public CustomerCustomerCategoryForm getCustomerCustomerCategoryForm()
+	{
+		return customerCustomerCategoryForm;
+	}
+
+	public CustomerCustomerCategorySelection getCustomerCustomerCategorySelection()
+	{
+		return customerCustomerCategorySelection;
+	}
 }

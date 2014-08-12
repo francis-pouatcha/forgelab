@@ -13,6 +13,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
@@ -80,7 +83,7 @@ public class CashDrawerListController implements EntityController
 
 	@Inject
 	private CashDrawerSearchInput searchInput ;
-	
+
 	@Inject
 	@ModalEntitySearchRequestedEvent
 	private Event<PaymentSearchInput> paymentSearchInputRequestEvent;
@@ -104,7 +107,8 @@ public class CashDrawerListController implements EntityController
 	@Inject
 	private CashDrawerCloseService cashDrawerCloseService;
 	@Inject
-	private ServiceCallFailedEventHandler cashDrawerCloseServiceFailedHandler;
+	private ServiceCallFailedEventHandler serviceFailedHandler;
+
 
 
 	@PostConstruct
@@ -122,9 +126,7 @@ public class CashDrawerListController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(30);
-				cashDrawerSearchService.setSearchInputs(searchInput).start();
+				handleSearchAction();
 			}
 				});
 		cashDrawerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -135,19 +137,13 @@ public class CashDrawerListController implements EntityController
 				searchResult = s.getValue();
 				event.consume();
 				s.reset();
+				System.out.println(searchResult.getResultList());
 				handleSearchResult(searchResult);
 
 			}
 		});
 
-		cashDrawerSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				CashDrawerSearchService s = (CashDrawerSearchService) event.getSource();
-				s.reset();				
-			}
-		});
+		cashDrawerSearchService.setOnFailed(serviceFailedHandler);
 		listView.getCashier().armedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
@@ -168,11 +164,11 @@ public class CashDrawerListController implements EntityController
 			{
 				CashDrawer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-				PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
-				paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(selectedItem));
-				paymentSearchInput.setMax(-1);
-				paymentSearchInput.getFieldNames().add("cashDrawer");
-				paymentSearchInputRequestEvent.fire(paymentSearchInput);
+					PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
+					paymentSearchInput.getEntity().setCashDrawer(new PaymentCashDrawer(selectedItem));
+					paymentSearchInput.setMax(-1);
+					paymentSearchInput.getFieldNames().add("cashDrawer");
+					paymentSearchInputRequestEvent.fire(paymentSearchInput);
 				}
 			}
 		});
@@ -185,6 +181,8 @@ public class CashDrawerListController implements EntityController
 				event.consume();
 				s.reset();
 				List<Login> resultList = result.getResultList();
+				ArrayList<CashDrawerCashier> arrayList = new ArrayList<CashDrawerCashier>();
+
 				resultList.sort(new Comparator<Login>() {
 
 					@Override
@@ -194,8 +192,11 @@ public class CashDrawerListController implements EntityController
 					}
 				});
 				for (Login login : resultList) {
-					listView.getCashier().getItems().add(new CashDrawerCashier(login));
+					arrayList.add(new CashDrawerCashier(login));
 				}
+				arrayList.add(0,new CashDrawerCashier(new Login()));
+				listView.getCashier().getItems().clear();
+				listView.getCashier().getItems().addAll(arrayList);
 
 			}
 		});
@@ -223,7 +224,7 @@ public class CashDrawerListController implements EntityController
 			}
 		});
 
-		cashDrawerCloseServiceFailedHandler.setErrorDisplay(new ErrorDisplay() {
+		serviceFailedHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
 			protected void showError(Throwable exception) {
@@ -232,7 +233,7 @@ public class CashDrawerListController implements EntityController
 			}
 		});
 
-		cashDrawerCloseService.setOnFailed(cashDrawerCloseServiceFailedHandler);
+		cashDrawerCloseService.setOnFailed(serviceFailedHandler);
 		cashDrawerCloseService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -241,6 +242,17 @@ public class CashDrawerListController implements EntityController
 				CashDrawer searchResult = s.getValue();
 				event.consume();
 				s.reset();
+
+			}
+		});
+
+		listView.getCashDrawerNumber().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(KeyCode.ENTER.equals(event.getCode())){
+					handleSearchAction();
+				}
 
 			}
 		});
@@ -300,6 +312,12 @@ public class CashDrawerListController implements EntityController
 				});
 	}
 
+	public void handleSearchAction(){
+		searchInput.setFieldNames(readSearchAttributes());
+		searchInput.setMax(30);
+		cashDrawerSearchService.setSearchInputs(searchInput).start();
+	}
+
 	@Override
 	public void display(Pane parent)
 	{
@@ -329,6 +347,13 @@ public class CashDrawerListController implements EntityController
 		List<CashDrawer> entities = searchResult.getResultList();
 		if (entities == null)
 			entities = new ArrayList<CashDrawer>();
+		entities.sort(new Comparator<CashDrawer>() {
+
+			@Override
+			public int compare(CashDrawer o1, CashDrawer o2) {
+				return o1.getOpeningDate().compareTo(o2.getOpeningDate());
+			}
+		});
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(entities);
 		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;

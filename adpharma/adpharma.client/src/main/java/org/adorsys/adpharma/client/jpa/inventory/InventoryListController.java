@@ -26,6 +26,11 @@ import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
+import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -40,6 +45,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
@@ -86,9 +92,14 @@ public class InventoryListController implements EntityController
 
 	@Inject
 	private InventorySearchInput searchInput ;
+
+	@Inject
+	private SectionSearchService sectionSearchService ;
+
 	@Inject
 	@PrintRequestedEvent
 	private Event<InventoryRepportData> printRequest;
+
 
 
 	@PostConstruct
@@ -96,8 +107,9 @@ public class InventoryListController implements EntityController
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getSearchButton().disableProperty().bind(inventorySearchService.runningProperty());
-		listView.getSearchButton().disableProperty().bind(itemSearchService.runningProperty());
-
+		listView.getRemoveButton().disableProperty().bind(inventoryRemoveService.runningProperty());
+		listView.bind(searchInput);
+		searchInput.setMax(50);
 		listView.getDataList().getSelectionModel().selectedItemProperty()
 		.addListener(new ChangeListener<Inventory>()
 				{
@@ -176,7 +188,7 @@ public class InventoryListController implements EntityController
 				source.reset();
 				event.consume();
 				listView.getDataListItem().getItems().clear();
-				listView.getDataList().getItems().remove(result);
+				listView.getDataList().getItems().clear();
 
 
 			}
@@ -202,7 +214,8 @@ public class InventoryListController implements EntityController
 				{
 			@Override
 			public void handle(ActionEvent e)
-			{
+			{ 
+				searchInput.setFieldNames(readSearchAttributes());
 				inventorySearchService.setSearchInputs(searchInput).start();
 			}
 				});
@@ -221,6 +234,28 @@ public class InventoryListController implements EntityController
 			}
 		});
 		inventorySearchService.setOnFailed(callFailedEventHandler);
+		
+		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SectionSearchService source = (SectionSearchService) event.getSource();
+				SectionSearchResult result = source.getValue();
+				List<Section> resultList = result.getResultList();
+				listView.getInventorySection().getItems().clear();
+				for (Section section : resultList) {
+					listView.getInventorySection().getItems().add( new InventorySection(section));
+				}
+				InventorySection inventorySection = new InventorySection();
+				inventorySection.setName("TOUS LES RAYONS ");
+				listView.getInventorySection().getItems().add(0,inventorySection);
+				source.reset();
+				event.consume();
+
+
+			}
+		});
+		sectionSearchService.setOnFailed(callFailedEventHandler);
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -265,6 +300,7 @@ public class InventoryListController implements EntityController
 		{
 			children.add(rootPane);
 		}
+		sectionSearchService.setSearchInputs(new SectionSearchInput()).start();
 	}
 
 	@Override
@@ -336,5 +372,18 @@ public class InventoryListController implements EntityController
 
 	public void reset() {
 		listView.getDataList().getItems().clear();
+	}
+	
+	public List<String> readSearchAttributes(){
+		ArrayList<String> seachAttributes = new ArrayList<String>() ;
+		String inventoryNumber = searchInput.getEntity().getInventoryNumber();
+		DocumentProcessingState inventoryStatus = searchInput.getEntity().getInventoryStatus();
+		InventorySection section = searchInput.getEntity().getSection();
+
+		if(StringUtils.isNotBlank(inventoryNumber)) seachAttributes.add("inventoryNumber");
+		if(inventoryStatus!=null) seachAttributes.add("inventoryStatus");
+		if(section!=null&&section.getId()!=null) seachAttributes.add("section") ;
+		return seachAttributes;
+
 	}
 }

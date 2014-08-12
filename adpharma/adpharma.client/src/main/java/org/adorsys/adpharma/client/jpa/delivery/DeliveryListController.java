@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -38,6 +40,7 @@ import net.sf.dynamicreports.report.exception.DRException;
 
 import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
@@ -64,6 +67,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
@@ -146,6 +150,7 @@ public class DeliveryListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getUpdateButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.bind(searchInput);
+		searchInput.setMax(30);
 		listView.getYearList().getItems().setAll(DateHelper.getYears());
 
 		chartDataSearchServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
@@ -268,7 +273,6 @@ public class DeliveryListController implements EntityController
 			public void handle(ActionEvent e)
 			{							
 				searchInput.setFieldNames(readSearchAttributes());
-				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
 
 			}
@@ -453,7 +457,7 @@ public class DeliveryListController implements EntityController
 			entities = new ArrayList<Delivery>();
 		listView.getDataList().getItems().clear();
 		listView.getDataList().getItems().addAll(entities);
-		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 50;
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 100;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
@@ -579,9 +583,6 @@ public class DeliveryListController implements EntityController
 						cell.setCellValue("");
 					}
 				}
-
-
-
 			}
 			try {
 				File file = new File("delivery.xls");
@@ -592,6 +593,14 @@ public class DeliveryListController implements EntityController
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+			listView.getUpdateButton().setVisible(true);
+		}else {
+			listView.getUpdateButton().setVisible(false);
 		}
 	}
 }

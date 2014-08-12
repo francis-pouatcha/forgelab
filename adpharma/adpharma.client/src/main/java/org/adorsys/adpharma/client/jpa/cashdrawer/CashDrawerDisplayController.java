@@ -201,6 +201,9 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<CashDrawer> cashDrawerSearchRequestEvent;
+	
+	@Inject
+	private SalesOrderSearchService salesOrderPaymentChecker ;
 
 	@Inject
 	@CloseOpenTabRequestEvent
@@ -446,6 +449,8 @@ public class CashDrawerDisplayController implements EntityController
 					}
 				});
 				displayView.getInvoicesDataList().getItems().setAll(resultList);
+				proccessingOrder.clearInvoices();
+				deactivate();
 
 			}
 		});
@@ -682,7 +687,7 @@ public class CashDrawerDisplayController implements EntityController
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
 				if(KeyCode.SPACE.equals(code))
-					doPayement();
+					handlePayment();
 				
 			}
 		});
@@ -897,7 +902,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getCashButon().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				doPayement();
+				handlePayment();
 			}
 		});
 		
@@ -907,11 +912,33 @@ public class CashDrawerDisplayController implements EntityController
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
-					processPayment();
+					handlePayment();
 				}
 
 			}
 		});
+		
+		salesOrderPaymentChecker.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderSearchService s = (SalesOrderSearchService) event.getSource();
+				SalesOrderSearchResult result = s.getValue();
+				event.consume();
+				s.reset();
+				if(!result.getResultList().isEmpty()){
+					SalesOrder salesOrder = result.getResultList().iterator().next();
+					if(!salesOrder.getCashed()){
+						doPayement();
+					}else {
+						Dialogs.create().message("Cette Commande a deja ete encaissee par Une autre caisse ou par vous !").showError();
+						handleSalesOrderSearchEvent();
+					}
+				}
+
+			}
+		});
+		
+		salesOrderPaymentChecker.setOnFailed(serviceFailedHandler);
 
 		paymentCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -921,13 +948,14 @@ public class CashDrawerDisplayController implements EntityController
 				PaymentId paymentId = new PaymentId(payment.getId());
 				event.consume();
 				s.reset();
-				// Print receipt here.
-				printPaymentReceiptRequestedEvent.fire(paymentId);
+				
 				displayView.getInvoicesDataList().getItems().remove(proccessingOrder);
 				PropertyReader.copy(new Payment(), payment);
 				PropertyReader.copy(new SalesOrder(), proccessingOrder);
 				proccessingOrder.clearInvoices();
 				deactivate();
+				// Print receipt here.
+				printPaymentReceiptRequestedEvent.fire(paymentId);
 
 			}
 		});
@@ -942,6 +970,14 @@ public class CashDrawerDisplayController implements EntityController
 		}else {
 			Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
 		}
+	}
+	
+	public void handlePayment(){
+		SalesOrderSearchInput salesOrderSearchInput = new SalesOrderSearchInput();
+		salesOrderSearchInput.setEntity(proccessingOrder);
+		salesOrderSearchInput.getFieldNames().add("id");
+		salesOrderSearchInput.getFieldNames().add("soNumber");
+		salesOrderPaymentChecker.setSearchInputs(salesOrderSearchInput).start();
 	}
 	public void processPayment(){
 		Payment payment = paymentManager.getPayment();
@@ -998,7 +1034,7 @@ public class CashDrawerDisplayController implements EntityController
 		displayView.getPaymentItemDataList().getItems().clear();
 		// print receipt???
 		displayView.getCashButon().setDisable(true);
-		displayView.getCashOutButton().setDisable(true);
+//		displayView.getCashOutButton().setDisable(true);
 	}
 
 	public void clearPaymentDataList(){

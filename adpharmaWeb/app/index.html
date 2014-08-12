@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adpharma" class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<title>AdpharmaWeb</title>
+		<meta name="description" content="description">
+		<meta name="author" content="DevOOPS">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="plugins/bootstrap/bootstrap.css" rel="stylesheet">
+		<link href="plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
+		<link href="plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+		<link href="plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+		<link href="plugins/xcharts/xcharts.min.css" rel="stylesheet">
+		<link href="plugins/select2/select2.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+                <link href="css/app.css" rel="stylesheet">
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
+				<script src="http://getbootstrap.com/docs-assets/js/respond.min.js"></script>
+		<![endif]-->
+	</head>
+<body>
+<!--Start Header-->
+<div id="screensaver">
+	<canvas id="canvas"></canvas>
+	<i class="fa fa-lock" id="screen_unlock"></i>
+</div>
+<div  id="modalbox">
+	<div class="devoops-modal">
+		<div class="devoops-modal-header">
+			<div class="modal-header-name">
+				<span>Basic table</span>
+			</div>
+			<div class="box-icons">
+				<a class="close-link">
+					<i class="fa fa-times"></i>
+				</a>
+			</div>
+		</div>
+		<div class="devoops-modal-inner">
+		</div>
+		<div class="devoops-modal-bottom">
+		</div>
+	</div>
+</div>
+<header  class="navbar">
+	<div class="container-fluid expanded-panel">
+		<div  class="row">
+			<div id="logo" class="col-xs-12 col-sm-2">
+				<a href="index.html">Adpharma-WEB</a>
+			</div>
+			<div id="top-panel" class="col-xs-12 col-sm-10">
+				<div class="row">
+					<div class="col-xs-8 col-sm-4">
+						<a href="#" class="show-sidebar">
+						  <i class="fa fa-bars"></i>
+						</a>
+						
+					</div>
+					<div class="col-xs-4 col-sm-8 top-panel-right">
+						<ul class="nav navbar-nav pull-right panel-menu">
+							
+							<li class="hidden-xs">
+								<a href="#/login" class="ajax-link">
+									<i class="fa fa-envelope"></i>
+									<span class="badge">7</span>
+								</a>
+							</li>
+							
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+<!--End Header-->
+<!--Start Container-->
+<div id="main" class="container-fluid">
+  <div ng-view></div>
+</div>
+	
+ <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="js/angular/angular.js"></script>
+  <script src="js/angular/ui-bootstrap-tpls-0.11.0.js"></script>
+  <script src="js/angular/angular-route.js"></script>
+  <script src="js/angular/angular-resource.js"></script>
+  <script src="js/angular/angular-cookies.js"></script>
+  <script src="js/angular/angular-sanitize.js"></script>
+  <script src="js/angular/angular-animate.js"></script>
+  
+  <script src="js/app.js"></script>
+  <script src="js/services/authorization.js"></script>
+  <script src="js/services/api.js"></script>
+  <script src="js/services/httpInterceptor.js"></script>
+  <script src="js/services/SalesOrderService.js"></script>
+  <script src="js/controller/SalesOrderEditController.js"></script>
+  <script src="js/controller/SalesOrderListController.js"></script>
+  <script src="js/controller/auth.js"></script>
+  <script src="js/filter/filters.js"></script>
+  <script src="js/directive/directives.js"></script>
+<!--End Container-->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--<script src="http://code.jquery.com/jquery.js"></script>-->
+
+<!-- All functions for this theme + document.ready processing -->
+</body>
+</html>

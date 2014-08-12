@@ -3,9 +3,12 @@ package org.adorsys.adpharma.client.jpa.insurrance;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -14,9 +17,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.javafx.crud.extensions.events.CreateModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -49,11 +56,36 @@ public class ModalInsurranceCreateController {
 
 	@Inject
 	private Insurrance insurrance ;
+	
+	@Inject 
+	@ModalEntitySearchRequestedEvent
+	private Event<CustomerSearchInput> modalCustomerSearchEvent;
 
 	@PostConstruct
 	public void postConstruct(){
 
 		createView.bind(insurrance);
+		
+//		createView.getInsurranceInsurerSelection().o.addListener(new ChangeListener<Boolean>() {
+//
+//			@Override
+//			public void changed(ObservableValue<? extends Boolean> observable,
+//					Boolean oldValue, Boolean newValue) {
+//				if(newValue)
+//					modalCustomerSearchEvent.fire(new CustomerSearchInput());
+//				
+//				
+//			}
+//		});
+		
+		createView.getInsurranceInsurerSelection().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				modalCustomerSearchEvent.fire(new CustomerSearchInput());
+				
+			}
+		});
 
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -88,7 +120,7 @@ public class ModalInsurranceCreateController {
 
 			@Override
 			public void handle(ActionEvent event) {
-				Set<ConstraintViolation<Insurrance>> contraintViolations = createView.getView().validate(insurrance);
+				Set<ConstraintViolation<Insurrance>> contraintViolations = createView.validate(insurrance);
 				if(contraintViolations.isEmpty()){
 					inssurancecreateService.setModel(insurrance).start();
 				}else {
@@ -100,7 +132,7 @@ public class ModalInsurranceCreateController {
 		});
 
 		//		add validators
-		createView.getView().addValidators();
+		createView.addValidators();
 
 		inssurancecreateService.setOnFailed(callFailedEventHandler);
 		inssurancecreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -125,5 +157,11 @@ public class ModalInsurranceCreateController {
 	private void handleInsuranceCreateRequestEvent(@Observes @ModalEntityCreateRequestedEvent Insurrance model){
 		PropertyReader.copy(model, insurrance);
 		createView.showDiaLog();
+	}
+	
+	private void handleInsurrerSearchDoneRequestEvent(@Observes @ModalEntitySearchDoneEvent Customer customer ){
+		if(customer!=null){
+			createView.getInsurranceInsurerSelection().setValue(new InsurranceInsurer(customer));
+		}
 	}
 }

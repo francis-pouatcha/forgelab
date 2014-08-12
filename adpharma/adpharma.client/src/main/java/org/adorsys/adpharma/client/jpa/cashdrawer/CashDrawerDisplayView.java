@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

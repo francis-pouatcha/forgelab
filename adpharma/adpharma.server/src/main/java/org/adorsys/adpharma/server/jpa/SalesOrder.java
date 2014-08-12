@@ -59,6 +59,10 @@ public class SalesOrder implements Serializable
 	@Column
 	@Description("SalesOrder_soNumber_description")
 	private String soNumber;
+	
+	@Column
+	@Description("SalesOrder_patientMatricle_description")
+	private String patientMatricle;
 
 	@Transient
 	@Description("SalesOrder_salesKey_description")
@@ -475,5 +479,13 @@ public class SalesOrder implements Serializable
 		return getAmountAfterTax();
 	}
 	public void setTotalRestToPay(BigDecimal totalRestToPay){}
+
+	public String getPatientMatricle() {
+		return patientMatricle;
+	}
+
+	public void setPatientMatricle(String patientMatricle) {
+		this.patientMatricle = patientMatricle;
+	}
 	
 }

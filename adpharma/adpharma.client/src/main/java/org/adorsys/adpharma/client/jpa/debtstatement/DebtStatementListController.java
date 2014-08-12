@@ -31,6 +31,8 @@ import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssoc;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocRemoveService;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchInput;
@@ -115,6 +117,9 @@ public class DebtStatementListController implements EntityController
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
+	
+	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService ;
 
 	@Inject
 	private SecurityUtil securityUtil ;
@@ -144,6 +149,7 @@ public class DebtStatementListController implements EntityController
 	{
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getRemoveButton().disableProperty().bind(removeService.runningProperty());
+		listView.getPrintButton().disableProperty().bind(customerInvoiceSearchService.runningProperty());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
@@ -316,6 +322,7 @@ public class DebtStatementListController implements EntityController
 				DebtStatement value = s.getValue();
 				event.consume();
 				s.reset();
+				handleRemovedEvent(value);
 				hideProgressEvent.fire(new Object());
 				listView.getDataListItem().getItems().clear();
 
@@ -383,8 +390,23 @@ public class DebtStatementListController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				Iterator<CustomerInvoice> iterator = listView.getDataListItem().getItems().iterator();
-				ArrayList<CustomerInvoice> invoices = Lists.newArrayList(iterator);
+				
+				if(selectedItem!=null){
+					customerInvoiceSearchService.setDebtStatement(selectedItem).start();
+				}
+			}
+		});
+		
+		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				CustomerInvoiceSearchResult value = s.getValue();
+				event.consume();
+				s.reset();
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				List<CustomerInvoice> invoices = value.getResultList();
 				Login login = securityUtil.getConnectedUser();
 				if(selectedItem!=null){
 					try {
@@ -397,8 +419,10 @@ public class DebtStatementListController implements EntityController
 						e.printStackTrace();
 					}
 				}
+				
 			}
 		});
+		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{

@@ -46,9 +46,11 @@ public class DeliverySupplierForm extends AbstractToOneAssociation<Delivery, Sup
 
    public void update(DeliverySupplier data)
    {
+	   if(data!=null){
       name.textProperty().set(data.nameProperty().get());
       fax.textProperty().set(data.faxProperty().get());
       email.textProperty().set(data.emailProperty().get());
+	   }
    }
 
    public TextField getName()

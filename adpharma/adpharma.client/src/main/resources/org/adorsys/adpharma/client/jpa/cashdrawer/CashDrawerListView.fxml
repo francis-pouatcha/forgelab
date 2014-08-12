@@ -11,12 +11,12 @@
 			<children>
 				<Button fx:id="printPaymentListButton" mnemonicParsing="false" prefWidth="140.0" text="Liste Des payments">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="closeButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Fermer la caisse">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="openButton" layoutX="23.0" layoutY="84.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="140.0" text="Ouvrir une caisse" />

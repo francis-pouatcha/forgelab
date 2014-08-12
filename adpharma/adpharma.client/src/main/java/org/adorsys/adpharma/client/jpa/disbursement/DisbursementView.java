@@ -26,12 +26,19 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValidator;
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 public class DisbursementView extends AbstractForm<Disbursement> {
 
 	private TextField raison;
 
+	private TextField receipt;
+
 	private BigDecimalField amount;
+
+	private BigDecimalField voucherAmount;
+
+	private TextField voucherNumber;
 
 	private CalendarTextField creatingDate;
 
@@ -76,19 +83,24 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
 		raison = viewBuilder.addTextField("Disbursement_raison_description.title", "raison", resourceBundle);
+		receipt= viewBuilder.addTextField("Disbursement_receipt_description.title", "receipt", resourceBundle);
 		amount = viewBuilder.addBigDecimalField("Disbursement_amount_description.title", "amount", resourceBundle, NumberType.CURRENCY, locale);
-		paymentMode = viewBuilder.addComboBox("Disbursement_paymentMode_description.title", "paymentMode", resourceBundle, PaymentMode.values());
-//		creatingDate = viewBuilder.addCalendarTextField("Disbursement_creationDate_description.title", "creationDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-//		viewBuilder.addTitlePane("Disbursement_cashier_description.title", resourceBundle);
-//		viewBuilder.addSubForm("Disbursement_cashier_description.title", "cashier", resourceBundle, cashOutCashierForm, ViewModel.READ_ONLY);
-//		viewBuilder.addSubForm("Disbursement_cashier_description.title", "cashier", resourceBundle, cashOutCashierSelection, ViewModel.READ_WRITE);
-//		viewBuilder.addTitlePane("Disbursement_cashDrawer_description.title", resourceBundle);
-//		viewBuilder.addSubForm("Disbursement_cashDrawer_description.title", "casDrawer", resourceBundle, cashOutCashDrawerForm, ViewModel.READ_ONLY);
-//		viewBuilder.addSubForm("Disbursement_cashDrawer_description.title", "casDrawer", resourceBundle, cashOutCashDrawerSelection, ViewModel.READ_WRITE);
-//		viewBuilder.addTitlePane("Disbursement_agency_description.title", resourceBundle);
-//		viewBuilder.addSubForm("Disbursement_agency_description.title", "agency", resourceBundle, cashOutAgencyForm, ViewModel.READ_ONLY);
-//		viewBuilder.addSubForm("Disbursement_agency_description.title", "agency", resourceBundle, cashOutAgencySelection, ViewModel.READ_WRITE);
+		paymentMode = viewBuilder.addComboBox("Disbursement_paymentMode_description.title", "paymentMode", resourceBundle, PaymentMode.valuesForDisbursement());
+		paymentMode.setPrefWidth(350d);
+		voucherNumber = viewBuilder.addTextField("Disbursement_voucherNumber_description.title", "raison", resourceBundle);
+		voucherAmount = viewBuilder.addBigDecimalField("Disbursement_voucherAmount_description.title", "amount", resourceBundle, NumberType.CURRENCY, locale);
 
+		//		creatingDate = viewBuilder.addCalendarTextField("Disbursement_creationDate_description.title", "creationDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		//		viewBuilder.addTitlePane("Disbursement_cashier_description.title", resourceBundle);
+		//		viewBuilder.addSubForm("Disbursement_cashier_description.title", "cashier", resourceBundle, cashOutCashierForm, ViewModel.READ_ONLY);
+		//		viewBuilder.addSubForm("Disbursement_cashier_description.title", "cashier", resourceBundle, cashOutCashierSelection, ViewModel.READ_WRITE);
+		//		viewBuilder.addTitlePane("Disbursement_cashDrawer_description.title", resourceBundle);
+		//		viewBuilder.addSubForm("Disbursement_cashDrawer_description.title", "casDrawer", resourceBundle, cashOutCashDrawerForm, ViewModel.READ_ONLY);
+		//		viewBuilder.addSubForm("Disbursement_cashDrawer_description.title", "casDrawer", resourceBundle, cashOutCashDrawerSelection, ViewModel.READ_WRITE);
+		//		viewBuilder.addTitlePane("Disbursement_agency_description.title", resourceBundle);
+		//		viewBuilder.addSubForm("Disbursement_agency_description.title", "agency", resourceBundle, cashOutAgencyForm, ViewModel.READ_ONLY);
+		//		viewBuilder.addSubForm("Disbursement_agency_description.title", "agency", resourceBundle, cashOutAgencySelection, ViewModel.READ_WRITE);
+		ComboBoxInitializer.initialize(paymentMode, paymentModeConverter, paymentModeListCellFatory, paymentModeBundle);
 		gridRows = viewBuilder.toRows();
 	}
 
@@ -109,19 +121,20 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 	public void bind(Disbursement model)
 	{
 		raison.textProperty().bindBidirectional(model.raisonProperty());
+		receipt.textProperty().bindBidirectional(model.receiptProperty());
 		amount.numberProperty().bindBidirectional(model.amountProperty());
-//		creatingDate.calendarProperty().bindBidirectional(model.creationDateProperty());
-		paymentMode.valueProperty().bind(model.paymentModeProperty());
-//		cashOutCashierForm.bind(model);
-//		cashOutCashierSelection.bind(model);
-//		cashOutAgencyForm.bind(model);
-//		cashOutAgencySelection.bind(model);
-//		cashOutCashDrawerForm.bind(model);
-//		cashOutCashDrawerSelection.bind(model);
+		voucherNumber.textProperty().bindBidirectional(model.voucherNumberProperty());
+		voucherAmount.numberProperty().bindBidirectional(model.voucherAmountProperty());
+		paymentMode.valueProperty().bindBidirectional(model.paymentModeProperty());
+
 	}
 
 	public TextField getRaison() {
 		return raison;
+	}
+	
+	public TextField getReceipt() {
+		return receipt;
 	}
 
 	public BigDecimalField getAmount() {
@@ -166,6 +179,30 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 
 	public ToOneAggreggationFieldValidator getToOneAggreggationFieldValidator() {
 		return toOneAggreggationFieldValidator;
+	}
+
+	public BigDecimalField getVoucherAmount() {
+		return voucherAmount;
+	}
+
+	public TextField getVoucherNumber() {
+		return voucherNumber;
+	}
+
+	public ComboBox<PaymentMode> getPaymentMode() {
+		return paymentMode;
+	}
+
+	public ResourceBundle getPaymentModeBundle() {
+		return paymentModeBundle;
+	}
+
+	public PaymentModeConverter getPaymentModeConverter() {
+		return paymentModeConverter;
+	}
+
+	public PaymentModeListCellFatory getPaymentModeListCellFatory() {
+		return paymentModeListCellFatory;
 	}
 
 

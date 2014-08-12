@@ -119,7 +119,8 @@ public class DeliveryItemController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(editController);
+//      displayedViews.add(editController);
+      displayedViews.add(searchController);
       displayedViews.add(listController);
       displayComponent();
    }
@@ -134,8 +135,8 @@ public class DeliveryItemController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
+      displayedViews.add(searchController);
       displayedViews.add(listController);
-      displayedViews.add(createController);
       displayComponent();
    }
 
@@ -154,7 +155,7 @@ public class DeliveryItemController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(editController);
+      displayedViews.add(searchController);
       displayedViews.add(listController);
 
       displayComponent();
@@ -164,7 +165,7 @@ public class DeliveryItemController extends DomainComponentController
    {
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-      displayedViews.add(editController);
+      displayedViews.add(searchController);
       displayedViews.add(listController);
 
       displayComponent();

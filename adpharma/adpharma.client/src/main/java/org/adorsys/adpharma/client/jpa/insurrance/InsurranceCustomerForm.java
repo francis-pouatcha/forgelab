@@ -73,6 +73,7 @@ public class InsurranceCustomerForm extends AbstractToOneAssociation<Insurrance,
 
    public void update(InsurranceCustomer data)
    {
+	   if(data!=null){
       fullName.textProperty().set(data.fullNameProperty().get());
       landLinePhone.textProperty().set(data.landLinePhoneProperty().get());
       mobile.textProperty().set(data.mobileProperty().get());
@@ -81,6 +82,7 @@ public class InsurranceCustomerForm extends AbstractToOneAssociation<Insurrance,
 //      creditAuthorized.textProperty().set(new BooleanStringConverter().toString(data.creditAuthorizedProperty().get()));
 //      discountAuthorized.textProperty().set(new BooleanStringConverter().toString(data.discountAuthorizedProperty().get()));
 //      birthDate.calendarProperty().set(data.birthDateProperty().get());
+   }
    }
 
    public TextField getFullName()

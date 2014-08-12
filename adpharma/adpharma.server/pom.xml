@@ -133,6 +133,7 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.1</version>
 		</dependency>
+	 
 	</dependencies>
 
 	<repositories>

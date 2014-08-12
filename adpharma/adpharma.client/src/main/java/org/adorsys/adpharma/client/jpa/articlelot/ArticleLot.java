@@ -149,7 +149,7 @@ public class ArticleLot implements Cloneable, Comparable<ArticleLot>
       return mainPic;
    }
 
-   @Size(min = 7, message = "ArticleLot_mainPic_Size_validation")
+   @Size(min = 1, message = "ArticleLot_mainPic_Size_validation")
    public String getMainPic()
    {
       return mainPicProperty().get();

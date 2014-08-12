@@ -124,6 +124,10 @@ public class Article implements Serializable
    @Column
    @Description("Article_maxStockQty_description")
    private Long maxStockQty;
+   
+   @Column
+   @Description("Article_minStockQty_description")
+   private Long minStockQty;
 
    @ManyToOne
    @Description("Article_agency_description")
@@ -397,8 +401,18 @@ public class Article implements Serializable
    {
       this.recordingDate = recordingDate;
    }
+   
+   
 
-   @Override
+   public Long getMinStockQty() {
+	return minStockQty;
+}
+
+public void setMinStockQty(Long minStockQty) {
+	this.minStockQty = minStockQty;
+}
+
+@Override
    public String toString()
    {
       String result = getClass().getSimpleName() + " ";

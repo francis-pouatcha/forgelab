@@ -212,6 +212,7 @@ public class CustomerEditController implements EntityController
          @Observes @EntityEditRequestedEvent Customer p)
    {
       PropertyReader.copy(p, displayedEntity);
+      handleOtherCustomerEdition(p);
    }
 
    /**
@@ -222,11 +223,19 @@ public class CustomerEditController implements EntityController
    {
       this.displayedEntity = model;
       editView.bind(this.displayedEntity);
+      handleOtherCustomerEdition(model);
    }
    
 	public void reset() {
 	     PropertyReader.copy(new Customer(), displayedEntity);
 	}
 
+	public void handleOtherCustomerEdition(Customer model){
+		if(model!=null && StringUtils.equalsIgnoreCase("000000001", model.getSerialNumber())){
+			editView.getView().getSerialNumber().setEditable(false);
+		}else {
+			editView.getView().getSerialNumber().setEditable(true);
+		}
+	}
 
 }

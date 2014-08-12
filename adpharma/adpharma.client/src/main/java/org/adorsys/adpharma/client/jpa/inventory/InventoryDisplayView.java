@@ -65,10 +65,10 @@ public class InventoryDisplayView
 
 	@FXML
 	private Button ordonnancierButton;
-	
+
 	@FXML
 	private Button printRepportButton;
-	
+
 	@FXML
 	private Button printButton;
 
@@ -166,7 +166,7 @@ public class InventoryDisplayView
 		viewBuilder.addStringColumn(dataList, "internalPic", "InventoryItem_internalPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "article", "InventoryItem_article_description.title", resourceBundle,400d);
 		viewBuilder.addBigDecimalColumn(dataList, "expectedQty", "InventoryItem_expectedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		asseccedQtyColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "asseccedQtyColumn", "InventoryItem_asseccedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		asseccedQtyColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "asseccedQty", "InventoryItem_asseccedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addSimpleNumberColumn(dataList, "gap", "InventoryItem_gap_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "gapTotalSalePrice", "InventoryItem_gapTotalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "gapTotalPurchasePrice", "InventoryItem_gapTotalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -235,7 +235,8 @@ public class InventoryDisplayView
 		gapQty.setEditable(false);
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
-		inventoryItemBar.addRow(0,new Label("CipM"),new Label("Designation"),new Label("Stock M"),new Label("Stock R"),new Label("Ecart"));
+		inventoryItemBar.addRow(0,new Label("CipM"),new Label(resourceBundle.getString("InventoryItem_article_description.title")),
+				new Label(resourceBundle.getString("InventoryItem_expectedQty_description.title")),new Label(resourceBundle.getString("InventoryItem_asseccedQty_description.title")),new Label(resourceBundle.getString("InventoryItem_gap_description.title")));
 		inventoryItemBar.addRow(1,internalPic,articleName,expectedQty,asseccedQty,gapQty,okButton);
 		//		saleOrderItemBar.getChildren().addAll(
 		//				internalPic,articleName,orderedQty,salesPricePU,totalSalePrice,okButton);
@@ -273,16 +274,16 @@ public class InventoryDisplayView
 		//				}
 		//				gapQty.setNumber(realQty.getNumber().multiply(expectedQty.getNumber()));
 		//			}});
-//		asseccedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
-//			@Override
-//			public void changed(ObservableValue<? extends BigDecimal> obs,
-//					BigDecimal oldVal, BigDecimal newVal) {
-//				if(newVal==null){
-//					gapQty.setNumber(BigDecimal.ZERO);
-//				}else {
-//					gapQty.setNumber(expectedQty.getNumber().subtract(newVal));
-//				} 
-//			}});
+		//		asseccedQty.numberProperty().addListener(new ChangeListener<BigDecimal>() {
+		//			@Override
+		//			public void changed(ObservableValue<? extends BigDecimal> obs,
+		//					BigDecimal oldVal, BigDecimal newVal) {
+		//				if(newVal==null){
+		//					gapQty.setNumber(BigDecimal.ZERO);
+		//				}else {
+		//					gapQty.setNumber(expectedQty.getNumber().subtract(newVal));
+		//				} 
+		//			}});
 	}
 
 	public BorderPane getRootPane()
@@ -357,11 +358,11 @@ public class InventoryDisplayView
 	public Button getOkButton() {
 		return okButton;
 	}
-	
+
 	public Button getPrintRepportButton() {
 		return printRepportButton;
 	}
-	
+
 	public Button getPrintButton() {
 		return printButton;
 	}

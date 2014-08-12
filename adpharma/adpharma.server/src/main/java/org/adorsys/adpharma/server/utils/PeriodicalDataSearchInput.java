@@ -15,7 +15,13 @@ public class PeriodicalDataSearchInput {
 	 private Date endDate;
 	 
 	 private Boolean check;
-
+	 
+	 private Boolean taxableSalesOnly = Boolean.FALSE ;
+	 
+	 private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
+	 
+	 private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
+	 
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -35,9 +41,34 @@ public class PeriodicalDataSearchInput {
 	public Boolean getCheck() {
 		return check;
 	}
+	
+	public Boolean getTaxableSalesOnly() {
+		return taxableSalesOnly;
+	}
+
+	public Boolean getNonTaxableSalesOnly() {
+		return nonTaxableSalesOnly;
+	}
+
 
 	public void setCheck(Boolean check) {
 		this.check = check;
+	}
+
+	public Boolean getTwentyOverHeightySalesOnly() {
+		return twentyOverHeightySalesOnly;
+	}
+
+	public void setTwentyOverHeightySalesOnly(Boolean twentyOverHeightySalesOnly) {
+		this.twentyOverHeightySalesOnly = twentyOverHeightySalesOnly;
+	}
+
+	public void setTaxableSalesOnly(Boolean taxableSalesOnly) {
+		this.taxableSalesOnly = taxableSalesOnly;
+	}
+
+	public void setNonTaxableSalesOnly(Boolean nonTaxableSalesOnly) {
+		this.nonTaxableSalesOnly = nonTaxableSalesOnly;
 	}
 	
 

@@ -107,6 +107,7 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private SalesOrderDisplayView displayView;
 
+	private boolean  isCustomerSearch = false ;
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
@@ -233,7 +234,6 @@ public class SalesOrderDisplayController implements EntityController
 				Dialogs.create().showException(exception);
 			}
 		});
-
 
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
@@ -454,6 +454,7 @@ public class SalesOrderDisplayController implements EntityController
 				CustomerSearchInput customerSearchInput = new CustomerSearchInput();
 				customerSearchInput.setMax(50);
 				modalCutomerSearchRequestEvent.fire(customerSearchInput);
+				isCustomerSearch = true ;
 			}
 
 
@@ -573,8 +574,9 @@ public class SalesOrderDisplayController implements EntityController
 				}else {
 					displayView.getDataList().getItems().add(0,createdItem);
 				}
-				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				updateSalesOrder(createdItem);
+				resetSearchBar();
+				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				displayView.getInternalPic().requestFocus();
 
 			}
@@ -669,6 +671,11 @@ public class SalesOrderDisplayController implements EntityController
 					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
 					modalArticleLotSearchEvent.fire(asi);
+				}
+
+				if(code== KeyCode.DELETE){
+					displayView.getArticleName().setText("");
+
 				}
 			}
 		});
@@ -796,6 +803,12 @@ public class SalesOrderDisplayController implements EntityController
 			salesOrderItemCreateService.setModel(salesOrderItem).start();
 		}
 	}
+	public void resetSearchBar(){
+		displayView.getInternalPic().setText("");
+		displayView.getArticleName().setText("");
+		displayView.getSalesPricePU().setText("");
+		displayView.getTotalSalePrice().setText("");
+	}
 
 	public void getOpenCashDrawer(){
 		CashDrawerSearchInput cdsi = new CashDrawerSearchInput();
@@ -847,18 +860,18 @@ public class SalesOrderDisplayController implements EntityController
 	public boolean isValidSalesOrderItem(){
 		BigDecimal orderedQty = salesOrderItem.getOrderedQty();
 		SalesOrderItemArticle article = salesOrderItem.getArticle();
-		
+
 		if(article==null || article.getId()==null){
 			Dialogs.create().nativeTitleBar().message("vous devez selection un article ").showError();
 			return false;
 		}
-		
+
 		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
 			Dialogs.create().nativeTitleBar().message("la Qte est Requis ").showError();
 			displayView.getOrderedQty().requestFocus();
 			return false;
 		}
-		
+
 		return true;
 
 	}
@@ -946,7 +959,10 @@ public class SalesOrderDisplayController implements EntityController
 
 	public void handleCustomerSearchDoneEvent(@Observes @ModalEntitySearchDoneEvent Customer model)
 	{
-		handleNewCustomer(model);
+		if(isCustomerSearch){
+			handleNewCustomer(model);
+			isCustomerSearch = false ;
+		}
 	}
 
 	public void handleNewCustomer(Customer model){
@@ -1005,6 +1021,7 @@ public class SalesOrderDisplayController implements EntityController
 		soia.setArticleName(al.getArticle().getArticleName());
 		soia.setVersion(al.getArticle().getVersion());
 		soia.setPic(al.getArticle().getPic());
+
 		soItem.setInternalPic((al.getInternalPic()));
 		soItem.setArticle(soia);
 		soItem.setOrderedQty(BigDecimal.ONE);
@@ -1063,7 +1080,7 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		return false;
 	}
-	
+
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.SUPER_SALLER.name())){
 			displayView.getSalesPricePU().setEditable(true);

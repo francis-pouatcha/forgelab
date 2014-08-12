@@ -18,10 +18,13 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
+import org.adorsys.adpharma.client.utils.DateHelper;
+import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
@@ -29,6 +32,10 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.oracle.jrockit.jfr.DataType;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 
 @Singleton
@@ -39,6 +46,9 @@ private ProcurementOrderAdvancedSearchView advancedSearchView;
 
 @Inject
 private ServiceCallFailedEventHandler callFailedEventHandler ;
+
+@Inject
+private ProcurementAdvancedSearchService advancedSearchService;
 
 @Inject
 private LoginSearchService loginSearchService ;
@@ -55,18 +65,27 @@ private Event<Object> showprogressEvent ;
 private Event<Object> hideProgressEvent ;
 
 @Inject
+@EntitySearchDoneEvent
+private Event<ProcurementOrderSearchResult> searchResultEvent ;
+
+@Inject
 private ProcurementOrderPreparationData data;
+
+@Inject
+private ProcurementOrderAdvancedSearchData advancedSearchData;
 
 
 @PostConstruct
 public void postConstruct() {
-	
+	advancedSearchView.getSaveButton().disableProperty().bind(advancedSearchService.runningProperty());
 	// Save action
+	advancedSearchView.bind(data);
 	advancedSearchView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
 		@Override
 		public void handle(ActionEvent arg0) {
-			
-			
+			readSearchInput();
+			advancedSearchService.setSearchInputs(advancedSearchData).start();
+			showprogressEvent.fire(new Object());
 		}
 	});
 	
@@ -132,6 +151,7 @@ public void postConstruct() {
 			});
 			resultList.add(0,login);
 			advancedSearchView.getCreatingUser().getItems().setAll(resultList);
+			advancedSearchView.getCreatingUser().arm(); 
 		}
 	});
 	
@@ -142,12 +162,38 @@ public void postConstruct() {
 		}
 	});
 	
+	advancedSearchService.setOnFailed(callFailedEventHandler);
+	advancedSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		@Override
+		public void handle(WorkerStateEvent event) {
+			ProcurementAdvancedSearchService source=(ProcurementAdvancedSearchService)event.getSource();
+			ProcurementOrderSearchResult value = source.getValue();
+			value.getSearchInput().setStart(0);
+			value.getSearchInput().setMax(200);
+			searchResultEvent.fire(value);
+			event.consume();
+			source.reset();
+			hideProgressEvent.fire(new Object());
+			advancedSearchView.closeDialog();
+		}
+	});
+	
 }
 
 // Show procurement avancedSearchView
 public void handleAdvenceSearchRequestEvent(@Observes @EntitySearchRequestedEvent ProcurementOrderPreparationData model){
 	PropertyReader.copy(model, data);
 	advancedSearchView.showDiaLog();
+}
+
+
+// Get data from model
+public void readSearchInput() {
+	if(data.getFromDate()!=null) advancedSearchData.setFrom(data.getFromDate());
+	if(data.getToDate()!=null) advancedSearchData.setTo(data.getToDate());
+	if(data.getCreatingUser()!=null && data.getCreatingUser().getId()!=null) advancedSearchData.setUser(data.getCreatingUser());
+	if(data.getPoStatus()!=null) advancedSearchData.setStatus(data.getPoStatus());
+	if(data.getSupplier()!=null) advancedSearchData.setSupplier(data.getSupplier());
 }
 
 

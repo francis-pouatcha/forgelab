@@ -35,6 +35,7 @@ public class InsurranceCustomer implements Association<Insurrance, Customer>, Cl
    private SimpleBooleanProperty discountAuthorized;
    private SimpleObjectProperty<Calendar> birthDate;
    private SimpleStringProperty serialNumber;
+   private SimpleStringProperty societe;
 
 
    public InsurranceCustomer()
@@ -103,6 +104,26 @@ public class InsurranceCustomer implements Association<Insurrance, Customer>, Cl
    {
       this.serialNumberProperty().set(serialNumber);
    }
+   
+   public SimpleStringProperty societeProperty()
+   {
+      if (societe == null)
+      {
+    	  societe = new SimpleStringProperty();
+      }
+      return societe;
+   }
+
+   public String getSociete()
+   {
+      return societeProperty().get();
+   }
+
+   public final void setSociete(String societe)
+   {
+      this.societeProperty().set(societe);
+   }
+
 
    public SimpleStringProperty landLinePhoneProperty()
    {

@@ -98,14 +98,17 @@ public class CustomerLoader extends Service<List<Customer>> {
 			}
 
 			cell = row.getCell(1);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setGender(Gender.valueOf(cell.getStringCellValue().trim()));
 			
 			cell = row.getCell(2);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setFirstName(cell.getStringCellValue().trim());
 
 			cell = row.getCell(3);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setLastName(cell.getStringCellValue().trim());
 				
@@ -114,6 +117,7 @@ public class CustomerLoader extends Service<List<Customer>> {
 			}
 
 			cell = row.getCell(4);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setFullName(cell.getStringCellValue().trim());
 				
@@ -121,100 +125,112 @@ public class CustomerLoader extends Service<List<Customer>> {
 				entity.setFullName(".");
 			}
 
-			cell = row.getCell(5);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-			{
-				String date = cell.getStringCellValue().trim();
-				Date parseDate;
-				try {
-					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-				} catch (ParseException e) {
-					throw new IllegalStateException(e);
-				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(parseDate);
-				entity.setBirthDate(calendar);
-			}
+//			cell = row.getCell(5);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//			{
+//				String date = cell.getStringCellValue().trim();
+//				Date parseDate;
+//				try {
+//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+//				} catch (ParseException e) {
+//					throw new IllegalStateException(e);
+//				}
+//				Calendar calendar = Calendar.getInstance();
+//				calendar.setTime(parseDate);
+//				entity.setBirthDate(calendar);
+//			}
 
 			cell = row.getCell(6);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setLandLinePhone(cell.getStringCellValue().trim());
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setLandLinePhone(cell.getStringCellValue().trim());
 
 			cell = row.getCell(7);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setMobile(cell.getStringCellValue().trim());
 
-			cell = row.getCell(8);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setFax(cell.getStringCellValue().trim());
-			
-			cell = row.getCell(9);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setEmail(cell.getStringCellValue().trim());
+//			cell = row.getCell(8);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setFax(cell.getStringCellValue().trim());
+//			
+//			cell = row.getCell(9);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setEmail(cell.getStringCellValue().trim());
 
-			cell = row.getCell(10);
-			if (cell != null)
-				entity.setCreditAuthorized(1==cell.getNumericCellValue());
+//			cell = row.getCell(10);
+//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//			if (cell != null)
+//				entity.setCreditAuthorized(1==cell.getNumericCellValue());
+//
+//			cell = row.getCell(11);
+//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//			if (cell != null)
+//				entity.setDiscountAuthorized(1==cell.getNumericCellValue());
+//
+//			cell = row.getCell(12);
+//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//			if (cell != null)
+//			{
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+//				entity.setTotalCreditLine(decimal);
+//			}
 
-			cell = row.getCell(11);
-			if (cell != null)
-				entity.setDiscountAuthorized(1==cell.getNumericCellValue());
+//			cell = row.getCell(13);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+//				String employerName = cell.getStringCellValue().trim();
+//				List<Employer> employers = dataMap.getEmployers();
+//				Employer employer = null;
+//				for (Employer e : employers) {
+//					if(employerName.equals(e.getName())){
+//						employer = e;
+//						break;
+//					}
+//				}
+//
+//				if(employer!=null){
+//					entity.setEmployer(new CustomerEmployer(employer));
+//				} else {
+//					throw new IllegalStateException("No employer found with name: " + employerName);
+//				}
+//			}
 
-			cell = row.getCell(12);
-			if (cell != null)
-			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setTotalCreditLine(decimal);
-			}
+//			cell = row.getCell(14);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+//				String customerCategoryName = cell.getStringCellValue().trim();
+//				List<CustomerCategory>customerCategories = dataMap.getCustomerCategories();
+//				CustomerCategory customerCategory = null;
+//				for (CustomerCategory c : customerCategories) {
+//					if(customerCategoryName.equals(c.getName())){
+//						customerCategory = c;
+//						break;
+//					}
+//				}
+//
+//				if(customerCategory!=null){
+//					entity.setCustomerCategory(new CustomerCustomerCategory(customerCategory));
+//				} else {
+//					throw new IllegalStateException("No customer category found with name: " + customerCategoryName);
+//				}
+//			}
 
-			cell = row.getCell(13);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String employerName = cell.getStringCellValue().trim();
-				List<Employer> employers = dataMap.getEmployers();
-				Employer employer = null;
-				for (Employer e : employers) {
-					if(employerName.equals(e.getName())){
-						employer = e;
-						break;
-					}
-				}
+//			cell = row.getCell(15);
+//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+//			if (cell != null)
+//			{
+//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+//				entity.setTotalDebt(decimal);
+//			}
 
-				if(employer!=null){
-					entity.setEmployer(new CustomerEmployer(employer));
-				} else {
-					throw new IllegalStateException("No employer found with name: " + employerName);
-				}
-			}
-
-			cell = row.getCell(14);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String customerCategoryName = cell.getStringCellValue().trim();
-				List<CustomerCategory>customerCategories = dataMap.getCustomerCategories();
-				CustomerCategory customerCategory = null;
-				for (CustomerCategory c : customerCategories) {
-					if(customerCategoryName.equals(c.getName())){
-						customerCategory = c;
-						break;
-					}
-				}
-
-				if(customerCategory!=null){
-					entity.setCustomerCategory(new CustomerCustomerCategory(customerCategory));
-				} else {
-					throw new IllegalStateException("No customer category found with name: " + customerCategoryName);
-				}
-			}
-
-			cell = row.getCell(15);
-			if (cell != null)
-			{
-				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setTotalDebt(decimal);
-			}
-
-			cell = row.getCell(16);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setCustomerType(CustomerType.valueOf(cell.getStringCellValue().trim()));
+//			cell = row.getCell(16);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setCustomerType(CustomerType.valueOf(cell.getStringCellValue().trim()));
 			
 			result.add(remoteService.create(entity));
 		}

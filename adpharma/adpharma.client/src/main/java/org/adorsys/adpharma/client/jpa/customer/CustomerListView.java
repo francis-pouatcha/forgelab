@@ -95,7 +95,7 @@ public class CustomerListView
 		viewBuilder.addStringColumn(dataList, "mobile", "Customer_mobile_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "serialNumber", "Customer_serialNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "email", "Customer_email_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "employer", "Customer_employer_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "societe", "Customer_societe_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "customerCategory", "Customer_customerCategory_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "totalDebt", "Customer_totalDebt_description.title", resourceBundle);
 

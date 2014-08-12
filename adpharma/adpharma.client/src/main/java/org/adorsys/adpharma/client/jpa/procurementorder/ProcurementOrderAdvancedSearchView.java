@@ -84,7 +84,9 @@ public class ProcurementOrderAdvancedSearchView extends ApplicationModal {
 		procurementOrderNumber.textProperty().bindBidirectional(model.procurementOrderNumberProperty());
 		state.valueProperty().bindBidirectional(model.poStatusProperty());
 		supplier.valueProperty().bindBidirectional(model.supplierProperty());
-		creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
+		if(creatingUser.valueProperty().getValue()!=null) {
+			creatingUser.valueProperty().bindBidirectional(model.creatingUserProperty());
+		}
 	}
 	
 	public void addValidators(){

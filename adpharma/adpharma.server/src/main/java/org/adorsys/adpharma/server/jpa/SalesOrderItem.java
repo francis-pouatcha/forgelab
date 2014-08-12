@@ -75,6 +75,11 @@ public class SalesOrderItem implements Serializable
 	@Description("SalesOrderItem_totalSalePrice_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private BigDecimal totalSalePrice;
+	
+	@Column
+	@Description("SalesOrderItem_vatValue_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private transient BigDecimal vatValue;
 
 	@Column
 	@Description("SalesOrderItem_internalPic_description")
@@ -207,6 +212,14 @@ public class SalesOrderItem implements Serializable
 	public void setTotalSalePrice(final BigDecimal totalSalePrice)
 	{
 		this.totalSalePrice = totalSalePrice;
+	}
+
+	public BigDecimal getVatValue() {
+		return vatValue;
+	}
+
+	public void setVatValue(BigDecimal vatValue) {
+		this.vatValue = vatValue;
 	}
 
 	public String getInternalPic()

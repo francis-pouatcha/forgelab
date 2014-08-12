@@ -164,7 +164,7 @@ public class Section implements Serializable
 		return wareHouse;
 	}
 
-	public void setWareHouse(Boolean salable) {
+	public void setWareHouse(Boolean wareHouse) {
 		this.wareHouse = wareHouse;
 	}
 

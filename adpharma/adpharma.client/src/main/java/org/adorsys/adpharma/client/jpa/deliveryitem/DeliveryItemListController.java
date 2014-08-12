@@ -112,22 +112,22 @@ public class DeliveryItemListController implements EntityController
       /*
        * listen to search button and fire search activated event.
        */
-      listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-           String deliverNumber = listView.getDeliveryNumber().getText();
-           if(StringUtils.isNotBlank(deliverNumber)){
-        	   DeliverySearchInput deliverySearchInput = new DeliverySearchInput();
-        	   deliverySearchInput.getEntity().setDeliveryNumber(deliverNumber);
-        	   deliverySearchInput.getEntity().setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-        	   deliverySearchInput.getFieldNames().add("deliveryNumber");
-        	   deliverySearchInput.getFieldNames().add("deliveryProcessingState");
-        	   deliverySearchService.setSearchInputs(deliverySearchInput).start();
-           }
-         }
-      });
+//      listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+//      {
+//         @Override
+//         public void handle(ActionEvent e)
+//         {
+//           String deliverNumber = listView.getDeliveryNumber().getText();
+//           if(StringUtils.isNotBlank(deliverNumber)){
+//        	   DeliverySearchInput deliverySearchInput = new DeliverySearchInput();
+//        	   deliverySearchInput.getEntity().setDeliveryNumber(deliverNumber);
+//        	   deliverySearchInput.getEntity().setDeliveryProcessingState(DocumentProcessingState.CLOSED);
+//        	   deliverySearchInput.getFieldNames().add("deliveryNumber");
+//        	   deliverySearchInput.getFieldNames().add("deliveryProcessingState");
+//        	   deliverySearchService.setSearchInputs(deliverySearchInput).start();
+//           }
+//         }
+//      });
       deliverySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 		
 		@Override

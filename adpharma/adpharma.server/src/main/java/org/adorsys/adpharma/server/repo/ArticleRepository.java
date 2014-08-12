@@ -15,4 +15,10 @@ public interface ArticleRepository extends EntityRepository<Article, Long>
 {
 	@Query("SELECT a FROM Article AS a WHERE a.pic = ?1 AND a.section = ?2 ")
 	public List<Article> findBySectionAndPic(String pic ,Section section) ;
+	
+	@Query("SELECT a FROM Article AS a WHERE a.qtyInStock > a.maxStockQty ")
+	public List<Article> findArticleMaxStockRepport() ;
+	
+	@Query("SELECT a FROM Article AS a WHERE a.qtyInStock < a.minStockQty ")
+	public List<Article> findArticleMinStockRepport() ;
 }

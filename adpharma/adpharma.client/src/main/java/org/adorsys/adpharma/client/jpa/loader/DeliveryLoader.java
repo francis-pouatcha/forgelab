@@ -127,13 +127,25 @@ public class DeliveryLoader extends Service<List<Delivery>> {
 					}
 
 					itemCell = row.getCell(23);
+					Cell sectionCell = row.getCell(33);
 					Article article = null;
 					if (itemCell != null && StringUtils.isNotBlank(itemCell.getStringCellValue())){
 						String articlePic = itemCell.getStringCellValue().trim();
 						List<Article> articles = dataMap.getArticles();
-						for (Article a : articles) {
-							if(articlePic.equals(a.getPic())){
-								article = a;
+						if(sectionCell != null && StringUtils.isNotBlank(sectionCell.getStringCellValue())) {
+							String sectioncode  = sectionCell.getStringCellValue().trim();
+							for (Article a : articles) {
+								if(articlePic.equals(a.getPic())&& sectioncode.equals(a.getSection().getSectionCode())){
+									article = a;
+									break ;
+								}
+							}
+						}else {
+							for (Article a : articles) {
+								if(articlePic.equals(a.getPic())){
+									article = a;
+									break ;
+								}
 							}
 						}
 						if(article!=null){

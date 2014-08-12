@@ -48,8 +48,11 @@ public class DeliveryCurrencyForm extends AbstractToOneAssociation<Delivery, Cur
 
    public void update(DeliveryCurrency data)
    {
-      name.textProperty().set(data.nameProperty().get());
-      cfaEquivalent.numberProperty().set(data.cfaEquivalentProperty().get());
+	   if(data!=null){
+		   
+		   name.textProperty().set(data.nameProperty().get());
+		   cfaEquivalent.numberProperty().set(data.cfaEquivalentProperty().get());
+	   }
    }
 
    public TextField getName()

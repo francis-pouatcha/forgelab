@@ -58,6 +58,9 @@ public class CashDrawer implements Cloneable
    @Description("CashDrawer_totalCash_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalCash;
+   @Description("CashDrawer_totalDrugVoucher_description")
+   @NumberFormatType(NumberType.CURRENCY)
+   private SimpleObjectProperty<BigDecimal> totalDrugVoucher;
    @Description("CashDrawer_totalCheck_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalCheck;
@@ -182,6 +185,25 @@ public class CashDrawer implements Cloneable
    public final void setTotalCashIn(BigDecimal totalCashIn)
    {
       this.totalCashInProperty().set(totalCashIn);
+   }
+   
+   public SimpleObjectProperty<BigDecimal> totalDrugVoucherProperty()
+   {
+      if (totalDrugVoucher == null)
+      {
+    	  totalDrugVoucher = new SimpleObjectProperty<BigDecimal>();
+      }
+      return totalDrugVoucher;
+   }
+
+   public BigDecimal getTotalDrugVoucher()
+   {
+      return totalDrugVoucherProperty().get();
+   }
+
+   public final void setTotalDrugVoucher(BigDecimal totalDrugVoucher)
+   {
+      this.totalDrugVoucherProperty().set(totalDrugVoucher);
    }
 
    public SimpleObjectProperty<BigDecimal> totalCashOutProperty()

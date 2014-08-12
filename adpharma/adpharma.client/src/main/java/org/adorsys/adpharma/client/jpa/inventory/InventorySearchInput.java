@@ -22,7 +22,7 @@ public class InventorySearchInput
    /**
     * The entity holding search inputs.
     */
-   private Inventory entity;
+   private Inventory entity = new Inventory();
 
    /**
     * The start cursor

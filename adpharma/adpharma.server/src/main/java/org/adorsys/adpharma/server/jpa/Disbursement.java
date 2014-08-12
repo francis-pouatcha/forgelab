@@ -1,39 +1,26 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-
-import java.lang.Override;
-import java.math.BigDecimal;
-
-import org.adorsys.adpharma.server.jpa.PaymentMode;
-import org.adorsys.adpharma.server.jpa.Login;
-
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.server.jpa.CashDrawer;
-import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.ToStringField;
-import org.adorsys.javaext.list.ListField;
-
-import java.util.Date;
-
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Description("Disbursement_description")
@@ -50,9 +37,19 @@ public class Disbursement implements Serializable
 
 	@Column
 	private String raison;
+	
+	@Column
+	private String receipt;
 
 	@Column
 	private BigDecimal amount;
+	
+	@Column
+	private String voucherNumber;
+	
+	@Column
+	private BigDecimal voucherAmount;
+
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -201,12 +198,36 @@ public class Disbursement implements Serializable
 		this.creationDate = creationDate;
 	}
 
+	public String getVoucherNumber() {
+		return voucherNumber;
+	}
+
+	public void setVoucherNumber(String voucherNumber) {
+		this.voucherNumber = voucherNumber;
+	}
+
+	public BigDecimal getVoucherAmount() {
+		return voucherAmount;
+	}
+
+	public void setVoucherAmount(BigDecimal voucherAmount) {
+		this.voucherAmount = voucherAmount;
+	}
+	
+	public String getReceipt() {
+		return receipt;
+	}
+	
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
+	}
+
 	@Override
 	public String toString()
 	{
 		String result = getClass().getSimpleName() + " ";
 		if (raison != null && !raison.trim().isEmpty())
-			result += "raison: " + raison;
+			result += "raison: " + raison+ "Beneficiaire: "+receipt;
 		return result;
 	}
 }

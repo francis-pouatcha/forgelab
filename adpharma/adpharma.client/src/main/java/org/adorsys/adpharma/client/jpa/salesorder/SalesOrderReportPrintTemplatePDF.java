@@ -42,14 +42,16 @@ public class SalesOrderReportPrintTemplatePDF {
 	private Login login ;
 	private PdfPTable reportTable;
 	private String pdfFileName;
-private PeriodicalDataSearchInput model;
+	private PeriodicalDataSearchInput model;
+	private String headerName = "";
 
 	public SalesOrderReportPrintTemplatePDF(
-			Login login,LoginAgency agency,PeriodicalDataSearchInput model
+			Login login,LoginAgency agency,PeriodicalDataSearchInput model,String headerName
 			) throws DocumentException {
 		this.agency = agency;
 		this.login = login;
 		this.model = model;
+		this.headerName = headerName;
 		PropertyReader.copy(login.getAgency(), agency);
 		pdfFileName = "sales.pdf";
 
@@ -75,30 +77,41 @@ private PeriodicalDataSearchInput model;
 		int artNamelenght = 68 ;
 		BigDecimal totalQty = BigDecimal.ZERO ;
 		BigDecimal totalPrice = BigDecimal.ZERO ;
-		
+		BigDecimal totalvat = BigDecimal.ZERO ;
+
 		for (SalesOrderItem item : items) {
 			String articleName = item.getArticle().getArticleName();
 			totalQty = totalQty.add(item.getDeliveredQty());
 			totalPrice = totalPrice.add(item.getTotalSalePrice());
+			BigDecimal vatValue = item.getVatValue();
+			totalvat = totalvat.add(vatValue);
 			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
 
 			newTableRow(item.getInternalPic(), 
 					articleName, 
 					item.getDeliveredQty(),
-					item.getTotalSalePrice()
+					item.getTotalSalePrice(),
+					vatValue
 					);
 		}
 		newTableRow("", 
 				"TOTAL :", 
 				totalQty,
-				totalPrice
+				totalPrice,
+				totalvat
 				);
+		
+		
+		
+		
+		
 	}
 
 	private void newTableRow(String internalPic, 
 			String articleName,
 			BigDecimal stockQuantity,
-			BigDecimal salesPricePU) {
+			BigDecimal salesPricePU,
+			BigDecimal vat) {
 
 
 		PdfPCell pdfPCell = new PdfPCell();
@@ -113,16 +126,20 @@ private PeriodicalDataSearchInput model;
 		pdfPCell.addElement(new RightParagraph(new StandardText(stockQuantity!=null?stockQuantity.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?salesPricePU.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(vat!=null?vat.toBigInteger()+"":"0")));
+		reportTable.addCell(pdfPCell);
 	}
 
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .61f, .13f,.13f });
+		reportTable = new PdfPTable(new float[]{ .10f, .51f, .13f,.13f,.13f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -139,14 +156,19 @@ private PeriodicalDataSearchInput model;
 		pdfPCell.addElement(new StandardText("Qte Vendu "));
 		reportTable.addCell(pdfPCell);
 
+
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Montant"));
+		pdfPCell.addElement(new StandardText("Vente"));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("T.V.A"));
 		reportTable.addCell(pdfPCell);
 	}
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES"));
+		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES "+headerName));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 

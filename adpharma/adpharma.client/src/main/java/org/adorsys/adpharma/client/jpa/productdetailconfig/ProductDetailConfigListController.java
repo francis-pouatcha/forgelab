@@ -11,6 +11,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -20,6 +21,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -31,6 +34,8 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 
@@ -43,6 +48,12 @@ public class ProductDetailConfigListController implements EntityController
 
 	@Inject
 	private ProductDetailConfigListView listView;
+
+	private Boolean isOrigine = Boolean.FALSE;
+
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> articleSearchInput;
 
 	@Inject
 	@EntitySelectionEvent
@@ -86,15 +97,41 @@ public class ProductDetailConfigListController implements EntityController
 		/*
 		 * listen to search button and fire search activated event.
 		 */
+
+		listView.getArticleOriginName().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				isOrigine = Boolean.TRUE;
+				articleSearchInput.fire(new ArticleSearchInput());
+
+			}
+		});
+
+		listView.getArticleTargetName().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				isOrigine = Boolean.FALSE ;
+				articleSearchInput.fire(new ArticleSearchInput());
+			}
+		});
 		listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
 			public void handle(ActionEvent e)
 			{
-				String sourceName = listView.getArticleOriginName().getText();
-				String targetName = listView.getArticleTargetName().getText();
+				ProductDetailConfigSource source = listView.getArticleOriginName().getValue();
+				ProductDetailConfigTarget target = listView.getArticleTargetName().getValue();
 				ProductDetailConfigSearchInput searchInput = new ProductDetailConfigSearchInput();
-				
+				if(source!=null){
+					searchInput.getEntity().setSource(source);
+					searchInput.getFieldNames().add("source") ;
+				}
+				if(target!=null){
+					searchInput.getEntity().setTarget(target);
+					searchInput.getFieldNames().add("target") ;
+				}
 				searchInput.setMax(30);
 				configSearchService.setSearchInputs(searchInput).start();
 
@@ -141,6 +178,16 @@ public class ProductDetailConfigListController implements EntityController
 					selectionEvent.fire(selectedItem);
 			}
 				});
+		listView.getResetButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				listView.getArticleOriginName().setValue(null);
+				listView.getArticleTargetName().setValue(null);
+			}
+				});
+		
 
 		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
 				{
@@ -244,6 +291,14 @@ public class ProductDetailConfigListController implements EntityController
 	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().clear();
+	}
+
+	public void handleSourceSearchDone(@Observes @ModalEntitySearchDoneEvent Article article){
+		if(isOrigine){
+			listView.getArticleOriginName().setValue(new ProductDetailConfigSource(article));
+		}else {
+			listView.getArticleTargetName().setValue(new ProductDetailConfigTarget(article));
 		}
+	}
 }

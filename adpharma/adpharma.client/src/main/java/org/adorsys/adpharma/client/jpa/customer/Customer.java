@@ -48,6 +48,8 @@ public class Customer implements Cloneable
    private SimpleStringProperty lastName;
    @Description("Customer_fullName_description")
    private SimpleStringProperty fullName;
+   @Description("Customer_societe_description")
+   private SimpleStringProperty societe;
    @Description("Customer_landLinePhone_description")
    private SimpleStringProperty landLinePhone;
    @Description("Customer_mobile_description")
@@ -158,6 +160,25 @@ public class Customer implements Cloneable
    public final void setFullName(String fullName)
    {
       this.fullNameProperty().set(fullName);
+   }
+   
+   public SimpleStringProperty societeProperty()
+   {
+      if (societe == null)
+      {
+    	  societe = new SimpleStringProperty();
+      }
+      return societe;
+   }
+
+   public String getSociete()
+   {
+      return societeProperty().get();
+   }
+
+   public final void setSociete(String societe)
+   {
+      this.societeProperty().set(societe);
    }
 
    public SimpleStringProperty landLinePhoneProperty()

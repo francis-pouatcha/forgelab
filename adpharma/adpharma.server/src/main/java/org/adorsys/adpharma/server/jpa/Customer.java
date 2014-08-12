@@ -84,6 +84,10 @@ public class Customer implements Serializable
    @Column
    @Description("Customer_email_description")
    private String email;
+   
+   @Column
+   @Description("Customer_societe_description")
+   private String societe;
 
    @Column
    @Description("Customer_creditAuthorized_description")
@@ -343,7 +347,15 @@ public class Customer implements Serializable
       this.serialNumber = serialNumber;
    }
 
-   @Override
+   public String getSociete() {
+	return societe;
+}
+
+public void setSociete(String societe) {
+	this.societe = societe;
+}
+
+@Override
    public String toString()
    {
       String result = getClass().getSimpleName() + " ";
