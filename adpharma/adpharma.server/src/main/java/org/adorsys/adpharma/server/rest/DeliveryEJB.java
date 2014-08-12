@@ -120,7 +120,7 @@ public class DeliveryEJB
 			//			if(isManagedLot)
 			deliveryItem = deliveryItemEJB.findById(deliveryItem.getId());
 			Long sectionId = deliveryItem.getArticle().getSection().getId();
-			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic())+"-"+sectionId;
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic())+sectionId;
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){
@@ -244,8 +244,6 @@ public class DeliveryEJB
 				DeliveryItem create = deliveryItemEJB.create(deliveryItem);
 				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
 			}
-
-
 		}
 		order.setPoStatus(DocumentProcessingState.CLOSED);
 		order = procurementOrderEJB.update(order);

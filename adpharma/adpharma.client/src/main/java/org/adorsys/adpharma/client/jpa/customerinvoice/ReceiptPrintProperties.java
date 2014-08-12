@@ -23,19 +23,20 @@ public class ReceiptPrintProperties {
 	private float fontSize = 14;
 	private boolean mergeCipAndDesignation = true;
 	private float docWidth = 430f;
+	private float docHeight = 4700f;
 	private double width = docWidth;
-	
+	private double height = docHeight;
+
 	private Font myBoldFont = FontFactory.getFont("Arial", fontSize, Font.BOLD);
 	private Font myFont = FontFactory.getFont("Arial", fontSize);
-	
-	private static float docHeight = 4700f;
+
 
 	private Rectangle pageSize = new Rectangle(docWidth, docHeight);
 
 	private String receiptPrinterName = "receipt";
-	
+
 	private boolean debug = true;
-	
+
 	public ReceiptPrintMode getReceiptPrintMode() {
 		return receiptPrintMode;
 	}
@@ -48,6 +49,7 @@ public class ReceiptPrintProperties {
 	public void setFormat(int format) {
 		this.format = format;
 	}
+
 	public int getArticleNameMaxLength() {
 		return articleNameMaxLength;
 	}
@@ -74,6 +76,12 @@ public class ReceiptPrintProperties {
 	public void setDocWidth(float docWidth) {
 		this.docWidth = docWidth;
 		width = docWidth;
+		pageSize = new Rectangle(docWidth, docHeight);
+	}
+
+	public void setDocHeight(float docHeight) {
+		this.docHeight = docHeight;
+		height = docHeight;
 		pageSize = new Rectangle(docWidth, docHeight);
 	}
 	public double getWidth() {
@@ -103,7 +111,7 @@ public class ReceiptPrintProperties {
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
-	
+
 	public static ReceiptPrintProperties loadPrintProperties(){
 		ReceiptPrintProperties r = new ReceiptPrintProperties();
 		File file = new File("appconfig.properties");
@@ -115,6 +123,11 @@ public class ReceiptPrintProperties {
 				if(StringUtils.isNotBlank(paperFormat)){
 					r.setFormat(NumberUtils.toInt(paperFormat));
 				}
+				String docHeigthStr = properties.getProperty("receipt-doc-height");
+				if(StringUtils.isNotBlank(docHeigthStr)){
+					r.setDocHeight(NumberUtils.toFloat(docHeigthStr));
+				}
+
 				String fontSizeStr = properties.getProperty("receipt-font-size");
 				if(StringUtils.isNotBlank(fontSizeStr)){
 					r.setFontSize(NumberUtils.toInt(fontSizeStr));
@@ -144,7 +157,7 @@ public class ReceiptPrintProperties {
 						// noop. Keep default mode
 					}
 				}
-				
+
 				String debugProp = properties.getProperty("receipt-print-debug");
 				if(StringUtils.isNotBlank(debugProp)){
 					r.setDebug(BooleanUtils.toBoolean(debugProp));

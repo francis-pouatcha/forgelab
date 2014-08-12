@@ -31,7 +31,7 @@ public final class AdpharmaClient extends Application {
 	private Weld weld;
 
 	private static Locale locale;
-//	private static ServerAddress serverAddress;
+	//	private static ServerAddress serverAddress;
 
 	public static void main(String[] args) {
 		// parse locale
@@ -64,7 +64,7 @@ public final class AdpharmaClient extends Application {
 				}
 			}
 		}
-		
+
 		if(locale==null || ServerAddress.serverUrl==null){
 			File file = new File("appconfig.properties");
 			if(file.exists()){
@@ -134,7 +134,7 @@ public final class AdpharmaClient extends Application {
 		Instance<Object> instance = weld.initialize().instance();
 		instance.select(LocaleFactory.class).get().setLocale(locale);
 		instance.select(MainController.class).get()
-				.start(stage, locale, "styles/application.css");
+		.start(stage, locale, "styles/application.css");
 	}
 
 	@Override

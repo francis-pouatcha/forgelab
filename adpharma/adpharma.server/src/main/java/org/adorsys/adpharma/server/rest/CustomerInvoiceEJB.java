@@ -288,7 +288,7 @@ public class CustomerInvoiceEJB {
 
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			ArticleLot articleLot = new ArticleLot();
- 			articleLot.setInternalPic(salesOrderItem.getInternalPic());
+			articleLot.setInternalPic(salesOrderItem.getInternalPic());
 			@SuppressWarnings("unchecked")
 			List<ArticleLot> found = articleLotEJB.findBy(articleLot, 0, 1, new SingularAttribute[]{ArticleLot_.internalPic});
 			if(found.isEmpty())
@@ -319,6 +319,7 @@ public class CustomerInvoiceEJB {
 
 	private Collection<CustomerInvoice> processInvoices(Collection<CustomerInvoice> invoices, SalesOrder salesOrder){
 		BigDecimal amountAfterTax = salesOrder.getAmountAfterTax();
+		int invoiceSize = invoices.size();
 		// DIscount will be shared proportionally to all invoices.
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = amountDiscount.divide(amountAfterTax, 8, RoundingMode.HALF_EVEN);
@@ -327,12 +328,15 @@ public class CustomerInvoiceEJB {
 		for (CustomerInvoice customerInvoice : invoices) {
 
 			BigDecimal discount = customerInvoice.getAmountAfterTax().multiply(discountRate);
+			if(invoiceSize==1)
+				discount =amountDiscount ;
 			customerInvoice.setAmountDiscount(discount);
 			customerInvoice.setNetToPay(customerInvoice.getAmountAfterTax().subtract(discount));
 
 			BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
 			BigDecimal customerCoverageRate = BigDecimal.ONE;
 			Insurrance insurance = customerInvoice.getInsurance();
+			
 			if(insurance!=null){
 				insuranceCoverageRate = customerInvoice.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_EVEN);
 				customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);

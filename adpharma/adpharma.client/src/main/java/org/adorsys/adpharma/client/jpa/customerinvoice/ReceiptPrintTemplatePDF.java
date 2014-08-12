@@ -18,6 +18,7 @@ import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -58,6 +59,8 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 	}
 
 	public void startPage() {
+
+
 		document = new Document(receiptPrintProperties.getPageSize());
 		document.setMargins(1, 1, 1, 1);
 		bos = new ByteArrayOutputStream();
@@ -335,12 +338,6 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 					DefaultBigDecimalFormatCM.getinstance().format(
 							coverRate)+"%")));
 
-			borderlessCell(paymentPane,new StandardText(resourceBundle
-					.getString("ReceiptPrintTemplate_clientRest.title")));
-
-			borderlessCell(paymentPane,new RightParagraph(new StandardText(
-					DefaultBigDecimalFormatCM.getinstance().format(
-							customerRest))));
 
 			borderlessCell(paymentPane,new StandardText(resourceBundle
 					.getString("ReceiptPrintTemplate_insuranceRest.title")));
@@ -348,6 +345,13 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			borderlessCell(paymentPane,new RightParagraph(new StandardText(
 					DefaultBigDecimalFormatCM.getinstance().format(
 							insurranceRest))));
+
+			borderlessCell(paymentPane,new StandardText(resourceBundle
+					.getString("ReceiptPrintTemplate_clientRest.title")));
+
+
+			borderlessCell(paymentPane,new RightParagraph(new StandardText(
+					DefaultBigDecimalFormatCM.getinstance().format(customerRest))));
 		}
 
 		borderlessCell(paymentPane,new StandardText(resourceBundle

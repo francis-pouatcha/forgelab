@@ -16,6 +16,7 @@ public class ReceiptPrinterData {
 	}
 
 	private final String customerName ;
+	private final boolean unDiscountReciept ;
 	private final Payment payment;
 	private final Agency agency;
 	private final Company company;
@@ -23,13 +24,14 @@ public class ReceiptPrinterData {
 	private  String salesOrderNumber;
 	private final List<CustomerInvoicePrinterData> invoiceData = new ArrayList<CustomerInvoicePrinterData>();
 	private final List<CustomerVoucher> usedVouchers  = new ArrayList<CustomerVoucher>() ;
-	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier,String customerName) {
+	public ReceiptPrinterData(Payment payment, Agency agency, Company company, Login cashier,String customerName,boolean unDiscountReciept) {
 		super();
 		this.payment = payment;
 		this.agency = agency;
 		this.company = company;
 		this.cashier = cashier;
 		this.customerName = customerName;
+		this.unDiscountReciept = unDiscountReciept;
 	}
 
 	public List<CustomerInvoicePrinterData> getInvoiceData() {
@@ -62,6 +64,10 @@ public class ReceiptPrinterData {
 
 	public void setSalesOrderNumber(String salesOrderNumber) {
 		this.salesOrderNumber = salesOrderNumber;
+	}
+
+	public boolean isUnDiscountReciept() {
+		return unDiscountReciept;
 	}
 
 

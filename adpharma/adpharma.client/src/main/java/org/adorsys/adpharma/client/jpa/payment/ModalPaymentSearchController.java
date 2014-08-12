@@ -112,6 +112,22 @@ public class ModalPaymentSearchController {
 				if(selectedItem!=null){
 					PaymentId paymentId = new PaymentId(selectedItem.getId());
 					// Print receipt here.
+					paymentId.setPrintWhithoutDiscount(false);
+					printPaymentReceiptRequestedEvent.fire(paymentId);
+				}
+
+			}
+		});
+		
+		view.getunDiscountReceiptBtn().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Payment selectedItem = view.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					PaymentId paymentId = new PaymentId(selectedItem.getId());
+					// Print receipt here.
+					paymentId.setPrintWhithoutDiscount(true);
 					printPaymentReceiptRequestedEvent.fire(paymentId);
 				}
 

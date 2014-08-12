@@ -20,6 +20,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
@@ -63,6 +64,9 @@ public class DebtStatement implements Cloneable
 	@Description("DebtStatement_advancePayment_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> advancePayment;
+	@Description("DebtStatement_payAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private SimpleObjectProperty<BigDecimal> payAmount;
 	@Description("DebtStatement_restAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> restAmount;
@@ -84,6 +88,11 @@ public class DebtStatement implements Cloneable
 	private SimpleObjectProperty<ObservableList<CustomerInvoice>> invoices;
 	@Description("DebtStatement_statementStatus_description")
 	private SimpleObjectProperty<DocumentProcessingState> statementStatus;
+
+	@Description("DebtStatement_paymentMode_description")
+	private SimpleObjectProperty<PaymentMode> paymentMode;
+
+
 
 
 	public Long getId()
@@ -112,6 +121,25 @@ public class DebtStatement implements Cloneable
 			statementStatus = new SimpleObjectProperty<DocumentProcessingState>();
 		}
 		return statementStatus;
+	}
+
+	public SimpleObjectProperty<PaymentMode> paymentModeProperty()
+	{
+		if (paymentMode == null)
+		{
+			paymentMode = new SimpleObjectProperty<PaymentMode>(PaymentMode.CASH);
+		}
+		return paymentMode;
+	}
+
+	public PaymentMode getPaymentMode()
+	{
+		return paymentModeProperty().get();
+	}
+
+	public final void setPaymentMode(PaymentMode paymentMode)
+	{
+		this.paymentModeProperty().set(paymentMode);
 	}
 
 	public DocumentProcessingState getStatementStatus()
@@ -261,6 +289,26 @@ public class DebtStatement implements Cloneable
 	{
 		this.restAmountProperty().set(restAmount);
 	}
+
+	public SimpleObjectProperty<BigDecimal> payAmountProperty()
+	{
+		if (payAmount == null)
+		{
+			payAmount = new SimpleObjectProperty<BigDecimal>();
+		}
+		return payAmount;
+	}
+
+	public BigDecimal getPayAmount()
+	{
+		return payAmountProperty().get();
+	}
+
+	public final void setPayAmount(BigDecimal payAmount)
+	{
+		this.payAmountProperty().set(payAmount);
+	}
+
 
 	public SimpleObjectProperty<BigDecimal> amountFromVouchersProperty()
 	{

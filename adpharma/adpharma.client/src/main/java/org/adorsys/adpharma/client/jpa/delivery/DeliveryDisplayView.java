@@ -180,7 +180,7 @@ public class DeliveryDisplayView
 		//      rootPane = viewBuilder.toAnchorPane();
 
 		ViewBuilder viewBuilder = new ViewBuilder();
-		viewBuilder.addStringColumn(dataList, "mainPic", "DeliveryItem_mainPic_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "internalPic", "DeliveryItem_internalPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "articleName", "DeliveryItem_articleName_description.title", resourceBundle,300d);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "freeQuantity", "DeliveryItem_freeQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -211,34 +211,21 @@ public class DeliveryDisplayView
 
 	public void buildActionBar(){
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
-		saveButton.setPrefWidth(150d);
-		saveButton.setAlignment(Pos.CENTER_LEFT);
 
 		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
-		cancelButton.setPrefWidth(150d);
-		cancelButton.setAlignment(Pos.CENTER_LEFT);
 
 		addArticleButton = ViewBuilderUtils.newButton( "Delivery_Add_article.title", "addArticleButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
-		addArticleButton.setPrefWidth(150d);
-		addArticleButton.setAlignment(Pos.CENTER_LEFT);
 
 		deleteButton =ViewBuilderUtils.newButton( "Entity_remove.title", "deleteButton", resourceBundle, AwesomeIcon.TRASH_ALT);
-		deleteButton.setPrefWidth(150d);
-		deleteButton.setAlignment(Pos.CENTER_LEFT);
 
 		editButton  =ViewBuilderUtils.newButton( "Delivery_Edit_Head.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
-		editButton.setPrefWidth(150d);
-		editButton.setAlignment(Pos.CENTER_LEFT);
 
 		addButton = ViewBuilderUtils.newButton( "Delivery_New.title", "addButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
-		addButton.setPrefWidth(150d);
-		addButton.setAlignment(Pos.CENTER_LEFT);
 
 		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-		printButton.setPrefWidth(150d);
-		printButton.setAlignment(Pos.CENTER_LEFT);
 
 		actionbar.getChildren().addAll(saveButton,editButton,deleteButton,addArticleButton,cancelButton,addButton,printButton);
+		actionbar.setAlignment(Pos.CENTER);
 
 	}
 	public void buildDeliveryItemBar(){

@@ -34,7 +34,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
 public class SalesOrderPrintTemplate {
-	
+
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private Document document;
@@ -48,6 +48,7 @@ public class SalesOrderPrintTemplate {
 	private final Login salesAgent;
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
+	private final boolean isProformat;
 
 	public SalesOrderPrintTemplate(SalesOrderPrinterData invoicePrinterData, ResourceBundle resourceBundle,
 			Locale locale) {
@@ -57,9 +58,10 @@ public class SalesOrderPrintTemplate {
 		this.salesAgent = invoicePrinterData.getLogin();
 		this.resourceBundle = resourceBundle;
 		this.locale = locale;
+		this.isProformat = invoicePrinterData.isProformat();
 
 		printReportHeader();
-		
+
 		fillTableHaeder();		
 	}
 	private void printReportHeader() {
@@ -74,12 +76,13 @@ public class SalesOrderPrintTemplate {
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException(e);
 		}
-		
+
 		PdfPTable rt = new PdfPTable(2);
 		rt.setWidthPercentage(100);
-
-		Paragraph documentName = new CenterParagraph(new BoldText(
-				resourceBundle.getString("SalesOrderPrintTemplate_invoice.title")+ " " + soNumber));
+		String invoiceHeader = resourceBundle.getString("SalesOrderPrintTemplate_invoice.title") ;
+		if(isProformat)
+			invoiceHeader = "FACTURE PRO FORMA";
+		Paragraph documentName = new CenterParagraph(new BoldText(invoiceHeader));
 		documentName.setSpacingAfter(10);
 		borderlessCell(rt, documentName, 2, 1);
 
@@ -90,7 +93,7 @@ public class SalesOrderPrintTemplate {
 
 		paragraph = new Paragraph(new BoldText(company.getSiteManager()));
 		borderlessCell(rt, paragraph, 2, 1);
-		
+
 		paragraph = new Paragraph(new StandardText(agency.getStreet()));
 		borderlessCell(rt, paragraph, 2, 1);
 
@@ -107,7 +110,7 @@ public class SalesOrderPrintTemplate {
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " + salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 1, 1);
-		
+
 		paragraph = new Paragraph(new StandardText(
 				resourceBundle.getString("SalesOrderPrintTemplate_invoiceDate.title")
 				+ " " + calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
@@ -129,7 +132,7 @@ public class SalesOrderPrintTemplate {
 			throw new IllegalStateException(e);
 		}
 	}
-	
+
 	private void fillTableHaeder() {
 		invoiceTable = new PdfPTable(new float[] { .18f, .37f, .06f,.11f,.11f,.15f});
 		invoiceTable.setWidthPercentage(100);
@@ -157,7 +160,7 @@ public class SalesOrderPrintTemplate {
 	private BigDecimal totalAmountHTAfterDiscount = BigDecimal.ZERO;
 	private BigDecimal totalAmountDiscount = BigDecimal.ZERO;
 	private BigDecimal totalAmountTax = BigDecimal.ZERO;
-	
+
 	public void addItems(List<SalesOrderItem> invoiceItems) {
 		BigDecimal discountRate = salesOrder.getDiscountRate()==null?BigDecimal.ZERO:VAT.getRawRate(salesOrder.getDiscountRate());
 		for (SalesOrderItem soItem : invoiceItems) {
@@ -184,7 +187,7 @@ public class SalesOrderPrintTemplate {
 
 			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(soItem.getOrderedQty())));
 			borderCell(invoiceTable,colspan,rowspan, par);
-			
+
 			BigDecimal sppuTTC = soItem.getSalesPricePU()==null?BigDecimal.ZERO:soItem.getSalesPricePU();
 			par = new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(sppuTTC)));
 			borderCell(invoiceTable,colspan,rowspan, par);
@@ -208,7 +211,7 @@ public class SalesOrderPrintTemplate {
 				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(vatAmount))));
 			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
-			
+
 			totalAmountHTBeforeDiscount = totalAmountHTBeforeDiscount.add(totalPriceHT);
 			totalAmountDiscount = totalAmountDiscount.add(discount);
 			totalAmountHTAfterDiscount = totalAmountHTAfterDiscount.add(totalPriceHTAfterDiscount);
@@ -217,7 +220,7 @@ public class SalesOrderPrintTemplate {
 	}
 
 
-	
+
 	public void closeReport(){
 		Paragraph par = new Paragraph(new StandardText(""));
 		borderCell(invoiceTable,6,1, par);
@@ -227,7 +230,7 @@ public class SalesOrderPrintTemplate {
 			int rowspan = 5;
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
-			
+
 			List<Paragraph> pars = new ArrayList<Paragraph>();
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTCBeforeDiscount.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalDiscount.title"))));
@@ -235,14 +238,14 @@ public class SalesOrderPrintTemplate {
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
-			
+
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
-			
+
 			pars = new ArrayList<Paragraph>();
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTBeforeDiscount))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountDiscount))));
@@ -257,20 +260,20 @@ public class SalesOrderPrintTemplate {
 
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
-			
+
 			List<Paragraph> pars = new ArrayList<Paragraph>();
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHT.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
-			
+
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
 			par = new Paragraph(new StandardText(""));
 			borderCell(invoiceTable, colspan,rowspan,par);
-			
+
 			pars = new ArrayList<Paragraph>();
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax))));
@@ -285,7 +288,7 @@ public class SalesOrderPrintTemplate {
 		} catch (DocumentException e) {
 			throw new IllegalStateException(e);
 		}
-		
+
 	}
 
 	private static float fontSize = 8;
@@ -370,7 +373,7 @@ public class SalesOrderPrintTemplate {
 
 	private PdfPCell borderCell(PdfPTable table, Element... elements) {
 		PdfPCell pdfPCell = new PdfPCell();
-//		pdfPCell.setBorder(Rectangle.NO_BORDER);
+		//		pdfPCell.setBorder(Rectangle.NO_BORDER);
 		for (Element element : elements) {
 			pdfPCell.addElement(element);
 		}
@@ -381,7 +384,7 @@ public class SalesOrderPrintTemplate {
 	private PdfPCell borderCell(PdfPTable table,
 			int colspan, int rowspan, Element... elements) {
 		PdfPCell pdfPCell = new PdfPCell();
-//		pdfPCell.setBorder(Rectangle.NO_BORDER);
+		//		pdfPCell.setBorder(Rectangle.NO_BORDER);
 		pdfPCell.setColspan(colspan);
 		pdfPCell.setRowspan(rowspan);
 		for (Element element : elements) {

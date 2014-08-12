@@ -40,7 +40,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	
 
 	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 5);
+	static Font font = FontFactory.getFont("Times-Roman", 6);
 
 	public ProcurementOrderReportPrintTemplatePdf(ProcurementOrderReportPrinterData data, Agency agency,Login login,ResourceBundle resourceBundle) throws DocumentException {
 		this.agency = agency ;
@@ -91,27 +91,33 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(cip));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new Phrase(cip,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(articleName));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new Phrase(articleName,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(saleQty!=null?saleQty.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new RightParagraph(new Phrase(saleQty!=null?saleQty.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(stockQty!=null?stockQty.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new RightParagraph(new Phrase(stockQty!=null?stockQty.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(pppu!=null?pppu.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new RightParagraph(new Phrase(pppu!=null?pppu.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(ttppu!=null?ttppu.toBigInteger()+"":"")));
+		pdfPCell.setFixedHeight(12);
+		pdfPCell.addElement(new RightParagraph(new Phrase(ttppu!=null?ttppu.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 	}
 
@@ -121,28 +127,34 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("CIP"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("CIP",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("DESIGNATION"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("DESIGNATION",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("CMD"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("CMD",boldFont));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("STOCK"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("STOCK",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("P.A"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("P.A",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Total"));
+		pdfPCell.setFixedHeight(15);
+		pdfPCell.addElement(new Phrase("Total",boldFont));
 		reportTable.addCell(pdfPCell);
 
 	}
@@ -157,15 +169,15 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText(agency.getFax() ));
+		paragraph = new Paragraph(new Phrase(agency.getFax() ));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText(agency.getPhone()));
+		paragraph = new Paragraph(new Phrase(agency.getPhone()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new Phrase("Date  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 		

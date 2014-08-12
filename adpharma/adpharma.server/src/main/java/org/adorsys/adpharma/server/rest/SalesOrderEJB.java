@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -42,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 @Stateless
 public class SalesOrderEJB
 {
+	
 
 	@Inject
 	private SalesOrderRepository repository;
@@ -100,7 +102,6 @@ public class SalesOrderEJB
 
 	@Inject
 	private EntityManager em ;
-
 
 	public SalesOrder create(SalesOrder entity)
 	{
@@ -268,16 +269,16 @@ public class SalesOrderEJB
 		returnSalesEvent.fire(update);
 		return update;
 	}
-	
+
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
-		System.out.println(salesOrder);
+		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
+		BigDecimal discountRate = salesOrder.getDiscountRate();
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
 			return  findById(salesOrder.getId()) ;
 		Login realSaller = getRealSaller(salesOrder.getSalesKey());
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
-		System.out.println(salesOrder);
 		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
 		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
 		//		salesOrder.setAmountVAT(original.getAmountVAT());
@@ -285,9 +286,17 @@ public class SalesOrderEJB
 		//			salesOrder.setAmountDiscount(BigDecimal.ZERO);
 
 		salesOrder.setSalesAgent(realSaller);
+		salesOrder = repository.save(salesOrder);
 		rebuildSaleOrder(salesOrder);
 		salesOrder.setSalesOrderStatus(DocumentProcessingState.CLOSED);
 		SalesOrder closedSales = update(salesOrder);
+		if(discountRate==null||BigDecimal.ZERO.compareTo(discountRate)==0){
+			if(amountDiscount!=null && BigDecimal.ZERO.compareTo(amountDiscount)!=0){
+				salesOrder.setAmountDiscount(amountDiscount);
+				salesOrder.setAmountAfterTax(salesOrder.getAmountAfterTax().subtract(amountDiscount));
+				salesOrder = repository.save(salesOrder);
+			}
+		}
 		salesOrderClosedEvent.fire(closedSales);
 		return closedSales;
 	}

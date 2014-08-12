@@ -25,59 +25,67 @@ import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemService;
 public class SalesOrderPrinterDataService extends Service<SalesOrderPrinterData>
 {
 
-   @Inject
-   private SalesOrderService salesOrderService;
-   @Inject
-   private CompanyService companyService;
-   @Inject
-   private AgencyService agencyService;
-   @Inject
-   private LoginService loginService;
-   @Inject
-   private SalesOrderItemService soItemService;
-   
-   private String customerName ;
+	@Inject
+	private SalesOrderService salesOrderService;
+	@Inject
+	private CompanyService companyService;
+	@Inject
+	private AgencyService agencyService;
+	@Inject
+	private LoginService loginService;
+	@Inject
+	private SalesOrderItemService soItemService;
 
-   private Long salesOrderId;
+	private String customerName ;
 
-   public SalesOrderPrinterDataService setSalesOrderId(Long salesOrderId)
-   {
-      this.salesOrderId = salesOrderId;
-      return this;
-   }
-   public String getCustomerName(){
-	   return customerName ;
-   }
-   public SalesOrderPrinterDataService setCustomerName(String customerName)
-   {
-      this.customerName = customerName;
-      return this;
-   }
+	private Long salesOrderId;
 
-   @Override
-   protected Task<SalesOrderPrinterData> createTask()
-   {
-      return new Task<SalesOrderPrinterData>()
-      {
-         @Override
-         protected SalesOrderPrinterData call() throws Exception
-         {
-            if (salesOrderId == null)
-               return null;
-            SalesOrderPrinterData result = null;
-            SalesOrder salesOrder = salesOrderService.findById(salesOrderId);
-            Agency agency = agencyService.findById(salesOrder.getAgency().getId());
-            Company company = companyService.findById(agency.getCompany().getId());
-            Login login = loginService.findById(salesOrder.getSalesAgent().getId());
-            SalesOrderItem soItem = new SalesOrderItem();
-            soItem.setSalesOrder(new SalesOrderItemSalesOrder(salesOrder));
-            SalesOrderItemSearchInput searchInput = new SalesOrderItemSearchInput();
-            searchInput.setEntity(soItem);
-            searchInput.getFieldNames().add("salesOrder");
-            SalesOrderItemSearchResult found = soItemService.findBy(searchInput);
-            result = new SalesOrderPrinterData(salesOrder, company, agency, login, found);
-			return result;
-         }
-      };
-   }
+	private boolean isProformat=false;
+
+	public SalesOrderPrinterDataService setSalesOrderId(Long salesOrderId)
+	{
+		this.salesOrderId = salesOrderId;
+		return this;
+	}
+	public String getCustomerName(){
+		return customerName ;
+	}
+	public SalesOrderPrinterDataService setCustomerName(String customerName)
+	{
+		this.customerName = customerName;
+		return this;
+	}
+
+	public SalesOrderPrinterDataService setIsProforma(boolean isProformat)
+	{
+		this.isProformat = isProformat;
+		return this;
+	}
+
+	@Override
+	protected Task<SalesOrderPrinterData> createTask()
+	{
+		return new Task<SalesOrderPrinterData>()
+				{
+			@Override
+			protected SalesOrderPrinterData call() throws Exception
+			{
+				if (salesOrderId == null)
+					return null;
+				SalesOrderPrinterData result = null;
+				SalesOrder salesOrder = salesOrderService.findById(salesOrderId);
+				Agency agency = agencyService.findById(salesOrder.getAgency().getId());
+				Company company = companyService.findById(agency.getCompany().getId());
+				Login login = loginService.findById(salesOrder.getSalesAgent().getId());
+				SalesOrderItem soItem = new SalesOrderItem();
+				soItem.setSalesOrder(new SalesOrderItemSalesOrder(salesOrder));
+				SalesOrderItemSearchInput searchInput = new SalesOrderItemSearchInput();
+				searchInput.setEntity(soItem);
+				searchInput.getFieldNames().add("salesOrder");
+				SalesOrderItemSearchResult found = soItemService.findBy(searchInput);
+				result = new SalesOrderPrinterData(salesOrder, company, agency, login, found,isProformat);
+				return result;
+			}
+				};
+	}
 }

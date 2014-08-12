@@ -14,8 +14,9 @@
 						<Insets right="5.0" />
 					</HBox.margin>
 				</TextField>
-				<Button fx:id="cancelButton" layoutX="689.0" layoutY="24.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="146.0" text="Fermer" />
-				<Button fx:id="printButton" layoutX="765.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="146.0" text="Imprimer " />
+				<Button fx:id="printButton" layoutX="765.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" text="recu avec remise" />
+<Button fx:id="unDiscountReceiptBtn" layoutX="633.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" text="recu sans remise" />
+				<Button fx:id="cancelButton" layoutX="689.0" layoutY="24.0" mnemonicParsing="false" prefHeight="35.0" text="Fermer" />
 			</children>
 			<padding>
 				<Insets left="10.0" />

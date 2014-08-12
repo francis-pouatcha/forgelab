@@ -16,6 +16,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
@@ -26,10 +27,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.events.PaymentRequestEvent;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
-import org.adorsys.adpharma.client.jpa.customer.CustomerSearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
@@ -38,12 +38,8 @@ import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtSta
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchInput;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchResult;
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchService;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
-import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -57,6 +53,8 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
@@ -91,6 +89,10 @@ public class DebtStatementListController implements EntityController
 	@Inject
 	private DebtStatementRemoveService removeService;
 
+	@Inject
+	@PaymentRequestEvent
+	private Event<DebtStatement> debstatementPaymentCreateRequestEvent;
+
 
 	@Inject
 	@EntityCreateRequestedEvent
@@ -101,7 +103,10 @@ public class DebtStatementListController implements EntityController
 	private Event<DebtStatementSearchResult> entityListPageIndexChangedEvent;
 
 	@Inject
-	private CustomerSearchService insurrerSearchService;
+	@ModalEntitySearchRequestedEvent
+	private Event<CustomerSearchInput>  insurrerSearchRequestEvent;
+
+
 
 	@Inject
 	private DebtStatementSearchService searchService ;
@@ -117,7 +122,7 @@ public class DebtStatementListController implements EntityController
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
-	
+
 	@Inject
 	private CustomerInvoiceSearchService customerInvoiceSearchService ;
 
@@ -159,6 +164,21 @@ public class DebtStatementListController implements EntityController
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
 
+			}
+		});
+		
+		listView.getCashButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					debstatementPaymentCreateRequestEvent.fire(selectedItem);
+					
+				}else {
+					Dialogs.create().message("Selectionner un etat !").showError();
+				}
+				
 			}
 		});
 
@@ -250,20 +270,13 @@ public class DebtStatementListController implements EntityController
 			}
 		});
 		statementCustomerInvoiceAssocSearchService.setOnFailed(callFailedEventHandler);
-
-		listView.getInsurrance().armedProperty().addListener(new ChangeListener<Boolean>() {
+		listView.getInsurrance().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if (newValue){
-					CustomerSearchInput searchInput = new CustomerSearchInput();
-					searchInput.setMax(-1);
-					insurrerSearchService.setSearchInputs(searchInput).start();
-
-				}
-
-
+			public void handle(MouseEvent event) {
+				CustomerSearchInput searchInput = new CustomerSearchInput();
+				searchInput.setMax(-1);
+				insurrerSearchRequestEvent.fire(searchInput);
 			}
 		});
 
@@ -341,33 +354,9 @@ public class DebtStatementListController implements EntityController
 				handleSearchResult(searchResult);
 			}
 		});
-		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		searchService.setOnFailed(callFailedEventHandler);
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				DebtStatementSearchService s = (DebtStatementSearchService) event.getSource();
-				s.reset();				
-			}
-		});
 
-		insurrerSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				CustomerSearchService s = (CustomerSearchService) event.getSource();
-				CustomerSearchResult value = s.getValue();
-				event.consume();
-				s.reset();
-				List<Customer> resultList = value.getResultList();
-				ArrayList<DebtStatementInsurrance> arrayList = new ArrayList<>();
-				for (Customer customer : resultList) {
-					arrayList.add(new DebtStatementInsurrance(customer) );
-				}
-				arrayList.add(0,new DebtStatementInsurrance());
-				listView.getInsurrance().getItems().setAll(arrayList);
-
-			}
-		});
 		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -376,27 +365,20 @@ public class DebtStatementListController implements EntityController
 
 			}
 		});
-		insurrerSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
-			@Override
-			public void handle(WorkerStateEvent event) {
-				SupplierSearchService s = (SupplierSearchService) event.getSource();
-				s.reset();				
-			}
-		});
 
 		listView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				
+
 				if(selectedItem!=null){
 					customerInvoiceSearchService.setDebtStatement(selectedItem).start();
 				}
 			}
 		});
-		
+
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -419,7 +401,7 @@ public class DebtStatementListController implements EntityController
 						e.printStackTrace();
 					}
 				}
-				
+
 			}
 		});
 		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
@@ -499,6 +481,14 @@ public class DebtStatementListController implements EntityController
 		listView.getDataList().getItems().add(0, createdEntity);
 	}
 
+	public void handleModalCustomerSearchDoneEvent(@Observes @ModalEntitySearchDoneEvent Customer customer)
+	{
+		List<DebtStatementInsurrance> arrayList = new ArrayList<DebtStatementInsurrance>();
+		listView.getInsurrance().setValue(new DebtStatementInsurrance(customer));
+	}
+
+
+
 	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent DebtStatement removedEntity)
 	{
 		listView.getDataList().getItems().remove(removedEntity);
@@ -556,18 +546,18 @@ public class DebtStatementListController implements EntityController
 		DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 		String debtStmenetNumber = selectedItem.getStatementNumber(); 
 
-		
+
 		HSSFWorkbook deleveryXls = new HSSFWorkbook();
 		int rownum = 0 ;
 		int cellnum = 0 ;
 		HSSFCell cell ;
 		HSSFSheet sheet = deleveryXls.createSheet(debtStmenetNumber);
 		HSSFRow head = sheet.createRow(rownum++);
-		
+
 		cell = head.createCell(cellnum++);
 		cell.setCellValue(selectedItem.getInsurrance().getFullName());
-		
-		 cellnum = 0 ;
+
+		cellnum = 0 ;
 		HSSFRow header = sheet.createRow(rownum++);
 
 		cell = header.createCell(cellnum++);
@@ -599,33 +589,33 @@ public class DebtStatementListController implements EntityController
 			List<CustomerInvoice> items = Lists.newArrayList(iterator);
 			for (CustomerInvoice item : items) {
 
-					cellnum = 0 ;
-					HSSFRow row = sheet.createRow(rownum++);
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getSalesOrder()+"");
+				cellnum = 0 ;
+				HSSFRow row = sheet.createRow(rownum++);
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getSalesOrder()+"");
 
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getInsurance().getCustomer().getSerialNumber());
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getInsurance().getCustomer().getSerialNumber());
 
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getCustomer().getFullName());
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getCustomer().getFullName());
 
-					if(item.getCreationDate()!=null){
-						cell = row.createCell(cellnum++);
-						cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"dd-MM-yyyy"));
-					}else {
-						cell = row.createCell(cellnum++);
-						cell.setCellValue("");
-					}
+				if(item.getCreationDate()!=null){
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"dd-MM-yyyy"));
+				}else {
+					cell = row.createCell(cellnum++);
+					cell.setCellValue("");
+				}
 
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getNetToPay().toBigInteger()+"");
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getNetToPay().toBigInteger()+"");
 
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getInsurranceRestTopay().toBigInteger()+"");
-					
-					cell = row.createCell(cellnum++);
-					cell.setCellValue(item.getInsurance().getCoverageRate().toBigInteger()+"%");
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getInsurranceRestTopay().toBigInteger()+"");
+
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(item.getInsurance().getCoverageRate().toBigInteger()+"%");
 
 
 

@@ -60,6 +60,8 @@ public class ProcurementOrderDisplayView
 	private Button addButton;
 
 	private Button printButton;
+	
+	private Button printXlsButton ;
 
 	private Button cancelButton;
 
@@ -234,20 +236,21 @@ public class ProcurementOrderDisplayView
 
 	public void buildActionBar(){
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
-		saveButton.setPrefWidth(150d);
 		saveButton.setAlignment(Pos.CENTER_LEFT);
 		saveButton.setText("Livrer");
 
 		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
-		cancelButton.setPrefWidth(150d);
 		cancelButton.setAlignment(Pos.CENTER_LEFT);
 
 		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-		printButton.setPrefWidth(220d);
 		printButton.setAlignment(Pos.CENTER_LEFT);
-		printButton.setText("Imprimer la preparation");
+		printButton.setText("Exporter en Pdf");
+		
+		printXlsButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+		printXlsButton.setAlignment(Pos.CENTER_LEFT);
+		printXlsButton.setText("Exporter en Xls");
 
-		actionbar.getChildren().addAll(saveButton,cancelButton,printButton);
+		actionbar.getChildren().addAll(saveButton,cancelButton,printButton,printXlsButton);
 
 	}
 
@@ -307,6 +310,10 @@ public class ProcurementOrderDisplayView
 
 	public Button getPrintButton(){
 		return printButton ;
+	}
+	
+	public Button getPrintXlsButton(){
+		return printXlsButton ;
 	}
 
 	public TextField getArticleName(){

@@ -52,7 +52,7 @@ public class SalesOrderPrinter {
 	
 	public void handlePrintSalesOrderRequestedEvent(
 			@Observes @PrintCustomerInvoiceRequestedEvent SalesOrderId salesOrderId) {
-		soDataService.setSalesOrderId(salesOrderId.getId()).setCustomerName(salesOrderId.getCustomerName()).start();
+		soDataService.setSalesOrderId(salesOrderId.getId()).setCustomerName(salesOrderId.getCustomerName()).setIsProforma(salesOrderId.isProformat()).start();
 	}
 
 	public void handlePrintSalesOrderRequestedEvent(
@@ -76,6 +76,7 @@ public class SalesOrderPrinter {
 	    		if(StringUtils.isNotBlank(customerName)){
 	    			invoiceData.getSalesOrder().getCustomer().setFullName(customerName);
 	    		}
+	    		
 	    		SalesOrderPrintTemplate worker = new SalesOrderPrintTemplate(invoiceData, resourceBundle, locale);
 	    		worker.addItems(invoiceData.getSalesOrderItemSearchResult().getResultList());
 	    		soItemDataService.setSalesOrderPrintTemplateWorker(worker).setSalesOrderPrinterData(invoiceData).start();

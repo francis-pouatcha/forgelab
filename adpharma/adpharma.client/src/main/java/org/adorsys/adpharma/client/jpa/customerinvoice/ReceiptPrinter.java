@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -76,6 +77,13 @@ public class ReceiptPrinter {
 	    		if(customerInvoicePrinterData==null) {
 	    			worker.closePayment();
 	    		} else {
+	    			if(receiptPrinterData.isUnDiscountReciept()){
+	    				CustomerInvoice invoice = customerInvoicePrinterData.getCustomerInvoice();
+	    				BigDecimal amountDiscount = invoice.getAmountDiscount()!=null?invoice.getAmountDiscount():BigDecimal.ZERO;
+	    				invoice.setAmountDiscount(BigDecimal.ZERO); // invoice whithout discount 
+	    				BigDecimal difference = receiptPrinterData.getPayment().getDifference();
+	    				receiptPrinterData.getPayment().setDifference(difference.subtract(amountDiscount));
+	    			}
 					worker.printInvoiceHeader(customerInvoicePrinterData);
 					worker.addItems(customerInvoicePrinterData.getCustomerInvoiceItemSearchResult().getResultList());
 					invoiceItemDataService.setReceiptPrintTemplateWorker(worker).setCustomerInvoicePrinterData(customerInvoicePrinterData).start();

@@ -87,11 +87,11 @@ public class PhmlOrderBuilder {
 	public String buildEndCommandLine(int clair,int encoded){
 		return END_COMMAND_LINE+StringUtils.leftPad(encoded+"", 4,"0")+StringUtils.leftPad(clair+"", 4,"0");
 	}
-/**
- * create phml order file and store it in message directory
- * @param order tobe sent on phml server
- * @throws IOException
- */
+	/**
+	 * create phml order file and store it in message directory
+	 * @param order tobe sent on phml server
+	 * @throws IOException
+	 */
 	public void build(ProcurementOrder order) throws IOException{
 		List<String> lines = new ArrayList<String>();
 		File file = new File("test.txt");

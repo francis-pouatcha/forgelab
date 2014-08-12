@@ -52,276 +52,302 @@ import org.adorsys.javaext.relation.RelationshipEnd;
 @Description("DebtStatement_description")
 @ToStringField("statementNumber")
 @ListField({ "statementNumber", "insurrance.fullName", "agency.name", "paymentDate",
-      "initialAmount", "advancePayment", "restAmount", "settled",
-      "amountFromVouchers", "canceled", "useVoucher" })
+	"initialAmount", "advancePayment", "restAmount", "settled",
+	"amountFromVouchers", "canceled", "useVoucher" })
 public class DebtStatement implements Serializable
 {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   @Column(name = "id", updatable = false, nullable = false)
-   private Long id = null;
-   @Version
-   @Column(name = "version")
-   private int version = 0;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", updatable = false, nullable = false)
+	private Long id = null;
+	@Version
+	@Column(name = "version")
+	private int version = 0;
 
-   @Column
-   @Description("DebtStatement_statementNumber_description")
-   private String statementNumber;
+	@Column
+	@Description("DebtStatement_statementNumber_description")
+	private String statementNumber;
 
-   @ManyToOne
-   @Description("DebtStatement_insurrance_description")
-   @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
-   private Customer insurrance;
+	@ManyToOne
+	@Description("DebtStatement_insurrance_description")
+	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
+	private Customer insurrance;
 
-   @ManyToOne
-   @Description("DebtStatement_agency_description")
-   @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
-   @NotNull(message = "DebtStatement_agency_NotNull_validation")
-   private Agency agency;
+	@ManyToOne
+	@Description("DebtStatement_agency_description")
+	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
+	@NotNull(message = "DebtStatement_agency_NotNull_validation")
+	private Agency agency;
 
-   @Temporal(TemporalType.TIMESTAMP)
-   @Description("DebtStatement_paymentDate_description")
-   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
-   private Date paymentDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("DebtStatement_paymentDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date paymentDate;
 
-   @Column
-   @Description("DebtStatement_initialAmount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal initialAmount;
+	@Column
+	@Description("DebtStatement_initialAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal initialAmount;
 
-   @Column
-   @Description("DebtStatement_advancePayment_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal advancePayment;
+	@Column
+	@Description("DebtStatement_advancePayment_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal advancePayment;
 
-   @Column
-   @Description("DebtStatement_restAmount_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal restAmount;
+	@Column
+	@Description("DebtStatement_payAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private transient BigDecimal payAmount;
 
-   @Column
-   @Description("DebtStatement_settled_description")
-   private Boolean settled;
+	@Column
+	@Description("DebtStatement_restAmount_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal restAmount;
 
-   @Column
-   @Description("DebtStatement_amountFromVouchers_description")
-   @NumberFormatType(NumberType.CURRENCY)
-   private BigDecimal amountFromVouchers;
+	@Column
+	@Description("DebtStatement_paymentMode_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private transient PaymentMode paymentMode;
 
-   @Column
-   @Description("DebtStatement_canceled_description")
-   private Boolean canceled;
+	@Column
+	@Description("DebtStatement_settled_description")
+	private Boolean settled;
 
-   @Column
-   @Description("DebtStatement_useVoucher_description")
-   private Boolean useVoucher;
+	@Column
+	@Description("DebtStatement_amountFromVouchers_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal amountFromVouchers;
 
-   @OneToMany(mappedBy = "source", targetEntity = DebtStatementCustomerInvoiceAssoc.class)
-   @Relationship(end = RelationshipEnd.SOURCE, sourceEntity = DebtStatement.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices")
-   @Description("DebtStatement_invoices_description")
-   @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
-   private Set<DebtStatementCustomerInvoiceAssoc> invoices = new HashSet<DebtStatementCustomerInvoiceAssoc>();
+	@Column
+	@Description("DebtStatement_canceled_description")
+	private Boolean canceled;
 
-   @Column
-   @Description("DebtStatement_statementStatus_description")
-   @Enumerated(EnumType.STRING)
-   private DocumentProcessingState statementStatus = DocumentProcessingState.ONGOING;
-   
-   
-   public Long getId()
-   {
-      return this.id;
-   }
+	@Column
+	@Description("DebtStatement_useVoucher_description")
+	private Boolean useVoucher;
 
-   public void setId(final Long id)
-   {
-      this.id = id;
-   }
+	@OneToMany(mappedBy = "source", targetEntity = DebtStatementCustomerInvoiceAssoc.class)
+	@Relationship(end = RelationshipEnd.SOURCE, sourceEntity = DebtStatement.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices")
+	@Description("DebtStatement_invoices_description")
+	@Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
+	private Set<DebtStatementCustomerInvoiceAssoc> invoices = new HashSet<DebtStatementCustomerInvoiceAssoc>();
 
-   public int getVersion()
-   {
-      return this.version;
-   }
+	@Column
+	@Description("DebtStatement_statementStatus_description")
+	@Enumerated(EnumType.STRING)
+	private DocumentProcessingState statementStatus = DocumentProcessingState.ONGOING;
 
-   public void setVersion(final int version)
-   {
-      this.version = version;
-   }
 
-   @Override
-   public boolean equals(Object that)
-   {
-      if (this == that)
-      {
-         return true;
-      }
-      if (that == null)
-      {
-         return false;
-      }
-      if (getClass() != that.getClass())
-      {
-         return false;
-      }
-      if (id != null)
-      {
-         return id.equals(((DebtStatement) that).id);
-      }
-      return super.equals(that);
-   }
+	public Long getId()
+	{
+		return this.id;
+	}
 
-   @Override
-   public int hashCode()
-   {
-      if (id != null)
-      {
-         return id.hashCode();
-      }
-      return super.hashCode();
-   }
-   public String getStatementNumber()
-   {
-      return this.statementNumber;
-   }
+	public void setId(final Long id)
+	{
+		this.id = id;
+	}
 
-   public void setStatementNumber(final String statementNumber)
-   {
-      this.statementNumber = statementNumber;
-   }
+	public int getVersion()
+	{
+		return this.version;
+	}
 
-   public Customer getInsurrance()
-   {
-      return this.insurrance;
-   }
+	public void setVersion(final int version)
+	{
+		this.version = version;
+	}
 
-   public void setInsurrance(final Customer insurrance)
-   {
-      this.insurrance = insurrance;
-   }
+	@Override
+	public boolean equals(Object that)
+	{
+		if (this == that)
+		{
+			return true;
+		}
+		if (that == null)
+		{
+			return false;
+		}
+		if (getClass() != that.getClass())
+		{
+			return false;
+		}
+		if (id != null)
+		{
+			return id.equals(((DebtStatement) that).id);
+		}
+		return super.equals(that);
+	}
 
-   public Agency getAgency()
-   {
-      return this.agency;
-   }
+	@Override
+	public int hashCode()
+	{
+		if (id != null)
+		{
+			return id.hashCode();
+		}
+		return super.hashCode();
+	}
+	public String getStatementNumber()
+	{
+		return this.statementNumber;
+	}
 
-   public void setAgency(final Agency agency)
-   {
-      this.agency = agency;
-   }
+	public void setStatementNumber(final String statementNumber)
+	{
+		this.statementNumber = statementNumber;
+	}
 
-   public Date getPaymentDate()
-   {
-      return this.paymentDate;
-   }
+	public Customer getInsurrance()
+	{
+		return this.insurrance;
+	}
 
-   public void setPaymentDate(final Date paymentDate)
-   {
-      this.paymentDate = paymentDate;
-   }
+	public void setInsurrance(final Customer insurrance)
+	{
+		this.insurrance = insurrance;
+	}
 
-   public BigDecimal getInitialAmount()
-   {
-      return this.initialAmount;
-   }
+	public Agency getAgency()
+	{
+		return this.agency;
+	}
 
-   public void setInitialAmount(final BigDecimal initialAmount)
-   {
-      this.initialAmount = initialAmount;
-   }
+	public void setAgency(final Agency agency)
+	{
+		this.agency = agency;
+	}
 
-   public BigDecimal getAdvancePayment()
-   {
-      return this.advancePayment;
-   }
+	public Date getPaymentDate()
+	{
+		return this.paymentDate;
+	}
 
-   public void setAdvancePayment(final BigDecimal advancePayment)
-   {
-      this.advancePayment = advancePayment;
-   }
+	public void setPaymentDate(final Date paymentDate)
+	{
+		this.paymentDate = paymentDate;
+	}
 
-   public BigDecimal getRestAmount()
-   {
-      return this.restAmount;
-   }
+	public BigDecimal getInitialAmount()
+	{
+		return this.initialAmount;
+	}
 
-   public void setRestAmount(final BigDecimal restAmount)
-   {
-      this.restAmount = restAmount;
-   }
+	public void setInitialAmount(final BigDecimal initialAmount)
+	{
+		this.initialAmount = initialAmount;
+	}
 
-   public Boolean getSettled()
-   {
-      return this.settled;
-   }
+	public BigDecimal getAdvancePayment()
+	{
+		return this.advancePayment;
+	}
 
-   public void setSettled(final Boolean settled)
-   {
-      this.settled = settled;
-   }
+	public void setAdvancePayment(final BigDecimal advancePayment)
+	{
+		this.advancePayment = advancePayment;
+	}
 
-   public BigDecimal getAmountFromVouchers()
-   {
-      return this.amountFromVouchers;
-   }
+	public BigDecimal getRestAmount()
+	{
+		return this.restAmount;
+	}
 
-   public void setAmountFromVouchers(final BigDecimal amountFromVouchers)
-   {
-      this.amountFromVouchers = amountFromVouchers;
-   }
+	public void setRestAmount(final BigDecimal restAmount)
+	{
+		this.restAmount = restAmount;
+	}
 
-   public Boolean getCanceled()
-   {
-      return this.canceled;
-   }
+	public Boolean getSettled()
+	{
+		return this.settled;
+	}
 
-   public void setCanceled(final Boolean canceled)
-   {
-      this.canceled = canceled;
-   }
+	public void setSettled(final Boolean settled)
+	{
+		this.settled = settled;
+	}
 
-   public Boolean getUseVoucher()
-   {
-      return this.useVoucher;
-   }
+	public BigDecimal getAmountFromVouchers()
+	{
+		return this.amountFromVouchers;
+	}
 
-   public void setUseVoucher(final Boolean useVoucher)
-   {
-      this.useVoucher = useVoucher;
-   }
-   
-   
+	public void setAmountFromVouchers(final BigDecimal amountFromVouchers)
+	{
+		this.amountFromVouchers = amountFromVouchers;
+	}
 
-   public DocumentProcessingState getStatementStatus() {
-	return statementStatus;
-   }
+	public Boolean getCanceled()
+	{
+		return this.canceled;
+	}
+
+	public void setCanceled(final Boolean canceled)
+	{
+		this.canceled = canceled;
+	}
+
+	public Boolean getUseVoucher()
+	{
+		return this.useVoucher;
+	}
+
+	public void setUseVoucher(final Boolean useVoucher)
+	{
+		this.useVoucher = useVoucher;
+	}
+
+
+
+	public DocumentProcessingState getStatementStatus() {
+		return statementStatus;
+	}
 
 	public void setStatementStatus(DocumentProcessingState statementStatus) {
 		this.statementStatus = statementStatus;
 	}
 
-@Override
-   public String toString()
-   {
-      String result = getClass().getSimpleName() + " ";
-      if (statementNumber != null && !statementNumber.trim().isEmpty())
-         result += "statementNumber: " + statementNumber;
-      if (settled != null)
-         result += ", settled: " + settled;
-      if (canceled != null)
-         result += ", canceled: " + canceled;
-      if (useVoucher != null)
-         result += ", useVoucher: " + useVoucher;
-      return result;
-   }
+	public BigDecimal getPayAmount() {
+		return payAmount;
+	}
 
-   public Set<DebtStatementCustomerInvoiceAssoc> getInvoices()
-   {
-      return this.invoices;
-   }
+	public void setPayAmount(BigDecimal payAmount) {
+		this.payAmount = payAmount;
+	}
 
-   public void setInvoices(final Set<DebtStatementCustomerInvoiceAssoc> invoices)
-   {
-      this.invoices = invoices;
-   }
+	public PaymentMode getPaymentMode() {
+		return paymentMode;
+	}
+
+	public void setPaymentMode(PaymentMode paymentMode) {
+		this.paymentMode = paymentMode;
+	}
+
+	@Override
+	public String toString()
+	{
+		String result = getClass().getSimpleName() + " ";
+		if (statementNumber != null && !statementNumber.trim().isEmpty())
+			result += "statementNumber: " + statementNumber;
+		if (settled != null)
+			result += ", settled: " + settled;
+		if (canceled != null)
+			result += ", canceled: " + canceled;
+		if (useVoucher != null)
+			result += ", useVoucher: " + useVoucher;
+		return result;
+	}
+
+	public Set<DebtStatementCustomerInvoiceAssoc> getInvoices()
+	{
+		return this.invoices;
+	}
+
+	public void setInvoices(final Set<DebtStatementCustomerInvoiceAssoc> invoices)
+	{
+		this.invoices = invoices;
+	}
 }

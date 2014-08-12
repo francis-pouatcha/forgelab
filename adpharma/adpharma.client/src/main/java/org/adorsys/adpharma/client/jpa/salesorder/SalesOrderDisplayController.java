@@ -235,6 +235,26 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getPrintProformaButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Boolean cashed = displayedEntity.getCashed();
+				if(!cashed){
+					SalesOrderId selectedSalesOrderId = new SalesOrderId(displayedEntity.getId());
+					if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+					String customerName = null;
+					if(displayedEntity!=null && "000000001".equals(displayedEntity.getCustomer().getSerialNumber()))
+						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					selectedSalesOrderId.setCustomerName(customerName);
+					selectedSalesOrderId.setProformat(true);
+					printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);
+
+				}else {
+					Dialogs.create().message("Impossible d'editer une proforma facture deja encaissee").showInformation();
+				}
+
+			}
+		});
 
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
 			@Override
@@ -545,9 +565,9 @@ public class SalesOrderDisplayController implements EntityController
 					}
 					displayView.getCashDrawer().getSelectionModel().select(0);
 				}
-
 			}
 		});
+		
 
 		cashDrawerSearchService.setOnFailed(callFailedEventHandler);
 
@@ -680,25 +700,22 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
-		//		displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
-		//				) {
-		//
-		//					@Override
-		//					public void changed(
-		//							ObservableValue<? extends BigDecimal> observable,
-		//							BigDecimal oldValue, BigDecimal newValue) {
-		//						if(newValue!=null){
-		//							BigDecimal ttc = displayView.getAmountTTC().getNumber();
-		//							if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
-		//								BigDecimal discountRate = (newValue.multiply(BigDecimal.valueOf(100))).divide(ttc, 2, RoundingMode.HALF_EVEN);
-		////						        displayedEntity.setDiscountRate(discountRate);
-		//								System.out.println(discountRate);
-		//						        displayView.getDiscountRate().setNumber(discountRate);
-		//							}
-		//						}
-		//						
-		//					}
-		//		});
+				displayView.getDiscount().numberProperty().addListener(new ChangeListener<BigDecimal>(
+						) {
+		
+							@Override
+							public void changed(
+									ObservableValue<? extends BigDecimal> observable,
+									BigDecimal oldValue, BigDecimal newValue) {
+								if(newValue!=null){
+									BigDecimal ttc = displayView.getAmountTTC().getNumber();
+									if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0){
+										displayView.getNetClientText().setText(ttc.subtract(newValue).toBigInteger()+"");
+									}
+								}
+								
+							}
+				});
 
 		//		
 		displayView.getInternalPic().setOnKeyPressed(new EventHandler<KeyEvent>() {
