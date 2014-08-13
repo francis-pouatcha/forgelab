@@ -7,6 +7,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderAdvenceSearchData;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -128,6 +130,16 @@ public class ProcurementOrderService {
 				searchInput, media);
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
+	}
+	
+	
+	// @POST
+	// @Path("/advancedSearch")
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public ProcurementOrderSearchResult advenceSearch(ProcurementOrderAdvancedSearchData data) {
+		Entity<ProcurementOrderAdvancedSearchData> searchInputEntity = Entity.entity(data, media);
+		return target().path("advancedSearch").request(media).post(searchInputEntity, ProcurementOrderSearchResult.class);
 	}
 
 

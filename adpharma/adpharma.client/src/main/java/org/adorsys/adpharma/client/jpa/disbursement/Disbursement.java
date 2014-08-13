@@ -18,6 +18,8 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("Disbursement_description")
@@ -32,6 +34,12 @@ public class Disbursement implements Cloneable{
 	private SimpleObjectProperty<BigDecimal> amount;
 	private SimpleObjectProperty<PaymentMode> paymentMode;
 	private SimpleObjectProperty<DisbursementCashier> cashier;
+	
+	/**
+	 * The receipt's amount
+	 */
+	private SimpleStringProperty receipt;
+	
 	private SimpleObjectProperty<DisbursementCashDrawer> cashDrawer;
 	private SimpleObjectProperty<DisbursementAgency> agency;
 	private SimpleObjectProperty<Calendar> creationDate;
@@ -96,6 +104,20 @@ public class Disbursement implements Cloneable{
 	{
 		this.raisonProperty().set(raison);
 	}
+	
+	
+	public SimpleStringProperty receiptProperty(){
+		if(receipt==null) receipt= new SimpleStringProperty();
+		return receipt;
+	}
+	
+	public String getReceipt() {
+		return receiptProperty().get();
+	}
+	
+   public void setReceipt(String receipt) {
+	this.receiptProperty().set(receipt);
+   }
 
 
 

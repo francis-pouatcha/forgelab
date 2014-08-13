@@ -70,6 +70,7 @@ public class DisbursementPrintTemplatePdf {
 		newTableRow("NUM :", "DC-"+disbursement.getId());
 		newTableRow("CASSIER : ", disbursement.getCashier().getLoginName());
 		newTableRow("RAISON  :", disbursement.getRaison());
+		newTableRow("BENEFICIAIRE  :", disbursement.getReceipt());
 		newTableRow("MODE  :", disbursement.getPaymentMode().toString());
 		newTableRow("MONTANT  :", disbursement.getAmount()+"");
 		if(customerVoucher!=null){
@@ -104,7 +105,7 @@ public class DisbursementPrintTemplatePdf {
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("RECU DE DECCASISSEMENT"));
+		Paragraph paragraph = new Paragraph(new BoldText("RECU DE DECAISSEMENT"));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 

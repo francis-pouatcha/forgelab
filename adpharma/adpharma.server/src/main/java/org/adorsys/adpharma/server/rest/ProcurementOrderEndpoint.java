@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderAdvancedSearchData;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder_;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderSearchInput;
@@ -168,6 +169,17 @@ public class ProcurementOrderEndpoint
 				searchInput.getStart(), searchInput.getMax(), attributes);
 		return new ProcurementOrderSearchResult(countLike, detach(resultList),
 				detach(searchInput));
+	}
+	
+	
+	// Advanced search method
+	@POST
+	@Path("/advancedSearch")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ProcurementOrderSearchResult advancedSearch(ProcurementOrderAdvancedSearchData data) {
+		List<ProcurementOrder> search = ejb.avancedSearch(data);
+		return new ProcurementOrderSearchResult(Long.valueOf(1), detach(search), detach(new ProcurementOrderSearchInput()));
 	}
 
 	@POST

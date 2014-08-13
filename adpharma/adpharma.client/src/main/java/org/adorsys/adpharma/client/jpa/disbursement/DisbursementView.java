@@ -32,6 +32,8 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 
 	private TextField raison;
 
+	private TextField receipt;
+
 	private BigDecimalField amount;
 
 	private BigDecimalField voucherAmount;
@@ -81,6 +83,7 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
 		raison = viewBuilder.addTextField("Disbursement_raison_description.title", "raison", resourceBundle);
+		receipt= viewBuilder.addTextField("Disbursement_receipt_description.title", "receipt", resourceBundle);
 		amount = viewBuilder.addBigDecimalField("Disbursement_amount_description.title", "amount", resourceBundle, NumberType.CURRENCY, locale);
 		paymentMode = viewBuilder.addComboBox("Disbursement_paymentMode_description.title", "paymentMode", resourceBundle, PaymentMode.valuesForDisbursement());
 		paymentMode.setPrefWidth(350d);
@@ -118,6 +121,7 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 	public void bind(Disbursement model)
 	{
 		raison.textProperty().bindBidirectional(model.raisonProperty());
+		receipt.textProperty().bindBidirectional(model.receiptProperty());
 		amount.numberProperty().bindBidirectional(model.amountProperty());
 		voucherNumber.textProperty().bindBidirectional(model.voucherNumberProperty());
 		voucherAmount.numberProperty().bindBidirectional(model.voucherAmountProperty());
@@ -127,6 +131,10 @@ public class DisbursementView extends AbstractForm<Disbursement> {
 
 	public TextField getRaison() {
 		return raison;
+	}
+	
+	public TextField getReceipt() {
+		return receipt;
 	}
 
 	public BigDecimalField getAmount() {

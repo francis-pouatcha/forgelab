@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.PhmlOrderBuilder;
@@ -82,6 +83,10 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<ProcurementOrder> searchRequestedEvent;
+	
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<ProcurementOrderPreparationData> advancedSearchRequestedEvent;
 
 	@Inject
 	@EntityRemoveRequestEvent
@@ -129,6 +134,7 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ProcurementOrderPreparationData> orderPreparationEventData;
+	
 
 	@Inject
 	private PhmlOrderBuilder orderBuilder ;
@@ -148,7 +154,21 @@ public class ProcurementOrderListController implements EntityController
 				
 			}
 		});
+		
+		
+		/**
+		 * Handle Advanced search action
+		 */
+         listView.getAdvancedSearchButton().setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent arg0) {
+				ProcurementOrderPreparationData data = new ProcurementOrderPreparationData();
+				advancedSearchRequestedEvent.fire(data); 
+			}
+		});
+		
+		
 		/**
 		 * handle print action
 		 */

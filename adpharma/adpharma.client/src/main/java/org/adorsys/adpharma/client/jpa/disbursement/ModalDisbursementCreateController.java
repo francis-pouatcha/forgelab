@@ -4,15 +4,9 @@ import java.math.BigDecimal;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;

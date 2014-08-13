@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -80,6 +81,7 @@ public class InventoryComptRepportTemplatePdf {
 	public void addItems(List<InventoryItem> items) {
 		int artNamelenght = 68 ;
 		BigDecimal total = BigDecimal.ZERO;
+		BigInteger totalGap= BigInteger.ZERO;
 		Long ecart = Long.valueOf(0);
 		for (InventoryItem item : items) {
 			String articleName = item.getArticle().getArticleName();
@@ -89,12 +91,11 @@ public class InventoryComptRepportTemplatePdf {
 			}else {
 				newTableRow(item.getInternalPic(), articleName, item.getExpectedQty(), item.getAsseccedQty(), item.getGap(), item.getGapTotalSalePrice());
 				total = total.add(item.getGapTotalSalePrice());
-				ecart = ecart.sum(ecart, item.getGap());
+				totalGap= totalGap.add(new BigInteger(item.getGap().toString()));
 			}
 		}
 		if(!isCountRepport)
-			newTableRow("", "Total :", null, null, ecart, total);
-
+			newTableRow("", "Total :", null, null, totalGap.longValue(), total);
 	}
 
 	private void newTableRow(String internalPic, 

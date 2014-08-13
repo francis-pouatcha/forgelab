@@ -53,6 +53,9 @@ public class ProcurementOrderListView
 	private Button searchButton;
 	
 	@FXML
+	private Button advancedSearchButton;
+	
+	@FXML
 	private Button printXlsButton ;
 
 	@FXML
@@ -198,6 +201,9 @@ public class ProcurementOrderListView
 		return printButton;
 	}
 	
+	public Button getAdvancedSearchButton() {
+		return advancedSearchButton;
+    }
 	public Button getPrintXlsButton()
 	{
 		return printXlsButton;

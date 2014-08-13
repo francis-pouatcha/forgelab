@@ -3,6 +3,7 @@ package org.adorsys.adpharma.server.rest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
@@ -26,6 +29,7 @@ import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderAdvancedSearchData;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem_;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
@@ -36,9 +40,11 @@ import org.adorsys.adpharma.server.jpa.Supplier;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.ProcurementOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.DateHelper;
 import org.adorsys.adpharma.server.utils.PhmlOrderBuilder;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 @Stateless
 public class ProcurementOrderEJB
@@ -69,6 +75,10 @@ public class ProcurementOrderEJB
 	private DeliveryItemEJB deliveryItemEJB;
 	@EJB
 	private SecurityUtil securityUtil;
+	
+	
+	@Inject
+	EntityManager em;
 
 	public ProcurementOrder create(ProcurementOrder entity)
 	{
@@ -230,6 +240,41 @@ public class ProcurementOrderEJB
 		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);
 		 procurementOrder = create(procurementOrder);
 		return procurementOrder;
+	}
+	
+	// Advanced Search request
+	public List<ProcurementOrder> avancedSearch(ProcurementOrderAdvancedSearchData data ){
+		List<ProcurementOrder> procurementOrders= new ArrayList<ProcurementOrder>();
+		StringBuilder query = new StringBuilder().append("SELECT p FROM ProcurementOrder AS p WHERE p.id!=NULL");
+		if(data.getFrom()!=null) query.append(" AND p.createdDate >= :fromDate");
+		if(data.getTo()!=null) 	query.append(" AND p.createdDate <= :toDate");
+		if(StringUtils.isNotBlank(data.getOrderNumber())) query.append(" AND p.procurementOrderNumber = :orderNumber");
+		if(data.getStatus()!=null) query.append(" AND p.poStatus = :status");
+		if(data.getSupplier()!=null) query.append(" AND p.supplier = :supplier");
+		if(data.getUser()!=null) query.append(" AND p.creatingUser = :user");
+		
+		Query createQuery = em.createQuery(query.toString());
+		if(data.getFrom()!=null) {
+			createQuery.setParameter("fromDate", data.getFrom().getTime());
+		}
+		if (data.getTo()!=null) {
+            createQuery.setParameter("toDate", data.getTo().getTime());
+		}
+		if(StringUtils.isNotBlank(data.getOrderNumber())) {
+			createQuery.setParameter("orderNumber", data.getOrderNumber());
+		}
+		if(data.getStatus()!=null) {
+			createQuery.setParameter("status", data.getStatus());
+		}
+		if(data.getSupplier()!=null) {
+			createQuery.setParameter("supplier", data.getSupplier());
+		}
+		if(data.getUser()!=null) {
+			createQuery.setParameter("user", data.getUser());
+		}
+		procurementOrders = (List<ProcurementOrder>)createQuery.getResultList();
+		
+		return procurementOrders;
 	}
 
 	public void handleStockMovementEvent(@Observes @DocumentProcessedEvent StockMovement stockMovement){

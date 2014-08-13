@@ -37,6 +37,9 @@ public class Disbursement implements Serializable
 
 	@Column
 	private String raison;
+	
+	@Column
+	private String receipt;
 
 	@Column
 	private BigDecimal amount;
@@ -210,13 +213,21 @@ public class Disbursement implements Serializable
 	public void setVoucherAmount(BigDecimal voucherAmount) {
 		this.voucherAmount = voucherAmount;
 	}
+	
+	public String getReceipt() {
+		return receipt;
+	}
+	
+	public void setReceipt(String receipt) {
+		this.receipt = receipt;
+	}
 
 	@Override
 	public String toString()
 	{
 		String result = getClass().getSimpleName() + " ";
 		if (raison != null && !raison.trim().isEmpty())
-			result += "raison: " + raison;
+			result += "raison: " + raison+ "Beneficiaire: "+receipt;
 		return result;
 	}
 }
