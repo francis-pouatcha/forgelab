@@ -3,9 +3,13 @@
 angular.module('adpharma').service('ArticleLotService', ['$http', function($http){
 	 var urlBase = '/adpharma.server/rest/articlelots';
 
-        this.findBy = function (searchInput) {
+        this.findByLike = function (searchInput) {
         return $http.post(urlBase+'/findByLike' ,searchInput);
         };
+        
+        this.findBy = function (searchInput) {
+            return $http.post(urlBase+'/findArticleLotByInternalPicWhitRealPrice' ,searchInput);
+            };
 
     // create a new article lot Search input
     this.newArticleLotSearchInput = function(){

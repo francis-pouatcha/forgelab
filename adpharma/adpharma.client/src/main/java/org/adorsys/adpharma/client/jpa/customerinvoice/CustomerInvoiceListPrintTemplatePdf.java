@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -39,16 +41,17 @@ public class CustomerInvoiceListPrintTemplatePdf {
 	private final Login agent;
 	private final ResourceBundle resourceBundle;
 	private final Locale locale;
-	private final Agency agency ;
+	private final LoginAgency agency ;
 	private String pdfFileName;
 	private PdfPTable reportTable;
 	
 	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
+	
 	static Font font = FontFactory.getFont("Times-Roman", 8);
 
 	
 	public CustomerInvoiceListPrintTemplatePdf(
-			Login agent, Agency agency,
+			Login agent, LoginAgency agency,
 			ResourceBundle resourceBundle,
 			Locale locale) throws DocumentException {
 		this.agency =agency ;
@@ -75,33 +78,23 @@ public class CustomerInvoiceListPrintTemplatePdf {
 
 	
 	public void addItems(List<CustomerInvoice> items) {
-		BigDecimal totalnet = BigDecimal.ZERO;
 		BigDecimal totalrest = BigDecimal.ZERO;
-		BigDecimal totaldiscount = BigDecimal.ZERO;
-		BigDecimal totalAdvence = BigDecimal.ZERO;
 		for (CustomerInvoice item : items) {
-			totalnet = item.getNetToPay()!=null?totalnet.add(item.getNetToPay()):totalnet;
-			totalrest = item.getTotalRestToPay()!=null?totalrest.add(item.getTotalRestToPay()):totalrest;
-			totaldiscount = item.getAmountDiscount()!=null?totaldiscount.add(item.getAmountDiscount()):totaldiscount;
-			totalAdvence = item.getAdvancePayment()!=null?totalAdvence.add(item.getAdvancePayment()):totalAdvence;
+			totalrest = item.getInsurranceRestTopay()!=null?totalrest.add(item.getInsurranceRestTopay()):totalrest;
 			newTableRow(item.getInvoiceNumber(),
+					item.getSalesOrder().getSoNumber(),
 					DateHelper.format(item.getCreationDate().getTime(), "dd-MM-yyyy HH:mm"),
-					item.getCreatingUser().getLoginName(),
-					item.getNetToPay(),
-					item.getAmountDiscount(),
-					item.getAdvancePayment(),
-					item.getTotalRestToPay()
+					item.getInsurance().getInsurer()+"",
+					item.getInsurranceRestTopay()
 					);
 		}
-		newTableRow("", "Total", null, totalnet, totaldiscount, totalAdvence,totalrest);
+		newTableRow("", "Total", null, null,totalrest);
 	}
 
 	private void newTableRow(String invNumber, 
+			String soNumber,
 			String date,
-			String saller,
-			BigDecimal net, 
-			BigDecimal discount, 
-			BigDecimal avance, 
+			String inssurrer, 
 			BigDecimal rest) {
 
 
@@ -110,32 +103,26 @@ public class CustomerInvoiceListPrintTemplatePdf {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(date));
+		pdfPCell.addElement(new StandardText(soNumber));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(saller)));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(net!=null?net.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(discount!=null?discount.toBigInteger()+"":"")));
+		pdfPCell.addElement(new RightParagraph(new StandardText(date)));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(avance!=null?avance.toBigInteger()+"":"")));
+		pdfPCell.addElement(new RightParagraph(new StandardText(inssurrer)));
 		reportTable.addCell(pdfPCell);
 
+		
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(rest!=null?rest.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
+		
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.15f,.17f,.18f,.12f,.12f,.12f,.12f});
+		reportTable = new PdfPTable(new float[]{.12f,.12f,.18f,.44f,.12f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -144,29 +131,23 @@ public class CustomerInvoiceListPrintTemplatePdf {
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_creationDate_description.title")));
+		pdfPCell.addElement(new StandardText("Num Cmd"));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_creatingUser_description.title")));
+		pdfPCell.addElement(new StandardText("Cree Le"));
 		reportTable.addCell(pdfPCell);
 
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_netToPay_description.title")));
-		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_amountDiscount_description.title")));
+		pdfPCell.addElement(new StandardText("Assurreur"));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_advancePayment_description.title")));
+		pdfPCell.addElement(new StandardText("Reste"));
 		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(resourceBundle.getString("CustomerInvoice_totalRestToPay_description.title")));
-		reportTable.addCell(pdfPCell);
+		
 
 	}
 	

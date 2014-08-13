@@ -105,7 +105,7 @@ public class SectionController extends DomainComponentController
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
 //      displayedViews.add(listController);
-      displayedViews.add(editController);
+      displayedViews.add(displayController);
 
       displayComponent();
    }

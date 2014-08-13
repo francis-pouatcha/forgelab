@@ -8,6 +8,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class InvoiceByAgencyPrintInput {
@@ -15,27 +16,27 @@ public class InvoiceByAgencyPrintInput {
 
 	private SimpleObjectProperty<Calendar> toDate;
 
-	private SimpleObjectProperty<Agency> agency;
-	
-	 public SimpleObjectProperty<Calendar> toDateProperty()
-	   {
-	      if (toDate == null)
-	      {
-	    	  toDate = new SimpleObjectProperty<Calendar>();
-	      }
-	      return toDate;
-	   }
+	private SimpleBooleanProperty onlyInsurrer;
 
-	 @NotNull
-	   public Calendar getToDate()
-	   {
-	      return toDateProperty().get();
-	   }
+	public SimpleObjectProperty<Calendar> toDateProperty()
+	{
+		if (toDate == null)
+		{
+			toDate = new SimpleObjectProperty<Calendar>();
+		}
+		return toDate;
+	}
 
-	   public final void setToDate(Calendar toDate)
-	   {
-	      this.toDateProperty().set(toDate);
-	   }
+	@NotNull
+	public Calendar getToDate()
+	{
+		return toDateProperty().get();
+	}
+
+	public final void setToDate(Calendar toDate)
+	{
+		this.toDateProperty().set(toDate);
+	}
 
 	public SimpleObjectProperty<Calendar> fromDateProperty()
 	{
@@ -57,28 +58,25 @@ public class InvoiceByAgencyPrintInput {
 		this.fromDateProperty().set(fromDate);
 	}	   
 
-	public SimpleObjectProperty<Agency> agencyProperty()
+	public SimpleBooleanProperty onlyInsurrerProperty()
 	{
-		if (agency == null)
+		if (onlyInsurrer == null)
 		{
-			agency = new SimpleObjectProperty<Agency>(new Agency());
+			onlyInsurrer = new SimpleBooleanProperty(Boolean.FALSE);
 		}
-		return agency;
+		return onlyInsurrer;
 	}
 
-	public Agency getAgency()
+	public Boolean getOnlyInsurrer()
 	{
-		return agencyProperty().get();
+		return onlyInsurrerProperty().get();
 	}
 
-	public final void setAgency(Agency agency)
+	public  void setOnlyInsurrer(Boolean onlyInsurrer)
 	{
-		if (agency == null)
-		{
-			agency = new Agency();
-		}
-		PropertyReader.copy(agency, getAgency());
-		agencyProperty().setValue(ObjectUtils.clone(getAgency()));
+		if (onlyInsurrer == null)
+			onlyInsurrer = Boolean.FALSE ;
+		this.onlyInsurrer = new SimpleBooleanProperty(onlyInsurrer);
 	}
 
 }

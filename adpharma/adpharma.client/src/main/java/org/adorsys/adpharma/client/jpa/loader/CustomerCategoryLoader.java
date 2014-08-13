@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 
+import jxl.CellType;
+
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchInput;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchResult;
@@ -64,6 +66,7 @@ public class CustomerCategoryLoader extends Service<List<CustomerCategory>> {
 			CustomerCategory entity = new CustomerCategory();
 
 			Cell cell = row.getCell(0);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setName(cell.getStringCellValue().trim());
 
@@ -80,6 +83,7 @@ public class CustomerCategoryLoader extends Service<List<CustomerCategory>> {
 			}
 			
 			cell = row.getCell(1);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
 				double numericCellValue = cell.getNumericCellValue();
@@ -88,6 +92,7 @@ public class CustomerCategoryLoader extends Service<List<CustomerCategory>> {
 			}
 
 			cell = row.getCell(2);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setDescription(cell.getStringCellValue().trim());
 

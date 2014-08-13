@@ -27,8 +27,8 @@ import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrintInput>{
 	private CalendarTextField fromDate;
 	private CalendarTextField toDate;
-	private ComboBox<Agency> agency;
-	private CheckBox groupPerDays;
+//	private ComboBox<Agency> agency;
+//	private CheckBox onlyInsurrer;
 
 	@Inject
 	@Bundle({ CrudKeys.class, CustomerInvoicePrintTemplate.class ,CustomerInvoice.class})
@@ -52,9 +52,9 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
 		fromDate = viewBuilder.addCalendarTextField("CustomerInvoice_fromdate_description.title", "fromDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		toDate = viewBuilder.addCalendarTextField("CustomerInvoice_todate_description.title", "fromDate", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-		agency = viewBuilder.addComboBox("CustomerInvoice_agency_description.title", "agency", resourceBundle);
-        groupPerDays =viewBuilder.addCheckBox("Entity_empty.text", "groupPerDays", resourceBundle);
-		groupPerDays.setText(resourceBundle.getString("CustomerInvoice_perDays_description.title"));
+//		agency = viewBuilder.addComboBox("CustomerInvoice_agency_description.title", "agency", resourceBundle);
+//        onlyInsurrer =viewBuilder.addCheckBox("Entity_empty.text", "groupPerDays", resourceBundle);
+//		onlyInsurrer.setText("Assureurs Uniquement ?");
         gridRows = viewBuilder.toRows();
 	}
 
@@ -69,14 +69,14 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = new HashSet<ConstraintViolation<InvoiceByAgencyPrintInput>>();
 		violations.addAll(calendarTextFieldValidator.validate(fromDate, InvoiceByAgencyPrintInput.class, "fromDate", resourceBundle));
 		violations.addAll(calendarTextFieldValidator.validate(toDate, InvoiceByAgencyPrintInput.class, "toDate", resourceBundle));
-		violations.addAll(aggreggationFieldValidator.validate(agency, model.getAgency(), InvoiceByAgencyPrintInput.class, "agency", resourceBundle));
+//		violations.addAll(aggreggationFieldValidator.validate(agency, model.getAgency(), InvoiceByAgencyPrintInput.class, "agency", resourceBundle));
 
 		return violations;
 	}
 	@Override
 	public void bind(InvoiceByAgencyPrintInput model)
 	{
-		agency.valueProperty().bindBidirectional(model.agencyProperty());
+//		onlyInsurrer.selectedProperty().bindBidirectional(model.onlyInsurrerProperty());
 		fromDate.calendarProperty().bindBidirectional(model.fromDateProperty());
 		toDate.calendarProperty().bindBidirectional(model.toDateProperty());
 	}
@@ -89,9 +89,15 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		return toDate;
 	}
 
-	public ComboBox<Agency> getAgency() {
-		return agency;
-	}
+	
+
+//	public CheckBox getOnlyInsurrer() {
+//		return onlyInsurrer;
+//	}
+//
+//	public void setOnlyInsurrer(CheckBox onlyInsurrer) {
+//		this.onlyInsurrer = onlyInsurrer;
+//	}
 
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
@@ -101,13 +107,7 @@ public class InvoiceByAgencySearchView extends AbstractForm<InvoiceByAgencyPrint
 		return locale;
 	}
 
-	public CheckBox getGroupPerDays() {
-		return groupPerDays;
-	}
-
-	public void setGroupPerDays(CheckBox groupPerDays) {
-		this.groupPerDays = groupPerDays;
-	}
+	
 
 
 

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$window','$log','SalesOrderService','SalesOrderItemService','ArticleLotService', function($scope,$window,$log,SalesOrderService,SalesOrderItemService,ArticleLotService){
+angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$window','$log','SalesOrderService','SalesOrderItemService','ArticleLotService','$modal', function($scope,$window,$log,SalesOrderService,SalesOrderItemService,ArticleLotService,$modal){
   var  discountRate = 0.05 ;
     $scope.articleLots = [];
     $scope.alerts = [];
@@ -98,7 +98,8 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
         // reset sales order item
         $scope.salesOrderItem = SalesOrderItemService.newSalesOrderItem();
     }
-	$scope.salesItemFromLot =  function(item,model,label){
+	
+    $scope.salesItemFromLot =  function(item,model,label){
 		if(model){
 			$scope.salesOrderItem.article.id = model.article.id;
 			$scope.salesOrderItem.article.articleName = model.article.articleName;
@@ -131,6 +132,7 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
 	};
 
     $scope.saveAndClose = function(){
+    	//$scope.open('sm');
         var salesKey = window.prompt('Saisir Votre cle de vente :');
         $scope.processingSales.salesKey = salesKey ;
         SalesOrderService.saveAndClose($scope.processingSales)
@@ -165,9 +167,35 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
 			$scope.articleLotSearchInput.entity.articleName = $scope.salesOrderItem.article.articleName ;
 			$scope.articleLotSearchInput.fieldNames= [] ;
 			$scope.articleLotSearchInput.fieldNames.push("articleName") ;
-			ArticleLotService.findBy($scope.articleLotSearchInput)
+			ArticleLotService.findByLike($scope.articleLotSearchInput)
 			.success(function (articleLotSearchResult) {
                     $scope.articleLots = articleLotSearchResult.resultList ;
+			})
+			.error(function (data,status) {
+				$scope.status = 'Unable to load sales orders data: ' + data.message;
+                    $scope.addAlert({msg:'Unable to load sales orders data: ',type:'danger'}) ;
+			});
+		}else{
+			$scope.articleLotSearchInput.fieldNames= [] ;
+		}
+
+
+	};
+	
+	$scope.handleInternalPicChange =  function(){
+        $scope.articleLots = [];
+        var internalPic = $scope.salesOrderItem.internalPic  ;
+		if(internalPic){
+			$scope.articleLotSearchInput.entity.internalPic = internalPic ;
+			$scope.articleLotSearchInput.fieldNames= [] ;
+			$scope.articleLotSearchInput.max= 5 ;
+			$scope.articleLotSearchInput.fieldNames.push("internalPic") ;
+			ArticleLotService.findBy($scope.articleLotSearchInput)
+			.success(function (articleLotSearchResult) {
+				if(articleLotSearchResult.resultList){
+					$scope.salesItemFromLot(null,articleLotSearchResult.resultList[0],null);
+				}
+                   
 			})
 			.error(function (data,status) {
 				$scope.status = 'Unable to load sales orders data: ' + data.message;
@@ -198,5 +226,47 @@ angular.module('adpharma').controller('SalesOrderEditController', ['$scope','$wi
         $scope.alerts = [];
         $scope.alerts.push(alert);
     };
+    
+    // for modal dialog
+    $scope.items = ['item1', 'item2', 'item3'];
+
+    $scope.open = function (size) {
+
+      var modalInstance = $modal.open({
+        templateUrl: 'passowordDialog.html',
+        controller: ModalInstanceCtrl,
+        size: size,
+        resolve: {
+          items: function () {
+            return $scope.items;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (selectedItem) {
+        $scope.selected = selectedItem;
+      }, function () {
+        $log.info('Modal dismissed at: ' + new Date());
+      });
+    };
+
+  // Please note that $modalInstance represents a modal window (instance) dependency.
+  // It is not the same as the $modal service used above.
+
+  var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
+
+    $scope.items = items;
+    $scope.selected = {
+      item: $scope.items[0]
+    };
+
+    $scope.ok = function () {
+      $modalInstance.close($scope.selected.item);
+    };
+
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+    };
+  };
 
 }]) ;

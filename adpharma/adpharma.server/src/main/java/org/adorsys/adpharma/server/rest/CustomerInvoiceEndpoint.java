@@ -123,22 +123,22 @@ public class CustomerInvoiceEndpoint
 	@Produces({ "application/json", "application/xml" })
 	public CustomerInvoiceSearchResult findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput)
 	{
-		List<CustomerInvoice> resultList = ejb.findByAgencyAndDateBetween(searchInput);
+		List<CustomerInvoice> resultList = ejb.findInsurranceCustomerInvoiceByDateBetween(searchInput);
 		CustomerInvoiceSearchInput input = new CustomerInvoiceSearchInput();
 		return new CustomerInvoiceSearchResult((long) resultList.size(),
 				detach(resultList), detach(input));
 	}
 	
-	@POST
-	@Path("/customerInvicePerDayAndPerAgency")
-	@Produces({ "application/json", "application/xml" })
-	public CustomerInvoiceSearchResult customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput)
-	{
-		List<CustomerInvoice> resultList = ejb.customerInvicePerDayAndPerAgency(searchInput);
-		CustomerInvoiceSearchInput input = new CustomerInvoiceSearchInput();
-		return new CustomerInvoiceSearchResult((long) resultList.size(),
-				detach(resultList), detach(input));
-	}
+//	@POST
+//	@Path("/customerInvicePerDayAndPerAgency")
+//	@Produces({ "application/json", "application/xml" })
+//	public CustomerInvoiceSearchResult customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput)
+//	{
+//		List<CustomerInvoice> resultList = ejb.customerInvicePerDayAndPerAgency(searchInput);
+//		CustomerInvoiceSearchInput input = new CustomerInvoiceSearchInput();
+//		return new CustomerInvoiceSearchResult((long) resultList.size(),
+//				detach(resultList), detach(input));
+//	}
 
 
 	@GET

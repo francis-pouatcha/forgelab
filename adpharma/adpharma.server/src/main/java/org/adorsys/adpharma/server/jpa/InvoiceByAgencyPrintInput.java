@@ -6,8 +6,8 @@ public class InvoiceByAgencyPrintInput {
 	private Date fromDate;
 
 	private Date toDate;
-
-	private Agency agency;
+	
+	private Boolean onlyInsurrer ;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -17,9 +17,6 @@ public class InvoiceByAgencyPrintInput {
 		return toDate;
 	}
 
-	public Agency getAgency() {
-		return agency;
-	}
 
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
@@ -29,9 +26,14 @@ public class InvoiceByAgencyPrintInput {
 		this.toDate = toDate;
 	}
 
-	public void setAgency(Agency agency) {
-		this.agency = agency;
+	public Boolean getOnlyInsurrer() {
+		return onlyInsurrer;
 	}
+
+	public void setOnlyInsurrer(Boolean onlyInsurrer) {
+		this.onlyInsurrer = onlyInsurrer;
+	}
+
 	
 	
 	

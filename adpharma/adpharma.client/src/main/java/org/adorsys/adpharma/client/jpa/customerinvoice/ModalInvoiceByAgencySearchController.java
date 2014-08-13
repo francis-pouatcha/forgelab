@@ -25,6 +25,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchInput;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchResult;
 import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSalesKeyResetService;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -56,8 +57,6 @@ public class ModalInvoiceByAgencySearchController  {
 	@Inject
 	private CustomerInvoiceByAgencySearchService invoiceByAgencySearchService ;
 
-	@Inject
-	private AgencySearchService agencySearchService;
 
 	private CustomerInvoiceListPrintTemplatePdf customerInvoiceListPrintTemplatePdf ;
 
@@ -93,13 +92,7 @@ public class ModalInvoiceByAgencySearchController  {
 
 			@Override
 			public void handle(ActionEvent event) {
-				Set<ConstraintViolation<InvoiceByAgencyPrintInput>> violations = view.getView().validate(invoiceByAgencyPrintInput);
-				if (violations.isEmpty())
-				{
-					if(view.getView().getGroupPerDays().isSelected())
-						invoiceByAgencySearchService.setPerDay(Boolean.TRUE);
-					invoiceByAgencySearchService.setSearchInputs(invoiceByAgencyPrintInput).start();
-				}
+				invoiceByAgencySearchService.setSearchInputs(invoiceByAgencyPrintInput).start();
 
 			}
 		});
@@ -112,9 +105,9 @@ public class ModalInvoiceByAgencySearchController  {
 				event.consume();
 				s.reset();
 				List<CustomerInvoice> resultList = cs.getResultList();
-				Agency agency = invoiceByAgencyPrintInput.getAgency();
+				Login connectedUser = securityUtil.getConnectedUser();
 				try {
-					customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(securityUtil.getConnectedUser(),agency, resourceBundle, locale);
+					customerInvoiceListPrintTemplatePdf = new CustomerInvoiceListPrintTemplatePdf(connectedUser,connectedUser.getAgency(), resourceBundle, locale);
 					customerInvoiceListPrintTemplatePdf.addItems(resultList);
 					customerInvoiceListPrintTemplatePdf.closeDocument();
 					File file = new File(customerInvoiceListPrintTemplatePdf.getFileName());
@@ -130,33 +123,7 @@ public class ModalInvoiceByAgencySearchController  {
 
 
 		invoiceByAgencySearchService.setOnFailed(callFailedEventHandler);
-		view.getView().getAgency().armedProperty().addListener(new ChangeListener<Boolean>() {
 
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable,
-					Boolean oldValue, Boolean newValue) {
-				if(newValue)
-					agencySearchService.setSearchInputs(new AgencySearchInput()).start();
-			}
-		});
-
-		agencySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				AgencySearchService s = (AgencySearchService) event.getSource();
-				AgencySearchResult cs = s.getValue();
-				event.consume();
-				s.reset();
-				List<Agency> resultList = cs.getResultList();
-				resultList.add(0, new Agency());
-				view.getView().getAgency().getItems().setAll(resultList);
-
-			}
-		});
-
-
-		agencySearchService.setOnFailed(callFailedEventHandler);
 	}
 
 	public void handleUserInfoRequestEvent(@Observes @EntitySearchRequestedEvent InvoiceByAgencyPrintInput searchInput){

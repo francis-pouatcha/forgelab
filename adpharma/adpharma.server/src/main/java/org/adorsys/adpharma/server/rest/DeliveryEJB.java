@@ -120,7 +120,9 @@ public class DeliveryEJB
 			//			if(isManagedLot)
 			deliveryItem = deliveryItemEJB.findById(deliveryItem.getId());
 			Long sectionId = deliveryItem.getArticle().getSection().getId();
-			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic())+sectionId;
+			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
+			if(!isManagedLot)
+				internalPic=internalPic+sectionId ;
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){

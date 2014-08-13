@@ -95,7 +95,7 @@ public class SectionDisplayController implements EntityController
       {
          @Override
          public void handle(ActionEvent e)
-         {
+         { 
             removeRequest.fire(displayedEntity);
          }
       });

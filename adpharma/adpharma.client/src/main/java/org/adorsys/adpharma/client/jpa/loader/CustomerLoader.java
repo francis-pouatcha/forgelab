@@ -141,15 +141,15 @@ public class CustomerLoader extends Service<List<Customer>> {
 //				entity.setBirthDate(calendar);
 //			}
 
-			cell = row.getCell(6);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			cell = row.getCell(6);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
 //			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 //				entity.setLandLinePhone(cell.getStringCellValue().trim());
 
-			cell = row.getCell(7);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				entity.setMobile(cell.getStringCellValue().trim());
+//			cell = row.getCell(7);
+//			cell.setCellType(Cell.CELL_TYPE_STRING);
+//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+//				entity.setMobile(cell.getStringCellValue().trim());
 
 //			cell = row.getCell(8);
 //			cell.setCellType(Cell.CELL_TYPE_STRING);

@@ -52,6 +52,7 @@ import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 import org.adorsys.adpharma.server.repo.DebtStatementCustomerInvoiceAssocRepository;
 import org.adorsys.adpharma.server.repo.PaymentItemCustomerInvoiceAssocRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.utils.AdTimeFrame;
 import org.adorsys.adpharma.server.utils.ChartData;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
@@ -126,47 +127,47 @@ public class CustomerInvoiceEJB {
 		return dsciar.findCustomerInvoiceBySource(source);
 	}
 
-	public List<CustomerInvoice> findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput){
-		if(searchInput.getAgency()==null||searchInput.getAgency().getId()==null)
-			return repository.findByDateBetweenAndCashed(searchInput.getFromDate(), searchInput.getToDate(), Boolean.TRUE, InvoiceType.VOUCHER);
-		return repository.findByAgencyAndDateBetween(searchInput.getFromDate(), searchInput.getToDate(), searchInput.getAgency(), Boolean.TRUE, InvoiceType.VOUCHER);
-	}
-
-	public List<CustomerInvoice> customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput){
-		List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>();
-		String query ="SELECT SUM(c.netToPay) , SUM(c.amountDiscount) ,   SUM(c.advancePayment) ,  SUM(c.totalRestToPay) , DATE(c.creationDate) FROM CustomerInvoice AS c WHERE c.creationDate BETWEEN :fromDate AND :toDate ";
-
-		if(searchInput.getAgency()!=null)
-			query = query+ " AND c.agency = :agency ";
-		query = query+" AND c.cashed = :cashed OR c.invoiceType = :invoiceType GROUP BY DATE(c.creationDate) " ;
-
-		Query querys = em.createQuery(query) ;
-
-		querys.setParameter("fromDate", searchInput.getFromDate());
-		querys.setParameter("toDate", searchInput.getFromDate());
-		querys.setParameter("cashed", Boolean.TRUE);
-		querys.setParameter("invoiceType",InvoiceType.VOUCHER);
-		if(searchInput.getAgency()!=null)
-			querys.setParameter("agency",searchInput.getAgency());
-		List<Object[]> resultList = querys.getResultList();
-		for (Object[] objects : resultList) {
-			CustomerInvoice invoice = new CustomerInvoice();
-			BigDecimal netTopay = (BigDecimal) objects[0];
-			BigDecimal amountDiscount = (BigDecimal) objects[1];
-			BigDecimal advancePayment = (BigDecimal) objects[2];
-			BigDecimal totalRestToPay = (BigDecimal) objects[3];
-			Date date = (Date) objects[4];
-			invoice.setNetToPay(netTopay);
-			invoice.setAmountDiscount(amountDiscount);
-			invoice.setAdvancePayment(advancePayment);
-			invoice.setTotalRestToPay(totalRestToPay);
-			invoice.setCreationDate(date);
-			customerInvoices.add(invoice);
-
-		}
-
-		return customerInvoices ;
-	}
+	//	public List<CustomerInvoice> findByAgencyAndDateBetween(InvoiceByAgencyPrintInput searchInput){
+	//		if(searchInput.getAgency()==null||searchInput.getAgency().getId()==null)
+	//			return repository.findByDateBetweenAndCashed(searchInput.getFromDate(), searchInput.getToDate(), Boolean.TRUE, InvoiceType.VOUCHER);
+	//		return repository.findByAgencyAndDateBetween(searchInput.getFromDate(), searchInput.getToDate(), searchInput.getAgency(), Boolean.TRUE, InvoiceType.VOUCHER);
+	//	}
+	//
+	//	public List<CustomerInvoice> customerInvicePerDayAndPerAgency(InvoiceByAgencyPrintInput searchInput){
+	//		List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>();
+	//		String query ="SELECT SUM(c.netToPay) , SUM(c.amountDiscount) ,   SUM(c.advancePayment) ,  SUM(c.totalRestToPay) , DATE(c.creationDate) FROM CustomerInvoice AS c WHERE c.creationDate BETWEEN :fromDate AND :toDate ";
+	//
+	//		if(searchInput.getAgency()!=null)
+	//			query = query+ " AND c.agency = :agency ";
+	//		query = query+" AND c.cashed = :cashed OR c.invoiceType = :invoiceType GROUP BY DATE(c.creationDate) " ;
+	//
+	//		Query querys = em.createQuery(query) ;
+	//
+	//		querys.setParameter("fromDate", searchInput.getFromDate());
+	//		querys.setParameter("toDate", searchInput.getFromDate());
+	//		querys.setParameter("cashed", Boolean.TRUE);
+	//		querys.setParameter("invoiceType",InvoiceType.VOUCHER);
+	//		if(searchInput.getAgency()!=null)
+	//			querys.setParameter("agency",searchInput.getAgency());
+	//		List<Object[]> resultList = querys.getResultList();
+	//		for (Object[] objects : resultList) {
+	//			CustomerInvoice invoice = new CustomerInvoice();
+	//			BigDecimal netTopay = (BigDecimal) objects[0];
+	//			BigDecimal amountDiscount = (BigDecimal) objects[1];
+	//			BigDecimal advancePayment = (BigDecimal) objects[2];
+	//			BigDecimal totalRestToPay = (BigDecimal) objects[3];
+	//			Date date = (Date) objects[4];
+	//			invoice.setNetToPay(netTopay);
+	//			invoice.setAmountDiscount(amountDiscount);
+	//			invoice.setAdvancePayment(advancePayment);
+	//			invoice.setTotalRestToPay(totalRestToPay);
+	//			invoice.setCreationDate(date);
+	//			customerInvoices.add(invoice);
+	//
+	//		}
+	//
+	//		return customerInvoices ;
+	//	}
 
 	public SalesStatisticsDataSearchResult findSalesStatistics(SalesStatisticsDataSearchInput dataSearchInput){
 		List<ChartData> chartDataSearchResult = new ArrayList<ChartData>();
@@ -196,6 +197,25 @@ public class CustomerInvoiceEJB {
 
 		return searchResult ;
 
+	}
+
+	public List<CustomerInvoice> findInsurranceCustomerInvoiceByDateBetween(InvoiceByAgencyPrintInput searchInput){
+		String query ="SELECT c  FROM CustomerInvoice AS c WHERE c.cashed = :cashed AND c.insurance IS NOT NULL" ;
+		
+		if(searchInput.getFromDate()!=null)
+			query = query+" AND c.creationDate >= :startTime" ;
+		if(searchInput.getToDate()!=null)
+			query = query+" AND c.creationDate <= :endTime" ;
+
+
+		Query querys = em.createQuery(query,CustomerInvoice.class) ;
+		querys.setParameter("cashed", Boolean.TRUE);
+		if(searchInput.getFromDate()!=null)
+			querys.setParameter("startTime", searchInput.getFromDate());
+		if(searchInput.getToDate()!=null)
+			querys.setParameter("endTime", searchInput.getToDate());
+		List<CustomerInvoice> resultList = querys.getResultList();
+		return resultList ;
 	}
 
 
@@ -336,7 +356,7 @@ public class CustomerInvoiceEJB {
 			BigDecimal insuranceCoverageRate = BigDecimal.ZERO;
 			BigDecimal customerCoverageRate = BigDecimal.ONE;
 			Insurrance insurance = customerInvoice.getInsurance();
-			
+
 			if(insurance!=null){
 				insuranceCoverageRate = customerInvoice.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_EVEN);
 				customerCoverageRate = customerCoverageRate.subtract(insuranceCoverageRate);
@@ -391,7 +411,6 @@ public class CustomerInvoiceEJB {
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 
-		ci.setCreatingUser(creatingUser);
 		ci.setCreationDate(creationDate);
 		ci.setAgency(agency);
 		ci.setAmountBeforeTax(BigDecimal.ZERO);
@@ -408,6 +427,7 @@ public class CustomerInvoiceEJB {
 		ci.setAdvancePayment(BigDecimal.ZERO);
 		String patientMatricle = StringUtils.isNotBlank(salesOrder.getPatientMatricle())?salesOrder.getPatientMatricle():salesOrder.getCustomer().getSerialNumber();
 		ci.setPatientMatricle(patientMatricle);
+		ci.setCreatingUser(salesOrder.getSalesAgent());
 		return create(ci);
 
 	}

@@ -174,11 +174,11 @@ public class LoginLoader extends Service<List<Login>> {
 			//			cell = row.getCell(11);
 			entity.setRecordingDate(new GregorianCalendar());
 
-			cell = row.getCell(12);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//cell = row.getCell(12);
+		//	cell.setCellType(Cell.CELL_TYPE_STRING);
 			String agencyNumber = "AG-0001";
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-				agencyNumber = cell.getStringCellValue().trim();
+			//if (cell != null && StringUtils.isNotBlank(agencyNumber))
+				//agencyNumber = agencyNumber ; // cell.getStringCellValue().trim();
 			List<Agency> agencies = dataMap.getAgencies();
 			Agency agency = null;
 			for (Agency ag : agencies) {

@@ -89,7 +89,7 @@ public class ArticleLotListView
 		//		viewBuilder.addStringColumn(dataList, "agency", "ArticleLot_agency_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ArticleLot_articleName_description.title", resourceBundle,350d);
 		ViewBuilderUtils.newStringColumn(dataList, "article.section", "Article_section_description.title", resourceBundle,250d);
-
+		viewBuilder.addDateColumn(dataList, "creationDate", "ArticleLot_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addDateColumn(dataList, "expirationDate", "ArticleLot_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ArticleLot_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "ArticleLot_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);

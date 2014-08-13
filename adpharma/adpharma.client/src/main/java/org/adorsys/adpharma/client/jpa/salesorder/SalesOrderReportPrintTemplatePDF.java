@@ -70,8 +70,8 @@ public class SalesOrderReportPrintTemplatePDF {
 		resetDocument();
 	}
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 8);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 10);
 
 	public void addItems(List<SalesOrderItem> items) {
 		int artNamelenght = 68 ;

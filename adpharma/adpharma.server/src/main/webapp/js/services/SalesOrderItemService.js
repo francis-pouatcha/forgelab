@@ -1,5 +1,4 @@
 'use strict';
-
  angular.module('adpharma').service('SalesOrderItemService', ['$http', function($http){
 	 var urlBase = '/adpharma.server/rest/salesorderitems';
 

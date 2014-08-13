@@ -31,6 +31,8 @@ public class SectionListView
 
    @FXML
    private Button createButton;
+   
+   private Button removeButton;
 
    @FXML
    private TableView<Section> dataList;
@@ -62,6 +64,8 @@ public class SectionListView
       HBox buttonBar = viewBuilder.addButtonBar();
       createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
       searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
+//      removeButton = viewBuilder.addButton(buttonBar, "Entity_remove.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+
       rootPane = viewBuilder.toAnchorPane();
    }
 
@@ -89,5 +93,49 @@ public class SectionListView
    {
       return pagination;
    }
+
+public Button getRemoveButton() {
+	return removeButton;
+}
+
+public void setRemoveButton(Button removeButton) {
+	this.removeButton = removeButton;
+}
+
+public Locale getLocale() {
+	return locale;
+}
+
+public void setLocale(Locale locale) {
+	this.locale = locale;
+}
+
+public ResourceBundle getResourceBundle() {
+	return resourceBundle;
+}
+
+public void setResourceBundle(ResourceBundle resourceBundle) {
+	this.resourceBundle = resourceBundle;
+}
+
+public void setRootPane(AnchorPane rootPane) {
+	this.rootPane = rootPane;
+}
+
+public void setSearchButton(Button searchButton) {
+	this.searchButton = searchButton;
+}
+
+public void setCreateButton(Button createButton) {
+	this.createButton = createButton;
+}
+
+public void setDataList(TableView<Section> dataList) {
+	this.dataList = dataList;
+}
+
+public void setPagination(Pagination pagination) {
+	this.pagination = pagination;
+}
 
 }
