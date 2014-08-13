@@ -239,6 +239,12 @@ public class ArticleLotEJB
 
 		return stockVAlues ;
 	}
+	
+	public List<ArticleLot> articleLotByArticleOrderByCreationDate(Article article){
+		if(article==null) throw new IllegalArgumentException("article is required") ;
+		return repository.articleLotByArticleOrderByCreationDate(BigDecimal.ZERO, article).orderAsc("creationDate").getResultList();
+		
+	}
 
 	public ArticleLot movetoTrash(ArticleLotMovedToTrashData data){
 		ArticleLot articleLot = findById(data.getId());

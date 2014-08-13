@@ -164,14 +164,14 @@
 									</children>
 								</GridPane>
 							</children>
-						</VBox><VBox alignment="TOP_CENTER" prefHeight="155.0" prefWidth="400.0">
+						</VBox><VBox alignment="TOP_CENTER" prefHeight="155.0" prefWidth="400.0" spacing="5.0">
 <children><Label prefHeight="40.0" text="NET A PAYER ">
 <font>
 <Font size="18.0" />
 </font></Label><TextField fx:id="netClientText" editable="false" prefHeight="40.0">
 <font>
 <Font size="24.0" />
-</font></TextField>
+</font></TextField><Button fx:id="findArticleButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="227.0" text="Rechercher un article" textFill="#1313c9" />
 </children></VBox>
 </children>
 <padding>

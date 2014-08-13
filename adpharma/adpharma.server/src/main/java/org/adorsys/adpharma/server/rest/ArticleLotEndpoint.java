@@ -169,6 +169,17 @@ public class ArticleLotEndpoint
    }
    
    @POST
+   @Path("/articleLotByArticleOrderByCreationDate")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public ArticleLotSearchResult articleLotByArticleOrderByCreationDate(ArticleLotSearchInput searchInput)
+   {
+      SingularAttribute<ArticleLot, Object>[] attributes = readSeachAttributes(searchInput);
+      List<ArticleLot> resultList = ejb.articleLotByArticleOrderByCreationDate(searchInput.getEntity().getArticle());
+      return new ArticleLotSearchResult(Long.valueOf(1), detach(resultList), detach(searchInput));
+   }
+   
+   @POST
    @Path("/stockValue")
    @Produces({ "application/json", "application/xml" })
    @Consumes({ "application/json", "application/xml" })

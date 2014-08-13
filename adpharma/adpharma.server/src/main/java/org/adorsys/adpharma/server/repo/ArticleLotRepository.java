@@ -1,5 +1,8 @@
 package org.adorsys.adpharma.server.repo;
 
+import java.math.BigDecimal;
+
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.Section;
 import org.apache.deltaspike.data.api.EntityRepository;
@@ -12,4 +15,7 @@ public interface  ArticleLotRepository extends EntityRepository<ArticleLot, Long
 {
 	@Query("select e from ArticleLot e where e.mainPic = ?1 AND  e.article.section = ?2")
     QueryResult<ArticleLot> findByPicAndSection(String pic , Section section);
+	
+	@Query(	"SELECT e FROM ArticleLot AS e WHERE e.stockQuantity > ?1 AND e.article = ?2  ")
+    QueryResult<ArticleLot> articleLotByArticleOrderByCreationDate(BigDecimal stockQuantity  , Article article);
 }

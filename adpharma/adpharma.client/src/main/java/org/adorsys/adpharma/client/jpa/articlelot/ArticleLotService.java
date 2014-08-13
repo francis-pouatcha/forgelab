@@ -186,7 +186,17 @@ public class ArticleLotService
 		return target().path("movedToTrash" )
 				.request(media).put(ent, ArticleLot.class);
 	}
-
+	// @POST
+	// @Path("/findLots"
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public ArticleLotSearchResult findArticleLotByArticleOrderByCreationDate(ArticleLotSearchInput searchInput)
+	{
+		Entity<ArticleLotSearchInput> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("articleLotByArticleOrderByCreationDate").request(media).post(
+				searchInputEntity, ArticleLotSearchResult.class);
+	}
 
 
 

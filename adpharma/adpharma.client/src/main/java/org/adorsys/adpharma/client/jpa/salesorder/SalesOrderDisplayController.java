@@ -38,8 +38,13 @@ import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
+import org.adorsys.adpharma.client.jpa.article.ArticleRemoveService;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotArticle;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchResult;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotService;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
@@ -108,6 +113,12 @@ public class SalesOrderDisplayController implements EntityController
 	private SalesOrderDisplayView displayView;
 
 	private boolean  isCustomerSearch = false ;
+	
+	
+	@Inject 
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> modalArticleSearchEvent;
+
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
@@ -216,6 +227,9 @@ public class SalesOrderDisplayController implements EntityController
 	@PrintCustomerVoucherRequestEvent
 	private Event<SalesOrder> salesOrderVoucherPrintRequestEvent ;
 
+	@Inject
+	private ArticleLotService articleLotService ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -232,6 +246,17 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
+			}
+		});
+		
+		displayView.getFindArticleButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				ArticleSearchInput articleSearchInput = new ArticleSearchInput();
+				articleSearchInput.setMax(50);
+				modalArticleSearchEvent.fire(articleSearchInput);
+				
 			}
 		});
 
@@ -266,16 +291,17 @@ public class SalesOrderDisplayController implements EntityController
 				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
 					// delete article
 					salesOrderItemRemoveService.setEntity(selectedItem).start();
-				} else {
-					if(displayView.getOrderedQty().isEditable()){
-						selectedItem.setOrderedQty(newValue);
-						selectedItem.updateTotalSalesPrice();
-						// update article
-						salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
-					}else {
-						orderedQtyCell.getRowValue().setOrderedQty(orderedQtyCell.getOldValue());
-					}
-				}
+				} 
+				//					else {
+				//					if(displayView.getOrderedQty().isEditable()){
+				//						selectedItem.setOrderedQty(newValue);
+				//						selectedItem.updateTotalSalesPrice();
+				//						// update article
+				//						salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+				//					}else {
+				//						orderedQtyCell.getRowValue().setOrderedQty(orderedQtyCell.getOldValue());
+				//					}
+				//				}
 			}
 		});
 
@@ -935,15 +961,56 @@ public class SalesOrderDisplayController implements EntityController
 		if(!isValidateOrderedQty(model))
 			return ;
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
-		if(!displayView.getOrderedQty().isEditable()){
+		if(!displayView.getArticleName().isEditable()){
 			if(isValidSalesOrderItem())
-				handleAddSalesOrderItem(salesOrderItem);
+					if(isOldStock(model)){
+						handleAddSalesOrderItem(salesOrderItem);
+					}else {
+						Dialogs.create().message("Veuillez Saisir le plus ancien Merci pour votre comprehension ! ").showInformation();
+						PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+					}
 			displayView.getInternalPic().requestFocus();
 		}else {
-			displayView.getOrderedQty().requestFocus();
+			handleAddSalesOrderItem(salesOrderItem);
+			displayView.getArticleName().requestFocus();
 		}
 	}
 
+	public boolean isOldStock(ArticleLot model){
+		boolean isOldStock = false ;
+		ArticleLotSearchInput articleLotSearchInput = new ArticleLotSearchInput();
+		articleLotSearchInput.setEntity(model);
+		articleLotSearchInput.getFieldNames().add("article") ;
+		List<ArticleLot> allLot = articleLotService.findArticleLotByArticleOrderByCreationDate(articleLotSearchInput).getResultList();
+		ArrayList<ArticleLot> restLot = new ArrayList<ArticleLot>(allLot);
+		Iterator<SalesOrderItem> salesOrderItems = displayView.getDataList().getItems().iterator();
+
+		List<SalesOrderItem> orderItemWithSameArticle = extractSalesOrderItemWithSameArticle(model.getArticle(), salesOrderItems);
+		if(orderItemWithSameArticle.isEmpty()){
+			if(!allLot.isEmpty())
+				return allLot.get(0).equals(model);
+
+		}else {
+			for (ArticleLot lot : allLot) {
+				for (SalesOrderItem salesOrderItem : orderItemWithSameArticle) {
+					if(lot.getInternalPic().equals(salesOrderItem.getInternalPic())){
+						if(lot.getStockQuantity().compareTo(salesOrderItem.getOrderedQty())==0){
+							restLot.remove(lot);
+						}else {
+							if(restLot.get(0).equals(model)&& model.getInternalPic().equals(salesOrderItem.getInternalPic()))
+								return true ;
+						}
+					}
+				}
+			}
+			if(!restLot.isEmpty())
+				return restLot.get(0).equals(model);
+
+		}
+
+
+		return isOldStock ;
+	}
 	public boolean isValidateOrderedQty(ArticleLot model){
 		Iterator<SalesOrderItem> iterator = displayView.getDataList().getItems().iterator();
 		//		while (iterator.hasNext()) {
@@ -961,6 +1028,18 @@ public class SalesOrderDisplayController implements EntityController
 		//		}
 
 		return true ;
+	}
+
+
+	public List<SalesOrderItem> extractSalesOrderItemWithSameArticle(ArticleLotArticle aticle, Iterator<SalesOrderItem> salesOrderItems){
+		ArrayList<SalesOrderItem> salesOrderItemWithSameArticle = new ArrayList<SalesOrderItem>();
+		while (salesOrderItems.hasNext()) {
+			SalesOrderItem salesOrderItem = (SalesOrderItem) salesOrderItems.next();
+			if(salesOrderItem.getArticle().getId().equals(aticle.getId()))
+				salesOrderItemWithSameArticle.add(salesOrderItem);
+		}
+
+		return salesOrderItemWithSameArticle ;
 	}
 
 	public void handleCustomerCreateDoneEvent(@Observes @ModalEntityCreateDoneEvent Customer model)
@@ -1103,6 +1182,12 @@ public class SalesOrderDisplayController implements EntityController
 			displayView.getSalesPricePU().setEditable(true);
 		}else {
 			displayView.getSalesPricePU().setEditable(false);
+		}
+
+		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME.name())){
+			displayView.getArticleName().setEditable(true);
+		}else {
+			displayView.getArticleName().setEditable(false);
 		}
 	}
 
