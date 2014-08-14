@@ -47,6 +47,7 @@ import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
+import org.adorsys.adpharma.server.repo.DeliveryItemRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.apache.commons.beanutils.BeanUtils;
@@ -99,6 +100,24 @@ public class ArticleLotEJB
 			repository.remove(entity);
 		}
 		return entity;
+	}
+
+	public Long countArticleNameLikeAndStockUpperThan(ArticleLot articleLot){
+		return repository.findByArticleNameLikeAndAndStockUpperThan(articleLot.getArticleName(), BigDecimal.ZERO).count();
+	}
+
+	public  List<ArticleLot> findByArticleNameLikeAndAndStockUpperThan(ArticleLotSearchInput searchInput){
+		return repository.findByArticleNameLikeAndAndStockUpperThan(searchInput.getEntity().getArticleName(), BigDecimal.ZERO)
+				.firstResult(searchInput.getStart()).maxResults(searchInput.getMax()).orderAsc("articleName").getResultList();
+	}
+
+	public Long countByArticleNameLikeAndStockEqual(ArticleLot articleLot){
+		return repository.findByArticleNameLikeAndAndStockEqual(articleLot.getArticleName(), BigDecimal.ZERO).count();
+	}
+
+	public  List<ArticleLot> findByArticleNameLikeAndStockEqual(ArticleLotSearchInput searchInput){
+		return repository.findByArticleNameLikeAndAndStockEqual(searchInput.getEntity().getArticleName(), BigDecimal.ZERO)
+				.firstResult(searchInput.getStart()).maxResults(searchInput.getMax()).orderAsc("articleName").getResultList();
 	}
 
 	public ArticleLot update(ArticleLot entity)
@@ -163,8 +182,8 @@ public class ArticleLotEJB
 		return entity;
 	}
 
-	
-	
+
+
 
 
 	public List<ArticleLot> findArticleLotByInternalPicWhitRealPrice(ArticleLotSearchInput lotSearchInput){
@@ -239,11 +258,11 @@ public class ArticleLotEJB
 
 		return stockVAlues ;
 	}
-	
+
 	public List<ArticleLot> articleLotByArticleOrderByCreationDate(Article article){
 		if(article==null) throw new IllegalArgumentException("article is required") ;
 		return repository.articleLotByArticleOrderByCreationDate(BigDecimal.ZERO, article).orderAsc("creationDate").getResultList();
-		
+
 	}
 
 	public ArticleLot movetoTrash(ArticleLotMovedToTrashData data){
@@ -325,7 +344,10 @@ public class ArticleLotEJB
 		return al ;
 	}
 
-	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	/*
+	 * process article lot stock change according to deliveryitem qty
+	 */
+	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
@@ -340,6 +362,10 @@ public class ArticleLotEJB
 			}
 		}
 	}
+
+	@Inject
+	private DeliveryItemRepository deliveryItemRepository ;
+
 	public void createArticleLot(Login creatingUser ,DeliveryItem deliveryItem,boolean manageLot){
 		ArticleLot al = new  ArticleLot();
 		al.setAgency(deliveryItem.getDelivery().getReceivingAgency());
@@ -349,8 +375,31 @@ public class ArticleLotEJB
 		al.setVat(article.getVat());
 		al.setCreationDate(new Date());
 		al.setExpirationDate(deliveryItem.getExpirationDate());
+		BigDecimal stockQuantity = deliveryItem.getStockQuantity();
 		if(manageLot){
 			al.setInternalPic(deliveryItem.getInternalPic());
+			// process stock compensation 
+			List<ArticleLot> resultList = repository.findByArticleAndStockQuantityLessThan(article, BigDecimal.ZERO).getResultList();
+
+			if(!resultList.isEmpty()){
+				for (ArticleLot articleLot : resultList) {
+					BigDecimal negativeStock = articleLot.getStockQuantity();
+					if(negativeStock.abs().compareTo(stockQuantity)<=0){
+						articleLot.setStockQuantity(BigDecimal.ZERO);
+						stockQuantity = stockQuantity.add(negativeStock);
+						repository.save(articleLot);
+					}else {
+						if(BigDecimal.ZERO.compareTo(stockQuantity)!=0){
+							articleLot.setStockQuantity(articleLot.getStockQuantity().add(stockQuantity));
+							stockQuantity = BigDecimal.ZERO;
+							repository.save(articleLot);
+							break;
+						}
+					}
+				}
+			}
+			deliveryItem.setStockQuantity(stockQuantity);
+			deliveryItemRepository.save(deliveryItem);
 		}else {
 			al.setInternalPic(deliveryItem.getMainPic());
 		}
@@ -358,7 +407,7 @@ public class ArticleLotEJB
 		al.setSecondaryPic(deliveryItem.getSecondaryPic());
 		al.setPurchasePricePU(deliveryItem.getPurchasePricePU());
 		al.setSalesPricePU(deliveryItem.getSalesPricePU());
-		al.setStockQuantity(deliveryItem.getStockQuantity());
+		al.setStockQuantity(stockQuantity);
 		al.calculateTotalAmout();
 		al = create(al);
 	}
@@ -433,7 +482,7 @@ public class ArticleLotEJB
 
 	@Inject
 	private ArticleRepository articleRepository ;
-	
+
 	@Inject
 	@ProcessTransferRequestEvent
 	private Event<ArticleLotTransferManager> articleLotProcessTransferRequestEvent ;
@@ -467,7 +516,7 @@ public class ArticleLotEJB
 		Article article = articleRepository.findBy(sourceLot.getArticle().getId());
 		article.setQtyInStock(article.getQtyInStock().subtract(lotTransferManager.getQtyToTransfer()));
 		articleRepository.save(article);
-		
+
 		return articleLot ;
 	}
 
@@ -485,7 +534,7 @@ public class ArticleLotEJB
 	 * 
 	 * @param salesOrder
 	 */
-	
+
 	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
@@ -560,7 +609,7 @@ public class ArticleLotEJB
 
 		for (SalesOrderItem salesOrderItem : salesOrderItems) {
 			String internalPic = salesOrderItem.getInternalPic();
-		   Article article = salesOrderItem.getArticle();
+			Article article = salesOrderItem.getArticle();
 			ArticleLot articleLot = new ArticleLot();
 			articleLot.setInternalPic(internalPic);
 			articleLot.setArticle(article);

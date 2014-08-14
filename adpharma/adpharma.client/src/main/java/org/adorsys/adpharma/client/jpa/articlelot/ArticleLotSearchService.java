@@ -14,6 +14,8 @@ public class ArticleLotSearchService extends Service<ArticleLotSearchResult>
 	private ArticleLotSearchInput searchInputs;
 	
 	private Boolean searchRealPrice = Boolean.FALSE;
+	
+	private Boolean searchByName = Boolean.FALSE ;
 
 
 	public ArticleLotSearchService setSearchInputs(ArticleLotSearchInput searchInputs)
@@ -27,6 +29,13 @@ public class ArticleLotSearchService extends Service<ArticleLotSearchResult>
 		this.searchRealPrice = searchRealPrice;
 		return this;
 	}
+	
+	public ArticleLotSearchService setSearchByName(Boolean searchByName)
+	{
+		this.searchByName = searchByName;
+		return this;
+	}
+
 
 
 	@Override
@@ -39,6 +48,9 @@ public class ArticleLotSearchService extends Service<ArticleLotSearchResult>
 			{
 				if(searchRealPrice)
 					return remoteService.findArticleLotByInternalPicWhitRealPrice(searchInputs);
+				
+				if(searchByName)
+					return remoteService.findByArticleName(searchInputs);
 				
 				if (searchInputs == null)
 					return null;

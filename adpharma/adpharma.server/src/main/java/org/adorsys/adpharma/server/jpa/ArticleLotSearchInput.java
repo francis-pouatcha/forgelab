@@ -15,63 +15,77 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ArticleLotSearchInput
 {
 
-   /**
-    * The entity holding search inputs.
-    */
-   private ArticleLot entity;
+	/**
+	 * The entity holding search inputs.
+	 */
+	private ArticleLot entity;
 
-   /**
-    * The start cursor
-    */
-   private int start = -1;
+	/**
+	 * The start cursor
+	 */
+	private int start = -1;
 
-   /**
-    * The max number of records to return.
-    */
-   private int max = -1;
+	/**
+	 * The max number of records to return.
+	 */
+	private int max = -1;
 
-   /**
-    * The field names to be included in the search.
-    */
-   private List<String> fieldNames = new ArrayList<String>();
+	/**
+	 * The max number of records to return.
+	 */
+	private boolean includeBreack = false;
 
-   public ArticleLot getEntity()
-   {
-      return entity;
-   }
+	/**
+	 * The field names to be included in the search.
+	 */
+	private List<String> fieldNames = new ArrayList<String>();
 
-   public void setEntity(ArticleLot entity)
-   {
-      this.entity = entity;
-   }
+	public ArticleLot getEntity()
+	{
+		return entity;
+	}
 
-   public List<String> getFieldNames()
-   {
-      return fieldNames;
-   }
+	public void setEntity(ArticleLot entity)
+	{
+		this.entity = entity;
+	}
 
-   public void setFieldNames(List<String> fieldNames)
-   {
-      this.fieldNames = fieldNames;
-   }
+	public List<String> getFieldNames()
+	{
+		return fieldNames;
+	}
 
-   public int getStart()
-   {
-      return start;
-   }
+	public void setFieldNames(List<String> fieldNames)
+	{
+		this.fieldNames = fieldNames;
+	}
 
-   public void setStart(int start)
-   {
-      this.start = start;
-   }
+	public int getStart()
+	{
+		return start;
+	}
 
-   public int getMax()
-   {
-      return max;
-   }
+	public void setStart(int start)
+	{
+		this.start = start;
+	}
 
-   public void setMax(int max)
-   {
-      this.max = max;
-   }
+	public int getMax()
+	{
+		return max;
+	}
+
+	public void setMax(int max)
+	{
+		this.max = max;
+	}
+
+	public boolean isIncludeBreack() {
+		return includeBreack;
+	}
+
+	public void setIncludeBreack(boolean includeBreack) {
+		this.includeBreack = includeBreack;
+	}
+
 }

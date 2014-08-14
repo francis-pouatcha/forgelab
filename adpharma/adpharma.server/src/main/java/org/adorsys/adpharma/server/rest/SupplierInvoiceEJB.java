@@ -232,7 +232,7 @@ public class SupplierInvoiceEJB
 				SupplierInvoiceItem sii = new SupplierInvoiceItem();
 				sii.setAmountReturn(BigDecimal.ZERO);
 				sii.setArticle(deliveryItem.getArticle());
-				sii.setDeliveryQty(deliveryItem.getStockQuantity());
+				sii.setDeliveryQty(deliveryItem.getAvailableQty());
 				String internalPic = deliveryItem.getMainPic();
 				if(isManagedLot)
 					internalPic = deliveryItem.getInternalPic();

@@ -101,6 +101,8 @@ public class ModalArticleLotSearchController  {
 
 			@Override
 			public void handle(ActionEvent event) {
+				articleSearchService.setSearchByName(Boolean.FALSE);
+				articleSearchService.setSearchRealPrice(Boolean.FALSE);
 				view.closeDialog();
 			}
 		});
@@ -128,17 +130,20 @@ public class ModalArticleLotSearchController  {
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
-					String articleName = view.getArticleName().getText();
-					if(StringUtils.isBlank(articleName)) return;
-					ArticleLot entity = new ArticleLot();
-					entity.setArticleName(articleName);
-					ArticleLotSearchInput asi = new ArticleLotSearchInput();
-					asi.setEntity(entity);
-					asi.setMax(30);
-					asi.getFieldNames().add("articleName");
-					articleSearchService.setSearchInputs(asi).start();
+					handleSearchAction();
 				}
 			}
+		});
+
+		view.getSearchButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				handleSearchAction();
+
+			}
+
+
 		});
 
 		articleSearchService.setOnFailed(articleSearchServiceCallFailedEventHandler);
@@ -161,11 +166,25 @@ public class ModalArticleLotSearchController  {
 
 	}
 
+	private void handleSearchAction() {
+		String articleName = view.getArticleName().getText();
+		if(StringUtils.isBlank(articleName)) return;
+		ArticleLot entity = new ArticleLot();
+		entity.setArticleName(articleName);
+		ArticleLotSearchInput asi = new ArticleLotSearchInput();
+		asi.setEntity(entity);
+		asi.setMax(30);
+		asi.getFieldNames().add("articleName");
+		asi.setIncludeBreack(view.getOnlyBreackButton().isSelected());
+		articleSearchService.setSearchInputs(asi).setSearchByName(Boolean.TRUE).start();
 
+	}
 
 	public void handleArticleSearchResult(
 			ArticleLotSearchResult articleLotSearchResult) {
-		if(articleLotSearchResult.getResultList().isEmpty()) return;
+		if(articleLotSearchResult.getResultList().isEmpty())
+			Dialogs.create().message("Aucun Article Trouve").showInformation();
+
 		if(articleLotSearchResult.getResultList().size()==1){
 			ArticleLot articleLot2 = articleLotSearchResult.getResultList().iterator().next();
 			PropertyReader.copy(new ArticleLot(), articleLot);
@@ -241,7 +260,8 @@ public class ModalArticleLotSearchController  {
 		if(lotSearchInput.getFieldNames().contains("internalPic")){
 			articleSearchService.setSearchInputs(lotSearchInput).setSearchRealPrice(Boolean.TRUE).start();
 		}else{
-			articleSearchService.setSearchInputs(lotSearchInput).start();
+			articleSearchService.setSearchInputs(lotSearchInput).setSearchByName(Boolean.TRUE).start();
 		}
+		view.getArticleName().setText(lotSearchInput.getEntity().getArticleName());
 	}
 }

@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -31,6 +32,12 @@ public class ModalArticleLotSearchView extends ApplicationModal{
 	private TextField articleName;
 
 	@FXML Button cancelButton;
+	
+	@FXML
+	private CheckBox onlyBreackButton ;
+	
+	@FXML
+	private Button searchButton ;
 
 	@FXML
 	Pagination pagination;
@@ -97,4 +104,62 @@ public class ModalArticleLotSearchView extends ApplicationModal{
 	public Pagination getPagination() {
 		return pagination;
 	}
+
+	public CheckBox getOnlyBreackButton() {
+		return onlyBreackButton;
+	}
+
+	public void setOnlyBreackButton(CheckBox onlyBreackButton) {
+		this.onlyBreackButton = onlyBreackButton;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+
+	public void setFxmlLoader(FXMLLoader fxmlLoader) {
+		this.fxmlLoader = fxmlLoader;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public void setResourceBundle(ResourceBundle resourceBundle) {
+		this.resourceBundle = resourceBundle;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public void setRootPane(VBox rootPane) {
+		this.rootPane = rootPane;
+	}
+
+	public void setArticleName(TextField articleName) {
+		this.articleName = articleName;
+	}
+
+	public void setCancelButton(Button cancelButton) {
+		this.cancelButton = cancelButton;
+	}
+
+	public void setPagination(Pagination pagination) {
+		this.pagination = pagination;
+	}
+
+	public void setDataList(TableView<ArticleLot> dataList) {
+		this.dataList = dataList;
+	}
+
+	public Button getSearchButton() {
+		return searchButton;
+	}
+	
+	
 }

@@ -193,7 +193,7 @@ public class ArticleEJB
 	 * 	- 
 	 * @param closedDelivery
 	 */
-	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 
 		// generate Article lot for each delivery item

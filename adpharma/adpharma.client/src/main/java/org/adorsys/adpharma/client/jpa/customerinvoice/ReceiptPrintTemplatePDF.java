@@ -350,8 +350,10 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 					.getString("ReceiptPrintTemplate_clientRest.title")));
 
 
+			//			borderlessCell(paymentPane,new RightParagraph(new StandardText(
+			//					DefaultBigDecimalFormatCM.getinstance().format(customerRest))));
 			borderlessCell(paymentPane,new RightParagraph(new StandardText(
-					DefaultBigDecimalFormatCM.getinstance().format(customerRest))));
+					DefaultBigDecimalFormatCM.getinstance().format(receiptPrinterData.getPayment().getReceivedAmount().subtract(receiptPrinterData.getPayment().getDifference())))));
 		}
 
 		borderlessCell(paymentPane,new StandardText(resourceBundle

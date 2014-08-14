@@ -61,7 +61,7 @@ public class ArticleLot implements Serializable
    @Version
    @Column(name = "version")
    private int version = 0;
-
+   
    @ManyToOne
    @Description("ArticleLot_agency_description")
    @NotNull(message = "ArticleLot_agency_NotNull_validation")
