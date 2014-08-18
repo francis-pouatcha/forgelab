@@ -1,7 +1,12 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -21,7 +26,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemInventory;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItemSearchResult;
@@ -31,6 +39,7 @@ import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -46,9 +55,15 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.google.common.collect.Lists;
 
 @Singleton
 public class InventoryListController implements EntityController
@@ -132,8 +147,26 @@ public class InventoryListController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				Inventory selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null)
-					selectionEvent.fire(selectedItem);
+				if(selectedItem!=null){
+					if(!DocumentProcessingState.CLOSED.equals(selectedItem.getInventoryStatus())){
+						selectionEvent.fire(selectedItem);
+					}else {
+						Dialogs.create().message("impossible de traiter l'inventaire est deja cloture ").showInformation();
+					}
+				}
+
+			}
+		});
+
+		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Inventory selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					List<InventoryItem> inventoryItems = Lists.newArrayList(listView.getDataListItem().getItems());
+					exportDeliveryToXls(inventoryItems);
+				}
 
 			}
 		});
@@ -234,7 +267,7 @@ public class InventoryListController implements EntityController
 			}
 		});
 		inventorySearchService.setOnFailed(callFailedEventHandler);
-		
+
 		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -248,7 +281,6 @@ public class InventoryListController implements EntityController
 				}
 				InventorySection inventorySection = new InventorySection();
 				inventorySection.setName("TOUS LES RAYONS ");
-				listView.getInventorySection().getItems().add(0,inventorySection);
 				source.reset();
 				event.consume();
 
@@ -373,7 +405,7 @@ public class InventoryListController implements EntityController
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
-	
+
 	public List<String> readSearchAttributes(){
 		ArrayList<String> seachAttributes = new ArrayList<String>() ;
 		String inventoryNumber = searchInput.getEntity().getInventoryNumber();
@@ -386,4 +418,68 @@ public class InventoryListController implements EntityController
 		return seachAttributes;
 
 	}
+
+	@SuppressWarnings("resource")
+	public void exportDeliveryToXls( List<InventoryItem> inventoryItems){
+		InventoryItem inventoryItem = inventoryItems.get(0);
+
+		HSSFWorkbook inventoryXls = new HSSFWorkbook();
+		int rownum = 0 ;
+		int cellnum = 0 ;
+		HSSFCell cell ;
+		HSSFSheet sheet = inventoryXls.createSheet(inventoryItem.getInventory().getInventoryNumber());
+		HSSFRow header = sheet.createRow(rownum++);
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("cipm");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("cip");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("designation");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("quantite");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("prix");
+
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("emplacement");
+
+		for (InventoryItem item : inventoryItems) {
+			header = sheet.createRow(rownum++);
+			cellnum = 0 ;
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getInternalPic());
+
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getArticle().getPic());
+
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getArticle().getArticleName());
+
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getExpectedQty().toBigInteger()+"");
+
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getGapSalesPricePU()+"");
+
+			cell = header.createCell(cellnum++);
+			cell.setCellValue("");
+		}
+
+		try {
+			File file = new File("inventory.xls");
+			FileOutputStream outputStream = new FileOutputStream(file);
+			inventoryXls.write(outputStream);
+			outputStream.close();
+			Desktop.getDesktop().open(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 }

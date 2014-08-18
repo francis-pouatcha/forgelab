@@ -42,12 +42,20 @@
 		</HBox>
 	</bottom>
 	<right>
-		<VBox fx:id="leftBox" spacing="5.0">
+		<VBox fx:id="leftBox" prefWidth="150.0" spacing="5.0" BorderPane.alignment="TOP_CENTER">
 <padding>
-<Insets top="55.0" />
+<Insets top="40.0" />
 </padding>
 <BorderPane.margin>
-<Insets left="2.0" right="2.0" />
-</BorderPane.margin></VBox>
+<Insets left="4.0" right="4.0" />
+</BorderPane.margin>
+<children><Button fx:id="advenceSearchButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Recherche Avancee" />
+<Button fx:id="createButton" layoutX="10.0" layoutY="60.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Nouveau Inventaire" />
+<Button fx:id="editButton" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Traiter l'inventaire" />
+<Button fx:id="removeButton" layoutX="10.0" layoutY="122.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Suprimer l'inventaire" />
+<Button fx:id="printButton" layoutX="10.0" layoutY="153.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Fiche de comptage" />
+<Button fx:id="exportToXlsButton" layoutX="10.0" layoutY="184.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Exporter (.xls)" />
+<Button fx:id="printRepportButton" layoutX="10.0" layoutY="215.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="158.0" text="Rapport de l'inventaire" />
+</children></VBox>
 	</right>
 </BorderPane>

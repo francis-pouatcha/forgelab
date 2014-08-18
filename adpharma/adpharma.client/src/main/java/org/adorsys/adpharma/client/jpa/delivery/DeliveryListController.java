@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;

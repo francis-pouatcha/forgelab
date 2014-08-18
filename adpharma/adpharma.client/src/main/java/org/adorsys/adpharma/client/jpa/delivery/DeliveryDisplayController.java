@@ -564,6 +564,7 @@ public class DeliveryDisplayController implements EntityController
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		if(parse!=null){
 			Calendar instance = Calendar.getInstance();
 			instance.setTime(parse);

@@ -1,27 +1,29 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,12 +34,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.inventoryitem.InventoryItem;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCashDrawer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderInsurance;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderView;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
-import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.control.BigDecimalField;
@@ -71,6 +68,9 @@ public class InventoryDisplayView
 
 	@FXML
 	private Button printButton;
+
+	@FXML
+	private Button importXlsButton ;
 
 
 	@FXML
@@ -158,6 +158,8 @@ public class InventoryDisplayView
 
 	private TableColumn<InventoryItem, BigDecimal> asseccedQtyColumn;
 
+	private TableColumn<InventoryItem, Long> gapColumn;
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -167,12 +169,43 @@ public class InventoryDisplayView
 		viewBuilder.addStringColumn(dataList, "article", "InventoryItem_article_description.title", resourceBundle,400d);
 		viewBuilder.addBigDecimalColumn(dataList, "expectedQty", "InventoryItem_expectedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		asseccedQtyColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "asseccedQty", "InventoryItem_asseccedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addSimpleNumberColumn(dataList, "gap", "InventoryItem_gap_description.title", resourceBundle);
+		gapColumn = viewBuilder.addEditableLongColumn(dataList, "gap", "InventoryItem_gap_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "gapTotalSalePrice", "InventoryItem_gapTotalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "gapTotalPurchasePrice", "InventoryItem_gapTotalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		buildOrderItemBar();
 		buildAmountPane();
+
+		gapColumn.setCellFactory(new Callback<TableColumn<InventoryItem,Long>, TableCell<InventoryItem,Long>>() {
+
+			@Override
+			public TableCell<InventoryItem, Long> call(TableColumn<InventoryItem, Long> param) {
+				// TODO Auto-generated method stub
+				return new TableCell<InventoryItem, Long>() {
+					@Override
+					protected void updateItem(Long item, boolean empty) {
+						super.updateItem(item, empty);
+						
+						if (item == null || empty) {
+							setText(null);
+							setStyle("");
+						} else {
+							// Format date.
+							setText(item+"");
+							
+							// Style all dates in March with a different color.
+							if (Long.compare(0, item)>0) {
+								setTextFill(Color.CHOCOLATE);
+								setStyle("-fx-background-color: yellow");
+							} else {
+								setTextFill(Color.BLACK);
+								setStyle("");
+							}
+						}
+					}
+				};
+			}
+		});
 	}
 
 	public void addValidators()
@@ -436,4 +469,62 @@ public class InventoryDisplayView
 	public TableColumn<InventoryItem, BigDecimal> getAsseccedQtyColumn() {
 		return asseccedQtyColumn;
 	}
+
+	public Button getImportXlsButton() {
+		return importXlsButton;
+	}
+
+	public GridPane getInventoryItemBar() {
+		return inventoryItemBar;
+	}
+
+	public BigDecimalField getGapQty() {
+		return gapQty;
+	}
+
+	public BigDecimalField getExpectedQty() {
+		return expectedQty;
+	}
+
+	public ComboBox<InventoryRecordingUser> getAgent() {
+		return agent;
+	}
+
+	public GridPane getRigthGrid() {
+		return rigthGrid;
+	}
+
+	public BigDecimalField getGapPA() {
+		return gapPA;
+	}
+
+	public BigDecimalField getGap() {
+		return gap;
+	}
+
+	public BigDecimalField getGapPV() {
+		return gapPV;
+	}
+
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public FXMLLoader getFxmlLoader() {
+		return fxmlLoader;
+	}
+
+	public Pagination getPagination() {
+		return pagination;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public ToOneAggreggationFieldValidator getToOneAggreggationFieldValidator() {
+		return toOneAggreggationFieldValidator;
+	}
+
+
 }

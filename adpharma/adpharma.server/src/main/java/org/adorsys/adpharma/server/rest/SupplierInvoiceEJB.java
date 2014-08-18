@@ -183,103 +183,103 @@ public class SupplierInvoiceEJB
 	 * 
 	 * @param closedDelivery
 	 */
-	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery) {
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-		Map<String, List<DeliveryItem>> deliveryItemMap = new HashMap<String, List<DeliveryItem>>();
-		Map<String, Agency> agencies = new HashMap<String, Agency>();
-		Map<String, ArticleLot> articleLots =  new HashMap<String, ArticleLot>();
-		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
-		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
-
-		// Group delivery items by agency
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			String internalPic = deliveryItem.getMainPic();
-			if(isManagedLot)
-				internalPic = deliveryItem.getInternalPic();
-			ArticleLot articleLot = getArticleLot(internalPic, articleLots);
-			List<DeliveryItem> list = deliveryItemMap.get(articleLot.getAgency().getAgencyNumber());
-			if(list==null){
-				list = new ArrayList<DeliveryItem>();
-				deliveryItemMap.put(articleLot.getAgency().getAgencyNumber(), list);
-			}
-			list.add(deliveryItem);
-		}
-		if(deliveryItemMap.size()>1){
-			Set<String> keySet = deliveryItemMap.keySet();
-			for (String string : keySet) {
-				System.out.println( "Agency- " + string);
-			}
-		}
-		Set<Entry<String,List<DeliveryItem>>> entrySet = deliveryItemMap.entrySet();
-		for (Entry<String, List<DeliveryItem>> entry : entrySet) {
-			String agencyNumber = entry.getKey();
-			SupplierInvoice si = new SupplierInvoice();
-			Login creatingUser = securityUtil.getConnectedUser();
-			Date creationDate = new Date();
-			si.setDelivery(closedDelivery);
-			si.setAgency(getAgency(agencyNumber, agencies));
-			si.setSupplier(closedDelivery.getSupplier());
-			si.setCreatingUser(creatingUser);
-			si.setCreationDate(creationDate);
-			si.setInvoiceType(InvoiceType.CASHDRAWER);
-			si = create(si);
-			// Generate the supplier invoice items
-			List<DeliveryItem> items = entry.getValue();
-			BigDecimal afterTax = BigDecimal.ZERO;
-			BigDecimal vat = BigDecimal.ZERO;
-			BigDecimal discount = BigDecimal.ZERO;
-			for (DeliveryItem deliveryItem : items) {
-				SupplierInvoiceItem sii = new SupplierInvoiceItem();
-				sii.setAmountReturn(BigDecimal.ZERO);
-				sii.setArticle(deliveryItem.getArticle());
-				sii.setDeliveryQty(deliveryItem.getAvailableQty());
-				String internalPic = deliveryItem.getMainPic();
-				if(isManagedLot)
-					internalPic = deliveryItem.getInternalPic();
-				sii.setInternalPic(internalPic);
-				sii.setInvoice(si);
-				sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
-				BigDecimal amountAfterTax = deliveryItem.getTotalPurchasePrice();
-				sii.setTotalPurchasePrice(amountAfterTax);
-				afterTax = afterTax.add(amountAfterTax);
-				
-				// Read the vat rate saed in the article lot.
-				ArticleLot articleLot = getArticleLot(internalPic, articleLots);
-				VAT ivat = articleLot.getVat();
-				BigDecimal vatRate = ivat!=null?VAT.getRawRate(ivat.getRate()):BigDecimal.ZERO;
-				
-				// IF the vat to be collected is waived in the delivery item, ignore vat computation here.
-//				if(BigDecimal.ZERO.compareTo(closedDelivery.getAmountVat())<=0)vatRate=BigDecimal.ZERO;
-				BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRate), 4, RoundingMode.HALF_EVEN); 
-				
-				BigDecimal amountVat = amountAfterTax.subtract(amountBeforeTax);
-				vat = vat.add(amountVat);
-
-				BigDecimal deliveryDiscount = closedDelivery.getAmountDiscount()==null?BigDecimal.ZERO:closedDelivery.getAmountDiscount();
-				BigDecimal deliveryAmountBeforeTax = closedDelivery.getAmountBeforeTax();
-				
-				// Proportion on whole invoice before tax. Because not all item have vat.
-				// Take the proportion of amount before tax
-				BigDecimal amountDiscount = BigDecimal.ZERO;				
-				if(deliveryDiscount.compareTo(BigDecimal.ZERO)>0){
-					if(deliveryAmountBeforeTax.compareTo(BigDecimal.ZERO)>0){
-						BigDecimal proportion = amountBeforeTax.divide(deliveryAmountBeforeTax, 4, RoundingMode.HALF_EVEN);
-						amountDiscount = deliveryDiscount.multiply(proportion);	
-					}
-				}
-				discount = discount.add(amountDiscount);
-
-				sii = supplierInvoiceItemEJB.create(sii);
-			}
-			
-			si.setAmountAfterTax(afterTax);
-			si.setTaxAmount(vat);
-			si.setAmountBeforeTax(afterTax.subtract(vat));
-			si.setAmountDiscount(discount);
-			si.setNetToPay(afterTax.subtract(discount));
-			si = update(si);
-		}
-	}
+//	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery) {
+//		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+//		Map<String, List<DeliveryItem>> deliveryItemMap = new HashMap<String, List<DeliveryItem>>();
+//		Map<String, Agency> agencies = new HashMap<String, Agency>();
+//		Map<String, ArticleLot> articleLots =  new HashMap<String, ArticleLot>();
+//		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+//		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+//
+//		// Group delivery items by agency
+//		for (DeliveryItem deliveryItem : deliveryItems) {
+//			String internalPic = deliveryItem.getMainPic();
+//			if(isManagedLot)
+//				internalPic = deliveryItem.getInternalPic();
+//			ArticleLot articleLot = getArticleLot(internalPic, articleLots);
+//			List<DeliveryItem> list = deliveryItemMap.get(articleLot.getAgency().getAgencyNumber());
+//			if(list==null){
+//				list = new ArrayList<DeliveryItem>();
+//				deliveryItemMap.put(articleLot.getAgency().getAgencyNumber(), list);
+//			}
+//			list.add(deliveryItem);
+//		}
+//		if(deliveryItemMap.size()>1){
+//			Set<String> keySet = deliveryItemMap.keySet();
+//			for (String string : keySet) {
+//				System.out.println( "Agency- " + string);
+//			}
+//		}
+//		Set<Entry<String,List<DeliveryItem>>> entrySet = deliveryItemMap.entrySet();
+//		for (Entry<String, List<DeliveryItem>> entry : entrySet) {
+//			String agencyNumber = entry.getKey();
+//			SupplierInvoice si = new SupplierInvoice();
+//			Login creatingUser = securityUtil.getConnectedUser();
+//			Date creationDate = new Date();
+//			si.setDelivery(closedDelivery);
+//			si.setAgency(getAgency(agencyNumber, agencies));
+//			si.setSupplier(closedDelivery.getSupplier());
+//			si.setCreatingUser(creatingUser);
+//			si.setCreationDate(creationDate);
+//			si.setInvoiceType(InvoiceType.CASHDRAWER);
+//			si = create(si);
+//			// Generate the supplier invoice items
+//			List<DeliveryItem> items = entry.getValue();
+//			BigDecimal afterTax = BigDecimal.ZERO;
+//			BigDecimal vat = BigDecimal.ZERO;
+//			BigDecimal discount = BigDecimal.ZERO;
+//			for (DeliveryItem deliveryItem : items) {
+//				SupplierInvoiceItem sii = new SupplierInvoiceItem();
+//				sii.setAmountReturn(BigDecimal.ZERO);
+//				sii.setArticle(deliveryItem.getArticle());
+//				sii.setDeliveryQty(deliveryItem.getAvailableQty());
+//				String internalPic = deliveryItem.getMainPic();
+//				if(isManagedLot)
+//					internalPic = deliveryItem.getInternalPic();
+//				sii.setInternalPic(internalPic);
+//				sii.setInvoice(si);
+//				sii.setPurchasePricePU(deliveryItem.getPurchasePricePU());
+//				BigDecimal amountAfterTax = deliveryItem.getTotalPurchasePrice();
+//				sii.setTotalPurchasePrice(amountAfterTax);
+//				afterTax = afterTax.add(amountAfterTax);
+//				
+//				// Read the vat rate saed in the article lot.
+//				ArticleLot articleLot = getArticleLot(internalPic, articleLots);
+//				VAT ivat = articleLot.getVat();
+//				BigDecimal vatRate = ivat!=null?VAT.getRawRate(ivat.getRate()):BigDecimal.ZERO;
+//				
+//				// IF the vat to be collected is waived in the delivery item, ignore vat computation here.
+////				if(BigDecimal.ZERO.compareTo(closedDelivery.getAmountVat())<=0)vatRate=BigDecimal.ZERO;
+//				BigDecimal amountBeforeTax = amountAfterTax.divide(BigDecimal.ONE.add(vatRate), 4, RoundingMode.HALF_EVEN); 
+//				
+//				BigDecimal amountVat = amountAfterTax.subtract(amountBeforeTax);
+//				vat = vat.add(amountVat);
+//
+//				BigDecimal deliveryDiscount = closedDelivery.getAmountDiscount()==null?BigDecimal.ZERO:closedDelivery.getAmountDiscount();
+//				BigDecimal deliveryAmountBeforeTax = closedDelivery.getAmountBeforeTax();
+//				
+//				// Proportion on whole invoice before tax. Because not all item have vat.
+//				// Take the proportion of amount before tax
+//				BigDecimal amountDiscount = BigDecimal.ZERO;				
+//				if(deliveryDiscount.compareTo(BigDecimal.ZERO)>0){
+//					if(deliveryAmountBeforeTax.compareTo(BigDecimal.ZERO)>0){
+//						BigDecimal proportion = amountBeforeTax.divide(deliveryAmountBeforeTax, 4, RoundingMode.HALF_EVEN);
+//						amountDiscount = deliveryDiscount.multiply(proportion);	
+//					}
+//				}
+//				discount = discount.add(amountDiscount);
+//
+//				sii = supplierInvoiceItemEJB.create(sii);
+//			}
+//			
+//			si.setAmountAfterTax(afterTax);
+//			si.setTaxAmount(vat);
+//			si.setAmountBeforeTax(afterTax.subtract(vat));
+//			si.setAmountDiscount(discount);
+//			si.setNetToPay(afterTax.subtract(discount));
+//			si = update(si);
+//		}
+//	}
 	
 	@Inject
 	private AgencyEJB agencyEJB;

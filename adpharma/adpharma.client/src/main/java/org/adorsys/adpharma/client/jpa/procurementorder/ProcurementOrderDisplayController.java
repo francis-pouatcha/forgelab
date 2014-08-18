@@ -35,6 +35,8 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.utils.DeliveryFromOrderData;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -163,6 +165,21 @@ public class ProcurementOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getAvailableQtyColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> availebleQtyCell) {
+				ProcurementOrderItem selectedItem = availebleQtyCell.getRowValue();
+				BigDecimal newValue = availebleQtyCell.getNewValue();
+				if(newValue==null && BigDecimal.ZERO.compareTo(newValue)>0){
+					if(selectedItem.getQtyOrdered().compareTo(newValue)>=0){
+						selectedItem.setAvailableQty(newValue);
+						selectedItem.calculateTotalAmout();
+						itemEditService.setProcurementOrderItem(selectedItem).start();
+					}
+				}
+			}
+		});
+
 		displayView.getPurchasePricePUColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
 			@Override
 			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> puCell) {
@@ -263,7 +280,7 @@ public class ProcurementOrderDisplayController implements EntityController
 
 		});
 
-	
+
 		displayView.getOkButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -273,7 +290,7 @@ public class ProcurementOrderDisplayController implements EntityController
 			}
 
 		});
-		
+
 
 
 		/*
@@ -289,11 +306,11 @@ public class ProcurementOrderDisplayController implements EntityController
 				}else {
 					Dialogs.create().message("La  commande dois avoir au moins une ligne  ").showInformation();
 				}
-				
+
 			}
 				});
-		
-		
+
+
 
 		/*
 		 * listen to save button and fire search requested event.
@@ -340,8 +357,14 @@ public class ProcurementOrderDisplayController implements EntityController
 				ProcurementOrderItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().add(createdItem);
-				PropertyReader.copy(new ProcurementOrderItem(), item);
+				int index = displayView.getDataList().getItems().indexOf(createdItem);
+				if(index>-1){
+					ProcurementOrderItem displayed = displayView.getDataList().getItems().get(index);
+					PropertyReader.copy(createdItem, displayed);
+				}else {
+					displayView.getDataList().getItems().add(createdItem);
+				}
+				updateProcurementOrder(item);
 			}
 		});
 		itemCreateService.setOnFailed(serviceCallFailedEventHandler);
@@ -354,9 +377,12 @@ public class ProcurementOrderDisplayController implements EntityController
 				ProcurementOrderItem editedItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().add(editedItem);
-				PropertyReader.copy(new ProcurementOrderItem(), item);
-				PropertyReader.copy(editedItem.getProcurementOrder(), displayedEntity);
+				int index = displayView.getDataList().getItems().indexOf(editedItem);
+				if(index>-1){
+					ProcurementOrderItem displayed = displayView.getDataList().getItems().get(index);
+					PropertyReader.copy(editedItem, displayed);
+				}
+				updateProcurementOrder(editedItem);
 
 			}
 		});
@@ -371,8 +397,7 @@ public class ProcurementOrderDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				displayView.getDataList().getItems().remove(removeddItem);
-				PropertyReader.copy(new ProcurementOrderItem(), item);
-				PropertyReader.copy(removeddItem.getProcurementOrder(), displayedEntity);
+				updateProcurementOrder(removeddItem);
 
 			}
 		});
@@ -395,6 +420,13 @@ public class ProcurementOrderDisplayController implements EntityController
 		//      });
 		//
 		//      displayView.getConfirmSelectionButton().visibleProperty().bind(pendingSelectionRequestProperty.isNotNull());
+	}
+
+	//	private static final BigDecimal HUNDRED = new BigDecimal(100); 
+	public void updateProcurementOrder(ProcurementOrderItem procurementOrderItem){
+		ProcurementOrderItemProcurementOrder procurementOrder = procurementOrderItem.getProcurementOrder();
+		PropertyReader.copy(procurementOrder, displayedEntity);
+		PropertyReader.copy(new ProcurementOrderItem(),item);
 	}
 
 	public void display(Pane parent)

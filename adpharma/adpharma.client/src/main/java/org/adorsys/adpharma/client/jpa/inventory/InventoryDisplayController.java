@@ -1,6 +1,11 @@
 package org.adorsys.adpharma.client.jpa.inventory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.property.ObjectProperty;
@@ -15,6 +20,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -63,7 +72,12 @@ import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -80,7 +94,7 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	@EntityEditRequestedEvent
 	private Event<Inventory> editRequestEvent;
-	
+
 	@Inject
 	@EntityEditDoneEvent
 	private Event<Inventory>  inventoryEditDoneRequestEVent ;
@@ -100,7 +114,13 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	@HideProgressBarRequestEvent
 	private Event<Object> hideProgressRequestEvent;
+	
 
+	@Inject
+	@EntitySelectionEvent
+	private Event<Inventory> inventorySelectionRequestEvent;
+
+	
 	@Inject
 	@AssocSelectionResponseEvent
 	private Event<AssocSelectionEventData<Inventory>> selectionResponseEvent;
@@ -145,12 +165,19 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	private InventoryCloseService inventoryCloseService;
 
+	Stage dialog = new Stage();
+	
+	@Inject
+	private InventoryResultLoaderService inventoryResultLoaderService ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
+		dialog.initModality(Modality.APPLICATION_MODAL);
 		//      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//      displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
 		displayView.getCloseButton().disableProperty().bind(inventoryCloseService.runningProperty());
+		displayView.getImportXlsButton().disableProperty().bind(inventoryResultLoaderService.runningProperty());
 		/*
 		 * listen to search button and fire search requested event.
 		 * 
@@ -174,7 +201,73 @@ public class InventoryDisplayController implements EntityController
 
 			}
 		});
+
+		displayView.getImportXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Selection un fichier de resultat inventaire");
+			fileChooser.getExtensionFilters().add(new ExtensionFilter("Fichier Excel", "*.xls"));
+			String userDirName = System.getProperty("user.dir");
+			File userDir = new File(userDirName);
+			if(!userDir.exists()){
+				userDir = new File("test").getParentFile();
+			}
+			fileChooser.setInitialDirectory(userDir);// working directory
+			File selectedFile = fileChooser.showOpenDialog(dialog);
+			if(selectedFile!=null){
+				HSSFWorkbook workbook;
+				ArrayList<InventoryItem> inventoryItemFromSheet = new ArrayList<InventoryItem>();
+				try {
+					FileInputStream dataStream = FileUtils.openInputStream(selectedFile);
+					workbook = new HSSFWorkbook(dataStream);
+					HSSFSheet sheet = workbook.getSheetAt(0);
+					Iterator<Row> rowIterator = sheet.rowIterator();
+					rowIterator.next();
+					int i = 0 ;
+					while (rowIterator.hasNext()) {
+						System.out.println("i = "+i++);
+						Row row = rowIterator.next();
+						InventoryItem item = new InventoryItem();
+						Cell cell = row.getCell(0);
+						if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+							item.setInternalPic(cell.getStringCellValue());
+						}else {
+							break ;
+						}
+
+						cell = row.getCell(1);
+						if (cell != null){
+							item.setAsseccedQty(BigDecimal.valueOf(cell.getNumericCellValue()));
+						}
+						inventoryItemFromSheet.add(item);
+					}
+					
+					showProgressRequestEvent.fire(new Object());
+					inventoryResultLoaderService.setItemFromResult(inventoryItemFromSheet).setInventory(displayedEntity).start();
+				}catch(IOException ioe){
+					Dialogs.create().message("Une erruer c'est produite durant le charchement ").showInformation();
+				}
+			}	
+
+			}
+		});
 		
+		inventoryResultLoaderService.setOnFailed(callFailedEventHandler);
+		inventoryResultLoaderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			
+			@Override
+			public void handle(WorkerStateEvent event) {
+				InventoryResultLoaderService s = (InventoryResultLoaderService) event.getSource();
+				Inventory editedInventory = s.getValue();
+				event.consume();
+				s.reset();
+				hideProgressRequestEvent.fire(new Object());
+				inventorySelectionRequestEvent.fire(editedInventory);
+
+			}
+		});
+
 		displayView.getPrintButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override

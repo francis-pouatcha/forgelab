@@ -202,12 +202,15 @@ public class ProcurementOrderEJB
 		List<CustomerInvoiceItem> customerInvoiceItems = customerInvoiceItemEJB.findPreparationDataItem(data);
 		HashMap<Article, ProcurementOrderItem> cashedItem = new  HashMap<Article,ProcurementOrderItem>();
 		
+		BigDecimal totalPurchasePrice = BigDecimal.ZERO;
+		
 		for (CustomerInvoiceItem item : customerInvoiceItems) {
-			BigDecimal totalPurchasePrice = BigDecimal.ZERO;
+			
 			if(cashedItem.containsKey(item.getArticle())){
+				totalPurchasePrice= totalPurchasePrice.subtract(cashedItem.get(item.getArticle()).getTotalPurchasePrice());
 				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();
 				cashedItem.get(item.getArticle()).setQtyOrdered(qtyOrdered.add(item.getPurchasedQty()));
-				totalPurchasePrice = cashedItem.get(item.getArticle()).calculTotalPuschasePrice();
+				totalPurchasePrice = totalPurchasePrice.add(cashedItem.get(item.getArticle()).calculTotalPuschasePrice());
 			}else {
 				ProcurementOrderItem procurementOrderItem = new ProcurementOrderItem();
 				procurementOrderItem.setArticle(item.getArticle());
@@ -216,25 +219,26 @@ public class ProcurementOrderEJB
 				procurementOrderItem.setMainPic(item.getArticle().getPic());
 				procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
 				procurementOrderItem.setProductRecCreated(new Date());
-				procurementOrderItem.setPurchasePricePU(item.getPurchasePricePU()!=null?item.getPurchasePricePU():item.getSalesPricePU());
+				procurementOrderItem.setPurchasePricePU(item.getArticle().getPppu()!=null?item.getArticle().getPppu():BigDecimal.ZERO);
 				procurementOrderItem.setQtyOrdered(item.getPurchasedQty());
-				procurementOrderItem.setSalesPricePU(item.getSalesPricePU());
+				procurementOrderItem.setSalesPricePU(item.getArticle().getSppu()!=null?item.getArticle().getSppu():BigDecimal.ZERO);
 				procurementOrderItem.setSecondaryPic(item.getArticle().getPic());
 				procurementOrderItem.setStockQuantity(item.getArticle().getQtyInStock());
 				procurementOrderItem.setValid(Boolean.FALSE);
-				procurementOrderItem.setAvailableQty( item.getPurchasedQty());
-				totalPurchasePrice = procurementOrderItem.calculTotalPuschasePrice();
+				procurementOrderItem.setAvailableQty(BigDecimal.ZERO);
+				totalPurchasePrice = totalPurchasePrice.add(procurementOrderItem.calculTotalPuschasePrice());
 				cashedItem.put(item.getArticle(), procurementOrderItem);
 			}
-			procurementOrder.setAmountAfterTax(procurementOrder.getAmountAfterTax().add(totalPurchasePrice));
-			BigDecimal vatRateRaw = item.getArticle().getVat()==null?BigDecimal.ZERO:VAT.getRawRate(item.getArticle().getVat().getRate());
-			BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(vatRateRaw), 4, RoundingMode.HALF_EVEN);
-			// Amount before tax
-			procurementOrder.setAmountBeforeTax(procurementOrder.getAmountBeforeTax().add(purchasePriceBeforTax));
-			// Amount vat
-			procurementOrder.setTaxAmount(procurementOrder.getTaxAmount().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
 		}
-		procurementOrder.setNetAmountToPay(procurementOrder.getAmountAfterTax().subtract(procurementOrder.getAmountDiscount()));
+		procurementOrder.setAmountAfterTax(totalPurchasePrice);
+//		BigDecimal vatRateRaw = item.getArticle().getVat()==null?BigDecimal.ZERO:VAT.getRawRate(item.getArticle().getVat().getRate());
+//		BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(vatRateRaw), 4, RoundingMode.HALF_EVEN);
+		// Amount before tax
+		procurementOrder.setAmountBeforeTax(totalPurchasePrice);
+		// Amount vat
+		procurementOrder.setTaxAmount(BigDecimal.ZERO);
+		
+		procurementOrder.setNetAmountToPay(totalPurchasePrice);
 
 		Collection<ProcurementOrderItem> procurementOrderItems = cashedItem.values();
 		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);

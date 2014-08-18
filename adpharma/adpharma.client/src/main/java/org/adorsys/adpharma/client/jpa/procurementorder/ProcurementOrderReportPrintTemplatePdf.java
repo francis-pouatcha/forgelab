@@ -39,8 +39,8 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	private Login login ;
 	
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 6);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 10);
 
 	public ProcurementOrderReportPrintTemplatePdf(ProcurementOrderReportPrinterData data, Agency agency,Login login,ResourceBundle resourceBundle) throws DocumentException {
 		this.agency = agency ;

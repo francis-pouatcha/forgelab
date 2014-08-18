@@ -147,6 +147,8 @@ public class ProcurementOrderDisplayView
 	private TableColumn<ProcurementOrderItem, BigDecimal> salesPricePUColumn;
 
 	private TableColumn<ProcurementOrderItem, BigDecimal> purchasePricePUColumn;
+	
+	private TableColumn<ProcurementOrderItem, BigDecimal> availableQtyColumn;
 
 	@Inject
 	@Bundle({ CrudKeys.class, ProcurementOrder.class ,ProcurementOrderItem.class,Delivery.class})
@@ -162,7 +164,7 @@ public class ProcurementOrderDisplayView
 		viewBuilder.addStringColumn(dataList, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,330d);
 		orderQuantityColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		availableQtyColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		salesPricePUColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.INTEGER, locale);
 		purchasePricePUColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -202,6 +204,7 @@ public class ProcurementOrderDisplayView
 		orderQuantityColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		salesPricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		purchasePricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		availableQtyColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		itemBar.visibleProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
@@ -338,6 +341,10 @@ public class ProcurementOrderDisplayView
 	public TableColumn<ProcurementOrderItem, BigDecimal> getPurchasePricePUColumn() {
 		return purchasePricePUColumn;
 	}
+
+public TableColumn<ProcurementOrderItem, BigDecimal> getAvailableQtyColumn() {
+	return availableQtyColumn;
+}
 	//
 	//	public Button getConfirmSelectionButton()
 	//	{

@@ -12,7 +12,7 @@ public class ProcurementOrderMerger
 {
 
    @Inject
-   private ProcurementOrderRepository repository;
+   public ProcurementOrderRepository repository;
 
    public ProcurementOrder bindComposed(ProcurementOrder entity)
    {
@@ -83,4 +83,14 @@ public class ProcurementOrderMerger
       //       }
       //      return entities;
    }
+
+public ProcurementOrderRepository getRepository() {
+	return repository;
+}
+
+public void setRepository(ProcurementOrderRepository repository) {
+	this.repository = repository;
+}
+   
+   
 }

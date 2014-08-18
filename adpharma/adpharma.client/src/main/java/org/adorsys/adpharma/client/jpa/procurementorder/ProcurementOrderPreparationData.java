@@ -19,6 +19,7 @@ import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
 
+
 public class ProcurementOrderPreparationData {
 
 	@Description("ProcurementOrder_procmtOrderTriggerMode_description")
@@ -26,13 +27,13 @@ public class ProcurementOrderPreparationData {
 
 	@Description("ProcurementOrder_supplier_description")
 	private SimpleObjectProperty<Supplier> supplier;
-	
+
 	@Description("ProcurementOrder_creatingUser_description")
 	private SimpleObjectProperty<Login> creatingUser;
-	
+
 	@Description("ProcurementOrder_poStatus_description")
 	private SimpleObjectProperty<DocumentProcessingState> poStatus;
-	
+
 	@Description("ProcurementOrder_procurementOrderNumber_description")
 	private SimpleStringProperty procurementOrderNumber;
 
@@ -42,73 +43,98 @@ public class ProcurementOrderPreparationData {
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private SimpleObjectProperty<Calendar> toDate;
 
-	 public SimpleObjectProperty<Supplier> supplierProperty()
-	   {
-	      if (supplier == null)
-	      {
-	         supplier = new SimpleObjectProperty<Supplier>(new Supplier());
-	      }
-	      return supplier;
-	   }
 
-	   @NotNull(message = "ProcurementOrder_supplier_NotNull_validation")
-	   public Supplier getSupplier()
-	   {
-	      return supplierProperty().get();
-	   }
+	public SimpleObjectProperty<Supplier> supplierProperty()
+	{
+		if (supplier == null)
+		{
+			supplier = new SimpleObjectProperty<Supplier>(new Supplier());
+		}
+		return supplier;
+	}
 
-	   public final void setSupplier(ProcurementOrderSupplier supplier)
-	   {
-	      if (supplier == null)
-	      {
-	         supplier = new ProcurementOrderSupplier();
-	      }
-	      PropertyReader.copy(supplier, getSupplier());
-	      supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
-	   }
-	   
-	   
-	   public SimpleObjectProperty<Login> creatingUserProperty()
-	   {
-	      if (creatingUser == null)
-	      {
-	         creatingUser = new SimpleObjectProperty<Login>(new Login());
-	      }
-	      return creatingUser;
-	   }
-	   
-	   public Login getCreatingUser() {
+	@NotNull(message = "ProcurementOrder_supplier_NotNull_validation")
+	public Supplier getSupplier()
+	{
+		return supplierProperty().get();
+	}
+
+	public final void setSupplier(ProcurementOrderSupplier supplier)
+	{
+		if (supplier == null)
+		{
+			supplier = new ProcurementOrderSupplier();
+		}
+		PropertyReader.copy(supplier, getSupplier());
+		supplierProperty().setValue(ObjectUtils.clone(getSupplier()));
+	}
+
+
+	public SimpleObjectProperty<Login> creatingUserProperty()
+	{
+		if (creatingUser == null)
+		{
+			creatingUser = new SimpleObjectProperty<Login>(new Login());
+		}
+		return creatingUser;
+	}
+
+	public Login getCreatingUser() {
 		return creatingUserProperty().get();
-	   }
-	   
-	   
-	   public SimpleObjectProperty<DocumentProcessingState> poStatusProperty()
-	   {
-	      if (poStatus == null)
-	      {
-	         poStatus = new SimpleObjectProperty<DocumentProcessingState>();
-	      }
-	      return poStatus;
-	   }
-	   
-	   public DocumentProcessingState getPoStatus() {
+	}
+
+	public final void setCreatingUser(ProcurementOrderCreatingUser login)
+	{
+		if (login == null)
+		{
+			login = new ProcurementOrderCreatingUser();
+		}
+		PropertyReader.copy(login, getCreatingUser());
+	}
+
+
+	public SimpleObjectProperty<DocumentProcessingState> poStatusProperty()
+	{
+		if (poStatus == null)
+		{
+			poStatus = new SimpleObjectProperty<DocumentProcessingState>();
+		}
+		return poStatus;
+	}
+
+	public DocumentProcessingState getPoStatus() {
 		return poStatusProperty().get();
-	    }
-	   
-	   public SimpleStringProperty procurementOrderNumberProperty()
-	   {
-	      if (procurementOrderNumber == null)
-	      {
-	         procurementOrderNumber = new SimpleStringProperty();
-	      }
-	      return procurementOrderNumber;
-	   }
-	   
-	   public String getProcurementOrderNumber() {
+	}
+	
+	
+
+	public final void setPoStatus(DocumentProcessingState poStatus)
+	{
+		if (poStatus == null)
+		{
+			poStatus =DocumentProcessingState.ONGOING;
+			poStatusProperty().set(poStatus);
+		}
+	}
+
+	public SimpleStringProperty procurementOrderNumberProperty()
+	{
+		if (procurementOrderNumber == null)
+		{
+			procurementOrderNumber = new SimpleStringProperty();
+		}
+		return procurementOrderNumber;
+	}
+
+	public String getProcurementOrderNumber() {
 		return procurementOrderNumberProperty().get();
 	}
-	   
-	   
+	
+	public final void setProcurementOrderNumber(String procurementOrderNumber)
+	{
+		procurementOrderNumberProperty().set(procurementOrderNumber);
+	}
+
 	public SimpleObjectProperty<Calendar> toDateProperty()
 	{
 		if (toDate == null)

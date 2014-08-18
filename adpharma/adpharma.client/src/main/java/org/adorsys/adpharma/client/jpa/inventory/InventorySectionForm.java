@@ -45,8 +45,11 @@ public class InventorySectionForm extends AbstractToOneAssociation<Inventory, Ag
 
 	public void update(InventorySection data)
 	{
-		sectionCode.textProperty().set(data.sectionCodeProperty().get());
-		name.textProperty().set(data.nameProperty().get());
+		if(data!=null){
+			
+			sectionCode.textProperty().set(data.sectionCodeProperty().get());
+			name.textProperty().set(data.nameProperty().get());
+		}
 	}
 
 	public TextField getSectionCode()

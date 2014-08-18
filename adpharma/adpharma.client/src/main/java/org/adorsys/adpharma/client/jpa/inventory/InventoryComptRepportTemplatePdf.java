@@ -75,8 +75,8 @@ public class InventoryComptRepportTemplatePdf {
 		resetDocument();
 	}
 
-	static Font boldFont = FontFactory.getFont("latin", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("latin", 8);
+	static Font boldFont = FontFactory.getFont("latin", 10, Font.BOLD);
+	static Font font = FontFactory.getFont("latin", 10);
 
 	public void addItems(List<InventoryItem> items) {
 		int artNamelenght = 68 ;
@@ -110,31 +110,31 @@ public class InventoryComptRepportTemplatePdf {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(internalPic));
 		reportTable.addCell(pdfPCell);
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new StandardText(articleName));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(expectedQty!=null?expectedQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(ecart+"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(montant!=null?montant.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
@@ -150,21 +150,21 @@ public class InventoryComptRepportTemplatePdf {
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(internalPic));
 		reportTable.addCell(pdfPCell);
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new StandardText(articleName));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new StandardText(realQty!=null?realQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
+		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new StandardText(observation));
 		reportTable.addCell(pdfPCell);
 
@@ -175,67 +175,67 @@ public class InventoryComptRepportTemplatePdf {
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .47f, .1f,.1f,.1f,.1f});
+		reportTable = new PdfPTable(new float[]{ .15f, .45f, .1f,.1f,.1f,.1f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("CIPM"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("CIPM",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Designation"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Designation",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Stock M"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Stock M",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Stock R"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Stock R",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Ecart"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Ecart",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("T Ecart"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("T Ecart",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 	}
 
 	private void fillCountRepportTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .13f, .57f, .1f,.2f});
+		reportTable = new PdfPTable(new float[]{ .16f, .54f, .1f,.2f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("CIPM"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("CIPM",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Designation"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Designation",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("Stock R"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Stock R",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(22f);
-		pdfPCell.addElement(new StandardText("OBS"));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("OBS",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
@@ -243,19 +243,19 @@ public class InventoryComptRepportTemplatePdf {
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("FICHE INVENTAIRE NUM: "+inventory.getInventoryNumber()));
+		Paragraph paragraph = new Paragraph(new Phrase("FICHE INVENTAIRE NUM: "+inventory.getInventoryNumber(),boldFont));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new BoldText(agency.getName()));
+		paragraph = new Paragraph(new Phrase(agency.getName(),boldFont));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText(agency.getFax() ));
+		paragraph = new Paragraph(new Phrase(agency.getFax(),boldFont ));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText(agency.getPhone()));
+		paragraph = new Paragraph(new Phrase(agency.getPhone(),boldFont));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 

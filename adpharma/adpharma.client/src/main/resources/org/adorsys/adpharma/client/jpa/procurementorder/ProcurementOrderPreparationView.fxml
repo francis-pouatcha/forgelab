@@ -9,7 +9,7 @@
 	<children>
 		<VBox fx:id="rootNode" prefHeight="250.0" prefWidth="400.0" styleClass="side-background" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
 			<children>
-				<TitledPane fx:id="header" prefHeight="13.0" prefWidth="400.0" text="Infos Preparation" textAlignment="RIGHT" textFill="#281a90" />
+				<TitledPane fx:id="header" prefHeight="13.0" prefWidth="400.0" text="Information de la  Preparation" textAlignment="RIGHT" textFill="#281a90" />
 				<VBox VBox.vgrow="ALWAYS">
 					<children>
 						<GridPane fx:id="entityForm" hgap="5.0" VBox.vgrow="ALWAYS">
@@ -24,10 +24,10 @@
 								<RowConstraints vgrow="SOMETIMES" />
 							</rowConstraints>
 							<children>
-								<Label prefHeight="30.0" text="MODE :" GridPane.rowIndex="1" />
-								<Label layoutX="10.0" layoutY="17.0" prefHeight="30.0" text="FROM DATE :" GridPane.rowIndex="2" />
-								<Label layoutX="10.0" layoutY="47.0" prefHeight="30.0" text="TO DATE :" GridPane.rowIndex="3" />
-								<Label layoutX="10.0" layoutY="22.0" prefHeight="30.0" text="SUPPLIER :" />
+								<Label prefHeight="30.0" text="Mode :" GridPane.rowIndex="1" />
+								<Label layoutX="10.0" layoutY="17.0" prefHeight="30.0" text="Du :" GridPane.rowIndex="2" />
+								<Label layoutX="10.0" layoutY="47.0" prefHeight="30.0" text="Au :" GridPane.rowIndex="3" />
+								<Label layoutX="10.0" layoutY="22.0" prefHeight="30.0" text="Fournisseur :" />
 							</children>
 						</GridPane>
 					</children>
@@ -35,7 +35,7 @@
 				<Separator prefWidth="200.0" />
 				<HBox fx:id="buttonBar" alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="400.0" spacing="10.0" VBox.vgrow="NEVER">
 					<children>
-						<Button fx:id="saveButton" mnemonicParsing="false" prefHeight="35.0" text="Sauvegarder" textFill="#142865" />
+						<Button fx:id="saveButton" mnemonicParsing="false" prefHeight="35.0" text="Traiter" textFill="#142865" />
 						<Button fx:id="cancelButton" layoutX="350.0" layoutY="22.0" mnemonicParsing="false" prefHeight="35.0" text="Anuller" textFill="#142865" />
 					</children>
 					<VBox.margin>

@@ -231,14 +231,7 @@ public class ProcurementOrderListController implements EntityController
 				listView.getDataListItem().getItems().setAll(resultList);
 			}
 		});
-		itemSearchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				ProcurementOrderItemSearchService s = (ProcurementOrderItemSearchService) event.getSource();
-				s.reset();				
-			}
-		});
+		itemSearchService.setOnFailed(callFailedEventHandler);
 
 		listView.getSupplier().armedProperty().addListener(new ChangeListener<Boolean>() {
 

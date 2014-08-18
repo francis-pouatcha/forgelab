@@ -35,7 +35,7 @@ import de.jensd.fx.fontawesome.AwesomeIcon;
 public class ProcurementOrderListView
 {
 
-	
+
 
 	@FXML
 	BorderPane rootPane;
@@ -51,10 +51,10 @@ public class ProcurementOrderListView
 
 	@FXML
 	private Button searchButton;
-	
+
 	@FXML
 	private Button advancedSearchButton;
-	
+
 	@FXML
 	private Button printXlsButton ;
 
@@ -63,10 +63,10 @@ public class ProcurementOrderListView
 
 	@FXML
 	private Button editButton ;
-	
+
 	@FXML
 	private Button sentButton ;
-	
+
 	@FXML
 	private Button retreivedButton ;
 
@@ -101,7 +101,7 @@ public class ProcurementOrderListView
 
 	@Inject
 	private FXMLLoader fxmlLoader ;
-	
+
 	@Inject
 	private DocumentProcessingStateListCellFatory procurementOrderStatusListCellFatory;
 
@@ -136,7 +136,7 @@ public class ProcurementOrderListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
-//		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataListItem, "salesPricePU", "ProcurementOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "purchasePricePU", "ProcurementOrderItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 
@@ -158,11 +158,13 @@ public class ProcurementOrderListView
 
 		supplier =ViewBuilderUtils.newComboBox(null, "supplier", false);
 		supplier.setPromptText(resourceBundle.getString("ProcurementOrder_supplier_description.title"));
+		supplier.setPromptText("TOUS LES FOURNISSEURS");
 		supplier.setPrefHeight(40d);
 		supplier.setPrefWidth(300d);
 
 		state = ViewBuilderUtils.newComboBox(null, "poStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		state.setPrefHeight(40d);
+		state.setPromptText("STATUS");
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
@@ -200,20 +202,20 @@ public class ProcurementOrderListView
 	{
 		return printButton;
 	}
-	
+
 	public Button getAdvancedSearchButton() {
 		return advancedSearchButton;
-    }
+	}
 	public Button getPrintXlsButton()
 	{
 		return printXlsButton;
 	}
-	
+
 	public Button getSentButton()
 	{
 		return sentButton;
 	}
-	
+
 	public Button getRetreivedButton()
 	{
 		return retreivedButton;
