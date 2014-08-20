@@ -44,6 +44,7 @@ import org.adorsys.javafx.crud.extensions.events.AssocSelectionEventData;
 import org.adorsys.javafx.crud.extensions.events.AssocSelectionResponseEvent;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestData;
 import org.adorsys.javafx.crud.extensions.events.ComponentSelectionRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
@@ -87,7 +88,11 @@ public class ProcurementOrderDisplayController implements EntityController
 
 	@Inject 
 	@EntitySelectionEvent
-	private Event<Delivery> deliverySelectionRequestEvent;
+	private Event<Delivery> deliveryEditRequestEvent;
+	
+	@Inject 
+	@EntityEditDoneEvent
+	private Event<ProcurementOrder> procurementEditRequestEvent;
 
 
 	@Inject
@@ -170,7 +175,8 @@ public class ProcurementOrderDisplayController implements EntityController
 			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> availebleQtyCell) {
 				ProcurementOrderItem selectedItem = availebleQtyCell.getRowValue();
 				BigDecimal newValue = availebleQtyCell.getNewValue();
-				if(newValue==null && BigDecimal.ZERO.compareTo(newValue)>0){
+				if(newValue!=null && BigDecimal.ZERO.compareTo(newValue)<0){
+					System.out.println(newValue);
 					if(selectedItem.getQtyOrdered().compareTo(newValue)>=0){
 						selectedItem.setAvailableQty(newValue);
 						selectedItem.calculateTotalAmout();
@@ -315,7 +321,7 @@ public class ProcurementOrderDisplayController implements EntityController
 		/*
 		 * listen to save button and fire search requested event.
 		 */
-		displayView.getSaveButton().setOnAction(new EventHandler<ActionEvent>()
+		displayView.getDeliverButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
 			public void handle(ActionEvent e)
@@ -332,9 +338,10 @@ public class ProcurementOrderDisplayController implements EntityController
 				DeliveryFromOrderData data = s.getValue();
 				event.consume();
 				s.reset();
-				PropertyReader.copy(data.getOrder(), displayedEntity);
-				deliverySelectionRequestEvent.fire(data.getDelivery());
+				procurementEditRequestEvent.fire(data.getOrder());
+//				handleSelectionEvent(data.getOrder());
 				componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(Delivery.class.getName()));
+				deliveryEditRequestEvent.fire(data.getDelivery());
 			}
 		});
 		deliveryFromOrderServeice.setOnFailed(serviceCallFailedEventHandler);

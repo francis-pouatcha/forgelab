@@ -1,12 +1,8 @@
 package org.adorsys.adpharma.client.jpa.procurementorder;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javafx.beans.value.ChangeListener;
@@ -23,15 +19,11 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
-import org.adorsys.adpharma.client.PhmlOrderBuilder;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryFromOrderServeice;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemProcurementOrder;
@@ -42,7 +34,8 @@ import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
-import org.adorsys.adpharma.client.utils.DateHelper;
+import org.adorsys.adpharma.client.utils.PhmlOrderReceiver;
+import org.adorsys.adpharma.client.utils.PhmlOrderSender;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -61,17 +54,14 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.controlsfx.dialog.Dialogs;
-
-import com.google.common.collect.Lists;
 
 @Singleton
 public class ProcurementOrderListController implements EntityController
 {
+
+	@Inject
+	private PhmlOrderSender phmlOrderBuilder ;
 
 	@Inject
 	private ProcurementOrderListView listView;
@@ -83,7 +73,7 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<ProcurementOrder> searchRequestedEvent;
-	
+
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<ProcurementOrderPreparationData> advancedSearchRequestedEvent;
@@ -108,13 +98,16 @@ public class ProcurementOrderListController implements EntityController
 
 	@Inject
 	private ProcurementOrderItemSearchService itemSearchService ;
-	
+
 	@Inject
 	private ProcurementOrderPhmlSenderService phmlSenderService ;
-	
+
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
-	
+
+	@Inject
+	private PhmlSendAndReceiveService phmlSendAndReceiveService ;
+
 	@Inject
 	private ProcurementOrderSearchInput searchInput;
 
@@ -127,17 +120,18 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@PrintRequestedEvent
 	private Event<ProcurementOrderId> poPrintRequestEvent ;
-	
+
 	@Inject
 	DeliveryFromOrderServeice deliveryFromOrderServeice ;
 
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<ProcurementOrderPreparationData> orderPreparationEventData;
-	
+
 
 	@Inject
-	private PhmlOrderBuilder orderBuilder ;
+	private PhmlOrderReceiver orderBuilder ;
+
 
 	@PostConstruct
 	public void postConstruct()
@@ -145,21 +139,21 @@ public class ProcurementOrderListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
-		
+
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-			
+
 			@Override
 			protected void showError(Throwable exception) {
-			Dialogs.create().showException(exception);
-				
+				Dialogs.create().showException(exception);
+
 			}
 		});
-		
-		
+
+
 		/**
 		 * Handle Advanced search action
 		 */
-         listView.getAdvancedSearchButton().setOnAction(new EventHandler<ActionEvent>() {
+		listView.getAdvancedSearchButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -167,8 +161,8 @@ public class ProcurementOrderListController implements EntityController
 				advancedSearchRequestedEvent.fire(data); 
 			}
 		});
-		
-		
+
+
 		/**
 		 * handle print action
 		 */
@@ -179,17 +173,28 @@ public class ProcurementOrderListController implements EntityController
 				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null)
 					poPrintRequestEvent.fire(new ProcurementOrderId(selectedItem.getId()));
-
-//
-//				Iterator<ProcurementOrderItem> iterator = listView.getDataListItem().getItems().iterator();
-//				List<ProcurementOrderItem> items = Lists.newArrayList(iterator);
-//				selectedItem.setProcurementOrderItems(items);
-//				try {
-//					orderBuilder.build(selectedItem);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				//				Iterator<ProcurementOrderItem> iterator = listView.getDataListItem().getItems().iterator();
+				//				List<ProcurementOrderItem> items = Lists.newArrayList(iterator);
+				//				selectedItem.setProcurementOrderItems(items);
+				//				try {
+				//					orderBuilder.build(selectedItem);
+				//				} catch (IOException e) {
+				//					// TODO Auto-generated catch block
+				//					e.printStackTrace();
+				//				}
+			}
+		});
+		listView.getRuptureButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+			ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+			if(selectedItem!=null&& DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus())){
+				ProcurementOrderId procurementOrderId = new ProcurementOrderId(selectedItem.getId());
+				procurementOrderId.setOnlyRupture(true);
+				poPrintRequestEvent.fire(procurementOrderId );
+			}
+				
 			}
 		});
 		listView.getDataList().getSelectionModel().selectedItemProperty()
@@ -201,20 +206,8 @@ public class ProcurementOrderListController implements EntityController
 					ProcurementOrder oldValue, ProcurementOrder newValue)
 			{
 				if (newValue != null){
-					listView.getRemoveButton().disableProperty().unbind();
-					listView.getSentButton().disableProperty().unbind();
-					listView.getRetreivedButton().disableProperty().unbind();
-					listView.getRemoveButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-					listView.getSentButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.SENT));
-					listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.RETREIVED));
-					listView.getSentButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
-					listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+					handleProcurementSeclection(newValue);
 
-					ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
-					poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
-					poisi.getFieldNames().add("procurementOrder");
-					poisi.setMax(-1);
-					itemSearchService.setSearchInputs(poisi).start();
 				}
 			}
 				});
@@ -248,9 +241,9 @@ public class ProcurementOrderListController implements EntityController
 
 			}
 		});
-		
+
 		listView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
@@ -259,7 +252,21 @@ public class ProcurementOrderListController implements EntityController
 				}else {
 					Dialogs.create().message("Selectionner une commande ").showInformation();
 				}
-				
+
+			}
+		});
+
+		listView.getRetreivedButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null && DocumentProcessingState.SENT.equals(selectedItem.getPoStatus())){
+					phmlSendAndReceiveService.setProcurementOrder(selectedItem).setToBeSent(false).start();
+				}else {
+					Dialogs.create().message("La commande dois etre envoyer !").showInformation();
+				}
+
 			}
 		});
 
@@ -272,11 +279,34 @@ public class ProcurementOrderListController implements EntityController
 			public void handle(ActionEvent e)
 			{
 				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null && !DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus()))
-					phmlSenderService.setModel(selectedItem).start();
+				if(selectedItem!=null && DocumentProcessingState.ONGOING.equals(selectedItem.getPoStatus())){
+					phmlSendAndReceiveService.setProcurementOrder(selectedItem).setToBeSent(true).start();
+				}else {
+					Dialogs.create().message("La commande dois etre encour !").showInformation();
+					
+				}
 
 			}
 				});
+
+		phmlSendAndReceiveService.setOnFailed(callFailedEventHandler);
+		phmlSendAndReceiveService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				PhmlSendAndReceiveService s = (PhmlSendAndReceiveService) event.getSource();
+				ProcurementOrder value = s.getValue();
+				handleEditDoneEvent(value);
+				event.consume();
+				s.reset();
+				if(phmlSendAndReceiveService.isToBeSent()){
+					Dialogs.create().message("Commande Envoyer Sur Phml Avec success !").showInformation();
+					
+				}else {
+					Dialogs.create().message("Commande Receptionnee de Phml Avec success !").showInformation();
+				}
+			}
+		});
 		/*
 		 * listen to remove  button and fire remove select event.
 		 */
@@ -319,21 +349,21 @@ public class ProcurementOrderListController implements EntityController
 				searchService.setSearchInputs(searchInput).start();
 			}
 				});
-		
+
 		phmlSenderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
 				ProcurementOrderPhmlSenderService s = (ProcurementOrderPhmlSenderService) event.getSource();
-				 ProcurementOrder value = s.getValue();
+				ProcurementOrder value = s.getValue();
 				event.consume();
 				s.reset();
-//				handleRemovedEvent(value);
+				//				handleRemovedEvent(value);
 			}
 		});
-		
+
 		phmlSenderService.setOnFailed(callFailedEventHandler);
-		
+
 		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -345,6 +375,7 @@ public class ProcurementOrderListController implements EntityController
 				handleSearchResult(searchResult);
 			}
 		});
+		
 		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -412,6 +443,22 @@ public class ProcurementOrderListController implements EntityController
 				});
 	}
 
+	private void handleProcurementSeclection(ProcurementOrder newValue){
+		listView.getRemoveButton().disableProperty().unbind();
+		listView.getSentButton().disableProperty().unbind();
+		listView.getRetreivedButton().disableProperty().unbind();
+		listView.getRemoveButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		listView.getSentButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.SENT));
+		listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.RETREIVED));
+		//listView.getRetreivedButton().disableProperty().bind(newValue.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+
+		ProcurementOrderItemSearchInput poisi = new ProcurementOrderItemSearchInput();
+		poisi.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(newValue));
+		poisi.getFieldNames().add("procurementOrder");
+		poisi.setMax(-1);
+		itemSearchService.setSearchInputs(poisi).start();
+	}
+
 	@Override
 	public void display(Pane parent)
 	{
@@ -428,9 +475,9 @@ public class ProcurementOrderListController implements EntityController
 	{
 		return ViewType.LIST;
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * Handle search results. But the switch of displays is centralized
@@ -473,10 +520,11 @@ public class ProcurementOrderListController implements EntityController
 		ProcurementOrder entity = listView.getDataList().getItems().get(selectedIndex);
 		PropertyReader.copy(selectedEntity, entity);
 
-		ArrayList<ProcurementOrder> arrayList = new ArrayList<ProcurementOrder>(listView.getDataList().getItems());
-		listView.getDataList().getItems().clear();
-		listView.getDataList().getItems().addAll(arrayList);
-		listView.getDataList().getSelectionModel().select(selectedEntity);
+//		ArrayList<ProcurementOrder> arrayList = new ArrayList<ProcurementOrder>(listView.getDataList().getItems());
+//		listView.getDataList().getItems().clear();
+//		listView.getDataList().getItems().addAll(arrayList);
+//		listView.getDataList().getSelectionModel().select(selectedEntity);
+		handleProcurementSeclection(entity);
 	}
 
 	public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent ProcurementOrder selectedEntity)

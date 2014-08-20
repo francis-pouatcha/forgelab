@@ -34,7 +34,10 @@ public class DeliveryFromOrderServeice extends Service<DeliveryFromOrderData>
 			{
 				if (model == null)
 					return null;
-				return remoteService.deliveryFromProcurementOrder(model);
+				DeliveryFromOrderData fromOrderData = remoteService.deliveryFromProcurementOrder(model);
+				Delivery delivery = remoteService.findById(fromOrderData.getDelivery().getId());
+				fromOrderData.setDelivery(delivery);
+				return fromOrderData;
 			}
 				};
 	}

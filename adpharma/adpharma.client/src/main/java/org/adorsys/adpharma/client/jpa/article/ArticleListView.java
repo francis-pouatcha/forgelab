@@ -117,15 +117,15 @@ public class ArticleListView
 		// Field not displayed in table
 		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataList, "qtyInStock", "Article_qtyInStock_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "minStockQty", "Article_minStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "maxStockQty", "Article_maxStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "sppu", "Article_sppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "pppu", "Article_pppu_description.title", resourceBundle, NumberType.CURRENCY, locale);
 //
 //		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 //		// Field not displayed in table
-		viewBuilder.addBigDecimalColumn(dataList, "minStockQty", "Article_minStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "maxStockQty", "Article_maxStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addStringColumn(dataList, "clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
 
 		//		pagination = viewBuilder.addPagination();
 //		viewBuilder.addSeparator();

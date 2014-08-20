@@ -221,6 +221,7 @@ public class DeliveryEJB
 		delivery.setReceivingAgency(login.getAgency());
 		delivery.setDeliverySlipNumber("From Import");
 		delivery.setCreatingUser(login);
+		delivery.setProcurementOrderNumber(order.getProcurementOrderNumber());
 		delivery = create(delivery);
 
 		Set<ProcurementOrderItem> items = order.getProcurementOrderItems();
@@ -234,7 +235,7 @@ public class DeliveryEJB
 				deliveryItem.setCreatingUser(login);
 				deliveryItem.setCreationDate(creationDate);
 				deliveryItem.setDelivery(delivery);
-				deliveryItem.setExpirationDate(DateUtils.addYears(creationDate, 2));
+				deliveryItem.setExpirationDate(DateUtils.addYears(creationDate, 1));
 				deliveryItem.setFreeQuantity(BigDecimal.ZERO);
 				deliveryItem.setInternalPic(item.getMainPic());
 				deliveryItem.setSecondaryPic(item.getSecondaryPic());
@@ -247,12 +248,16 @@ public class DeliveryEJB
 				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
 			}
 		}
+		
 		order.setPoStatus(DocumentProcessingState.CLOSED);
 		order = procurementOrderEJB.update(order);
 		delivery.setAmountAfterTax(amountHt);
 		delivery.setAmountBeforeTax(amountHt);
 		delivery.setAmountVat(BigDecimal.ZERO);
 		delivery.setAmountDiscount(BigDecimal.ZERO);
+		delivery.setNetAmountToPay(amountHt);
+		delivery.setDateOnDeliverySlip(creationDate);
+		delivery.setDeliveryDate(creationDate);
 		delivery.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		delivery= repository.save(delivery);
 		return new DeliveryFromOrderData(delivery,order );

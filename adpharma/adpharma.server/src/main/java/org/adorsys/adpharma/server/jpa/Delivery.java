@@ -51,6 +51,10 @@ public class Delivery implements Serializable
 	@Column
 	@Description("Delivery_deliveryNumber_description")
 	private String deliveryNumber;
+	
+	@Column
+	@Description("Delivery_procurementOrderNumber_description")
+	private String procurementOrderNumber;
 
 	@Column
 	@Description("Delivery_deliverySlipNumber_description")
@@ -355,6 +359,14 @@ public class Delivery implements Serializable
 
 	public void setAmountVat(BigDecimal amountVat) {
 		this.amountVat = amountVat;
+	}
+
+	public String getProcurementOrderNumber() {
+		return procurementOrderNumber;
+	}
+
+	public void setProcurementOrderNumber(String procurementOrderNumber) {
+		this.procurementOrderNumber = procurementOrderNumber;
 	}
 
 	@Override

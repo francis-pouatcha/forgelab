@@ -45,6 +45,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -195,7 +196,6 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(isValidDeliveryItem())
 					handleAddDeliveryItem(deliveryItem);
 			}
 
@@ -205,10 +205,61 @@ public class DeliveryDisplayController implements EntityController
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(isValidDeliveryItem())
 					handleAddDeliveryItem(deliveryItem);
 			}
 
+		});
+		displayView.getStockQuantity().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					
+					handleAddDeliveryItem(deliveryItem);
+				}
+			}
+		});
+		
+		displayView.getFreeQuantity().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					handleAddDeliveryItem(deliveryItem);
+				}
+			}
+		});
+		displayView.getPurchasePricePU().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					handleAddDeliveryItem(deliveryItem);
+				}
+			}
+		});
+		displayView.getSalesPricePU().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					handleAddDeliveryItem(deliveryItem);
+				}
+			}
+		});
+		displayView.getExpirationDate().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				KeyCode code = event.getCode();
+				if(code== KeyCode.ENTER){
+					handleAddDeliveryItem(deliveryItem);
+				}
+			}
 		});
 
 		/*
@@ -486,11 +537,13 @@ public class DeliveryDisplayController implements EntityController
 		BigDecimal orderedQty = deliveryItem.getStockQuantity();
 		DeliveryItemArticle article = deliveryItem.getArticle();
 		if(article==null || article.getId()==null){
-			Dialogs.create().nativeTitleBar().message("you need to specified article ").showError();
+			Dialogs.create().nativeTitleBar().message("Vous devez selectionner un article ").showError();
+			displayView.getMainPic().requestFocus();
 			return false;
 		}
 		if(orderedQty==null || orderedQty.compareTo(BigDecimal.ZERO)==0){
-			Dialogs.create().nativeTitleBar().message("orderedQty is required ").showError();
+			Dialogs.create().nativeTitleBar().message("Saisir la quantite ").showError();
+			displayView.getStockQuantity().requestFocus();
 			return false;
 		}
 
@@ -554,6 +607,7 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
+		if(isValidDeliveryItem()){
 		deliveryItem.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		Date parse = null ;
 		try {
@@ -576,7 +630,10 @@ public class DeliveryDisplayController implements EntityController
 		}else {
 			deliveryItemEditService.setDeliveryItem(deliveryItem).start();
 		}
+		}
 	}
+	
+	
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {

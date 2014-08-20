@@ -72,6 +72,11 @@ public class ProcurementOrderListView
 
 	@FXML
 	private Button removeButton ;
+	
+	@FXML
+	private Button ruptureButton ;
+	
+	
 
 	@FXML
 	private Button printButton ;
@@ -191,6 +196,11 @@ public class ProcurementOrderListView
 	public Button getRemoveButton()
 	{
 		return removeButton;
+	}
+	
+	public Button getRuptureButton()
+	{
+		return ruptureButton;
 	}
 
 	public Button getSearchButton()

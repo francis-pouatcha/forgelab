@@ -56,9 +56,12 @@ public class ProcurementOrderReportPrinter {
 
 	@Inject
 	private PrintDialog printDialog;
+	
+	private ProcurementOrderId currentPoId ;
 
 	public void handlePrintRequestedEvent(
 			@Observes @PrintRequestedEvent ProcurementOrderId procurementOrderId) {
+		PropertyReader.copy(procurementOrderId, currentPoId);
 		ProcurementOrder procurementOrder = new ProcurementOrder();
 		procurementOrder.setId(procurementOrderId.getId());
 		dataService.setProcuremnetOrder(procurementOrder).start();
@@ -66,6 +69,7 @@ public class ProcurementOrderReportPrinter {
 
 	@PostConstruct
 	public void postConstruct() {
+		currentPoId = new ProcurementOrderId(null);
 		dataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
@@ -79,7 +83,7 @@ public class ProcurementOrderReportPrinter {
 				try {
 					Agency agency = new Agency();
 					PropertyReader.copy(procurementOrderData.getProcurementOrder().getAgency(), agency);
-					ProcurementOrderReportPrintTemplatePdf pdfRepportTemplate = new ProcurementOrderReportPrintTemplatePdf(procurementOrderData,agency,securityUtil.getConnectedUser(),resourceBundle);
+					ProcurementOrderReportPrintTemplatePdf pdfRepportTemplate = new ProcurementOrderReportPrintTemplatePdf(procurementOrderData,agency,securityUtil.getConnectedUser(),resourceBundle,currentPoId.isOnlyRupture());
 					pdfRepportTemplate.addItem();
 					pdfRepportTemplate.closeDocument();
 					Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));

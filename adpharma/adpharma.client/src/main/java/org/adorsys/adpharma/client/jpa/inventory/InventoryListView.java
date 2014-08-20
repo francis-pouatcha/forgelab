@@ -45,13 +45,13 @@ public class InventoryListView
 
 	@FXML
 	private Button createButton;
-	
+
 	@FXML
 	private Button advenceSearchButton;
-	
+
 	@FXML
 	private Button exportToXlsButton;
-	
+
 	@FXML
 	private Button printButton;
 
@@ -144,7 +144,7 @@ public class InventoryListView
 		viewBuilder.addBigDecimalColumn(dataListItem, "gapTotalPurchasePrice", "InventoryItem_gapTotalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		buildsearchBar();
-//		buildLeftBox();
+		//		buildLeftBox();
 		ComboBoxInitializer.initialize(inventoryStatus, documentProcessingStateConverter, statusListCellFatory, statusBundle);
 
 	}
@@ -164,46 +164,46 @@ public class InventoryListView
 		inventorySection.setPromptText(resourceBundle.getString("Inventory_section_description.title"));
 		inventorySection.setPrefWidth(300d);
 		inventorySection.setPrefHeight(30d);
-		
+
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
 		searchBar.getChildren().addAll(inventoryNumber,inventorySection,inventoryStatus,searchButton);
 	}
 
-//	public void buildLeftBox(){
-//
-//		createButton =ViewBuilderUtils.newButton("Entity_create.title", "createButton", resourceBundle, AwesomeIcon.ADJUST);
-//		createButton.setPrefHeight(30d);
-//		createButton.setPrefWidth(150d);
-//		createButton.setTextAlignment(TextAlignment.LEFT);
-//
-//
-//		editButton =ViewBuilderUtils.newButton("Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
-//		editButton.setPrefHeight(30d);
-//		editButton.setPrefWidth(150d);
-//		editButton.setTextAlignment(TextAlignment.LEFT);
-//
-//		removeButton =ViewBuilderUtils.newButton("Entity_delete.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
-//		removeButton.setPrefHeight(30d);
-//		removeButton.setPrefWidth(150d);
-//		removeButton.setTextAlignment(TextAlignment.LEFT);
-//
-//		printButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-//		printButton.setPrefHeight(30d);
-//		printButton.setPrefWidth(150d);
-//		printButton.setTextAlignment(TextAlignment.LEFT);
-//
-//		printRepportButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
-//		printRepportButton.setPrefHeight(30d);
-//		printRepportButton.setPrefWidth(150d);
-//		printRepportButton.setText("Rapport D'inventaire");
-//		printRepportButton.setTextAlignment(TextAlignment.LEFT);
-//
-//
-//
-//		leftBox.getChildren().addAll(createButton,editButton,removeButton,printButton,printRepportButton);
-//	}
-	
+	//	public void buildLeftBox(){
+	//
+	//		createButton =ViewBuilderUtils.newButton("Entity_create.title", "createButton", resourceBundle, AwesomeIcon.ADJUST);
+	//		createButton.setPrefHeight(30d);
+	//		createButton.setPrefWidth(150d);
+	//		createButton.setTextAlignment(TextAlignment.LEFT);
+	//
+	//
+	//		editButton =ViewBuilderUtils.newButton("Entity_edit.title", "editButton", resourceBundle, AwesomeIcon.EDIT);
+	//		editButton.setPrefHeight(30d);
+	//		editButton.setPrefWidth(150d);
+	//		editButton.setTextAlignment(TextAlignment.LEFT);
+	//
+	//		removeButton =ViewBuilderUtils.newButton("Entity_delete.title", "removeButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+	//		removeButton.setPrefHeight(30d);
+	//		removeButton.setPrefWidth(150d);
+	//		removeButton.setTextAlignment(TextAlignment.LEFT);
+	//
+	//		printButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+	//		printButton.setPrefHeight(30d);
+	//		printButton.setPrefWidth(150d);
+	//		printButton.setTextAlignment(TextAlignment.LEFT);
+	//
+	//		printRepportButton =ViewBuilderUtils.newButton("Inventory_print_count_repport_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
+	//		printRepportButton.setPrefHeight(30d);
+	//		printRepportButton.setPrefWidth(150d);
+	//		printRepportButton.setText("Rapport D'inventaire");
+	//		printRepportButton.setTextAlignment(TextAlignment.LEFT);
+	//
+	//
+	//
+	//		leftBox.getChildren().addAll(createButton,editButton,removeButton,printButton,printRepportButton);
+	//	}
+
 	public void bind(InventorySearchInput searchInput)
 	{
 

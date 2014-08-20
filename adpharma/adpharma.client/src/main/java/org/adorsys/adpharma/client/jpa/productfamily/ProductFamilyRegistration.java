@@ -17,7 +17,7 @@ import org.adorsys.javafx.crud.extensions.locale.Bundle;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class ProductFamilyRegistration extends DomainComponentRegistration
 {

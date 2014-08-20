@@ -122,9 +122,9 @@ public class CustomerView extends AbstractForm<Customer>
 	public void postConstruct()
 	{
 		LazyViewBuilder viewBuilder = new LazyViewBuilder();
-		firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
 		lastName = viewBuilder.addTextField("Customer_lastName_description.title", "lastName", resourceBundle);
-		fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
+		firstName = viewBuilder.addTextField("Customer_firstName_description.title", "firstName", resourceBundle);
+//		fullName = viewBuilder.addTextField("Customer_fullName_description.title", "fullName", resourceBundle);
 		landLinePhone = viewBuilder.addTextField("Customer_landLinePhone_description.title", "landLinePhone", resourceBundle);
 		mobile = viewBuilder.addTextField("Customer_mobile_description.title", "mobile", resourceBundle);
 		fax = viewBuilder.addTextField("Customer_fax_description.title", "fax", resourceBundle);
@@ -134,8 +134,8 @@ public class CustomerView extends AbstractForm<Customer>
 		serialNumber = viewBuilder.addTextField("Customer_serialNumber_description.title", "serialNumber", resourceBundle);
 		gender = viewBuilder.addComboBox("Customer_gender_description.title", "gender", resourceBundle, Gender.values());
 		customerType = viewBuilder.addComboBox("Customer_customerType_description.title", "customerType", resourceBundle, CustomerType.values());
-		totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
-		totalDebt = viewBuilder.addBigDecimalField("Customer_totalDebt_description.title", "totalDebt", resourceBundle, NumberType.CURRENCY, locale);
+//		totalCreditLine = viewBuilder.addBigDecimalField("Customer_totalCreditLine_description.title", "totalCreditLine", resourceBundle, NumberType.INTEGER, locale);
+//		totalDebt = viewBuilder.addBigDecimalField("Customer_totalDebt_description.title", "totalDebt", resourceBundle, NumberType.CURRENCY, locale);
 		birthDate = viewBuilder.addCalendarTextField("Customer_birthDate_description.title", "birthDate", resourceBundle, "dd-MM-yyyy", locale);
 		//      viewBuilder.addTitlePane("Customer_employer_description.title", resourceBundle);
 		societe = viewBuilder.addTextField("Customer_societe_description.title", "societe", resourceBundle);
@@ -154,14 +154,14 @@ public class CustomerView extends AbstractForm<Customer>
 	public void addValidators()
 	{
 		lastName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, lastName, Customer.class, "lastName", resourceBundle));
-		fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, fullName, Customer.class, "fullName", resourceBundle));
+//		fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Customer>(textInputControlValidator, fullName, Customer.class, "fullName", resourceBundle));
 	}
 
 	public Set<ConstraintViolation<Customer>> validate(Customer model)
 	{
 		Set<ConstraintViolation<Customer>> violations = new HashSet<ConstraintViolation<Customer>>();
 		violations.addAll(textInputControlValidator.validate(lastName, Customer.class, "lastName", resourceBundle));
-		violations.addAll(textInputControlValidator.validate(fullName, Customer.class, "fullName", resourceBundle));
+//		violations.addAll(textInputControlValidator.validate(fullName, Customer.class, "fullName", resourceBundle));
 		return violations;
 	}
 
@@ -170,7 +170,7 @@ public class CustomerView extends AbstractForm<Customer>
 		firstName.textProperty().bindBidirectional(model.firstNameProperty());
 		societe.textProperty().bindBidirectional(model.societeProperty());
 		lastName.textProperty().bindBidirectional(model.lastNameProperty());
-		fullName.textProperty().bindBidirectional(model.fullNameProperty());
+//		fullName.textProperty().bindBidirectional(model.fullNameProperty());
 		landLinePhone.textProperty().bindBidirectional(model.landLinePhoneProperty());
 		mobile.textProperty().bindBidirectional(model.mobileProperty());
 		fax.textProperty().bindBidirectional(model.faxProperty());
@@ -180,8 +180,8 @@ public class CustomerView extends AbstractForm<Customer>
 		serialNumber.textProperty().bindBidirectional(model.serialNumberProperty());
 		gender.valueProperty().bindBidirectional(model.genderProperty());
 		customerType.valueProperty().bindBidirectional(model.customerTypeProperty());
-		totalCreditLine.numberProperty().bindBidirectional(model.totalCreditLineProperty());
-		totalDebt.numberProperty().bindBidirectional(model.totalDebtProperty());
+//		totalCreditLine.numberProperty().bindBidirectional(model.totalCreditLineProperty());
+//		totalDebt.numberProperty().bindBidirectional(model.totalDebtProperty());
 		birthDate.calendarProperty().bindBidirectional(model.birthDateProperty());
 		customerEmployerForm.bind(model);
 		customerEmployerSelection.bind(model);

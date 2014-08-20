@@ -9,12 +9,12 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button fx:id="createButton" mnemonicParsing="false" prefWidth="140.0" text="Create">
+				<Button fx:id="createButton" mnemonicParsing="false" prefWidth="140.0" text="Nouveau">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>
 				</Button>
-				<Button fx:id="editButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Edit">
+				<Button fx:id="editButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Modifier">
 					<VBox.margin>
 						<Insets bottom="10.0" />
 					</VBox.margin>

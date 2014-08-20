@@ -135,6 +135,18 @@ public class ModalArticleSearchControler {
 			ArticleSearchResult articleSearchResult = s.getValue();
 			event.consume();
 			s.reset();
+			if(articleSearchResult.getResultList().isEmpty()){
+				String internalPic = articleSearchResult.getSearchInput().getEntity().getPic();
+				String articleName = articleSearchResult.getSearchInput().getEntity().getArticleName();
+				String message = null;
+				if(StringUtils.isNotBlank(internalPic))
+					message = "Aucun article avec  Pour CIP : "+internalPic ;
+				if(StringUtils.isNotBlank(articleName))
+					message = "Aucun article avec  Pour Designation : "+articleName ;
+				
+				Dialogs.create().message(message).showInformation();
+				return ;
+			}
 			handleArticleSearchResult(articleSearchResult);
 		}
 

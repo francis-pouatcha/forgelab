@@ -104,6 +104,8 @@ public class CashDrawerDisplayView
 	private Button searchButton;
 
 	private Button searchPayementButton;
+	
+	private Button debtStatementButton;
 
 	@Inject
 	private CashDrawerView view;
@@ -243,33 +245,34 @@ public class CashDrawerDisplayView
 		invoiceNumberToSearch.setPromptText("Invoice ID");
 
 		openCashDrawer = ViewBuilderUtils.newComboBox(null,"openCashDrawer", false);
-		openCashDrawer.setPrefWidth(200d);
 		openCashDrawer.setPrefHeight(25d);
 		openCashDrawer.setPromptText("Cash Drawer");
 
 		searchButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchButton.setPrefHeight(25d);
-		searchButton.setPrefWidth(150d);
 
 		searchPayementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchPayementButton.setPrefHeight(25d);
-		searchPayementButton.setPrefWidth(180d);
 		searchPayementButton.setText("Liste des Paiements");
+		
+
+		debtStatementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.INBOX);
+		debtStatementButton.setPrefHeight(25d);
+		debtStatementButton.setText("Credits a payer");
 
 		closeCashDrawerButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.EJECT);
 		closeCashDrawerButton.setPrefHeight(25d);
-		closeCashDrawerButton.setPrefWidth(100d);
-		closeCashDrawerButton.setText("Fermer");
+		closeCashDrawerButton.setText("Fermer la caisse");
 
 
 		cancelButton = ViewBuilderUtils.newButton("Entity_cancel.text", "ok", resourceBundle, AwesomeIcon.ASTERISK);
-		cancelButton.setPrefWidth(100d);
+		cancelButton.setText("Annuler la vente");
 		HBox hBox = new HBox();
 		hBox.setSpacing(5d);
-		hBox.getChildren().addAll(cancelButton,closeCashDrawerButton,searchPayementButton);
+		hBox.getChildren().addAll(searchPayementButton,debtStatementButton,cancelButton,closeCashDrawerButton);
 		invoiceSearchBox.setMargin(hBox, new Insets(0, 0, 0, 100));
 
-		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch ,openCashDrawer,searchButton,hBox);
+		invoiceSearchBox.getChildren().addAll(invoiceNumberToSearch,searchButton,hBox);
 	}
 
 	public void buildinvoiceHeadGrid(){

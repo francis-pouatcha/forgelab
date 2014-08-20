@@ -97,7 +97,7 @@ public class CustomerListView
 		viewBuilder.addStringColumn(dataList, "email", "Customer_email_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "societe", "Customer_societe_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "customerCategory", "Customer_customerCategory_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "totalDebt", "Customer_totalDebt_description.title", resourceBundle);
+//		viewBuilder.addStringColumn(dataList, "totalDebt", "Customer_totalDebt_description.title", resourceBundle);
 
 		// Field not displayed in table
 		// Field not displayed in table
@@ -122,16 +122,16 @@ public class CustomerListView
 		customerName =ViewBuilderUtils.newTextField("customerName", false);
 		customerName.setPromptText("customer Name");
 		customerName.setPrefWidth(300d);
-		customerName.setPrefHeight(40d);
+		customerName.setPrefHeight(30d);
 
 
 		category =ViewBuilderUtils.newComboBox(null, "category", false);
 		category.setPromptText("ALL CATEGORIE");
-		category.setPrefWidth(200d);
-		category.setPrefHeight(40d);
+		category.setPrefWidth(250d);
+		category.setPrefHeight(30d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
-		searchButton.setPrefHeight(40d);
+		searchButton.setPrefHeight(30d);
 		searchBar.getChildren().addAll(customerName,category,searchButton);
 	}
 

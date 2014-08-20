@@ -26,6 +26,10 @@ public class ReceiptPrintProperties {
 	private float docHeight = 4700f;
 	private double width = docWidth;
 	private double height = docHeight;
+	private String phmlMessageDirectory = null;
+	private String phmlResponseDirectory = null;
+	private String phmlRepartiteur = null;
+	
 
 	private Font myBoldFont = FontFactory.getFont("Arial", fontSize, Font.BOLD);
 	private Font myFont = FontFactory.getFont("Arial", fontSize);
@@ -119,6 +123,21 @@ public class ReceiptPrintProperties {
 			Properties properties = new Properties();
 			try {
 				properties.load(new FileInputStream(file));
+				
+				String phmlMsgDir = properties.getProperty("phml_messages_directory");
+				if(StringUtils.isNotBlank(phmlMsgDir)){
+					r.setPhmlMessageDirectory(phmlMsgDir);
+					System.out.println(phmlMsgDir);
+				}
+				String phmlRespDir = properties.getProperty("phml_responses_directory");
+				if(StringUtils.isNotBlank(phmlRespDir)){
+					r.setPhmlResponseDirectory(phmlRespDir);
+				}
+				String phmlRepartiter = properties.getProperty("phml_repartiter");
+				if(StringUtils.isNotBlank(phmlRepartiter)){
+					r.setPhmlRepartiteur(phmlRepartiter);
+				}
+				
 				String paperFormat = properties.getProperty("receipt-printer-format");
 				if(StringUtils.isNotBlank(paperFormat)){
 					r.setFormat(NumberUtils.toInt(paperFormat));
@@ -170,4 +189,24 @@ public class ReceiptPrintProperties {
 		}
 		return r;
 	}
+	public String getPhmlMessageDirectory() {
+		return phmlMessageDirectory;
+	}
+	public void setPhmlMessageDirectory(String phmlMessageDirectory) {
+		this.phmlMessageDirectory = phmlMessageDirectory;
+	}
+	public String getPhmlResponseDirectory() {
+		return phmlResponseDirectory;
+	}
+	public void setPhmlResponseDirectory(String phmlResponseDirectory) {
+		this.phmlResponseDirectory = phmlResponseDirectory;
+	}
+	public String getPhmlRepartiteur() {
+		return phmlRepartiteur;
+	}
+	public void setPhmlRepartiteur(String phmlRepartiteur) {
+		this.phmlRepartiteur = phmlRepartiteur;
+	}
+	
+	
 }

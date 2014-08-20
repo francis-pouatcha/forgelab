@@ -195,9 +195,12 @@ public class InventoryDisplayView
 							
 							// Style all dates in March with a different color.
 							if (Long.compare(0, item)>0) {
-								setTextFill(Color.CHOCOLATE);
+								setTextFill(Color.RED);
 								setStyle("-fx-background-color: yellow");
-							} else {
+							} else if(Long.compare(0, item)<0){
+								setTextFill(Color.RED);
+								setStyle("-fx-background-color: green");
+							}else {
 								setTextFill(Color.BLACK);
 								setStyle("");
 							}

@@ -53,7 +53,7 @@ public class ProcurementOrderDisplayView
 	@FXML
 	private HBox actionbar ;
 
-	private Button saveButton;
+	private Button deliverButton;
 
 	private Button editButton;
 
@@ -205,7 +205,7 @@ public class ProcurementOrderDisplayView
 		salesPricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		purchasePricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		availableQtyColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-		saveButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		deliverButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		itemBar.visibleProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 	}
@@ -238,9 +238,9 @@ public class ProcurementOrderDisplayView
 	}
 
 	public void buildActionBar(){
-		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
-		saveButton.setAlignment(Pos.CENTER_LEFT);
-		saveButton.setText("Livrer");
+		deliverButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
+		deliverButton.setAlignment(Pos.CENTER_LEFT);
+		deliverButton.setText("Livrer");
 
 		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
 		cancelButton.setAlignment(Pos.CENTER_LEFT);
@@ -253,7 +253,7 @@ public class ProcurementOrderDisplayView
 		printXlsButton.setAlignment(Pos.CENTER_LEFT);
 		printXlsButton.setText("Exporter en Xls");
 
-		actionbar.getChildren().addAll(saveButton,cancelButton,printButton,printXlsButton);
+		actionbar.getChildren().addAll(deliverButton,cancelButton,printButton,printXlsButton);
 
 	}
 
@@ -297,9 +297,9 @@ public class ProcurementOrderDisplayView
 		return rootPane;
 	}
 
-	public Button getSaveButton()
+	public Button getDeliverButton()
 	{
-		return saveButton;
+		return deliverButton;
 	}
 
 	public Button getCancelButton()

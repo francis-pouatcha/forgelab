@@ -9,7 +9,7 @@
 	<right>
 		<VBox fx:id="actionBar" alignment="TOP_CENTER" prefHeight="644.0" prefWidth="165.0" spacing="5.0" BorderPane.alignment="CENTER">
 			<children>
-				<ToolBar orientation="VERTICAL" prefHeight="300.0" prefWidth="175.0" VBox.vgrow="NEVER">
+				<ToolBar orientation="VERTICAL" prefHeight="397.0" prefWidth="175.0" VBox.vgrow="NEVER">
 					<items>
 						<Button fx:id="editButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="163.0" text="Traiter la selection" />
 						<Button fx:id="printButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Exporter en pdf" />
@@ -19,6 +19,7 @@
 						<Button fx:id="advancedSearchButton" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Recherche avancee" />	
 						<Button fx:id="sentButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Envoyer sur Phml" />
 						<Button fx:id="retreivedButton" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Importer de Phml" />
+<Button fx:id="ruptureButton" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="162.0" text="Rapport des Ruptures" />
 					</items>
 				</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="251.0" prefWidth="170.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">

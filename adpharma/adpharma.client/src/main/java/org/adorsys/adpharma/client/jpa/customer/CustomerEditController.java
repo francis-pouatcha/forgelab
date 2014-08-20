@@ -91,6 +91,7 @@ public class CustomerEditController implements EntityController
                public void handle(ActionEvent e)
                {
 
+            	   displayedEntity.setFullName(displayedEntity.getFirstName()+" "+displayedEntity.getLastName());
                   Set<ConstraintViolation<Customer>> violations = editView.getView().validate(displayedEntity);
                   if (violations.isEmpty())
                   {

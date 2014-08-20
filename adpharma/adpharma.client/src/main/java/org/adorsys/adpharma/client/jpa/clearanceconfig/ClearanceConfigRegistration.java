@@ -18,7 +18,7 @@ import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
  * @author francis
  *
  */
-@Eager
+//@Eager
 @Singleton
 public class ClearanceConfigRegistration extends DomainComponentRegistration
 {

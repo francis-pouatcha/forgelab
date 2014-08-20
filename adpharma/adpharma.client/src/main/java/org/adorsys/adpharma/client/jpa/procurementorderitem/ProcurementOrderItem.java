@@ -500,7 +500,7 @@ public class ProcurementOrderItem implements Cloneable
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "articleName", "articleName", "qtyOrdered");
+      return PropertyReader.buildToString(this, "mainPic", "articleName", "availableQty","purchasePricePU");
    }
 
    public void cleanIds()

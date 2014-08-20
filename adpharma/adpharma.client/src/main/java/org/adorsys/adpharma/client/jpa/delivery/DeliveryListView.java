@@ -129,18 +129,18 @@ public class DeliveryListView
 		ViewBuilder viewBuilder = new ViewBuilder();
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "deliveryNumber", "Delivery_deliveryNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "Delivery_procurementOrderNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
+		viewBuilder.addEnumColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle, deliveryProcessingStateConverter);
 		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle,150d);
-
-		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle,250d);
 		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "Delivery_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountDiscount", "Delivery_amountDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "Delivery_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addStringColumn(dataList, "vat", "Delivery_vat_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "receivingAgency", "Delivery_receivingAgency_description.title", resourceBundle,250d);
-		viewBuilder.addStringColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataList, "receivingAgency", "Delivery_receivingAgency_description.title", resourceBundle,250d);
 
 		//				pagination = viewBuilder.addPagination();
 		//				viewBuilder.addSeparator();

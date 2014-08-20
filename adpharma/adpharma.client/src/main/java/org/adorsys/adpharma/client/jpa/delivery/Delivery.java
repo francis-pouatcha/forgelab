@@ -51,6 +51,8 @@ public class Delivery implements Cloneable
 
    @Description("Delivery_deliveryNumber_description")
    private SimpleStringProperty deliveryNumber;
+   @Description("Delivery_procurementOrderNumber_description")
+   private SimpleStringProperty procurementOrderNumber;
    @Description("Delivery_deliverySlipNumber_description")
    private SimpleStringProperty deliverySlipNumber;
    @Description("Delivery_deliveryProcessingState_description")
@@ -146,6 +148,25 @@ public class Delivery implements Cloneable
    public final void setDeliveryNumber(String deliveryNumber)
    {
       this.deliveryNumberProperty().set(deliveryNumber);
+   }
+   
+   public SimpleStringProperty procurementOrderNumberProperty()
+   {
+      if (procurementOrderNumber == null)
+      {
+    	  procurementOrderNumber = new SimpleStringProperty();
+      }
+      return procurementOrderNumber;
+   }
+
+   public String getProcurementOrderNumber()
+   {
+      return procurementOrderNumberProperty().get();
+   }
+
+   public final void setProcurementOrderNumber(String procurementOrderNumber)
+   {
+      this.procurementOrderNumberProperty().set(procurementOrderNumber);
    }
 
    public SimpleStringProperty deliverySlipNumberProperty()

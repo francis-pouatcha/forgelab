@@ -272,7 +272,7 @@ public class DeliveryDisplayView
 
 		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente")
 		,new Label("Prix d\'achat"),new Label("T.Mul"),new Label("Exp Date"));
-		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,mulRate,expirationDate,okButton);
+		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,mulRate,expirationDate);
 		//		deliveryItemBar.getChildren().addAll(
 		//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
 
@@ -305,7 +305,7 @@ public class DeliveryDisplayView
 	{
 		//		view.bind(model);
 		deliveryNumber.textProperty().bindBidirectional(model.deliveryNumberProperty());
-		deliverySlipNumber.textProperty().bindBidirectional(model.deliverySlipNumberProperty());
+		deliverySlipNumber.textProperty().bindBidirectional(model.procurementOrderNumberProperty());
 		amountBeforeTax.numberProperty().bindBidirectional(model.amountBeforeTaxProperty());
 		amountDiscount.numberProperty().bindBidirectional(model.amountDiscountProperty());
 		amountAfterTax.numberProperty().bindBidirectional(model.amountAfterTaxProperty());

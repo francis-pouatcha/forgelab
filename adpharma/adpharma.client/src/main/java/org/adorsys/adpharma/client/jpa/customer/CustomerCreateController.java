@@ -33,6 +33,7 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class CustomerCreateController implements EntityController
@@ -91,6 +92,7 @@ public class CustomerCreateController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
+				model.setFullName(model.getFirstName()+" "+model.getLastName());
 				Set<ConstraintViolation<Customer>> violations = createView.getView().validate(model);
 				if (violations.isEmpty())
 				{
@@ -119,6 +121,7 @@ public class CustomerCreateController implements EntityController
 				event.consume();
 				s.reset();
 				createDoneEvent.fire(ent);
+				Dialogs.create().message("CLient : "+ent.getFullName()+" Enregistre avec success !").showInformation();
 			}
 				});
 		createServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
@@ -190,6 +193,7 @@ public class CustomerCreateController implements EntityController
 	public void handleCreateRequestedEvent(@Observes @EntityCreateRequestedEvent Customer templateEntity)
 	{
 		PropertyReader.copy(templateEntity, model);
+		model.setFullName(".");
 		// PropertyReader.cleanIds(model, new HashSet<Object>());
 		model.cleanIds();
 	}
