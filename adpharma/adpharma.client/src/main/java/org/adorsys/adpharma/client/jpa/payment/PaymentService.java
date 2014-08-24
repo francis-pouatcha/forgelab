@@ -1,6 +1,10 @@
 package org.adorsys.adpharma.client.jpa.payment;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -29,6 +33,15 @@ public class PaymentService {
 	public Payment create(Payment entity) {
 		Entity<Payment> eCopy = Entity.entity(entity, media);
 		return target().request(media).post(eCopy, Payment.class);
+	}
+	
+//	 @POST
+//	   @Path("/createPaymentForDebtstatement")
+//	   @Consumes({ "application/json", "application/xml" })
+//	   @Produces({ "application/json", "application/xml" })
+	public Payment createPaymentForDebtstatement(Payment entity) {
+		Entity<Payment> eCopy = Entity.entity(entity, media);
+		return target().path("createPaymentForDebtstatement").request(media).post(eCopy, Payment.class);
 	}
 
 	// @DELETE

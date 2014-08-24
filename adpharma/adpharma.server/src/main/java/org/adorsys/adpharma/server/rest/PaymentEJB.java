@@ -18,17 +18,21 @@ import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DebtStatement;
 import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc;
+import org.adorsys.adpharma.server.jpa.DebtStatementCustomerInvoiceAssoc_;
+import org.adorsys.adpharma.server.jpa.DebtStatement_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentCustomerInvoiceAssoc;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.repo.DebtStatementRepository;
 import org.adorsys.adpharma.server.repo.PaymentRepository;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class PaymentEJB
@@ -60,12 +64,19 @@ public class PaymentEJB
 	@Inject
 	@DocumentProcessedEvent
 	private Event<Payment> paymentProcessedEvent;
+	
+	@Inject
+	@DocumentClosedEvent
+	private Event<Payment> paymentclosedEvent;
 
 	@EJB
 	private CustomerInvoiceEJB customerInvoiceEJB;
 
 	@EJB
 	private DebtStatementCustomerInvoiceAssocEJB debtStatementCustomerInvoiceAssocEJB ;
+
+	@Inject
+	private DebtStatementRepository debtStatementRepository ;
 
 
 	@Inject
@@ -93,9 +104,9 @@ public class PaymentEJB
 			payment.getInvoices().add(i);
 		}
 		// Is the cashier the owner of this cashdrawer
-		//	   if(!cashDrawer.getCashier().equals(cashier)){
-		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
-		//	   }
+		// if(!cashDrawer.getCashier().equals(cashier)){
+		// throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
+		// }
 		payment.setAgency(cashDrawer.getAgency());
 		payment.setCashier(cashDrawer.getCashier());
 		Date now = new Date();
@@ -115,18 +126,71 @@ public class PaymentEJB
 			difference = difference.add(piReceivedAmount.subtract(piAmount));
 			paymentMode = paymentItem.getPaymentMode();
 		}
-
 		payment.setAmount(amount);
 		payment.setReceivedAmount(receivedAmount);
 		payment.setDifference(difference);
 		payment.setPaymentMode(paymentMode);
-
-
 		payment = repository.save(payment);
 		payment.setPaymentNumber(SequenceGenerator.PAYMENT_SEQUENCE_PREFIX+payment.getId());
 		payment = update(payment);
 		paymentProcessedEvent.fire(payment);
 		return payment;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public Payment createPaymentForDebtstatement(Payment entity){
+		entity.getPaymentItems().clear();
+	    entity = attach(entity);
+		CashDrawer cashDrawer = entity.getCashDrawer();
+		BigDecimal amount = entity.getAmount();
+		DebtStatement debtStatement = new DebtStatement();
+		debtStatement.setStatementNumber(entity.getStatementNumber());
+		List<DebtStatement> debt = debtStatementRepository.findBy(debtStatement, new  SingularAttribute[]{DebtStatement_.statementNumber} );
+		debtStatement = debt.iterator().next();
+		debtStatement.setAdvancePayment(debtStatement.getAdvancePayment().add(entity.getAmount()));
+		debtStatement.setRestAmount(debtStatement.getInitialAmount().subtract(debtStatement.getAdvancePayment()));
+		debtStatement.setWaitingForCash(false);
+		debtStatement.setSettled(BigDecimal.ZERO.compareTo(debtStatement.getRestAmount())==0);
+		debtStatement = debtStatementRepository.save(debtStatement);
+		DebtStatementCustomerInvoiceAssoc assoc = new DebtStatementCustomerInvoiceAssoc();
+		assoc.setSource(debtStatement);
+		List<DebtStatementCustomerInvoiceAssoc> assocs = debtStatementCustomerInvoiceAssocEJB.findBy(assoc, 0, -1,  new  SingularAttribute[]{DebtStatementCustomerInvoiceAssoc_.source});
+		for (DebtStatementCustomerInvoiceAssoc debtsAssoc : assocs) {
+			CustomerInvoice customerInvoice = debtsAssoc.getTarget();
+			BigDecimal insurranceRestTopay = customerInvoice.getInsurranceRestTopay();
+			if(BigDecimal.ZERO.compareTo(insurranceRestTopay)<0){
+				if(insurranceRestTopay.compareTo(amount)<0){
+					amount = amount.subtract(insurranceRestTopay);
+					customerInvoice.setInsurranceRestTopay(customerInvoice.getInsurranceRestTopay().subtract(insurranceRestTopay));
+					customerInvoice.setAdvancePayment(customerInvoice.getAdvancePayment().add(insurranceRestTopay));
+					customerInvoice.setTotalRestToPay(customerInvoice.getTotalRestToPay().subtract(insurranceRestTopay));
+					customerInvoice.setSettled(BigDecimal.ZERO.compareTo(customerInvoice.getTotalRestToPay())==0);
+					debtsAssoc.setTarget(customerInvoice);
+					debtStatementCustomerInvoiceAssocEJB.update(debtsAssoc);
+				}else {
+					customerInvoice.setInsurranceRestTopay(customerInvoice.getInsurranceRestTopay().subtract(amount));
+					customerInvoice.setAdvancePayment(customerInvoice.getAdvancePayment().add(amount));
+					customerInvoice.setTotalRestToPay(customerInvoice.getTotalRestToPay().subtract(amount));
+					customerInvoice.setSettled(BigDecimal.ZERO.compareTo(customerInvoice.getTotalRestToPay())==0);
+					debtsAssoc.setTarget(customerInvoice);
+					debtStatementCustomerInvoiceAssocEJB.update(debtsAssoc);
+					amount = BigDecimal.ZERO ;
+					break;
+				}
+			}
+		}
+		entity.setAgency(cashDrawer.getAgency());
+		entity.setCashier(cashDrawer.getCashier());
+		Date now = new Date();
+		entity.setPaymentDate(now);
+		entity.setRecordDate(now);
+		entity.setPaidBy(debtStatement.getInsurrance());
+		entity = repository.save(entity);
+		entity.setPaymentNumber("PY-"+entity.getId());
+		entity = update(entity);
+		paymentclosedEvent.fire(entity);
+		return entity ;
 	}
 
 	private List<CustomerInvoice> getPayableInvoicesFromDebtStatement(DebtStatement debtStatement){
@@ -147,68 +211,68 @@ public class PaymentEJB
 		return payableInvoices ;
 	}
 
-//	public Payment createDebtstatementPayment(DebtStatement entity)
-//	{
-//		List<CustomerInvoice> InvoicesToPay = getPayableInvoicesFromDebtStatement(entity);
-//		
-//		// create payment for debtstatement 
-//		Payment payment2 = new Payment();
-//		payment2.get
-//		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
-//		Payment payment = attach(entity);
-//		Login cashier = securityUtil.getConnectedUser();
-//		CashDrawer cashDrawer = payment.getCashDrawer();
-//		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
-//			if(paymentCustomerInvoiceAssoc.getTarget()!=null && paymentCustomerInvoiceAssoc.getTarget().getCashed())
-//				continue;
-//			PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
-//			i.setSource(payment);
-//			i.setSourceQualifier("invoices");
-//			CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
-//			CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
-//			SalesOrder salesOrder = customerInvoice.getSalesOrder();
-//			salesOrder.setCashDrawer(cashDrawer);
-//			salesOrderRepository.save(salesOrder);
-//			i.setTarget(customerInvoice);
-//			i.setTargetQualifier("payments");
-//			payment.getInvoices().add(i);
-//		}
-//		// Is the cashier the owner of this cashdrawer
-//		//	   if(!cashDrawer.getCashier().equals(cashier)){
-//		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
-//		//	   }
-//		payment.setAgency(cashDrawer.getAgency());
-//		payment.setCashier(cashDrawer.getCashier());
-//		Date now = new Date();
-//		payment.setPaymentDate(now);
-//		payment.setRecordDate(now);
-//		payment.setPaymentNumber("PY-"+RandomStringUtils.randomAlphanumeric(5));
-//		Set<PaymentItem> paymentItems = payment.getPaymentItems();
-//		BigDecimal amount = BigDecimal.ZERO;
-//		BigDecimal receivedAmount = BigDecimal.ZERO;
-//		BigDecimal difference = BigDecimal.ZERO;
-//		PaymentMode paymentMode = null;
-//		for (PaymentItem paymentItem : paymentItems) {
-//			BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
-//			amount = amount.add(piAmount);
-//			BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
-//			receivedAmount = receivedAmount.add(piReceivedAmount);
-//			difference = difference.add(piReceivedAmount.subtract(piAmount));
-//			paymentMode = paymentItem.getPaymentMode();
-//		}
-//
-//		payment.setAmount(amount);
-//		payment.setReceivedAmount(receivedAmount);
-//		payment.setDifference(difference);
-//		payment.setPaymentMode(paymentMode);
-//
-//
-//		payment = repository.save(payment);
-//		payment.setPaymentNumber(SequenceGenerator.PAYMENT_SEQUENCE_PREFIX+payment.getId());
-//		payment = update(payment);
-//		paymentProcessedEvent.fire(payment);
-//		return payment;
-//	}
+	//	public Payment createDebtstatementPayment(DebtStatement entity)
+	//	{
+	//		List<CustomerInvoice> InvoicesToPay = getPayableInvoicesFromDebtStatement(entity);
+	//		
+	//		// create payment for debtstatement 
+	//		Payment payment2 = new Payment();
+	//		payment2.get
+	//		ArrayList<PaymentCustomerInvoiceAssoc> invoices = new ArrayList<>(entity.getInvoices());
+	//		Payment payment = attach(entity);
+	//		Login cashier = securityUtil.getConnectedUser();
+	//		CashDrawer cashDrawer = payment.getCashDrawer();
+	//		for (PaymentCustomerInvoiceAssoc paymentCustomerInvoiceAssoc : invoices) {
+	//			if(paymentCustomerInvoiceAssoc.getTarget()!=null && paymentCustomerInvoiceAssoc.getTarget().getCashed())
+	//				continue;
+	//			PaymentCustomerInvoiceAssoc i = new PaymentCustomerInvoiceAssoc();
+	//			i.setSource(payment);
+	//			i.setSourceQualifier("invoices");
+	//			CustomerInvoice target = paymentCustomerInvoiceAssoc.getTarget();
+	//			CustomerInvoice customerInvoice = customerInvoiceEJB.findById(target.getId());
+	//			SalesOrder salesOrder = customerInvoice.getSalesOrder();
+	//			salesOrder.setCashDrawer(cashDrawer);
+	//			salesOrderRepository.save(salesOrder);
+	//			i.setTarget(customerInvoice);
+	//			i.setTargetQualifier("payments");
+	//			payment.getInvoices().add(i);
+	//		}
+	//		// Is the cashier the owner of this cashdrawer
+	//		//	   if(!cashDrawer.getCashier().equals(cashier)){
+	//		//		   throw new IllegalStateException("Wrong cashier. Cash drawer is opened by: " + cashDrawer.getCashier() + " Payment is bieng made by: " + cashier);
+	//		//	   }
+	//		payment.setAgency(cashDrawer.getAgency());
+	//		payment.setCashier(cashDrawer.getCashier());
+	//		Date now = new Date();
+	//		payment.setPaymentDate(now);
+	//		payment.setRecordDate(now);
+	//		payment.setPaymentNumber("PY-"+RandomStringUtils.randomAlphanumeric(5));
+	//		Set<PaymentItem> paymentItems = payment.getPaymentItems();
+	//		BigDecimal amount = BigDecimal.ZERO;
+	//		BigDecimal receivedAmount = BigDecimal.ZERO;
+	//		BigDecimal difference = BigDecimal.ZERO;
+	//		PaymentMode paymentMode = null;
+	//		for (PaymentItem paymentItem : paymentItems) {
+	//			BigDecimal piAmount = paymentItem.getAmount()!=null?paymentItem.getAmount():BigDecimal.ZERO;
+	//			amount = amount.add(piAmount);
+	//			BigDecimal piReceivedAmount = paymentItem.getReceivedAmount()!=null?paymentItem.getReceivedAmount():BigDecimal.ZERO;
+	//			receivedAmount = receivedAmount.add(piReceivedAmount);
+	//			difference = difference.add(piReceivedAmount.subtract(piAmount));
+	//			paymentMode = paymentItem.getPaymentMode();
+	//		}
+	//
+	//		payment.setAmount(amount);
+	//		payment.setReceivedAmount(receivedAmount);
+	//		payment.setDifference(difference);
+	//		payment.setPaymentMode(paymentMode);
+	//
+	//
+	//		payment = repository.save(payment);
+	//		payment.setPaymentNumber(SequenceGenerator.PAYMENT_SEQUENCE_PREFIX+payment.getId());
+	//		payment = update(payment);
+	//		paymentProcessedEvent.fire(payment);
+	//		return payment;
+	//	}
 
 	public Payment deleteById(Long id)
 	{

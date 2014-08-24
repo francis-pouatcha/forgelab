@@ -52,6 +52,7 @@ import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.controlsfx.dialog.Dialogs;
 
 public class DataLoadController {
 
@@ -442,6 +443,7 @@ public class DataLoadController {
 	private void handleFailure(WorkerStateEvent event) {
 		Service<?> s = (Service<?>) event.getSource();
 		Throwable exception = s.getException();
+		Dialogs.create().showException(exception);
 		s.reset();
 		event.consume();
 		String message = exception.getMessage();

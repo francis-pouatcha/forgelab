@@ -98,7 +98,7 @@ public class DeliveryRegistration extends DomainComponentRegistration
 	}
 	
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())||roles.contains(AccessRoleEnum.PERIODICAL_DELIVERY_REPPORT_PERM.name())){
 			deliveryMenuItemAddEvent.fire(new ReportMenuItem(deliveryReportMenuItem));
 		}else {
 			deliveryMenuItemRemoveEvent.fire(new ReportMenuItem(deliveryReportMenuItem));

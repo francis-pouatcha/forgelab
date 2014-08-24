@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.InvoiceType;
 import org.adorsys.adpharma.server.utils.ApharmaDateUtil;
@@ -22,5 +23,8 @@ public abstract class CustomerInvoiceRepository extends AdpharmaEntityRepository
 	
 	@Query("SELECT ci FROM CustomerInvoice AS ci WHERE ci.creationDate BETWEEN ?1 AND ?2 AND ci.cashed = ?3 OR ci.invoiceType = ?4")
 	public abstract List<CustomerInvoice> findByDateBetweenAndCashed(Date fromDate ,Date toDate,Boolean cashed,InvoiceType invoiceType);
+	
+	@Query("SELECT ci FROM CustomerInvoice AS ci WHERE ci.insurance.insurer = ?1 AND  ci.cashed = ?2 AND ci.settled = ?3 AND ci.invoiceType = ?4")
+	public abstract List<CustomerInvoice> findUnpayInvoiceByCustomer(Customer insurer ,Boolean cashed,Boolean settled,InvoiceType invoiceType);
 
 }

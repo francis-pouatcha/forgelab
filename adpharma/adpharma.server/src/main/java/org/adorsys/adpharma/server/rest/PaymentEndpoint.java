@@ -65,6 +65,15 @@ public class PaymentEndpoint
    {
       return detach(ejb.create(entity));
    }
+   
+   @POST
+   @Path("/createPaymentForDebtstatement")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json", "application/xml" })
+   public Payment createPaymentForDebtstatement(Payment entity)
+   {
+      return detach(ejb.createPaymentForDebtstatement(entity));
+   }
 
    @DELETE
    @Path("/{id:[0-9][0-9]*}")

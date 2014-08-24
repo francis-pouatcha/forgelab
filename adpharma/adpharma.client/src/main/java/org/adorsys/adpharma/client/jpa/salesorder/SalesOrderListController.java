@@ -793,5 +793,13 @@ public class SalesOrderListController implements EntityController
 		}else {
 			listView.getTurnoverTab().setDisable(true);
 		}
+		
+		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+			listView.getPrintVoucherButton().setVisible(true);
+		}else {
+			listView.getPrintVoucherButton().setVisible(false);
+		}
 	}
+	
+	
 }

@@ -38,9 +38,9 @@ public class CustomerVoucherViewSearchFields extends AbstractForm<CustomerVouche
    {
       LazyViewBuilder viewBuilder = new LazyViewBuilder();
       voucherNumber = viewBuilder.addTextField("CustomerVoucher_voucherNumber_description.title", "voucherNumber", resourceBundle);
-      canceled = viewBuilder.addCheckBox("CustomerVoucher_canceled_description.title", "canceled", resourceBundle);
-      settled = viewBuilder.addCheckBox("CustomerVoucher_settled_description.title", "settled", resourceBundle);
-      voucherPrinted = viewBuilder.addCheckBox("CustomerVoucher_voucherPrinted_description.title", "voucherPrinted", resourceBundle);
+//      canceled = viewBuilder.addCheckBox("CustomerVoucher_canceled_description.title", "canceled", resourceBundle);
+//      settled = viewBuilder.addCheckBox("CustomerVoucher_settled_description.title", "settled", resourceBundle);
+//      voucherPrinted = viewBuilder.addCheckBox("CustomerVoucher_voucherPrinted_description.title", "voucherPrinted", resourceBundle);
 
       gridRows = viewBuilder.toRows();
    }
@@ -48,9 +48,9 @@ public class CustomerVoucherViewSearchFields extends AbstractForm<CustomerVouche
    public void bind(CustomerVoucher model)
    {
       voucherNumber.textProperty().bindBidirectional(model.voucherNumberProperty());
-      canceled.textProperty().bindBidirectional(model.canceledProperty(), new BooleanStringConverter());
-      settled.textProperty().bindBidirectional(model.settledProperty(), new BooleanStringConverter());
-      voucherPrinted.textProperty().bindBidirectional(model.voucherPrintedProperty(), new BooleanStringConverter());
+//      canceled.textProperty().bindBidirectional(model.canceledProperty(), new BooleanStringConverter());
+//      settled.textProperty().bindBidirectional(model.settledProperty(), new BooleanStringConverter());
+//      voucherPrinted.textProperty().bindBidirectional(model.voucherPrintedProperty(), new BooleanStringConverter());
 
    }
 

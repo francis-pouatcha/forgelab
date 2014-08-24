@@ -130,6 +130,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 						drugVoucherPa,
 						null,
 						null,
+						null,
 						cashOutPa,
 						cashInPa,true);
 				
@@ -140,6 +141,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				 openDateString = currentOpenDateString ;
 			}
 				BigDecimal initialAmount = cashDrawer.getInitialAmount() !=null ? cashDrawer.getInitialAmount() : BigDecimal.ZERO;
+				BigDecimal discount = cashDrawer.getAmountDiscount() !=null ? cashDrawer.getAmountDiscount() : BigDecimal.ZERO;
 				BigDecimal drugVoucher = cashDrawer.getTotalDrugVoucher() !=null ? cashDrawer.getTotalDrugVoucher() : BigDecimal.ZERO;
 				BigDecimal purchaseP = cashDrawer.getTotalCompanyVoucher() !=null ? cashDrawer.getTotalCompanyVoucher() : BigDecimal.ZERO;
 				String closindDate = cashDrawer.getClosingDate() ==null ?"":DateHelper.format(cashDrawer.getClosingDate().getTime(),"dd-MM-yyyy HH:mm");
@@ -160,6 +162,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 						purchaseP.multiply(simulationRate),
 						drugVoucher.multiply(simulationRate),
 						initialAmount.multiply(simulationRate),
+						discount.multiply(simulationRate),
 						cashDrawer.getTotalClientVoucher().multiply(simulationRate),
 						cashDrawer.getTotalCashOut().multiply(simulationRate),
 						cashDrawer.getTotalCash().multiply(simulationRate),false);
@@ -173,6 +176,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				drugVoucherPa,
 				null,
 				null,
+				null,
 				cashOutPa,
 				cashInPa,true);
 		newTableRow("",
@@ -181,6 +185,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				"TOTAUX : ", 
 				purchaseT,
 				drugVoucherT,
+				null,
 				null,
 				null,
 				cashOutT,
@@ -194,6 +199,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			BigDecimal purchasePrice,
 			BigDecimal drugVoucher,
 			BigDecimal fond,
+			BigDecimal discount,
 			BigDecimal totalClientVoucher,
 			BigDecimal cashOut,
 			BigDecimal totalCash,boolean colored) {
@@ -273,6 +279,13 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond),font)));
 		}
 		reportTable.addCell(pdfPCell);
+		if(colored){
+
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(discount),blueBoldFont)));
+		}else {
+			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(discount),font)));
+		}
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(18f);
@@ -307,7 +320,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f,.10f});
+		reportTable = new PdfPTable(new float[]{.10f,.10f,.10f,.10f,.10f,.08f,.08f,.10f,.08f,.08f,.08f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -349,6 +362,11 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new Phrase("Fond ",boldFont));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Remise ",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -402,8 +420,8 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText(calendarFormat.format(startDate, "dd-MM-yyyy HH:mm", locale) +
-				" - " + calendarFormat.format(endDate, "dd-MM-yyyy HH:mm", locale)));
+		paragraph = new Paragraph(new StandardText("PERIODE DU : "+calendarFormat.format(startDate, "dd-MM-yyyy HH:mm", locale) +
+				" AU : " + calendarFormat.format(endDate, "dd-MM-yyyy HH:mm", locale)));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 

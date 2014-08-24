@@ -162,6 +162,17 @@ public class CustomerInvoiceEndpoint
 				detach(searchInput));
 	}
 	
+	@POST
+	@Path("/findUnpayInvoiceByInsurer")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public CustomerInvoiceSearchResult findUnpayInvoiceByInsurer(CustomerInvoiceSearchInput searchInput)
+	{
+		List<CustomerInvoice> resultList = ejb.findUnpayInvoiceByInsurer(searchInput.getEntity().getInsurance().getInsurer());
+		return new CustomerInvoiceSearchResult(Long.valueOf(1), detach(resultList),
+				detach(searchInput));
+	}
+	
 
     @POST
   	@Path("/findCustomerInvoiceBySource")

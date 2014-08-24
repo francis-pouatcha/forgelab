@@ -64,6 +64,17 @@ public class CustomerInvoiceService {
 				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
 	}
 
+	//	@GET
+	//	@Path("/findByAgencyAndDateBetween")
+	//	@Produces({ "application/json", "application/xml" })
+	public CustomerInvoiceSearchResult findUnpayInvoiceByInsurer(CustomerInvoiceSearchInput searchInput)
+	{
+		Entity<CustomerInvoiceSearchInput> searchInputEntity = Entity.entity(
+				searchInput, media);
+		return target().path("/findUnpayInvoiceByInsurer").request(media)
+				.post(searchInputEntity, CustomerInvoiceSearchResult.class);
+	}
+
 	// @PUT
 	// @Path("/{id:[0-9][0-9]*}")
 	// @Consumes("application/xml")

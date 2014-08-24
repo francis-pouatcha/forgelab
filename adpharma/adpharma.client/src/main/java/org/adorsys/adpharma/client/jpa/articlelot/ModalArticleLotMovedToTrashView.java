@@ -41,6 +41,8 @@ public class ModalArticleLotMovedToTrashView extends ApplicationModal {
 	private TextField internalPic;
 
 	private TextField articleName;
+	
+	private TextField raison;
 
 	private BigDecimalField stockQuantity;
 
@@ -69,6 +71,7 @@ public class ModalArticleLotMovedToTrashView extends ApplicationModal {
 		articleName = lazyviewBuilder.addTextField("ArticleLot_articleName_description.title", "articleName", resourceBundle,ViewModel.READ_ONLY);
 		stockQuantity = lazyviewBuilder.addBigDecimalField("ArticleLot_stockQuantity_description.title", "stockQuantity", resourceBundle, NumberType.INTEGER, locale,ViewModel.READ_ONLY);
 		qtyToMoved = lazyviewBuilder.addBigDecimalField("ArticleLot_qtyToMoved_description.title", "salesPricePU", resourceBundle, NumberType.INTEGER, locale);
+		raison = lazyviewBuilder.addTextField("ArticleLot_raison_description.title", "raison", resourceBundle);
 
 
 		ViewBuilder viewBuilder = new ViewBuilder();
@@ -89,6 +92,7 @@ public class ModalArticleLotMovedToTrashView extends ApplicationModal {
 		articleName.textProperty().bindBidirectional(model.articleNameProperty());
 		stockQuantity.numberProperty().bindBidirectional(model.stockQuantityProperty());
 		qtyToMoved.numberProperty().bindBidirectional(model.qtyToMovedProperty());
+		raison.textProperty().bindBidirectional(model.raisonProperty());
 	}
 
 	public void addValidators()

@@ -32,6 +32,7 @@ public class ArticleLotMovedToTrashData {
 	   private SimpleStringProperty internalPic;
 	   private SimpleStringProperty mainPic;
 	   private SimpleStringProperty articleName;
+	   private SimpleStringProperty raison;
 	   private SimpleObjectProperty<BigDecimal> stockQuantity;
 	   private SimpleObjectProperty<BigDecimal> qtyToMoved;
 
@@ -114,6 +115,25 @@ public class ArticleLotMovedToTrashData {
 	   public final void setArticleName(String articleName)
 	   {
 	      this.articleNameProperty().set(articleName);
+	   }
+	   
+	   public SimpleStringProperty raisonProperty()
+	   {
+	      if (raison == null)
+	      {
+	    	  raison = new SimpleStringProperty();
+	      }
+	      return raison;
+	   }
+
+	   public String getRaison()
+	   {
+	      return raisonProperty().get();
+	   }
+
+	   public final void setRaison(String raison)
+	   {
+	      this.raisonProperty().set(raison);
 	   }
 
 	   public SimpleObjectProperty<BigDecimal> stockQuantityProperty()

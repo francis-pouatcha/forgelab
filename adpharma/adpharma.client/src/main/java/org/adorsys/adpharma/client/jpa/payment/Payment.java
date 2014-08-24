@@ -56,6 +56,8 @@ public class Payment implements Cloneable
 
    @Description("Payment_paymentNumber_description")
    private SimpleStringProperty paymentNumber;
+   @Description("Payment_statementNumber_description")
+   private SimpleStringProperty statementNumber;
    @Description("Payment_paymentReceiptPrinted_description")
    private SimpleBooleanProperty paymentReceiptPrinted;
    @Description("Payment_paymentMode_description")
@@ -132,6 +134,25 @@ public class Payment implements Cloneable
    public final void setPaymentNumber(String paymentNumber)
    {
       this.paymentNumberProperty().set(paymentNumber);
+   }
+   
+   public SimpleStringProperty statementNumberProperty()
+   {
+      if (statementNumber == null)
+      {
+    	  statementNumber = new SimpleStringProperty();
+      }
+      return statementNumber;
+   }
+
+   public String getStatementNumber()
+   {
+      return statementNumberProperty().get();
+   }
+
+   public final void setStatementNumber(String statementNumber)
+   {
+      this.statementNumberProperty().set(statementNumber);
    }
 
    public SimpleBooleanProperty paymentReceiptPrintedProperty()

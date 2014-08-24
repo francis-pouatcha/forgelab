@@ -45,6 +45,8 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
+import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
@@ -63,6 +65,7 @@ import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.LogoutSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -147,7 +150,7 @@ public class DeliveryDisplayController implements EntityController
 
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
-
+displayView.getSaveButton().disableProperty().bind(closeService.runningProperty());
 
 		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -671,6 +674,10 @@ public class DeliveryDisplayController implements EntityController
 		}else {
 			displayView.getEditButton().setVisible(false);
 		}
+	}
+	
+	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
+		searchRequestEvent.fire(new Delivery());
 	}
 
 

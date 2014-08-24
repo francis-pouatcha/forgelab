@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.articlelot;
+package org.adorsys.adpharma.client.jpa.debtstatement;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,11 +6,19 @@ import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.delivery.DeliveryReportPrinterData;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.utils.DateHelper;
+import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.exceptions.IllegalStateException;
 
 import com.lowagie.text.Chunk;
@@ -27,24 +35,28 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
-public class StockValuRepportTemplatePdf {
+
+public class DebtstatementCashReportPrintTemplatePDF  {
+
+	private CalendarFormat calendarFormat = new CalendarFormat();
+
 	private Document document;
-	private String pdfFileName;
 	private FileOutputStream fos;
-	private PdfPTable reportTable;
-	private ResourceBundle resourceBundle;
-	private ArticleAgency agency ;
+	private final DebtStatement debtStatement;
+	private Agency agency = new Agency() ;
 	private Login login ;
-	
+	private PdfPTable reportTable;
+	private String pdfFileName;
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 10);
 
-	public StockValuRepportTemplatePdf( ArticleAgency agency,Login login,ResourceBundle resourceBundle) throws DocumentException {
-		this.agency = agency ;
-		this.login = login ;
-		this.resourceBundle = resourceBundle ;
-		pdfFileName = "procurementRepport" + ".pdf";
+	public DebtstatementCashReportPrintTemplatePDF(
+			DebtStatement debtStatement, 
+			Login login
+			) throws DocumentException {
+		this.debtStatement = debtStatement;
+		this.login = login;
+		PropertyReader.copy(login.getAgency(), agency);
+		pdfFileName = "debtStatement_"+debtStatement.getStatementNumber() + ".pdf";
 
 		document = new Document(PageSize.A4,5,5,5,5);
 		File file = new File(pdfFileName);
@@ -61,107 +73,84 @@ public class StockValuRepportTemplatePdf {
 		resetDocument();
 	}
 
-	public void addItems(List<ArticleLot> items) {
-		BigDecimal totalPU = BigDecimal.ZERO;
-		BigDecimal totalSP = BigDecimal.ZERO;
-		BigDecimal totalQTY = BigDecimal.ZERO;
-		for (ArticleLot item : items) {
-			item.calculateAmount();
-			totalPU = totalPU.add(item.getTotalPurchasePrice());
-			totalQTY = totalQTY.add(item.getStockQuantity());
-			totalSP = totalSP.add(item.getTotalSalePrice());
-			newTableRow(item.getMainPic(),
-					item.getInternalPic(), 
-					item.getArticleName(),
-					item.getStockQuantity(),
-					item.getTotalPurchasePrice(),
-					item.getTotalSalePrice()
-					);
+	static Font boldFont = FontFactory.getFont("latin", 10, Font.BOLD);
+	static Font font = FontFactory.getFont("latin", 10);
+
+	public void addItems(List<Payment> payments) {
+	String fullName = debtStatement.getInsurrance().getFullName();
+		BigDecimal totaAmount = BigDecimal.ZERO;
+		for (Payment payment : payments) {
+			if(BigDecimal.ZERO.compareTo(payment.getAmount())==0)
+				continue ;
+			newTableRow(payment.getPaymentNumber(), 
+					DateHelper.format(payment.getPaymentDate().getTime(), "dd-MM-yyyy HH:mm"), 
+					fullName, 
+					payment.getAmount());
+			totaAmount = totaAmount.add(payment.getAmount()) ;
+			
 		}
-		newTableRow("", "Total", null, totalQTY, totalPU, totalSP);
+		newTableRow("", "", "TOTAL ", totaAmount);
 	}
 
-	private void newTableRow(
-			String cip, 
-			String internalCip, 
-			String articleName,
-			BigDecimal stockQty, 
-			BigDecimal pppu, 
-			BigDecimal sppu) {
-		
+	private void newTableRow(String num, 
+			String date,
+			String payBy,
+			BigDecimal amount
+			) {
+
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(cip,font));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase(num,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(internalCip,font));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase(date,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(articleName,font));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase(payBy,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new RightParagraph(new Phrase(stockQty!=null?stockQty.toBigInteger()+"":"",font)));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new RightParagraph(new Phrase(amount!=null?amount.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
-		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new RightParagraph(new Phrase(pppu!=null?pppu.toBigInteger()+"":"",font)));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new RightParagraph(new Phrase(sppu!=null?sppu.toBigInteger()+"":"",font)));
-		reportTable.addCell(pdfPCell);
 	}
 
+
+
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.13f,.15f,.42f,.1f,.1f,.1f});
+		reportTable = new PdfPTable(new float[]{ .15f,.2f, .48f, .17f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_pic.title"),boldFont));
+		pdfPCell.setFixedHeight(18f);
+		pdfPCell.addElement(new Phrase("Num paie",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_internalPic.title"),boldFont));
+		pdfPCell.addElement(new Phrase("Date Paie",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_articleName.title"),boldFont));
-		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_stockQuantity.title"),boldFont));
+		pdfPCell.addElement(new Phrase("Payer Par",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_purchasePricePU.title"),boldFont));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(17f);
-		pdfPCell.addElement(new Phrase(resourceBundle.getString("ProcurementOrderReportPrintTemplate_totalPurchasePrice.title"),boldFont));
+		pdfPCell.addElement(new Phrase("Montant",boldFont));
 		reportTable.addCell(pdfPCell);
 
 	}
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new Phrase("VALORISATION DU STOCK ",boldFont));
+		Paragraph paragraph = new Paragraph(new BoldText("ETAT DES PAIEMENTS "+" "+debtStatement.getStatementNumber()));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
@@ -176,8 +165,12 @@ public class StockValuRepportTemplatePdf {
 		paragraph = new Paragraph(new StandardText(agency.getPhone()));
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
+		
+		paragraph = new Paragraph(new StandardText("Client : "+debtStatement.getInsurrance().getFullName()));
+		paragraph.setAlignment(Element.ALIGN_LEFT);
+		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Valeur du stock a la date du  : "+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new StandardText("Etat A la date du  :"+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
@@ -185,7 +178,7 @@ public class StockValuRepportTemplatePdf {
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText("Imprimer Par : "+login.getFullName()));
+		paragraph = new Paragraph(new StandardText("Edite Par : "+login.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
@@ -253,4 +246,5 @@ public class StockValuRepportTemplatePdf {
 		printReportHeader();
 		fillTableHaeder();
 	}
+
 }

@@ -10,29 +10,39 @@ import javax.inject.Singleton;
 public class PaymentCreateService extends Service<Payment>
 {
 
-   private Payment model;
+	private Payment model;
 
-   @Inject
-   private PaymentService remoteService;
+	private Boolean isForDebtstatement = false ;
 
-   public PaymentCreateService setModel(Payment model)
-   {
-      this.model = model;
-      return this;
-   }
+	@Inject
+	private PaymentService remoteService;
 
-   @Override
-   protected Task<Payment> createTask()
-   {
-      return new Task<Payment>()
-      {
-         @Override
-         protected Payment call() throws Exception
-         {
-            if (model == null)
-               return null;
-            return remoteService.create(model);
-         }
-      };
-   }
+	public PaymentCreateService setModel(Payment model)
+	{
+		this.model = model;
+		return this;
+	}
+
+	public PaymentCreateService setIsForDebtstatement(Boolean isForDebtstatement)
+	{
+		this.isForDebtstatement = isForDebtstatement;
+		return this;
+	}
+
+	@Override
+	protected Task<Payment> createTask()
+	{
+		return new Task<Payment>()
+				{
+			@Override
+			protected Payment call() throws Exception
+			{
+				if (model == null)
+					return null;
+				if(isForDebtstatement)
+					remoteService.createPaymentForDebtstatement(model);
+				return remoteService.create(model);
+			}
+				};
+	}
 }

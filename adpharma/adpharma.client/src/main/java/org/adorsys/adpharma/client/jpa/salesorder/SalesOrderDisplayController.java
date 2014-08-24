@@ -95,6 +95,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.LoginSucceededEvent;
+import org.adorsys.javafx.crud.extensions.login.LogoutSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.login.WorkingInformationEvent;
@@ -286,12 +287,12 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {
 				SalesOrderItem selectedItem = orderedQtyCell.getRowValue();
 				BigDecimal newValue = orderedQtyCell.getNewValue();
-				if(newValue==null){
-					// reset old value.
-				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
-					// delete article
-					salesOrderItemRemoveService.setEntity(selectedItem).start();
-				} 
+//				if(newValue==null){
+//					// reset old value.
+//				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+//					// delete article
+//				} 
+				salesOrderItemRemoveService.setEntity(selectedItem).start();
 				//					else {
 				//					if(displayView.getOrderedQty().isEditable()){
 				//						selectedItem.setOrderedQty(newValue);
@@ -1178,17 +1179,30 @@ public class SalesOrderDisplayController implements EntityController
 	}
 
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-		if(roles.contains(AccessRoleEnum.SUPER_SALLER.name())){
+		if(roles.contains(AccessRoleEnum.SUPER_SALLER_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
 			displayView.getSalesPricePU().setEditable(true);
 		}else {
 			displayView.getSalesPricePU().setEditable(false);
 		}
 
-		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME.name())){
+		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
 			displayView.getArticleName().setEditable(true);
 		}else {
 			displayView.getArticleName().setEditable(false);
 		}
+		
+		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+			displayView.getReturnSOIMenu().setVisible(true);
+			displayView.getSaveReturnButton().setVisible(true);
+		}else {
+			displayView.getReturnSOIMenu().setVisible(false);
+			displayView.getSaveReturnButton().setVisible(false);
+		}
 	}
 
+	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
+		PropertyReader.copy(new SalesOrder(), displayedEntity);
+		PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+		searchRequestedEvent.fire(displayedEntity);
+	}
 }

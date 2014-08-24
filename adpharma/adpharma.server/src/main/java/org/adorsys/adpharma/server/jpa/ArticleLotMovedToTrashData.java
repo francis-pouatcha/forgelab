@@ -9,6 +9,7 @@ public class ArticleLotMovedToTrashData {
 	   private String internalPic;
 	   private String mainPic;
 	   private String articleName;
+	   private String raison;
 	   private BigDecimal stockQuantity;
 	   private BigDecimal qtyToMoved;
 	public Long getId() {
@@ -52,6 +53,12 @@ public class ArticleLotMovedToTrashData {
 	}
 	public void setQtyToMoved(BigDecimal qtyToMoved) {
 		this.qtyToMoved = qtyToMoved;
+	}
+	public String getRaison() {
+		return raison;
+	}
+	public void setRaison(String raison) {
+		this.raison = raison;
 	}
 
 	 

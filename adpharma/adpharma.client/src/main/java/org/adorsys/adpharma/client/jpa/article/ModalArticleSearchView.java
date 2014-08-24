@@ -36,7 +36,7 @@ public class ModalArticleSearchView extends ApplicationModal{
 	private TextField articleName;
 
 	@FXML Button cancelButton;
-	
+
 	@FXML
 	Pagination pagination;
 
@@ -52,7 +52,7 @@ public class ModalArticleSearchView extends ApplicationModal{
 
 	@Inject
 	private Locale locale;
-	
+
 	@Override
 	public VBox getRootPane() {
 		return rootPane;
@@ -62,7 +62,7 @@ public class ModalArticleSearchView extends ApplicationModal{
 	public void onPostConstruct(){
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
-//		dataList = viewBuilder.addTable("dataList");
+		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "pic", "Article_pic_description.title", resourceBundle,100d);
 		viewBuilder.addStringColumn(dataList, "articleName", "Article_articleName_description.title", resourceBundle,350d);
 		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle,200d);

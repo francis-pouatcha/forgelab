@@ -36,6 +36,7 @@ import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
@@ -70,6 +71,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.LogoutSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.io.FileUtils;
@@ -189,6 +191,7 @@ public class InventoryDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
+				
 				searchRequestedEvent.fire(displayedEntity);
 			}
 				});
@@ -679,4 +682,9 @@ public class InventoryDisplayController implements EntityController
 	public void reset() {
 		PropertyReader.copy(new Inventory(), displayedEntity);
 	}
+	
+	
+//	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
+//		searchRequestedEvent.fire(displayedEntity);
+//	}
 }

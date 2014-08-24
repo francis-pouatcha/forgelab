@@ -333,13 +333,14 @@ public class ArticleLotEJB
 		al.setArticleName(al.getArticle().getArticleName());
 		al.setCreationDate(new Date());
 		al.setExpirationDate(lotToDetails.getExpirationDate());
-		al.setInternalPic(lotToDetails.getInternalPic());
+		al.setInternalPic(newLotNumber(lotDetailsManager.getDetailConfig().getTarget().getPic()));
 		al.setMainPic(detailConfig.getTarget().getPic());
 		al.setSecondaryPic(lotToDetails.getSecondaryPic());
 		al.setStockQuantity(detailsQty.multiply(detailConfig.getTargetQuantity()));
 		al.setPurchasePricePU(lotToDetails.getPurchasePricePU().divide(al.getStockQuantity(), 4, RoundingMode.HALF_EVEN));
 		al.setSalesPricePU(detailConfig.getSalesPrice());
-		al.setVat(detailConfig.getTarget().getVat());
+		Article targetLot = articleRepository.findBy(lotDetailsManager.getDetailConfig().getTarget().getId());
+		al.setVat(targetLot.getVat());
 		al.calculateTotalAmout();
 		return al ;
 	}

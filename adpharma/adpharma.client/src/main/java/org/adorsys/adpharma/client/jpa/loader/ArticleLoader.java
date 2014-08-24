@@ -110,11 +110,11 @@ public class ArticleLoader extends Service<List<Article>> {
 
 			if (StringUtils.isBlank(entity.getPic()))
 				continue;
-			
+
 			cell = row.getCell(14);
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String sc = "RAY-0061" ; // cell.getStringCellValue().trim();
+				String sc =  cell.getStringCellValue().trim();
 				List<Section> ss = dataMap.getSections();
 				Section sec = null;
 				for (Section s : ss) {
@@ -136,7 +136,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			searchInput.setEntity(entity);
 			searchInput.getFieldNames().add("section");
 			searchInput.getFieldNames().add("pic");
-//check heare
+			//check heare
 			ArticleSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
 				continue;
@@ -157,10 +157,11 @@ public class ArticleLoader extends Service<List<Article>> {
 				entity.setAuthorizedSale(Boolean.TRUE);
 
 			cell = row.getCell(5);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			if (cell != null)
 			{
-				//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-				entity.setMaxStockQty(BigDecimal.valueOf(50));
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setMaxStockQty(decimal!=null?decimal:BigDecimal.valueOf(10));
 			}
 
 			cell = row.getCell(6);
@@ -237,7 +238,7 @@ public class ArticleLoader extends Service<List<Article>> {
 			cell = row.getCell(14);
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				String sectionCode = "RAY-0061" ; //cell.getStringCellValue().trim();
+				String sectionCode = cell.getStringCellValue().trim();
 				List<Section> sections = dataMap.getSections();
 				Section section = null;
 				for (Section s : sections) {
@@ -296,6 +297,14 @@ public class ArticleLoader extends Service<List<Article>> {
 			//			}
 			VAT vat = dataMap.getVats().iterator().next();
 			entity.setVat(new ArticleVat(vat));
+			
+			cell = row.getCell(21);
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			if (cell != null)
+			{
+				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+				entity.setMinStockQty(decimal!=null?decimal:BigDecimal.valueOf(10));
+			}
 
 			result.add(remoteService.create(entity));
 		}

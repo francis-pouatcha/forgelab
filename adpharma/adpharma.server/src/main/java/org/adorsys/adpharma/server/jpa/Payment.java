@@ -58,6 +58,10 @@ public class Payment implements Serializable
    @Column
    @Description("Payment_paymentNumber_description")
    private String paymentNumber;
+   
+   @Column
+   @Description("Payment_statementNumber_description")
+   private String statementNumber;
 
    @Temporal(TemporalType.TIMESTAMP)
    @Description("Payment_paymentDate_description")
@@ -328,4 +332,14 @@ public class Payment implements Serializable
    {
       this.paymentItems = paymentItems;
    }
+
+public String getStatementNumber() {
+	return statementNumber;
+}
+
+public void setStatementNumber(String statementNumber) {
+	this.statementNumber = statementNumber;
+}
+   
+   
 }

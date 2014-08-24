@@ -11,14 +11,16 @@
 			<children>
 				<Button fx:id="createButton" mnemonicParsing="false" prefWidth="140.0" text="Nouveau">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
 				<Button fx:id="editButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Modifier">
 					<VBox.margin>
-						<Insets bottom="10.0" />
+						<Insets />
 					</VBox.margin>
 				</Button>
+<Button fx:id="removeButton" layoutX="23.0" layoutY="127.0" mnemonicParsing="false" prefWidth="140.0" text="Suprimer" />
+				<Button fx:id="unpayButton" layoutX="23.0" layoutY="106.0" mnemonicParsing="false" prefWidth="140.0" text="Etat Impayer" />
 				<Pane fx:id="rigthpane" prefHeight="219.0" prefWidth="165.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
 					<VBox.margin>
 						<Insets left="5.0" />

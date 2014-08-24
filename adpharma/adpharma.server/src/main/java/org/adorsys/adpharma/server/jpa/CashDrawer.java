@@ -44,6 +44,8 @@ public class CashDrawer implements Serializable
 	@Version
 	@Column(name = "version")
 	private int version = 0;
+	
+	private  BigDecimal amountDiscount = BigDecimal.ZERO ;
 
 	@Column
 	@Description("CashDrawer_cashDrawerNumber_description")
@@ -349,6 +351,12 @@ public class CashDrawer implements Serializable
 	
 	
 
+	public BigDecimal getAmountDiscount() {
+		return amountDiscount;
+	}
+	public void setAmountDiscount(BigDecimal amountDiscount) {
+		this.amountDiscount = amountDiscount;
+	}
 	public BigDecimal getTotalDrugVoucher() {
 		return totalDrugVoucher;
 	}

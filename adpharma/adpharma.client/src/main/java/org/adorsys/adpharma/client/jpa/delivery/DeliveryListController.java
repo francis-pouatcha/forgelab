@@ -39,6 +39,7 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.exception.DRException;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
@@ -142,6 +143,9 @@ public class DeliveryListController implements EntityController
 	@Inject
 	@PrintRequestedEvent
 	private Event<DeliveryId> printRequestedEvent;
+	
+	@Inject
+	private SecurityUtil securityUtil ;
 
 
 	@PostConstruct
@@ -551,9 +555,13 @@ public class DeliveryListController implements EntityController
 		cell.setCellValue("fournisseur");
 		
 		cell = header.createCell(cellnum++);
+		cell.setCellValue("site");
+		
+		cell = header.createCell(cellnum++);
 		cell.setCellValue("date");
 
 		if( selectedItem!=null&&sheet!=null){
+			String agencyName = securityUtil.getAgency().getName();
 			Iterator<DeliveryItem> iterator = listView.getDataListItem().getItems().iterator();
 			List<DeliveryItem> items = Lists.newArrayList(iterator);
 			for (DeliveryItem item : items) {
@@ -576,6 +584,10 @@ public class DeliveryListController implements EntityController
 
 					cell = row.createCell(cellnum++);
 					cell.setCellValue(supllierName);
+					
+					cell = row.createCell(cellnum++);
+					cell.setCellValue(agencyName);
+					
 					if(item.getCreationDate()!=null){
 					cell = row.createCell(cellnum++);
 					cell.setCellValue(DateHelper.format(item.getCreationDate().getTime(),"ddMMyy"));

@@ -37,7 +37,7 @@ public class CustomerLoader extends Service<List<Customer>> {
 
 	@Inject
 	private CustomerService remoteService;
-	
+
 	private HSSFWorkbook workbook;
 	private DataMap dataMap;
 
@@ -64,18 +64,18 @@ public class CustomerLoader extends Service<List<Customer>> {
 	private List<Customer> loadAgencies() {
 		List<Customer> result = new ArrayList<Customer>();
 		result.addAll(remoteService.listAll().getResultList());
-		
+
 		HSSFSheet sheet = workbook.getSheet("Customer");
 		if(sheet==null){
 			return result;
 		}
-		
+
 		Platform.runLater(new Runnable(){@Override public void run() {progressLabel.setText(progressText);}});
 
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		rowIterator.next();
 		rowIterator.next();
-		
+
 		while (rowIterator.hasNext()) {
 			Row row = rowIterator.next();
 			Customer entity = new Customer();
@@ -90,148 +90,148 @@ public class CustomerLoader extends Service<List<Customer>> {
 			CustomerSearchInput searchInput = new CustomerSearchInput();
 			searchInput.setEntity(entity);
 			searchInput.getFieldNames().add("serialNumber");
-			
+
 			CustomerSearchResult found = remoteService.findBy(searchInput);
 			if (!found.getResultList().isEmpty()){
-//				result.add(found.getResultList().iterator().next());
+				//				result.add(found.getResultList().iterator().next());
 				continue;
 			}
 
 			cell = row.getCell(1);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setGender(Gender.valueOf(cell.getStringCellValue().trim()));
-			
+
 			cell = row.getCell(2);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setFirstName(cell.getStringCellValue().trim());
 
 			cell = row.getCell(3);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
 				entity.setLastName(cell.getStringCellValue().trim());
-				
-			}else {
+
+			}
+
+			if(StringUtils.isBlank(entity.getLastName()))
 				entity.setLastName(".");
-			}
+			//			cell = row.getCell(4);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+			//				entity.setFullName(cell.getStringCellValue().trim());
+			//				
+			//			}else {
+			//				entity.setFullName(".);
+			//			}
+			entity.setFullName( entity.getFirstName()+" "+entity.getLastName());
 
-			cell = row.getCell(4);
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-				entity.setFullName(cell.getStringCellValue().trim());
-				
-			}else {
-				entity.setFullName(".");
-			}
+			//			cell = row.getCell(5);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//			{
+			//				String date = cell.getStringCellValue().trim();
+			//				Date parseDate;
+			//				try {
+			//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
+			//				} catch (ParseException e) {
+			//					throw new IllegalStateException(e);
+			//				}
+			//				Calendar calendar = Calendar.getInstance();
+			//				calendar.setTime(parseDate);
+			//				entity.setBirthDate(calendar);
+			//			}
 
-//			cell = row.getCell(5);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//			{
-//				String date = cell.getStringCellValue().trim();
-//				Date parseDate;
-//				try {
-//					parseDate = DateUtils.parseDate(date, "dd-MM-yyyy");
-//				} catch (ParseException e) {
-//					throw new IllegalStateException(e);
-//				}
-//				Calendar calendar = Calendar.getInstance();
-//				calendar.setTime(parseDate);
-//				entity.setBirthDate(calendar);
-//			}
+			//			cell = row.getCell(6);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//				entity.setLandLinePhone(cell.getStringCellValue().trim());
 
-//			cell = row.getCell(6);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//				entity.setLandLinePhone(cell.getStringCellValue().trim());
+			//			cell = row.getCell(7);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//				entity.setMobile(cell.getStringCellValue().trim());
 
-//			cell = row.getCell(7);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//				entity.setMobile(cell.getStringCellValue().trim());
+			//			cell = row.getCell(8);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//				entity.setFax(cell.getStringCellValue().trim());
+			//			
+			//			cell = row.getCell(9);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//				entity.setEmail(cell.getStringCellValue().trim());
 
-//			cell = row.getCell(8);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//				entity.setFax(cell.getStringCellValue().trim());
-//			
-//			cell = row.getCell(9);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//				entity.setEmail(cell.getStringCellValue().trim());
+			//			cell = row.getCell(10);
+			//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			//			if (cell != null)
+			//				entity.setCreditAuthorized(1==cell.getNumericCellValue());
+			//
+			//			cell = row.getCell(11);
+			//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			//			if (cell != null)
+			//				entity.setDiscountAuthorized(1==cell.getNumericCellValue());
+			//
+			//			cell = row.getCell(12);
+			//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			//			if (cell != null)
+			//			{
+			//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+			//				entity.setTotalCreditLine(decimal);
+			//			}
 
-//			cell = row.getCell(10);
-//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-//			if (cell != null)
-//				entity.setCreditAuthorized(1==cell.getNumericCellValue());
-//
-//			cell = row.getCell(11);
-//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-//			if (cell != null)
-//				entity.setDiscountAuthorized(1==cell.getNumericCellValue());
-//
-//			cell = row.getCell(12);
-//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-//			if (cell != null)
-//			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-//				entity.setTotalCreditLine(decimal);
-//			}
+						cell = row.getCell(13);
+						if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+							cell.setCellType(Cell.CELL_TYPE_STRING);
+							String employerName = cell.getStringCellValue().toUpperCase();
+							entity.setSociete(employerName);
+						}
+			//				List<Employer> employers = dataMap.getEmployers();
+			//				Employer employer = null;
+			//				for (Employer e : employers) {
+			//					if(employerName.equals(e.getName())){
+			//						employer = e;
+			//						break;
+			//					}
+			//				}
+			//
+			//				if(employer!=null){
+			//					entity.setEmployer(new CustomerEmployer(employer));
+			//				} else {
+			//					throw new IllegalStateException("No employer found with name: " + employerName);
+			//				}
+			//			}
 
-//			cell = row.getCell(13);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-//				String employerName = cell.getStringCellValue().trim();
-//				List<Employer> employers = dataMap.getEmployers();
-//				Employer employer = null;
-//				for (Employer e : employers) {
-//					if(employerName.equals(e.getName())){
-//						employer = e;
-//						break;
-//					}
-//				}
-//
-//				if(employer!=null){
-//					entity.setEmployer(new CustomerEmployer(employer));
-//				} else {
-//					throw new IllegalStateException("No employer found with name: " + employerName);
-//				}
-//			}
+			//			cell = row.getCell(14);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
+			//				String customerCategoryName = cell.getStringCellValue().trim();
+			//				List<CustomerCategory>customerCategories = dataMap.getCustomerCategories();
+			//				CustomerCategory customerCategory = null;
+			//				for (CustomerCategory c : customerCategories) {
+			//					if(customerCategoryName.equals(c.getName())){
+			//						customerCategory = c;
+			//						break;
+			//					}
+			//				}
+			//
+			//				if(customerCategory!=null){
+			//					entity.setCustomerCategory(new CustomerCustomerCategory(customerCategory));
+			//				} else {
+			//					throw new IllegalStateException("No customer category found with name: " + customerCategoryName);
+			//				}
+			//			}
 
-//			cell = row.getCell(14);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue())){
-//				String customerCategoryName = cell.getStringCellValue().trim();
-//				List<CustomerCategory>customerCategories = dataMap.getCustomerCategories();
-//				CustomerCategory customerCategory = null;
-//				for (CustomerCategory c : customerCategories) {
-//					if(customerCategoryName.equals(c.getName())){
-//						customerCategory = c;
-//						break;
-//					}
-//				}
-//
-//				if(customerCategory!=null){
-//					entity.setCustomerCategory(new CustomerCustomerCategory(customerCategory));
-//				} else {
-//					throw new IllegalStateException("No customer category found with name: " + customerCategoryName);
-//				}
-//			}
+			//			cell = row.getCell(15);
+			//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			//			if (cell != null)
+			//			{
+			//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
+			//				entity.setTotalDebt(decimal);
+			//			}
 
-//			cell = row.getCell(15);
-//			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-//			if (cell != null)
-//			{
-//				BigDecimal decimal = new BigDecimal(cell.getNumericCellValue());
-//				entity.setTotalDebt(decimal);
-//			}
+			//			cell = row.getCell(16);
+			//			cell.setCellType(Cell.CELL_TYPE_STRING);
+			//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
+			//				entity.setCustomerType(CustomerType.valueOf(cell.getStringCellValue().trim()));
 
-//			cell = row.getCell(16);
-//			cell.setCellType(Cell.CELL_TYPE_STRING);
-//			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
-//				entity.setCustomerType(CustomerType.valueOf(cell.getStringCellValue().trim()));
-			
 			result.add(remoteService.create(entity));
 		}
 		return result;

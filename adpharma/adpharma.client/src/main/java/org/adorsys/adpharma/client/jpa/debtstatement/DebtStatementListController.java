@@ -3,12 +3,14 @@ package org.adorsys.adpharma.client.jpa.debtstatement;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -40,6 +42,9 @@ import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtSta
 import org.adorsys.adpharma.client.jpa.debtstatementcustomerinvoiceassoc.DebtStatementCustomerInvoiceAssocSearchService;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchInput;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchResult;
+import org.adorsys.adpharma.client.jpa.payment.PaymentSearchService;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -70,6 +75,7 @@ import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 import com.google.common.collect.Lists;
+import com.lowagie.text.DocumentException;
 
 @Singleton
 public class DebtStatementListController implements EntityController
@@ -106,8 +112,6 @@ public class DebtStatementListController implements EntityController
 	@ModalEntitySearchRequestedEvent
 	private Event<CustomerSearchInput>  insurrerSearchRequestEvent;
 
-
-
 	@Inject
 	private DebtStatementSearchService searchService ;
 
@@ -138,6 +142,9 @@ public class DebtStatementListController implements EntityController
 	private Event<Object> hideProgressEvent ;
 
 	@Inject
+	private DebtStatementEditService debtStatementEditService;
+
+	@Inject
 	private DebtStatementCustomerInvoiceAssocSearchService statementCustomerInvoiceAssocSearchService ;
 
 	@Inject
@@ -148,6 +155,9 @@ public class DebtStatementListController implements EntityController
 
 	@Inject
 	private Locale locale ;
+	
+	@Inject
+	private PaymentSearchService  paymentSearchService;
 
 	@PostConstruct
 	public void postConstruct()
@@ -166,19 +176,94 @@ public class DebtStatementListController implements EntityController
 
 			}
 		});
-		
+
 		listView.getCashButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!=null){
-					debstatementPaymentCreateRequestEvent.fire(selectedItem);
-					
+					if(!selectedItem.getSettled()){
+						Action showConfirm = Dialogs.create().message("Confirmer l'operation").showConfirm();
+						if(Dialog.Actions.YES.equals(showConfirm)){
+							selectedItem.setWaitingForCash(Boolean.TRUE);
+							debtStatementEditService.setDebtStatement(selectedItem).start();
+						}
+
+					}else {
+						Dialogs.create().message("Selectionner un etat !").showError();
+					}
 				}else {
-					Dialogs.create().message("Selectionner un etat !").showError();
+					Dialogs.create().message("Etat Deja Solde").showInformation();
 				}
-				
+			}
+		});
+		debtStatementEditService.setOnFailed(callFailedEventHandler);
+
+		debtStatementEditService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DebtStatementEditService s = (DebtStatementEditService) event.getSource();
+				DebtStatement value = s.getValue();
+				event.consume();
+				s.reset();
+				handleEditDoneEvent(value);
+				Dialogs.create().message("Operation effectuee avec success !").showInformation();
+			}
+		});
+
+		listView.getCloseButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null&& !DocumentProcessingState.CLOSED.equals(selectedItem.getStatementStatus())){
+					Action showConfirm = Dialogs.create().message("Confirmer la cloture l'operation inverse est impossible").showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						selectedItem.setStatementStatus(DocumentProcessingState.CLOSED);
+						debtStatementEditService.setDebtStatement(selectedItem).start();
+					}
+				}
+
+			}
+		});
+
+		listView.getCashRepportButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+                   PaymentSearchInput paymentSearchInput = new PaymentSearchInput();
+                   paymentSearchInput.getEntity().setStatementNumber(selectedItem.getStatementNumber());
+                   paymentSearchInput.getFieldNames().add("statementNumber");
+                   paymentSearchInput.setMax(-1);
+                   paymentSearchService.setSearchInputs(paymentSearchInput).start();
+				}
+			}
+		});
+		paymentSearchService.setOnFailed(callFailedEventHandler);
+		paymentSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				PaymentSearchService s = (PaymentSearchService) event.getSource();
+				PaymentSearchResult value = s.getValue();
+				event.consume();
+				s.reset();
+				Login login = securityUtil.getConnectedUser();
+				try {
+					DebtstatementCashReportPrintTemplatePDF cashReportPrintTemplatePDF = new DebtstatementCashReportPrintTemplatePDF(selectedItem, login);
+				    cashReportPrintTemplatePDF.addItems(value.getResultList());
+				    cashReportPrintTemplatePDF.closeDocument();
+				    File file = new File(cashReportPrintTemplatePDF.getFileName()) ;
+				    Desktop.getDesktop().open(file);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -204,6 +289,8 @@ public class DebtStatementListController implements EntityController
 			}
 		});
 
+
+
 		listView.getDataList().getSelectionModel().selectedItemProperty()
 		.addListener(new ChangeListener<DebtStatement>()
 				{
@@ -214,6 +301,12 @@ public class DebtStatementListController implements EntityController
 			{
 				if (newValue != null){
 					listView.getRemoveButton().disableProperty().unbind();
+					listView.getCloseButton().disableProperty().unbind();
+					listView.getCashButton().disableProperty().unbind();
+					listView.getRemoveButton().disableProperty().bind(new SimpleBooleanProperty(!(BigDecimal.ZERO.compareTo(newValue.getAdvancePayment())==0)));
+					listView.getCashButton().disableProperty().bind(newValue.statementStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+					listView.getCloseButton().disableProperty().bind(newValue.statementStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+
 					DebtStatementCustomerInvoiceAssocSearchInput dbtsci = new DebtStatementCustomerInvoiceAssocSearchInput();
 					dbtsci.getEntity().setSource(newValue);
 					dbtsci.getFieldNames().add("source");
@@ -251,6 +344,7 @@ public class DebtStatementListController implements EntityController
 				listView.getDataListItem().getItems().remove(value.getTarget());
 			}
 		});
+
 		statementCustomerInvoiceAssocRemoveService.setOnFailed(callFailedEventHandler);
 
 		statementCustomerInvoiceAssocSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -277,6 +371,7 @@ public class DebtStatementListController implements EntityController
 				CustomerSearchInput searchInput = new CustomerSearchInput();
 				searchInput.setMax(-1);
 				insurrerSearchRequestEvent.fire(searchInput);
+				listView.getEmptyInsurrance().setSelected(false);
 			}
 		});
 

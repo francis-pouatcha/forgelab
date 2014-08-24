@@ -10,42 +10,54 @@ import org.adorsys.adpharma.client.jpa.debtstatement.DebtStatement;
 public class CustomerInvoiceSearchService extends Service<CustomerInvoiceSearchResult>
 {
 
-   @Inject
-   private CustomerInvoiceService remoteService;
+	@Inject
+	private CustomerInvoiceService remoteService;
 
-   private CustomerInvoiceSearchInput searchInputs;
-   
-   private DebtStatement source;
+	private CustomerInvoiceSearchInput searchInputs;
 
-   public CustomerInvoiceSearchService setSearchInputs(CustomerInvoiceSearchInput searchInputs)
-   {
-      this.searchInputs = searchInputs;
-      return this;
-   }
-   
-   public CustomerInvoiceSearchService setDebtStatement(DebtStatement source)
-   {
-      this.source = source;
-      return this;
-   }
+	private Boolean isForInsurer = Boolean.FALSE ;
 
-   @Override
-   protected Task<CustomerInvoiceSearchResult> createTask()
-   {
-      return new Task<CustomerInvoiceSearchResult>()
-      {
-         @Override
-         protected CustomerInvoiceSearchResult call() throws Exception
-         {
-            if (searchInputs != null){
-            	return remoteService.findByLike(searchInputs);
-            }
-            
-            if (source != null){
-            	return remoteService.findCustomerInvoiceBySource(source);
-            }
-               return null;
-         }
-      };
-   }
+	private DebtStatement source;
+
+	public CustomerInvoiceSearchService setSearchInputs(CustomerInvoiceSearchInput searchInputs)
+	{
+		this.searchInputs = searchInputs;
+		return this;
+	}
+
+	public CustomerInvoiceSearchService setIsForInsurer(Boolean isForInsurer)
+	{
+		this.isForInsurer = isForInsurer;
+		return this;
+	}
+
+	public CustomerInvoiceSearchService setDebtStatement(DebtStatement source)
+	{
+		this.source = source;
+		return this;
+	}
+
+	@Override
+	protected Task<CustomerInvoiceSearchResult> createTask()
+	{
+		return new Task<CustomerInvoiceSearchResult>()
+				{
+			@Override
+			protected CustomerInvoiceSearchResult call() throws Exception
+			{
+				if (searchInputs != null){
+					if(isForInsurer){
+						return remoteService.findUnpayInvoiceByInsurer(searchInputs);
+					}else {
+						return remoteService.findByLike(searchInputs);
+					}
+				}
+
+				if (source != null){
+					return remoteService.findCustomerInvoiceBySource(source);
+				}
+				return null;
+			}
+				};
+	}
 }

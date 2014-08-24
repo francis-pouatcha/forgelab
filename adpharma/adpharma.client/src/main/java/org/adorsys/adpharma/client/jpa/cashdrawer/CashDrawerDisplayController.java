@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
+import org.adorsys.adpharma.client.events.ProcessDebtstatementPayment;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSalesOrder;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
@@ -48,7 +49,9 @@ import org.adorsys.adpharma.client.jpa.disbursement.DisbursementAgency;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashDrawer;
 import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
+import org.adorsys.adpharma.client.jpa.payment.PaymentAgency;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -167,6 +170,10 @@ public class CashDrawerDisplayController implements EntityController
 	@Inject
 	@ComponentSelectionRequestEvent
 	private Event<ComponentSelectionRequestData> componentSelectionRequestEvent;
+	
+	@Inject
+	@ProcessDebtstatementPayment
+	private Event<Payment> debtstatementPaymentRequestEvent;
 
 	@Inject
 	@Bundle({ CrudKeys.class, CashDrawer.class, CustomerInvoice.class })
@@ -253,6 +260,18 @@ public class CashDrawerDisplayController implements EntityController
 
 				}
 
+			}
+		});
+		
+		displayView.getDebtStatementButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				Login connectedUser = securityUtil.getConnectedUser();
+				Payment payment = new Payment();
+				payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));
+				payment.setCashier(new PaymentCashier(connectedUser));
+				debtstatementPaymentRequestEvent.fire(payment);
 			}
 		});
 		

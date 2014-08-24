@@ -48,6 +48,8 @@ public class StockMovement implements Cloneable
 
    @Description("StockMovement_originatedDocNumber_description")
    private SimpleStringProperty originatedDocNumber;
+   @Description("StockMovement_raison_description")
+   private SimpleStringProperty raison;
    @Description("StockMovement_internalPic_description")
    private SimpleStringProperty internalPic;
    @Description("StockMovement_movementType_description")
@@ -121,6 +123,25 @@ public class StockMovement implements Cloneable
    public final void setOriginatedDocNumber(String originatedDocNumber)
    {
       this.originatedDocNumberProperty().set(originatedDocNumber);
+   }
+   
+   public SimpleStringProperty raisonProperty()
+   {
+      if (raison == null)
+      {
+    	  raison = new SimpleStringProperty();
+      }
+      return raison;
+   }
+
+   public String getRaison()
+   {
+      return raisonProperty().get();
+   }
+
+   public final void setRaison(String raison)
+   {
+      this.raisonProperty().set(raison);
    }
 
    public SimpleStringProperty internalPicProperty()

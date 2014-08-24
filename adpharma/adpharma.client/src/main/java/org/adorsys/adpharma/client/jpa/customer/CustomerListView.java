@@ -58,6 +58,12 @@ public class CustomerListView
 
 	@FXML
 	private Button editButton;
+	
+	@FXML
+	private Button removeButton ;
+
+	@FXML
+	private Button unpayButton ;
 
 	@FXML
 	HBox searchBar;
@@ -93,11 +99,11 @@ public class CustomerListView
 		ViewBuilderUtils.newStringColumn(dataList, "fullName", "Customer_fullName_description.title", resourceBundle,300d);
 		//		viewBuilder.addDateColumn(dataList, "birthDate", "Customer_birthDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addStringColumn(dataList, "mobile", "Customer_mobile_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "serialNumber", "Customer_serialNumber_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "societe", "Customer_societe_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "email", "Customer_email_description.title", resourceBundle);
-		viewBuilder.addStringColumn(dataList, "societe", "Customer_societe_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "serialNumber", "Customer_serialNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "customerCategory", "Customer_customerCategory_description.title", resourceBundle);
-//		viewBuilder.addStringColumn(dataList, "totalDebt", "Customer_totalDebt_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataList, "totalDebt", "Customer_totalDebt_description.title", resourceBundle);
 
 		// Field not displayed in table
 		// Field not displayed in table
@@ -172,6 +178,22 @@ public class CustomerListView
 	public Pagination getPagination()
 	{
 		return pagination;
+	}
+
+	public Button getUnpayButton() {
+		return unpayButton;
+	}
+
+	public Button getRemoveButton() {
+		return removeButton;
+	}
+
+	public void setRemoveButton(Button removeButton) {
+		this.removeButton = removeButton;
+	}
+
+	public void setUnpayButton(Button unpayButton) {
+		this.unpayButton = unpayButton;
 	}
 
 }

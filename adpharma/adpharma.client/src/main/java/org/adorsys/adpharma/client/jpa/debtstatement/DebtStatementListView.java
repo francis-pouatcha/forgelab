@@ -3,9 +3,12 @@ package org.adorsys.adpharma.client.jpa.debtstatement;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
@@ -46,6 +49,8 @@ public class DebtStatementListView
 	private TextField procurementOrderNumber ;
 
 	private ComboBox<DebtStatementInsurrance> insurrance ;
+	
+	private CheckBox emptyInsurrance ;
 
 	private ComboBox<DocumentProcessingState> state ;
 
@@ -69,6 +74,12 @@ public class DebtStatementListView
 	
 	@FXML
 	private Button cashButton ;
+	
+	@FXML
+	private Button closeButton ;
+	
+	@FXML
+	private Button cashRepportButton ;
 	
 	@FXML
 	private Button removeInvoiceButton ;
@@ -116,13 +127,14 @@ public class DebtStatementListView
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "statementNumber", "DebtStatement_statementNumber_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "insurrance", "DebtStatement_insurrance_description.title", resourceBundle,300d);
-		viewBuilder.addStringColumn(dataList, "agency", "DebtStatement_agency_description.title", resourceBundle);
-		viewBuilder.addDateColumn(dataList, "paymentDate", "DebtStatement_paymentDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addStringColumn(dataList, "waitingForCash", "DebtStatement_waitingForCash_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "statementStatus", "DebtStatement_statementStatus_description.title", resourceBundle);
+				viewBuilder.addDateColumn(dataList, "paymentDate", "DebtStatement_paymentDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "initialAmount", "DebtStatement_initialAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "advancePayment", "DebtStatement_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "restAmount", "DebtStatement_restAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
-		viewBuilder.addBigDecimalColumn(dataList, "amountFromVouchers", "DebtStatement_amountFromVouchers_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "restAmount", "DebtStatement_restAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
 		// Field not displayed in table
 		//		pagination = viewBuilder.addPagination();
@@ -142,12 +154,23 @@ public class DebtStatementListView
 		//		viewBuilder.addStringColumn(dataListItem, "creatingUser", "CustomerInvoice_creatingUser_description.title", resourceBundle);
 		//		viewBuilder.addStringColumn(dataListItem, "salesOrder", "CustomerInvoice_salesOrder_description.title", resourceBundle);
 		viewBuilder.addBigDecimalColumn(dataListItem, "netToPay", "CustomerInvoice_netToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addBigDecimalColumn(dataListItem, "customerRestTopay", "CustomerInvoice_customerRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "insurranceRestTopay", "CustomerInvoice_insurranceRestTopay_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		viewBuilder.addBigDecimalColumn(dataListItem, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataListItem, "advancePayment", "CustomerInvoice_advancePayment_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "totalRestToPay", "CustomerInvoice_totalRestToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		buildsearchBar();
 		ComboBoxInitializer.initialize(state, documentProcessingStateConverter, statusListCellFatory, statusBundle);
+		emptyInsurrance.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue){
+					insurrance.setValue(null);
+				}
+				
+			}
+		});
 
 	}
 
@@ -160,6 +183,8 @@ public class DebtStatementListView
 		insurrance.setPromptText("Tous les Assurreurs");
 		insurrance.setPrefHeight(40d);
 		insurrance.setPrefWidth(300d);
+		emptyInsurrance = ViewBuilderUtils.newCheckBox("Vider ", "empty", resourceBundle, false);
+		emptyInsurrance.setText("vider l'assureur");
 
 		state = ViewBuilderUtils.newComboBox(null, "poStatus", resourceBundle, DocumentProcessingState.valuesWithNull(), false);
 		state.setPromptText("Status");
@@ -167,7 +192,7 @@ public class DebtStatementListView
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(procurementOrderNumber,insurrance,state,searchButton);
+		searchBar.getChildren().addAll(procurementOrderNumber,insurrance,emptyInsurrance,state,searchButton);
 	}
 
 	public void bind(DebtStatementSearchInput searchInput)
@@ -260,6 +285,26 @@ public class DebtStatementListView
 
 	public FXMLLoader getFxmlLoader() {
 		return fxmlLoader;
+	}
+
+	public Button getCloseButton() {
+		return closeButton;
+	}
+
+	public Button getCashRepportButton() {
+		return cashRepportButton;
+	}
+
+	public ResourceBundle getStatusBundle() {
+		return statusBundle;
+	}
+
+	public DocumentProcessingStateListCellFatory getStatusListCellFatory() {
+		return statusListCellFatory;
+	}
+
+	public CheckBox getEmptyInsurrance() {
+		return emptyInsurrance;
 	}
 
 

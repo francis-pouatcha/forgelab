@@ -1,58 +1,34 @@
 package org.adorsys.adpharma.server.jpa;
 
-import javax.persistence.Entity;
-
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Id;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Version;
-
-import java.lang.Override;
-
-import org.adorsys.javaext.description.Description;
-import org.adorsys.adpharma.server.jpa.InvoiceType;
-
-import javax.persistence.Enumerated;
-
-import org.adorsys.javaext.list.ListField;
-import org.adorsys.javaext.display.ToStringField;
-
-import java.util.Date;
-
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.adorsys.javaext.format.DateFormatPattern;
-import org.adorsys.adpharma.server.jpa.Customer;
-
-import javax.persistence.ManyToOne;
-
-import org.adorsys.javaext.display.Association;
-import org.adorsys.javaext.display.SelectionMode;
-import org.adorsys.javaext.display.AssociationType;
-
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
-import org.adorsys.adpharma.server.jpa.Insurrance;
-import org.adorsys.adpharma.server.jpa.Login;
-import org.adorsys.adpharma.server.jpa.Agency;
-import org.adorsys.adpharma.server.jpa.SalesOrder;
-
-import java.math.BigDecimal;
-
+import org.adorsys.javaext.description.Description;
+import org.adorsys.javaext.display.Association;
+import org.adorsys.javaext.display.AssociationType;
+import org.adorsys.javaext.display.SelectionMode;
+import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
-import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
-
-import java.util.Set;
-import java.util.HashSet;
-
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
-
+import org.adorsys.javaext.list.ListField;
 import org.adorsys.javaext.relation.Relationship;
 import org.adorsys.javaext.relation.RelationshipEnd;
 

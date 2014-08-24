@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,21 +31,18 @@ import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceByAgencySearchService;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceListPrintTemplatePdf;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoicePrintTemplate;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
-import org.adorsys.adpharma.client.jpa.customerinvoice.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderReportPrintTemplate;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
-import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
 
 import com.lowagie.text.DocumentException;
@@ -71,7 +69,15 @@ public class ModalStockValueSearchController {
 
 	@Inject
 	private SectionSearchService sectionSearchService;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressionRequestEvent ;
 
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressionRequestEvent ;
+	
 	private StockValuRepportTemplatePdf stockValuRepportTemplatePdf ;
 
 	@Inject
@@ -85,6 +91,7 @@ public class ModalStockValueSearchController {
 	@PostConstruct
 	public void postContruct(){
 		view.bind(searchInput);
+		view.getSaveButton().disableProperty().bind(searchService.runningProperty());
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -109,15 +116,10 @@ public class ModalStockValueSearchController {
 				Set<ConstraintViolation<ArticleSearchInput>> violations = view.getView().validate(searchInput);
 				if (violations.isEmpty())
 				{
-					if(view.getView().getGroupByArticle().isSelected()){
-						// TODO write service here 
-					}else {
 						searchService.setStockValue(Boolean.TRUE);
-						System.out.println(searchInput.getEntity().getAgency()+" agence");
-						System.out.println(searchInput.getEntity().getSection()+" section ");
 						searchInput.setMax(-1);
 						searchService.setSearchInputs(searchInput).start();
-					}
+						showProgressionRequestEvent.fire(new Object());
 				}
 
 			}
@@ -126,6 +128,7 @@ public class ModalStockValueSearchController {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressionRequestEvent.fire(new Object());
 				StockValueSearchService s = (StockValueSearchService) event.getSource();
 				ArticleLotSearchResult cs = s.getValue();
 				event.consume();
@@ -140,6 +143,7 @@ public class ModalStockValueSearchController {
 					if(file.exists()) {
 						openFile(file);
 					} 
+					
 				} catch (DocumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

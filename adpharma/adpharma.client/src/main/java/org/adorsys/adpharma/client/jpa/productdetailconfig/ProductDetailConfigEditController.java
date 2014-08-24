@@ -31,6 +31,8 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class ProductDetailConfigEditController implements EntityController
@@ -94,7 +96,15 @@ public class ProductDetailConfigEditController implements EntityController
                   Set<ConstraintViolation<ProductDetailConfig>> violations = editView.getView().validate(displayedEntity);
                   if (violations.isEmpty())
                   {
-                     editService.setProductDetailConfig(displayedEntity).start();
+                	  String source = displayedEntity.getSource().getPic();
+                	  String target = displayedEntity.getTarget().getPic();
+                	  if(StringUtils.equals(source, target)){
+                		  Dialogs.create().message("Impossible de sauvegarder la source ne peu etre egal a la cible").showError() ;
+                		  return ;
+                		  
+                	  }else {
+                		  editService.setProductDetailConfig(displayedEntity).start();
+					}
                   }
                   else
                   {

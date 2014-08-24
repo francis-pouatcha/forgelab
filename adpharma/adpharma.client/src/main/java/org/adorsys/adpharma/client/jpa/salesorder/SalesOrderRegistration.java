@@ -97,7 +97,7 @@ public class SalesOrderRegistration extends DomainComponentRegistration
 	}
 	
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())||roles.contains(AccessRoleEnum.PERIODICAL_SALES_REPPORT_PERM.name())){
 			salesMenuItemAddEvent.fire(new ReportMenuItem(salesReportMenuItem));
 		}else {
 			salesMenuItemRemoveEvent.fire(new ReportMenuItem(salesReportMenuItem));

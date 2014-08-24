@@ -28,6 +28,7 @@ import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.repo.InventoryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -224,6 +225,8 @@ public class InventoryEJB
 
 		return sales;
 	}
+	@Inject
+	private ApplicationConfiguration applicationConfiguration;
 
 	public Inventory initInventory(Inventory inventory,Login user){
 		List<ArticleLot> lotForInventory = lotForInventory(inventory);
@@ -243,20 +246,30 @@ public class InventoryEJB
 
 
 	public List<ArticleLot> lotForInventory(Inventory inventory){
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		List<ArticleLot> lotForInventorys = new ArrayList<ArticleLot>();
 		if(inventory.getCreateEmpty())
 			return lotForInventorys;
-		String query ="SELECT c FROM ArticleLot AS c ORDER BY c.article.articleName  ";
+		String query ="SELECT c FROM ArticleLot AS c WHERE c.id IS NOT NULL ";
+		
 		Section section = inventory.getSection();
 
 		if(section!=null && section.getId()!=null)
-			query ="SELECT c FROM ArticleLot AS c WHERE c.article.section = :section ORDER BY c.article.articleName  "; 
+			query ="SELECT c FROM ArticleLot AS c WHERE c.article.section = :section  "; 
+		
+		if(isManagedLot)
+			query =query+ " AND c.stockQuantity != :stockQuantity  ";
+		query = query+ " ORDER BY c.article.articleName  ";
 
 		Query querys = em.createQuery(query,ArticleLot.class) ;
 
 		if(section!=null && section.getId()!=null)
 			querys.setParameter("section",section);
 
+		if(isManagedLot)
+			querys.setParameter("stockQuantity",BigDecimal.ZERO);
+		
 		lotForInventorys = querys.getResultList();
 
 		return lotForInventorys ;

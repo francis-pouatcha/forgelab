@@ -73,7 +73,9 @@ public class ModalPaymentSearchView extends ApplicationModal{
 	public void onPostConstruct(){
 		FXMLLoaderUtils.load(fxmlLoader, this,resourceBundle);
 		ViewBuilder viewBuilder = new ViewBuilder();
-		viewBuilder.addStringColumn(dataList, "paymentNumber", "Payment_paymentNumber_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataList, "paymentNumber", "Payment_paymentNumber_description.title", resourceBundle,150d);
+		viewBuilder.addStringColumn(dataList, "statementNumber", "Payment_statementNumber_description.title", resourceBundle,150d);
+
 		viewBuilder.addEnumColumn(dataList, "paymentMode", "Payment_paymentMode_description.title", resourceBundle, paymentModeConverter);
 		viewBuilder.addStringColumn(dataList, "cashier", "Payment_cashier_description.title", resourceBundle,200d);
 		viewBuilder.addBigDecimalColumn(dataList, "amount", "Payment_amount_description.title", resourceBundle, NumberType.CURRENCY, locale);

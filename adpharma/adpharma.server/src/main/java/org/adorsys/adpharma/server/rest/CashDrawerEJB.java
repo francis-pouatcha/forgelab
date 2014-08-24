@@ -127,7 +127,7 @@ public class CashDrawerEJB
 		return entity;
 	}
 
-	public void processPaymentClosed(@Observes @DocumentClosedEvent Payment payment){
+	public void processPaymentClosed(@Observes @DocumentClosedEvent  Payment payment){
 		CashDrawer cashDrawer = payment.getCashDrawer();
 		Set<PaymentItem> paymentItems = payment.getPaymentItems();
 		BigDecimal amount = payment.getAmount();
@@ -157,7 +157,7 @@ public class CashDrawerEJB
 		}
 		update(cashDrawer);
 	}
-	
+
 	public void processDisbursment(@Observes @DocumentProcessedEvent Disbursement disbursement){
 		CashDrawer cashDrawer = disbursement.getCashDrawer();
 		BigDecimal amount = disbursement.getAmount();
@@ -204,7 +204,7 @@ public class CashDrawerEJB
 
 	@Inject
 	private SalesOrderRepository salesOrderRepository ;
-	
+
 	@Inject
 	private SalesOrderItemRepository salesOrderItemRepository ;
 
@@ -215,9 +215,14 @@ public class CashDrawerEJB
 			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer);
 			if(totalDrugVoucher!=null)
 				cashDrawer.setTotalDrugVoucher(totalDrugVoucher);
+			
 			BigDecimal purchasePriceValue = salesOrderItemRepository.getPurchasePriceValueByCashdrawer(cashDrawer,Boolean.TRUE);
 			if(purchasePriceValue!=null)
 				cashDrawer.setTotalCompanyVoucher(purchasePriceValue);
+
+			BigDecimal amountDiscount = salesOrderRepository.getDiscountByCashdrawer(cashDrawer,Boolean.TRUE);
+			if(amountDiscount!=null)
+				cashDrawer.setAmountDiscount(amountDiscount);
 		}
 
 		return cashDrawers ;

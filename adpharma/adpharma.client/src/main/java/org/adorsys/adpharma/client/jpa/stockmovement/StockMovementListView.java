@@ -90,6 +90,8 @@ public class StockMovementListView
 		ViewBuilderUtils.newStringColumn(dataList, "article", "StockMovement_article_description.title", resourceBundle,300d);
 		viewBuilder.addBigDecimalColumn(dataList, "movedQty", "StockMovement_movedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addEnumColumn(dataList, "movementType", "StockMovement_movementType_description.title", resourceBundle, stockMovementTypeConverter);
+		ViewBuilderUtils.newStringColumn(dataList, "raison", "StockMovement_raison_description.title", resourceBundle,150d);
+
 		ViewBuilderUtils.newStringColumn(dataList, "creatingUser", "StockMovement_creatingUser_description.title", resourceBundle,150d);
 		viewBuilder.addDateColumn(dataList, "creationDate", "StockMovement_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addEnumColumn(dataList, "movementOrigin", "StockMovement_movementOrigin_description.title", resourceBundle, stockMovementTerminalConverter);

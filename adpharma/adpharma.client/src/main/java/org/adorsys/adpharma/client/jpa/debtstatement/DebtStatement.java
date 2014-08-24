@@ -58,6 +58,8 @@ public class DebtStatement implements Cloneable
 	private SimpleBooleanProperty canceled;
 	@Description("DebtStatement_useVoucher_description")
 	private SimpleBooleanProperty useVoucher;
+	@Description("DebtStatement_waitingForCash_description")
+	private SimpleBooleanProperty waitingForCash ;
 	@Description("DebtStatement_initialAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> initialAmount;
@@ -231,6 +233,27 @@ public class DebtStatement implements Cloneable
 		if (useVoucher == null)
 			useVoucher = Boolean.FALSE;
 		this.useVoucherProperty().set(useVoucher);
+	}
+	
+	public SimpleBooleanProperty waitingForCashProperty()
+	{
+		if (waitingForCash == null)
+		{
+			waitingForCash = new SimpleBooleanProperty();
+		}
+		return waitingForCash;
+	}
+
+	public Boolean getWaitingForCash()
+	{
+		return waitingForCashProperty().get();
+	}
+
+	public final void setWaitingForCash(Boolean waitingForCash)
+	{
+		if (waitingForCash == null)
+			waitingForCash = Boolean.FALSE;
+		this.waitingForCashProperty().set(waitingForCash);
 	}
 
 	public SimpleObjectProperty<BigDecimal> initialAmountProperty()

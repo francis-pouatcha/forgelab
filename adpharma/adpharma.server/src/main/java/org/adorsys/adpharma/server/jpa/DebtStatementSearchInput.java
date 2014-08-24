@@ -18,12 +18,12 @@ public class DebtStatementSearchInput
    /**
     * The entity holding search inputs.
     */
-   private DebtStatement entity;
+   private DebtStatement entity = new DebtStatement();
 
    /**
     * The start cursor
     */
-   private int start = -1;
+   private int start = 0;
 
    /**
     * The max number of records to return.

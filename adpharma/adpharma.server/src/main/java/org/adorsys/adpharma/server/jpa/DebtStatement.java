@@ -88,22 +88,22 @@ public class DebtStatement implements Serializable
 	@Column
 	@Description("DebtStatement_initialAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal initialAmount;
+	private BigDecimal initialAmount = BigDecimal.ZERO;;
 
 	@Column
 	@Description("DebtStatement_advancePayment_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal advancePayment;
+	private BigDecimal advancePayment = BigDecimal.ZERO;
 
 	@Column
 	@Description("DebtStatement_payAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private transient BigDecimal payAmount;
+	private transient BigDecimal payAmount = BigDecimal.ZERO;
 
 	@Column
 	@Description("DebtStatement_restAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
-	private BigDecimal restAmount;
+	private BigDecimal restAmount = BigDecimal.ZERO;
 
 	@Column
 	@Description("DebtStatement_paymentMode_description")
@@ -112,7 +112,11 @@ public class DebtStatement implements Serializable
 
 	@Column
 	@Description("DebtStatement_settled_description")
-	private Boolean settled;
+	private Boolean settled = Boolean.FALSE;
+	
+	@Column
+	@Description("DebtStatement_waitingForCash_description")
+	private Boolean waitingForCash = Boolean.FALSE;
 
 	@Column
 	@Description("DebtStatement_amountFromVouchers_description")
@@ -121,11 +125,11 @@ public class DebtStatement implements Serializable
 
 	@Column
 	@Description("DebtStatement_canceled_description")
-	private Boolean canceled;
+	private Boolean canceled = Boolean.FALSE;
 
 	@Column
 	@Description("DebtStatement_useVoucher_description")
-	private Boolean useVoucher;
+	private Boolean useVoucher = Boolean.FALSE;
 
 	@OneToMany(mappedBy = "source", targetEntity = DebtStatementCustomerInvoiceAssoc.class)
 	@Relationship(end = RelationshipEnd.SOURCE, sourceEntity = DebtStatement.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices")
@@ -300,7 +304,13 @@ public class DebtStatement implements Serializable
 		this.useVoucher = useVoucher;
 	}
 
+	public Boolean getWaitingForCash() {
+		return waitingForCash;
+	}
 
+	public void setWaitingForCash(Boolean waitingForCash) {
+		this.waitingForCash = waitingForCash;
+	}
 
 	public DocumentProcessingState getStatementStatus() {
 		return statementStatus;

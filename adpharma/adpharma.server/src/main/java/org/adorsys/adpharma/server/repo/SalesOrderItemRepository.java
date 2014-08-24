@@ -16,5 +16,6 @@ public interface SalesOrderItemRepository extends EntityRepository<SalesOrderIte
 {
 	@Query("SELECT SUM(s.purchasePricePU * s.orderedQty) FROM SalesOrderItem AS s WHERE s.salesOrder.cashDrawer = ?1 AND s.salesOrder.cashed = ?2 ")
 	public  BigDecimal getPurchasePriceValueByCashdrawer(CashDrawer cashDrawer , Boolean casheed) ;
+	
 }
 

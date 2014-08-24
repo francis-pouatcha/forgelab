@@ -154,6 +154,9 @@ public class StockMovementEJB
 		sm.setFinalQty(articleLot.getStockQuantity());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.TRASH);
+		String raison = data.getRaison();
+		raison = raison+"";
+		sm.setRaison(raison.toUpperCase());
 		sm.setOriginatedDocNumber("....");
 		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(data.getQtyToMoved()));
 		if(articleLot.getSalesPricePU()!=null)
@@ -179,6 +182,7 @@ public class StockMovementEJB
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 		sm.setOriginatedDocNumber("DETAILS");
+		sm.setRaison("DETAIL");
 		sm.setTotalPurchasingPrice(lotToDetails.getPurchasePricePU().multiply(lotDetailsManager.getDetailsQty()));
 		if(lotToDetails.getSalesPricePU()!=null)
 			sm.setTotalSalesPrice(lotToDetails.getSalesPricePU().multiply(lotDetailsManager.getDetailsQty()));
@@ -198,6 +202,7 @@ public class StockMovementEJB
 		sm.setCreatingUser(creatingUser);
 		sm.setCreationDate(creationDate);
 		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setRaison("TRANSFERT");
 		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
 		sm.setFinalQty(articleLot.getStockQuantity());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
@@ -227,6 +232,7 @@ public class StockMovementEJB
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 		sm.setOriginatedDocNumber("TRANSFER");
+		sm.setRaison("TRANSFERT");
 		sm.setTotalPurchasingPrice(articleLot.getPurchasePricePU().multiply(lotTransferManager.getQtyToTransfer()));
 		if(articleLot.getSalesPricePU()!=null)
 			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
@@ -248,6 +254,7 @@ public class StockMovementEJB
 			sm.setCreatingUser(creatingUser);
 			sm.setCreationDate(creationDate);
 			sm.setInitialQty(BigDecimal.ZERO);
+			sm.setRaison("LIVRAISON");
 			sm.setMovedQty(deliveryItem.getStockQuantity());
 			sm.setFinalQty(deliveryItem.getStockQuantity());
 			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
@@ -279,6 +286,7 @@ public class StockMovementEJB
 			sm.setArticle(salesOrderItem.getArticle());
 			sm.setCreatingUser(creatingUser);
 			sm.setCreationDate(creationDate);
+			sm.setRaison("VENTE");
 			sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
 			BigDecimal releasedQty = salesOrderItem.getOrderedQty()==null?BigDecimal.ZERO:salesOrderItem.getOrderedQty();
 			BigDecimal returnedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
@@ -324,6 +332,7 @@ public class StockMovementEJB
 				sm.setArticle(salesOrderItem.getArticle());
 				sm.setCreatingUser(creatingUser);
 				sm.setCreationDate(creationDate);
+				sm.setRaison("RETOUR CLIENT");
 				sm.setInitialQty(BigDecimal.ZERO);//supposed to be qty in stock
 				BigDecimal movedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
 				sm.setMovedQty(movedQty);

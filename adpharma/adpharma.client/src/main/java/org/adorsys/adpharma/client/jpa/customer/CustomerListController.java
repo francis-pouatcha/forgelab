@@ -1,5 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customer;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +22,20 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchInput;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchResult;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchService;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderCustomer;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderRemoveService;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchService;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceListPrintTemplatePdf;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceTobePayedRepportPdf;
+import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
+import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -38,13 +45,20 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityListPageIndexChangedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.lowagie.text.DocumentException;
 
 @Singleton
 public class CustomerListController implements EntityController
@@ -66,6 +80,11 @@ public class CustomerListController implements EntityController
 	private Event<Customer> createRequestedEvent;
 
 	@Inject
+	@EntityRemoveRequestEvent
+	private Event<Customer> removeRequest;
+
+
+	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<CustomerSearchResult> entityListPageIndexChangedEvent;
 
@@ -85,7 +104,16 @@ public class CustomerListController implements EntityController
 	private CustomerSearchService  customerSearchService;
 
 	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService ;
+
+	@Inject
 	private CustomerSearchInput searchInput ;
+
+	@Inject
+	private SecurityUtil securityUtil ;
+
+	@Inject
+	private ServiceCallFailedEventHandler callFailedEventHandler;
 
 	@PostConstruct
 	public void postConstruct()
@@ -93,6 +121,26 @@ public class CustomerListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.bind(searchInput);
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
+
+			}
+		});
+
+		listView.getRemoveButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Customer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+                    	 removeRequest.fire(selectedItem);
+				}
+
+			}
+		});
 
 		//      listView.getDataList().getSelectionModel().selectedItemProperty()
 		//            .addListener(new ChangeListener<Customer>()
@@ -117,7 +165,46 @@ public class CustomerListController implements EntityController
 
 			}
 		});
+		listView.getUnpayButton().setOnAction(new EventHandler<ActionEvent>() {
 
+			@Override
+			public void handle(ActionEvent event) {
+				Customer selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					CustomerInvoiceSearchInput customerInvoiceSearchInput = new CustomerInvoiceSearchInput();
+					customerInvoiceSearchInput.getEntity().getInsurance().setInsurer(new InsurranceInsurer(selectedItem));
+					customerInvoiceSearchService.setSearchInputs(customerInvoiceSearchInput).setIsForInsurer(Boolean.TRUE).start();
+				}
+
+			}
+		});
+		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
+		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService s = (CustomerInvoiceSearchService) event.getSource();
+				CustomerInvoiceSearchResult searchResult = s.getValue();
+				event.consume();
+				s.reset();
+				List<CustomerInvoice> resultList = searchResult.getResultList() ;
+				Login connectedUser = securityUtil.getConnectedUser();
+				try {
+					String clientName = "" ;
+					if(!resultList.isEmpty())
+						clientName = resultList.iterator().next().getInsurance().getInsurer().getFullName() ;
+					CustomerInvoiceTobePayedRepportPdf customerInvoiceTobePayedRepportPdf = new CustomerInvoiceTobePayedRepportPdf(connectedUser, connectedUser.getAgency(),clientName);
+					customerInvoiceTobePayedRepportPdf.addItems(resultList);
+					customerInvoiceTobePayedRepportPdf.closeDocument();
+					File file = new File(customerInvoiceTobePayedRepportPdf.getFileName());
+					Desktop.getDesktop().open(file);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
 		customerCategorySearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override

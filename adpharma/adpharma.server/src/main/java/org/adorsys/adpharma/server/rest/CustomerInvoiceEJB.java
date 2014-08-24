@@ -116,6 +116,11 @@ public class CustomerInvoiceEJB {
 		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
 		return repository.save(save);
 	}
+	
+	public  List<CustomerInvoice> findUnpayInvoiceByInsurer(Customer insurer){
+		return repository.findUnpayInvoiceByCustomer(insurer, Boolean.TRUE, Boolean.FALSE, InvoiceType.CASHDRAWER);
+	}
+
 
 
 	@Inject

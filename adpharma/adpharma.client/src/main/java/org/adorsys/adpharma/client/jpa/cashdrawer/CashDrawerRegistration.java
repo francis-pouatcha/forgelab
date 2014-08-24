@@ -101,7 +101,7 @@ public class CashDrawerRegistration extends DomainComponentRegistration
    }
 
    public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-	   if(roles.contains(AccessRoleEnum.MANAGER.name())){
+	   if(roles.contains(AccessRoleEnum.MANAGER.name())||roles.contains(AccessRoleEnum.CASHDRAWER_REPPORT_PERM.name())){
 		   cashDrawerReportMenuItemAddEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));
 	   } else {
 		   cashDrawerReportMenuItemRemoveEvent.fire(new ReportMenuItem(cashDrawerReportMenuItem));

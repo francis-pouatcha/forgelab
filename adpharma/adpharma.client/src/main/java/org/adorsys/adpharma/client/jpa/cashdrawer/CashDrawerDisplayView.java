@@ -365,6 +365,10 @@ public class CashDrawerDisplayView
 	public Button getOpenCashDrawerButton(){
 		return openCashDrawerButton ;
 	}
+	
+	public Button getDebtStatementButton(){
+		return debtStatementButton ;
+	}
 
 	public Button getCloseCashDrawerButton(){
 		return closeCashDrawerButton ;

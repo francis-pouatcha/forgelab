@@ -90,6 +90,10 @@ public class StockMovement implements Serializable
 	@Column
 	@Description("StockMovement_originatedDocNumber_description")
 	private String originatedDocNumber;
+	
+	@Column
+	@Description("StockMovement_raison_description")
+	private String raison;
 
 	@ManyToOne
 	@Description("StockMovement_agency_description")
@@ -355,6 +359,14 @@ public class StockMovement implements Serializable
 	public void setInternalPic(final String internalPic)
 	{
 		this.internalPic = internalPic;
+	}
+
+	public String getRaison() {
+		return raison;
+	}
+
+	public void setRaison(String raison) {
+		this.raison = raison;
 	}
 
 	@Override

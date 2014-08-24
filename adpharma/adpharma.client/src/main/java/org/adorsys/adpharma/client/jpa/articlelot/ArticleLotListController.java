@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,10 +25,12 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
@@ -48,6 +51,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
@@ -493,5 +497,21 @@ public class ArticleLotListController implements EntityController
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.PUSH_ARTICLE_OUT_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+			listView.getMoveButton().setVisible(true);
+			listView.getMoveToWareHouseButton().setVisible(true);
+		}else {
+			listView.getMoveButton().setVisible(false);
+			listView.getMoveToWareHouseButton().setVisible(false);
+		}
+		if(roles.contains(AccessRoleEnum.TRANSFORM_ARTICLE_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+			listView.getDetailsButton().setVisible(true);
+		}else {
+			listView.getDetailsButton().setVisible(false);
+		}
+		
 	}
 }
