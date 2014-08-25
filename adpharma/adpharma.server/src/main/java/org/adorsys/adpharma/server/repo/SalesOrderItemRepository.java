@@ -9,6 +9,7 @@ import org.apache.deltaspike.data.api.Modifying;
 import org.apache.deltaspike.data.api.Query;
 import org.apache.deltaspike.data.api.Repository;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 
 @Repository(forEntity = SalesOrderItem.class)
@@ -16,6 +17,9 @@ public interface SalesOrderItemRepository extends EntityRepository<SalesOrderIte
 {
 	@Query("SELECT SUM(s.purchasePricePU * s.orderedQty) FROM SalesOrderItem AS s WHERE s.salesOrder.cashDrawer = ?1 AND s.salesOrder.cashed = ?2 ")
 	public  BigDecimal getPurchasePriceValueByCashdrawer(CashDrawer cashDrawer , Boolean casheed) ;
+	
+	@Query("SELECT c FROM SalesOrderItem as c WHERE c.recordDate BETWEEN ?1 AND ?2 AND c.salesOrder.cashed = ?3")
+	public List<SalesOrderItem> findPreparationDataItem(Date fromDate,Date toDate,Boolean cashed);
 	
 }
 

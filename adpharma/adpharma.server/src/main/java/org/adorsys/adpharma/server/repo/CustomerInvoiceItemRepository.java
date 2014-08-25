@@ -11,6 +11,6 @@ import org.apache.deltaspike.data.api.Repository;
 @Repository(forEntity = CustomerInvoiceItem.class)
 public interface CustomerInvoiceItemRepository extends EntityRepository<CustomerInvoiceItem, Long>
 {
-	@Query("SELECT c FROM CustomerInvoiceItem as c WHERE c.invoice.creationDate BETWEEN ?1 AND ?2 AND c.invoice.cashed = ?3")
+	@Query("SELECT c FROM CustomerInvoiceItem as c WHERE c.invoice.creationDate >= ?1 AND c.invoice.creationDate <= ?2 AND c.invoice.cashed = ?3")
 	public List<CustomerInvoiceItem> findPreparationDataItem(Date fromDate,Date toDate,Boolean cashed);
 }

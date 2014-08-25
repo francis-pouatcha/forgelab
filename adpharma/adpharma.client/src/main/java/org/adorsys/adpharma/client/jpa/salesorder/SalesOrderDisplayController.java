@@ -114,8 +114,8 @@ public class SalesOrderDisplayController implements EntityController
 	private SalesOrderDisplayView displayView;
 
 	private boolean  isCustomerSearch = false ;
-	
-	
+
+
 	@Inject 
 	@ModalEntitySearchRequestedEvent
 	private Event<ArticleSearchInput> modalArticleSearchEvent;
@@ -249,15 +249,15 @@ public class SalesOrderDisplayController implements EntityController
 				Dialogs.create().showException(exception);
 			}
 		});
-		
+
 		displayView.getFindArticleButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				ArticleSearchInput articleSearchInput = new ArticleSearchInput();
 				articleSearchInput.setMax(50);
 				modalArticleSearchEvent.fire(articleSearchInput);
-				
+
 			}
 		});
 
@@ -287,11 +287,11 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {
 				SalesOrderItem selectedItem = orderedQtyCell.getRowValue();
 				BigDecimal newValue = orderedQtyCell.getNewValue();
-//				if(newValue==null){
-//					// reset old value.
-//				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
-//					// delete article
-//				} 
+				//				if(newValue==null){
+				//					// reset old value.
+				//				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+				//					// delete article
+				//				} 
 				salesOrderItemRemoveService.setEntity(selectedItem).start();
 				//					else {
 				//					if(displayView.getOrderedQty().isEditable()){
@@ -467,7 +467,11 @@ public class SalesOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(!displayedEntity.getAlreadyReturned()){
-					orderReturnService.setEntity(displayedEntity).start();
+					if(canProcessReturn()){
+						orderReturnService.setEntity(displayedEntity).start();
+					}else {
+						Dialogs.create().message("La commande dois avoir au moins un article retourne").showInformation();
+					}
 				}else {
 					Dialogs.create().message("Cette commande a deja fais l'objet dun retour !").showInformation();
 				}
@@ -964,12 +968,12 @@ public class SalesOrderDisplayController implements EntityController
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
 		if(!displayView.getArticleName().isEditable()){
 			if(isValidSalesOrderItem())
-					if(isOldStock(model)){
-						handleAddSalesOrderItem(salesOrderItem);
-					}else {
-						Dialogs.create().message("Veuillez Saisir le plus ancien Merci pour votre comprehension ! ").showInformation();
-						PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-					}
+				if(isOldStock(model)){
+					handleAddSalesOrderItem(salesOrderItem);
+				}else {
+					Dialogs.create().message("Veuillez Saisir le plus ancien Merci pour votre comprehension ! ").showInformation();
+					PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
+				}
 			displayView.getInternalPic().requestFocus();
 		}else {
 			handleAddSalesOrderItem(salesOrderItem);
@@ -1190,7 +1194,7 @@ public class SalesOrderDisplayController implements EntityController
 		}else {
 			displayView.getArticleName().setEditable(false);
 		}
-		
+
 		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
 			displayView.getReturnSOIMenu().setVisible(true);
 			displayView.getSaveReturnButton().setVisible(true);
@@ -1199,7 +1203,18 @@ public class SalesOrderDisplayController implements EntityController
 			displayView.getSaveReturnButton().setVisible(false);
 		}
 	}
-
+	public boolean canProcessReturn(){
+		boolean canProcessReturn = false ;
+		Iterator<SalesOrderItem> items = displayView.getDataList().getItems().iterator();
+		while (items.hasNext()) {
+			SalesOrderItem salesOrderItem = (SalesOrderItem) items.next();
+			if(BigDecimal.ZERO.compareTo(salesOrderItem.getReturnedQty())<0){
+				canProcessReturn = true ;
+				break ;
+			}
+		}
+		return canProcessReturn  ;
+	}
 	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
 		PropertyReader.copy(new SalesOrder(), displayedEntity);
 		PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
