@@ -35,6 +35,7 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Singleton
 public class StockMovementListController implements EntityController
@@ -248,6 +249,11 @@ public class StockMovementListController implements EntityController
 				if(movementOrigin!=null)seachAttributes.add("movementOrigin");
 				if(movementDestination!=null)seachAttributes.add("movementDestination");
 				if(movementType!=null)seachAttributes.add("movementType");
+				String internalPic = searchInput.getEntity().getInternalPic();
+				if(StringUtils.isNotBlank(internalPic))seachAttributes.add("internalPic");
+				String raison = searchInput.getEntity().getRaison();
+				if(StringUtils.isNotBlank(raison))seachAttributes.add("raison");
+				
 		return seachAttributes;
 
 	}

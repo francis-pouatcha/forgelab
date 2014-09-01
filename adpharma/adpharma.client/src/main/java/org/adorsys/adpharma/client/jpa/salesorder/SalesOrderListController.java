@@ -691,6 +691,7 @@ public class SalesOrderListController implements EntityController
 		{
 			children.add(rootPane);
 		}
+		listView.getSalesOrderStatus().setValue(DocumentProcessingState.CLOSED);
 	}
 
 	@Override

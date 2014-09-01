@@ -114,7 +114,7 @@ public class StockMovementEndpoint
    @Consumes({ "application/json", "application/xml" })
    public StockMovementSearchResult findBy(StockMovementSearchInput searchInput)
    {
-      SingularAttribute<StockMovement, ?>[] attributes = readSeachAttributes(searchInput);
+      SingularAttribute<StockMovement, Object>[] attributes = readSeachAttributes(searchInput);
       Long count = ejb.countBy(searchInput.getEntity(), attributes);
       List<StockMovement> resultList = ejb.findBy(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
@@ -137,7 +137,7 @@ public class StockMovementEndpoint
    @Consumes({ "application/json", "application/xml" })
    public StockMovementSearchResult findByLike(StockMovementSearchInput searchInput)
    {
-      SingularAttribute<StockMovement, ?>[] attributes = readSeachAttributes(searchInput);
+      SingularAttribute<StockMovement, Object>[] attributes = readSeachAttributes(searchInput);
       Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
       List<StockMovement> resultList = ejb.findByLike(searchInput.getEntity(),
             searchInput.getStart(), searchInput.getMax(), attributes);
@@ -154,11 +154,11 @@ public class StockMovementEndpoint
       return ejb.countByLike(searchInput.getEntity(), attributes);
    }
    @SuppressWarnings("unchecked")
-   private SingularAttribute<StockMovement, ?>[] readSeachAttributes(
+   private SingularAttribute<StockMovement, Object>[] readSeachAttributes(
          StockMovementSearchInput searchInput)
    {
       List<String> fieldNames = searchInput.getFieldNames();
-      List<SingularAttribute<StockMovement, ?>> result = new ArrayList<SingularAttribute<StockMovement, ?>>();
+      List<SingularAttribute<StockMovement, Object>> result = new ArrayList<SingularAttribute<StockMovement, Object>>();
       for (String fieldName : fieldNames)
       {
          Field[] fields = StockMovement_.class.getFields();
@@ -168,7 +168,7 @@ public class StockMovementEndpoint
             {
                try
                {
-                  result.add((SingularAttribute<StockMovement, ?>) field.get(null));
+                  result.add((SingularAttribute<StockMovement, Object>) field.get(null));
                }
                catch (IllegalArgumentException e)
                {

@@ -121,6 +121,7 @@ public class PhmlOrderSender {
 		ProcurementOrderItemSearchInput searchInput = new ProcurementOrderItemSearchInput();
 		searchInput.getEntity().setProcurementOrder(new ProcurementOrderItemProcurementOrder(order));
 		searchInput.getFieldNames().add("procurementOrder");
+		searchInput.setMax(-1);
 		List<ProcurementOrderItem> items = itemService.findBy(searchInput).getResultList();
 
 		int index=1;

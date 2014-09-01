@@ -208,7 +208,8 @@ public class InventoryDisplayController implements EntityController
 		displayView.getImportXlsButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
-			public void handle(ActionEvent event) {FileChooser fileChooser = new FileChooser();
+			public void handle(ActionEvent event) {
+				FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Selection un fichier de resultat inventaire");
 			fileChooser.getExtensionFilters().add(new ExtensionFilter("Fichier Excel", "*.xls"));
 			String userDirName = System.getProperty("user.dir");

@@ -18,12 +18,10 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
-import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
@@ -32,10 +30,6 @@ import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
-
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-import com.oracle.jrockit.jfr.DataType;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 
 @Singleton

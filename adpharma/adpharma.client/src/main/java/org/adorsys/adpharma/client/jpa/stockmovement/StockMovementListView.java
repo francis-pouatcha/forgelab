@@ -20,12 +20,15 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminal;
 import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminalConverter;
+import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminalListCellFatory;
 import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementType;
 import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementTypeConverter;
+import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementTypeListCellFatory;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
+import org.adorsys.javafx.crud.extensions.view.ComboBoxInitializer;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
@@ -52,7 +55,8 @@ public class StockMovementListView
 
 	private ComboBox<StockMovementType> type ;
 
-	private TextField articleName ;
+	private TextField raison ;
+	private TextField cipm ;
 
 	@FXML
 	private TableView<StockMovement> dataList;
@@ -76,6 +80,21 @@ public class StockMovementListView
 
 	@Inject
 	private StockMovementTerminalConverter stockMovementTerminalConverter;
+	@Inject
+	private StockMovementTerminalListCellFatory movementDestinationListCellFatory;
+	@Inject
+	private StockMovementTerminalListCellFatory movementOriginListCellFatory;
+	@Inject
+	private StockMovementTypeListCellFatory movementTypeListCellFatory;
+	@Inject
+	@Bundle(StockMovementType.class)
+	private ResourceBundle movementTypeBundle;
+	@Inject
+	@Bundle(StockMovementTerminal.class)
+	private ResourceBundle movementDestinationBundle;
+	@Inject
+	@Bundle(StockMovementTerminal.class)
+	private ResourceBundle movementOriginBundle;
 
 	@Inject
 	FXMLLoader fxmlLoader;
@@ -96,12 +115,12 @@ public class StockMovementListView
 		viewBuilder.addDateColumn(dataList, "creationDate", "StockMovement_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addEnumColumn(dataList, "movementOrigin", "StockMovement_movementOrigin_description.title", resourceBundle, stockMovementTerminalConverter);
 		viewBuilder.addEnumColumn(dataList, "movementDestination", "StockMovement_movementDestination_description.title", resourceBundle, stockMovementTerminalConverter);
-//		viewBuilder.addStringColumn(dataList, "agency", "StockMovement_agency_description.title", resourceBundle);
+		//		viewBuilder.addStringColumn(dataList, "agency", "StockMovement_agency_description.title", resourceBundle);
 		//		viewBuilder.addBigDecimalColumn(dataList, "initialQty", "StockMovement_initialQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "finalQty", "StockMovement_finalQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasingPrice", "StockMovement_totalPurchasingPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasingPrice", "StockMovement_totalPurchasingPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "totalDiscount", "StockMovement_totalDiscount_description.title", resourceBundle, NumberType.CURRENCY, locale);
-//		viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "StockMovement_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(dataList, "totalSalesPrice", "StockMovement_totalSalesPrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//      pagination = viewBuilder.addPagination();
 		//      viewBuilder.addSeparator();
 
@@ -110,40 +129,51 @@ public class StockMovementListView
 		//      searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		//      rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
+
+		ComboBoxInitializer.initialize(type, stockMovementTypeConverter, movementTypeListCellFatory, movementTypeBundle);
+		ComboBoxInitializer.initialize(origin, stockMovementTerminalConverter, movementOriginListCellFatory, movementOriginBundle);
+		ComboBoxInitializer.initialize(destination, stockMovementTerminalConverter, movementDestinationListCellFatory, movementDestinationBundle);
+
 	}
 
 	public void buildsearchBar(){
 		origin =ViewBuilderUtils.newComboBox(null,"origin", resourceBundle,StockMovementTerminal.valuesWithNull(),false);
-		origin.setPromptText("ALL ORIGIN");
+		origin.setPromptText("ORIGINES");
 		origin.setPrefHeight(40d);
 		origin.setPrefWidth(150d);
 
 		destination =ViewBuilderUtils.newComboBox(null,"destination", resourceBundle,StockMovementTerminal.valuesWithNull(),false);
-		destination.setPromptText("ALL DESTINATION ");
+		destination.setPromptText("DESTINATIONS ");
 		destination.setPrefHeight(40d);
 		destination.setPrefWidth(165d);
 
-		articleName =ViewBuilderUtils.newTextField("articleName", false);
-		articleName.setPromptText("Article Name");
-		articleName.setPrefHeight(40d);
-		articleName.setPrefWidth(400d);
+		raison =ViewBuilderUtils.newTextField("raison", false);
+		raison.setPromptText("Raison");
+		raison.setPrefHeight(40d);
+		raison.setPrefWidth(200d);
+		
+		cipm =ViewBuilderUtils.newTextField("cipm", false);
+		cipm.setPromptText("CIPM");
+		cipm.setPrefHeight(40d);
+		cipm.setPrefWidth(150d);
 
 		type =ViewBuilderUtils.newComboBox(null,"ALL", resourceBundle,StockMovementType.valuesWithNull(),false);
-		type.setPromptText("ALL TYPE");
+		type.setPromptText("TYPES");
 		type.setPrefHeight(40d);
 		type.setPrefWidth(150d);
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(articleName,origin,destination,type,searchButton);
+		searchBar.getChildren().addAll(cipm,raison,origin,destination,type,searchButton);
 	}
 
 	public void bind(StockMovementSearchInput searchInput)
 	{
 		origin.valueProperty().bindBidirectional(searchInput.getEntity().movementOriginProperty());
-		articleName.textProperty().bindBidirectional(searchInput.getEntity().getArticle().articleNameProperty());
+		raison.textProperty().bindBidirectional(searchInput.getEntity().raisonProperty());
 		destination.valueProperty().bindBidirectional(searchInput.getEntity().movementDestinationProperty());
 		type.valueProperty().bindBidirectional(searchInput.getEntity().movementTypeProperty());
+		cipm.textProperty().bindBidirectional(searchInput.getEntity().internalPicProperty());
 	}
 
 	public Button getCreateButton()
@@ -176,9 +206,9 @@ public class StockMovementListView
 		return type;
 	}
 
-	public TextField getArticleName()
+	public TextField getRaison()
 	{
-		return articleName;
+		return raison;
 	}
 
 	public BorderPane getRootPane()

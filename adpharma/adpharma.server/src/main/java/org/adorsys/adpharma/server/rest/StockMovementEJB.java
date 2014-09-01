@@ -29,6 +29,7 @@ import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovementTerminal;
 import org.adorsys.adpharma.server.jpa.StockMovementType;
+import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.repo.StockMovementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
@@ -50,9 +51,9 @@ public class StockMovementEJB
 
 	@Inject
 	private SecurityUtil securityUtil;
-	
-	  @Inject
-	   private ArticleLotEJB articleLotEJB;
+
+	@Inject
+	private ArticleLotEJB articleLotEJB;
 
 	@Inject
 	@DocumentProcessedEvent
@@ -93,9 +94,10 @@ public class StockMovementEJB
 		return repository.count();
 	}
 
-	public List<StockMovement> findBy(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
+	public List<StockMovement> findBy(StockMovement entity, int start, int max, SingularAttribute<StockMovement, Object>[] attributes)
 	{
-		return repository.findBy(entity, start, max, attributes);
+		entity = attach(entity);
+		return repository.criteriafindBy(entity, attributes).orderDesc(StockMovement_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countBy(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
@@ -103,9 +105,10 @@ public class StockMovementEJB
 		return repository.count(entity, attributes);
 	}
 
-	public List<StockMovement> findByLike(StockMovement entity, int start, int max, SingularAttribute<StockMovement, ?>[] attributes)
+	public List<StockMovement> findByLike(StockMovement entity, int start, int max, SingularAttribute<StockMovement, Object>[] attributes)
 	{
-		return repository.findByLike(entity, start, max, attributes);
+		entity = attach(entity);
+		return repository.criteriafindBy(entity, attributes).orderDesc(StockMovement_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countByLike(StockMovement entity, SingularAttribute<StockMovement, ?>[] attributes)
@@ -129,16 +132,16 @@ public class StockMovementEJB
 
 		return entity;
 	}
-	
+
 	/**
 	 *Reduice stock according to moved qty.
 	 * 	- 
 	 * @param closedDelivery
 	 */
-   
-   public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
-	   ArticleLot articleLot = articleLotEJB.findById(data.getId());
-	   Article article = articleLot.getArticle();
+
+	public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
+		ArticleLot articleLot = articleLotEJB.findById(data.getId());
+		Article article = articleLot.getArticle();
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		// Generate Stock Movement for article to details
@@ -162,7 +165,7 @@ public class StockMovementEJB
 		if(articleLot.getSalesPricePU()!=null)
 			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(data.getQtyToMoved()));
 		sm = create(sm);
-   }
+	}
 
 	public void handleArticleLotDetails(@Observes @DocumentProcessedEvent ArticleLotDetailsManager  lotDetailsManager){
 		ArticleLot lotToDetails = lotDetailsManager.getLotToDetails();
@@ -188,7 +191,7 @@ public class StockMovementEJB
 			sm.setTotalSalesPrice(lotToDetails.getSalesPricePU().multiply(lotDetailsManager.getDetailsQty()));
 		sm = create(sm);
 	}
-	
+
 	public void handleArticleLotTransfer(@Observes @DocumentProcessedEvent ArticleLotTransferManager  lotTransferManager){
 		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -213,7 +216,7 @@ public class StockMovementEJB
 			sm.setTotalSalesPrice(articleLot.getSalesPricePU().multiply(lotTransferManager.getQtyToTransfer()));
 		sm = create(sm);
 	}
-	
+
 	public void handleArticleLotDestocking(@Observes @DestockingProcessedEvent ArticleLotTransferManager  lotTransferManager){
 		ArticleLot articleLot = lotTransferManager.getLotToTransfer();
 		Login creatingUser = securityUtil.getConnectedUser();

@@ -201,7 +201,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new Phrase("CMD DU : "+org.adorsys.adpharma.client.utils.DateHelper.format(data.getProcurementOrder().getCreatedDate().getTime(), "EEEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new Phrase("CMD DU : "+org.adorsys.adpharma.client.utils.DateHelper.format(data.getProcurementOrder().getCreatedDate().getTime(), "EEEE dd MMMMM yyyy HH:mm:ss")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
@@ -212,7 +212,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText("Imprime Le : "+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy")+" par : "+login.getFullName()));
+		paragraph = new Paragraph(new StandardText("Imprime Le : "+org.adorsys.adpharma.client.utils.DateHelper.format(new Date(), "EEEE dd MMMMM yyyy HH:mm:ss")+" par : "+login.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 		document.add(Chunk.NEWLINE);

@@ -555,14 +555,15 @@ public class SalesOrderDisplayController implements EntityController
 				List<Insurrance> resultList = cs.getResultList();
 				displayView.getInsurrer().getItems().clear();
 				ArrayList<SalesOrderInsurance> insurrances = new ArrayList<SalesOrderInsurance>();
-				resultList.add(0, new Insurrance());
+				resultList.add( new Insurrance());
 				for (Insurrance insurrance : resultList) {
 					insurrances.add(new SalesOrderInsurance(insurrance));
 				}
 
 				displayView.getInsurrer().getItems().addAll(insurrances);
 				if(!insurrances.isEmpty()){
-					displayedEntity.setInsurance(insurrances.iterator().next());
+					displayView.getInsurrer().setValue(insurrances.iterator().next());
+//					displayedEntity.setInsurance(insurrances.iterator().next());
 
 				}else {
 					displayedEntity.setInsurance(new SalesOrderInsurance());

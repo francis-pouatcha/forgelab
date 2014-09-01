@@ -86,6 +86,7 @@ public class ModalCustomerCreateController {
 
 			@Override
 			public void handle(ActionEvent event) {
+				customer.setFullName(customer.getLastName()+" "+customer.getFirstName());
 				Set<ConstraintViolation<Customer>> contraintViolations = createView.getView().validate(customer);
 				if(contraintViolations.isEmpty()){
 					createService.setModel(customer).start();

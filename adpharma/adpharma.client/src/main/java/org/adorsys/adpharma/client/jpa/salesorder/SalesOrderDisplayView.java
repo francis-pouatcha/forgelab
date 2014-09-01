@@ -297,7 +297,6 @@ public class SalesOrderDisplayView
 		discountRate.numberProperty().bindBidirectional(model.discountRateProperty());
 		amountTTC.numberProperty().bindBidirectional(model.amountAfterTaxProperty());
 		//		tax.valueProperty().bindBidirectional(model.vatProperty());
-		insurrer.valueProperty().bindBidirectional(model.insuranceProperty());
 		client.valueProperty().bindBidirectional(model.customerProperty());
 		numcmd.textProperty().bindBidirectional(model.soNumberProperty());
 		clientPhone.textProperty().bindBidirectional(model.getCustomer().mobileProperty());
@@ -357,6 +356,8 @@ public class SalesOrderDisplayView
 				totalSalePrice.setNumber(salesPricePU.getNumber().multiply(orderedQty.getNumber()));
 			}});
 	}
+	
+	
 
 	public BorderPane getRootPane()
 	{
