@@ -390,6 +390,7 @@ public class DebtStatementListController implements EntityController
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				List<CustomerInvoice> invoices = value.getResultList();
 				Login login = securityUtil.getConnectedUser();
+				
 				if(selectedItem!=null){
 					try {
 						DebtStatementReportPrintTemplatePDF pdfRepportTemplate = new DebtStatementReportPrintTemplatePDF(selectedItem, listView.getResourceBundle(), locale, login);
