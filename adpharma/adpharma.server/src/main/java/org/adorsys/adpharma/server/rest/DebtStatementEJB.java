@@ -209,7 +209,7 @@ public class DebtStatementEJB
 		List<DebtStatementCustomerInvoiceAssoc> dciaFound = debtStatementCustomerInvoiceAssocEJB.findBy(dcia, 0, -1, new SingularAttribute[]{DebtStatementCustomerInvoiceAssoc_.target});
 		for (DebtStatementCustomerInvoiceAssoc d : dciaFound) {
 			debtStatement = d.getSource();
-			if(debtStatement.getInsurrance().equals(debtStatement.getInsurrance())) return; // This invoice is part of a debt statement of this payer.
+			if(d.getSource().getInsurrance()!=null&&d.getSource().getInsurrance().equals(debtStatement.getInsurrance())) return; // This invoice is part of a debt statement of this payer.
 		}
 		// now add the invoice to the debt statement.
 		DebtStatementCustomerInvoiceAssoc dcas = new DebtStatementCustomerInvoiceAssoc();

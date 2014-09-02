@@ -159,7 +159,7 @@ public class ModalArticleLotSearchController  {
 				if(articleSearchResult.getResultList().isEmpty()){
 					String internalPic = articleSearchResult.getSearchInput().getEntity().getInternalPic();
 					String articleName = articleSearchResult.getSearchInput().getEntity().getArticle().getArticleName();
-					String message = null;
+					String message = "Aucun article trouve ";
 					if(StringUtils.isNotBlank(internalPic))
 						message = "Aucun article avec  Pour CIPM : "+internalPic ;
 					if(StringUtils.isNotBlank(articleName))

@@ -287,22 +287,21 @@ public class SalesOrderDisplayController implements EntityController
 			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderedQtyCell) {
 				SalesOrderItem selectedItem = orderedQtyCell.getRowValue();
 				BigDecimal newValue = orderedQtyCell.getNewValue();
-				//				if(newValue==null){
-				//					// reset old value.
-				//				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
-				//					// delete article
-				//				} 
-				salesOrderItemRemoveService.setEntity(selectedItem).start();
-				//					else {
-				//					if(displayView.getOrderedQty().isEditable()){
-				//						selectedItem.setOrderedQty(newValue);
-				//						selectedItem.updateTotalSalesPrice();
-				//						// update article
-				//						salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
-				//					}else {
-				//						orderedQtyCell.getRowValue().setOrderedQty(orderedQtyCell.getOldValue());
-				//					}
-				//				}
+				if(newValue==null){
+					// reset old value.
+				} else if (newValue.compareTo(BigDecimal.ZERO)<=0){
+					// delete article
+					salesOrderItemRemoveService.setEntity(selectedItem).start();
+				} else {
+					if(displayView.getOrderedQty().isEditable()){
+						selectedItem.setOrderedQty(newValue);
+						selectedItem.updateTotalSalesPrice();
+						// update article
+						salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+					}else {
+						orderedQtyCell.getRowValue().setOrderedQty(orderedQtyCell.getOldValue());
+					}
+				}
 			}
 		});
 
@@ -1190,19 +1189,19 @@ public class SalesOrderDisplayController implements EntityController
 			displayView.getSalesPricePU().setEditable(false);
 		}
 
-		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-			displayView.getArticleName().setEditable(true);
-		}else {
-			displayView.getArticleName().setEditable(false);
-		}
+//		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+//			displayView.getArticleName().setEditable(true);
+//		}else {
+//			displayView.getArticleName().setEditable(false);
+//		}
 
-		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-			displayView.getReturnSOIMenu().setVisible(true);
-			displayView.getSaveReturnButton().setVisible(true);
-		}else {
-			displayView.getReturnSOIMenu().setVisible(false);
-			displayView.getSaveReturnButton().setVisible(false);
-		}
+//		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+//			displayView.getReturnSOIMenu().setVisible(true);
+//			displayView.getSaveReturnButton().setVisible(true);
+//		}else {
+//			displayView.getReturnSOIMenu().setVisible(false);
+//			displayView.getSaveReturnButton().setVisible(false);
+//		}
 	}
 	public boolean canProcessReturn(){
 		boolean canProcessReturn = false ;

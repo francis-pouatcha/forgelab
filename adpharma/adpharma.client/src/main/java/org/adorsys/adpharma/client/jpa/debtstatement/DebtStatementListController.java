@@ -95,7 +95,6 @@ public class DebtStatementListController implements EntityController
 	@Inject
 	private DebtStatementRemoveService removeService;
 
-	@Inject
 	@PaymentRequestEvent
 	private Event<DebtStatement> debstatementPaymentCreateRequestEvent;
 

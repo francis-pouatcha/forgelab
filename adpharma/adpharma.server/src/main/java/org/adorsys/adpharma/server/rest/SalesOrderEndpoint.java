@@ -143,7 +143,8 @@ public class SalesOrderEndpoint
 	@Produces({ "application/json", "application/xml" })
 	public Boolean isManagedLot()
 	{
-		return  Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		String managedLot = applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config");
+		return  Boolean.valueOf(managedLot );
 
 	}
 
