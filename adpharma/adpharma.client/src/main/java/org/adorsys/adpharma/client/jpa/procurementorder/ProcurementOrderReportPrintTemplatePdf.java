@@ -39,8 +39,8 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	private Login login ;
 	
 
-	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD);
-	static Font font = FontFactory.getFont("Times-Roman", 6);
+	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
+	static Font font = FontFactory.getFont("Times-Roman", 10);
 
 	public ProcurementOrderReportPrintTemplatePdf(ProcurementOrderReportPrinterData data, Agency agency,Login login,ResourceBundle resourceBundle) throws DocumentException {
 		this.agency = agency ;
@@ -91,32 +91,32 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase(cip,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase(articleName,font));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new RightParagraph(new Phrase(saleQty!=null?saleQty.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new RightParagraph(new Phrase(stockQty!=null?stockQty.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new RightParagraph(new Phrase(pppu!=null?pppu.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(12);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new RightParagraph(new Phrase(ttppu!=null?ttppu.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 	}
@@ -127,33 +127,33 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("CIP",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("DESIGNATION",boldFont));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("CMD",boldFont));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("STOCK",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("P.A",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.setFixedHeight(15);
+		pdfPCell.setFixedHeight(18);
 		pdfPCell.addElement(new Phrase("Total",boldFont));
 		reportTable.addCell(pdfPCell);
 
