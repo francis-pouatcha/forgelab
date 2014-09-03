@@ -41,18 +41,18 @@ public class SalesOrderAdvenceSearchController {
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
-	
+
 	@Inject
 	private LoginSearchService loginSearchService ;
 
 	@Inject
 	@EntitySearchDoneEvent
 	private Event<SalesOrderSearchResult> searchResultEvent ;
-	
+
 	@Inject
 	@ShowProgressBarRequestEvent
 	private Event<Object> showprogressEvent ;
-	
+
 	@Inject
 	@HideProgressBarRequestEvent
 	private Event<Object> hideProgressEvent ;
@@ -82,12 +82,12 @@ public class SalesOrderAdvenceSearchController {
 					searchInput.setMax(-1);
 					loginSearchService.setSearchInputs(searchInput).start();
 				}
-				
+
 			}
 		});
 		loginSearchService.setOnFailed(callFailedEventHandler);
 		loginSearchService.setOnSucceeded(new  EventHandler<WorkerStateEvent>() {
-			
+
 			@Override
 			public void handle(WorkerStateEvent event) {
 				LoginSearchService source = (LoginSearchService) event.getSource();
@@ -159,5 +159,6 @@ public class SalesOrderAdvenceSearchController {
 			data.setSaller(view.getSaller().getValue());
 		if(view.getState().getValue()!=null)
 			data.setSate(view.getState().getValue());
+		data.setOnlyCrediSales(view.getOnlyCrediSales().isSelected());
 	}
 }

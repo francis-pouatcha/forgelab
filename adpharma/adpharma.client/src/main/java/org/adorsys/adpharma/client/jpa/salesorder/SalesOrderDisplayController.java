@@ -54,6 +54,7 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
@@ -241,7 +242,11 @@ public class SalesOrderDisplayController implements EntityController
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
-
+//		displayView.getCloseButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getClientButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getInsurreurButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getOrderQuantityColumn().editableProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+//		
 		salesOrderItemCreateFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -1195,13 +1200,19 @@ public class SalesOrderDisplayController implements EntityController
 		}else {
 			displayView.getArticleName().setEditable(false);
 		}
+		
+		
+		displayView.getReturnSOIMenu().disableProperty().unbind();
+		displayView.getSaveReturnButton().disableProperty().unbind();
 
 		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-			displayView.getReturnSOIMenu().setVisible(true);
-			displayView.getSaveReturnButton().setVisible(true);
+			displayView.getReturnSOIMenu().setDisable(false);
+			displayView.getSaveReturnButton().setDisable(false);
+			displayView.getReturnSOIMenu().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+			displayView.getSaveReturnButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		}else {
-			displayView.getReturnSOIMenu().setVisible(false);
-			displayView.getSaveReturnButton().setVisible(false);
+			displayView.getReturnSOIMenu().setDisable(true);
+			displayView.getSaveReturnButton().setDisable(true);
 		}
 	}
 	public boolean canProcessReturn(){

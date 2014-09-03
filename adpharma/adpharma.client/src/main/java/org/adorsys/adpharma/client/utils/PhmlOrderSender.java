@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.utils;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 public class PhmlOrderSender {
-	
+
 	@Inject
 	private ProcurementOrderItemService itemService ;
 
@@ -50,7 +51,7 @@ public class PhmlOrderSender {
 
 	@PostConstruct
 	public void posconstruct(){
-       
+
 	}
 
 	public String buildItemLine(ProcurementOrderItem item , int lineIndex){
@@ -95,7 +96,7 @@ public class PhmlOrderSender {
 	public String buildEndCommandLine(int clair,int encoded){
 		return END_COMMAND_LINE+StringUtils.leftPad(encoded+"", 4,"0")+StringUtils.leftPad(clair+"", 4,"0");
 	}
-	
+
 	/**
 	 * create phml order file and store it in message directory
 	 * @param order tobe sent on phml server
@@ -109,10 +110,14 @@ public class PhmlOrderSender {
 		String filename = messageDir+order.getProcurementOrderNumber()+".txt";
 
 		List<String> lines = new ArrayList<String>();
-
-		File file = new File(filename);
-		if(file.exists())
-			file.delete();
+		File file = null;
+		try {
+			file = new File(filename);
+			if(file.exists())
+				file.delete();
+		} catch (Exception e) {
+			throw new FileNotFoundException("Impossible de joindre le repertoir d'envoi");
+		}
 		lines.add(buildRepartiteurLine(repartiteur));
 		lines.add(WORK_TYPE_LINE);
 		lines.add(buildCommandTypeLine(order.getProcurementOrderNumber()));
@@ -133,7 +138,7 @@ public class PhmlOrderSender {
 		lines.add(buildEndCommandLine(0, items.size()));
 
 		FileUtils.writeLines(file, "UTF-8", lines);
-		Desktop.getDesktop().open(file);
+//		Desktop.getDesktop().open(file);
 	}
 
 

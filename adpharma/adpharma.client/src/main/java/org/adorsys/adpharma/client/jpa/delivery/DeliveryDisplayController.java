@@ -150,7 +150,7 @@ public class DeliveryDisplayController implements EntityController
 
 		displayView.bind(deliveryItem);
 		displayView.bind(displayedEntity);
-displayView.getSaveButton().disableProperty().bind(closeService.runningProperty());
+		displayView.getSaveButton().disableProperty().bind(closeService.runningProperty());
 
 		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
@@ -199,7 +199,7 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-					handleAddDeliveryItem(deliveryItem);
+				handleAddDeliveryItem(deliveryItem);
 			}
 
 		});
@@ -208,7 +208,7 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 
 			@Override
 			public void handle(ActionEvent event) {
-					handleAddDeliveryItem(deliveryItem);
+				handleAddDeliveryItem(deliveryItem);
 			}
 
 		});
@@ -218,12 +218,12 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
 				if(code== KeyCode.ENTER){
-					
+
 					handleAddDeliveryItem(deliveryItem);
 				}
 			}
 		});
-		
+
 		displayView.getFreeQuantity().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -611,32 +611,32 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
 		if(isValidDeliveryItem()){
-		deliveryItem.setDelivery(new DeliveryItemDelivery(displayedEntity));
-		Date parse = null ;
-		try {
-			String[] split = displayView.getExpirationDate().getText().split("/");
-			String expDate = "01/"+split[0]+"/20"+split[1];
-			parse = DateHelper.parse(expDate, "dd/MM/yyyy");
+			deliveryItem.setDelivery(new DeliveryItemDelivery(displayedEntity));
+			Date parse = null ;
+			try {
+				String[] split = displayView.getExpirationDate().getText().split("/");
+				String expDate = "01/"+split[0]+"/20"+split[1];
+				parse = DateHelper.parse(expDate, "dd/MM/yyyy");
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		if(parse!=null){
-			Calendar instance = Calendar.getInstance();
-			instance.setTime(parse);
-			deliveryItem.setExpirationDate(instance);
-		}
-		deliveryItem.calculateTotalAmout();
-		if(deliveryItem.getId()==null){
-			deliveryItemCreateService.setModel(deliveryItem).start();
-		}else {
-			deliveryItemEditService.setDeliveryItem(deliveryItem).start();
-		}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if(parse!=null){
+				Calendar instance = Calendar.getInstance();
+				instance.setTime(parse);
+				deliveryItem.setExpirationDate(instance);
+			}
+			deliveryItem.calculateTotalAmout();
+			if(deliveryItem.getId()==null){
+				deliveryItemCreateService.setModel(deliveryItem).start();
+			}else {
+				deliveryItemEditService.setDeliveryItem(deliveryItem).start();
+			}
 		}
 	}
-	
-	
+
+
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
@@ -659,6 +659,7 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 	public DeliveryItemSearchInput getDeliveryItemSearchInput(Delivery delivery){
 		DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
 		deliveryItemSearchInput.getFieldNames().add("delivery");
+		deliveryItemSearchInput.setMax(-1);
 		DeliveryItem deliveryItem2 = new DeliveryItem();
 		deliveryItem2.setDelivery(new DeliveryItemDelivery(delivery));
 		deliveryItemSearchInput.setEntity(deliveryItem2);
@@ -667,7 +668,7 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 	public void reset() {
 		PropertyReader.copy(new Delivery(), displayedEntity);
 	}
-	
+
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
 		if(roles.contains(AccessRoleEnum.MANAGER.name())){
 			displayView.getEditButton().setVisible(true);
@@ -675,7 +676,7 @@ displayView.getSaveButton().disableProperty().bind(closeService.runningProperty(
 			displayView.getEditButton().setVisible(false);
 		}
 	}
-	
+
 	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
 		searchRequestEvent.fire(new Delivery());
 	}

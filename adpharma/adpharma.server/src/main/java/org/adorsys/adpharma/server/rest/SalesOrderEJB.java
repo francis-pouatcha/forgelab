@@ -156,6 +156,9 @@ public class SalesOrderEJB
 
 		if(StringUtils.isNotBlank(data.getArticleName()))
 			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName)";
+		
+		if(data.getOnlyCrediSales())
+			query = query+" AND s.salesOrder.insurance IS NOT NULL";
 
 		Query querys = em.createQuery(query) ;
 

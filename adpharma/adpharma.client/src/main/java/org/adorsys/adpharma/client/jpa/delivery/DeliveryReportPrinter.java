@@ -33,24 +33,24 @@ public class DeliveryReportPrinter {
 	private ServiceCallFailedEventHandler dataServiceCallFailedEventHandler;
 	@Inject
 	private ErrorMessageDialog dataErrorMessageDialog;
-	
+
 	@Inject
 	private DeliveryReportItemFetchDataService itemDataService;
 	@Inject
 	private ServiceCallFailedEventHandler itemDataServiceCallFailedEventHandler;
 	@Inject
 	private ErrorMessageDialog itemErrorMessageDialog;
-		
+
 	@Inject
 	@Bundle({ CrudKeys.class, DeliveryReportPrintTemplate.class })
 	private ResourceBundle resourceBundle;
-	
+
 	@Inject
 	private Locale locale;
-	
-//	@Inject
-//	private PrintDialog printDialog;
-	
+
+	//	@Inject
+	//	private PrintDialog printDialog;
+
 	public void handlePrintRequestedEvent(
 			@Observes @PrintRequestedEvent DeliveryId deliveryId) {
 		Delivery delivery = new Delivery();
@@ -64,23 +64,23 @@ public class DeliveryReportPrinter {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				DeliveryReportPrinterDataService s = (DeliveryReportPrinterDataService) event.getSource();
-	            DeliveryReportPrinterData deliveryData = s.getValue();
-	            event.consume();
-	            s.reset();
-	    		if(deliveryData==null) return;
-	    		if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) return;
-	    			DeliveryReportPrintTemplatePDF worker;
-					try {
-						worker = new DeliveryReportPrintTemplatePDF(deliveryData, resourceBundle, locale);
-						worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
-						itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
-						worker.closeDocument();
-						File file = new File(worker.getFileName());
-						openFile(file);
-					} catch (DocumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				DeliveryReportPrinterData deliveryData = s.getValue();
+				event.consume();
+				s.reset();
+				if(deliveryData==null) return;
+				if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) return;
+				DeliveryReportPrintTemplatePDF worker;
+				try {
+					worker = new DeliveryReportPrintTemplatePDF(deliveryData, resourceBundle, locale);
+					worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
+					itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
+					worker.closeDocument();
+					File file = new File(worker.getFileName());
+					openFile(file);
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -104,25 +104,25 @@ public class DeliveryReportPrinter {
 						dataErrorMessageDialog.closeDialog();
 					}
 				});
-		
+
 		itemDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				DeliveryReportItemFetchDataService s = (DeliveryReportItemFetchDataService) event.getSource();
-	            DeliveryReportPrinterData deliveryData = s.getValue();
-	            DeliveryReportPrintTemplate worker = s.getDeliveryReportPrintTemplateWorker();
-	            event.consume();
-	            s.reset();
-	    		if(deliveryData==null) return;
-	    		if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) {
-	    			worker.closeReport();
-	    			String deliveryNumber = deliveryData.getDelivery().getDeliveryNumber();
-	    			File file = new File(deliveryNumber+".pdf");
-	    			if(file.exists())openFile(file);
-	    		} else {
-	    			worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
-	    			itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
-	    		}
+				DeliveryReportPrinterData deliveryData = s.getValue();
+				DeliveryReportPrintTemplate worker = s.getDeliveryReportPrintTemplateWorker();
+				event.consume();
+				s.reset();
+				if(deliveryData==null) return;
+				if(deliveryData.getDeliveryItemSearchResult().getResultList().isEmpty()) {
+					worker.closeReport();
+					String deliveryNumber = deliveryData.getDelivery().getDeliveryNumber();
+					File file = new File(deliveryNumber+".pdf");
+					if(file.exists())openFile(file);
+				} else {
+					worker.addItems(deliveryData.getDeliveryItemSearchResult().getResultList());
+					itemDataService.setDeliveryReportPrintTemplateWorker(worker).setDeliveryReportPrinterData(deliveryData).start();
+				}
 			}
 		});
 
@@ -146,7 +146,7 @@ public class DeliveryReportPrinter {
 					}
 				});
 	}
-	
+
 	private void openFile(File file){
 		try {
 			Desktop.getDesktop().open(file);

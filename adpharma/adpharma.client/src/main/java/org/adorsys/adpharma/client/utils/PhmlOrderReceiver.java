@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.utils;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -71,9 +72,11 @@ public class PhmlOrderReceiver {
 			}
 		});
 		File responseFile = null ;
-		if(listFiles.length>0) 
+		if(listFiles.length>0){
 			responseFile = listFiles[0];
-
+		}else {
+			throw new FileNotFoundException("Fichier de reponse Phml Non disponible ");
+		}
 		if (responseFile!=null) {
 			List<String> readLines = FileUtils.readLines(responseFile, "UTF-8");
 			for (String string : readLines) {

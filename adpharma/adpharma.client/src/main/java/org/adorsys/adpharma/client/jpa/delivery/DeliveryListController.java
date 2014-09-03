@@ -512,10 +512,12 @@ public class DeliveryListController implements EntityController
 	public List<String> readSearchAttributes(){
 		ArrayList<String> seachAttributes = new ArrayList<String>() ;
 		String deliveryNumber = searchInput.getEntity().getDeliveryNumber();
+		String procurementOrderNumber = searchInput.getEntity().getProcurementOrderNumber();
 		DeliverySupplier supplier = searchInput.getEntity().getSupplier();
 		DocumentProcessingState state = searchInput.getEntity().getDeliveryProcessingState();
-
+ 
 		if(StringUtils.isNotBlank(deliveryNumber)) seachAttributes.add("deliveryNumber");
+		if(StringUtils.isNotBlank(procurementOrderNumber)) seachAttributes.add("procurementOrderNumber");
 		if(supplier!=null && supplier.getId()!=null) seachAttributes.add("supplier");
 		if(state!=null) seachAttributes.add("deliveryProcessingState") ;
 		return seachAttributes;
