@@ -150,7 +150,6 @@ public class ProcurementOrderDisplayController implements EntityController
 
 			}
 		});
-
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
 			@Override
 			public void handle(CellEditEvent<ProcurementOrderItem, BigDecimal> orderedQtyCell) {

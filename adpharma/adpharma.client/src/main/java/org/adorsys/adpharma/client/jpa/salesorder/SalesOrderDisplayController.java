@@ -562,7 +562,7 @@ public class SalesOrderDisplayController implements EntityController
 				displayView.getInsurrer().getItems().addAll(insurrances);
 				if(!insurrances.isEmpty()){
 					displayView.getInsurrer().setValue(insurrances.iterator().next());
-//					displayedEntity.setInsurance(insurrances.iterator().next());
+					//					displayedEntity.setInsurance(insurrances.iterator().next());
 
 				}else {
 					displayedEntity.setInsurance(new SalesOrderInsurance());
@@ -1189,19 +1189,19 @@ public class SalesOrderDisplayController implements EntityController
 			displayView.getSalesPricePU().setEditable(false);
 		}
 
-//		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-//			displayView.getArticleName().setEditable(true);
-//		}else {
-//			displayView.getArticleName().setEditable(false);
-//		}
+		//		if(roles.contains(AccessRoleEnum.SALLE_BY_ARTICLENAME_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+		//			displayView.getArticleName().setEditable(true);
+		//		}else {
+		//			displayView.getArticleName().setEditable(false);
+		//		}
 
-//		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-//			displayView.getReturnSOIMenu().setVisible(true);
-//			displayView.getSaveReturnButton().setVisible(true);
-//		}else {
-//			displayView.getReturnSOIMenu().setVisible(false);
-//			displayView.getSaveReturnButton().setVisible(false);
-//		}
+		//		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+		//			displayView.getReturnSOIMenu().setVisible(true);
+		//			displayView.getSaveReturnButton().setVisible(true);
+		//		}else {
+		//			displayView.getReturnSOIMenu().setVisible(false);
+		//			displayView.getSaveReturnButton().setVisible(false);
+		//		}
 	}
 	public boolean canProcessReturn(){
 		boolean canProcessReturn = false ;

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.utils;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -109,10 +110,14 @@ public class PhmlOrderSender {
 		String filename = messageDir+order.getProcurementOrderNumber()+".txt";
 
 		List<String> lines = new ArrayList<String>();
-
-		File file = new File(filename);
-		if(file.exists())
-			file.delete();
+		File file = null ;
+        try {
+           file = new File(filename);
+           if(file.exists())
+   			file.delete();
+		} catch (Exception e) {
+			throw new FileNotFoundException("Impossible de creer le fichier d'envoi");
+		}
 		lines.add(buildRepartiteurLine(repartiteur));
 		lines.add(WORK_TYPE_LINE);
 		lines.add(buildCommandTypeLine(order.getProcurementOrderNumber()));
@@ -133,7 +138,7 @@ public class PhmlOrderSender {
 		lines.add(buildEndCommandLine(0, items.size()));
 
 		FileUtils.writeLines(file, "UTF-8", lines);
-		Desktop.getDesktop().open(file);
+//		Desktop.getDesktop().open(file);
 	}
 
 

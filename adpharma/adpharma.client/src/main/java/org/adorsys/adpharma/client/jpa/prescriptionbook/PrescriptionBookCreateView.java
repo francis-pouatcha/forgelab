@@ -24,7 +24,7 @@ public class PrescriptionBookCreateView
    private AnchorPane rootPane;
 
    private Button saveButton;
-
+   
    private Button resetButton;
 
    private Button searchButton;
@@ -43,6 +43,7 @@ public class PrescriptionBookCreateView
       viewBuilder.addMainForm(view, ViewType.CREATE, false);
       viewBuilder.addSeparator();
       HBox buttonBar = viewBuilder.addButtonBar();
+     
       saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
       resetButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
       searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
