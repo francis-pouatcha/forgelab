@@ -34,6 +34,7 @@ public class RolesTask extends Service<LoginRoleNameAssocSearchResult>
          protected LoginRoleNameAssocSearchResult call() throws Exception
          {
 			LoginRoleNameAssocSearchInput loginRoleNameAssocSearchInput = new LoginRoleNameAssocSearchInput();
+			loginRoleNameAssocSearchInput.setMax(-1);
 			LoginRoleNameAssoc loginRoleNameAssoc = new LoginRoleNameAssoc();
 			loginRoleNameAssoc.setSource(login);
 			loginRoleNameAssoc.setSourceQualifier("roleNames");
