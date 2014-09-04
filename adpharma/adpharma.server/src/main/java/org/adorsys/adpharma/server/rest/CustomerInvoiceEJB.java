@@ -116,7 +116,7 @@ public class CustomerInvoiceEJB {
 		save.setInvoiceNumber((SequenceGenerator.CUSTOMER_INVOICE_SEQUENCE_PREFIXE+save.getId()));
 		return repository.save(save);
 	}
-	
+
 	public  List<CustomerInvoice> findUnpayInvoiceByInsurer(Customer insurer){
 		return repository.findUnpayInvoiceByCustomer(insurer, Boolean.TRUE, Boolean.FALSE, InvoiceType.CASHDRAWER);
 	}
@@ -206,7 +206,7 @@ public class CustomerInvoiceEJB {
 
 	public List<CustomerInvoice> findInsurranceCustomerInvoiceByDateBetween(InvoiceByAgencyPrintInput searchInput){
 		String query ="SELECT c  FROM CustomerInvoice AS c WHERE c.cashed = :cashed AND c.insurance IS NOT NULL" ;
-		
+
 		if(searchInput.getFromDate()!=null)
 			query = query+" AND c.creationDate >= :startTime" ;
 		if(searchInput.getToDate()!=null)
@@ -492,8 +492,10 @@ public class CustomerInvoiceEJB {
 		CustomerInvoice ci = new CustomerInvoice();
 		ci.setSalesOrder(salesOrder);
 		List<CustomerInvoice> found = findBy(ci, 0, 1, new SingularAttribute[]{CustomerInvoice_.salesOrder});
-		ci = found.iterator().next();
-		deleteById(ci.getId());
+		if(!found.isEmpty()){
+			ci = found.iterator().next();
+			deleteById(ci.getId());
+		}
 	}
 
 	public void processPayment(@Observes @DocumentProcessedEvent Payment payment){
