@@ -76,6 +76,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 			total = item.getTotalPurchasePrice()!=null?total.add(item.getTotalPurchasePrice()):total;
 			newTableRow(item.getMainPic(),
 					item.getArticle().getArticleName(),
+					item.getStockQuantity(),
 					item.getQtyOrdered(),
 					item.getAvailableQty(),
 					item.getQtyOrdered().subtract(item.getAvailableQty()),
@@ -83,7 +84,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 					item.getTotalPurchasePrice()
 					);
 		}
-		newTableRow("", "Total", null, null, null,null, total);
+		newTableRow("", "Total", null, null, null, null,null, total);
 	}
 
 	public void addItem(){
@@ -91,6 +92,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 	private void newTableRow(String cip, 
 			String articleName,
+			BigDecimal stock,
 			BigDecimal saleQty, 
 			BigDecimal stockQty, 
 			BigDecimal rest,
@@ -106,6 +108,11 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
 		pdfPCell.addElement(new Phrase(articleName,font));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(16);
+		pdfPCell.addElement(new RightParagraph(new Phrase(stock!=null?stock.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -135,7 +142,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.15f,.39f,.09f,.09f,.09f,.09f,.10f});
+		reportTable = new PdfPTable(new float[]{.11f,.34f,.09f,.09f,.09f,.09f,.09f,.10f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -148,7 +155,11 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		pdfPCell.setFixedHeight(16);
 		pdfPCell.addElement(new Phrase("DESIGNATION",boldFont));
 		reportTable.addCell(pdfPCell);
-
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(16);
+		pdfPCell.addElement(new Phrase("STOCK",boldFont));
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);

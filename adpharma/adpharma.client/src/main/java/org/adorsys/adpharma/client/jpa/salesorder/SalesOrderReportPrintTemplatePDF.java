@@ -139,7 +139,7 @@ public class SalesOrderReportPrintTemplatePDF {
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .10f, .51f, .13f,.13f,.13f });
+		reportTable = new PdfPTable(new float[]{ .18f, .46f, .1f,.13f,.13f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -153,12 +153,12 @@ public class SalesOrderReportPrintTemplatePDF {
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Qte Vendu "));
+		pdfPCell.addElement(new StandardText("Qte"));
 		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Vente"));
+		pdfPCell.addElement(new StandardText("PVT"));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
@@ -193,7 +193,7 @@ public class SalesOrderReportPrintTemplatePDF {
 
 		document.add(new LineSeparator());
 
-		paragraph = new Paragraph(new StandardText("Print By : "+login.getFullName()));
+		paragraph = new Paragraph(new StandardText("Imprimer Par : "+login.getFullName()));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
