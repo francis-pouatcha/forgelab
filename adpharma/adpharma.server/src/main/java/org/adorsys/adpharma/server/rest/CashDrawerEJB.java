@@ -220,6 +220,7 @@ public class CashDrawerEJB
 			if(purchasePriceValue!=null)
 				cashDrawer.setTotalCompanyVoucher(purchasePriceValue);
 
+			BigDecimal discountByCashdrawer2 = salesOrderRepository.getDiscountByCashdrawer2();
 			BigDecimal amountDiscount = salesOrderRepository.getDiscountByCashdrawer(cashDrawer,Boolean.TRUE);
 			if(amountDiscount!=null)
 				cashDrawer.setAmountDiscount(amountDiscount);

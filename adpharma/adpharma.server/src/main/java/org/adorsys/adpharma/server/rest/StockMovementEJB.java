@@ -32,6 +32,7 @@ import org.adorsys.adpharma.server.jpa.StockMovementType;
 import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.repo.StockMovementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
+import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 
 @Stateless
 public class StockMovementEJB
@@ -242,16 +243,22 @@ public class StockMovementEJB
 		sm = create(sm);
 	}
 
+	@Inject
+	private ApplicationConfiguration applicationConfiguration;
+
 	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
-
+		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		// Generate Stock Movement for each delivery item
 		for (DeliveryItem deliveryItem : deliveryItems) {
 			StockMovement sm = new StockMovement();
 			sm.setAgency(creatingUser.getAgency());
-			sm.setInternalPic(deliveryItem.getInternalPic());
+			sm.setInternalPic(deliveryItem.getMainPic());
+			if(isManagedLot)
+				sm.setInternalPic(deliveryItem.getInternalPic());
 			sm.setMovementType(StockMovementType.IN);
 			sm.setArticle(deliveryItem.getArticle());
 			sm.setCreatingUser(creatingUser);

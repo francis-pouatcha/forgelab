@@ -22,6 +22,8 @@ public class PeriodicalDataSearchInput {
 	 
 	 private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
 	 
+	 private String pic ;
+	 
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -69,6 +71,14 @@ public class PeriodicalDataSearchInput {
 
 	public void setNonTaxableSalesOnly(Boolean nonTaxableSalesOnly) {
 		this.nonTaxableSalesOnly = nonTaxableSalesOnly;
+	}
+
+	public String getPic() {
+		return pic;
+	}
+
+	public void setPic(String pic) {
+		this.pic = pic;
 	}
 	
 

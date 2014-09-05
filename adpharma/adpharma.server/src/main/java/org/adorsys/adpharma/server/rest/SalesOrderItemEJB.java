@@ -23,6 +23,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 import org.adorsys.adpharma.server.utils.CurencyUtil;
 import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class SalesOrderItemEJB
@@ -89,13 +90,23 @@ public class SalesOrderItemEJB
 		Boolean check = searchInput.getCheck();
 		ArrayList<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
 
-		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed ORDER BY s.article.articleName ";
-		List<Object[]> sales = new ArrayList<Object[]>();
-		if(check)
-			query ="SELECT s.internalPic , s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE "
-					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed  GROUP BY s.article , s.internalPic ";
-		Query querys = em.createQuery(query) ;
+		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed  ";
+		if(StringUtils.isNotBlank(searchInput.getPic()))
+			query = query+" AND s.article.pic = :pic";
+		query = query+" ORDER BY s.article.articleName";
 
+		List<Object[]> sales = new ArrayList<Object[]>();
+		if(check){
+			query ="SELECT s.internalPic , s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE "
+					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed   ";
+			if(StringUtils.isNotBlank(searchInput.getPic()))
+				query = query+" AND s.article.pic = :pic";
+			query = query+" GROUP BY s.article , s.internalPic";
+		}
+
+		Query querys = em.createQuery(query) ;
+		if(StringUtils.isNotBlank(searchInput.getPic()))
+			querys.setParameter("pic", searchInput.getPic());
 		querys.setParameter("from", searchInput.getBeginDate());
 		querys.setParameter("to", searchInput.getEndDate());
 		querys.setParameter("cashed", Boolean.TRUE);

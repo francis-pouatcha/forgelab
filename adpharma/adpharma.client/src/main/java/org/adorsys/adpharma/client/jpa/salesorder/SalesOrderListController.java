@@ -194,7 +194,7 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private Locale locale;
-	
+
 	boolean printWhithDiscount = true;
 
 	@Inject
@@ -560,22 +560,22 @@ public class SalesOrderListController implements EntityController
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
-				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(false);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
 			}
 		});
-		
+
 		listView.getPrintProformaButton().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
-				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(true);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
@@ -596,7 +596,7 @@ public class SalesOrderListController implements EntityController
 				}
 			}
 		});
-		
+
 		listView.getUnDiscountReceipt().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -611,8 +611,8 @@ public class SalesOrderListController implements EntityController
 				}
 			}
 		});
-		
-		
+
+
 
 		customerInvoiceSearchService.setOnFailed(serviceCallFailedEventHandler);
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -654,11 +654,11 @@ public class SalesOrderListController implements EntityController
 					PaymentId paymentId = new PaymentId(payment.getId());
 					SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 					String customerName = null;
-					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					//					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 					paymentId.setCustomerName(customerName);
 					paymentId.setPrintWhithoutDiscount(printWhithDiscount);
-					
+
 					printPaymentReceiptRequestedEvent.fire(paymentId);
 
 				}
@@ -794,13 +794,13 @@ public class SalesOrderListController implements EntityController
 		}else {
 			listView.getTurnoverTab().setDisable(true);
 		}
-		
+
 		if(roles.contains(AccessRoleEnum.RETURN_SALES_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
 			listView.getPrintVoucherButton().setVisible(true);
 		}else {
 			listView.getPrintVoucherButton().setVisible(false);
 		}
 	}
-	
-	
+
+
 }

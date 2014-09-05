@@ -16,5 +16,8 @@ public abstract class SalesOrderRepository extends AdpharmaEntityRepository<Sale
 	
 	@Query("SELECT SUM(s.amountDiscount) FROM SalesOrder AS s WHERE s.cashDrawer = ?1 AND s.cashed = ?2 ")
 	public abstract BigDecimal getDiscountByCashdrawer(CashDrawer cashDrawer , Boolean casheed) ;
+
+	@Query("SELECT SUM(s.amountDiscount) FROM SalesOrder AS s")
+	public abstract BigDecimal getDiscountByCashdrawer2() ;
 }
  

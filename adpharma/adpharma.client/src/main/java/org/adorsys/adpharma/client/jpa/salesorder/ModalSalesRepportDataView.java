@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -18,6 +19,7 @@ import javax.validation.ConstraintViolation;
 
 import jfxtras.scene.control.CalendarTextField;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -44,6 +46,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CheckBox nonTaxableSalesOnly;
 	
 	private CheckBox twentyOverHeightySalesOnly;
+	
+	private TextField pic ;
 
 	private Button saveButton;
 
@@ -56,7 +60,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextFieldValidator calendarControlValidator;
 
 	@Inject
-	@Bundle({ CrudKeys.class, SalesOrder.class })
+	@Bundle({ CrudKeys.class, SalesOrder.class ,Article.class})
 	private ResourceBundle resourceBundle;
 
 	@PostConstruct
@@ -65,6 +69,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		LazyViewBuilder lazyviewBuilder = new LazyViewBuilder();
 		beginDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_fromDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
+		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "Pic", resourceBundle);
 		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
 		taxableSalesOnly.setText("Taxable Uniquement ?");
 		nonTaxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "nonTaxableSalesOnly", resourceBundle);
@@ -95,7 +100,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
 		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
 		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
-		
+		pic.textProperty().bindBidirectional(model.picProperty());
 	}
 
 	public void addValidators()

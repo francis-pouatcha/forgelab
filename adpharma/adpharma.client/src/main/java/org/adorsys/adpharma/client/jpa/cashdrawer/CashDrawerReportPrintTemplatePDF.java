@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -102,6 +103,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				return o1.getOpeningDate().compareTo(o2.getOpeningDate());
 			}
 		});
+		
 		BigDecimal simulationRate =BigDecimal.ONE ;
 		BigDecimal drugVoucherT = BigDecimal.ZERO ;
 		BigDecimal cashOutT = BigDecimal.ZERO ;
@@ -118,7 +120,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 		if(login.getSimulationRate()!=null && login.getSimulationRate().compareTo(BigDecimal.ZERO)!= 0)
 			simulationRate = login.getSimulationRate().divide(BigDecimal.valueOf(100));
-		for (CashDrawer cashDrawer : cashDrawers) {
+
+		List<CashDrawer> drawers = new ArrayList<>(cashDrawers);
+		for (CashDrawer cashDrawer : drawers) {
 			String	currentOpenDateString = DateHelper.format(cashDrawer.getOpeningDate().getTime(), "dd-MM-yyyy");
 			
 			if(!StringUtils.equals(openDateString, currentOpenDateString)){
@@ -141,6 +145,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 				 openDateString = currentOpenDateString ;
 			}
 				BigDecimal initialAmount = cashDrawer.getInitialAmount() !=null ? cashDrawer.getInitialAmount() : BigDecimal.ZERO;
+				if(cashDrawer.getAmountDiscount()==null){
+					cashDrawer.getAmountDiscount();
+				}
 				BigDecimal discount = cashDrawer.getAmountDiscount() !=null ? cashDrawer.getAmountDiscount() : BigDecimal.ZERO;
 				BigDecimal drugVoucher = cashDrawer.getTotalDrugVoucher() !=null ? cashDrawer.getTotalDrugVoucher() : BigDecimal.ZERO;
 				BigDecimal purchaseP = cashDrawer.getTotalCompanyVoucher() !=null ? cashDrawer.getTotalCompanyVoucher() : BigDecimal.ZERO;
@@ -279,6 +286,8 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond),font)));
 		}
 		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
 		if(colored){
 
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(discount),blueBoldFont)));

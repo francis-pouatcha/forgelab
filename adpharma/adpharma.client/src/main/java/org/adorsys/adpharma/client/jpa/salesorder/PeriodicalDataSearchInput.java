@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,11 +17,13 @@ public class PeriodicalDataSearchInput {
 	private SimpleObjectProperty<Calendar> endDate;
 
 	private SimpleBooleanProperty check;
-	
+
+	private SimpleStringProperty pic;
+
 	private SimpleBooleanProperty taxableSalesOnly ;
-	 
+
 	private SimpleBooleanProperty nonTaxableSalesOnly  ;
-	
+
 	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
 
 
@@ -32,6 +35,24 @@ public class PeriodicalDataSearchInput {
 		}
 		return beginDate;
 	}
+	public SimpleStringProperty picProperty()
+	   {
+	      if (pic == null)
+	      {
+	    	  pic = new SimpleStringProperty();
+	      }
+	      return pic;
+	   }
+
+	   public String getPic()
+	   {
+	      return picProperty().get();
+	   }
+
+	   public final void setPic(String pic)
+	   {
+	      this.picProperty().set(pic);
+	   }
 
 	public Calendar getBeginDate()
 	{
@@ -82,7 +103,7 @@ public class PeriodicalDataSearchInput {
 			check = Boolean.FALSE;
 		this.checkProperty().set(check);
 	}
-	
+
 	public SimpleBooleanProperty twentyOverHeightySalesOnlyProperty()
 	{
 		if (twentyOverHeightySalesOnly == null)
@@ -103,7 +124,7 @@ public class PeriodicalDataSearchInput {
 			twentyOverHeightySalesOnly = Boolean.FALSE;
 		this.twentyOverHeightySalesOnlyProperty().set(twentyOverHeightySalesOnly);
 	}
-	
+
 	public SimpleBooleanProperty nonTaxableSalesOnlyProperty()
 	{
 		if (nonTaxableSalesOnly == null)
@@ -124,7 +145,7 @@ public class PeriodicalDataSearchInput {
 			nonTaxableSalesOnly = Boolean.FALSE;
 		this.nonTaxableSalesOnlyProperty().set(nonTaxableSalesOnly);
 	}
-	
+
 	public SimpleBooleanProperty taxableSalesOnlyProperty()
 	{
 		if (taxableSalesOnly == null)
@@ -146,10 +167,10 @@ public class PeriodicalDataSearchInput {
 		this.taxableSalesOnlyProperty().set(taxableSalesOnly);
 	}
 
-	 public String toString()
-	   {
-	      return PropertyReader.buildToString(this, "beginDate","endDate");
-	   }
+	public String toString()
+	{
+		return PropertyReader.buildToString(this, "beginDate","endDate");
+	}
 
 
 }
