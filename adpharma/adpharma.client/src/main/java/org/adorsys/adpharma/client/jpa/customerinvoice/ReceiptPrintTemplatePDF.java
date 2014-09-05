@@ -95,47 +95,47 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 				.getCompany().getDisplayName()));
 		borderlessCell(rt, paragraph);
 
-		paragraph = new Paragraph(new BoldText(receiptPrinterData.getCompany()
-				.getSiteManager()));
-		borderlessCell(rt, paragraph);
+		//		paragraph = new Paragraph(new BoldText(receiptPrinterData.getCompany()
+		//				.getSiteManager()));
+		//		borderlessCell(rt, paragraph);
 
 		paragraph = new Paragraph(new StandardText(receiptPrinterData
 				.getAgency().getStreet()));
 		borderlessCell(rt, paragraph);
 
 		paragraph = new Paragraph(new StandardText("TEL: "
-				+ receiptPrinterData.getAgency().getPhone() + " FAX: "
-				+ receiptPrinterData.getAgency().getFax()));
+				+ receiptPrinterData.getAgency().getPhone() + " Email : "
+				+ receiptPrinterData.getCompany().getEmail()));
 		borderlessCell(rt, paragraph);
 
-		paragraph = new Paragraph(new StandardText(
-				resourceBundle.getString("ReceiptPrintTemplate_email.title")
-				+ " " + receiptPrinterData.getCompany().getEmail()));
-		borderlessCell(rt, paragraph);
+		//		paragraph = new Paragraph(new StandardText(
+		//				resourceBundle.getString("ReceiptPrintTemplate_email.title")
+		//				+ " " + receiptPrinterData.getCompany().getEmail()));
+		//		borderlessCell(rt, paragraph);
 
-		paragraph = new Paragraph(new StandardText(
-				resourceBundle
-				.getString("ReceiptPrintTemplate_registerNumber.title")
-				+ " "
-				+ receiptPrinterData.getCompany().getRegisterNumber()));
-		borderlessCell(rt, paragraph);
+		//		paragraph = new Paragraph(new StandardText(
+		//				resourceBundle
+		//				.getString("ReceiptPrintTemplate_registerNumber.title")
+		//				+ " "
+		//				+ receiptPrinterData.getCompany().getRegisterNumber()));
+		//		borderlessCell(rt, paragraph);
 
 		borderlessCell(rt, new CenterParagraph(separatorText));
 
-		paragraph = new Paragraph(
-				new StandardText(
-						resourceBundle
-						.getString("ReceiptPrintTemplate_receipt.title")
-						+ " "
-						+ receiptPrinterData.getPayment()
-						.getPaymentNumber()
-						+ resourceBundle
-						.getString("ReceiptPrintTemplate_receipt_of.title")
-						+ " "
-						+ calendarFormat.format(receiptPrinterData
-								.getPayment().getPaymentDate(),
-								"dd-MM-yyyy HH:mm", locale)));
-		borderlessCell(rt, paragraph);
+		//		paragraph = new Paragraph(
+		//				new StandardText(
+		//						resourceBundle
+		//						.getString("ReceiptPrintTemplate_receipt.title")
+		//						+ " "
+		//						+ receiptPrinterData.getPayment()
+		//						.getPaymentNumber()
+		//						+ resourceBundle
+		//						.getString("ReceiptPrintTemplate_receipt_of.title")
+		//						+ " "
+		//						+ calendarFormat.format(receiptPrinterData
+		//								.getPayment().getPaymentDate(),
+		//								"dd-MM-yyyy HH:mm", locale)));
+		//		borderlessCell(rt, paragraph);
 
 		paragraph = new Paragraph(new StandardText(
 				resourceBundle.getString("ReceiptPrintTemplate_cashier.title")
@@ -210,7 +210,9 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 						.getString("ReceiptPrintTemplate_salesOrder.title")
 						+ " "
 						+ invoiceData.getCustomerInvoice()
-						.getSalesOrder().getSoNumber());
+						.getSalesOrder().getSoNumber()+" Du : "+calendarFormat.format(receiptPrinterData
+								.getPayment().getPaymentDate(),
+								"dd-MM-yyyy HH:mm", locale));
 				borderlessCell(invoiceTable, new Paragraph(standardText), invoiceTableColCount,1);
 			}
 
