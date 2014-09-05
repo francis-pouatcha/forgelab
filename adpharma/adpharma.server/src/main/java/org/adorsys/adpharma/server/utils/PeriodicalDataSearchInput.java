@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.server.utils;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,18 +9,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class PeriodicalDataSearchInput {
 
-	 private Date beginDate;
-	 
-	 private Date endDate;
-	 
-	 private Boolean check;
-	 
-	 private Boolean taxableSalesOnly = Boolean.FALSE ;
-	 
-	 private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
-	 
-	 private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
-	 
+	private Date beginDate;
+
+	private Date endDate;
+
+	private Boolean check;
+
+	private Boolean taxableSalesOnly = Boolean.FALSE ;
+
+	private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
+
+	private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
+
+	private String pic;
+	
+	
+	
+
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -41,7 +45,7 @@ public class PeriodicalDataSearchInput {
 	public Boolean getCheck() {
 		return check;
 	}
-	
+
 	public Boolean getTaxableSalesOnly() {
 		return taxableSalesOnly;
 	}
@@ -70,7 +74,15 @@ public class PeriodicalDataSearchInput {
 	public void setNonTaxableSalesOnly(Boolean nonTaxableSalesOnly) {
 		this.nonTaxableSalesOnly = nonTaxableSalesOnly;
 	}
-	
+
+	public String getPic() {
+		return pic;
+	}
+
+	public void setPic(String pic) {
+		this.pic = pic;
+	}
+
 
 
 }

@@ -279,6 +279,9 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(fond),font)));
 		}
 		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(18f);
 		if(colored){
 
 			pdfPCell.addElement(new RightParagraph(new Phrase(DefaultBigDecimalFormatCM.getinstance().format(discount),blueBoldFont)));

@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,7 +23,27 @@ public class PeriodicalDataSearchInput {
 	private SimpleBooleanProperty nonTaxableSalesOnly  ;
 	
 	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
+	
+	private SimpleStringProperty pic;
 
+	 public SimpleStringProperty picProperty()
+	   {
+	      if (pic == null)
+	      {
+	         pic = new SimpleStringProperty();
+	      }
+	      return pic;
+	   }
+
+	   public String getPic()
+	   {
+	      return picProperty().get();
+	   }
+
+	   public final void setPic(String pic)
+	   {
+	      this.picProperty().set(pic);
+	   }
 
 	public SimpleObjectProperty<Calendar> beginDateProperty()
 	{

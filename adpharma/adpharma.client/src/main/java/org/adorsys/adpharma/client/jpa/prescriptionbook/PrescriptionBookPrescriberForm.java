@@ -50,10 +50,12 @@ public class PrescriptionBookPrescriberForm extends AbstractToOneAssociation<Pre
 
    public void update(PrescriptionBookPrescriber data)
    {
+	   if(data!=null){
       name.textProperty().set(data.nameProperty().get());
       phone.textProperty().set(data.phoneProperty().get());
       street.textProperty().set(data.streetProperty().get());
       city.textProperty().set(data.cityProperty().get());
+	   }
    }
 
    public TextField getName()

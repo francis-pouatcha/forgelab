@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -38,6 +39,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextField endDate;
 
 	private CheckBox check;
+	
+	private TextField pic ;
 	
 	private CheckBox taxableSalesOnly;
 	
