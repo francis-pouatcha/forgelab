@@ -95,19 +95,19 @@ public class CustomerVoucherController extends DomainComponentController
    /**
     * Listens to list selection events and display
     */
-   public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerVoucher selectedEntity)
-   {
-      if (!registration.canRead())
-         return;
-      // if result is empty: display no result.
-      // else display list of customerVouchers.
-      List<EntityController> displayedViews = getDisplayedViews();
-      displayedViews.clear();
-      displayedViews.add(listController);
-      displayedViews.add(displayController);
-
-      displayComponent();
-   }
+//   public void handleSelectionEvent(@Observes @EntitySelectionEvent CustomerVoucher selectedEntity)
+//   {
+//      if (!registration.canRead())
+//         return;
+//      // if result is empty: display no result.
+//      // else display list of customerVouchers.
+//      List<EntityController> displayedViews = getDisplayedViews();
+//      displayedViews.clear();
+//      displayedViews.add(listController);
+//      displayedViews.add(displayController);
+//
+//      displayComponent();
+//   }
 
    /**
     * Display the search and list panel

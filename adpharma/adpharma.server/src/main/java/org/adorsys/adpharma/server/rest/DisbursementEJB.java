@@ -39,6 +39,7 @@ public class DisbursementEJB
 		if(attach.getAmount().compareTo(cashDrawer.getTotalCash()) > 0)
 			throw new RuntimeException(" Disbusment amount must be lower than cash ");
 		Disbursement save = repository.save(attach(entity));
+		
 		processDisbursmentRequestEvent.fire(save);
 		return save ;
 	}

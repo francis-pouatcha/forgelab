@@ -33,6 +33,12 @@ public class CustomerVoucherListView
 
    @FXML
    private Button createButton;
+   
+   @FXML
+   private Button cancleButton;
+   
+   @FXML
+   private Button unCancelButton;
 
    @FXML
    private TableView<CustomerVoucher> dataList;
@@ -60,10 +66,10 @@ public class CustomerVoucherListView
       viewBuilder.addBigDecimalColumn(dataList, "amountUsed", "CustomerVoucher_amountUsed_description.title", resourceBundle, NumberType.CURRENCY, locale);
       viewBuilder.addBigDecimalColumn(dataList, "restAmount", "CustomerVoucher_restAmount_description.title", resourceBundle, NumberType.INTEGER, locale);
       viewBuilder.addStringColumn(dataList, "customer", "CustomerVoucher_customer_description.title", resourceBundle);
-      viewBuilder.addStringColumn(dataList, "agency", "CustomerVoucher_agency_description.title", resourceBundle);
+		viewBuilder.addDateColumn(dataList, "modifiedDate", "CustomerVoucher_modifiedDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
       // Field not displayed in table
       // Field not displayed in table
-      viewBuilder.addDateColumn(dataList, "modifiedDate", "CustomerVoucher_modifiedDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+      viewBuilder.addStringColumn(dataList, "canceled", "CustomerVoucher_canceled_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "settled", "CustomerVoucher_settled_description.title", resourceBundle);
       viewBuilder.addStringColumn(dataList, "voucherPrinted", "CustomerVoucher_voucherPrinted_description.title", resourceBundle);
       // Field not displayed in table
@@ -73,6 +79,11 @@ public class CustomerVoucherListView
 
       HBox buttonBar = viewBuilder.addButtonBar();
       createButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "createButton", resourceBundle, AwesomeIcon.SAVE);
+      cancleButton = viewBuilder.addButton(buttonBar, "Entity_create.title", "cancleButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+      cancleButton.setText("Anuller l'avoir");
+      
+      unCancelButton= viewBuilder.addButton(buttonBar, "Entity_create.title", "unCancelButton", resourceBundle, AwesomeIcon.EDIT);
+      unCancelButton.setText("Retablir l'avoir");
       searchButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
       rootPane = viewBuilder.toAnchorPane();
    }
@@ -101,5 +112,21 @@ public class CustomerVoucherListView
    {
       return pagination;
    }
+
+public Button getCancleButton() {
+	return cancleButton;
+}
+
+public void setCancleButton(Button cancleButton) {
+	this.cancleButton = cancleButton;
+}
+
+public Button getUnCancelButton() {
+	return unCancelButton;
+}
+
+public void setUnCancelButton(Button unCancelButton) {
+	this.unCancelButton = unCancelButton;
+}
 
 }

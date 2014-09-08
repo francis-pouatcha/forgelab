@@ -7,6 +7,8 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -30,183 +32,252 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class CustomerVoucherListController implements EntityController
 {
 
-   @Inject
-   private CustomerVoucherListView listView;
+	@Inject
+	private CustomerVoucherListView listView;
 
-   @Inject
-   @EntitySelectionEvent
-   private Event<CustomerVoucher> selectionEvent;
+	@Inject
+	@EntitySelectionEvent
+	private Event<CustomerVoucher> selectionEvent;
 
-   @Inject
-   @EntitySearchRequestedEvent
-   private Event<CustomerVoucher> searchRequestedEvent;
+	@Inject
+	@EntitySearchRequestedEvent
+	private Event<CustomerVoucher> searchRequestedEvent;
 
-   @Inject
-   @EntityCreateRequestedEvent
-   private Event<CustomerVoucher> createRequestedEvent;
+	@Inject
+	@EntityCreateRequestedEvent
+	private Event<CustomerVoucher> createRequestedEvent;
 
-   @Inject
-   @EntityListPageIndexChangedEvent
-   private Event<CustomerVoucherSearchResult> entityListPageIndexChangedEvent;
+	@Inject
+	@EntityListPageIndexChangedEvent
+	private Event<CustomerVoucherSearchResult> entityListPageIndexChangedEvent;
 
-   private CustomerVoucherSearchResult searchResult;
+	private CustomerVoucherSearchResult searchResult;
 
-   @Inject
-   private CustomerVoucherRegistration registration;
+	@Inject
+	private CustomerVoucherEditService customerVoucherEditService;
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+	@Inject
+	private CustomerVoucherRegistration registration;
 
-      listView.getDataList().getSelectionModel().selectedItemProperty()
-            .addListener(new ChangeListener<CustomerVoucher>()
-            {
-               @Override
-               public void changed(
-                     ObservableValue<? extends CustomerVoucher> property,
-                     CustomerVoucher oldValue, CustomerVoucher newValue)
-               {
-                  if (newValue != null)
-                     selectionEvent.fire(newValue);
-               }
-            });
+	@Inject
+	private ServiceCallFailedEventHandler callFailedEventHandler ;
+	
+	@Inject
+	private CustomerVoucher selected ;
 
-      /*
-       * listen to search button and fire search activated event.
-       */
-      listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new CustomerVoucher();
-            searchRequestedEvent.fire(selectedItem);
-         }
-      });
+	@PostConstruct
+	public void postConstruct()
+	{
+		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
+        listView.getCancleButton().disableProperty().bind(selected.canceledProperty());
+		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
-      listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
-      {
-         @Override
-         public void handle(ActionEvent e)
-         {
-            CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-            if (selectedItem == null)
-               selectedItem = new CustomerVoucher();
-            createRequestedEvent.fire(selectedItem);
-         }
-      });
+			@Override
+			protected void showError(Throwable exception) {
+				Dialogs.create().showException(exception);
 
-      listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
-      {
-         @Override
-         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-         {
-            if (searchResult == null)
-               return;
-            if (searchResult.getSearchInput() == null)
-               searchResult.setSearchInput(new CustomerVoucherSearchInput());
-            int start = 0;
-            int max = searchResult.getSearchInput().getMax();
-            if (newValue != null)
-            {
-               start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
-            }
-            searchResult.getSearchInput().setStart(start);
-            entityListPageIndexChangedEvent.fire(searchResult);
+			}
+		});
+		      listView.getDataList().getSelectionModel().selectedItemProperty()
+		            .addListener(new ChangeListener<CustomerVoucher>()
+		            {
+		               @Override
+		               public void changed(
+		                     ObservableValue<? extends CustomerVoucher> property,
+		                     CustomerVoucher oldValue, CustomerVoucher newValue)
+		               {
+		                  if (newValue != null){
+		                	  PropertyReader.copy(newValue, selected);
+		                     selectionEvent.fire(newValue);
+		                  }
+		               }
+		            });
 
-         }
-      });
-   }
+		listView.getCancleButton().setOnAction(new EventHandler<ActionEvent>() {
 
-   @Override
-   public void display(Pane parent)
-   {
-      AnchorPane rootPane = listView.getRootPane();
-      ObservableList<Node> children = parent.getChildren();
-      if (!children.contains(rootPane))
-      {
-         children.add(rootPane);
-      }
-   }
+			@Override
+			public void handle(ActionEvent event) {
+				CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					Action showConfirm = Dialogs.create().message("Confirmer l'annulation").showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						selectedItem.setCanceled(true);
+						customerVoucherEditService.setCustomerVoucher(selectedItem).start();
+					}
 
-   @Override
-   public ViewType getViewType()
-   {
-      return ViewType.LIST;
-   }
+				}
 
-   /**
-    * Handle search results. But the switch of displays is centralized
-    * in the main customerVoucher controller.
-    * 
-    * @param entities
-    */
-   public void handleSearchResult(@Observes @EntitySearchDoneEvent CustomerVoucherSearchResult searchResult)
-   {
-      this.searchResult = searchResult;
-      List<CustomerVoucher> entities = searchResult.getResultList();
-      if (entities == null)
-         entities = new ArrayList<CustomerVoucher>();
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(entities);
-      int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
-      int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
-      listView.getPagination().setPageCount(pageCount);
-      int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
-      int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
-      listView.getPagination().setCurrentPageIndex(pageIndex);
+			}
+		});
+		listView.getUnCancelButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null){
+					Action showConfirm = Dialogs.create().message("Confirmer le retablissement").showConfirm();
+					if(Dialog.Actions.YES.equals(showConfirm)){
+						selectedItem.setCanceled(false);
+						customerVoucherEditService.setCustomerVoucher(selectedItem).start();
+					}
 
-   }
+				}
+				
+			}
+		});
+		customerVoucherEditService.setOnFailed(callFailedEventHandler);
+		customerVoucherEditService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-   public void handleCreatedEvent(@Observes @EntityCreateDoneEvent CustomerVoucher createdEntity)
-   {
-      listView.getDataList().getItems().add(0, createdEntity);
-   }
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerVoucherEditService source = (CustomerVoucherEditService) event.getSource();
+                CustomerVoucher customerVoucher = source.getValue();
+                source.reset();
+                event.consume();
+                handleEditDoneEvent(customerVoucher);
+                Dialogs.create().message("Operation effectuee avec success ").showInformation();
+			}
+		});
+		/*
+		 * listen to search button and fire search activated event.
+		 */
+		listView.getSearchButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if (selectedItem == null)
+					selectedItem = new CustomerVoucher();
+				searchRequestedEvent.fire(selectedItem);
+			}
+				});
 
-   public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent CustomerVoucher removedEntity)
-   {
-      listView.getDataList().getItems().remove(removedEntity);
-   }
+		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
+				{
+			@Override
+			public void handle(ActionEvent e)
+			{
+				CustomerVoucher selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if (selectedItem == null)
+					selectedItem = new CustomerVoucher();
+				createRequestedEvent.fire(selectedItem);
+			}
+				});
 
-   public void handleEditDoneEvent(@Observes @EntityEditDoneEvent CustomerVoucher selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      CustomerVoucher entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+		listView.getPagination().currentPageIndexProperty().addListener(new ChangeListener<Number>()
+				{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				if (searchResult == null)
+					return;
+				if (searchResult.getSearchInput() == null)
+					searchResult.setSearchInput(new CustomerVoucherSearchInput());
+				int start = 0;
+				int max = searchResult.getSearchInput().getMax();
+				if (newValue != null)
+				{
+					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
+				}
+				searchResult.getSearchInput().setStart(start);
+				entityListPageIndexChangedEvent.fire(searchResult);
 
-      ArrayList<CustomerVoucher> arrayList = new ArrayList<CustomerVoucher>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+			}
+				});
+	}
 
-   public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent CustomerVoucher selectedEntity)
-   {
-      int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
-      if (selectedIndex <= -1)
-         return;
-      CustomerVoucher entity = listView.getDataList().getItems().get(selectedIndex);
-      PropertyReader.copy(selectedEntity, entity);
+	@Override
+	public void display(Pane parent)
+	{
+		AnchorPane rootPane = listView.getRootPane();
+		ObservableList<Node> children = parent.getChildren();
+		if (!children.contains(rootPane))
+		{
+			children.add(rootPane);
+		}
+	}
 
-      ArrayList<CustomerVoucher> arrayList = new ArrayList<CustomerVoucher>(listView.getDataList().getItems());
-      listView.getDataList().getItems().clear();
-      listView.getDataList().getItems().addAll(arrayList);
-      listView.getDataList().getSelectionModel().select(selectedEntity);
-   }
+	@Override
+	public ViewType getViewType()
+	{
+		return ViewType.LIST;
+	}
+
+	/**
+	 * Handle search results. But the switch of displays is centralized
+	 * in the main customerVoucher controller.
+	 * 
+	 * @param entities
+	 */
+	public void handleSearchResult(@Observes @EntitySearchDoneEvent CustomerVoucherSearchResult searchResult)
+	{
+		this.searchResult = searchResult;
+		List<CustomerVoucher> entities = searchResult.getResultList();
+		if (entities == null)
+			entities = new ArrayList<CustomerVoucher>();
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(entities);
+		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
+		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
+		listView.getPagination().setPageCount(pageCount);
+		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
+		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
+		listView.getPagination().setCurrentPageIndex(pageIndex);
+
+	}
+
+	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent CustomerVoucher createdEntity)
+	{
+		listView.getDataList().getItems().add(0, createdEntity);
+	}
+
+	public void handleRemovedEvent(@Observes @EntityRemoveDoneEvent CustomerVoucher removedEntity)
+	{
+		listView.getDataList().getItems().remove(removedEntity);
+	}
+
+	public void handleEditDoneEvent(@Observes @EntityEditDoneEvent CustomerVoucher selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		CustomerVoucher entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<CustomerVoucher> arrayList = new ArrayList<CustomerVoucher>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
+
+	public void handleEditCanceledEvent(@Observes @EntityEditCanceledEvent CustomerVoucher selectedEntity)
+	{
+		int selectedIndex = listView.getDataList().getItems().indexOf(selectedEntity);
+		if (selectedIndex <= -1)
+			return;
+		CustomerVoucher entity = listView.getDataList().getItems().get(selectedIndex);
+		PropertyReader.copy(selectedEntity, entity);
+
+		ArrayList<CustomerVoucher> arrayList = new ArrayList<CustomerVoucher>(listView.getDataList().getItems());
+		listView.getDataList().getItems().clear();
+		listView.getDataList().getItems().addAll(arrayList);
+		listView.getDataList().getSelectionModel().select(selectedEntity);
+	}
 
 	public void reset() {
-		   listView.getDataList().getItems().clear();
-		}
+		listView.getDataList().getItems().clear();
+	}
 }

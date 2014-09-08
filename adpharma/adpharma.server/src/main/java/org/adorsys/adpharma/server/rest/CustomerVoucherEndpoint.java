@@ -137,7 +137,7 @@ public class CustomerVoucherEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public CustomerVoucherSearchResult findBy(CustomerVoucherSearchInput searchInput)
 	{
-		SingularAttribute<CustomerVoucher, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<CustomerVoucher, Object>[] attributes = readSeachAttributes(searchInput);
 		Long count = ejb.countBy(searchInput.getEntity(), attributes);
 		List<CustomerVoucher> resultList = ejb.findBy(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -160,7 +160,7 @@ public class CustomerVoucherEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public CustomerVoucherSearchResult findByLike(CustomerVoucherSearchInput searchInput)
 	{
-		SingularAttribute<CustomerVoucher, ?>[] attributes = readSeachAttributes(searchInput);
+		SingularAttribute<CustomerVoucher, Object>[] attributes = readSeachAttributes(searchInput);
 		Long countLike = ejb.countByLike(searchInput.getEntity(), attributes);
 		List<CustomerVoucher> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
@@ -178,11 +178,11 @@ public class CustomerVoucherEndpoint
 	}
 
 	@SuppressWarnings("unchecked")
-	private SingularAttribute<CustomerVoucher, ?>[] readSeachAttributes(
+	private SingularAttribute<CustomerVoucher, Object>[] readSeachAttributes(
 			CustomerVoucherSearchInput searchInput)
 			{
 		List<String> fieldNames = searchInput.getFieldNames();
-		List<SingularAttribute<CustomerVoucher, ?>> result = new ArrayList<SingularAttribute<CustomerVoucher, ?>>();
+		List<SingularAttribute<CustomerVoucher, Object>> result = new ArrayList<SingularAttribute<CustomerVoucher, Object>>();
 		for (String fieldName : fieldNames)
 		{
 			Field[] fields = CustomerVoucher_.class.getFields();
@@ -192,7 +192,7 @@ public class CustomerVoucherEndpoint
 				{
 					try
 					{
-						result.add((SingularAttribute<CustomerVoucher, ?>) field.get(null));
+						result.add((SingularAttribute<CustomerVoucher, Object>) field.get(null));
 					}
 					catch (IllegalArgumentException e)
 					{

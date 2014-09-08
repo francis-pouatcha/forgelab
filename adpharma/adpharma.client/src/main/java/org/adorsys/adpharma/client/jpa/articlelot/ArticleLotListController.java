@@ -485,8 +485,6 @@ public class ArticleLotListController implements EntityController
 					}
 			}
 
-
-
 		}
 		try {
 			File file = new File("delivery.xls");
@@ -499,19 +497,19 @@ public class ArticleLotListController implements EntityController
 		}
 	}
 	
-	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-		if(roles.contains(AccessRoleEnum.PUSH_ARTICLE_OUT_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-			listView.getMoveButton().setVisible(true);
-			listView.getMoveToWareHouseButton().setVisible(true);
-		}else {
-			listView.getMoveButton().setVisible(false);
-			listView.getMoveToWareHouseButton().setVisible(false);
-		}
-		if(roles.contains(AccessRoleEnum.TRANSFORM_ARTICLE_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
-			listView.getDetailsButton().setVisible(true);
-		}else {
-			listView.getDetailsButton().setVisible(false);
-		}
-		
-	}
+//	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+//		if(roles.contains(AccessRoleEnum.PUSH_ARTICLE_OUT_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+//			listView.getMoveButton().setVisible(true);
+//			listView.getMoveToWareHouseButton().setVisible(true);
+//		}else {
+//			listView.getMoveButton().setVisible(false);
+//			listView.getMoveToWareHouseButton().setVisible(false);
+//		}
+//		if(roles.contains(AccessRoleEnum.TRANSFORM_ARTICLE_PERM.name())||roles.contains(AccessRoleEnum.MANAGER.name())){
+//			listView.getDetailsButton().setVisible(true);
+//		}else {
+//			listView.getDetailsButton().setVisible(false);
+//		}
+//		
+//	}
 }

@@ -88,6 +88,7 @@ public class DebtStatementReportPrintTemplatePDF {
 		BigDecimal ticketMt = BigDecimal.ZERO;
 		for (CustomerInvoice inoice : invoices) {
 			String societe = null ;
+			BigDecimal inssurancePart = inoice.getInsurance().getCoverageRate().multiply(inoice.getNetToPay()).divide(BigDecimal.valueOf(100));
 			if(inoice.getCustomer()!=null)
 				newTableRow(inoice.getInvoiceNumber(), 
 						inoice.getCustomer().getSociete()+"",
@@ -96,8 +97,8 @@ public class DebtStatementReportPrintTemplatePDF {
 						inoice.getInsurance().getCustomer().getFullName(),
 						DateHelper.format(inoice.getCreationDate().getTime(),"dd-MM-yyyy HH:mm"),
 						inoice.getNetToPay(),
-						inoice.getNetToPay().subtract(inoice.getInsurranceRestTopay()),
-						inoice.getInsurranceRestTopay(),
+						inoice.getNetToPay().subtract(inssurancePart),
+						inssurancePart,
 						inoice.getInsurance().getCoverageRate() );
 
 			total = total.add(inoice.getNetToPay());
@@ -146,7 +147,7 @@ public class DebtStatementReportPrintTemplatePDF {
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmount))));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(ticketm))));
 		reportTable.addCell(pdfPCell);

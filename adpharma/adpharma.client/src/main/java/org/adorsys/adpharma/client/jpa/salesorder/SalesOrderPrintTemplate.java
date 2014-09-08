@@ -265,6 +265,11 @@ public class SalesOrderPrintTemplate {
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHT.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
+			if(salesOrder.getInsurance()!=null&& salesOrder.getInsurance().getId()!=null){
+				pars.add(new Paragraph(new StandardText("Taux de couverture ")));
+				pars.add(new Paragraph(new StandardText("Part client ")));
+				pars.add(new Paragraph(new StandardText("Part client payeur ")));
+			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 
 			par = new Paragraph(new StandardText(""));
@@ -278,6 +283,11 @@ public class SalesOrderPrintTemplate {
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount.add(totalAmountTax)))));
+			if(salesOrder.getInsurance()!=null&& salesOrder.getInsurance().getId()!=null){
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getInsurance().getCoverageRate())+"%")));
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getCustomerRestTopay()))));
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getNetToPay().subtract(salesOrder.getCustomerRestTopay())))));
+			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 		}
 

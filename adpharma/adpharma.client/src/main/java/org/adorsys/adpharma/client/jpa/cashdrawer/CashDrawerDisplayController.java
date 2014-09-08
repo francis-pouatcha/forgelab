@@ -612,8 +612,12 @@ public class CashDrawerDisplayController implements EntityController
 				CustomerVoucherSearchInput voucherSearchInput = new CustomerVoucherSearchInput();
 				voucherSearchInput.getEntity().setVoucherNumber(voucherNumber);
 				voucherSearchInput.getEntity().setRestAmount(restAmount);
+				voucherSearchInput.getEntity().setCanceled(Boolean.FALSE);
+				voucherSearchInput.getEntity().setSettled(Boolean.FALSE);
 				voucherSearchInput.getFieldNames().add("voucherNumber");
 				voucherSearchInput.getFieldNames().add("restAmount");
+				voucherSearchInput.getFieldNames().add("canceled");
+				voucherSearchInput.getFieldNames().add("settled");
 				customerVoucherSearchService.setSearchInputs(voucherSearchInput).start();
 				voucherCheckingView.close();
 
@@ -677,7 +681,7 @@ public class CashDrawerDisplayController implements EntityController
 				event.consume();
 				s.reset();
 				if(result.getResultList().isEmpty()){
-					Dialogs.create().message("Les Informations Fournies Sont incorrecte").showError();
+					Dialogs.create().message("Les Informations Fournies Sont incorrecte OU BIEN L'AVOIR A ETE ANULLER Ou Solder").showError();
 				} else {
 					CustomerVoucher customerVoucher = result.getResultList().iterator().next();
 					displayView.getReceivedAmount().setNumber(customerVoucher.getRestAmount());

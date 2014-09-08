@@ -3,9 +3,9 @@ package org.adorsys.adpharma.client.jpa.debtstatement;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +75,6 @@ import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 import com.google.common.collect.Lists;
-import com.lowagie.text.DocumentException;
 
 @Singleton
 public class DebtStatementListController implements EntityController
@@ -483,6 +482,17 @@ public class DebtStatementListController implements EntityController
 				s.reset();
 				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				List<CustomerInvoice> invoices = value.getResultList();
+				Action showConfirm = Dialogs.create().message("Trier Par Ordre chronologique ?").showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
+					invoices.sort(new Comparator<CustomerInvoice>() {
+
+						@Override
+						public int compare(CustomerInvoice o1, CustomerInvoice o2) {
+							// TODO Auto-generated method stub
+							return o1.getCreationDate().compareTo(o2.getCreationDate());
+						}
+					});
+				}
 				Login login = securityUtil.getConnectedUser();
 				if(selectedItem!=null){
 					try {

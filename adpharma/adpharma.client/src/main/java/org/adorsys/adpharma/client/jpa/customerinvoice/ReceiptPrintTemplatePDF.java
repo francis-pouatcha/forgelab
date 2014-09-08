@@ -184,7 +184,8 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 			hasInsurrance = Boolean.TRUE ;
 			coverRate = insurance.getCoverageRate();
 			customerRest = invoiceData.getCustomerInvoice().getCustomerRestTopay();
-			insurranceRest = invoiceData.getCustomerInvoice().getInsurranceRestTopay();
+//			insurranceRest = invoiceData.getCustomerInvoice().getInsurranceRestTopay();
+			insurranceRest = invoiceData.getCustomerInvoice().getNetToPay().subtract(customerRest);
 
 		}
 		int invoiceTableColCount = 3;

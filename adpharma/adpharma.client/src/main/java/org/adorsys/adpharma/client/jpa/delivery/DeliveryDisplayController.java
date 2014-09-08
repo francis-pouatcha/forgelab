@@ -548,6 +548,17 @@ public class DeliveryDisplayController implements EntityController
 			displayView.getStockQuantity().requestFocus();
 			return false;
 		}
+		if(deliveryItem.getPurchasePricePU()!=null && deliveryItem.getSalesPricePU()!=null){
+		if(deliveryItem.getPurchasePricePU().compareTo(deliveryItem.getSalesPricePU())>0){
+			Dialogs.create().nativeTitleBar().message("Le prix de ventre dois etre superieur au prix d'achat ").showError();
+			displayView.getSalesPricePU().requestFocus();
+			return false;
+		}
+		}else {
+			Dialogs.create().nativeTitleBar().message("Le prix de ventre ou le prix d'achat ne peuvent etre null ").showError();
+			displayView.getSalesPricePU().requestFocus();
+			return false;
+		}
 
 		return true;
 
@@ -625,7 +636,7 @@ public class DeliveryDisplayController implements EntityController
 				parse = DateHelper.parse(expDate, "dd/MM/yyyy");
 
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 
 			if(parse!=null){

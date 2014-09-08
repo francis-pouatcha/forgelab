@@ -11,12 +11,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
-import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
-import org.adorsys.adpharma.server.jpa.CustomerInvoice_;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher;
 import org.adorsys.adpharma.server.jpa.CustomerVoucher_;
 import org.adorsys.adpharma.server.jpa.Disbursement;
@@ -26,6 +23,7 @@ import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
 import org.adorsys.adpharma.server.jpa.PaymentMode;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.repo.CustomerVoucherRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
@@ -87,11 +85,19 @@ public class CustomerVoucherEJB
 		if(PaymentMode.VOUCHER.equals(disbursement.getPaymentMode())){
 			CustomerVoucher voucher = new CustomerVoucher();
 			voucher.setVoucherNumber(disbursement.getVoucherNumber());
-			voucher.setAmount(disbursement.getVoucherAmount());
-			List<CustomerVoucher> found = findBy(voucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber,CustomerVoucher_.amount});
+			voucher.setRestAmount(disbursement.getVoucherAmount());
+			voucher.setCanceled(Boolean.FALSE);
+			voucher.setSettled(Boolean.FALSE);
+			List<CustomerVoucher> found = findBy(voucher, 0, 1, new SingularAttribute[]{CustomerVoucher_.voucherNumber,CustomerVoucher_.restAmount,CustomerVoucher_.canceled,CustomerVoucher_.settled});
 			if(found.isEmpty()) throw new RuntimeException("Voucher not found whith this number") ;
 			voucher = found.iterator().next();
-			voucher.setAmount(voucher.getAmount().subtract(disbursement.getAmount()));
+			if(voucher.getRestAmount().compareTo(disbursement.getAmount())<0)
+				throw new IllegalStateException("Disbusement amount must be lower than voucher rest amount");
+
+			voucher.setAmountUsed(voucher.getAmountUsed().add(disbursement.getAmount()));
+			voucher.setRestAmount(voucher.getAmount().subtract(voucher.getAmountUsed()));
+			voucher.setSettled(voucher.getRestAmount().compareTo(BigDecimal.ZERO)<=0);
+
 			update(voucher);
 		}
 	}
@@ -127,9 +133,10 @@ public class CustomerVoucherEJB
 		return repository.count();
 	}
 
-	public List<CustomerVoucher> findBy(CustomerVoucher entity, int start, int max, SingularAttribute<CustomerVoucher, ?>[] attributes)
+	public List<CustomerVoucher> findBy(CustomerVoucher entity, int start, int max, SingularAttribute<CustomerVoucher, Object>[] attributes)
 	{
-		return repository.findBy(entity, start, max, attributes);
+		CustomerVoucher attach = attach(entity);
+		return repository.criteriafindBy(attach, attributes).orderDesc(CustomerVoucher_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
 
 	public Long countBy(CustomerVoucher entity, SingularAttribute<CustomerVoucher, ?>[] attributes)
@@ -137,10 +144,13 @@ public class CustomerVoucherEJB
 		return repository.count(entity, attributes);
 	}
 
-	public List<CustomerVoucher> findByLike(CustomerVoucher entity, int start, int max, SingularAttribute<CustomerVoucher, ?>[] attributes)
+	public List<CustomerVoucher> findByLike(CustomerVoucher entity, int start, int max, SingularAttribute<CustomerVoucher, Object>[] attributes)
 	{
-		return repository.findByLike(entity, start, max, attributes);
+		CustomerVoucher attach = attach(entity);
+		return repository.criteriafindBy(attach, attributes).orderDesc(CustomerVoucher_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 	}
+
+
 
 	public Long countByLike(CustomerVoucher entity, SingularAttribute<CustomerVoucher, ?>[] attributes)
 	{
@@ -189,8 +199,7 @@ public class CustomerVoucherEJB
 				customerVoucher.setModifiedDate(new Date());
 				customerVoucher.setRecordingUser(securityUtil.getConnectedUser());
 				customerVoucher.setRestAmount(customerVoucher.getAmount().subtract(customerVoucher.getAmountUsed()));
-				if(customerVoucher.getRestAmount().compareTo(BigDecimal.ZERO)<=0)
-					customerVoucher.setSettled(Boolean.TRUE);
+				customerVoucher.setSettled(customerVoucher.getRestAmount().compareTo(BigDecimal.ZERO)<=0);
 				update(customerVoucher);
 			}
 		}

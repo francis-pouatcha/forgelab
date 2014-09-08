@@ -44,9 +44,10 @@ public class PhmlOrderReceiver {
 			String cip = StringUtils.substring(line, 8,57);
 			procurementOrderItem.setMainPic(cip.trim());
 			if(line.length()>116){
-			String ppu = StringUtils.substring(line, 116,line.length());
-			BigDecimal pp = new BigDecimal(ppu);
-			procurementOrderItem.setPurchasePricePU(pp);
+				String ppu = StringUtils.substring(line, 115,line.length());
+				System.out.println(ppu);
+				BigDecimal pp = new BigDecimal(ppu);
+				procurementOrderItem.setPurchasePricePU(pp);
 			}
 		}
 		return procurementOrderItem ;
@@ -59,7 +60,7 @@ public class PhmlOrderReceiver {
 	 */
 	public List<ProcurementOrderItem> receiveFromPhml(ProcurementOrder order) throws IOException{
 		applicationConfiguration= ReceiptPrintProperties.loadPrintProperties();
-		final String filename = order.getProcurementOrderNumber()+"-reponse-retour-";
+		final String filename = "CF69353-reponse-retour-";      //order.getProcurementOrderNumber()+"-reponse-retour-";
 		String responseDirectory = applicationConfiguration.getPhmlResponseDirectory();
 		List<ProcurementOrderItem> responseItem = new ArrayList<ProcurementOrderItem>();
 		List<String> lines = new ArrayList<String>();
