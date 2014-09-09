@@ -44,9 +44,10 @@ public class PhmlOrderReceiver {
 			String cip = StringUtils.substring(line, 8,57);
 			procurementOrderItem.setMainPic(cip.trim());
 			if(line.length()>116){
-			String ppu = StringUtils.substring(line, 116,line.length());
-			BigDecimal pp = new BigDecimal(ppu);
-			procurementOrderItem.setPurchasePricePU(pp);
+				String ppu = StringUtils.substring(line, 115,line.length());
+				BigDecimal pp = new BigDecimal(ppu);
+				System.out.println(ppu);
+				procurementOrderItem.setPurchasePricePU(pp);
 			}
 		}
 		return procurementOrderItem ;

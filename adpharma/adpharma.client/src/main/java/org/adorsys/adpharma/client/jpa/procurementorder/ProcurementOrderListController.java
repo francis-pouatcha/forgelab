@@ -137,7 +137,7 @@ public class ProcurementOrderListController implements EntityController
 	@Inject
 	@ShowProgressBarRequestEvent
 	private Event<Object> showProgressBarRequestEvent ;
-	
+
 	@Inject
 	@HideProgressBarRequestEvent
 	private Event<Object> hideProgressBarRequestEvent ;
@@ -156,7 +156,7 @@ public class ProcurementOrderListController implements EntityController
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
-
+				hideProgressBarRequestEvent.fire(new Object());
 			}
 		});
 
@@ -196,16 +196,16 @@ public class ProcurementOrderListController implements EntityController
 			}
 		});
 		listView.getRuptureButton().setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
-			ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-			if(selectedItem!=null&& DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus())){
-				ProcurementOrderId procurementOrderId = new ProcurementOrderId(selectedItem.getId());
-				procurementOrderId.setOnlyRupture(true);
-				poPrintRequestEvent.fire(procurementOrderId );
-			}
-				
+				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null&& DocumentProcessingState.CLOSED.equals(selectedItem.getPoStatus())){
+					ProcurementOrderId procurementOrderId = new ProcurementOrderId(selectedItem.getId());
+					procurementOrderId.setOnlyRupture(true);
+					poPrintRequestEvent.fire(procurementOrderId );
+				}
+
 			}
 		});
 		listView.getDataList().getSelectionModel().selectedItemProperty()
@@ -291,14 +291,14 @@ public class ProcurementOrderListController implements EntityController
 			public void handle(ActionEvent e)
 			{
 				if(NetWorkChecker.hasNetwork()){
-				ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				if(selectedItem!=null && DocumentProcessingState.ONGOING.equals(selectedItem.getPoStatus())){
-					showProgressBarRequestEvent.fire(new Object());
-					phmlSendAndReceiveService.setProcurementOrder(selectedItem).setToBeSent(true).start();
-				}else {
-					Dialogs.create().message("La commande dois etre encour !").showInformation();
-					
-				}
+					ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+					if(selectedItem!=null && DocumentProcessingState.ONGOING.equals(selectedItem.getPoStatus())){
+						showProgressBarRequestEvent.fire(new Object());
+						phmlSendAndReceiveService.setProcurementOrder(selectedItem).setToBeSent(true).start();
+					}else {
+						Dialogs.create().message("La commande dois etre encour !").showInformation();
+
+					}
 				}else {
 					Dialogs.create().message("Impossible de joindre le serveur Phml Verifier votre connection Internet").showInformation();
 				}
@@ -318,7 +318,7 @@ public class ProcurementOrderListController implements EntityController
 				s.reset();
 				if(phmlSendAndReceiveService.isToBeSent()){
 					Dialogs.create().message("Commande Envoyer Sur Phml Avec success !").showInformation();
-					
+
 				}else {
 					Dialogs.create().message("Commande Receptionnee de Phml Avec success !").showInformation();
 				}
@@ -393,7 +393,7 @@ public class ProcurementOrderListController implements EntityController
 				handleSearchResult(searchResult);
 			}
 		});
-		
+
 		searchService.setOnFailed(new EventHandler<WorkerStateEvent>() {
 
 			@Override
@@ -538,10 +538,10 @@ public class ProcurementOrderListController implements EntityController
 		ProcurementOrder entity = listView.getDataList().getItems().get(selectedIndex);
 		PropertyReader.copy(selectedEntity, entity);
 
-//		ArrayList<ProcurementOrder> arrayList = new ArrayList<ProcurementOrder>(listView.getDataList().getItems());
-//		listView.getDataList().getItems().clear();
-//		listView.getDataList().getItems().addAll(arrayList);
-//		listView.getDataList().getSelectionModel().select(selectedEntity);
+		//		ArrayList<ProcurementOrder> arrayList = new ArrayList<ProcurementOrder>(listView.getDataList().getItems());
+		//		listView.getDataList().getItems().clear();
+		//		listView.getDataList().getItems().addAll(arrayList);
+		//		listView.getDataList().getSelectionModel().select(selectedEntity);
 		handleProcurementSeclection(entity);
 	}
 
