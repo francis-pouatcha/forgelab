@@ -132,7 +132,7 @@ public class CustomerListView
 
 
 		category =ViewBuilderUtils.newComboBox(null, "category", false);
-		category.setPromptText("ALL CATEGORIE");
+		category.setPromptText("ALL CATEGORIES");
 		category.setPrefWidth(250d);
 		category.setPrefHeight(30d);
 
