@@ -26,6 +26,7 @@ import org.adorsys.adpharma.server.events.ReturnSalesEvent;
 import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
+import org.adorsys.adpharma.server.jpa.Insurrance;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
@@ -279,6 +280,11 @@ public class SalesOrderEJB
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
+		Insurrance insurance = salesOrder.getInsurance();
+		if(insurance!=null&& salesOrder.getCustomer().equals(insurance.getInsurer())){
+			Customer customer = insurance.getCustomer();
+			salesOrder.setCustomer(customer);
+		}
 		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
 		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
 		//		salesOrder.setAmountVAT(original.getAmountVAT());

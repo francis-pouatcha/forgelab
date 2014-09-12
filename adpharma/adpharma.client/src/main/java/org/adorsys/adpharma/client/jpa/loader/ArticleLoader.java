@@ -142,12 +142,15 @@ public class ArticleLoader extends Service<List<Article>> {
 				continue;
 			}
 			Platform.runLater(pgRunner.setText(progressText + " : " + entity.getArticleName()));
-
+           
 			cell = row.getCell(2);
+			if(cell!=null){
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 			if (cell != null && StringUtils.isNotBlank(cell.getStringCellValue()))
 				entity.setManufacturer(cell.getStringCellValue().trim());
-
+			}else {
+				continue;
+			}
 			cell = row.getCell(3);
 			if (cell != null)
 				entity.setActive(Boolean.TRUE);

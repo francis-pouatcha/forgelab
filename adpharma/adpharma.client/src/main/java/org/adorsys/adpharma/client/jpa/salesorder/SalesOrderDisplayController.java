@@ -104,6 +104,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+import org.jboss.weld.exceptions.IllegalStateException;
 
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
@@ -405,6 +406,7 @@ public class SalesOrderDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
+						
 						if(isValideSale()){
 							Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
 							if (violations.isEmpty())
@@ -412,6 +414,7 @@ public class SalesOrderDisplayController implements EntityController
 								String salesKey = salesKeyRecieverView.show();
 								if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
 									displayedEntity.setSalesKey(salesKey);
+									
 									closeService.setSalesOrder(displayedEntity).start();
 								}
 							}

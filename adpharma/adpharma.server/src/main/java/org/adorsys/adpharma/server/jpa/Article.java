@@ -38,7 +38,6 @@ import org.adorsys.adpharma.server.jpa.VAT;
       "authorizedSale", "agency.name", "vat.rate" })
 public class Article implements Serializable
 {
-
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
