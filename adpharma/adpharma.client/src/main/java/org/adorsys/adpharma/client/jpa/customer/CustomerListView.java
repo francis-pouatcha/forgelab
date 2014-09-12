@@ -64,6 +64,9 @@ public class CustomerListView
 
 	@FXML
 	private Button unpayButton ;
+	
+	@FXML
+	private Button creditButton;
 
 	@FXML
 	HBox searchBar;
@@ -194,6 +197,14 @@ public class CustomerListView
 
 	public void setUnpayButton(Button unpayButton) {
 		this.unpayButton = unpayButton;
+	}
+	
+	public Button getCreditButton() {
+		return creditButton;
+	}
+	
+	public void setCreditButton(Button creditButton) {
+		this.creditButton = creditButton;
 	}
 
 }

@@ -154,6 +154,7 @@ public class SalesOrderEJB
 		         if(data.getToDate()!=null) {
 		        	 createQuery.setParameter("toDate", data.getToDate());
 		         }
+		         createQuery.setParameter("cashed", Boolean.TRUE);
 		         sales = (List<SalesOrder>)createQuery.getResultList();
 		return sales;
 		
