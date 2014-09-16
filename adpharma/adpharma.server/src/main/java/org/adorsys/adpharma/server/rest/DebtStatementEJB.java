@@ -141,7 +141,7 @@ public class DebtStatementEJB
 	public List<CustomerInvoice>  findInvoices(DebtStatementProcessingData data ){
 		List<CustomerInvoice> customerInvoices = new ArrayList<CustomerInvoice>() ;
 
-		String query ="SELECT s FROM CustomerInvoice AS s WHERE s.insurance != NULL AND s.salesOrder.cashed = :cashed AND s.invoiceType = :invoiceType ";
+		String query ="SELECT s FROM CustomerInvoice AS s WHERE s.insurance != NULL AND s.salesOrder.cashed = :cashed  ";
 		if(data.getFromDate()!=null)
 			query = query+" AND s.creationDate >= :fromDate ";
 
@@ -164,7 +164,6 @@ public class DebtStatementEJB
 		if(data.getCustomer()!=null)
 			querys.setParameter("insurer", data.getCustomer());
 		querys.setParameter("cashed", Boolean.TRUE);
-		querys.setParameter("invoiceType", InvoiceType.CASHDRAWER);
 
 		customerInvoices = (List<CustomerInvoice>) querys.getResultList();
 		return customerInvoices ;

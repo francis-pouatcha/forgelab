@@ -181,11 +181,12 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 	public void printInvoiceHeader(CustomerInvoicePrinterData invoiceData) {
 		CustomerInvoiceInsurance insurance = invoiceData.getCustomerInvoice().getInsurance();
 		if(insurance!=null&& insurance.getId()!=null){
+			BigDecimal insurrancerate = insurance.getCoverageRate().divide(BigDecimal.valueOf(100));
 			hasInsurrance = Boolean.TRUE ;
 			coverRate = insurance.getCoverageRate();
-			customerRest = invoiceData.getCustomerInvoice().getCustomerRestTopay();
+			insurranceRest = invoiceData.getCustomerInvoice().getNetToPay().multiply(insurrancerate);
 //			insurranceRest = invoiceData.getCustomerInvoice().getInsurranceRestTopay();
-			insurranceRest = invoiceData.getCustomerInvoice().getNetToPay().subtract(customerRest);
+			customerRest = invoiceData.getCustomerInvoice().getNetToPay().subtract(insurrancerate);
 
 		}
 		int invoiceTableColCount = 3;

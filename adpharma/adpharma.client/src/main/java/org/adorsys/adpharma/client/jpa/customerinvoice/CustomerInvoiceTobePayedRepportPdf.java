@@ -77,20 +77,25 @@ public class CustomerInvoiceTobePayedRepportPdf {
 	public void addItems(List<CustomerInvoice> items) {
 		BigDecimal totalrest = BigDecimal.ZERO;
 		BigDecimal totalamount = BigDecimal.ZERO;
+		BigDecimal totalamountAdvence = BigDecimal.ZERO;
 		for (CustomerInvoice item : items) {
-			totalrest = item.getInsurranceRestTopay()!=null?totalrest.add(item.getInsurranceRestTopay()):totalrest;
 			BigDecimal insuranceRate = item.getInsurance().getCoverageRate().divide(BigDecimal.valueOf(100));
 			BigDecimal insr = item.getNetToPay().multiply(insuranceRate);
+			BigDecimal cust = item.getNetToPay().subtract(insr);
+			BigDecimal advenceIsurrance = item.getAdvancePayment().subtract(cust);
+			BigDecimal advence = insr.subtract(item.getAdvancePayment().subtract(cust));
 			totalamount = totalamount.add(insr);
+			totalrest = totalrest.add(insr.subtract(advenceIsurrance));
+			totalamountAdvence = totalamountAdvence.add(advenceIsurrance);
 			newTableRow(item.getInvoiceNumber(),
 					item.getSalesOrder().getSoNumber(),
 					DateHelper.format(item.getCreationDate().getTime(), "dd-MM-yyyy HH:mm"),
 					insr,
-					insr.subtract(item.getInsurranceRestTopay()),
-					item.getInsurranceRestTopay()
+					advenceIsurrance,
+					insr.subtract(advenceIsurrance)
 					);
 		}
-		newTableRow("", "Total", null,totalamount,totalamount.subtract(totalrest),totalrest);
+		newTableRow("", "Total", null,totalamount,totalamountAdvence,totalrest);
 	}
 
 	private void newTableRow(String invNumber, 

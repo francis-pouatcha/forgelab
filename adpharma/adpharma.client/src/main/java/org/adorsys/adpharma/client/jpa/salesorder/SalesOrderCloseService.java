@@ -29,11 +29,6 @@ public class SalesOrderCloseService extends Service<SalesOrder> {
 			{
 				if (entity == null)
 					return null;
-				SalesOrderInsurance insurance = entity.getInsurance();
-				if(insurance!=null){
-					if(entity.getCustomer().getId().equals(insurance.getInsurer().getId()))
-						throw new IllegalStateException("le client ne peu etre identique au l'assureur ") ;
-				}
 				return remoteService.saveAndClose(entity);
 			}
 				};

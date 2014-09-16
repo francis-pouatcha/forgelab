@@ -78,10 +78,15 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 	
 	public void addItems(List<DeliveryItem> deliveryItems) {
 	int artNamelenght = 68 ;
+	BigDecimal totalPp = BigDecimal.ZERO;
+	BigDecimal totalQte = BigDecimal.ZERO;
 			for (DeliveryItem deliveryItem : deliveryItems) {
 				String articleName = deliveryItem.getArticleName();
-				if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
+				if(articleName.length()>artNamelenght) 
+					articleName = StringUtils.substring(articleName, 0, artNamelenght);
 	
+				totalPp = totalPp.add(deliveryItem.getTotalPurchasePrice());
+				totalQte = totalQte.add(deliveryItem.getStockQuantity());
 				newTableRow(deliveryItem.getInternalPic(), 
 						articleName, 
 						deliveryItem.getArticle().getQtyInStock(), 
@@ -90,6 +95,8 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 						deliveryItem.getSalesPricePU(),
 						deliveryItem.getTotalPurchasePrice());
 			}
+			
+			newTableRow("", "TOTAL : ", null, null, totalQte, null, totalPp);
 		}
 	
 	private void newTableRow(String internalPic, 
