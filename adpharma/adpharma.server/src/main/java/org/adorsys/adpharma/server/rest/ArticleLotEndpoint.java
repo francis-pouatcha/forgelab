@@ -32,6 +32,7 @@ import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
+import org.adorsys.adpharma.server.utils.ArticleLotDetailResultHolder;
 
 /**
  * 
@@ -106,9 +107,12 @@ public class ArticleLotEndpoint
 	@Path("/processDetails")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager)
+	public ArticleLotDetailResultHolder processDetails(ArticleLotDetailsManager lotDetailsManager)
 	{
-		return detach(ejb.processDetails(lotDetailsManager));
+		ArticleLotDetailResultHolder resultHolder = ejb.processDetails(lotDetailsManager);
+		resultHolder.setSource(detach(resultHolder.getSource()));
+		resultHolder.setTarget(detach(resultHolder.getTarget()));
+		return resultHolder;
 	}
 
 	@GET

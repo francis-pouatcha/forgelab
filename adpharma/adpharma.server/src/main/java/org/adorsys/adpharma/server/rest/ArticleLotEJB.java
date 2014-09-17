@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,7 +49,7 @@ import org.adorsys.adpharma.server.repo.ArticleRepository;
 import org.adorsys.adpharma.server.repo.DeliveryItemRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
-import org.apache.commons.beanutils.BeanUtils;
+import org.adorsys.adpharma.server.utils.ArticleLotDetailResultHolder;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -285,7 +284,8 @@ public class ArticleLotEJB
 	 * process article lot details
 	 *
 	 */
-	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager){
+	public ArticleLotDetailResultHolder processDetails(ArticleLotDetailsManager lotDetailsManager){
+		ArticleLotDetailResultHolder articleLotDetailResultHolder = new ArticleLotDetailResultHolder();
 		ArticleLot lot = null ;
 
 		Login login = securityUtil.getConnectedUser();
@@ -297,6 +297,7 @@ public class ArticleLotEJB
 
 		if(isManagedLot){
 			ArticleLot al = newArticleLot(lotDetailsManager);
+			processLotCompensation(al);
 			lot = create(al);
 		}else {
 			ArticleLot articleLot = new ArticleLot();
@@ -319,7 +320,31 @@ public class ArticleLotEJB
 		source.calculateTotalAmout();
 		source = update(source);
 		articleLotDetailsEvent.fire(lotDetailsManager);
-		return source ;
+		articleLotDetailResultHolder.setSource(source);
+		articleLotDetailResultHolder.setTarget(lot);
+		
+		return articleLotDetailResultHolder ;
+	}
+	// pas bon travail sur le target lot 
+	public void processLotCompensation(ArticleLot source){
+		ArticleLot lotToDetails = source;
+		BigDecimal detailsQty = source.getStockQuantity();
+		List<ArticleLot> lotToCompense = repository.findByArticleAndStockQuantityLessThan(lotToDetails.getArticle(), BigDecimal.ZERO).getResultList();
+	  
+		for (ArticleLot articleLot : lotToCompense) {
+		BigDecimal stockQty = articleLot.getStockQuantity().abs();
+		if(detailsQty.compareTo(stockQty)<=0){
+			articleLot.setStockQuantity(articleLot.getStockQuantity().add(detailsQty));
+			repository.save(articleLot);
+			detailsQty = BigDecimal.ZERO ;
+			break;
+		}else {
+			articleLot.setStockQuantity(articleLot.getStockQuantity().add(stockQty));
+			repository.save(articleLot);
+			detailsQty = detailsQty.subtract(stockQty);
+		}
+		source.setStockQuantity(detailsQty);
+	}
 	}
 
 

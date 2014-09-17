@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.repo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
@@ -29,6 +30,11 @@ public interface  ArticleLotRepository extends EntityRepository<ArticleLot, Long
 	@Query(	"SELECT e FROM ArticleLot AS e WHERE e.article = ?1  AND e.stockQuantity < ?2")
     QueryResult<ArticleLot> findByArticleAndStockQuantityLessThan(Article article,BigDecimal lessThan);
 
+	@Query(	"SELECT e FROM ArticleLot AS e WHERE e.article.qtyInStock < ?1")
+    QueryResult<ArticleLot> findBreakArticleLot(BigDecimal lessThan);
+	
+	@Query(	"SELECT e FROM ArticleLot AS e WHERE e.article.qtyInStock < e.article.minStockQty")
+    QueryResult<ArticleLot> findBelowThresholdArticleLot();
 
 
 }

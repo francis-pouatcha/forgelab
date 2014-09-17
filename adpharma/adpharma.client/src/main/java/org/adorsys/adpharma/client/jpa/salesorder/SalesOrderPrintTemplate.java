@@ -108,22 +108,19 @@ public class SalesOrderPrintTemplate {
 				+ ": " + company.getRegisterNumber()));
 		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " + salesOrder.getCustomer().getFullName()));
+		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " +
+				salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 1, 1);
 
-		paragraph = new Paragraph(new StandardText(
-				resourceBundle.getString("SalesOrderPrintTemplate_invoiceDate.title")
-				+ " " + calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
-		borderlessCell(rt, paragraph, 1, 1);
+		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
+		borderlessCell(rt, paragraph, 2, 1);
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_salesAgent.title") 
 				+ " " + salesAgent.getFullName()));
 		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_invoiceNr.title") 
-				+ " " + salesOrder.getSoNumber()));
-		paragraph.setSpacingAfter(15);
+		paragraph = new Paragraph(new StandardText( "Facture No  " +salesOrder.getSoNumber() +" Du "+ calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
 		borderlessCell(rt, paragraph, 1, 1);
 
 		try {

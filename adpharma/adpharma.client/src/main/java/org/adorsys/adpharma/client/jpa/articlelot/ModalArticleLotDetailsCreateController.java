@@ -22,6 +22,7 @@ import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSe
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchResult;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSearchService;
 import org.adorsys.adpharma.client.jpa.productdetailconfig.ProductDetailConfigSource;
+import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityEditDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
@@ -57,7 +58,7 @@ public class ModalArticleLotDetailsCreateController {
 
 	@Inject
 	@EntityEditDoneEvent
-	private Event<ArticleLot> articleLotCreateDoneEvent;
+	private Event<ArticleLotDetailResultHolder> detailRequestDoneEvent;
 
 	@Inject
 	@WorkingInformationEvent
@@ -112,10 +113,10 @@ public class ModalArticleLotDetailsCreateController {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				ArticleLotDetailsService s = (ArticleLotDetailsService) event.getSource();
-				ArticleLot ent = s.getValue();
+				ArticleLotDetailResultHolder ent = s.getValue();
 				event.consume();
 				s.reset();
-				articleLotCreateDoneEvent.fire(ent);
+				detailRequestDoneEvent.fire(ent);
 				workingEvent.fire("Article details successfuly !");
 				lotDetailsCreateView.closeDialog();
 
@@ -133,6 +134,8 @@ public class ModalArticleLotDetailsCreateController {
 				s.reset();
 				List<ProductDetailConfig> resultList = searchResult.getResultList();
 				lotDetailsCreateView.getDetailsConfig().getItems().setAll(resultList);
+				if(!resultList.isEmpty())
+					lotDetailsCreateView.getDetailsConfig().getSelectionModel().select(0);
 
 			}
 		});

@@ -25,6 +25,8 @@ public class PeriodicalDataSearchInput {
 	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
 	
 	private SimpleStringProperty pic;
+	
+	private SimpleStringProperty articleName ; 
 
 	 public SimpleStringProperty picProperty()
 	   {
@@ -43,6 +45,25 @@ public class PeriodicalDataSearchInput {
 	   public final void setPic(String pic)
 	   {
 	      this.picProperty().set(pic);
+	   }
+	   
+	   public SimpleStringProperty articleNameProperty()
+	   {
+	      if (articleName == null)
+	      {
+	    	  articleName = new SimpleStringProperty();
+	      }
+	      return articleName;
+	   }
+
+	   public String getArticleName()
+	   {
+	      return articleNameProperty().get();
+	   }
+
+	   public final void setArticleName(String articleName)
+	   {
+	      this.articleNameProperty().set(articleName);
 	   }
 
 	public SimpleObjectProperty<Calendar> beginDateProperty()

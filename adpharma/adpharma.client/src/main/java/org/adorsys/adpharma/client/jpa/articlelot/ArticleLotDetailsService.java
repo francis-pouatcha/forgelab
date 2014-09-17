@@ -5,7 +5,9 @@ import javafx.concurrent.Task;
 
 import javax.inject.Inject;
 
-public class ArticleLotDetailsService extends Service<ArticleLot>
+import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
+
+public class ArticleLotDetailsService extends Service<ArticleLotDetailResultHolder>
 {
 
 	   private ArticleLotDetailsManager model;
@@ -20,12 +22,12 @@ public class ArticleLotDetailsService extends Service<ArticleLot>
 	   }
 
 	   @Override
-	   protected Task<ArticleLot> createTask()
+	   protected Task<ArticleLotDetailResultHolder> createTask()
 	   {
-	      return new Task<ArticleLot>()
+	      return new Task<ArticleLotDetailResultHolder>()
 	      {
 	         @Override
-	         protected ArticleLot call() throws Exception
+	         protected ArticleLotDetailResultHolder call() throws Exception
 	         {
 	            if (model == null)
 	               return null;

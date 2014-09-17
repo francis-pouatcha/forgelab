@@ -90,6 +90,7 @@ public class SalesOrderItemEJB
 		ArrayList<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
 
 		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed ORDER BY s.article.articleName ";
+		
 		List<Object[]> sales = new ArrayList<Object[]>();
 		if(check)
 			query ="SELECT s.internalPic , s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE "

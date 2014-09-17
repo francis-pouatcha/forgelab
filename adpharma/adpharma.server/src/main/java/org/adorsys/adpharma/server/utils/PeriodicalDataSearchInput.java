@@ -23,6 +23,8 @@ public class PeriodicalDataSearchInput {
 
 	private String pic;
 	
+	private String articleName;
+	
 	
 	
 
@@ -81,6 +83,14 @@ public class PeriodicalDataSearchInput {
 
 	public void setPic(String pic) {
 		this.pic = pic;
+	}
+
+	public String getArticleName() {
+		return articleName;
+	}
+
+	public void setArticleName(String articleName) {
+		this.articleName = articleName;
 	}
 
 

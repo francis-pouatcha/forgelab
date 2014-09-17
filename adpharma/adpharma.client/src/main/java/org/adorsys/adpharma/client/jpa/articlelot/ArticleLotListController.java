@@ -38,6 +38,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
+import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -143,7 +144,8 @@ public class ArticleLotListController implements EntityController
 					if(selectedItem!=null){
 						String textInput = Dialogs.create().message("Quantite : ").showTextInput();
 						Long valueOf = Long.valueOf(textInput);
-						exportDeliveryToXls(valueOf.intValue(),selectedItem);
+						String agencyName = securityUtil.getAgency().getName();
+						exportDeliveryToXls(valueOf.intValue(),selectedItem,agencyName);
 					}
 
 				} catch (Exception e) {
@@ -401,13 +403,28 @@ public class ArticleLotListController implements EntityController
 		//		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
 
 	}
+	
+	public void handleArticleDatailDoneEvent(@Observes  @EntityEditDoneEvent ArticleLotDetailResultHolder articleLotDetailResultHolder){
+		ArticleLot source = articleLotDetailResultHolder.getSource();
+		ArticleLot target = articleLotDetailResultHolder.getTarget();
+		int indexOf = listView.getDataList().getItems().indexOf(source);
+		handleEditDoneEvent(source);
+		listView.getDataList().getItems().add(0, target);
+		try {
+			
+			exportDeliveryToXls(target.getStockQuantity().intValue(), target, securityUtil.getAgency().getName());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
 
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
 
 	@SuppressWarnings("resource")
-	public void exportDeliveryToXls(int qty,ArticleLot item){
+	public void exportDeliveryToXls(int qty,ArticleLot item,String agencyName){
 		String supllierName = securityUtil.getAgency().getName();
 		if(StringUtils.isNotBlank(supllierName))
 			if(supllierName.length()>4)
@@ -434,6 +451,9 @@ public class ArticleLotListController implements EntityController
 		cell.setCellValue("fournisseur");
 		
 		cell = header.createCell(cellnum++);
+		cell.setCellValue("site");
+		
+		cell = header.createCell(cellnum++);
 		cell.setCellValue("date");
 
 		if( item!=null&&sheet!=null){
@@ -455,6 +475,11 @@ public class ArticleLotListController implements EntityController
 
 				cell = row.createCell(cellnum++);
 				cell.setCellValue(supllierName);
+				
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(agencyName);
+				
+				
 				
 				if(item.getCreationDate()!=null){
 					cell = row.createCell(cellnum++);

@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolation;
 
 import jfxtras.scene.control.CalendarTextField;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -42,6 +43,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	
 	private TextField pic ;
 	
+	private TextField articleName ;
+	
 	private CheckBox taxableSalesOnly;
 	
 	private CheckBox nonTaxableSalesOnly;
@@ -59,7 +62,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextFieldValidator calendarControlValidator;
 
 	@Inject
-	@Bundle({ CrudKeys.class, SalesOrder.class })
+	@Bundle({ CrudKeys.class, SalesOrder.class,Article.class })
 	private ResourceBundle resourceBundle;
 
 	@PostConstruct
@@ -68,6 +71,9 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		LazyViewBuilder lazyviewBuilder = new LazyViewBuilder();
 		beginDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_fromDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
+		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle) ;
+		articleName = lazyviewBuilder.addTextField("Article_articleName_description.title", "pic", resourceBundle) ;
+		
 		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
 		taxableSalesOnly.setText("Taxable Uniquement ?");
 		nonTaxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "nonTaxableSalesOnly", resourceBundle);
@@ -85,7 +91,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
 		rootPane = viewBuilder.toAnchorPane();
-		rootPane.setPrefWidth(300);
+		rootPane.setPrefWidth(500);
 	}
 
 

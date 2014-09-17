@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
+import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -98,12 +99,12 @@ public class ArticleLotService
 	//	@POST
 	//	@Path("/processDetails")
 	//	@Consumes("application/xml")
-	public ArticleLot processDetails(ArticleLotDetailsManager lotDetailsManager)
+	public ArticleLotDetailResultHolder processDetails(ArticleLotDetailsManager lotDetailsManager)
 	{
 		Entity<ArticleLotDetailsManager> articleLotDetailsManagerEntity = Entity.entity(
 				lotDetailsManager, media);
 		return target().path("processDetails").request()
-				.put(articleLotDetailsManagerEntity, ArticleLot.class);
+				.put(articleLotDetailsManagerEntity, ArticleLotDetailResultHolder.class);
 	}
 
 
