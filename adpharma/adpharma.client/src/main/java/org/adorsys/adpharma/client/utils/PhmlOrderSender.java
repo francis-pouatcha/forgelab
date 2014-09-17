@@ -21,6 +21,7 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 public class PhmlOrderSender {
 
 	@Inject
@@ -102,11 +103,10 @@ public class PhmlOrderSender {
 	 * @param order tobe sent on phml server
 	 * @throws IOException
 	 */
-	public void sendToPhml(ProcurementOrder order) throws IOException{
+	public void sendToPhml(ProcurementOrder order,String repartiteur) throws IOException{
 		applicationConfiguration= ReceiptPrintProperties.loadPrintProperties();
 		String messageDir = applicationConfiguration.getPhmlMessageDirectory();
-		String repartiteur = applicationConfiguration.getPhmlRepartiteur();
-		System.out.println(repartiteur);
+		if(StringUtils.isBlank(repartiteur)) throw new RuntimeException("Vous devez selectionner un repartiteur !");
 		String filename = messageDir+order.getProcurementOrderNumber()+".txt";
 
 		List<String> lines = new ArrayList<String>();
@@ -138,7 +138,7 @@ public class PhmlOrderSender {
 		lines.add(buildEndCommandLine(0, items.size()));
 
 		FileUtils.writeLines(file, "UTF-8", lines);
-//		Desktop.getDesktop().open(file);
+		//		Desktop.getDesktop().open(file);
 	}
 
 

@@ -25,6 +25,8 @@ public class PeriodicalDataSearchInput {
 	
 	private String articleName;
 	
+	private String internalPic;
+	
 	
 	
 
@@ -91,6 +93,14 @@ public class PeriodicalDataSearchInput {
 
 	public void setArticleName(String articleName) {
 		this.articleName = articleName;
+	}
+
+	public String getInternalPic() {
+		return internalPic;
+	}
+
+	public void setInternalPic(String internalPic) {
+		this.internalPic = internalPic;
 	}
 
 

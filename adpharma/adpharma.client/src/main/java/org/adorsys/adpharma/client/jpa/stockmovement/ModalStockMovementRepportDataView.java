@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.salesorder;
+package org.adorsys.adpharma.client.jpa.stockmovement;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -21,6 +21,8 @@ import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
+import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -31,7 +33,7 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 @Singleton
-public class ModalSalesRepportDataView extends ApplicationModal{
+public class ModalStockMovementRepportDataView extends ApplicationModal{
 
 	private AnchorPane rootPane;
 
@@ -39,18 +41,12 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 	private CalendarTextField endDate;
 
-	private CheckBox check;
-	
 	private TextField pic ;
+	
+	private TextField internalPic ;
 	
 	private TextField articleName ;
 	
-	private CheckBox taxableSalesOnly;
-	
-	private CheckBox nonTaxableSalesOnly;
-	
-	private CheckBox twentyOverHeightySalesOnly;
-
 	private Button saveButton;
 
 	private Button resetButton;
@@ -62,7 +58,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextFieldValidator calendarControlValidator;
 
 	@Inject
-	@Bundle({ CrudKeys.class, SalesOrder.class,Article.class })
+	@Bundle({ CrudKeys.class, SalesOrder.class,Article.class,ArticleLot.class })
 	private ResourceBundle resourceBundle;
 
 	@PostConstruct
@@ -72,18 +68,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		beginDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_fromDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle) ;
+		internalPic = lazyviewBuilder.addTextField("ArticleLot_internalPic_description.title", "pic", resourceBundle) ;
 		articleName = lazyviewBuilder.addTextField("Article_articleName_description.title", "pic", resourceBundle) ;
-		
-		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
-		taxableSalesOnly.setText("Taxable Uniquement ?");
-		nonTaxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "nonTaxableSalesOnly", resourceBundle);
-		nonTaxableSalesOnly.setText("Non Taxable Uniquement ?");
-		twentyOverHeightySalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightySalesOnly", resourceBundle);
-		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
-		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
-		check.setText("Resultat Groupé Par cip ?");
-		
-
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lazyviewBuilder.toRows(), ViewType.CREATE, false);
 		viewBuilder.addSeparator();
@@ -100,12 +86,9 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	{
 		beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
 		endDate.calendarProperty().bindBidirectional(model.endDateProperty());
-		check.selectedProperty().bindBidirectional(model.checkProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
 		articleName.textProperty().bindBidirectional(model.articleNameProperty());
-		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
-		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
-		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
+		internalPic.textProperty().bindBidirectional(model.internalPicProperty());
 		
 	}
 
@@ -154,28 +137,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 
 
-	public CheckBox getCheck() {
-		return check;
-	}
-
-
-
-	public CheckBox getTaxableSalesOnly() {
-		return taxableSalesOnly;
-	}
-
-
-
-	public CheckBox getNonTaxableSalesOnly() {
-		return nonTaxableSalesOnly;
-	}
-
-
-
-	public CheckBox getTwentyOverHeightySalesOnly() {
-		return twentyOverHeightySalesOnly;
-	}
-
+	
 
 
 	public CalendarTextFieldValidator getCalendarControlValidator() {

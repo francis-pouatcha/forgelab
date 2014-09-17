@@ -23,10 +23,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchInput;
+import org.adorsys.adpharma.server.jpa.SalesOrderItemSearchResult;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.jpa.StockMovementSearchInput;
 import org.adorsys.adpharma.server.jpa.StockMovementSearchResult;
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 
 /**
  * 
@@ -49,6 +53,19 @@ public class StockMovementEndpoint
    @Inject
    private AgencyMerger agencyMerger;
 
+   @POST
+   @Path("/periodicalMovement")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public StockMovementSearchResult periodicalMovement(PeriodicalDataSearchInput data)
+   {
+	   List<StockMovement> periodicalMvt = ejb.periodicalStockMovement(data);
+	   periodicalMvt = detach(periodicalMvt);
+	   StockMovementSearchInput searchInput = new StockMovementSearchInput();
+      return new StockMovementSearchResult(Long.valueOf(1), periodicalMvt, searchInput);
+   }
+   
+   
    @POST
    @Consumes({ "application/json", "application/xml" })
    @Produces({ "application/json", "application/xml" })

@@ -27,6 +27,8 @@ public class PeriodicalDataSearchInput {
 	private SimpleStringProperty pic;
 	
 	private SimpleStringProperty articleName ; 
+	
+	private SimpleStringProperty internalPic ;  
 
 	 public SimpleStringProperty picProperty()
 	   {
@@ -45,6 +47,25 @@ public class PeriodicalDataSearchInput {
 	   public final void setPic(String pic)
 	   {
 	      this.picProperty().set(pic);
+	   }
+	   
+	   public SimpleStringProperty internalPicProperty()
+	   {
+	      if (internalPic == null)
+	      {
+	    	  internalPic = new SimpleStringProperty();
+	      }
+	      return internalPic;
+	   }
+
+	   public String getInternalPic()
+	   {
+	      return internalPicProperty().get();
+	   }
+
+	   public final void setInternalPic(String internalPic)
+	   {
+	      this.internalPicProperty().set(internalPic);
 	   }
 	   
 	   public SimpleStringProperty articleNameProperty()

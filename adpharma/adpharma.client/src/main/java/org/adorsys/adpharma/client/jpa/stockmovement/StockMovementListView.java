@@ -48,6 +48,9 @@ public class StockMovementListView
 
 	@FXML
 	private Button createButton;
+	
+	@FXML
+	private Button advenceSearchButton;
 
 	private ComboBox<StockMovementTerminal> origin ;
 
@@ -164,7 +167,11 @@ public class StockMovementListView
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(cipm,raison,origin,destination,type,searchButton);
+		
+		advenceSearchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH_PLUS);
+		advenceSearchButton.setPrefHeight(40d);
+		advenceSearchButton.setText("Recherche Avancee");
+		searchBar.getChildren().addAll(cipm,origin,destination,type,searchButton,advenceSearchButton);
 	}
 
 	public void bind(StockMovementSearchInput searchInput)
@@ -220,5 +227,15 @@ public class StockMovementListView
 	{
 		return pagination;
 	}
+
+	public Button getAdvenceSearchButton() {
+		return advenceSearchButton;
+	}
+
+	public void setAdvenceSearchButton(Button advenceSearchButton) {
+		this.advenceSearchButton = advenceSearchButton;
+	}
+	
+	
 
 }

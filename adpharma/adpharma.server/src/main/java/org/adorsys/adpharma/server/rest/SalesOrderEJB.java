@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 @Stateless
 public class SalesOrderEJB
 {
-	
+
 
 	@Inject
 	private SalesOrderRepository repository;
@@ -156,7 +156,7 @@ public class SalesOrderEJB
 
 		if(StringUtils.isNotBlank(data.getArticleName()))
 			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName)";
-		
+
 		if(data.getOnlyCrediSales())
 			query = query+" AND s.salesOrder.insurance IS NOT NULL";
 
@@ -274,6 +274,8 @@ public class SalesOrderEJB
 	}
 
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+
+
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = salesOrder.getDiscountRate();
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
@@ -282,6 +284,14 @@ public class SalesOrderEJB
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
+		
+		// dirty hack 17-09-2014
+		if(salesOrder.getInsurance()!=null && salesOrder.getInsurance().getCustomer()!=null && salesOrder.getCustomer()!=null){
+			if(salesOrder.getCustomer().equals(salesOrder.getInsurance().getInsurer()) && !salesOrder.getCustomer().equals(salesOrder.getInsurance().getCustomer())){
+				salesOrder.setCustomer(salesOrder.getInsurance().getCustomer());
+			}
+		}
+		
 		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
 		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
 		//		salesOrder.setAmountVAT(original.getAmountVAT());

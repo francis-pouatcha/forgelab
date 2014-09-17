@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintProperties;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryFromOrderServeice;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
@@ -293,8 +294,13 @@ public class ProcurementOrderListController implements EntityController
 				if(NetWorkChecker.hasNetwork()){
 					ProcurementOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 					if(selectedItem!=null && DocumentProcessingState.ONGOING.equals(selectedItem.getPoStatus())){
+						String repartiteur = ReceiptPrintProperties.loadPrintProperties().getPhmlRepartiteur();
+						if(StringUtils.contains(repartiteur, ",")){
+							String[] listOfRepartiteur = StringUtils.split(repartiteur, ",");
+							repartiteur = Dialogs.create().title("Selectionner un compte :").message("Compte").showChoices(listOfRepartiteur);
+						}
 						showProgressBarRequestEvent.fire(new Object());
-						phmlSendAndReceiveService.setProcurementOrder(selectedItem).setToBeSent(true).start();
+						phmlSendAndReceiveService.setProcurementOrder(selectedItem).setRepartiter(repartiteur).setToBeSent(true).start();
 					}else {
 						Dialogs.create().message("La commande dois etre encour !").showInformation();
 
