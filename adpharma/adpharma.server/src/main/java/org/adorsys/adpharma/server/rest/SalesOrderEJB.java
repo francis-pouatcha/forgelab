@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 @Stateless
 public class SalesOrderEJB
 {
-	
+
 
 	@Inject
 	private SalesOrderRepository repository;
@@ -280,10 +280,11 @@ public class SalesOrderEJB
 		if(realSaller==null) throw new IllegalStateException("Saller is required !") ;
 		//		SalesOrder original = findById(salesOrder.getId());
 		salesOrder = attach(salesOrder);
-		Insurrance insurance = salesOrder.getInsurance();
-		if(insurance!=null&& salesOrder.getCustomer().equals(insurance.getInsurer())){
-			Customer customer = insurance.getCustomer();
-			salesOrder.setCustomer(customer);
+		// dirty hack 17-09-2014
+		if(salesOrder.getInsurance()!=null && salesOrder.getInsurance().getCustomer()!=null && salesOrder.getCustomer()!=null){
+			if(salesOrder.getCustomer().equals(salesOrder.getInsurance().getInsurer()) && !salesOrder.getCustomer().equals(salesOrder.getInsurance().getCustomer())){
+				salesOrder.setCustomer(salesOrder.getInsurance().getCustomer());
+			}
 		}
 		//		salesOrder.setAmountAfterTax(original.getAmountAfterTax());
 		//		salesOrder.setAmountBeforeTax(original.getAmountBeforeTax());
