@@ -192,6 +192,7 @@ public class SalesOrderEndpoint
 		return new SalesOrderSearchResult(Long.valueOf(1), detach(resultList),
 				detach(new SalesOrderSearchInput()));
 	}
+	
 
 	@POST
 	@Path("/countBy")

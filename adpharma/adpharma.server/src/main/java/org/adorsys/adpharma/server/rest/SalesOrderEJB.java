@@ -139,6 +139,27 @@ public class SalesOrderEJB
 		}
 		return entity;
 	}
+	
+	// Periodic Report Sales per vendor
+	public List<SalesOrder> periodicReportSalesPerVendor(SalesOrderAdvenceSearchData data){
+		List<SalesOrder> sales= new ArrayList<SalesOrder>();
+		StringBuilder query=new StringBuilder().append("SELECT l.fullName, s.creationDate, sum(s.amountAfterTax) as chiffreAffaire, sum(s.amountDiscount) as totalRemise"+
+	             "FROM SalesOrder s, Login l WHERE s.id != NULL AND s.salesAgent=l.id");
+				 if(data.getFromDate()!=null) query.append(" AND s.creationDate >= :fromDate");
+		         if(data.getToDate()!=null) query.append(" AND s.creationDate <= :toDate");
+		         query.append("AND s.cashed= :cashed");
+		         Query createQuery = em.createQuery(query.toString());
+		         if(data.getFromDate()!=null) {
+		        	 createQuery.setParameter("fromDate", data.getFromDate());
+		         }
+		         if(data.getToDate()!=null) {
+		        	 createQuery.setParameter("toDate", data.getToDate());
+		         }
+		         createQuery.setParameter("cashed", Boolean.TRUE);
+		         sales = (List<SalesOrder>)createQuery.getResultList();
+		return sales;
+		
+	}
 
 	public List<SalesOrder> advenceSearch(SalesOrderAdvenceSearchData data){
 		List<SalesOrder> sales = new ArrayList<SalesOrder>();
