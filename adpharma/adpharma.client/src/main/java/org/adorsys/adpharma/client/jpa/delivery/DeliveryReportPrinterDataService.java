@@ -43,6 +43,7 @@ public class DeliveryReportPrinterDataService extends
 				DeliveryItem deliveryItem = new DeliveryItem();
 				deliveryItem.setDelivery(new DeliveryItemDelivery(delivery));
 				DeliveryItemSearchInput deliveryItemSearchInput = new DeliveryItemSearchInput();
+				deliveryItemSearchInput.setMax(-1);
 				deliveryItemSearchInput.setEntity(deliveryItem);
 				deliveryItemSearchInput.getFieldNames().add("delivery");
 				DeliveryItemSearchResult deliveryItemSearchResult = deliveryItemService

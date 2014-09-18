@@ -8,6 +8,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -26,6 +27,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.delivery.DeliveryFromOrderServeice;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemCreateService;
@@ -35,8 +37,6 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchInput;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchResult;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemSearchService;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemSalesOrder;
 import org.adorsys.adpharma.client.utils.DeliveryFromOrderData;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -49,10 +49,12 @@ import org.adorsys.javafx.crud.extensions.events.EntityEditRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -89,7 +91,7 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject 
 	@EntitySelectionEvent
 	private Event<Delivery> deliveryEditRequestEvent;
-	
+
 	@Inject 
 	@EntityEditDoneEvent
 	private Event<ProcurementOrder> procurementEditRequestEvent;
@@ -137,17 +139,27 @@ public class ProcurementOrderDisplayController implements EntityController
 	@PrintRequestedEvent
 	private Event<ProcurementOrderId> printRequestedEvent;
 
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressBarRequestEvent ;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressBarRequestEvent ;
+
 	@PostConstruct
 	public void postConstruct()
 	{
 		displayView.bind(item);
 		displayView.bind(displayedEntity);
+		displayView.getDeliverButton().disableProperty().bind(deliveryFromOrderServeice.runningProperty());
 		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
+
 
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
-
+				hideProgressBarRequestEvent.fire(new Object());
 			}
 		});
 		displayView.getOrderQuantityColumn().setOnEditCommit(new EventHandler<CellEditEvent<ProcurementOrderItem,BigDecimal>>() {
@@ -325,7 +337,12 @@ public class ProcurementOrderDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent e)
 			{
-				deliveryFromOrderServeice.setModel(displayedEntity).start();
+				if(DocumentProcessingState.RETREIVED.equals(displayedEntity.getPoStatus())){
+					showProgressBarRequestEvent.fire(new Object());
+					deliveryFromOrderServeice.setModel(displayedEntity).start();
+				}else {
+					Dialogs.create().message("La commande dois etre dans l'etat recu !").showInformation();
+				}
 			}
 				});
 
@@ -333,14 +350,16 @@ public class ProcurementOrderDisplayController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+
 				DeliveryFromOrderServeice s = (DeliveryFromOrderServeice) event.getSource();
 				DeliveryFromOrderData data = s.getValue();
 				event.consume();
 				s.reset();
 				procurementEditRequestEvent.fire(data.getOrder());
-//				handleSelectionEvent(data.getOrder());
+				//				handleSelectionEvent(data.getOrder());
 				componentSelectionRequestEvent.fire(new ComponentSelectionRequestData(Delivery.class.getName()));
 				deliveryEditRequestEvent.fire(data.getDelivery());
+				hideProgressBarRequestEvent.fire(new Object());
 			}
 		});
 		deliveryFromOrderServeice.setOnFailed(serviceCallFailedEventHandler);

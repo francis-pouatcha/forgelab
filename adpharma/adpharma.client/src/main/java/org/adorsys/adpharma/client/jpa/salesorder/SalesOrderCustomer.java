@@ -38,6 +38,7 @@ public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cl
 	private SimpleBooleanProperty discountAuthorized;
 	private SimpleObjectProperty<Calendar> birthDate;
 	private SimpleObjectProperty<CustomerCustomerCategory> customerCategory;
+	private SimpleStringProperty societe;
 
 	public SalesOrderCustomer()
 	{
@@ -67,6 +68,25 @@ public class SalesOrderCustomer implements Association<SalesOrder, Customer>, Cl
 	{
 		this.version = version;
 	}
+	
+	public SimpleStringProperty societeProperty()
+	   {
+	      if (societe == null)
+	      {
+	    	  societe = new SimpleStringProperty();
+	      }
+	      return societe;
+	   }
+
+	   public String getSociete()
+	   {
+	      return societeProperty().get();
+	   }
+
+	   public final void setSociete(String societe)
+	   {
+	      this.societeProperty().set(societe);
+	   }
 
 	 public SimpleObjectProperty<CustomerCustomerCategory> customerCategoryProperty()
 	   {

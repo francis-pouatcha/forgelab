@@ -21,8 +21,9 @@ import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItemService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialogs;
 public class PhmlOrderSender {
-	
+
 	@Inject
 	private ProcurementOrderItemService itemService ;
 
@@ -51,7 +52,7 @@ public class PhmlOrderSender {
 
 	@PostConstruct
 	public void posconstruct(){
-       
+
 	}
 
 	public String buildItemLine(ProcurementOrderItem item , int lineIndex){
@@ -96,25 +97,24 @@ public class PhmlOrderSender {
 	public String buildEndCommandLine(int clair,int encoded){
 		return END_COMMAND_LINE+StringUtils.leftPad(encoded+"", 4,"0")+StringUtils.leftPad(clair+"", 4,"0");
 	}
-	
+
 	/**
 	 * create phml order file and store it in message directory
 	 * @param order tobe sent on phml server
 	 * @throws IOException
 	 */
-	public void sendToPhml(ProcurementOrder order) throws IOException{
+	public void sendToPhml(ProcurementOrder order,String repartiteur) throws IOException{
 		applicationConfiguration= ReceiptPrintProperties.loadPrintProperties();
 		String messageDir = applicationConfiguration.getPhmlMessageDirectory();
-		String repartiteur = applicationConfiguration.getPhmlRepartiteur();
-		System.out.println(repartiteur);
+		if(StringUtils.isBlank(repartiteur)) throw new RuntimeException("Vous devez selectionner un repartiteur !");
 		String filename = messageDir+order.getProcurementOrderNumber()+".txt";
 
 		List<String> lines = new ArrayList<String>();
-		File file = null ;
-        try {
-           file = new File(filename);
-           if(file.exists())
-   			file.delete();
+		File file = null;
+		try {
+			file = new File(filename);
+			if(file.exists())
+				file.delete();
 		} catch (Exception e) {
 			throw new FileNotFoundException("Impossible de creer le fichier d'envoi");
 		}
@@ -138,7 +138,7 @@ public class PhmlOrderSender {
 		lines.add(buildEndCommandLine(0, items.size()));
 
 		FileUtils.writeLines(file, "UTF-8", lines);
-//		Desktop.getDesktop().open(file);
+		//		Desktop.getDesktop().open(file);
 	}
 
 

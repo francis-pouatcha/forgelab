@@ -76,7 +76,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 			total = item.getTotalPurchasePrice()!=null?total.add(item.getTotalPurchasePrice()):total;
 			newTableRow(item.getMainPic(),
 					item.getArticle().getArticleName(),
-					item.getStockQuantity(),
+					item.getArticle().getQtyInStock(),
 					item.getQtyOrdered(),
 					item.getAvailableQty(),
 					item.getQtyOrdered().subtract(item.getAvailableQty()),
@@ -92,9 +92,9 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 	private void newTableRow(String cip, 
 			String articleName,
-			BigDecimal stock,
-			BigDecimal saleQty, 
-			BigDecimal stockQty, 
+			BigDecimal qtyInStock, 
+			BigDecimal qtyOrdered, 
+			BigDecimal availableQty, 
 			BigDecimal rest,
 			BigDecimal pppu, 
 			BigDecimal ttppu) {
@@ -112,17 +112,17 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
-		pdfPCell.addElement(new RightParagraph(new Phrase(stock!=null?stock.toBigInteger()+"":"",font)));
+		pdfPCell.addElement(new RightParagraph(new Phrase(qtyInStock!=null?qtyInStock.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
-		pdfPCell.addElement(new RightParagraph(new Phrase(saleQty!=null?saleQty.toBigInteger()+"":"",font)));
+		pdfPCell.addElement(new RightParagraph(new Phrase(qtyOrdered!=null?qtyOrdered.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
-		pdfPCell.addElement(new RightParagraph(new Phrase(stockQty!=null?stockQty.toBigInteger()+"":"",font)));
+		pdfPCell.addElement(new RightParagraph(new Phrase(availableQty!=null?availableQty.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -142,7 +142,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.11f,.34f,.09f,.09f,.09f,.09f,.09f,.10f});
+		reportTable = new PdfPTable(new float[]{.12f,.33f,.09f,.09f,.09f,.09f,.09f,.10f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -155,15 +155,15 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		pdfPCell.setFixedHeight(16);
 		pdfPCell.addElement(new Phrase("DESIGNATION",boldFont));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
-		pdfPCell.addElement(new Phrase("STOCK",boldFont));
+		pdfPCell.addElement(new Phrase("Stock",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
-		pdfPCell.addElement(new Phrase("CMD",boldFont));
+		pdfPCell.addElement(new Phrase("Cmd",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();

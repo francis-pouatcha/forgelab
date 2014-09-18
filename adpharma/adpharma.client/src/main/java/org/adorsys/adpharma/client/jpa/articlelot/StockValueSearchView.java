@@ -31,6 +31,11 @@ public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
 	private ComboBox<ArticleAgency> agency;
 	private ComboBox<ArticleSection> section;
 	private CheckBox groupByArticle;
+	private CheckBox stockValueRepport;
+	private CheckBox breakArticleRepport;
+	private CheckBox beloThresholdArticleRepport;
+	
+	
 
 	@Inject
 	@Bundle({ CrudKeys.class, CustomerInvoicePrintTemplate.class ,Article.class})
@@ -56,6 +61,15 @@ public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
 		section = viewBuilder.addComboBox("Article_section_description.title", "section", resourceBundle);
 		groupByArticle = viewBuilder.addCheckBox("Entity_empty.text", "groupByArticle", resourceBundle);
 		groupByArticle.setText(resourceBundle.getString("Article_groupByCip_description.title"));
+		
+		stockValueRepport = viewBuilder.addCheckBox("Entity_empty.text", "stockValueRepport", resourceBundle);
+		stockValueRepport.setText("Valorisation du stock");
+		
+		breakArticleRepport = viewBuilder.addCheckBox("Entity_empty.text", "breakArticleRepport", resourceBundle);
+		breakArticleRepport.setText("Article en rupture");
+		
+		beloThresholdArticleRepport = viewBuilder.addCheckBox("Entity_empty.text", "beloThresholdArticleRepport", resourceBundle);
+		beloThresholdArticleRepport.setText("Article a seuil critique");
         gridRows = viewBuilder.toRows();
 	}
 

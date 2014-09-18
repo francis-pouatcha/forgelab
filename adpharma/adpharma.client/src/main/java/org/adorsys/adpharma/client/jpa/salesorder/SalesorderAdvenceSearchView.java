@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -36,6 +37,7 @@ public class SalesorderAdvenceSearchView extends ApplicationModal{
 	private DatePicker fromDate;
 	private DatePicker toDate;
 	private TextField articleName;
+	private CheckBox onlyCrediSales ;
 	private Button saveButton ;
 	private Button cancelButton ;
 
@@ -64,6 +66,8 @@ public class SalesorderAdvenceSearchView extends ApplicationModal{
 		fromDate.setPrefWidth(300d);
 		toDate.setPrefWidth(300d);
 		state.setPrefWidth(300d);
+		onlyCrediSales = lvb.addCheckBox("Entity_empty.title", "onlyCrediSales", resourceBundle);
+		onlyCrediSales.setText("Uniquement les Bons ?");
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lvb.toRows(),ViewType.CREATE, false);
 		viewBuilder.addSeparator();
@@ -150,6 +154,16 @@ public class SalesorderAdvenceSearchView extends ApplicationModal{
 
 	public ToOneAggreggationFieldValidator getToOneAggreggationFieldValidator() {
 		return toOneAggreggationFieldValidator;
+	}
+
+
+	public CheckBox getOnlyCrediSales() {
+		return onlyCrediSales;
+	}
+
+
+	public void setOnlyCrediSales(CheckBox onlyCrediSales) {
+		this.onlyCrediSales = onlyCrediSales;
 	}
 
 	//	public Set<ConstraintViolation<ArticleLotDetailsManager>> validate(ArticleLotDetailsManager model)

@@ -108,22 +108,19 @@ public class SalesOrderPrintTemplate {
 				+ ": " + company.getRegisterNumber()));
 		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " + salesOrder.getCustomer().getFullName()));
+		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " +
+				salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 1, 1);
 
-		paragraph = new Paragraph(new StandardText(
-				resourceBundle.getString("SalesOrderPrintTemplate_invoiceDate.title")
-				+ " " + calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
-		borderlessCell(rt, paragraph, 1, 1);
+		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
+		borderlessCell(rt, paragraph, 2, 1);
 
 		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_salesAgent.title") 
 				+ " " + salesAgent.getFullName()));
 		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_invoiceNr.title") 
-				+ " " + salesOrder.getSoNumber()));
-		paragraph.setSpacingAfter(15);
+		paragraph = new Paragraph(new StandardText( "Facture No  " +salesOrder.getSoNumber() +" Du "+ calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
 		borderlessCell(rt, paragraph, 1, 1);
 
 		try {
@@ -265,10 +262,12 @@ public class SalesOrderPrintTemplate {
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalHT.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalAmountTax.title"))));
 			pars.add(new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_totalTTC.title"))));
-			if(salesOrder.getInsurance()!=null&& salesOrder.getInsurance().getId()!=null){
+			SalesOrderInsurance insurance = salesOrder.getInsurance();
+			BigDecimal inssurancePart = null;
+			if(insurance!=null&&insurance.getId()!=null){
+				inssurancePart = salesOrder.getNetToPay().multiply(insurance.getCoverageRate().divide(BigDecimal.valueOf(100)));
 				pars.add(new Paragraph(new StandardText("Taux de couverture ")));
-				pars.add(new Paragraph(new StandardText("Part client ")));
-				pars.add(new Paragraph(new StandardText("Part client payeur ")));
+				pars.add(new Paragraph(new StandardText("Part Client ")));
 			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 
@@ -283,10 +282,9 @@ public class SalesOrderPrintTemplate {
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountTax))));
 			pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmountHTAfterDiscount.add(totalAmountTax)))));
-			if(salesOrder.getInsurance()!=null&& salesOrder.getInsurance().getId()!=null){
+			if(inssurancePart!=null){
 				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getInsurance().getCoverageRate())+"%")));
-				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getCustomerRestTopay()))));
-				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getNetToPay().subtract(salesOrder.getCustomerRestTopay())))));
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getNetToPay().subtract(inssurancePart)))));
 			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 		}

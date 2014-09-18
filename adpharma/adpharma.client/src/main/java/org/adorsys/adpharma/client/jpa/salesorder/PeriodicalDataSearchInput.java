@@ -18,14 +18,58 @@ public class PeriodicalDataSearchInput {
 
 	private SimpleBooleanProperty check;
 
-	private SimpleStringProperty pic;
 
 	private SimpleBooleanProperty taxableSalesOnly ;
 
 	private SimpleBooleanProperty nonTaxableSalesOnly  ;
 
 	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
+	
+	private SimpleStringProperty pic;
+	
+	private SimpleStringProperty articleName ; 
+	
+	private SimpleStringProperty internalPic ;  
 
+	 
+	   
+	   public SimpleStringProperty internalPicProperty()
+	   {
+	      if (internalPic == null)
+	      {
+	    	  internalPic = new SimpleStringProperty();
+	      }
+	      return internalPic;
+	   }
+
+	   public String getInternalPic()
+	   {
+	      return internalPicProperty().get();
+	   }
+
+	   public final void setInternalPic(String internalPic)
+	   {
+	      this.internalPicProperty().set(internalPic);
+	   }
+	   
+	   public SimpleStringProperty articleNameProperty()
+	   {
+	      if (articleName == null)
+	      {
+	    	  articleName = new SimpleStringProperty();
+	      }
+	      return articleName;
+	   }
+
+	   public String getArticleName()
+	   {
+	      return articleNameProperty().get();
+	   }
+
+	   public final void setArticleName(String articleName)
+	   {
+	      this.articleNameProperty().set(articleName);
+	   }
 
 	public SimpleObjectProperty<Calendar> beginDateProperty()
 	{

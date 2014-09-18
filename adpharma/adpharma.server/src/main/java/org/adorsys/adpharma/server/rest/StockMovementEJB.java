@@ -9,6 +9,8 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
@@ -33,7 +35,8 @@ import org.adorsys.adpharma.server.jpa.StockMovement_;
 import org.adorsys.adpharma.server.repo.StockMovementRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
-
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
+import org.apache.commons.lang3.StringUtils;
 @Stateless
 public class StockMovementEJB
 {
@@ -139,7 +142,48 @@ public class StockMovementEJB
 	 * 	- 
 	 * @param closedDelivery
 	 */
+	@Inject
+	private EntityManager em ;
 
+	public List<StockMovement> periodicalStockMovement (PeriodicalDataSearchInput dataSearchInput){
+		String query ="SELECT s From StockMovement AS  s  WHERE s.id IS NOT NULL ";
+		if(StringUtils.isNotBlank(dataSearchInput.getPic()))
+			query = query+" AND s.article.pic = :pic ";
+
+		if(StringUtils.isNotBlank(dataSearchInput.getArticleName()))
+			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
+
+		if(StringUtils.isNotBlank(dataSearchInput.getInternalPic()))
+			query = query+" AND s.internalPic = :internalPic ";
+
+		if(dataSearchInput.getBeginDate()!=null)
+			query = query+" AND s.creationDate >= :beginDate ";
+
+		if(dataSearchInput.getEndDate()!=null)
+			query = query+" AND s.creationDate <= :endDate ";
+
+		Query querys = em.createQuery(query) ;
+
+		if(StringUtils.isNotBlank(dataSearchInput.getPic()))
+			querys.setParameter("pic", dataSearchInput.getPic());
+
+		if(StringUtils.isNotBlank(dataSearchInput.getArticleName())){
+			String articleName = "%"+dataSearchInput.getArticleName()+"%";
+			querys.setParameter("articleName", articleName);
+		}
+			
+
+		if(StringUtils.isNotBlank(dataSearchInput.getInternalPic()))
+			querys.setParameter("internalPic", dataSearchInput.getInternalPic());
+
+		if(dataSearchInput.getBeginDate()!=null)
+			querys.setParameter("beginDate", dataSearchInput.getBeginDate());
+
+		if(dataSearchInput.getEndDate()!=null)
+			querys.setParameter("endDate", dataSearchInput.getEndDate());
+
+		return querys.getResultList();
+	}
 	public void handleArticlelLotTrashMoved(@Observes ArticleLotMovedToTrashData data){
 		ArticleLot articleLot = articleLotEJB.findById(data.getId());
 		Article article = articleLot.getArticle();

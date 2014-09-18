@@ -63,6 +63,7 @@ public class ModalPrescriptionBookCreateController {
 	@Inject
 	@ModalEntityCreateDoneEvent
 	private Event<PrescriptionBook> modalPrescriptionBookCreateDoneEvent;
+	
 
 	@PostConstruct
 	public void postConstruct(){          
@@ -76,6 +77,66 @@ public class ModalPrescriptionBookCreateController {
 
 			}
 		});
+		
+		// handle hopital creation 
+		modalPrescriptionBookCreateView.getCreateHospitalButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				String hospitalName = Dialogs.create().title("Saisir le Nom de l'hopital").message("Hopital :").showTextInput();
+				if(StringUtils.isNotBlank(hospitalName)){
+					Hospital hospital = new Hospital();
+					hospital.setName(hospitalName.toUpperCase());
+					hospitalCreateService.setModel(hospital).start();
+				}
+				
+			}
+		});
+		hospitalCreateService.setOnFailed(serviceCallFailedEventHandler);
+		hospitalCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			
+			@Override
+			public void handle(WorkerStateEvent event) {
+				HospitalCreateService s = (HospitalCreateService) event.getSource();
+				Hospital hospital = s.getValue();
+				event.consume();
+				s.reset();
+				PrescriptionBookHospital prescriptionBookHospital = new PrescriptionBookHospital(hospital);
+				modalPrescriptionBookCreateView.getView().getPrescriptionBookHospitalSelection().getHospital().getItems().clear();
+				modalPrescriptionBookCreateView.getView().getPrescriptionBookHospitalSelection().getHospital().getItems().add(prescriptionBookHospital);
+				modalPrescriptionBookCreateView.getView().getPrescriptionBookHospitalSelection().getHospital().setValue(prescriptionBookHospital);
+			}
+		});
+		
+		// handle prescriber creation 
+				modalPrescriptionBookCreateView.getCreatePrescriberButton().setOnAction(new EventHandler<ActionEvent>() {
+					
+					@Override
+					public void handle(ActionEvent event) {
+						String prescriberName = Dialogs.create().title("Saisir le Nom du Prescripteur").message("Prescripteur :").showTextInput();
+						if(StringUtils.isNotBlank(prescriberName)){
+							Prescriber prescriber = new Prescriber();
+							prescriber.setName(prescriberName.toUpperCase());
+							prescriberCreateService.setModel(prescriber).start();
+						}
+						
+					}
+				});
+				prescriberCreateService.setOnFailed(serviceCallFailedEventHandler);
+				prescriberCreateService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+					
+					@Override
+					public void handle(WorkerStateEvent event) {
+						PrescriberCreateService s = (PrescriberCreateService) event.getSource();
+						Prescriber prescriber = s.getValue();
+						event.consume();
+						s.reset();
+						PrescriptionBookPrescriber prescriptionBookPrescriber = new PrescriptionBookPrescriber(prescriber);
+						modalPrescriptionBookCreateView.getView().getPrescriptionBookPrescriberSelection().getPrescriber().getItems().clear();
+						modalPrescriptionBookCreateView.getView().getPrescriptionBookPrescriberSelection().getPrescriber().getItems().add(prescriptionBookPrescriber);
+						modalPrescriptionBookCreateView.getView().getPrescriptionBookPrescriberSelection().getPrescriber().setValue(prescriptionBookPrescriber);
+					}
+				});
 		//  handele create action
 		modalPrescriptionBookCreateView.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
 

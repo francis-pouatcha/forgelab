@@ -25,6 +25,7 @@ public class ModalPrescriptionBookCreateView  extends ApplicationModal{
 	private Button saveButton;
 
 	private Button resetButton;
+	
 
 	private Button cancelButton;
 
@@ -58,14 +59,14 @@ public class ModalPrescriptionBookCreateView  extends ApplicationModal{
 		viewBuilder.addMainForm(view, ViewType.CREATE, false);
 		viewBuilder.addSeparator();
 		HBox buttonBar = viewBuilder.addButtonBar();
-		createHospitalButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "createHospitalButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+		createHospitalButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.HOSPITAL);
 		createHospitalButton.setText("Hopital");
-		createPrescriberButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "createPrescriberButton", resourceBundle, AwesomeIcon.PLUS_CIRCLE);
+		createPrescriberButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.USER);
 		createPrescriberButton.setText("Prescripteur");
-
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_reset.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
 		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.TRASH_ALT);
+		
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(600d);
 
@@ -88,17 +89,17 @@ public class ModalPrescriptionBookCreateView  extends ApplicationModal{
 	public Button getCancelButton() {
 		return cancelButton;
 	}
-	public Button getCreatePrescriberButton() {
-		return createPrescriberButton;
-	}
-	public void setCreatePrescriberButton(Button createPrescriberButton) {
-		this.createPrescriberButton = createPrescriberButton;
-	}
 	public Button getCreateHospitalButton() {
 		return createHospitalButton;
 	}
 	public void setCreateHospitalButton(Button createHospitalButton) {
 		this.createHospitalButton = createHospitalButton;
+	}
+	public Button getCreatePrescriberButton() {
+		return createPrescriberButton;
+	}
+	public void setCreatePrescriberButton(Button createPrescriberButton) {
+		createPrescriberButton = createPrescriberButton;
 	}
 
 }

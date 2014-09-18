@@ -75,30 +75,29 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 
 	static Font boldFont = FontFactory.getFont("latin", 10, Font.BOLD);
 	static Font font = FontFactory.getFont("latin", 10);
-	
+
 	public void addItems(List<DeliveryItem> deliveryItems) {
-	int artNamelenght = 68 ;
-	BigDecimal totalPp = BigDecimal.ZERO;
-	BigDecimal totalQte = BigDecimal.ZERO;
-			for (DeliveryItem deliveryItem : deliveryItems) {
-				String articleName = deliveryItem.getArticleName();
-				if(articleName.length()>artNamelenght) 
-					articleName = StringUtils.substring(articleName, 0, artNamelenght);
-	
-				totalPp = totalPp.add(deliveryItem.getTotalPurchasePrice());
-				totalQte = totalQte.add(deliveryItem.getStockQuantity());
-				newTableRow(deliveryItem.getInternalPic(), 
-						articleName, 
-						deliveryItem.getArticle().getQtyInStock(), 
-						deliveryItem.getPurchasePricePU(),
-						deliveryItem.getStockQuantity(),
-						deliveryItem.getSalesPricePU(),
-						deliveryItem.getTotalPurchasePrice());
-			}
-			
-			newTableRow("", "TOTAL : ", null, null, totalQte, null, totalPp);
+
+		int artNamelenght = 68 ;
+		BigDecimal ttQte = BigDecimal.ZERO;
+		BigDecimal ttPp = BigDecimal.ZERO;
+		for (DeliveryItem deliveryItem : deliveryItems) {
+			String articleName = deliveryItem.getArticleName();
+			if(articleName.length()>artNamelenght) 
+				articleName = StringUtils.substring(articleName, 0, artNamelenght);
+			ttQte = ttQte.add(deliveryItem.getStockQuantity());
+			ttPp =ttPp.add(deliveryItem.getTotalPurchasePrice());
+			newTableRow(deliveryItem.getInternalPic(), 
+					articleName, 
+					deliveryItem.getArticle().getQtyInStock(), 
+					deliveryItem.getPurchasePricePU(),
+					deliveryItem.getStockQuantity(),
+					deliveryItem.getSalesPricePU(),
+					deliveryItem.getTotalPurchasePrice());
 		}
-	
+		newTableRow("", "TOTAL :", null, null, ttQte, null, ttPp);
+	}
+
 	private void newTableRow(String internalPic, 
 			String articleName,
 			BigDecimal stockQuantity,
@@ -137,13 +136,13 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new Phrase(salesPricePU!=null?salesPricePU.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(18f);
 		pdfPCell.addElement(new RightParagraph(new Phrase(totalPurchasePrice!=null?totalPurchasePrice.toBigInteger()+"":"",font)));
 		reportTable.addCell(pdfPCell);
 	}
-	
+
 
 
 	private void fillTableHaeder() throws DocumentException {
@@ -176,7 +175,7 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_salesPricePU.title"),boldFont));
 		reportTable.addCell(pdfPCell);
-		
+
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new Phrase(resourceBundle.getString("DeliveryReportPrintTemplate_totalPurchasePrice.title"),boldFont));
 		reportTable.addCell(pdfPCell);
@@ -281,7 +280,7 @@ public class DeliveryReportPrintTemplatePDF implements DeliveryReportPrintTempla
 	@Override
 	public void closeReport() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 

@@ -29,6 +29,7 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
@@ -37,6 +38,7 @@ import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchInput;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchResult;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemSearchService;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
+import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -101,7 +103,7 @@ public class ArticleLotListController implements EntityController
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 
 	@Inject
-	private DeliveryItemSearchService deliveryItemSearchService ;
+	private ArticleLotSearchService articleLotSearchService ;
 
 	@Inject
 	private ArticleLotRegistration registration;
@@ -109,14 +111,17 @@ public class ArticleLotListController implements EntityController
 	@Inject
 	@Bundle({ CrudKeys.class,DeliveryItem.class})
 	private ResourceBundle resourceBundle;
+	
+	@Inject
+	private SecurityUtil  securityUtil;
 
 
 	@PostConstruct
 	public void postConstruct()
 	{
 		//		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
-		listView.getDetailsButton().disableProperty().bind(registration.canCreateProperty().not());
-		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
+//		listView.getDetailsButton().disableProperty().bind(registration.canCreateProperty().not());
+//		listView.getMoveButton().disableProperty().bind(registration.canEditProperty().not());
 		listView.getSearchButton().disableProperty().bind(searchService.runningProperty());
 		listView.bind(searchInput);
 
@@ -137,16 +142,10 @@ public class ArticleLotListController implements EntityController
 				try {
 					ArticleLot selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 					if(selectedItem!=null){
-						DeliveryItemSearchInput itemSearchInput = new DeliveryItemSearchInput();
-						itemSearchInput.getEntity().setMainPic(selectedItem.getMainPic());
-						ArticleLotArticle article = selectedItem.getArticle();
-						DeliveryItemArticle deliveryItemArticle = new DeliveryItemArticle();
-						PropertyReader.copy(selectedItem.getArticle(), deliveryItemArticle);
-						itemSearchInput.getEntity().setArticle(deliveryItemArticle);
-						itemSearchInput.setMax(100);
-						itemSearchInput.getFieldNames().add("article") ;
-						itemSearchInput.getFieldNames().add("mainPic") ;
-						deliveryItemSearchService.setSearchInputs(itemSearchInput).start();
+						String textInput = Dialogs.create().message("Quantite : ").showTextInput();
+						Long valueOf = Long.valueOf(textInput);
+						String agencyName = securityUtil.getAgency().getName();
+						exportDeliveryToXls(valueOf.intValue(),selectedItem,agencyName);
 					}
 
 				} catch (Exception e) {
@@ -154,24 +153,7 @@ public class ArticleLotListController implements EntityController
 
 			}
 		});
-		deliveryItemSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
-			@Override
-			public void handle(WorkerStateEvent event) {
-				DeliveryItemSearchService s = (DeliveryItemSearchService) event.getSource();
-				DeliveryItemSearchResult searchResult = s.getValue();
-				event.consume();
-				s.reset();
-				if(!searchResult.getResultList().isEmpty()){
-					DeliveryItem deliveryItem = searchResult.getResultList().iterator().next();
-					String textInput = Dialogs.create().message("Quantite : ").showTextInput();
-					Long valueOf = Long.valueOf(textInput);
-					exportDeliveryToXls(valueOf.intValue(),deliveryItem);
-				}
-
-			}
-		});
-		deliveryItemSearchService.setOnFailed(callFailedEventHandler);
+		
 
 		listView.getArticleName().setOnKeyPressed(new EventHandler<KeyEvent>() {
 
@@ -421,14 +403,29 @@ public class ArticleLotListController implements EntityController
 		//		PropertyReader.copy(articleLot, listView.getDataList().getItems().get(indexOf));
 
 	}
+	
+	public void handleArticleDatailDoneEvent(@Observes  @EntityEditDoneEvent ArticleLotDetailResultHolder articleLotDetailResultHolder){
+		ArticleLot source = articleLotDetailResultHolder.getSource();
+		ArticleLot target = articleLotDetailResultHolder.getTarget();
+		int indexOf = listView.getDataList().getItems().indexOf(source);
+		handleEditDoneEvent(source);
+		listView.getDataList().getItems().add(0, target);
+		try {
+			
+			exportDeliveryToXls(target.getStockQuantity().intValue(), target, securityUtil.getAgency().getName());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
 
 	public void reset() {
 		listView.getDataList().getItems().clear();
 	}
 
 	@SuppressWarnings("resource")
-	public void exportDeliveryToXls(int qty,DeliveryItem item){
-		String supllierName = item.getDelivery().getSupplier().getName();
+	public void exportDeliveryToXls(int qty,ArticleLot item,String agencyName){
+		String supllierName = securityUtil.getAgency().getName();
 		if(StringUtils.isNotBlank(supllierName))
 			if(supllierName.length()>4)
 				supllierName = StringUtils.substring(supllierName, 0, 3);
@@ -454,6 +451,9 @@ public class ArticleLotListController implements EntityController
 		cell.setCellValue("fournisseur");
 		
 		cell = header.createCell(cellnum++);
+		cell.setCellValue("site");
+		
+		cell = header.createCell(cellnum++);
 		cell.setCellValue("date");
 
 		if( item!=null&&sheet!=null){
@@ -475,6 +475,11 @@ public class ArticleLotListController implements EntityController
 
 				cell = row.createCell(cellnum++);
 				cell.setCellValue(supllierName);
+				
+				cell = row.createCell(cellnum++);
+				cell.setCellValue(agencyName);
+				
+				
 				
 				if(item.getCreationDate()!=null){
 					cell = row.createCell(cellnum++);
@@ -512,4 +517,5 @@ public class ArticleLotListController implements EntityController
 //		}
 //		
 //	}
+
 }

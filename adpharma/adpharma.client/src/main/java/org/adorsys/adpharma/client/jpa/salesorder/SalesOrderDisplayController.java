@@ -54,6 +54,8 @@ import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchService;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintProperties;
+import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
@@ -242,7 +244,11 @@ public class SalesOrderDisplayController implements EntityController
 		//		bind models to the view
 		displayView.bind(displayedEntity);
 		displayView.bind(salesOrderItem);
-
+//		displayView.getCloseButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getClientButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getInsurreurButton().disableProperty().bind(displayedEntity.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+//		displayView.getOrderQuantityColumn().editableProperty().bind(displayedEntity.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+//		
 		salesOrderItemCreateFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -935,27 +941,66 @@ public class SalesOrderDisplayController implements EntityController
 			Dialogs.create().nativeTitleBar().message("la vente dois avoir au moins un produit ").showError();
 			return false;
 		}
-
-		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
-			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
-			if(discountRate!=null&&amountDiscount!=null){
-				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN)).add(BigDecimal.valueOf(5));
-				if(realDiscount.compareTo(amountDiscount)<0){
-					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
-					return false ;
+		
+		String discoutStrategy = ReceiptPrintProperties.loadPrintProperties().getDiscoutStrategy();
+		BigDecimal userDiscounteRate = securityUtil.getConnectedUser().getDiscountRate()!=null?securityUtil.getConnectedUser().getDiscountRate():BigDecimal.ZERO;
+		BigDecimal categoryDiscountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null?displayedEntity.getCustomer().getCustomerCategory().getDiscountRate():BigDecimal.ZERO;
+		BigDecimal realdiscounteRate = BigDecimal.ZERO;
+		switch (discoutStrategy) {
+		case "MIN":
+			    if(userDiscounteRate.compareTo(categoryDiscountRate)<=0){
+			       realdiscounteRate = userDiscounteRate;
+			    }else {
+					realdiscounteRate = categoryDiscountRate;
 				}
+			break;
+			
+		case "MAX":
+		    if(userDiscounteRate.compareTo(categoryDiscountRate)>=0){
+		       realdiscounteRate = userDiscounteRate;
+		    }else {
+				realdiscounteRate = categoryDiscountRate;
 			}
-		}else  if(BigDecimal.ZERO.compareTo(amountDiscount)!=0){
-			Dialogs.create().message("ce client n est pas autorise a avoir une remise ").showInformation();
-			displayedEntity.setAmountDiscount(BigDecimal.ZERO);
-			displayView.getDiscountRate().setNumber(BigDecimal.ZERO);
-			displayView.getDiscountRate().requestFocus();
-			return false ;
+		    
+		case "USER":
+		    realdiscounteRate = userDiscounteRate ;
+		break;
+		
+		case "CATEGORY":
+		    realdiscounteRate = categoryDiscountRate ;
+		break;
 
+		default:
+			break;
 		}
+		BigDecimal realDiscount = amountAfterTax.multiply(realdiscounteRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN));
+		
+		if(realDiscount.compareTo(amountDiscount)<0){
+			Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
+			return false ;
+		}
+//		
+//		if(displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null){
+//			BigDecimal discountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate();
+//			if(discountRate!=null&&amountDiscount!=null){
+//				BigDecimal realDiscount = amountAfterTax.multiply(discountRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN)).add(BigDecimal.valueOf(5));
+//				if(realDiscount.compareTo(amountDiscount)<0){
+//					Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
+//					return false ;
+//				}
+//			}
+//		}else  if(BigDecimal.ZERO.compareTo(amountDiscount)!=0){
+//			Dialogs.create().message("ce client n est pas autorise a avoir une remise ").showInformation();
+//			displayedEntity.setAmountDiscount(BigDecimal.ZERO);
+//			displayView.getDiscountRate().setNumber(BigDecimal.ZERO);
+//			displayView.getDiscountRate().requestFocus();
+//			return false ;
+//
+//		}
 
 		return true;
 	}
+	
 
 	public void handleAssocSelectionRequest(@Observes(notifyObserver = Reception.ALWAYS) @AssocSelectionRequestEvent AssocSelectionEventData<SalesOrder> eventData)
 	{

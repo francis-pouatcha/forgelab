@@ -1,12 +1,19 @@
 package org.adorsys.adpharma.client.jpa.stockmovement;
 
+import java.util.List;
+
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
@@ -34,7 +41,7 @@ public class StockMovementService {
 	// @DELETE
 	// @Path("/{id:[0-9][0-9]*}")
 	public StockMovement deleteById(Long id) {// @PathParam("id")
-												// TODO encode id
+		// TODO encode id
 		return target().path("" + id).request(media)
 				.delete(StockMovement.class);
 	}
@@ -105,6 +112,20 @@ public class StockMovementService {
 		return target().path(FIND_BY_LIKE_PATH).request(media)
 				.post(searchInputEntity, StockMovementSearchResult.class);
 	}
+
+	// @POST
+	// @Path("/periodicalMovement"
+	// @Produces("application/xml")
+	// @Consumes("application/xml")
+	public StockMovementSearchResult periodicalMovement(
+			PeriodicalDataSearchInput data) {
+		Entity<PeriodicalDataSearchInput> searchInputEntity = Entity.entity(
+				data, media);
+		return target().path("periodicalMovement").request(media)
+				.post(searchInputEntity, StockMovementSearchResult.class);
+	}
+
+
 
 	// @POST
 	// @Path("/countByLike"

@@ -560,8 +560,8 @@ public class SalesOrderListController implements EntityController
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
-				//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(false);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
@@ -574,8 +574,8 @@ public class SalesOrderListController implements EntityController
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
-				//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(true);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
@@ -654,8 +654,8 @@ public class SalesOrderListController implements EntityController
 					PaymentId paymentId = new PaymentId(payment.getId());
 					SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 					String customerName = null;
-					//					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+//					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 					paymentId.setCustomerName(customerName);
 					paymentId.setPrintWhithoutDiscount(printWhithDiscount);
 

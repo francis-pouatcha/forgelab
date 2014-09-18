@@ -839,12 +839,12 @@ public class CashDrawerDisplayController implements EntityController
 					PropertyReader.copy(proccessingOrder.getCustomer(), paidBy);
 					paymentItem.setPaidBy(paidBy);
 					displayView.getPaymentItemDataList().getItems().add(paymentItem);
-					int size = displayView.getPaymentItemDataList().getItems().size();
-					boolean contains = displayView.getPaymentItemDataList().getItems().contains(paymentItem);
-					int size2 = paymentManager.getPayment().getPaymentItems().size();
-					if(size==size2){
-						size++;
-					}
+//					int size = displayView.getPaymentItemDataList().getItems().size();
+//					boolean contains = displayView.getPaymentItemDataList().getItems().contains(paymentItem);
+//					int size2 = paymentManager.getPayment().getPaymentItems().size();
+//					if(size==size2){
+//						size++;
+//					}
 				}
 			}
 		});

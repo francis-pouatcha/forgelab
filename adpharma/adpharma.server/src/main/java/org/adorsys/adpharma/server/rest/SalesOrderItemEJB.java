@@ -1,9 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -21,7 +19,6 @@ import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
-import org.adorsys.adpharma.server.utils.CurencyUtil;
 import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 import org.apache.commons.lang3.StringUtils;
 
@@ -90,9 +87,11 @@ public class SalesOrderItemEJB
 		Boolean check = searchInput.getCheck();
 		ArrayList<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
 
-		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed  ";
+		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
 		if(StringUtils.isNotBlank(searchInput.getPic()))
 			query = query+" AND s.article.pic = :pic";
+		if(StringUtils.isNotBlank(searchInput.getArticleName()))
+			query = query+" AND LOWER (s.article.articleName) LIKE LOWER (:articleName) ";
 		query = query+" ORDER BY s.article.articleName";
 
 		List<Object[]> sales = new ArrayList<Object[]>();
@@ -101,12 +100,18 @@ public class SalesOrderItemEJB
 					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed   ";
 			if(StringUtils.isNotBlank(searchInput.getPic()))
 				query = query+" AND s.article.pic = :pic";
+			if(StringUtils.isNotBlank(searchInput.getArticleName()))
+				query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
 			query = query+" GROUP BY s.article , s.internalPic";
 		}
 
 		Query querys = em.createQuery(query) ;
 		if(StringUtils.isNotBlank(searchInput.getPic()))
 			querys.setParameter("pic", searchInput.getPic());
+		if(StringUtils.isNotBlank(searchInput.getArticleName())){
+			String articleName = "%"+searchInput.getArticleName()+"%";
+			querys.setParameter("articleName", articleName);
+		}
 		querys.setParameter("from", searchInput.getBeginDate());
 		querys.setParameter("to", searchInput.getEndDate());
 		querys.setParameter("cashed", Boolean.TRUE);

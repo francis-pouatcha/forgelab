@@ -46,6 +46,8 @@ public class DeliveryListView
 	HBox searchBar;
 
 	private TextField deliveryNumber ;
+	
+	private TextField procurementOrderNumber ;
 
 	private CalendarTextField deliveryDateFrom;
 
@@ -177,6 +179,8 @@ public class DeliveryListView
 	{
 
 		deliveryNumber.textProperty().bindBidirectional(searchInput.getEntity().deliveryNumberProperty());
+		procurementOrderNumber.textProperty().bindBidirectional(searchInput.getEntity().procurementOrderNumberProperty());
+		
 		//		deliveryDateFrom.calendarProperty().bindBidirectional(searchInput.getEntity().deliveryDateProperty());
 		supplier.valueProperty().bindBidirectional(searchInput.getEntity().supplierProperty());
 		deliveryProcessingState.valueProperty().bindBidirectional(searchInput.getEntity().deliveryProcessingStateProperty());
@@ -184,10 +188,15 @@ public class DeliveryListView
 
 	public void buildsearchBar(){
 		deliveryNumber =ViewBuilderUtils.newTextField("deliveryNumber", false);
-		deliveryNumber.setPromptText("delivery Number");
+		deliveryNumber.setPromptText("Num Livraison");
 		deliveryNumber.setTooltip(new Tooltip("Num Livraison"));
 		deliveryNumber.setPrefHeight(40d);
 
+		procurementOrderNumber =ViewBuilderUtils.newTextField("procurementOrderNumber", false);
+		procurementOrderNumber.setPromptText("Numero CMD");
+		procurementOrderNumber.setTooltip(new Tooltip("Num CMD"));
+		procurementOrderNumber.setPrefHeight(40d);
+		
 		//		deliveryDateFrom =ViewBuilderUtils.newCalendarTextField("deliveryDateFrom", "dd-MM-yyyy HH:mm", locale, false);
 		//		deliveryDateFrom.setPromptText("date From");
 		//		deliveryDateFrom.setPrefWidth(160d);
@@ -207,7 +216,7 @@ public class DeliveryListView
 
 		searchButton =ViewBuilderUtils.newButton("Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 		searchButton.setPrefHeight(40d);
-		searchBar.getChildren().addAll(deliveryNumber,supplier,deliveryProcessingState,searchButton);
+		searchBar.getChildren().addAll(procurementOrderNumber,deliveryNumber,supplier,deliveryProcessingState,searchButton);
 	}
 
 	public Button getCreateButton()
@@ -328,5 +337,15 @@ public class DeliveryListView
 	public FXMLLoader getFxmlLoader() {
 		return fxmlLoader;
 	}
+
+	public TextField getProcurementOrderNumber() {
+		return procurementOrderNumber;
+	}
+
+	public void setProcurementOrderNumber(TextField procurementOrderNumber) {
+		this.procurementOrderNumber = procurementOrderNumber;
+	}
+	
+	
 
 }

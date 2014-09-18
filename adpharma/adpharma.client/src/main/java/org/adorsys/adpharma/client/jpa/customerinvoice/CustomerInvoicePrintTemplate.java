@@ -330,7 +330,7 @@ public class CustomerInvoicePrintTemplate {
 		GridPane.setValignment(customerNameLabel, VPos.BOTTOM);
 		// ROW (7-3..)
 		Text customerNameValue = new Text(customerInvoice.getCustomer()
-				.getFullName());
+				.getFullName()+" [ "+customerInvoice.getCustomer().getSociete()+" ]");
 		headerPane.add(customerNameValue, 2, rowIndex, colCount - 2, 1);
 		GridPane.setHalignment(customerNameValue, HPos.LEFT);
 		GridPane.setValignment(customerNameValue, VPos.BOTTOM);

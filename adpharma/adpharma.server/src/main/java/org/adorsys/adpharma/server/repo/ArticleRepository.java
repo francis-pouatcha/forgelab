@@ -21,4 +21,6 @@ public interface ArticleRepository extends EntityRepository<Article, Long>
 	
 	@Query("SELECT a FROM Article AS a WHERE a.qtyInStock < a.minStockQty ")
 	public List<Article> findArticleMinStockRepport() ;
+	
+	
 }

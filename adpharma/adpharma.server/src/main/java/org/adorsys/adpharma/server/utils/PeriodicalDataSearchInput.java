@@ -1,6 +1,5 @@
 package org.adorsys.adpharma.server.utils;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,20 +9,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class PeriodicalDataSearchInput {
 
-	 private Date beginDate;
-	 
-	 private Date endDate;
-	 
-	 private Boolean check;
-	 
-	 private Boolean taxableSalesOnly = Boolean.FALSE ;
-	 
-	 private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
-	 
-	 private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
-	 
-	 private String pic ;
-	 
+	private Date beginDate;
+
+	private Date endDate;
+
+	private Boolean check;
+
+	private Boolean taxableSalesOnly = Boolean.FALSE ;
+
+	private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
+
+	private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
+
+	private String pic;
+	
+	private String articleName;
+	
+	private String internalPic;
+	
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -43,7 +46,7 @@ public class PeriodicalDataSearchInput {
 	public Boolean getCheck() {
 		return check;
 	}
-	
+
 	public Boolean getTaxableSalesOnly() {
 		return taxableSalesOnly;
 	}
@@ -80,7 +83,23 @@ public class PeriodicalDataSearchInput {
 	public void setPic(String pic) {
 		this.pic = pic;
 	}
-	
+
+	public String getArticleName() {
+		return articleName;
+	}
+
+	public void setArticleName(String articleName) {
+		this.articleName = articleName;
+	}
+
+	public String getInternalPic() {
+		return internalPic;
+	}
+
+	public void setInternalPic(String internalPic) {
+		this.internalPic = internalPic;
+	}
+
 
 
 }

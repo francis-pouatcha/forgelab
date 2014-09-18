@@ -179,6 +179,9 @@ public class SalesOrderEJB
 		if(StringUtils.isNotBlank(data.getArticleName()))
 			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName)";
 
+		if(data.getOnlyCrediSales())
+			query = query+" AND s.salesOrder.insurance IS NOT NULL";
+
 		Query querys = em.createQuery(query) ;
 
 		if(data.getFromDate()!=null)
@@ -293,6 +296,8 @@ public class SalesOrderEJB
 	}
 
 	public SalesOrder saveAndClose(SalesOrder salesOrder) {
+
+
 		BigDecimal amountDiscount = salesOrder.getAmountDiscount();
 		BigDecimal discountRate = salesOrder.getDiscountRate();
 		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))

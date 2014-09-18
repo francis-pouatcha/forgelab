@@ -31,6 +31,8 @@ public class PhmlSendAndReceiveService extends Service<ProcurementOrder>
 	@Inject private ProcurementOrderItemService procurementOrderItemService ;
 
 	private ProcurementOrder entity;
+	
+	private String repartiteur ;
 
 	private boolean toBeSent = false ;
 
@@ -41,6 +43,12 @@ public class PhmlSendAndReceiveService extends Service<ProcurementOrder>
 	public PhmlSendAndReceiveService setProcurementOrder(ProcurementOrder entity)
 	{
 		this.entity = entity;
+		return this;
+	}
+	
+	public PhmlSendAndReceiveService setRepartiter(String repartiter)
+	{
+		this.repartiteur = repartiter;
 		return this;
 	}
 
@@ -63,7 +71,7 @@ public class PhmlSendAndReceiveService extends Service<ProcurementOrder>
 					return null;
 				if(toBeSent){
 					if(DocumentProcessingState.ONGOING.equals(entity.getPoStatus())){
-						phmlOrderSender.sendToPhml(entity);
+						phmlOrderSender.sendToPhml(entity,repartiteur);
 						entity.setPoStatus(DocumentProcessingState.SENT);
 						entity = procurementOrderService.update(entity);
 					}

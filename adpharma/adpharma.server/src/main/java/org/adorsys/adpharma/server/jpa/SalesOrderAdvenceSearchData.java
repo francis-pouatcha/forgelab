@@ -12,6 +12,8 @@ public class SalesOrderAdvenceSearchData {
 	
 	private String articleName ;
 	
+	private Boolean onlyCrediSales = Boolean.FALSE ;
+	
 	private DocumentProcessingState sate ;
 
 	public Date getFromDate() {
@@ -59,6 +61,14 @@ public class SalesOrderAdvenceSearchData {
 		return "SalesOrderAdvenceSearchData [fromDate=" + fromDate
 				+ ", toDate=" + toDate + ", saller=" + saller
 				+ ", articleName=" + articleName + "]";
+	}
+
+	public Boolean getOnlyCrediSales() {
+		return onlyCrediSales;
+	}
+
+	public void setOnlyCrediSales(Boolean onlyCrediSales) {
+		this.onlyCrediSales = onlyCrediSales;
 	}
 	
 	

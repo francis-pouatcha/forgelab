@@ -21,109 +21,115 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.view.ConfirmDialog;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 public class RoleNameRemoveControler
 {
 
-   @Inject
-   @EntityRemoveDoneEvent
-   private Event<RoleName> removedEvent;
+	@Inject
+	@EntityRemoveDoneEvent
+	private Event<RoleName> removedEvent;
 
-   @Inject
-   private RoleNameRemoveService removeService;
-   @Inject
-   private ServiceCallFailedEventHandler removeServiceCallFailedEventHandler;
+	@Inject
+	private RoleNameRemoveService removeService;
+	@Inject
+	private ServiceCallFailedEventHandler removeServiceCallFailedEventHandler;
 
-   @Inject
-   @Bundle({ CrudKeys.class, RoleName.class })
-   private ResourceBundle resourceBundle;
+	@Inject
+	@Bundle({ CrudKeys.class, RoleName.class })
+	private ResourceBundle resourceBundle;
 
-   @Inject
-   private ConfirmDialog confirmDialog;
+	@Inject
+	private ConfirmDialog confirmDialog;
 
-   private RoleName entity;
+	private RoleName entity;
 
-   @Inject
-   private ErrorMessageDialog errorMessageDialog;
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
 
-   public void handleRemoveRequest(
-         @Observes @EntityRemoveRequestEvent RoleName entity)
-   {
-      this.entity = entity;
-      confirmDialog.display();
-   }
+	public void handleRemoveRequest(
+			@Observes @EntityRemoveRequestEvent RoleName entity)
+	{
+		this.entity = entity;
+		Action showConfirm = Dialogs.create().message("Confirmer la Supression ").showConfirm();
+		if(Dialog.Actions.YES.equals(showConfirm))
+			handleRemoveOkEvent(entity);
+		//      confirmDialog.display();
+	}
 
-   public void handleRemoveOkEvent(
-         @Observes @EntityRemoveConfirmedEvent RoleName entity)
-   {
-      removeService.setEntity(entity).start();
-   }
+	public void handleRemoveOkEvent(
+			@Observes @EntityRemoveConfirmedEvent RoleName entity)
+	{
+		removeService.setEntity(entity).start();
+	}
 
-   @PostConstruct
-   public void postConstruct()
-   {
-      confirmDialog.setText(resourceBundle.getString("Entity_confirm_remove.title")
-            + " "
-            + resourceBundle.getString("RoleName_description.title"));
-      confirmDialog.getOkButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  if (confirmDialog.hasDialog())
-                  {
-                     removeService.setEntity(entity).start();
-                     confirmDialog.closeDialog();
-                  }
-               }
-            });
+	@PostConstruct
+	public void postConstruct()
+	{
+		confirmDialog.setText(resourceBundle.getString("Entity_confirm_remove.title")
+				+ " "
+				+ resourceBundle.getString("RoleName_description.title"));
+		confirmDialog.getOkButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						if (confirmDialog.hasDialog())
+						{
+							removeService.setEntity(entity).start();
+							confirmDialog.closeDialog();
+						}
+					}
+				});
 
-      confirmDialog.getCancelButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  confirmDialog.closeDialog();
-               }
-            });
+		confirmDialog.getCancelButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						confirmDialog.closeDialog();
+					}
+				});
 
-      removeService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
-      {
-         @Override
-         public void handle(WorkerStateEvent wse)
-         {
-            RoleNameRemoveService service = (RoleNameRemoveService) wse
-                  .getSource();
-            RoleName p = service.getValue();
-            wse.consume();
-            service.reset();
-            removedEvent.fire(p);
-         }
-      });
-      removeServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
-      {
-         @Override
-         protected void showError(Throwable exception)
-         {
-            String message = exception.getMessage();
-            errorMessageDialog.getTitleText().setText(
-                  resourceBundle.getString("Entity_remove_error.title"));
-            if (!StringUtils.isBlank(message))
-               errorMessageDialog.getDetailText().setText(message);
-            errorMessageDialog.display();
-         }
-      });
-      removeService.setOnFailed(removeServiceCallFailedEventHandler);
-      errorMessageDialog.getOkButton().setOnAction(
-            new EventHandler<ActionEvent>()
-            {
-               @Override
-               public void handle(ActionEvent event)
-               {
-                  errorMessageDialog.closeDialog();
-               }
-            });
-   }
+		removeService.setOnSucceeded(new EventHandler<WorkerStateEvent>()
+				{
+			@Override
+			public void handle(WorkerStateEvent wse)
+			{
+				RoleNameRemoveService service = (RoleNameRemoveService) wse
+						.getSource();
+				RoleName p = service.getValue();
+				wse.consume();
+				service.reset();
+				removedEvent.fire(p);
+			}
+				});
+		removeServiceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay()
+		{
+			@Override
+			protected void showError(Throwable exception)
+			{
+				String message = exception.getMessage();
+				errorMessageDialog.getTitleText().setText(
+						resourceBundle.getString("Entity_remove_error.title"));
+				if (!StringUtils.isBlank(message))
+					errorMessageDialog.getDetailText().setText(message);
+				errorMessageDialog.display();
+			}
+		});
+		removeService.setOnFailed(removeServiceCallFailedEventHandler);
+		errorMessageDialog.getOkButton().setOnAction(
+				new EventHandler<ActionEvent>()
+				{
+					@Override
+					public void handle(ActionEvent event)
+					{
+						errorMessageDialog.closeDialog();
+					}
+				});
+	}
 }

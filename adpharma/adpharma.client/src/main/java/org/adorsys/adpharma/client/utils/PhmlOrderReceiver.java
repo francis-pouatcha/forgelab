@@ -45,8 +45,8 @@ public class PhmlOrderReceiver {
 			procurementOrderItem.setMainPic(cip.trim());
 			if(line.length()>116){
 				String ppu = StringUtils.substring(line, 115,line.length());
-				System.out.println(ppu);
 				BigDecimal pp = new BigDecimal(ppu);
+				System.out.println(ppu);
 				procurementOrderItem.setPurchasePricePU(pp);
 			}
 		}
@@ -73,12 +73,11 @@ public class PhmlOrderReceiver {
 			}
 		});
 		File responseFile = null ;
-		if(listFiles.length>0) {
+		if(listFiles.length>0){
 			responseFile = listFiles[0];
 		}else {
-			throw new FileNotFoundException("Fichier de reponse non Disponible Verifier votre connection internet \n ou appeller UBIPHARM ");
+			throw new FileNotFoundException("Fichier de reponse Phml Non disponible ");
 		}
-
 		if (responseFile!=null) {
 			List<String> readLines = FileUtils.readLines(responseFile, "UTF-8");
 			for (String string : readLines) {

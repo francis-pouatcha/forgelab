@@ -72,11 +72,11 @@ public class ProcurementOrderListView
 
 	@FXML
 	private Button removeButton ;
-	
+
 	@FXML
 	private Button ruptureButton ;
-	
-	
+
+
 
 	@FXML
 	private Button printButton ;
@@ -137,7 +137,7 @@ public class ProcurementOrderListView
 		viewBuilder.addStringColumn(dataListItem, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataListItem, "articleName", "ProcurementOrderItem_articleName_description.title", resourceBundle,300d);
-		viewBuilder.addDateColumn(dataListItem, "expirationDate", "ProcurementOrderItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		//		viewBuilder.addDateColumn(dataListItem, "expirationDate", "ProcurementOrderItem_expirationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "qtyOrdered", "ProcurementOrderItem_qtyOrdered_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "availableQty", "ProcurementOrderItem_availableQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataListItem, "article.qtyInStock", "ProcurementOrderItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
@@ -197,7 +197,7 @@ public class ProcurementOrderListView
 	{
 		return removeButton;
 	}
-	
+
 	public Button getRuptureButton()
 	{
 		return ruptureButton;

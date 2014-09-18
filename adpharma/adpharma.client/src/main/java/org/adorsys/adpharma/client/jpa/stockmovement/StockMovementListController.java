@@ -20,6 +20,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.events.PeriodicalMovementSearchRequestEvent;
+import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.adpharma.client.jpa.stockmovementterminal.StockMovementTerminal;
 import org.adorsys.adpharma.client.jpa.stockmovementtype.StockMovementType;
 import org.adorsys.javafx.crud.extensions.EntityController;
@@ -51,6 +53,10 @@ public class StockMovementListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<StockMovement> searchRequestedEvent;
+	
+	@Inject
+	@PeriodicalMovementSearchRequestEvent
+	private Event<PeriodicalDataSearchInput> periodicalMovevementRequestEvent;
 
 	@Inject
 	@EntityCreateRequestedEvent
@@ -104,6 +110,13 @@ public class StockMovementListController implements EntityController
 				searchService.setSearchInputs(searchInput).start();
 			}
 				});
+		listView.getAdvenceSearchButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				periodicalMovevementRequestEvent.fire(new PeriodicalDataSearchInput());
+			}
+		});
 		searchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
 			@Override
