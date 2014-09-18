@@ -542,7 +542,8 @@ public class CustomerInvoiceEJB {
 					if(amount.compareTo(BigDecimal.ZERO)<=0) continue;
 
 					boolean customer = true;// paid by the client
-					if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getInsurer().equals(payer))customer=false;// paid by the insurance.
+					// just client use this methode for payment there is another methode for insurance payement @see PaymentEJB.createPaymentForDebtstatement
+//					if(customerInvoice.getInsurance()!=null && customerInvoice.getInsurance().getInsurer().equals(payer))customer=false;// paid by the insurance.
 
 					BigDecimal totalRestToPay = customerInvoice.getTotalRestToPay();
 					BigDecimal payerRestTopay = customer?customerInvoice.getCustomerRestTopay():customerInvoice.getInsurranceRestTopay();

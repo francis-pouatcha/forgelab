@@ -178,7 +178,7 @@ public class Payment implements Cloneable
 
    public SimpleObjectProperty<PaymentMode> paymentModeProperty()
    {
-      if (paymentMode == null)
+      if (paymentMode == null || paymentMode.get()==null)
       {
          paymentMode = new SimpleObjectProperty<PaymentMode>(PaymentMode.CASH);
       }

@@ -29,6 +29,7 @@ public class ReceiptPrintProperties {
 	private String phmlMessageDirectory = null;
 	private String phmlResponseDirectory = null;
 	private String phmlRepartiteur = null;
+	private String discoutStrategy = "MIN";
 	
 
 	private Font myBoldFont = FontFactory.getFont("Arial", fontSize, Font.BOLD);
@@ -138,6 +139,11 @@ public class ReceiptPrintProperties {
 					r.setPhmlRepartiteur(phmlRepartiter);
 				}
 				
+				String discountStrategy = properties.getProperty("discount_strategy");
+				if(StringUtils.isNotBlank(discountStrategy)){
+					r.setDiscoutStrategy(discountStrategy);
+				}
+				
 				String paperFormat = properties.getProperty("receipt-printer-format");
 				if(StringUtils.isNotBlank(paperFormat)){
 					r.setFormat(NumberUtils.toInt(paperFormat));
@@ -206,6 +212,12 @@ public class ReceiptPrintProperties {
 	}
 	public void setPhmlRepartiteur(String phmlRepartiteur) {
 		this.phmlRepartiteur = phmlRepartiteur;
+	}
+	public String getDiscoutStrategy() {
+		return discoutStrategy;
+	}
+	public void setDiscoutStrategy(String discoutStrategy) {
+		this.discoutStrategy = discoutStrategy;
 	}
 	
 	
