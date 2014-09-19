@@ -89,6 +89,7 @@ public class SalesOrderReportPrintTemplatePDF {
 
 			newTableRow(item.getInternalPic(), 
 					articleName, 
+					item.getArticle().getQtyInStock(),
 					item.getDeliveredQty(),
 					item.getTotalSalePrice(),
 					vatValue
@@ -97,6 +98,7 @@ public class SalesOrderReportPrintTemplatePDF {
 		newTableRow("", 
 				"TOTAL :", 
 				totalQty,
+				null,
 				totalPrice,
 				totalvat
 				);
@@ -109,7 +111,8 @@ public class SalesOrderReportPrintTemplatePDF {
 
 	private void newTableRow(String internalPic, 
 			String articleName,
-			BigDecimal stockQuantity,
+			BigDecimal stockQty,
+			BigDecimal salesQty,
 			BigDecimal salesPricePU,
 			BigDecimal vat) {
 
@@ -121,9 +124,13 @@ public class SalesOrderReportPrintTemplatePDF {
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(articleName));
 		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(stockQty!=null?stockQty.toBigInteger()+"":"")));
+		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(stockQuantity!=null?stockQuantity.toBigInteger()+"":"")));
+		pdfPCell.addElement(new RightParagraph(new StandardText(salesQty!=null?salesQty.toBigInteger()+"":"")));
 		reportTable.addCell(pdfPCell);
 
 
@@ -139,7 +146,7 @@ public class SalesOrderReportPrintTemplatePDF {
 
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .10f, .51f, .13f,.13f,.13f });
+		reportTable = new PdfPTable(new float[]{ .10f, .41f, .12f, .12f,.11f,.11f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -151,7 +158,10 @@ public class SalesOrderReportPrintTemplatePDF {
 		pdfPCell.addElement(new StandardText("Libelle"));
 		reportTable.addCell(pdfPCell);
 
-
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("En Stock "));
+		reportTable.addCell(pdfPCell);
+		
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Qte Vendu "));
 		reportTable.addCell(pdfPCell);

@@ -262,11 +262,11 @@ public class DeliveryDisplayView
 		mulRate.setAlignment(Pos.CENTER);
 
 		expirationDate = ViewBuilderUtils.newTextField( "expirationDate", false);
-		expirationDate.setPromptText("MM-YY");
+		expirationDate.setPromptText("MMYY");
 		expirationDate.setTooltip(new Tooltip("expiration Date"));
 		expirationDate.setPrefWidth(60d);
 		expirationDate.setAlignment(Pos.CENTER);
-		TextFieldFormatter.addMask(expirationDate, "  /  ");
+//		TextFieldFormatter.addMask(expirationDate, "  /  ");
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
