@@ -20,6 +20,8 @@ import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.PeriodicalDeliveryDataSearchInput;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem;
+import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.repo.DeliveryItemRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 
@@ -41,7 +43,7 @@ public class DeliveryItemEJB
 
 	@Inject
 	private SecurityUtil securityUtilEJB;
-	
+
 	@Inject
 	@EntityEditDoneRequestEvent
 	private Event<DeliveryItem> deliveryItemEditRequestEvent;
@@ -52,6 +54,20 @@ public class DeliveryItemEJB
 		Login login = securityUtilEJB.getConnectedUser();
 		entity.setCreatingUser(login);
 		entity.calculateAmount();
+
+		List<DeliveryItem> found = findBy(entity, 0, 1, new SingularAttribute[]{DeliveryItem_.mainPic,DeliveryItem_.article,DeliveryItem_.delivery});
+		if(!found.isEmpty()){
+             DeliveryItem next = found.iterator().next();
+             next.setQtyOrdered(next.getQtyOrdered().add(entity.getQtyOrdered()));
+             next.setAvailableQty(next.getAvailableQty().add(entity.getAvailableQty()));
+             next.setStockQuantity(entity.getStockQuantity().add(next.getStockQuantity()));
+             next.setFreeQuantity(next.getFreeQuantity().add(entity.getFreeQuantity()));
+             next.setPurchasePricePU(entity.getPurchasePricePU());
+             next.setSalesPricePU(entity.getSalesPricePU());
+             next.setExpirationDate(entity.getExpirationDate());
+             next.calculateAmount();
+             return repository.save(next);
+		}
 		return repository.save(entity);
 	}
 
@@ -80,8 +96,8 @@ public class DeliveryItemEJB
 	}
 	public DeliveryItem update(DeliveryItem entity)
 	{
-//		entity.calculateAmount();
-		 DeliveryItem save = repository.save(attach(entity));
+		//		entity.calculateAmount();
+		DeliveryItem save = repository.save(attach(entity));
 		deliveryItemEditRequestEvent.fire(save);
 		return save;
 	}

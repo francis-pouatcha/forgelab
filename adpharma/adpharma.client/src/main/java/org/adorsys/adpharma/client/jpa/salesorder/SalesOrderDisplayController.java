@@ -63,6 +63,7 @@ import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchResult;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchService;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
+import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
 import org.adorsys.adpharma.client.jpa.login.LoginService;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBook;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookAgency;
@@ -233,6 +234,8 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject
 	private ArticleLotService articleLotService ;
+	
+	
 
 	@PostConstruct
 	public void postConstruct()
@@ -412,15 +415,22 @@ public class SalesOrderDisplayController implements EntityController
 					@Override
 					public void handle(ActionEvent e)
 					{
-						
-						if(isValideSale()){
+						String saleKey = salesKeyRecieverView.show();
+						LoginSearchInput loginSearchInput = new LoginSearchInput();
+						loginSearchInput.getEntity().setSaleKey(saleKey);
+						loginSearchInput.getFieldNames().add("saleKey");
+						LoginSearchResult loginResult = loginService.findBy(loginSearchInput);
+						if(loginResult.getResultList().isEmpty()){
+							Dialogs.create().message("Cle de vente Incorrect").showError();
+							return ;
+						}
+						Login login = loginResult.getResultList().iterator().next();
+						if(isValideSale(login)){
 							Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
 							if (violations.isEmpty())
 							{
-								String salesKey = salesKeyRecieverView.show();
 								if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
-									displayedEntity.setSalesKey(salesKey);
-									
+									displayedEntity.setSalesKey(saleKey);
 									closeService.setSalesOrder(displayedEntity).start();
 								}
 							}
@@ -933,7 +943,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	}
 
-	public boolean isValideSale(){
+	public boolean isValideSale(Login login){
 		BigDecimal amountDiscount = displayedEntity.getAmountDiscount()!=null?displayedEntity.getAmountDiscount():BigDecimal.ZERO;
 		BigDecimal amountAfterTax = displayedEntity.getAmountAfterTax()!=null?displayedEntity.getAmountAfterTax():BigDecimal.ZERO;
 
@@ -943,7 +953,7 @@ public class SalesOrderDisplayController implements EntityController
 		}
 		
 		String discoutStrategy = ReceiptPrintProperties.loadPrintProperties().getDiscoutStrategy();
-		BigDecimal userDiscounteRate = securityUtil.getConnectedUser().getDiscountRate()!=null?securityUtil.getConnectedUser().getDiscountRate():BigDecimal.ZERO;
+		BigDecimal userDiscounteRate = login.getDiscountRate()!=null?login.getDiscountRate():BigDecimal.ZERO;
 		BigDecimal categoryDiscountRate = displayedEntity.getCustomer().getCustomerCategory().getDiscountRate()!=null?displayedEntity.getCustomer().getCustomerCategory().getDiscountRate():BigDecimal.ZERO;
 		BigDecimal realdiscounteRate = BigDecimal.ZERO;
 		switch (discoutStrategy) {
@@ -971,6 +981,7 @@ public class SalesOrderDisplayController implements EntityController
 		break;
 
 		default:
+			realdiscounteRate = categoryDiscountRate;
 			break;
 		}
 		BigDecimal realDiscount = amountAfterTax.multiply(realdiscounteRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN));

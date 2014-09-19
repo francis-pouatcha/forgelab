@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -71,6 +72,9 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 @Singleton
@@ -465,12 +469,17 @@ public class DeliveryDisplayController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				DeliveryItemCreateService s = (DeliveryItemCreateService) event.getSource();
 				DeliveryItem createdItem = s.getValue();
 				event.consume();
 				s.reset();
-				displayView.getDataList().getItems().add(0,createdItem);
-				PropertyReader.copy(new DeliveryItem(), deliveryItem);
+				int indexOf = displayView.getDataList().getItems().indexOf(createdItem);
+				if(indexOf>=0){
+					PropertyReader.copy(createdItem, displayView.getDataList().getItems().get(indexOf));
+				}else {
+					displayView.getDataList().getItems().add(0,createdItem);
+				}
 				calculateProcessAmont();
 				displayView.getMainPic().requestFocus();
 
@@ -620,13 +629,22 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
+		Iterator<DeliveryItem> iterator = displayView.getDataList().getItems().iterator();
+		
 		if(isValidDeliveryItem()){
 			deliveryItem.setDelivery(new DeliveryItemDelivery(displayedEntity));
 			Date parse = null ;
 			try {
 
-				String[] split = displayView.getExpirationDate().getText().split("/");
-				String expDate = "01/"+split[0]+"/20"+split[1];
+				String text = displayView.getExpirationDate().getText();
+				String month = "01";
+				String year = DateHelper.format(DateUtils.addYears(new Date(), 1), "yy");
+				if(StringUtils.isNotBlank(text) && text.length() >=4){
+					month = text.substring(0, 2);
+					year = text.substring(2, 4);
+				}
+				
+				String expDate = "01/"+month+"/20"+year;
 				parse = DateHelper.parse(expDate, "dd/MM/yyyy");
 
 			} catch (Exception e) {
@@ -639,15 +657,32 @@ public class DeliveryDisplayController implements EntityController
 				deliveryItem.setExpirationDate(instance);
 			}
 			deliveryItem.calculateTotalAmout();
-			if(deliveryItem.getId()==null){
-				deliveryItemCreateService.setModel(deliveryItem).start();
+			
+			if(containArticle(deliveryItem, iterator)){
+				Action showConfirm = Dialogs.create().message("Ce produit est deja dans la liste voulez vous augmenter sa quantite ?").showConfirm();
+				if(Dialog.Actions.YES.equals(showConfirm)){
+					saveDeliveryItem(deliveryItem);
+				}else {
+					PropertyReader.copy(new DeliveryItem(), deliveryItem);
+					displayView.getMainPic().requestFocus();
+				}
 			}else {
-				deliveryItemEditService.setDeliveryItem(deliveryItem).start();
+				saveDeliveryItem(deliveryItem);
 			}
+
+			
 		}
+
 	}
 
 
+private void	saveDeliveryItem(DeliveryItem deliveryItem){
+		if(deliveryItem.getId()==null){
+			deliveryItemCreateService.setModel(deliveryItem).start();
+		}else {
+			deliveryItemEditService.setDeliveryItem(deliveryItem).start();
+		}
+	}
 
 	private void handleDeliveryClosedEvent(
 			Delivery displayedEntity) {
@@ -690,6 +725,20 @@ public class DeliveryDisplayController implements EntityController
 
 	public void handleLogoutSucceedEvent(@Observes(notifyObserver=Reception.ALWAYS) @LogoutSucceededEvent Object object){
 		searchRequestEvent.fire(new Delivery());
+	}
+
+
+	public boolean containArticle(DeliveryItem deliveryItem, Iterator<DeliveryItem> items){
+		boolean   containArticle = false ;
+		while (items.hasNext()) {
+			DeliveryItem deliveryItem2 = (DeliveryItem) items.next();
+			if(StringUtils.equals(deliveryItem.getMainPic(), deliveryItem2.getMainPic())){
+				containArticle = true;
+				break ;
+			}
+		}
+		return containArticle ;
+
 	}
 
 
