@@ -421,7 +421,7 @@ public class SalesOrderDisplayController implements EntityController
 						loginSearchInput.getFieldNames().add("saleKey");
 						LoginSearchResult loginResult = loginService.findBy(loginSearchInput);
 						if(loginResult.getResultList().isEmpty()){
-							Dialogs.create().message("Cle de vente Incorrect").showError();
+							Dialogs.create().message("Cle de vente Incorrecte").showError();
 							return ;
 						}
 						Login login = loginResult.getResultList().iterator().next();
@@ -984,8 +984,8 @@ public class SalesOrderDisplayController implements EntityController
 			realdiscounteRate = categoryDiscountRate;
 			break;
 		}
-		BigDecimal realDiscount = amountAfterTax.multiply(realdiscounteRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_EVEN));
-		
+		BigDecimal realDiscount = amountAfterTax.multiply(realdiscounteRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.DOWN));
+		realDiscount = realDiscount.add(BigDecimal.valueOf(1)) ;
 		if(realDiscount.compareTo(amountDiscount)<0){
 			Dialogs.create().message("la remise ne peux etre superieur a "+ realDiscount).showInformation();
 			return false ;

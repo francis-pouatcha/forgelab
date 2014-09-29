@@ -18,5 +18,8 @@ angular.module('adpharma', [
   $routeProvider.otherwise({redirectTo: '/salesOrderEdit'});
 }).run(function($rootScope, LogoutService) {
     $rootScope.Security = LogoutService;
+    
+    
+    
 });
 
