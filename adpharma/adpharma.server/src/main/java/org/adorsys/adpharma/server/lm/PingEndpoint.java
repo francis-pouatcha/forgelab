@@ -22,6 +22,6 @@ public class PingEndpoint
    @Produces({ "application/json", "application/xml" })
    public String authping()
    {
-      return new Date().toString();
+      return  "/useradminmaster/login-list";
    }
 }
