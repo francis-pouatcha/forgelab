@@ -181,7 +181,7 @@ public class DeliveryListController implements EntityController
 		listView.getExportToXlsButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
-			public void handle(ActionEvent event) {
+			public void handle(ActionEvent event) { 
 				exportDeliveryToXls();
 
 			}
@@ -606,6 +606,7 @@ public class DeliveryListController implements EntityController
 				outputStream.close();
 				Desktop.getDesktop().open(file);
 			} catch (Exception e) {
+				System.out.println("Error: "+e.getMessage());
 				e.printStackTrace();
 			}
 		}

@@ -61,6 +61,8 @@ public class DeliveryDisplayView
 	private Button addButton;
 
 	private Button printButton;
+	
+	private Button printXlsButton;
 
 	private Button cancelButton;
 
@@ -115,7 +117,7 @@ public class DeliveryDisplayView
 	private BigDecimalField processAmont;
 
 	@FXML
-	private GridPane amountPane ;
+	private GridPane amountPane;
 
 	@FXML
 	private ContextMenu datalistContextMenu;
@@ -136,7 +138,7 @@ public class DeliveryDisplayView
 
 	private BigDecimalField purchasePricePU;
 
-	private BigDecimalField mulRate ;;
+	private BigDecimalField mulRate ;
 
 	private BigDecimalField salesPricePU;
 
@@ -224,7 +226,8 @@ public class DeliveryDisplayView
 
 		printButton = ViewBuilderUtils.newButton( "Delivery_print_description.title", "printButton", resourceBundle, AwesomeIcon.PRINT);
 
-		actionbar.getChildren().addAll(saveButton,editButton,deleteButton,addArticleButton,cancelButton,addButton,printButton);
+		printXlsButton= ViewBuilderUtils.newButton("Delivery_printxls_description.title", "printXlsButton", resourceBundle, AwesomeIcon.PRINT);
+		actionbar.getChildren().addAll(saveButton,editButton,deleteButton,addArticleButton,cancelButton,addButton,printButton,printXlsButton);
 		actionbar.setAlignment(Pos.CENTER);
 
 	}
@@ -326,6 +329,7 @@ public class DeliveryDisplayView
 		editButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		addArticleButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		printButton.disableProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		printXlsButton.disableProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 	}
 
@@ -516,6 +520,11 @@ public class DeliveryDisplayView
 		return resourceBundle;
 	}
 
+	public Button getPrintXlsButton() {
+		return printXlsButton;
+	}
+	
+	
 
 
 }

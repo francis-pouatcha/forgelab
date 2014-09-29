@@ -529,6 +529,16 @@ public class DeliveryDisplayController implements EntityController
 				printRequestedEvent.fire(new DeliveryId(displayedEntity.getId()));
 			}
 		});
+		
+		displayView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				if(displayedEntity==null || displayedEntity.getId()==null) return;
+				printRequestedEvent.fire(new DeliveryId(displayedEntity.getId()));
+			}
+			
+		});
 
 		displayView.getView().addValidators();
 	}

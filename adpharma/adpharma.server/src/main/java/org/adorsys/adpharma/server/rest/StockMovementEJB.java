@@ -18,6 +18,7 @@ import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesTraceEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
@@ -200,6 +201,7 @@ public class StockMovementEJB
 		sm.setInitialQty(articleLot.getStockQuantity().add(data.getQtyToMoved()));
 		sm.setMovedQty(data.getQtyToMoved());
 		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setStockQty(articleLot.getArticle().getQtyInStock());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.TRASH);
 		String raison = data.getRaison();
@@ -227,6 +229,7 @@ public class StockMovementEJB
 		sm.setInitialQty(BigDecimal.ZERO);
 		sm.setMovedQty(lotDetailsManager.getDetailsQty());
 		sm.setFinalQty(lotToDetails.getStockQuantity());
+		sm.setStockQty(lotToDetails.getArticle().getQtyInStock());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 		sm.setOriginatedDocNumber("DETAILS");
@@ -253,6 +256,7 @@ public class StockMovementEJB
 		sm.setRaison("TRANSFERT");
 		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
 		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setStockQty(articleLot.getArticle().getQtyInStock());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 		sm.setOriginatedDocNumber("TRANSFER");
@@ -277,6 +281,7 @@ public class StockMovementEJB
 		sm.setInitialQty(BigDecimal.ZERO);
 		sm.setMovedQty(lotTransferManager.getQtyToTransfer());
 		sm.setFinalQty(articleLot.getStockQuantity());
+		sm.setStockQty(articleLot.getArticle().getQtyInStock());
 		sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 		sm.setOriginatedDocNumber("TRANSFER");
@@ -290,7 +295,7 @@ public class StockMovementEJB
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
 
-	public void handleDelivery(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	public void handleDelivery(@Observes @DocumentProcessedEvent Delivery closedDelivery){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
@@ -311,6 +316,7 @@ public class StockMovementEJB
 			sm.setRaison("LIVRAISON");
 			sm.setMovedQty(deliveryItem.getStockQuantity());
 			sm.setFinalQty(deliveryItem.getStockQuantity());
+			sm.setStockQty(deliveryItem.getArticle().getQtyInStock());
 			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
 			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 			sm.setOriginatedDocNumber(closedDelivery.getDeliveryNumber());
@@ -347,7 +353,7 @@ public class StockMovementEJB
 			BigDecimal movedQty = releasedQty.subtract(returnedQty);
 			sm.setMovedQty(movedQty);
 			sm.setFinalQty(movedQty);//supposed to be qty in stock.
-
+            sm.setStockQty(salesOrderItem.getArticle().getQtyInStock());
 			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
 				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);
@@ -372,7 +378,7 @@ public class StockMovementEJB
 	 * 
 	 * @param salesOrder
 	 */
-	public void handleReturnSales(@Observes @ReturnSalesEvent SalesOrder salesOrder){
+	public void handleReturnSales(@Observes @ReturnSalesTraceEvent SalesOrder salesOrder){
 		Login creatingUser = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Set<SalesOrderItem> salesOrderItems = salesOrder.getSalesOrderItems();
@@ -391,6 +397,7 @@ public class StockMovementEJB
 				BigDecimal movedQty = salesOrderItem.getReturnedQty()==null?BigDecimal.ZERO:salesOrderItem.getReturnedQty();
 				sm.setMovedQty(movedQty);
 				sm.setFinalQty(movedQty);//supposed to be qty in stock.
+				sm.setStockQty(salesOrderItem.getArticle().getQtyInStock());
 				sm.setMovementOrigin(StockMovementTerminal.CUSTOMER);
 				sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
 				sm.setOriginatedDocNumber(salesOrder.getSoNumber());

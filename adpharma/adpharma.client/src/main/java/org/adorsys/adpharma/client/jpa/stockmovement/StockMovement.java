@@ -48,40 +48,58 @@ public class StockMovement implements Cloneable
 
    @Description("StockMovement_originatedDocNumber_description")
    private SimpleStringProperty originatedDocNumber;
+   
    @Description("StockMovement_raison_description")
    private SimpleStringProperty raison;
+   
    @Description("StockMovement_internalPic_description")
    private SimpleStringProperty internalPic;
+   
    @Description("StockMovement_movementType_description")
    private SimpleObjectProperty<StockMovementType> movementType;
+   
    @Description("StockMovement_movementOrigin_description")
    private SimpleObjectProperty<StockMovementTerminal> movementOrigin;
+   
    @Description("StockMovement_movementDestination_description")
    private SimpleObjectProperty<StockMovementTerminal> movementDestination;
+   
    @Description("StockMovement_movedQty_description")
    private SimpleObjectProperty<BigDecimal> movedQty;
+   
    @Description("StockMovement_initialQty_description")
    private SimpleObjectProperty<BigDecimal> initialQty;
+   
    @Description("StockMovement_finalQty_description")
    private SimpleObjectProperty<BigDecimal> finalQty;
+   
+   @Description("StockMovement_stockQty_description")
+   private SimpleObjectProperty<BigDecimal> stockQty;
+   
    @Description("StockMovement_totalPurchasingPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalPurchasingPrice;
+   
    @Description("StockMovement_totalDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalDiscount;
+   
    @Description("StockMovement_totalSalesPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalSalesPrice;
+   
    @Description("StockMovement_creationDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> creationDate;
+   
    @Description("StockMovement_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<StockMovementCreatingUser> creatingUser;
+   
    @Description("StockMovement_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<StockMovementArticle> article;
+   
    @Description("StockMovement_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<StockMovementAgency> agency;
@@ -279,6 +297,23 @@ public class StockMovement implements Cloneable
    {
       this.finalQtyProperty().set(finalQty);
    }
+   
+   public SimpleObjectProperty<BigDecimal> stockQtyProperty()
+   {
+      if (stockQty == null)
+      {
+    	  stockQty = new SimpleObjectProperty<BigDecimal>();
+      }
+      return stockQty;
+   }
+   
+   public BigDecimal getStockQty() {
+	return stockQtyProperty().get();
+    }
+   
+   public void setStockQty(BigDecimal stockQty) {
+	this.stockQtyProperty().set(stockQty);
+    }
 
    public SimpleObjectProperty<BigDecimal> totalPurchasingPriceProperty()
    {

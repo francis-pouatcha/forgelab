@@ -268,6 +268,7 @@ public class SalesOrderPrintTemplate {
 				inssurancePart = salesOrder.getNetToPay().multiply(insurance.getCoverageRate().divide(BigDecimal.valueOf(100)));
 				pars.add(new Paragraph(new StandardText("Taux de couverture ")));
 				pars.add(new Paragraph(new StandardText("Part Client ")));
+				pars.add(new Paragraph(new StandardText("Part Assurance ")));
 			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 
@@ -285,6 +286,7 @@ public class SalesOrderPrintTemplate {
 			if(inssurancePart!=null){
 				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getInsurance().getCoverageRate())+"%")));
 				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(salesOrder.getNetToPay().subtract(inssurancePart)))));
+				pars.add(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(inssurancePart))));
 			}
 			borderCell(invoiceTable, colspan,rowspan, pars.toArray(new Paragraph[pars.size()]));
 		}

@@ -1002,6 +1002,8 @@ public class CashDrawerDisplayController implements EntityController
 		salesOrderSearchInput.getFieldNames().add("soNumber");
 		salesOrderPaymentChecker.setSearchInputs(salesOrderSearchInput).start();
 	}
+	
+	
 	public void processPayment(){
 		Payment payment = paymentManager.getPayment();
 		payment.setCashDrawer(new PaymentCashDrawer(displayedEntity));
