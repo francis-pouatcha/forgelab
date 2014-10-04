@@ -20,6 +20,8 @@ public class PeriodicalDataSearchInput {
 	private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
 
 	private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
+	
+	private Boolean perVendorAndDiscount;
 
 	private String pic;
 	
@@ -98,6 +100,14 @@ public class PeriodicalDataSearchInput {
 
 	public void setInternalPic(String internalPic) {
 		this.internalPic = internalPic;
+	}
+	
+	public Boolean getPerVendorAndDiscount() {
+		return perVendorAndDiscount;
+	}
+	
+	public void setPerVendorAndDiscount(Boolean perVendorAndDiscount) {
+		this.perVendorAndDiscount = perVendorAndDiscount;
 	}
 
 

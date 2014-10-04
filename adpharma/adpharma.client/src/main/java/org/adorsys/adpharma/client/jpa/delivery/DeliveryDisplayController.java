@@ -30,6 +30,7 @@ import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.DeliveryId;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ReportMenuItem;
@@ -145,6 +146,9 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@PrintRequestedEvent
 	private Event<DeliveryId> printRequestedEvent;
+	
+	@Inject
+	private SecurityUtil securityUtil;
 
 	@PostConstruct
 	public void postConstruct()
@@ -535,7 +539,7 @@ public class DeliveryDisplayController implements EntityController
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(displayedEntity==null || displayedEntity.getId()==null) return;
-				printRequestedEvent.fire(new DeliveryId(displayedEntity.getId()));
+				DeliveryXlsExporter.exportDeliveryToXls(displayView.getDataList().getItems().iterator(),  securityUtil.getAgency().getName());
 			}
 			
 		});

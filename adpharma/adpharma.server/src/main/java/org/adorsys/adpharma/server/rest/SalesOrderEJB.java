@@ -31,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Login_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderAdvenceSearchData;
+import org.adorsys.adpharma.server.jpa.SalesOrderDiscount;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
@@ -38,6 +39,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.CurencyUtil;
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -160,6 +162,42 @@ public class SalesOrderEJB
 		return sales;
 		
 	}
+	
+	// Rapport des remises par vendeurs
+	public List<SalesOrderDiscount> periodicalSalesOrderDiscounts(PeriodicalDataSearchInput data){
+		// Variables initialisation
+		List<SalesOrderDiscount> resultList= new ArrayList<SalesOrderDiscount>();
+		List<Object[]> sales= new ArrayList<Object[]>();
+		
+		StringBuilder query=new StringBuilder("SELECT l.fullName as fullName, SUM(s.amountAfterTax) as chiffreAffaire, SUM(s.amountDiscount) as totalRemise"+
+	             " FROM SalesOrder s, Login l WHERE s.id IS NOT NULL AND s.salesAgent=l.id");
+		
+		if(data.getBeginDate()!=null) query.append(" AND s.creationDate >= :beginDate");
+        if(data.getEndDate()!=null) query.append(" AND s.creationDate <= :endDate");
+        query.append(" AND s.cashed = :cashed");
+        query.append(" GROUP BY l.fullName");
+        
+        Query createQuery = em.createQuery(query.toString());
+        createQuery.setParameter("cashed", Boolean.TRUE);
+        if(data.getBeginDate()!=null) {
+       	 createQuery.setParameter("beginDate", data.getBeginDate());
+        }
+        if(data.getEndDate()!=null) {
+       	 createQuery.setParameter("endDate", data.getEndDate());
+        }
+        sales = createQuery.getResultList();
+        
+        for(Object[] sale: sales) {
+        	String fullName = (String)sale[0];
+        	BigDecimal chiffreAffaire= (BigDecimal)sale[1];
+        	BigDecimal remises= (BigDecimal)sale[2];
+        	SalesOrderDiscount salesOrderDiscount = new SalesOrderDiscount(fullName, chiffreAffaire, remises);
+        	resultList.add(salesOrderDiscount);
+        }
+		return resultList;
+	}
+	
+	
 
 	public List<SalesOrder> advenceSearch(SalesOrderAdvenceSearchData data){
 		List<SalesOrder> sales = new ArrayList<SalesOrder>();

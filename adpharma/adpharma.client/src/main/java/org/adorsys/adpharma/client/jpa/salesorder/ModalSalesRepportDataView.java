@@ -49,6 +49,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	
 	private CheckBox twentyOverHeightySalesOnly;
 	
+	private CheckBox perVendorAndDiscount;
+	
 	private TextField pic ;
 
 	private Button saveButton;
@@ -82,6 +84,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
 		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
 		check.setText("Resultat Groupé Par cip ?");
+		perVendorAndDiscount = lazyviewBuilder.addCheckBox("Entity_empty.text", "perVendorAndDiscount", resourceBundle);
+		perVendorAndDiscount.setText("Remises par vendeurs");
 		
 
 		ViewBuilder viewBuilder = new ViewBuilder();
@@ -106,6 +110,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
 		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
 		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
+		perVendorAndDiscount.selectedProperty().bindBidirectional(model.perVendorAndDiscountProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
 	}
 
@@ -182,6 +187,9 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		return calendarControlValidator;
 	}
 
+	public CheckBox getPerVendorAndDiscount() {
+		return perVendorAndDiscount;
+	}
 
 
 	public ResourceBundle getResourceBundle() {

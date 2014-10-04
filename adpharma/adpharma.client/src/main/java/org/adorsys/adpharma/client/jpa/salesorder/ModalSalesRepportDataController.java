@@ -49,6 +49,9 @@ public class ModalSalesRepportDataController {
 
 	@Inject
 	private SalesOrderItemPeriodicalSearchService salesOrderItemPeriodicalSearchService ;
+	
+	@Inject
+	private SalesOrderPeriodicalSearchService salesOrderPeriodicalSearchService;
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
@@ -77,6 +80,7 @@ public class ModalSalesRepportDataController {
 
 			}
 		});
+		
 
 		view.getNonTaxableSalesOnly().selectedProperty().addListener(new ChangeListener<Boolean>() {
 
@@ -88,9 +92,21 @@ public class ModalSalesRepportDataController {
 
 			}
 		});
+		
+		view.getPerVendorAndDiscount().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue)
+				view.getPerVendorAndDiscount().setSelected(true);
+			}
+		});
+				
+			
+		
 
 		salesOrderItemPeriodicalSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
 			@Override
 			public void handle(WorkerStateEvent event) {
 				SalesOrderItemPeriodicalSearchService source = (SalesOrderItemPeriodicalSearchService) event.getSource();
@@ -111,19 +127,39 @@ public class ModalSalesRepportDataController {
 					File file = new File(worker.getFileName());
 					openFile(file);
 				} catch (DocumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
 		salesOrderItemPeriodicalSearchService.setOnFailed(callFailedEventHandler);
+		
 		view.getResetButton().setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
 				view.closeDialog();
-
+			}
+		});
+		
+		salesOrderPeriodicalSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SalesOrderPeriodicalSearchService source= (SalesOrderPeriodicalSearchService)event.getSource();
+				List<SalesOrderDiscount> items = source.getValue().getResultList();
+				event.consume();
+				source.reset();
+				
+				Login login = securityUtil.getConnectedUser();
+				LoginAgency agency = securityUtil.getAgency();
+				try {
+					SalesOrderDiscountReportPrintTemplatePDF worker = new SalesOrderDiscountReportPrintTemplatePDF(agency, login, model, getHeaderName());
+					worker.addItems(items);
+					worker.closeDocument();
+					File file = new File(worker.getPdfFileName());
+					openFile(file);
+				} catch (DocumentException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -133,7 +169,12 @@ public class ModalSalesRepportDataController {
 			public void handle(ActionEvent event) {
 				Set<ConstraintViolation<PeriodicalDataSearchInput>> validate = view.validate(model);
 				if(validate.isEmpty()){
-					salesOrderItemPeriodicalSearchService.setSearchInputs(model).start();
+					if(model.getPerVendorAndDiscount().equals(Boolean.TRUE)) {
+						salesOrderPeriodicalSearchService.setSearchInputs(model).start();
+					}else {
+						salesOrderItemPeriodicalSearchService.setSearchInputs(model).start();
+					}
+						
 				}
 			}
 		});
@@ -146,6 +187,8 @@ public class ModalSalesRepportDataController {
 		view.showDiaLog();
 	}
 
+	
+	// Open a File in the desktop UI
 	private void openFile(File file){
 		try {
 			Desktop.getDesktop().open(file);
@@ -198,6 +241,9 @@ public class ModalSalesRepportDataController {
 			headerName = " NON TAXABLE";
 		if(model.getTwentyOverHeightySalesOnly())
 			headerName = " 20 / 80 ";
+		if(model.getPerVendorAndDiscount()) {
+			headerName="REMISES / VENDEURS";
+		}
 		return headerName ;
 	}
 

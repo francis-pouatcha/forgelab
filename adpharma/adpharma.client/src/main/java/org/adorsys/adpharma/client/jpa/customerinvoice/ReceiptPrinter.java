@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.print.Printer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;

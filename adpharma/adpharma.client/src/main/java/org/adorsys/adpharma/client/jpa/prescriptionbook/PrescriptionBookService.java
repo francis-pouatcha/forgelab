@@ -107,6 +107,17 @@ public class PrescriptionBookService {
 		return target().path(FIND_BY_LIKE_PATH).request(media)
 				.post(searchInputEntity, PrescriptionBookSearchResult.class);
 	}
+	
+	
+	    // @POST
+		// @Path("/periodicalPrescriptionBook")
+		// @Produces("application/xml")
+		// @Consumes("application/xml")
+		public PrescriptionBookSearchResult periodicalPrescriptionBook(PeriodicalPrescriptionBookDataSearchInput searchInput) {
+			Entity<PeriodicalPrescriptionBookDataSearchInput> searchInputEntity = Entity.entity(searchInput, media);
+			return target().path("periodicalPrescriptionBook").request(media)
+					.post(searchInputEntity, PrescriptionBookSearchResult.class);
+		}
 
 	// @POST
 	// @Path("/countByLike"

@@ -4,17 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.exceptions.IllegalStateException;
 
 import com.lowagie.text.Chunk;
@@ -31,9 +27,9 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.LineSeparator;
 
-
-public class SalesOrderReportPrintTemplatePDF {
-
+public class SalesOrderDiscountReportPrintTemplatePDF {
+	
+	
 	private CalendarFormat calendarFormat = new CalendarFormat();
 
 	private Document document;
@@ -44,16 +40,15 @@ public class SalesOrderReportPrintTemplatePDF {
 	private String pdfFileName;
 	private PeriodicalDataSearchInput model;
 	private String headerName = "";
-
-	public SalesOrderReportPrintTemplatePDF(
-			Login login,LoginAgency agency,PeriodicalDataSearchInput model,String headerName
-			) throws DocumentException {
+	public SalesOrderDiscountReportPrintTemplatePDF(LoginAgency agency,
+			Login login, PeriodicalDataSearchInput model, String headerName) throws DocumentException{
+		super();
 		this.agency = agency;
 		this.login = login;
 		this.model = model;
 		this.headerName = headerName;
 		PropertyReader.copy(login.getAgency(), agency);
-		pdfFileName = "sales.pdf";
+		pdfFileName = "salesDiscounts.pdf";
 
 		document = new Document(PageSize.A4,5,5,5,5);
 		File file = new File(pdfFileName);
@@ -67,118 +62,69 @@ public class SalesOrderReportPrintTemplatePDF {
 		} catch (DocumentException e) {
 			throw new IllegalStateException(e);
 		}
+		
 		resetDocument();
 	}
-
-	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
+	
+	
+	static Font boldFont = FontFactory.getFont("Times-Bold", 10, Font.BOLD);
 	static Font font = FontFactory.getFont("Times-Roman", 10);
-
-	public void addItems(List<SalesOrderItem> items) {
-		int artNamelenght = 68 ;
-		BigDecimal totalQty = BigDecimal.ZERO ;
-		BigDecimal totalPrice = BigDecimal.ZERO ;
-		BigDecimal totalvat = BigDecimal.ZERO ;
-
-		for (SalesOrderItem item : items) {
-			String articleName = item.getArticle().getArticleName();
-			totalQty = totalQty.add(item.getDeliveredQty());
-			totalPrice = totalPrice.add(item.getTotalSalePrice());
-			BigDecimal vatValue = item.getVatValue();
-			totalvat = totalvat.add(vatValue);
-			if(articleName.length()>artNamelenght) articleName = StringUtils.substring(articleName, 0, artNamelenght);
-
-			newTableRow(item.getInternalPic(), 
-					articleName, 
-					item.getArticle().getQtyInStock(),
-					item.getDeliveredQty(),
-					item.getTotalSalePrice(),
-					vatValue
-					);
-		}
-		newTableRow("", 
-				"TOTAL :", 
-				null,
-				totalQty,
-				totalPrice,
-				totalvat
-				);
-		
-		
-		
-		
-		
-	}
-
-	private void newTableRow(String internalPic, 
-			String articleName,
-			BigDecimal stockQty,
-			BigDecimal salesQty,
-			BigDecimal salesPricePU,
-			BigDecimal vat) {
-
-
-		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(internalPic));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(articleName));
-		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(stockQty!=null?stockQty.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(salesQty!=null?salesQty.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(salesPricePU!=null?salesPricePU.toBigInteger()+"":"")));
-		reportTable.addCell(pdfPCell);
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new RightParagraph(new StandardText(vat!=null?vat.toBigInteger()+"":"0")));
-		reportTable.addCell(pdfPCell);
-	}
-
-
-
-	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .10f, .41f, .12f, .12f,.11f,.11f });
+	
+	
+	
+	private void fillTableHeader() throws DocumentException {
+		reportTable = new PdfPTable(new float[]{ .30f, .20f, .20f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("cip"));
+		pdfPCell.addElement(new BoldText("Vendeur"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Libelle"));
+		pdfPCell.addElement(new BoldText("Chiffre d'ffaire"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("En Stock "));
-		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Qte"));
-		reportTable.addCell(pdfPCell);
-
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("PVT"));
-		reportTable.addCell(pdfPCell);
-		
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("T.V.A"));
+		pdfPCell.addElement(new BoldText("Total Remise "));
 		reportTable.addCell(pdfPCell);
 	}
+	
+	
+	private void newTableRow(String fullName, BigDecimal totalAmount, BigDecimal totalDiscount) {
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(fullName));
+		reportTable.addCell(pdfPCell);
 
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(totalAmount.toBigInteger()+""));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new RightParagraph(new StandardText(totalDiscount.toBigInteger()+"")));
+		reportTable.addCell(pdfPCell);
+	}
+	
+	
+	public void addItems(List<SalesOrderDiscount> items) {
+		BigDecimal sumAmount=BigDecimal.ZERO;
+		BigDecimal sumDiscount=BigDecimal.ZERO;
+		
+		for(SalesOrderDiscount discount: items) {
+			sumAmount=sumAmount.add(discount.getTotalAmountAfterTax());
+			sumDiscount=sumDiscount.add(discount.getTotalDiscount());
+			newTableRow(discount.getFullName(), discount.getTotalAmountAfterTax(), discount.getTotalDiscount());
+		}
+		newTableRow("Total", sumAmount, sumDiscount);
+	}
+	
+	
+	
+	
+	
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES "+headerName));
+		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES: "+headerName));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
@@ -194,8 +140,8 @@ public class SalesOrderReportPrintTemplatePDF {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Periode Du  :"+org.adorsys.adpharma.client.utils.DateHelper.format(model.getBeginDate().getTime(), "EEE dd MMMMM yyyy")+" AU : "+
-				org.adorsys.adpharma.client.utils.DateHelper.format(model.getEndDate().getTime(), "EEE dd MMMMM yyyy")));
+		paragraph = new Paragraph(new StandardText("Periode Du  :"+DateHelper.format(model.getBeginDate().getTime(), "EEE dd MMMMM yyyy")+" AU : "
+		+DateHelper.format(model.getEndDate().getTime(), "EEE dd MMMMM yyyy")));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 
@@ -209,9 +155,10 @@ public class SalesOrderReportPrintTemplatePDF {
 
 		document.add(Chunk.NEWLINE);
 	}
-
-
-
+	
+	
+	
+	
 	static class StandardText extends Phrase{
 		private static final long serialVersionUID = -5796192414147292471L;
 		StandardText() {
@@ -250,7 +197,7 @@ public class SalesOrderReportPrintTemplatePDF {
 	}
 	
 	
-
+	
 	public void closeDocument() {
 		try {
 			document.add(reportTable);
@@ -260,21 +207,25 @@ public class SalesOrderReportPrintTemplatePDF {
 		document.close();
 	}
 
-	public String getFileName() {
-		return pdfFileName;
-	}
-
 	public void resetDocument() throws DocumentException{
 		document.open();
 		if(reportTable!=null)
 			reportTable.getRows().clear();
 		printReportHeader();
-		fillTableHaeder();
+		fillTableHeader();
 	}
 
-	public void closeReport() {
 
+	public String getPdfFileName() {
+		return pdfFileName;
 	}
 
+
+	public void setPdfFileName(String pdfFileName) {
+		this.pdfFileName = pdfFileName;
+	}
+	
+	
+	
 
 }

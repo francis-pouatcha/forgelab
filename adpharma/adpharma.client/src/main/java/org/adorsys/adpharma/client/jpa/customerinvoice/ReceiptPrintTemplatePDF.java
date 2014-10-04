@@ -199,7 +199,7 @@ public class ReceiptPrintTemplatePDF extends ReceiptPrintTemplate {
 				designationRowWidth = receiptPrintProperties.getWidth() * .6;
 				invoiceTableColCount = 3;
 			} else {
-				invoiceTable = new PdfPTable(new float[] {.17f, .47f, .06f, .2f });
+				invoiceTable = new PdfPTable(new float[] {.17f, .47f, .08f, .2f });
 				designationRowWidth = receiptPrintProperties.getWidth() * .47;
 				invoiceTableColCount = 4;
 			}

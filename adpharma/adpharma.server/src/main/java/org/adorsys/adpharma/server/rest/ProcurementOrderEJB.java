@@ -206,6 +206,7 @@ public class ProcurementOrderEJB
 		
 		for (CustomerInvoiceItem item : customerInvoiceItems) {
 			
+			
 			if(cashedItem.containsKey(item.getArticle())){
 				totalPurchasePrice= totalPurchasePrice.subtract(cashedItem.get(item.getArticle()).getTotalPurchasePrice());
 				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();
@@ -225,6 +226,7 @@ public class ProcurementOrderEJB
 				procurementOrderItem.setSecondaryPic(item.getArticle().getPic());
 				procurementOrderItem.setStockQuantity(item.getArticle().getQtyInStock());
 				procurementOrderItem.setValid(Boolean.FALSE);
+				procurementOrderItem.setProductSalesDate(item.getCreationDate());
 				procurementOrderItem.setAvailableQty(BigDecimal.ZERO);
 				totalPurchasePrice = totalPurchasePrice.add(procurementOrderItem.calculTotalPuschasePrice());
 				cashedItem.put(item.getArticle(), procurementOrderItem);

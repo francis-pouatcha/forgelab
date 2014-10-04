@@ -121,14 +121,13 @@ public class SalesOrderItemService {
 
 
 	// @POST
-	// @Path("/findByLike"
+	// @Path("/periodicalSales"
 	// @Produces("application/xml")
 	// @Consumes("application/xml")
-	public SalesOrderItemSearchResult periodicalSales(
-			PeriodicalDataSearchInput searchInput) {
-		Entity<PeriodicalDataSearchInput> searchInputEntity = Entity.entity(
-				searchInput, media);
-		return target().path("periodicalSales").request(media)
-				.post(searchInputEntity, SalesOrderItemSearchResult.class);
+	public SalesOrderItemSearchResult periodicalSales(PeriodicalDataSearchInput searchInput) {
+		Entity<PeriodicalDataSearchInput> searchInputEntity = Entity.entity(searchInput, media);
+		return target().path("periodicalSales")
+				       .request(media)
+				       .post(searchInputEntity, SalesOrderItemSearchResult.class);
 	}
 }

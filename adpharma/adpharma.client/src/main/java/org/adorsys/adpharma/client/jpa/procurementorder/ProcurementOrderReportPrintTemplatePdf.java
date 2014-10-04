@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -11,6 +12,7 @@ import java.util.ResourceBundle;
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.procurementorderitem.ProcurementOrderItem;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.jboss.weld.exceptions.IllegalStateException;
 
 import com.lowagie.text.Chunk;
@@ -76,6 +78,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 			total = item.getTotalPurchasePrice()!=null?total.add(item.getTotalPurchasePrice()):total;
 			newTableRow(item.getMainPic(),
 					item.getArticle().getArticleName(),
+					DateHelper.format(item.getProductSalesDate().getTime(), DateHelper.DATE_TIME_FORMAT),
 					item.getArticle().getQtyInStock(),
 					item.getQtyOrdered(),
 					item.getAvailableQty(),
@@ -84,7 +87,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 					item.getTotalPurchasePrice()
 					);
 		}
-		newTableRow("", "Total", null, null, null, null,null, total);
+		newTableRow("", "Total", "", null, null, null, null,null, total);
 	}
 
 	public void addItem(){
@@ -92,6 +95,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 	private void newTableRow(String cip, 
 			String articleName,
+			String salesDate,
 			BigDecimal qtyInStock, 
 			BigDecimal qtyOrdered, 
 			BigDecimal availableQty, 
@@ -108,6 +112,11 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
 		pdfPCell.addElement(new Phrase(articleName,font));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(16);
+		pdfPCell.addElement(new Phrase(salesDate,font));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
@@ -142,7 +151,7 @@ public class ProcurementOrderReportPrintTemplatePdf {
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.12f,.33f,.09f,.09f,.09f,.09f,.09f,.10f});
+		reportTable = new PdfPTable(new float[]{.12f,.33f, .15f, .09f,.09f,.09f,.09f,.09f,.10f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
@@ -154,6 +163,11 @@ public class ProcurementOrderReportPrintTemplatePdf {
 		pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(16);
 		pdfPCell.addElement(new Phrase("DESIGNATION",boldFont));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.setFixedHeight(16);
+		pdfPCell.addElement(new Phrase("DATE VENTE",boldFont));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();

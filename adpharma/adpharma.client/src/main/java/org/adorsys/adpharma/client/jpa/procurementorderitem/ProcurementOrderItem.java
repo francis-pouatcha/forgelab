@@ -77,6 +77,9 @@ public class ProcurementOrderItem implements Cloneable
    @Description("ProcurementOrderItem_productRecCreated_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
    private SimpleObjectProperty<Calendar> productRecCreated;
+   @Description("ProcurementOrderItem_productSalesDate_description")
+   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
+   private SimpleObjectProperty<Calendar> productSalesDate;
    @Description("ProcurementOrderItem_procurementOrder_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrder.class)
    private SimpleObjectProperty<ProcurementOrderItemProcurementOrder> procurementOrder;
@@ -395,6 +398,26 @@ public class ProcurementOrderItem implements Cloneable
    public final void setProductRecCreated(Calendar productRecCreated)
    {
       this.productRecCreatedProperty().set(productRecCreated);
+   }
+   
+   public SimpleObjectProperty<Calendar> productSalesDateProperty()
+   {
+      if (productSalesDate == null)
+      {
+    	  productSalesDate = new SimpleObjectProperty<Calendar>();
+      }
+      return productSalesDate;
+   }
+   
+   
+   public Calendar getProductSalesDate()
+   {
+      return productSalesDateProperty().get();
+   }
+   
+   public final void setProductSalesDate(Calendar productSalesDate)
+   {
+      this.productSalesDateProperty().set(productSalesDate);
    }
 
    public SimpleObjectProperty<ProcurementOrderItemProcurementOrder> procurementOrderProperty()

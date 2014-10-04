@@ -42,24 +42,31 @@ public class PrescriptionBook implements Cloneable
 
    @Description("PrescriptionBook_prescriptionNumber_description")
    private SimpleStringProperty prescriptionNumber;
+   
    @Description("PrescriptionBook_prescriptionDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> prescriptionDate;
+   
    @Description("PrescriptionBook_recordingDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordingDate;
+   
    @Description("PrescriptionBook_prescriber_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Prescriber.class)
    private SimpleObjectProperty<PrescriptionBookPrescriber> prescriber;
+   
    @Description("PrescriptionBook_hospital_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Hospital.class)
    private SimpleObjectProperty<PrescriptionBookHospital> hospital;
+   
    @Description("PrescriptionBook_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<PrescriptionBookAgency> agency;
+   
    @Description("PrescriptionBook_recordingAgent_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<PrescriptionBookRecordingAgent> recordingAgent;
+   
    @Description("PrescriptionBook_salesOrder_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
    private SimpleObjectProperty<PrescriptionBookSalesOrder> salesOrder;
