@@ -126,6 +126,16 @@ public class SalesOrderService {
 			return target().path("advenceSearch").request(media)
 					.post(searchInputEntity, SalesOrderSearchResult.class);
 		}
+		
+         // @POST /periodicalSales
+		// @Produces("application/xml")
+		// @Consumes("application/xml")
+		public SalesOrderDiscountSearchResult periodicalSalesPerVendor(PeriodicalDataSearchInput data) {
+			Entity<PeriodicalDataSearchInput> searchInputEntity = Entity.entity(data, media);
+			return target().path("periodicalSalesVendor")
+					       .request(media)
+					       .post(searchInputEntity, SalesOrderDiscountSearchResult.class);
+		}
 
 	// @POST
 	// @Path("/countBy")

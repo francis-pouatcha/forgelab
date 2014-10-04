@@ -27,10 +27,13 @@ import org.adorsys.adpharma.server.jpa.Customer;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderAdvenceSearchData;
+import org.adorsys.adpharma.server.jpa.SalesOrderDiscount;
+import org.adorsys.adpharma.server.jpa.SalesOrderDiscountSearchResult;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchInput;
 import org.adorsys.adpharma.server.jpa.SalesOrderSearchResult;
 import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
+import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 
 /**
  * 
@@ -191,6 +194,18 @@ public class SalesOrderEndpoint
 		List<SalesOrder> resultList = ejb.advenceSearch(data);
 		return new SalesOrderSearchResult(Long.valueOf(1), detach(resultList),
 				detach(new SalesOrderSearchInput()));
+	}
+	
+	
+	@POST
+	@Path("/periodicalSalesVendor")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public SalesOrderDiscountSearchResult periodicalSalesOrderPerVendor(PeriodicalDataSearchInput data)
+	{
+		System.out.println("Arrivee sur le serveur");
+		List<SalesOrderDiscount> discounts = ejb.periodicalSalesOrderDiscounts(data);
+	   return new SalesOrderDiscountSearchResult(Long.valueOf(discounts.size()), discounts);
 	}
 	
 

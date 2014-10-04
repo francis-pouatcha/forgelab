@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.client.jpa.customerinvoiceitem;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,6 +17,7 @@ import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.AssociationType;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.ToStringField;
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
@@ -38,23 +40,33 @@ public class CustomerInvoiceItem implements Cloneable
 
    @Description("CustomerInvoiceItem_internalPic_description")
    private SimpleStringProperty internalPic;
+   
    @Description("CustomerInvoiceItem_purchasedQty_description")
    private SimpleObjectProperty<BigDecimal> purchasedQty;
+   
    @Description("CustomerInvoiceItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> salesPricePU;
+   
    @Description("CustomerInvoiceItem_purchasePricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> purchasePricePU;
+   
    @Description("CustomerInvoiceItem_totalSalesPrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalSalesPrice;
+   
    @Description("CustomerInvoiceItem_invoice_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
    private SimpleObjectProperty<CustomerInvoiceItemInvoice> invoice;
+   
    @Description("CustomerInvoiceItem_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<CustomerInvoiceItemArticle> article;
+   
+   @Description("CustomerInvoiceItem_creationDate_description")
+   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
+   private SimpleObjectProperty<Calendar> creationDate;
 
    public Long getId()
    {
@@ -216,6 +228,26 @@ public class CustomerInvoiceItem implements Cloneable
       }
       PropertyReader.copy(article, getArticle());
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
+   }
+   
+   
+   public SimpleObjectProperty<Calendar> creationDateProperty()
+   {
+      if (creationDate == null)
+      {
+         creationDate = new SimpleObjectProperty<Calendar>();
+      }
+      return creationDate;
+   }
+
+   public Calendar getCreationDate()
+   {
+      return creationDateProperty().get();
+   }
+
+   public final void setCreationDate(Calendar creationDate)
+   {
+      this.creationDateProperty().set(creationDate);
    }
 
    @Override

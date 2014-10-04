@@ -1,22 +1,34 @@
 package org.adorsys.adpharma.server.jpa;
 
 import javax.persistence.Entity;
+
 import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
+
 import java.lang.Override;
+
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javaext.display.ToStringField;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.adpharma.server.jpa.Article;
+
 import javax.persistence.ManyToOne;
+
 import org.adorsys.javaext.display.Association;
 import org.adorsys.javaext.display.SelectionMode;
 import org.adorsys.javaext.display.AssociationType;
+
 import java.math.BigDecimal;
+import java.util.Date;
+
+import org.adorsys.javaext.format.DateFormatPattern;
 import org.adorsys.javaext.format.NumberFormatType;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
@@ -69,6 +81,11 @@ public class CustomerInvoiceItem implements Serializable
 	@Description("CustomerInvoiceItem_invoice_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoice.class)
 	private CustomerInvoice invoice;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Description("CustomerInvoiceItem_creationDate_description")
+	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
+	private Date creationDate= new Date();
 
 
 
@@ -172,6 +189,14 @@ public class CustomerInvoiceItem implements Serializable
 	public void setTotalSalesPrice(final BigDecimal totalSalesPrice)
 	{
 		this.totalSalesPrice = totalSalesPrice;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Override

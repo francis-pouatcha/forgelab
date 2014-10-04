@@ -94,6 +94,11 @@ public class ProcurementOrderItem implements Serializable
    @Description("ProcurementOrderItem_productRecCreated_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
    private Date productRecCreated = new Date();
+   
+   @Temporal(TemporalType.TIMESTAMP)
+   @Description("ProcurementOrderItem_productSalesDate_description")
+   @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
+   private Date productSalesDate = new Date();
 
    @Column
    @Description("ProcurementOrderItem_qtyOrdered_description")
@@ -264,6 +269,17 @@ public class ProcurementOrderItem implements Serializable
    {
       this.productRecCreated = productRecCreated;
    }
+   
+   public Date getProductSalesDate() 
+   {
+	   return productSalesDate;
+   }
+   
+   public void setProductSalesDate(Date productSalesDate) 
+   {
+	   this.productSalesDate = productSalesDate;
+   }
+   
 
    public BigDecimal getQtyOrdered()
    {

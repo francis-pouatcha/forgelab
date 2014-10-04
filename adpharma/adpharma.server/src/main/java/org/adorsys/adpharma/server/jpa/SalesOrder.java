@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -163,6 +164,7 @@ public class SalesOrder implements Serializable
 	@Description("SalesOrder_discountRate_description")
 	@NumberFormatType(NumberType.PERCENTAGE)
 	private BigDecimal discountRate =BigDecimal.ZERO;
+	
 	
 	@PostPersist
 	public void prePersist(){
@@ -425,6 +427,7 @@ public class SalesOrder implements Serializable
 	public void setAlreadyReturned(Boolean alreadyReturned) {
 		this.alreadyReturned = alreadyReturned;
 	}
+	
 
 	@Override
 	public String toString()

@@ -101,7 +101,7 @@ public class SalesOrder implements Cloneable
 	@Description("SalesOrder_salesOrderItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
 	private SimpleObjectProperty<ObservableList<SalesOrderItem>> salesOrderItems;
-
+	
 	@Description("SalesOrder_cashDrawer_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
 	private SimpleObjectProperty<SalesOrderCashDrawer> cashDrawer;
@@ -454,7 +454,8 @@ public class SalesOrder implements Cloneable
 		if (salesOrderItems != null)
 			this.salesOrderItemsProperty().get().addAll(salesOrderItems);
 	}
-
+	
+	
 	public final void addToSalesOrderItems(SalesOrderItem entity)
 	{
 		this.salesOrderItemsProperty().get().add(entity);

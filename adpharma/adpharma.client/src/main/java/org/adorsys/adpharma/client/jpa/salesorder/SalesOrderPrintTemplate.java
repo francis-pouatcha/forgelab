@@ -32,6 +32,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
+import com.lowagie.text.Chunk;
 
 public class SalesOrderPrintTemplate {
 
@@ -108,20 +109,26 @@ public class SalesOrderPrintTemplate {
 				+ ": " + company.getRegisterNumber()));
 		borderlessCell(rt, paragraph, 2, 1);
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " +
+		paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_customerName.title") + " " +
 				salesOrder.getCustomer().getFullName()));
-		borderlessCell(rt, paragraph, 1, 1);
-
-		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
 		borderlessCell(rt, paragraph, 2, 1);
+		
+		String insurance=salesOrder.getInsurance()!=null?salesOrder.getInsurance().getInsurer().getFullName():" ";
+		paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_insurerName.title") + " " +insurance));
+		borderlessCell(rt, paragraph, 2, 1);
+		
 
-		paragraph = new Paragraph(new StandardText(resourceBundle.getString("SalesOrderPrintTemplate_salesAgent.title") 
+//		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
+//		borderlessCell(rt, paragraph, 2, 1);
+
+		paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_salesAgent.title") 
 				+ " " + salesAgent.getFullName()));
 		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
 
 		paragraph = new Paragraph(new StandardText( "Facture No  " +salesOrder.getSoNumber() +" Du "+ calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
 		borderlessCell(rt, paragraph, 1, 1);
+		
 
 		try {
 			document.add(rt);

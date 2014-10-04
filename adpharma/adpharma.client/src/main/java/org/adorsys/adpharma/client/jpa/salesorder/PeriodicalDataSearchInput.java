@@ -7,9 +7,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
+@XmlRootElement
 public class PeriodicalDataSearchInput {
 
 	private SimpleObjectProperty<Calendar> beginDate;
@@ -24,6 +26,8 @@ public class PeriodicalDataSearchInput {
 	private SimpleBooleanProperty nonTaxableSalesOnly  ;
 
 	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
+	
+	private SimpleBooleanProperty perVendorAndDiscount;
 	
 	private SimpleStringProperty pic;
 	
@@ -210,6 +214,28 @@ public class PeriodicalDataSearchInput {
 			taxableSalesOnly = Boolean.FALSE;
 		this.taxableSalesOnlyProperty().set(taxableSalesOnly);
 	}
+	
+	public SimpleBooleanProperty perVendorAndDiscountProperty()
+	{
+		if (perVendorAndDiscount == null)
+		{
+			perVendorAndDiscount = new SimpleBooleanProperty();
+		}
+		return perVendorAndDiscount;
+	}
+	
+	public Boolean getPerVendorAndDiscount()
+	{
+		return perVendorAndDiscountProperty().get();
+	}
+	
+	public final void setPerVendorAndDiscount(Boolean perVendorAndDiscount)
+	{
+		if (perVendorAndDiscount == null)
+			perVendorAndDiscount = Boolean.FALSE;
+		this.perVendorAndDiscountProperty().set(perVendorAndDiscount);
+	}
+	
 
 	public String toString()
 	{

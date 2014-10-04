@@ -22,6 +22,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.adorsys.adpharma.server.jpa.PeriodicalPrescriptionBookDataSearchInput;
+import org.adorsys.adpharma.server.jpa.PeriodicalPrescriptionBookSearchResult;
 import org.adorsys.adpharma.server.jpa.PrescriptionBook;
 import org.adorsys.adpharma.server.jpa.PrescriptionBook_;
 import org.adorsys.adpharma.server.jpa.PrescriptionBookSearchInput;
@@ -126,6 +129,19 @@ public class PrescriptionBookEndpoint
       return new PrescriptionBookSearchResult(count, detach(resultList),
             detach(searchInput));
    }
+   
+   @POST
+   @Path("/periodicalPrescriptionBook")
+   @Produces({ "application/json", "application/xml" })
+   @Consumes({ "application/json", "application/xml" })
+   public PrescriptionBookSearchResult periodicalPrescriptionBook(PeriodicalPrescriptionBookDataSearchInput searchInput)
+   {
+	   List<PrescriptionBook> resultList = ejb.periodicalPrescriptionBook(searchInput);
+	   return new PrescriptionBookSearchResult(Long.valueOf(resultList.size()) , detach(resultList), detach(new PrescriptionBookSearchInput())); 
+	   
+   }
+   
+   
 
    @POST
    @Path("/countBy")
