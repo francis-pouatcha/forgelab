@@ -189,10 +189,10 @@ public class DebtStatementListController implements EntityController
 						}
 
 					}else {
-						Dialogs.create().message("Selectionner un etat !").showError();
+						Dialogs.create().message("Etat Deja Solde").showInformation();
 					}
 				}else {
-					Dialogs.create().message("Etat Deja Solde").showInformation();
+					Dialogs.create().message("Selectionner un etat !").showError();
 				}
 			}
 		});

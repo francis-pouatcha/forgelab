@@ -124,6 +124,11 @@ public class CashDrawer implements Serializable
 	private BigDecimal totalDrugVoucher;
 	
 	@Column
+	@Description("CashDrawer_detstatementAmoutPay_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	private BigDecimal detstatementAmoutPay = BigDecimal.ZERO;
+	
+	@Column
 	@Description("CashDrawer_opened_description")
 	private Boolean opened=Boolean.TRUE;
 
@@ -351,6 +356,12 @@ public class CashDrawer implements Serializable
 	
 	
 
+	public BigDecimal getDetstatementAmoutPay() {
+		return detstatementAmoutPay;
+	}
+	public void setDetstatementAmoutPay(BigDecimal detstatementAmoutPay) {
+		this.detstatementAmoutPay = detstatementAmoutPay;
+	}
 	public BigDecimal getAmountDiscount() {
 		return amountDiscount;
 	}

@@ -11,6 +11,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DebstatementPaymentRequestEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Agency;
@@ -131,7 +132,7 @@ public class CashDrawerEJB
 		CashDrawer cashDrawer = payment.getCashDrawer();
 		Set<PaymentItem> paymentItems = payment.getPaymentItems();
 		BigDecimal amount = payment.getAmount();
-		cashDrawer.setTotalCashIn(amount);
+		cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
 		for (PaymentItem paymentItem : paymentItems) {
 			PaymentMode paymentMode = paymentItem.getPaymentMode();
 			switch (paymentMode) {
@@ -155,6 +156,36 @@ public class CashDrawerEJB
 				throw new IllegalStateException("Unknown payment mode: "+paymentMode);
 			}
 		}
+		update(cashDrawer);
+	}
+
+	public void processDebstatementPaymentClosed(@Observes @DebstatementPaymentRequestEvent  Payment payment){
+		CashDrawer cashDrawer = payment.getCashDrawer();
+		PaymentMode paymentMode = payment.getPaymentMode();
+		BigDecimal amount = payment.getAmount();
+		cashDrawer.setTotalCashIn(cashDrawer.getTotalCashIn().add(amount));
+		BigDecimal debstamoutPay = cashDrawer.getDetstatementAmoutPay()!=null?cashDrawer.getDetstatementAmoutPay():BigDecimal.ZERO;
+		cashDrawer.setDetstatementAmoutPay(debstamoutPay.add(amount));
+			switch (paymentMode) {
+			case CASH:
+				BigDecimal totalCash = cashDrawer.getTotalCash()==null?BigDecimal.ZERO:cashDrawer.getTotalCash();
+				cashDrawer.setTotalCash(totalCash.add(amount));
+				break;
+			case CREDIT_CARD:
+				BigDecimal totalCreditCard = cashDrawer.getTotalCreditCard()==null?BigDecimal.ZERO:cashDrawer.getTotalCreditCard();
+				cashDrawer.setTotalCreditCard(totalCreditCard.add(amount));
+				break;
+			case CHECK:
+				BigDecimal totalCheck = cashDrawer.getTotalCheck()==null?BigDecimal.ZERO:cashDrawer.getTotalCheck();
+				cashDrawer.setTotalCheck(totalCheck.add(amount));
+				break;
+			case VOUCHER:
+				BigDecimal totalClientVoucher = cashDrawer.getTotalClientVoucher()==null?BigDecimal.ZERO:cashDrawer.getTotalClientVoucher();
+				cashDrawer.setTotalClientVoucher(totalClientVoucher.add(amount));
+				break;
+			default:
+				throw new IllegalStateException("Unknown payment mode: "+paymentMode);
+			}
 		update(cashDrawer);
 	}
 
