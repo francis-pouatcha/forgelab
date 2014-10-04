@@ -16,6 +16,7 @@ import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
 import org.adorsys.adpharma.server.events.ReturnSalesEvent;
+import org.adorsys.adpharma.server.events.ReturnSalesTraceEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotDetailsManager;
@@ -54,6 +55,14 @@ public class ArticleEJB
 
 	@Inject
 	private ArticleLotEJB articleLotEJB;
+	
+	@Inject
+	@DocumentProcessedEvent
+	private Event<Delivery> deliveryClosedDoneEvent;
+	
+	@Inject
+	@ReturnSalesTraceEvent
+	private Event<SalesOrder> saleOrderClosedTraceEvent;
 
 	@Inject
 	@EntityEditDoneRequestEvent
@@ -221,8 +230,9 @@ public class ArticleEJB
 			article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
 
 			article.setRecordingDate(new Date());
-
+			
 			update(article);
+			deliveryClosedDoneEvent.fire(closedDelivery);
 		}
 	}
 
@@ -283,8 +293,8 @@ public class ArticleEJB
 				article.setQtyInStock(article.getQtyInStock().add(movedQty));
 				update(article);
 			}
-
 		}
+		saleOrderClosedTraceEvent.fire(salesOrder);
 	}
 
 	/**

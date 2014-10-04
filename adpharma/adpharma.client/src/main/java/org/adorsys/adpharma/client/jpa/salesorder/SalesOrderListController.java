@@ -561,7 +561,7 @@ public class SalesOrderListController implements EntityController
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
 //				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(false);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	

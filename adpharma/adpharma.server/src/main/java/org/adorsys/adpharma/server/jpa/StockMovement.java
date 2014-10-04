@@ -108,6 +108,10 @@ public class StockMovement implements Serializable
 	@Column
 	@Description("StockMovement_finalQty_description")
 	private BigDecimal finalQty;
+	
+	@Column
+	@Description("StockMovement_stockQty_description")
+	private BigDecimal stockQty;
 
 	@Column
 	@Description("StockMovement_totalPurchasingPrice_description")
@@ -305,6 +309,7 @@ public class StockMovement implements Serializable
 	{
 		return this.initialQty;
 	}
+	
 
 	public void setInitialQty(final BigDecimal initialQty)
 	{
@@ -319,6 +324,15 @@ public class StockMovement implements Serializable
 	public void setFinalQty(final BigDecimal finalQty)
 	{
 		this.finalQty = finalQty;
+	}
+	
+	
+	public BigDecimal getStockQty() {
+		return this.stockQty;
+	}
+	
+	public void setStockQty(BigDecimal stockQty) {
+		this.stockQty = stockQty;
 	}
 
 	public BigDecimal getTotalPurchasingPrice()
