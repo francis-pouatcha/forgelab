@@ -273,7 +273,6 @@ public class SalesOrderReportPrintTemplatePDF {
 	}
 
 	public void closeReport() {
-		// TODO Auto-generated method stub
 
 	}
 

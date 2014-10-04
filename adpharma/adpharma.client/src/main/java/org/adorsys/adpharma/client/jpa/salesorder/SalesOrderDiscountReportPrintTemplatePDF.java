@@ -8,10 +8,6 @@ import java.util.List;
 
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderReportPrintTemplatePDF.BoldText;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderReportPrintTemplatePDF.RightParagraph;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderReportPrintTemplatePDF.StandardText;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
