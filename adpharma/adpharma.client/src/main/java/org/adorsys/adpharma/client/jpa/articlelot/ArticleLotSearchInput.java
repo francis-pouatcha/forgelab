@@ -6,7 +6,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * Holds an entity and corresponding field descriptions for a search by example
@@ -17,6 +19,7 @@ import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ArticleLotSearchInput
 {
 
