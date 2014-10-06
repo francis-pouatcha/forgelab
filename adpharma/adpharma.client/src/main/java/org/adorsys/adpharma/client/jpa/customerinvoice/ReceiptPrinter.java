@@ -71,7 +71,7 @@ public class ReceiptPrinter {
 	            s.reset();
 	    		if(receiptPrinterData==null) return;
 	    		if(receiptPrinterData.getPayment()==null) return;
-	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplatePDF(receiptPrinterData, resourceBundle, locale);
+	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplatePDF2(receiptPrinterData, resourceBundle, locale);
 	    		worker.startPage();
 	    		CustomerInvoicePrinterData customerInvoicePrinterData = worker.nextInvoice();
 	    		if(customerInvoicePrinterData==null) {
