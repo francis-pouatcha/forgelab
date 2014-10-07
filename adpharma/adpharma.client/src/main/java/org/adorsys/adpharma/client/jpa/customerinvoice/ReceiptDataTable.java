@@ -28,7 +28,7 @@ public class ReceiptDataTable {
 		for (ReceiptDataRow receiptDataRow : receiptDataRows) {
 			height+=receiptDataRow.getHeight();
 		}
-		return height + 2 * tableMetaData.getRowHeight() + 2 * (tableMetaData.getMargin());
+		return height + 8 * tableMetaData.getRowHeight() + 2 * (tableMetaData.getMargin());
 	}
 
 	public ReceiptDataTableMetaData getTableMetaData() {
