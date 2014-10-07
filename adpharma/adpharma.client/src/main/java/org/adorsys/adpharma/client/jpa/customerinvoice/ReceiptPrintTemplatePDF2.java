@@ -35,7 +35,7 @@ public class ReceiptPrintTemplatePDF2 extends ReceiptPrintTemplate {
 	private static ReceiptDataTableMetaData tableMetaData;
 	private static ReceiptDataTwoColsMetaData twoColsMetaData;
 
-	private boolean printOrder;
+	private boolean printOrder=Boolean.TRUE;
 	
 	static {
 		initProperties();
