@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.customerinvoice;
+package org.adorsys.adpharma.client.jpa.customerinvoice.print;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintMode;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;

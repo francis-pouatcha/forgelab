@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.customerinvoice;
+package org.adorsys.adpharma.client.jpa.customerinvoice.print;
 
 import java.io.IOException;
 import java.util.List;

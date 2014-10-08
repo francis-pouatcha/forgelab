@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.customerinvoice;
+package org.adorsys.adpharma.client.jpa.customerinvoice.print;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceInsurance;
+import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoicePrinterData;
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintMode;
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintTemplate;
+import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrinterData;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;

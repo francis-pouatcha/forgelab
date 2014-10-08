@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.customerinvoice;
+package org.adorsys.adpharma.client.jpa.customerinvoice.print;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,65 +7,80 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 
-public class ReceiptDataOneColBuilder {
+public class ReceiptDataTwoColsBuilder {
 
 	private final ReceiptDataTableMetaData receiptMetaData;
+	private final ReceiptDataTwoColsMetaData lineMetaData;
 
-	private final ReceiptDataOneCol receiptDataLine;
+	private final ReceiptDataTwoCol receiptDataLine;
 	
 	private boolean built;
 
-	public ReceiptDataOneColBuilder(ReceiptDataTableMetaData receiptMetaData) {
+	public ReceiptDataTwoColsBuilder(ReceiptDataTableMetaData receiptMetaData,
+			ReceiptDataTwoColsMetaData lineMetaData) {
+		super();
 		this.receiptMetaData = receiptMetaData;
-		this.receiptDataLine = new ReceiptDataOneCol(receiptMetaData);
+		this.lineMetaData = lineMetaData;
+		this.receiptDataLine = new ReceiptDataTwoCol(receiptMetaData, lineMetaData);
 	}
 
 	public void build(ReceiptDataTable rdt) throws IOException{
 		receiptDataLine.getDesignationChunks().clear();
-		float designationSize = receiptMetaData.getWidth()-(receiptMetaData.getMargin()*2);
+		float designationSize = lineMetaData.getDesignation();
 		
 		String desString = receiptDataLine.getDesignation();
 		ReceiptDataUtils.split(desString, designationSize, receiptMetaData, receiptDataLine.isBold(), receiptDataLine.getDesignationChunks());
 
-		receiptDataLine.setHeight(receiptMetaData.getRowHeight() * receiptDataLine.getDesignationChunks().size());
+		receiptDataLine.setHeight(lineMetaData.getRowHeight() * receiptDataLine.getDesignationChunks().size());
 		
 		built = true;
 		rdt.getReceiptDataRows().add(receiptDataLine);
 	}
-	public ReceiptDataOneColBuilder withDesignation(String designation) throws IOException {
+	public ReceiptDataTwoColsBuilder withDesignation(String designation) throws IOException {
 		assert(!built);
 		receiptDataLine.setDesignation(designation);
 		return this;
 	}
 
-	public ReceiptDataOneColBuilder withCenterAlign() {
+	public ReceiptDataTwoColsBuilder withValue(String value) {
 		assert(!built);
-		receiptDataLine.setCentered(true);
+		receiptDataLine.setValue(value);
 		return this;
 	}
 
-	public ReceiptDataOneColBuilder withBoldFont() {
+	public ReceiptDataTwoColsBuilder withBoldFont() {
 		assert(!built);
 		receiptDataLine.setBold(true);
 		return this;
 	}
+	public ReceiptDataTwoColsBuilder withCenterAlign() {
+		assert(!built);
+		receiptDataLine.setCentered(true);
+		return this;
+	}
 	
-	static class ReceiptDataOneCol implements ReceiptDataRow {
+	static class ReceiptDataTwoCol implements ReceiptDataRow {
 
 		private final ReceiptDataTableMetaData receiptMetaData;
+		private final ReceiptDataTwoColsMetaData lineMetaData;
 
+		private String value;
+		
 		private String designation;
 		
 		private boolean bold;
-		
+
 		private boolean centered;
 
 		private final List<String> designationChunks = new ArrayList<String>();
 		
 		private float height;
 		
-		private ReceiptDataOneCol(ReceiptDataTableMetaData receiptMetaData) {
+		private ReceiptDataTwoCol(ReceiptDataTableMetaData receiptMetaData,
+				ReceiptDataTwoColsMetaData lineMetaData) {
+			super();
 			this.receiptMetaData = receiptMetaData;
+			this.lineMetaData = lineMetaData;
 		}
 
 		private String getDesignation() {
@@ -76,6 +91,10 @@ public class ReceiptDataOneColBuilder {
 			this.designation = designation;
 		}
 
+		private void setValue(String value) {
+			this.value = value;
+		}
+		
 		private void setBold(boolean bold) {
 			this.bold = bold;
 		}
@@ -102,7 +121,7 @@ public class ReceiptDataOneColBuilder {
 
 		public float writeItemLine(PDPageContentStream contentStream, float posY) throws IOException{
 			
-			// Set bold foont if needed
+			// Set bold font if needed
 			if(bold) contentStream.setFont(receiptMetaData.getBoldFont(), receiptMetaData.getFontSize());
 			
 			float positionY = posY;
@@ -114,9 +133,10 @@ public class ReceiptDataOneColBuilder {
 				if(StringUtils.isBlank(des)) continue;
 				float desPosX = positionX;
 				if(centered){ // move the position
-					float boxSize = receiptMetaData.getWidth()-(receiptMetaData.getMargin()*2);
+					float boxSize = lineMetaData.getDesignation();
 					desPosX = positionX + ReceiptDataUtils.centerPrint(des, boxSize, receiptMetaData, bold);
 				}
+				
 				contentStream.beginText();
 				contentStream.moveTextPositionByAmount(desPosX, desPosY);
 				if(first){
@@ -126,7 +146,22 @@ public class ReceiptDataOneColBuilder {
 					contentStream.drawString(" "+ des);
 				}
 				contentStream.endText();
-				desPosY -= receiptMetaData.getRowHeight();
+				desPosY -= lineMetaData.getRowHeight();
+			}
+			
+			if(StringUtils.isNotBlank(value)){
+				positionX += lineMetaData.getDesignation()+lineMetaData.getCellMargin();
+				float desPosX = positionX;
+				float boxSize = lineMetaData.getValue();
+				if(centered){ // move the position
+					desPosX = positionX + ReceiptDataUtils.centerPrint(value, boxSize, receiptMetaData, bold);
+				} else {
+					desPosX = positionX + ReceiptDataUtils.rightPrint(value, boxSize, receiptMetaData, bold);
+				}
+				contentStream.beginText();
+				contentStream.moveTextPositionByAmount(desPosX, positionY);
+				contentStream.drawString(StringUtils.isBlank(value)?"":value);
+				contentStream.endText();
 			}
 
 			// Reset simple bold foont if needed

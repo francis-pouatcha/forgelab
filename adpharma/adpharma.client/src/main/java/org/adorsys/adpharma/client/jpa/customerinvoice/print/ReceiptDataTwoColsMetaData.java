@@ -1,4 +1,4 @@
-package org.adorsys.adpharma.client.jpa.customerinvoice;
+package org.adorsys.adpharma.client.jpa.customerinvoice.print;
 
 public class ReceiptDataTwoColsMetaData {
 

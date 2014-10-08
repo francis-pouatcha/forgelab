@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import org.adorsys.adpharma.client.events.PaymentId;
 import org.adorsys.adpharma.client.events.PrintPaymentReceiptRequestedEvent;
 import org.adorsys.adpharma.client.jpa.company.Company;
+import org.adorsys.adpharma.client.jpa.customerinvoice.print.ReceiptPrintTemplatePDF2;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
