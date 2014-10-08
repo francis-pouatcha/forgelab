@@ -65,6 +65,9 @@ public class DebtStatementListView
 
 	@FXML
 	private Button printButton ;
+	
+	@FXML
+	private Button printDetailButton ;
 
 	@FXML
 	private Button exportToXlsButton ;
@@ -250,6 +253,10 @@ public class DebtStatementListView
 
 	public Button getPrintButton() {
 		return printButton;
+	}
+	
+	public Button getPrintDetailButton() {
+		return printDetailButton;
 	}
 
 	public Button getRemoveButton() {

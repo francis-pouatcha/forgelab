@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -150,7 +151,7 @@ public class CustomerInvoice implements Serializable
 	@NumberFormatType(NumberType.CURRENCY)
 	private BigDecimal totalRestToPay = BigDecimal.ZERO;
 
-	@OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	@Description("CustomerInvoice_invoiceItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoiceItem.class, selectionMode = SelectionMode.TABLE)
 	private Set<CustomerInvoiceItem> invoiceItems = new HashSet<CustomerInvoiceItem>();

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.util.List;
 
+import org.adorsys.adpharma.server.utils.PropertyReader;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 public class MergerUtils
@@ -15,8 +16,9 @@ public class MergerUtils
       {
          for (String fieldName : fieldNames)
          {
-            if (fieldName.contains("."))
-               continue;
+            if (fieldName.contains(".")) {
+            	continue;
+            }
             Object fieldValue = FieldUtils.readField(source, fieldName,
                   true);
             FieldUtils.writeField(target, fieldName, fieldValue, true);
