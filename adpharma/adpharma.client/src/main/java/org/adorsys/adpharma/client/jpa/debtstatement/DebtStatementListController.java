@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.debtstatement;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,6 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -75,6 +77,7 @@ import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 import com.google.common.collect.Lists;
+import com.lowagie.text.DocumentException;
 
 @Singleton
 public class DebtStatementListController implements EntityController
@@ -127,6 +130,9 @@ public class DebtStatementListController implements EntityController
 
 	@Inject
 	private CustomerInvoiceSearchService customerInvoiceSearchService ;
+	
+	@Inject
+	private CustomerInvoiceSearchService customerInvoiceSearchService1 ;
 
 	@Inject
 	private SecurityUtil securityUtil ;
@@ -163,6 +169,7 @@ public class DebtStatementListController implements EntityController
 		listView.getCreateButton().disableProperty().bind(registration.canCreateProperty().not());
 		listView.getRemoveButton().disableProperty().bind(removeService.runningProperty());
 		listView.getPrintButton().disableProperty().bind(customerInvoiceSearchService.runningProperty());
+		listView.getPrintDetailButton().disableProperty().bind(customerInvoiceSearchService1.runningProperty());
 		searchInput.setMax(30);
 		listView.bind(searchInput);
 
@@ -471,6 +478,7 @@ public class DebtStatementListController implements EntityController
 				}
 			}
 		});
+		
 
 		customerInvoiceSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -508,7 +516,47 @@ public class DebtStatementListController implements EntityController
 
 			}
 		});
+		
+		listView.getPrintDetailButton().setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				if(selectedItem!=null) {
+					customerInvoiceSearchService1.setDebtStatement(selectedItem).start();
+				}
+			}
+		});
+		
+		customerInvoiceSearchService1.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				CustomerInvoiceSearchService source = (CustomerInvoiceSearchService)event.getSource();
+				CustomerInvoiceSearchResult value = source.getValue();
+				event.consume();
+				source.reset();
+				List<CustomerInvoice> invoices = value.getResultList();
+				DebtStatement selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				Login login = securityUtil.getConnectedUser();
+				if(selectedItem!=null) {
+					try {
+						DebtStatementDetailsReportPrintTemplatePDF pdfRepportTemplate = new DebtStatementDetailsReportPrintTemplatePDF(selectedItem, listView.getResourceBundle(), locale, login);
+						pdfRepportTemplate.addItems(invoices);
+						pdfRepportTemplate.closeDocument();
+						Desktop.getDesktop().open(new File(pdfRepportTemplate.getFileName()));
+					} catch (DocumentException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		});
+		
+		
 		customerInvoiceSearchService.setOnFailed(callFailedEventHandler);
+		customerInvoiceSearchService1.setOnFailed(callFailedEventHandler);
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{

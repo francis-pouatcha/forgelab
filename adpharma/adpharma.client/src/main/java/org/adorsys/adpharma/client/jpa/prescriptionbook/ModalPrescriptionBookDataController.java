@@ -1,6 +1,10 @@
 package org.adorsys.adpharma.client.jpa.prescriptionbook;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javafx.concurrent.WorkerStateEvent;
@@ -20,6 +24,8 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 
+import com.lowagie.text.DocumentException;
+
 @Singleton
 public class ModalPrescriptionBookDataController {
 	
@@ -31,6 +37,9 @@ public class ModalPrescriptionBookDataController {
 	
 	@Inject
 	PrescriptionBookPeriodicalSearchService prescriptionBookPeriodicalSearchService;
+	
+	@Inject
+	private Locale locale ;
 	
 	
 	@Inject
@@ -64,7 +73,6 @@ public class ModalPrescriptionBookDataController {
 		});
 		
 		prescriptionBookPeriodicalSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-
 			@Override
 			public void handle(WorkerStateEvent event) {
 			PrescriptionBookPeriodicalSearchService source=	(PrescriptionBookPeriodicalSearchService)event.getSource();
@@ -72,7 +80,18 @@ public class ModalPrescriptionBookDataController {
 			event.consume();
 			source.reset();
 			LoginAgency agency = securityUtil.getAgency();
-			Login connectedUser = securityUtil.getConnectedUser();
+			Login login = securityUtil.getConnectedUser();
+			
+			try {
+				PrescriptionBookReportPrintTemplatePDF pdfRepportTemplate = new PrescriptionBookReportPrintTemplatePDF(agency, login, view.getResourceBundle(), locale, model); 
+				pdfRepportTemplate.addItems(resultList);
+				pdfRepportTemplate.closeDocument();
+			    Desktop.getDesktop().open(new File(pdfRepportTemplate.getPdfFileName()));
+			} catch (DocumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 			}
 		});

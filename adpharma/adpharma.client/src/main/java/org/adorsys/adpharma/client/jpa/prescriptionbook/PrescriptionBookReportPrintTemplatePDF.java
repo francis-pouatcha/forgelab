@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
-import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -34,16 +35,18 @@ public class PrescriptionBookReportPrintTemplatePDF {
 	private Login login ;
 	private PdfPTable reportTable;
 	private String pdfFileName;
+	private final ResourceBundle resourceBundle;
+	private final Locale locale;
 	private PeriodicalPrescriptionBookDataSearchInput model;
-	private String headerName = "";
 	
 	
-	public PrescriptionBookReportPrintTemplatePDF(LoginAgency agency, Login login,
-			PeriodicalPrescriptionBookDataSearchInput model, String headerName) throws DocumentException {
+	public PrescriptionBookReportPrintTemplatePDF(LoginAgency agency, Login login, ResourceBundle resourceBundle, Locale locale,
+			PeriodicalPrescriptionBookDataSearchInput model) throws DocumentException {
 		this.agency = agency;
 		this.login = login;
 		this.model = model;
-		this.headerName = headerName;
+		this.resourceBundle=resourceBundle;
+		this.locale=locale;
 		pdfFileName="Ordonnance.pdf";
 		PropertyReader.copy(login.getAgency(), agency);
 		document = new Document(PageSize.A4,5,5,5,5);
@@ -64,14 +67,53 @@ public class PrescriptionBookReportPrintTemplatePDF {
 	static Font boldFont = FontFactory.getFont("Times-Roman", 10, Font.BOLD);
 	static Font font = FontFactory.getFont("Times-Roman", 10);
 	
-	public void addItems(List<SalesOrderItem> items) {
-        
-		
+	
+	
+	public void addItems(List<PrescriptionBook> items) {
+		if(!items.isEmpty()) {
+			for(PrescriptionBook ord: items) {
+				newTableRow(ord.getPrescriptionNumber(), 
+						ord.getSalesOrder().getSoNumber(), 
+						ord.getPrescriptionDate()!=null?DateHelper.format(ord.getPrescriptionDate().getTime(), DateHelper.DATE_FORMAT):"--", 
+						ord.getPrescriber().getName(), 
+						ord.getHospital().getName());
+			}
+		}
 	}
+	
+	private void newTableRow(String ordNumber, 
+			String salesNumber,
+			String ordDate,
+			String prescriptor,
+			String hospital
+			) {
+
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(ordNumber));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(salesNumber));
+		reportTable.addCell(pdfPCell);
+
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(ordDate));
+		reportTable.addCell(pdfPCell);
+
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(prescriptor));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(hospital));
+		reportTable.addCell(pdfPCell);
+	}
+	
 	
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("RAPPORT PERIODIQUE DES ORDONNANCES "+headerName));
+		Paragraph paragraph = new Paragraph(new BoldText(resourceBundle.getString("PrescriptionBook_repport_description.title")));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 
@@ -104,12 +146,16 @@ public class PrescriptionBookReportPrintTemplatePDF {
 	}
 	
 	private void fillTableHeader() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{ .10f, .41f, .12f, .12f,.11f,.11f });
+		reportTable = new PdfPTable(new float[]{ .12f, .12f, .16f, .18f,.18f });
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
 		PdfPCell pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Numero"));
+		pdfPCell.addElement(new StandardText("No Ordonnance"));
+		reportTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText("No Commande"));
 		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
@@ -123,14 +169,7 @@ public class PrescriptionBookReportPrintTemplatePDF {
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Hopital"));
 		reportTable.addCell(pdfPCell);
-
-
-		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("No Cmde"));
-		reportTable.addCell(pdfPCell);
 	}
-	
-	
 	
 	
 	
@@ -158,10 +197,18 @@ public class PrescriptionBookReportPrintTemplatePDF {
 		}
 	}
 	
-	
-	
-	
-	
+	static class RightParagraph extends Paragraph {
+		private static final long serialVersionUID = 986392503142787342L;
+
+		public RightParagraph(Phrase phrase) {
+			super(phrase);
+			setAlignment(Element.ALIGN_RIGHT);
+		}
+
+		public RightParagraph(String string) {
+			this(new Phrase(string));
+		}
+	}
 	
 	
 	
@@ -175,6 +222,10 @@ public class PrescriptionBookReportPrintTemplatePDF {
 		document.close();
 	}
 	
+	public String getPdfFileName() {
+		return pdfFileName;
+	}
+	
 	
 	public void resetDocument() throws DocumentException{
 		document.open();
@@ -183,10 +234,6 @@ public class PrescriptionBookReportPrintTemplatePDF {
 		printReportHeader();
 		fillTableHeader();
 	}
-	
-	
-	
-	
 	
 
 }

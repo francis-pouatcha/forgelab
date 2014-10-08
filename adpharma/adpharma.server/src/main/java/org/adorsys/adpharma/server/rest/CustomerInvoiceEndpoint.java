@@ -260,7 +260,7 @@ public class CustomerInvoiceEndpoint
 
 	private static final List<String> salesOrderFields = Arrays.asList("cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus", "cashed", "amountBeforeTax", "amountVAT", "amountDiscount", "totalReturnAmount", "amountAfterTax", "salesOrderType","patientMatricle");
 
-	private static final List<String> invoiceItemsFields = Arrays.asList("internalPic", "article.articleName", "purchasedQty", "salesPricePU", "totalSalesPrice");
+	private static final List<String> invoiceItemsFields = Arrays.asList("internalPic", "purchasedQty", "salesPricePU", "totalSalesPrice");
 
 	private static final List<String> paymentsFields = emptyList;
 
@@ -285,7 +285,7 @@ public class CustomerInvoiceEndpoint
 		entity.setSalesOrder(salesOrderMerger.unbind(entity.getSalesOrder(), salesOrderFields));
 
 		// composed collections
-		entity.setInvoiceItems(customerInvoiceItemMerger.unbind(entity.getInvoiceItems(), invoiceItemsFields));
+		entity.setInvoiceItems(customerInvoiceItemMerger.unbind1(entity.getInvoiceItems(), invoiceItemsFields));
 
 		// aggregated collection
 		entity.setPayments(paymentCustomerInvoiceAssocMerger.unbind(entity.getPayments(), paymentsFields));

@@ -83,4 +83,17 @@ public class CustomerInvoiceItemMerger
       //       }
       //      return entities;
    }
+   
+   public Set<CustomerInvoiceItem> unbind1(final Set<CustomerInvoiceItem> entities, List<String> fieldList)
+   {
+      if (entities == null)
+         return null;
+//      return new HashSet<CustomerInvoiceItem>();
+             HashSet<CustomerInvoiceItem> cache = new HashSet<CustomerInvoiceItem>(entities);
+             entities.clear();
+             for (CustomerInvoiceItem entity : cache) {
+        		entities.add(unbind(entity, fieldList));
+             }
+            return entities;
+   }
 }
