@@ -12,6 +12,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.adorsys.adpharma.server.events.DebstatementPaymentRequestEvent;
 import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
@@ -32,7 +33,6 @@ import org.adorsys.adpharma.server.repo.SalesOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class PaymentEJB
@@ -64,6 +64,10 @@ public class PaymentEJB
 	@Inject
 	@DocumentProcessedEvent
 	private Event<Payment> paymentProcessedEvent;
+	
+	@Inject
+	@DebstatementPaymentRequestEvent
+	private Event<Payment> debstPaymentclosedEvent;
 	
 	@Inject
 	@DocumentClosedEvent
@@ -189,7 +193,7 @@ public class PaymentEJB
 		entity = repository.save(entity);
 		entity.setPaymentNumber("PY-"+entity.getId());
 		entity = update(entity);
-		paymentclosedEvent.fire(entity);
+		debstPaymentclosedEvent.fire(entity);
 		return entity ;
 	}
 
