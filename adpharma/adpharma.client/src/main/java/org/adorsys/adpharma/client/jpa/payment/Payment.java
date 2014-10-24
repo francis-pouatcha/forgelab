@@ -56,43 +56,57 @@ public class Payment implements Cloneable
 
    @Description("Payment_paymentNumber_description")
    private SimpleStringProperty paymentNumber;
+   
    @Description("Payment_statementNumber_description")
    private SimpleStringProperty statementNumber;
+   
    @Description("Payment_paymentReceiptPrinted_description")
    private SimpleBooleanProperty paymentReceiptPrinted;
+   
    @Description("Payment_paymentMode_description")
    private SimpleObjectProperty<PaymentMode> paymentMode;
+   
    @Description("Payment_amount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amount;
+   
    @Description("Payment_receivedAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> receivedAmount;
+   
    @Description("Payment_difference_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> difference;
+   
    @Description("Payment_paymentDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> paymentDate;
+   
    @Description("Payment_recordDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordDate;
+   
    @Description("Payment_paymentItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = PaymentItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<PaymentItem>> paymentItems;
+   
    @Description("Payment_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<PaymentAgency> agency;
+   
    @Description("Payment_cashier_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<PaymentCashier> cashier;
+   
    @Description("Payment_cashDrawer_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
    private SimpleObjectProperty<PaymentCashDrawer> cashDrawer;
+   
    @Relationship(end = RelationshipEnd.SOURCE, sourceEntity = Payment.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices", targetQualifier = "payments")
    @Description("Payment_invoices_description")
    @Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<PaymentCustomerInvoiceAssoc>> invoices;
+   
    @Description("Payment_paidBy_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
    private SimpleObjectProperty<PaymentPaidBy> paidBy;

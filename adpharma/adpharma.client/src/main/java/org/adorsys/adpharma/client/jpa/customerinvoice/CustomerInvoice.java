@@ -37,6 +37,7 @@ import org.adorsys.javaext.relation.Relationship;
 import org.adorsys.javaext.relation.RelationshipEnd;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -48,7 +49,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 	"insurance.insurer.fullName", "creatingUser.fullName", "agency.name",
 	"salesOrder.soNumber", "settled", "amountBeforeTax", "taxAmount",
 	"amountDiscount", "amountAfterTax", "netToPay", "customerRestTopay",
-	"insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay" })
+	"insurranceRestTopay", "cashed", "advancePayment", "totalRestToPay", "amountRestAfterVoucher"})
 @ToStringField("invoiceNumber")
 public class CustomerInvoice implements Cloneable
 {
@@ -58,61 +59,87 @@ public class CustomerInvoice implements Cloneable
 
 	@Description("CustomerInvoice_invoiceNumber_description")
 	private SimpleStringProperty invoiceNumber;
+	
 	@Description("CustomerInvoice_patientMatricle_description")
 	private SimpleStringProperty patientMatricle;
+	
 	@Description("CustomerInvoice_settled_description")
 	private SimpleBooleanProperty settled;
+	
 	@Description("CustomerInvoice_cashed_description")
 	private SimpleBooleanProperty cashed;
+	
 	@Description("CustomerInvoice_invoiceType_description")
 	private SimpleObjectProperty<InvoiceType> invoiceType;
+	
 	@Description("CustomerInvoice_amountBeforeTax_description")
 	private SimpleObjectProperty<BigDecimal> amountBeforeTax;
+	
 	@Description("CustomerInvoice_taxAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> taxAmount;
+	
 	@Description("CustomerInvoice_amountDiscount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> amountDiscount;
+	
 	@Description("CustomerInvoice_amountAfterTax_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> amountAfterTax;
+	
 	@Description("CustomerInvoice_netToPay_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> netToPay;
+	
 	@Description("CustomerInvoice_customerRestTopay_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> customerRestTopay;
+	
 	@Description("CustomerInvoice_insurranceRestTopay_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> insurranceRestTopay;
+	
 	@Description("CustomerInvoice_advancePayment_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> advancePayment;
+	
 	@Description("CustomerInvoice_totalRestToPay_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> totalRestToPay;
+	
+	@Description("CustomerInvoice_amountRestAfterVoucher_description")
+	@NumberFormatType(NumberType.CURRENCY)
+	@JsonIgnore
+	private SimpleObjectProperty<BigDecimal>  amountRestAfterVoucher;
+	
 	@Description("CustomerInvoice_creationDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private SimpleObjectProperty<Calendar> creationDate;
+	
 	@Description("CustomerInvoice_invoiceItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = CustomerInvoiceItem.class, selectionMode = SelectionMode.TABLE)
 	private SimpleObjectProperty<ObservableList<CustomerInvoiceItem>> invoiceItems;
+	
 	@Description("CustomerInvoice_customer_description")
 	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
 	private SimpleObjectProperty<CustomerInvoiceCustomer> customer;
+	
 	@Description("CustomerInvoice_insurance_description")
 	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Insurrance.class)
 	private SimpleObjectProperty<CustomerInvoiceInsurance> insurance;
+	
 	@Description("CustomerInvoice_creatingUser_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
 	private SimpleObjectProperty<CustomerInvoiceCreatingUser> creatingUser;
+	
 	@Description("CustomerInvoice_agency_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
 	private SimpleObjectProperty<CustomerInvoiceAgency> agency;
+	
 	@Description("CustomerInvoice_salesOrder_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = SalesOrder.class)
 	private SimpleObjectProperty<CustomerInvoiceSalesOrder> salesOrder;
+	
 	@Relationship(end = RelationshipEnd.TARGET, sourceEntity = Payment.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices", targetQualifier = "payments")
 	@Description("CustomerInvoice_payments_description")
 	@Association(associationType = AssociationType.AGGREGATION, targetEntity = Payment.class)
@@ -407,7 +434,9 @@ public class CustomerInvoice implements Cloneable
 	{
 		this.totalRestToPayProperty().set(totalRestToPay);
 	}
-
+	
+	
+	
 	public SimpleObjectProperty<Calendar> creationDateProperty()
 	{
 		if (creationDate == null)
@@ -426,6 +455,28 @@ public class CustomerInvoice implements Cloneable
 	{
 		this.creationDateProperty().set(creationDate);
 	}
+	
+	
+	public SimpleObjectProperty<BigDecimal> amountRestAfterVoucherProperty()
+	{
+		if (amountRestAfterVoucher == null)
+		{
+			amountRestAfterVoucher = new SimpleObjectProperty<BigDecimal>();
+		}
+		return amountRestAfterVoucher;
+	}
+
+	public BigDecimal getAmountRestAfterVoucher()
+	{
+		return amountRestAfterVoucherProperty().get();
+	}
+
+	public final void setAmountRestAfterVoucher(BigDecimal amountRestAfterVoucher)
+	{
+		this.amountRestAfterVoucherProperty().set(amountRestAfterVoucher);
+	}
+	
+	
 
 	public SimpleObjectProperty<ObservableList<CustomerInvoiceItem>> invoiceItemsProperty()
 	{
@@ -668,6 +719,7 @@ public class CustomerInvoice implements Cloneable
 		e.invoiceItems = invoiceItems;
 		e.customer = customer;
 		e.insurance = insurance;
+		e.amountRestAfterVoucher = amountRestAfterVoucher;
 		e.creatingUser = creatingUser;
 		e.agency = agency;
 		e.salesOrder = salesOrder;

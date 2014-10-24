@@ -102,11 +102,11 @@ public class ArticleLotEJB
 	}
 
 	public Long countArticleNameLikeAndStockUpperThan(ArticleLot articleLot){
-		return repository.findByArticleNameLikeAndAndStockUpperThan(articleLot.getArticleName(), BigDecimal.ZERO).count();
+		return repository.findByArticleNameLikeAndAndStockUpperThan(articleLot.getArticleName(), BigDecimal.ZERO, Boolean.FALSE).count();
 	}
 
 	public  List<ArticleLot> findByArticleNameLikeAndAndStockUpperThan(ArticleLotSearchInput searchInput){
-		return repository.findByArticleNameLikeAndAndStockUpperThan(searchInput.getEntity().getArticleName(), BigDecimal.ZERO)
+		return repository.findByArticleNameLikeAndAndStockUpperThan(searchInput.getEntity().getArticleName(), BigDecimal.ZERO, Boolean.FALSE)
 				.firstResult(searchInput.getStart()).maxResults(searchInput.getMax()).orderAsc("articleName").getResultList();
 	}
 

@@ -52,42 +52,56 @@ public class DebtStatement implements Cloneable
 
 	@Description("DebtStatement_statementNumber_description")
 	private SimpleStringProperty statementNumber;
+	
 	@Description("DebtStatement_settled_description")
 	private SimpleBooleanProperty settled;
+	
 	@Description("DebtStatement_canceled_description")
 	private SimpleBooleanProperty canceled;
+	
 	@Description("DebtStatement_useVoucher_description")
 	private SimpleBooleanProperty useVoucher;
+	
 	@Description("DebtStatement_waitingForCash_description")
-	private SimpleBooleanProperty waitingForCash ;
+	private SimpleBooleanProperty waitingForCash;
+	
 	@Description("DebtStatement_initialAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> initialAmount;
+	
 	@Description("DebtStatement_advancePayment_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> advancePayment;
+	
 	@Description("DebtStatement_payAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> payAmount;
+	
 	@Description("DebtStatement_restAmount_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> restAmount;
+	
 	@Description("DebtStatement_amountFromVouchers_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> amountFromVouchers;
+	
 	@Description("DebtStatement_paymentDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private SimpleObjectProperty<Calendar> paymentDate;
+	
 	@Description("DebtStatement_insurrance_description")
 	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Customer.class)
 	private SimpleObjectProperty<DebtStatementInsurrance> insurrance;
+	
 	@Description("DebtStatement_agency_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
 	private SimpleObjectProperty<DebtStatementAgency> agency;
+	
 	@Relationship(end = RelationshipEnd.SOURCE, sourceEntity = DebtStatement.class, targetEntity = CustomerInvoice.class, sourceQualifier = "invoices")
 	@Description("DebtStatement_invoices_description")
 	@Association(associationType = AssociationType.AGGREGATION, targetEntity = CustomerInvoice.class)
 	private SimpleObjectProperty<ObservableList<CustomerInvoice>> invoices;
+	
 	@Description("DebtStatement_statementStatus_description")
 	private SimpleObjectProperty<DocumentProcessingState> statementStatus;
 

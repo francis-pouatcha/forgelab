@@ -65,19 +65,26 @@ public class ReceiptPrinter {
 	@PostConstruct
 	public void postConstruct() {
 		receiptPrinterDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@SuppressWarnings("unused")
 			@Override
 			public void handle(WorkerStateEvent event) {
 				ReceiptPrinterDataService s = (ReceiptPrinterDataService) event.getSource();
 	            ReceiptPrinterData receiptPrinterData = s.getValue();
 	            event.consume();
 	            s.reset();
-	    		if(receiptPrinterData==null) return;
-	    		if(receiptPrinterData.getPayment()==null) return;
-	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplatePDF(receiptPrinterData, resourceBundle, locale);
+	    		if(receiptPrinterData==null) {
+	    			return;
+	    		}
+	    		if(receiptPrinterData.getPayment()==null) {
+	    			return;
+	    		}
+	    		ReceiptPrintTemplate worker = new ReceiptPrintTemplatePDF2(receiptPrinterData, resourceBundle, locale);
 	    		worker.startPage();
 	    		CustomerInvoicePrinterData customerInvoicePrinterData = worker.nextInvoice();
 	    		if(customerInvoicePrinterData==null) {
 	    			worker.closePayment();
+                 //	 TODO	
+	    			
 	    		} else {
 	    			if(receiptPrinterData.isUnDiscountReciept()){
 	    				CustomerInvoice invoice = customerInvoicePrinterData.getCustomerInvoice();

@@ -87,7 +87,7 @@ public class ModalCashController {
 				event.consume();
 				s.reset();
 				printPaymentReceiptRequestedEvent.fire(new PaymentId(searchResult.getId()));
-				paymentCreateService.setIsForDebtstatement(Boolean.FALSE) ;
+				paymentCreateService.setIsForDebtstatement(Boolean.FALSE);
 				cashView.closeDialog();
 
 			}

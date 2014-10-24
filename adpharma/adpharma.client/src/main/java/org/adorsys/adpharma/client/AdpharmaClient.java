@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -29,6 +30,7 @@ import org.jboss.weld.exceptions.IllegalStateException;
 
 public final class AdpharmaClient extends Application {
 	private Weld weld;
+	
 
 	private static Locale locale;
 	//	private static ServerAddress serverAddress;
@@ -133,8 +135,7 @@ public final class AdpharmaClient extends Application {
 		});
 		Instance<Object> instance = weld.initialize().instance();
 		instance.select(LocaleFactory.class).get().setLocale(locale);
-		instance.select(MainController.class).get()
-		.start(stage, locale, "styles/application.css");
+		instance.select(MainController.class).get().start(stage, locale, "styles/application.css");
 	}
 
 	@Override

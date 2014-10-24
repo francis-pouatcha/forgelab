@@ -39,6 +39,7 @@ import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javaext.list.ListField;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.ObjectUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -65,6 +66,7 @@ public class SalesOrder implements Cloneable
 	
 	@Description("SalesOrder_salesKey_description")
 	private SimpleStringProperty salesKey;
+	
 	
 	@Description("SalesOrder_cashed_description")
 	private SimpleBooleanProperty cashed;
@@ -101,6 +103,8 @@ public class SalesOrder implements Cloneable
 	@Description("SalesOrder_salesOrderItems_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrderItem.class, selectionMode = SelectionMode.TABLE)
 	private SimpleObjectProperty<ObservableList<SalesOrderItem>> salesOrderItems;
+	
+	
 	
 	@Description("SalesOrder_cashDrawer_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = CashDrawer.class)
@@ -230,6 +234,9 @@ public class SalesOrder implements Cloneable
 		}
 		return alreadyReturned;
 	}
+	
+	
+	
 
 	public Boolean getAlreadyReturned()
 	{

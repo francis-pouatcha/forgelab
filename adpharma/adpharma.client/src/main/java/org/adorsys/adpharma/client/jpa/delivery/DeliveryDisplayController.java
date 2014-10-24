@@ -59,11 +59,13 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -77,6 +79,8 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 @Singleton
 public class DeliveryDisplayController implements EntityController
@@ -149,6 +153,14 @@ public class DeliveryDisplayController implements EntityController
 	
 	@Inject
 	private SecurityUtil securityUtil;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressionEvent;
+	
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object>  hideProgressionEvent;
 
 	@PostConstruct
 	public void postConstruct()
@@ -425,6 +437,7 @@ public class DeliveryDisplayController implements EntityController
 							BigDecimal amountBeforeTax = displayedEntity.getAmountBeforeTax();
 							if(amountBeforeTax.compareTo(processAmount)==0){
 								handleDeliveryClosedEvent(displayedEntity);
+								showProgressionEvent.fire(new Object());
 							}else {
 								Dialogs.create().message("le Montant Saisie dois etre egal au montant HT")
 								.nativeTitleBar().showError();
@@ -438,14 +451,13 @@ public class DeliveryDisplayController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressionEvent.fire(new Object());
 				DeliveryCloseService s = (DeliveryCloseService) event.getSource();
 				Delivery entity = s.getValue();
 				event.consume();
 				s.reset();
 				PropertyReader.copy(entity, displayedEntity);
 				deliveryItemSearchService.setSearchInputs(getDeliveryItemSearchInput(entity)).start();
-
-
 			}
 		});
 

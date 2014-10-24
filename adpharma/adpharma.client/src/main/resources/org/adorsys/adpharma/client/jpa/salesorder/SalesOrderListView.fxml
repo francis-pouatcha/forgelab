@@ -30,7 +30,7 @@
 						</Button>
 						<Button fx:id="printProformaButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Facture Proforma" />
 						<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Recu sans remise" />
-<Button fx:id="unDiscountReceipt" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefWidth="140.0" text="Recu  avec remise" />
+                        <Button fx:id="unDiscountReceipt" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefWidth="140.0" text="Recu  avec remise" />
 						<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Suprimer">
 							<VBox.margin>
 								<Insets />

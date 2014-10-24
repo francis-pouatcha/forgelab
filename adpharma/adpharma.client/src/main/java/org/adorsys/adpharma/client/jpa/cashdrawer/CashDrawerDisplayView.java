@@ -188,6 +188,7 @@ public class CashDrawerDisplayView
 		//		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle,100d);
 		viewBuilder.addStringColumn(salesOrderDataList, "customer", "CustomerInvoice_customer_description.title", resourceBundle,150d);
+//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountRestAfterVoucher","CustomerInvoice_amountRestAfterVoucher_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
 		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
