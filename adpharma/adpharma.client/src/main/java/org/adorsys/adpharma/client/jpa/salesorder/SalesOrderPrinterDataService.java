@@ -39,6 +39,8 @@ public class SalesOrderPrinterDataService extends Service<SalesOrderPrinterData>
 	private String customerName ;
 
 	private Long salesOrderId;
+	
+	private String invoiceDate;
 
 	private boolean isProformat=false;
 
@@ -61,6 +63,17 @@ public class SalesOrderPrinterDataService extends Service<SalesOrderPrinterData>
 		this.isProformat = isProformat;
 		return this;
 	}
+	
+	public String getInvoiceDate() {
+		return invoiceDate;
+	}
+	
+	public SalesOrderPrinterDataService setInvoiceDate(String invoiceDate)
+	{
+		this.invoiceDate = invoiceDate;
+		return this;
+	}
+	
 
 	@Override
 	protected Task<SalesOrderPrinterData> createTask()

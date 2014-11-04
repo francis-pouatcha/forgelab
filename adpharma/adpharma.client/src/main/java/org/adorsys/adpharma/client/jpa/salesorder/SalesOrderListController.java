@@ -77,6 +77,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -173,6 +174,10 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
+	
+	@Inject
+	@ModalEntityCreateRequestedEvent
+	private Event<SalesOrderPrintInvoiceData> salesOrderPrintInvoiceRequestedEvent;
 
 	private SalesOrderId selectedSalesOrderId;
 
@@ -199,6 +204,7 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private SecurityUtil securityUtil;
+	
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -352,7 +358,7 @@ public class SalesOrderListController implements EntityController
 				event.consume();
 				s.reset();
 				Iterator<ChartData> iterator = result.getChartData().iterator();
-				List<Series<String, BigDecimal>> pieChartData = ChartData.toBarChartData( result.getChartData());
+				List<Series<String, BigDecimal>> pieChartData = ChartData.toBarChartData(result.getChartData());
 				listView.getPieChart().getData().setAll(pieChartData);
 			}
 		});
@@ -412,8 +418,6 @@ public class SalesOrderListController implements EntityController
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				if(selectedItem!= null) 
 					salesOrderLoadService.setId(selectedItem.getId()).start();
-
-
 			}
 		});
 
@@ -557,14 +561,18 @@ public class SalesOrderListController implements EntityController
 		listView.getPrintInvoiceButtonn().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
-				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-				String customerName = null;
-//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
-				selectedSalesOrderId.setCustomerName(customerName);
-				selectedSalesOrderId.setProformat(false);
-				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
+				SalesOrderPrintInvoiceData salesOrderPrintInvoiceData = new SalesOrderPrintInvoiceData();
+				salesOrderPrintInvoiceData.setSalesOrderId(selectedSalesOrderId);
+				salesOrderPrintInvoiceRequestedEvent.fire(salesOrderPrintInvoiceData);
+				
+//				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+//				@SuppressWarnings("unused")
+//				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+//				String customerName = null;
+//				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+//				selectedSalesOrderId.setCustomerName(customerName);
+//				selectedSalesOrderId.setProformat(false);
+//				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
 			}
 		});
 
@@ -572,6 +580,7 @@ public class SalesOrderListController implements EntityController
 			@Override
 			public void handle(ActionEvent event) {
 				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+				@SuppressWarnings("unused")
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
 //				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))

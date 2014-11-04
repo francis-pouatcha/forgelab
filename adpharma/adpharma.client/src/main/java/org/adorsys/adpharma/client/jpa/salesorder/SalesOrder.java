@@ -46,7 +46,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Description("SalesOrder_description")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ListField({ "cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName",
+@ListField({ "cashDrawer.cashDrawerNumber", "cashDrawer.cashier.loginName", "soNumber", "customer.fullName",
 	"insurance.customer.fullName", "insurance.insurer.fullName",
 	"vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus",
 	"cashed", "amountBeforeTax", "amountVAT", "amountDiscount",

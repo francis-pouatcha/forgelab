@@ -13,6 +13,8 @@ import org.adorsys.adpharma.client.jpa.salesorder.SalesStattisticsDataSearchInpu
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 public class CustomerInvoiceService {
 	private String media = MediaType.APPLICATION_JSON;
 	private static final String FIND_BY = "findBy";
@@ -163,7 +165,8 @@ public class CustomerInvoiceService {
 			DebtStatement source) {
 		Entity<DebtStatement> sourceEntity = Entity.entity(
 				source, media);
-		return target().path("findCustomerInvoiceBySource").request(media)
+		CustomerInvoiceSearchResult customerInvoiceSearchResult = target().path("findCustomerInvoiceBySource").request(media)
 				.post(sourceEntity, CustomerInvoiceSearchResult.class);
+		return customerInvoiceSearchResult;
 	}
 }

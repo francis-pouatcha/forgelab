@@ -13,6 +13,7 @@ import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderType;
 import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
@@ -113,11 +114,18 @@ public class SalesOrderPrintTemplate {
 				salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 2, 1);
 		
+		if(salesOrder.getInsurance()!=null) {
+			String patient=salesOrder.getPatientMatricle()!=null?salesOrder.getPatientMatricle():" ";
+			paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_patientMatricle.title") + " " +patient));
+			borderlessCell(rt, paragraph, 2, 1);
+		}
+		
 		String insurance=salesOrder.getInsurance()!=null?salesOrder.getInsurance().getInsurer().getFullName():" ";
 		paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_insurerName.title") + " " +insurance));
 		borderlessCell(rt, paragraph, 2, 1);
 		
 
+		
 //		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
 //		borderlessCell(rt, paragraph, 2, 1);
 
@@ -125,8 +133,10 @@ public class SalesOrderPrintTemplate {
 				+ " " + salesAgent.getFullName()));
 		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
+		
 
 		paragraph = new Paragraph(new StandardText( "Facture No  " +salesOrder.getSoNumber() +" Du "+ calendarFormat.format(salesOrder.getCreationDate(), "dd-MM-yyyy HH:mm", locale)));
+		paragraph.setSpacingAfter(15);
 		borderlessCell(rt, paragraph, 1, 1);
 		
 

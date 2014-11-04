@@ -3,6 +3,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -19,6 +20,7 @@ import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.company.Company;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -52,7 +54,11 @@ public class SalesOrderPrinter {
 	
 	public void handlePrintSalesOrderRequestedEvent(
 			@Observes @PrintCustomerInvoiceRequestedEvent SalesOrderId salesOrderId) {
-		soDataService.setSalesOrderId(salesOrderId.getId()).setCustomerName(salesOrderId.getCustomerName()).setIsProforma(salesOrderId.isProformat()).start();
+		soDataService.setSalesOrderId(salesOrderId.getId())
+		             .setCustomerName(salesOrderId.getCustomerName())
+		             .setIsProforma(salesOrderId.isProformat())
+		             .setInvoiceDate(salesOrderId.getInvoiceDate())
+		             .start();
 	}
 
 	public void handlePrintSalesOrderRequestedEvent(
@@ -65,16 +71,21 @@ public class SalesOrderPrinter {
 		soDataService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
-				SalesOrderPrinterDataService s = (SalesOrderPrinterDataService) event
-						.getSource();
+				SalesOrderPrinterDataService s = (SalesOrderPrinterDataService) event.getSource();
 	            SalesOrderPrinterData invoiceData = s.getValue();
 	            event.consume();
 	            s.reset();
 	    		if(invoiceData==null) return;
 	    		if(invoiceData.getSalesOrderItemSearchResult().getResultList().isEmpty()) return;
 	    		String customerName = s.getCustomerName();
+	    		String invoiceDate = s.getInvoiceDate();
 	    		if(StringUtils.isNotBlank(customerName)){
 	    			invoiceData.getSalesOrder().getCustomer().setFullName(customerName);
+	    		}
+	    		if(StringUtils.isNotBlank(invoiceDate)){
+	    			Calendar calendar = Calendar.getInstance();
+	    			calendar.setTime(DateHelper.parse(invoiceDate, DateHelper.DATE_TIME_FORMAT));
+	    		    invoiceData.getSalesOrder().setCreationDate(calendar);
 	    		}
 	    		
 	    		SalesOrderPrintTemplate worker = new SalesOrderPrintTemplate(invoiceData, resourceBundle, locale);
@@ -112,15 +123,24 @@ public class SalesOrderPrinter {
 	            SalesOrderPrintTemplate worker = s.getSalesOrderPrintTemplateWorker();
 	            event.consume();
 	            s.reset();
-	    		if(soData==null) return;
+	    		if(soData==null) {
+	    			return;
+	    		}
 	    		if(soData.getSalesOrderItemSearchResult().getResultList().isEmpty()) {
 	    			worker.closeReport();
 	    			String soNumber = soData.getSalesOrder().getSoNumber();
 	    			File file = new File(soNumber+".pdf");
 	    			if(file.exists())openFile(file);
 	    		} else {
+	    			// Bug fixed
 	    			worker.addItems(soData.getSalesOrderItemSearchResult().getResultList());
-	    			soItemDataService.setSalesOrderPrintTemplateWorker(worker).setSalesOrderPrinterData(soData).start();
+	    			worker.closeReport();
+	    			String soNumber = soData.getSalesOrder().getSoNumber();
+	    			File file = new File(soNumber+".pdf");
+	    			if(file.exists()) {
+	    				openFile(file);
+	    			}
+//	    			soItemDataService.setSalesOrderPrintTemplateWorker(worker).setSalesOrderPrinterData(soData).start();
 	    		}
 			}
 		});

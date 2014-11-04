@@ -68,6 +68,7 @@ public class CustomerInvoiceItem implements Cloneable
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm ")
    private SimpleObjectProperty<Calendar> creationDate;
 
+   
    public Long getId()
    {
       return id;
@@ -306,4 +307,7 @@ public class CustomerInvoiceItem implements Cloneable
       e.article = article;
       return e;
    }
+
+   
+   
 }

@@ -229,6 +229,7 @@ public class SalesOrderEndpoint
 		List<SalesOrder> resultList = ejb.findByLike(searchInput.getEntity(),
 				searchInput.getStart(), searchInput.getMax(), attributes);
 		List<SalesOrder> detach = detach(resultList);
+		
 		return new SalesOrderSearchResult(countLike, detach,
 				detach(searchInput));
 	}
@@ -275,7 +276,7 @@ public class SalesOrderEndpoint
 
 	private static final List<String> emptyList = Collections.emptyList();
 
-	private static final List<String> cashDrawerFields = Arrays.asList("cashDrawerNumber", "agency.name", "openingDate", "closingDate", "initialAmount", "totalCashIn", "totalCashOut", "totalCash", "totalCheck", "totalCreditCard", "totalCompanyVoucher", "totalClientVoucher", "opened");
+	private static final List<String> cashDrawerFields = Arrays.asList("cashDrawerNumber", "cashier.loginName", "agency.name", "openingDate", "closingDate", "initialAmount", "totalCashIn", "totalCashOut", "totalCash", "totalCheck", "totalCreditCard", "totalCompanyVoucher", "totalClientVoucher", "opened");
 
 	private static final List<String> customerFields = Arrays.asList("fullName", "serialNumber", "landLinePhone", "mobile", "fax", "email","societe", "creditAuthorized", "discountAuthorized","customerCategory.discountRate","customerCategory.name");
 
