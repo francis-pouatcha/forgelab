@@ -43,6 +43,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	
 	private TextField articleName ;
 	
+	private CheckBox printXls;
+	
 	private CheckBox taxableSalesOnly;
 	
 	private CheckBox nonTaxableSalesOnly;
@@ -86,6 +88,9 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		check.setText("Resultat Groupé Par cip ?");
 		perVendorAndDiscount = lazyviewBuilder.addCheckBox("Entity_empty.text", "perVendorAndDiscount", resourceBundle);
 		perVendorAndDiscount.setText("Remises par vendeurs");
+		printXls= lazyviewBuilder.addCheckBox("Entity_empty.text", "printXls", resourceBundle);
+		printXls.setText("Imprimer en Excel");
+		
 		
 
 		ViewBuilder viewBuilder = new ViewBuilder();
@@ -112,6 +117,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
 		perVendorAndDiscount.selectedProperty().bindBidirectional(model.perVendorAndDiscountProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
+		printXls.selectedProperty().bindBidirectional(model.printXlsProperty());
 	}
 
 	public void addValidators()
@@ -161,6 +167,10 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 	public CheckBox getCheck() {
 		return check;
+	}
+	
+	public CheckBox getPrintXls() {
+		return printXls;
 	}
 
 
