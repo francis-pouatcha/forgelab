@@ -1,12 +1,15 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.CustomerInvoice;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceRepository;
 
@@ -16,6 +19,27 @@ public class CustomerInvoiceMerger
    @Inject
    private CustomerInvoiceRepository repository;
 
+	@Inject
+	private CustomerMerger customerMerger;
+
+	@Inject
+	private LoginMerger loginMerger;
+
+	@Inject
+	private CustomerInvoiceItemMerger customerInvoiceItemMerger;
+
+	@Inject
+	private SalesOrderMerger salesOrderMerger;
+
+	@Inject
+	private InsurranceMerger insurranceMerger;
+
+	@Inject
+	private PaymentCustomerInvoiceAssocMerger paymentCustomerInvoiceAssocMerger;
+
+	@Inject
+	private AgencyMerger agencyMerger;
+   
    public CustomerInvoice bindComposed(CustomerInvoice entity)
    {
       if (entity == null)
@@ -69,6 +93,14 @@ public class CustomerInvoiceMerger
       CustomerInvoice newEntity = new CustomerInvoice();
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
+      
+      
+      Map<String, List<String>> nestedFields = MergerUtils.getNestedFields(fieldList);
+      Set<String> keySet = nestedFields.keySet();
+      for (String fieldName : keySet) {
+    	  unbindNested(fieldName, nestedFields.get(fieldName), entity, newEntity);
+      }
+      
       MergerUtils.copyFields(entity, newEntity, fieldList);
       newEntity.setInsurance(entity.getInsurance());
       newEntity.setCustomer(entity.getCustomer());
@@ -92,5 +124,22 @@ public class CustomerInvoiceMerger
       //  		entities.add(unbind(entity, fieldList));
       //       }
       //      return entities;
+   }
+
+   private void unbindNested(String fieldName, List<String> nestedFields, CustomerInvoice entity, CustomerInvoice newEntity) {
+	   if("insurance".equals(fieldName)) {
+		   newEntity.setInsurance(insurranceMerger.unbind(entity.getInsurance(), nestedFields));
+	   } else if("customer".equals(fieldName)) {
+		   newEntity.setCustomer(customerMerger.unbind(entity.getCustomer(), nestedFields));
+	   } else if("salesOrder".equals(fieldName)) {
+		   newEntity.setSalesOrder(salesOrderMerger.unbind(entity.getSalesOrder(), nestedFields));
+	   } else if("invoiceItems".equals(fieldName)) {
+		   Set<CustomerInvoiceItem> newInvoiceItems = new HashSet<CustomerInvoiceItem>();
+		   Set<CustomerInvoiceItem> invoiceItems = entity.getInvoiceItems();
+		   for (CustomerInvoiceItem customerInvoiceItem : invoiceItems) {
+			   newInvoiceItems.add(customerInvoiceItemMerger.unbind(customerInvoiceItem, nestedFields));
+		   }
+		   newEntity.setInvoiceItems(newInvoiceItems);
+	   }
    }
 }

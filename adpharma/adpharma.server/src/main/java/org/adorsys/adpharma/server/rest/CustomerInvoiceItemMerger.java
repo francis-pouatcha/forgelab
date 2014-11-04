@@ -1,10 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import org.adorsys.adpharma.server.jpa.ArticleLot;
+import org.adorsys.adpharma.server.jpa.CustomerInvoice;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.repo.CustomerInvoiceItemRepository;
 
@@ -14,6 +18,9 @@ public class CustomerInvoiceItemMerger
    @Inject
    private CustomerInvoiceItemRepository repository;
 
+	@Inject
+	private ArticleMerger articleMerger;
+   
    public CustomerInvoiceItem bindComposed(CustomerInvoiceItem entity)
    {
       if (entity == null)
@@ -67,6 +74,14 @@ public class CustomerInvoiceItemMerger
       CustomerInvoiceItem newEntity = new CustomerInvoiceItem();
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
+
+      
+      Map<String, List<String>> nestedFields = MergerUtils.getNestedFields(fieldList);
+      Set<String> keySet = nestedFields.keySet();
+      for (String fieldName : keySet) {
+    	  unbindNested(fieldName, nestedFields.get(fieldName), entity, newEntity);
+      }
+      
       MergerUtils.copyFields(entity, newEntity, fieldList);
       return newEntity;
    }
@@ -96,4 +111,13 @@ public class CustomerInvoiceItemMerger
              }
             return entities;
    }
+   
+
+
+   private void unbindNested(String fieldName, List<String> nestedFields, CustomerInvoiceItem entity, CustomerInvoiceItem newEntity) {
+	   if("article".equals(fieldName)) {
+		   newEntity.setArticle(articleMerger.unbind(entity.getArticle(), nestedFields));
+	   }
+   }
+   
 }

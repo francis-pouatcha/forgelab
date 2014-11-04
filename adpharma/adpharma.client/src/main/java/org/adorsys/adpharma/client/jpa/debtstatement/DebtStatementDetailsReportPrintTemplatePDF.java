@@ -91,7 +91,6 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 		List<CustomerInvoiceItem> invoiceItems = invoice.getInvoiceItems();
 		List<String> resultList= new ArrayList<String>();
 		for(CustomerInvoiceItem item: invoiceItems) {
-			System.out.println("Invoice Item: "+item.toString());
 			String internalPic = item.getInternalPic(); 
 			String articleName = item.getArticle().getArticleName();
 			  BigInteger qty = item.getPurchasedQty().toBigInteger();

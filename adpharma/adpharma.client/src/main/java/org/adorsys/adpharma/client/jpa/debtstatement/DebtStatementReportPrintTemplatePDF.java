@@ -6,13 +6,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
-
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.utils.DateHelper;
+import org.adorsys.adpharma.client.utils.ReportColumn;
+import org.adorsys.adpharma.client.utils.ReportColumns;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.control.DefaultBigDecimalFormatCM;
 import org.jboss.weld.exceptions.IllegalStateException;
@@ -54,9 +57,12 @@ public class DebtStatementReportPrintTemplatePDF {
 	private final DebtStatement debtStatement ;	
 	static Font boldFont = FontFactory.getFont("Times-Roman", 8, Font.BOLD,Color.BLUE);
 	static Font font = FontFactory.getFont("Times-Roman", 8);
-
+	
+	static ReportColumns reportColumns = new ReportColumns(DebtStatementReportPrintTemplatePDF.class.getSimpleName());
+	
 	public DebtStatementReportPrintTemplatePDF(DebtStatement debtStatement, ResourceBundle resourceBundle,
 			Locale locale,Login login) throws DocumentException {
+		
 		this.reportPrinter = login;
 		this.debtStatement = debtStatement ;
 		this.resourceBundle = resourceBundle;
@@ -83,6 +89,7 @@ public class DebtStatementReportPrintTemplatePDF {
 	}
 
 	public void addItems(List<CustomerInvoice> invoices) {
+		
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal instotal = BigDecimal.ZERO;
 		BigDecimal ticketMt = BigDecimal.ZERO;
@@ -119,95 +126,126 @@ public class DebtStatementReportPrintTemplatePDF {
 			BigDecimal amount, 
 			BigDecimal rate
 			) {
+		
+		Map<String, PdfPCell> cels = new HashMap<String, PdfPCell>();
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(invoiceNumber));
-		reportTable.addCell(pdfPCell);
+		cels.put("invoiceNumber", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(societe));
-		reportTable.addCell(societe);
+		cels.put("societe", pdfPCell);
+//		reportTable.addCell(societe);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(matPrinc));
-		reportTable.addCell(matPrinc);
+		cels.put("matPrinc", pdfPCell);
+//		reportTable.addCell(matPrinc);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(matMal));
-		reportTable.addCell(matMal);
+		cels.put("matMal", pdfPCell);
+//		reportTable.addCell(matMal);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(client));
-		reportTable.addCell(pdfPCell);
+		cels.put("client", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(date));
-		reportTable.addCell(pdfPCell);
+		cels.put("date", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(totalAmount))));
-		reportTable.addCell(pdfPCell);
+		cels.put("totalAmount", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(ticketm))));
-		reportTable.addCell(pdfPCell);
+		cels.put("ticketm", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(amount))));
-		reportTable.addCell(pdfPCell);
+		cels.put("amount", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new RightParagraph(new StandardText(DefaultBigDecimalFormatCM.getinstance().format(rate)+"%")));
-		reportTable.addCell(pdfPCell);
-
+		cels.put("rate", pdfPCell);
+//		reportTable.addCell(pdfPCell);
+		
+		List<ReportColumn> columns = reportColumns.getColumns();
+		for (ReportColumn reportColumn : columns) {
+			reportTable.addCell(cels.get(reportColumn.getName()));
+		}
 	}
 
 	private void fillTableHaeder() throws DocumentException {
-		reportTable = new PdfPTable(new float[]{.1f,.15f,.1f,.1f,.25f,.14f,.07f,.07f,.07f,.05f});
+		reportTable = new PdfPTable(reportColumns.getColArray());
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
 
-
+		Map<String, PdfPCell> cels = new HashMap<String, PdfPCell>();
+		
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_invoice_description.title")));
-		reportTable.addCell(pdfPCell);
+		cels.put("invoiceNumber", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Employeur"));
-		reportTable.addCell(pdfPCell);
+		cels.put("societe", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Mat. Princ"));
-		reportTable.addCell(pdfPCell);
+		cels.put("matPrinc", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Mat. Malade"));
-		reportTable.addCell(pdfPCell);
+		cels.put("matMal", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_customer_description.title")));
-		reportTable.addCell(pdfPCell);
+		cels.put("client", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_date_description.title")));
-		reportTable.addCell(pdfPCell);
+		cels.put("date", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("M.Brut"));
-		reportTable.addCell(pdfPCell);
+		cels.put("totalAmount", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText("Ticket M."));
-		reportTable.addCell(pdfPCell);
+		cels.put("ticketm", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_insurrance_amount_description.title")));
-		reportTable.addCell(pdfPCell);
+		cels.put("amount", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
 		pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_covert_rate_description.title")));
-		reportTable.addCell(pdfPCell);
+		cels.put("rate", pdfPCell);
+//		reportTable.addCell(pdfPCell);
 
+		List<ReportColumn> columns = reportColumns.getColumns();
+		for (ReportColumn reportColumn : columns) {
+			reportTable.addCell(cels.get(reportColumn.getName()));
+		}
 
 	}
 
@@ -309,4 +347,5 @@ public class DebtStatementReportPrintTemplatePDF {
 		printReportHeader();
 		fillTableHaeder();
 	}
+
 }

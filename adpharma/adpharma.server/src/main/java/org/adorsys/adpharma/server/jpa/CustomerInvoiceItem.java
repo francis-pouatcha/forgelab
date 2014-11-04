@@ -8,8 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
+import javax.persistence.PostLoad;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import java.lang.Override;
@@ -86,7 +88,6 @@ public class CustomerInvoiceItem implements Serializable
 	@Description("CustomerInvoiceItem_creationDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private Date creationDate= new Date();
-
 
 
 	public Long getId()

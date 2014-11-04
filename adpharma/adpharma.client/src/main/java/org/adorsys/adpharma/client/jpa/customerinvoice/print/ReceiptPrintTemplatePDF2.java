@@ -57,6 +57,8 @@ public class ReceiptPrintTemplatePDF2 extends ReceiptPrintTemplate {
 		
 	}
 	
+
+	
 	private static final void initProperties(){
 		rpp = ReceiptPrintProperties2.loadPrintProperties();
 		itemMataData = new ReceiptDataItemMetaData(rpp.getRowHeight(), rpp.getWidth(),rpp.getMargin(),

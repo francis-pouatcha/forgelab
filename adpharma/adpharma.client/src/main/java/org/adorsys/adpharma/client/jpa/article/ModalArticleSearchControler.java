@@ -101,7 +101,6 @@ public class ModalArticleSearchControler {
 			if(newValue!=null){
 				view.closeDialog();
 				modalArticleSearchDoneEvent.fire(newValue);
-
 			}
 
 
