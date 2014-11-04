@@ -1,10 +1,13 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 
@@ -13,6 +16,16 @@ public class ArticleLotMerger
 
    @Inject
    private ArticleLotRepository repository;
+   
+	@Inject
+	private AgencyMerger agencyMerger;
+
+	@Inject
+	private ArticleMerger articleMerger;
+
+	@Inject
+	private VATMerger vATMerger;
+   
 
    public ArticleLot bindComposed(ArticleLot entity)
    {
@@ -67,6 +80,13 @@ public class ArticleLotMerger
       ArticleLot newEntity = new ArticleLot();
       newEntity.setId(entity.getId());
       newEntity.setVersion(entity.getVersion());
+      
+      Map<String, List<String>> nestedFields = MergerUtils.getNestedFields(fieldList);
+      Set<String> keySet = nestedFields.keySet();
+      for (String fieldName : keySet) {
+    	  unbindNested(fieldName, nestedFields.get(fieldName), entity, newEntity);
+      }
+      
       MergerUtils.copyFields(entity, newEntity, fieldList);
       return newEntity;
    }
@@ -82,5 +102,16 @@ public class ArticleLotMerger
       //  		entities.add(unbind(entity, fieldList));
       //       }
       //      return entities;
+   }
+
+
+   private void unbindNested(String fieldName, List<String> nestedFields, ArticleLot entity, ArticleLot newEntity) {
+	   if("article".equals(fieldName)) {
+		   newEntity.setArticle(articleMerger.unbind(entity.getArticle(), nestedFields));
+	   } else if("agency".equals(fieldName)) {
+		   newEntity.setAgency(agencyMerger.unbind(entity.getAgency(), nestedFields));
+	   } else if("vat".equals(fieldName)) {
+		   newEntity.setVat(vATMerger.unbind(entity.getVat(), nestedFields));
+	   }
    }
 }

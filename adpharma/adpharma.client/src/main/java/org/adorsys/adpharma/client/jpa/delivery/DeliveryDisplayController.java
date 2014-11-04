@@ -311,6 +311,7 @@ public class DeliveryDisplayController implements EntityController
 				if(selectedItem!=null) {
 					PropertyReader.copy(selectedItem, deliveryItem);
 					displayView.getDataList().getItems().remove(selectedItem);
+					displayView.getActualStock().setNumber(selectedItem.getArticle().getQtyInStock());
 					displayView.getStockQuantity().setFocusTraversable(true);
 				}
 
@@ -497,6 +498,9 @@ public class DeliveryDisplayController implements EntityController
 					displayView.getDataList().getItems().add(0,createdItem);
 				}
 				calculateProcessAmont();
+				@SuppressWarnings("unused")
+				String actualStock = displayView.getActualStock().getNumber().toString();
+				displayView.getActualStock().setNumber(BigDecimal.ZERO);
 				displayView.getMainPic().requestFocus();
 
 			}
@@ -514,9 +518,8 @@ public class DeliveryDisplayController implements EntityController
 				displayView.getDataList().getItems().add(editedItem);
 				PropertyReader.copy(new DeliveryItem(), deliveryItem);
 				calculateProcessAmont();
+				displayView.getActualStock().setNumber(BigDecimal.ZERO);
 				displayView.getMainPic().requestFocus();
-
-
 			}
 		});
 		deliveryItemEditService.setOnFailed(serviceCallFailedEventHandler);
@@ -568,6 +571,7 @@ public class DeliveryDisplayController implements EntityController
 		{
 			children.add(rootPane);
 		}
+		displayView.getActualStock().setNumber(BigDecimal.ZERO);
 	}
 
 	public boolean isValidDeliveryItem(){
@@ -636,11 +640,13 @@ public class DeliveryDisplayController implements EntityController
 
 	}
 
+	// Handle SearchRequestDoneEvent of Article
 	private void handleSelectedArticle(Article article) {
 		DeliveryItem fromArticle = DeliveryItem.fromArticle(article);
 		fromArticle.setDelivery(new DeliveryItemDelivery(displayedEntity));
 		PropertyReader.copy(fromArticle, deliveryItem);
 		displayView.getMulRate().setNumber(BigDecimal.ZERO);
+		displayView.getActualStock().setNumber(article.getQtyInStock());
 		displayView.getStockQuantity().requestFocus();
 	}
 

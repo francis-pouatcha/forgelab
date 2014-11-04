@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -18,6 +19,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -131,6 +134,8 @@ public class DeliveryDisplayView
 	private TextField articleName;
 
 	private TextField mainPic;
+	
+	private BigDecimalField actualStock;
 
 	private BigDecimalField stockQuantity;
 
@@ -197,6 +202,8 @@ public class DeliveryDisplayView
 		buildLeftGrid();
 		buildActionBar();
 	}
+	
+	
 	public void buildLeftGrid(){
 		recordingDate =ViewBuilderUtils.newCalendarTextField("recordingDate", "dd-MM-yyyy HH:mm", locale, false);
 		recordingDate.setPrefWidth(180d);
@@ -207,9 +214,9 @@ public class DeliveryDisplayView
 		deliveryDate.setPrefWidth(180d);
 		deliveryDate.setDisable(true);
 		leftGride.add(deliveryDate, 1, 3);
-
-
 	}
+	
+	
 
 	public void buildActionBar(){
 		saveButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
@@ -229,8 +236,9 @@ public class DeliveryDisplayView
 		printXlsButton= ViewBuilderUtils.newButton("Delivery_printxls_description.title", "printXlsButton", resourceBundle, AwesomeIcon.PRINT);
 		actionbar.getChildren().addAll(saveButton,editButton,deleteButton,addArticleButton,cancelButton,addButton,printButton,printXlsButton);
 		actionbar.setAlignment(Pos.CENTER);
-
 	}
+	
+	
 	public void buildDeliveryItemBar(){
 		mainPic = ViewBuilderUtils.newTextField( "mainPic", false);
 		mainPic.setPromptText("cip");
@@ -241,15 +249,25 @@ public class DeliveryDisplayView
 		articleName.setPrefWidth(350d);
 		articleName.setTooltip(new Tooltip("Designation article"));
 
-		freeQuantity = ViewBuilderUtils.newBigDecimalField( "freeQuantity", NumberType.INTEGER,locale,false);
-		freeQuantity.setTooltip(new Tooltip("Unite gratuite"));
-		freeQuantity.setPrefWidth(75d);
-		freeQuantity.setAlignment(Pos.CENTER);
-
+		actualStock = ViewBuilderUtils.newBigDecimalField("actualStock", NumberType.INTEGER, locale, false);
+		actualStock.setPrefWidth(30d);
+		actualStock.setTooltip(new Tooltip("Quantite en Stock"));
+		actualStock.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
+		actualStock.setOpacity(1);
+		actualStock.setNumber(BigDecimal.ZERO);
+		actualStock.setDisable(Boolean.TRUE);
+		actualStock.setEditable(Boolean.TRUE);
+		actualStock.setAlignment(Pos.CENTER);
+		
 		stockQuantity = ViewBuilderUtils.newBigDecimalField( "stockQuantity", NumberType.INTEGER, locale,false);
 		stockQuantity.setTooltip(new Tooltip("Quantite livree"));
-		stockQuantity.setPrefWidth(75d);
+		stockQuantity.setPrefWidth(60d);
 		stockQuantity.setAlignment(Pos.CENTER);
+		
+		freeQuantity = ViewBuilderUtils.newBigDecimalField( "freeQuantity", NumberType.INTEGER,locale,false);
+		freeQuantity.setTooltip(new Tooltip("Unite gratuite"));
+		freeQuantity.setPrefWidth(60d);
+		freeQuantity.setAlignment(Pos.CENTER);
 
 		salesPricePU = ViewBuilderUtils.newBigDecimalField("salesPricePU", NumberType.INTEGER, locale,false);
 		salesPricePU.setTooltip(new Tooltip("Prix de vente unitaire"));
@@ -273,13 +291,15 @@ public class DeliveryDisplayView
 
 		okButton = ViewBuilderUtils.newButton("Entity_ok.text", "ok", resourceBundle, AwesomeIcon.ARROW_DOWN);
 
-		deliveryItemBar.addRow(0,new Label("CIP"),new Label("Designation"),new Label("Qte"),new Label("Qte UG"),new Label("Prix de Vente")
-		,new Label("Prix d\'achat"),new Label("T.Mul"),new Label("Exp Date"));
-		deliveryItemBar.addRow(1,mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,mulRate,expirationDate,okButton);
+		deliveryItemBar.addRow(0,new Label("CIP"), new Label("Designation"), new Label("Qte Stock"), 
+				new Label("Qte"), new Label("Qte UG"), new Label("Prix de Vente"),
+				new Label("Prix d\'achat"), new Label("T.Mul"), new Label("Exp Date"));
+		deliveryItemBar.addRow(1,mainPic,articleName,actualStock,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,mulRate,expirationDate,okButton);
 		//		deliveryItemBar.getChildren().addAll(
 		//				mainPic,articleName,stockQuantity,freeQuantity,salesPricePU,purchasePricePU,okButton);
 
 	}
+	
 
 	public void buildAmountPane(){
 		amountBeforeTax = ViewBuilderUtils.newBigDecimalField( "amountBeforeTax", NumberType.CURRENCY,locale,false);
@@ -303,6 +323,8 @@ public class DeliveryDisplayView
 		amountPane.add(amountAfterTax, 1, 3);
 		amountPane.add(processAmont, 1, 4);
 	}
+	
+	
 
 	public void bind(Delivery model)
 	{
@@ -330,7 +352,6 @@ public class DeliveryDisplayView
 		addArticleButton.disableProperty().bind(model.deliveryProcessingStateProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		printButton.disableProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		printXlsButton.disableProperty().bind(model.deliveryProcessingStateProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
-
 	}
 
 	public void bind(DeliveryItem deliveryItem) {
@@ -422,6 +443,11 @@ public class DeliveryDisplayView
 	public BigDecimalField getStockQuantity() {
 		return stockQuantity;
 	}
+	
+	public BigDecimalField getActualStock() {
+		return actualStock;
+	}
+	
 
 	public BigDecimalField getFreeQuantity() {
 		return freeQuantity;

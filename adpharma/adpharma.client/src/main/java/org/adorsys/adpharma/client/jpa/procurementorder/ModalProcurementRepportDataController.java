@@ -136,7 +136,6 @@ public class ModalProcurementRepportDataController {
 					File file = new File(worker.getFileName());
 					openFile(file);
 				} catch (DocumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				System.out.println(resultList);

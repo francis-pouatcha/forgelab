@@ -1,11 +1,5 @@
 package org.adorsys.adpharma.client.jpa.delivery;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
-
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -34,10 +27,6 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilders;
-import net.sf.dynamicreports.report.exception.DRException;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.DeliveryId;
@@ -78,7 +67,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;

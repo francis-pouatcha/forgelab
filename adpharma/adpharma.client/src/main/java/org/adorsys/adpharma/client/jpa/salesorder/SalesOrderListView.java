@@ -151,6 +151,7 @@ public class SalesOrderListView
 		viewBuilder.addStringColumn(dataList, "customer", "SalesOrder_customer_description.title", resourceBundle,250d);
 		//		viewBuilder.addStringColumn(dataList, "cashDrawer", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "salesAgent", "SalesOrder_salesAgent_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "cashDrawer.cashier.loginName", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
 
 		// Field not displayed in table

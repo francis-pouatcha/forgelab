@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -12,18 +11,15 @@ import java.util.Properties;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.adorsys.javafx.crud.extensions.MainController;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.locale.LocaleFactory;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.exceptions.IllegalStateException;
