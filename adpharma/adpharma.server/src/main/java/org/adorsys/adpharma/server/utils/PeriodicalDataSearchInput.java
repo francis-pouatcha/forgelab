@@ -14,6 +14,8 @@ public class PeriodicalDataSearchInput {
 	private Date endDate;
 
 	private Boolean check;
+	
+	private Boolean printXls;
 
 	private Boolean taxableSalesOnly = Boolean.FALSE ;
 
@@ -110,6 +112,13 @@ public class PeriodicalDataSearchInput {
 		this.perVendorAndDiscount = perVendorAndDiscount;
 	}
 
-
+   public Boolean getPrintXls() {
+	return printXls; 
+    }
+   
+   public void setPrintXls(Boolean printXls) {
+	this.printXls = printXls;
+   }
+   
 
 }

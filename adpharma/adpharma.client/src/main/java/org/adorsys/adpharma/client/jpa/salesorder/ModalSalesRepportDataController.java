@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
@@ -102,6 +101,16 @@ public class ModalSalesRepportDataController {
 				view.getPerVendorAndDiscount().setSelected(true);
 			}
 		});
+		
+		view.getPrintXls().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue)
+				view.getPrintXls().setSelected(true);
+			}
+		});
 				
 			
 		
@@ -118,18 +127,23 @@ public class ModalSalesRepportDataController {
 					value = getTwentyHeigth(value);
 				}
 
-				try {
-					Login login = securityUtil.getConnectedUser();
-					LoginAgency agency = securityUtil.getAgency();
-					SalesOrderReportPrintTemplatePDF worker = new SalesOrderReportPrintTemplatePDF(login,agency,model,getHeaderName());
-					worker.addItems(value);
-					worker.closeDocument();
-					File file = new File(worker.getFileName());
-					openFile(file);
-				} catch (DocumentException e) {
-					e.printStackTrace();
+				if(model.getPrintXls()) {
+					SalesOrderXlsExporter.exportSalesOrderItemsToXls(value, model);
+					
+				}else {
+					try {
+						Login login = securityUtil.getConnectedUser();
+						LoginAgency agency = securityUtil.getAgency();
+						SalesOrderReportPrintTemplatePDF worker = new SalesOrderReportPrintTemplatePDF(login,agency,model,getHeaderName());
+						worker.addItems(value);
+						worker.closeDocument();
+						File file = new File(worker.getFileName());
+						openFile(file);
+					} catch (DocumentException e) {
+						e.printStackTrace();
+					}
 				}
-			}
+				}
 		});
 		salesOrderItemPeriodicalSearchService.setOnFailed(callFailedEventHandler);
 		

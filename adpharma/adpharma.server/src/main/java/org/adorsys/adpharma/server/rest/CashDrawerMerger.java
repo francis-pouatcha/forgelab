@@ -1,11 +1,14 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import org.adorsys.adpharma.server.jpa.CashDrawer;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.repo.CashDrawerRepository;
 
 public class CashDrawerMerger
@@ -13,6 +16,7 @@ public class CashDrawerMerger
 
    @Inject
    private CashDrawerRepository repository;
+   
 
    public CashDrawer bindComposed(CashDrawer entity)
    {
@@ -83,4 +87,7 @@ public class CashDrawerMerger
       //       }
       //      return entities;
    }
+   
+  
+   
 }

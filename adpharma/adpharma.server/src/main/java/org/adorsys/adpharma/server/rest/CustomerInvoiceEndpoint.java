@@ -285,7 +285,7 @@ public class CustomerInvoiceEndpoint
 		entity.setSalesOrder(salesOrderMerger.unbind(entity.getSalesOrder(), salesOrderFields));
 
 		// composed collections
-		entity.setInvoiceItems(customerInvoiceItemMerger.unbind1(entity.getInvoiceItems(), invoiceItemsFields));
+		entity.setInvoiceItems(customerInvoiceItemMerger.unbind(entity.getInvoiceItems(), invoiceItemsFields));
 
 		// aggregated collection
 		entity.setPayments(paymentCustomerInvoiceAssocMerger.unbind(entity.getPayments(), paymentsFields));
