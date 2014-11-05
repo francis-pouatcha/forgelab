@@ -239,12 +239,15 @@ public class SalesOrderDisplayController implements EntityController
 	@Inject
 	private ArticleLotService articleLotService ;
 	
+   
+	
 	
 
 	@PostConstruct
 	public void postConstruct()
 	{
 
+		 
 		//		      displayView.getEditButton().disableProperty().bind(registration.canEditProperty().not());
 		//		displayView.getRemoveButton().disableProperty().bind(registration.canEditProperty().not());
 
@@ -414,15 +417,16 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 */
 		displayView.getCloseButton().disableProperty().bind(closeService.runningProperty());
-		final KeyCombination codeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_C);
+		final KeyCombination closeKeyCodeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_C);
 		displayView.getRootPane().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
-			public void handle(KeyEvent e) {
-				if(codeCombination.match(e)) {
+			public void handle(final KeyEvent event) {
+				if(closeKeyCodeCombination.match(event)) {
 					if(!displayView.getCloseButton().isDisabled()) {
 						displayView.getCloseButton().fire();
 					}
 				}
+				event.consume();
 			}});
 		
 		displayView.getCloseButton().setOnAction(
@@ -811,16 +815,17 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 * listen to ordonnancier button and fire modal create  requested event.
 		 */
-		displayView.getOrdonnancierButton().disableProperty().bind(prescriptionBookSearchService.runningProperty());
-		final KeyCombination codeCombination2 = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_O);
-		displayView.getRootPane().addEventHandler(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+//		displayView.getOrdonnancierButton().disableProperty().bind(prescriptionBookSearchService.runningProperty());
+		final KeyCombination ordonancekeyCodeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_O);
+		displayView.getRootPane().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
-			public void handle(KeyEvent e) {
-				if(codeCombination2.match(e)) {
+			public void handle(final KeyEvent event) {
+				if(ordonancekeyCodeCombination.match(event)) {
 					if(!displayView.getOrdonnancierButton().isDisabled()) {
 						displayView.getOrdonnancierButton().fire();
 					}
 				}
+				event.consume();
 			}});
 		displayView.getOrdonnancierButton().setOnAction(new EventHandler<ActionEvent>()
 				{
