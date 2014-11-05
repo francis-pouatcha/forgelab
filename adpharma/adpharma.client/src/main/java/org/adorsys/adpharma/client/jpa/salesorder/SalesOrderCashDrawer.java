@@ -346,7 +346,7 @@ public class SalesOrderCashDrawer implements Association<SalesOrder, CashDrawer>
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "cashDrawerNumber","cashier.loginName");
+      return PropertyReader.buildToString(this, "cashDrawerNumber","cashier");
    }
 
    @Override

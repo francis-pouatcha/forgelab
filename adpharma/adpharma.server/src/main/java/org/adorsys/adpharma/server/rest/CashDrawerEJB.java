@@ -18,6 +18,7 @@ import org.adorsys.adpharma.server.jpa.Agency;
 import org.adorsys.adpharma.server.jpa.CashDrawer;
 import org.adorsys.adpharma.server.jpa.CashDrawer_;
 import org.adorsys.adpharma.server.jpa.Disbursement;
+import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.Payment;
 import org.adorsys.adpharma.server.jpa.PaymentItem;
@@ -243,7 +244,7 @@ public class CashDrawerEJB
 		List<CashDrawer> cashDrawers = repository.findByOpeningDateBetween(startClosingDate, endClosingDate, start, max);
 
 		for (CashDrawer cashDrawer : cashDrawers) {
-			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer);
+			BigDecimal totalDrugVoucher = salesOrderRepository.getInsurranceSalesByCashDrawer(cashDrawer,DocumentProcessingState.CLOSED);
 			if(totalDrugVoucher!=null)
 				cashDrawer.setTotalDrugVoucher(totalDrugVoucher);
 			

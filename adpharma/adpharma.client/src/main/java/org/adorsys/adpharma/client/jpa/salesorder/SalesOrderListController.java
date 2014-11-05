@@ -39,6 +39,7 @@ import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerCashier;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchResult;
@@ -719,6 +720,15 @@ public class SalesOrderListController implements EntityController
 	{
 		this.searchResult = searchResult;
 		List<SalesOrder> entities = searchResult.getResultList();
+		for(SalesOrder salesOrder: entities) {
+			   String loginName;
+				SalesOrderCashDrawer cashDrawer = salesOrder.getCashDrawer();
+				if(cashDrawer!=null) {
+					CashDrawerCashier cashier = cashDrawer.getCashier();
+					if(cashier!=null)
+					loginName= cashier.getLoginName();
+				}
+		}
 		if (entities == null)
 			entities = new ArrayList<SalesOrder>();
 		listView.getDataList().getItems().setAll(entities);

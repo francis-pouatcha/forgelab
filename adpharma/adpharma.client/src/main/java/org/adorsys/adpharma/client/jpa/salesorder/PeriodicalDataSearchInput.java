@@ -19,7 +19,8 @@ public class PeriodicalDataSearchInput {
 	private SimpleObjectProperty<Calendar> endDate;
 
 	private SimpleBooleanProperty check;
-
+	
+	private SimpleBooleanProperty printXls;
 
 	private SimpleBooleanProperty taxableSalesOnly ;
 
@@ -150,6 +151,27 @@ public class PeriodicalDataSearchInput {
 		if (check == null)
 			check = Boolean.FALSE;
 		this.checkProperty().set(check);
+	}
+	
+	public SimpleBooleanProperty printXlsProperty()
+	{
+		if (printXls == null)
+		{
+			printXls = new SimpleBooleanProperty();
+		}
+		return printXls;
+	}
+
+	public Boolean getPrintXls()
+	{
+		return printXlsProperty().get();
+	}
+
+	public final void setPrintXls(Boolean printXls)
+	{
+		if (printXls == null)
+			printXls = Boolean.FALSE;
+		this.printXlsProperty().set(printXls);
 	}
 
 	public SimpleBooleanProperty twentyOverHeightySalesOnlyProperty()
