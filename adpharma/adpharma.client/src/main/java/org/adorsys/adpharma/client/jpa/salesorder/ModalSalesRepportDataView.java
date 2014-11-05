@@ -17,9 +17,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -90,7 +90,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
 		
 		twentyOverHeightyInQty = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightyInQty", resourceBundle);
-		twentyOverHeightySalesOnly.setText("20/80 en Quantite?");
+		twentyOverHeightyInQty.setText("20/80 en Quantite?");
 		
 		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
 		check.setText("Resultat Groupé Par cip ?");
