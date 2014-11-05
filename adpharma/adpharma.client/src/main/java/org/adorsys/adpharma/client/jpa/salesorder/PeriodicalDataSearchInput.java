@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -26,7 +25,9 @@ public class PeriodicalDataSearchInput {
 
 	private SimpleBooleanProperty nonTaxableSalesOnly  ;
 
-	private SimpleBooleanProperty twentyOverHeightySalesOnly  ;
+	private SimpleBooleanProperty twentyOverHeightySalesOnly;
+	
+	private SimpleBooleanProperty twentyOverHeightyInQty;
 	
 	private SimpleBooleanProperty perVendorAndDiscount;
 	
@@ -193,6 +194,27 @@ public class PeriodicalDataSearchInput {
 		if (twentyOverHeightySalesOnly == null)
 			twentyOverHeightySalesOnly = Boolean.FALSE;
 		this.twentyOverHeightySalesOnlyProperty().set(twentyOverHeightySalesOnly);
+	}
+	
+	public SimpleBooleanProperty twentyOverHeightyInQtyProperty()
+	{
+		if (twentyOverHeightyInQty == null)
+		{
+			twentyOverHeightyInQty = new SimpleBooleanProperty();
+		}
+		return twentyOverHeightyInQty;
+	}
+
+	public Boolean getTwentyOverHeightyInQty()
+	{
+		return twentyOverHeightyInQtyProperty().get();
+	}
+
+	public final void setTwentyOverHeightyInQty(Boolean twentyOverHeightyInQty)
+	{
+		if (twentyOverHeightyInQty == null)
+			twentyOverHeightyInQty = Boolean.FALSE;
+		this.twentyOverHeightyInQtyProperty().set(twentyOverHeightyInQty);
 	}
 
 	public SimpleBooleanProperty nonTaxableSalesOnlyProperty()

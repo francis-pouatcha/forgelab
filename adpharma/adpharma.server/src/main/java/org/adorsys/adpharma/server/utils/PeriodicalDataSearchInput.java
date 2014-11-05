@@ -23,6 +23,8 @@ public class PeriodicalDataSearchInput {
 
 	private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
 	
+	private Boolean twentyOverHeightyInQty = Boolean.FALSE ;
+	
 	private Boolean perVendorAndDiscount;
 
 	private String pic;
@@ -70,6 +72,16 @@ public class PeriodicalDataSearchInput {
 
 	public void setTwentyOverHeightySalesOnly(Boolean twentyOverHeightySalesOnly) {
 		this.twentyOverHeightySalesOnly = twentyOverHeightySalesOnly;
+	}
+	
+	
+
+	public Boolean getTwentyOverHeightyInQty() {
+		return twentyOverHeightyInQty;
+	}
+
+	public void setTwentyOverHeightyInQty(Boolean twentyOverHeightyInQty) {
+		this.twentyOverHeightyInQty = twentyOverHeightyInQty;
 	}
 
 	public void setTaxableSalesOnly(Boolean taxableSalesOnly) {

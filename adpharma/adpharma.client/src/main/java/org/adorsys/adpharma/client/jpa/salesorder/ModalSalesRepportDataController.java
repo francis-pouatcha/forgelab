@@ -102,6 +102,16 @@ public class ModalSalesRepportDataController {
 			}
 		});
 		
+		view.getTwentyOverHeightyInQty().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue)
+				view.getTwentyOverHeightyInQty().setSelected(true);
+			}
+		});
+		
 		view.getPrintXls().selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override

@@ -103,10 +103,6 @@ public class SalesOrderReportPrintTemplatePDF {
 				totalvat
 				);
 		
-		
-		
-		
-		
 	}
 
 	private void newTableRow(String internalPic, 
