@@ -90,7 +90,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
 		
 		twentyOverHeightyInQty = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightyInQty", resourceBundle);
-		twentyOverHeightySalesOnly.setText("20/80 en Quantite?");
+		twentyOverHeightyInQty.setText("20/80 en Quantite?");
 		
 		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
 		check.setText("Resultat Groupé Par cip ?");
