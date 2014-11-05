@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
@@ -51,6 +50,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	
 	private CheckBox twentyOverHeightySalesOnly;
 	
+	private CheckBox twentyOverHeightyInQty;
+	
 	private CheckBox perVendorAndDiscount;
 	
 	private TextField pic ;
@@ -75,19 +76,28 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		LazyViewBuilder lazyviewBuilder = new LazyViewBuilder();
 		beginDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_fromDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
+		
 		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle) ;
 		articleName = lazyviewBuilder.addTextField("Article_articleName_description.title", "pic", resourceBundle) ;
 		
 		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
 		taxableSalesOnly.setText("Taxable Uniquement ?");
+		
 		nonTaxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "nonTaxableSalesOnly", resourceBundle);
 		nonTaxableSalesOnly.setText("Non Taxable Uniquement ?");
+		
 		twentyOverHeightySalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightySalesOnly", resourceBundle);
 		twentyOverHeightySalesOnly.setText("20/80 Uniquement ?");
+		
+		twentyOverHeightyInQty = lazyviewBuilder.addCheckBox("Entity_empty.text", "twentyOverHeightyInQty", resourceBundle);
+		twentyOverHeightySalesOnly.setText("20/80 en Quantite?");
+		
 		check = lazyviewBuilder.addCheckBox("Entity_empty.text", "check", resourceBundle);
 		check.setText("Resultat Groupé Par cip ?");
+		
 		perVendorAndDiscount = lazyviewBuilder.addCheckBox("Entity_empty.text", "perVendorAndDiscount", resourceBundle);
 		perVendorAndDiscount.setText("Remises par vendeurs");
+		
 		printXls= lazyviewBuilder.addCheckBox("Entity_empty.text", "printXls", resourceBundle);
 		printXls.setText("Imprimer en Excel");
 		
@@ -115,6 +125,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
 		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
 		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
+		twentyOverHeightyInQty.selectedProperty().bindBidirectional(model.twentyOverHeightyInQtyProperty());
 		perVendorAndDiscount.selectedProperty().bindBidirectional(model.perVendorAndDiscountProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
 		printXls.selectedProperty().bindBidirectional(model.printXlsProperty());
@@ -189,6 +200,10 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 	public CheckBox getTwentyOverHeightySalesOnly() {
 		return twentyOverHeightySalesOnly;
+	}
+	
+	public CheckBox getTwentyOverHeightyInQty() {
+		return twentyOverHeightyInQty;
 	}
 
 

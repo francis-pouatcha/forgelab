@@ -89,7 +89,7 @@ public class SalesOrderPrinter {
 	    		}
 	    		
 	    		SalesOrderPrintTemplate worker = new SalesOrderPrintTemplate(invoiceData, resourceBundle, locale);
-	    		worker.addItems(invoiceData.getSalesOrderItemSearchResult().getResultList());
+//	    		worker.addItems(invoiceData.getSalesOrderItemSearchResult().getResultList());
 	    		soItemDataService.setSalesOrderPrintTemplateWorker(worker).setSalesOrderPrinterData(invoiceData).start();
 			}
 		});

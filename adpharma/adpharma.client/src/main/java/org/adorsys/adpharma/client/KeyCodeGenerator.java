@@ -25,22 +25,22 @@ public class KeyCodeGenerator {
 	public static KeyCombination getKeyCodeCombination(String keyCodeCombination) {
 	    KeyCombination combination;
 		if(keyCodeCombination.equals(CTRL_A)) {
-			combination= new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}else if (keyCodeCombination.equals(CTRL_B)) {
-			combination= new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}else if (keyCodeCombination.equals(CTRL_C)) {
-			combination= new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}else if (keyCodeCombination.equals(CTRL_D)) {
-			combination= new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.D, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}else if (keyCodeCombination.equals(CTRL_E)) {
-			combination= new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}else if (keyCodeCombination.equals(CTRL_F)) {
-			combination= new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+			combination= new KeyCodeCombination(KeyCode.F, KeyCombination.SHORTCUT_ANY);
 			return combination;
 		}
 		return null;
