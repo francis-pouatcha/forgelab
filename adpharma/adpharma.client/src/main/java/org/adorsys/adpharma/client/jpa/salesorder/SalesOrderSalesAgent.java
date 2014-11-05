@@ -140,7 +140,7 @@ public class SalesOrderSalesAgent implements Association<SalesOrder, Login>, Clo
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    @Override

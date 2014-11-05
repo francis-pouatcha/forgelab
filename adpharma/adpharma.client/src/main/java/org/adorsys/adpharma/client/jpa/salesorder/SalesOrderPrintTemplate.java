@@ -114,17 +114,21 @@ public class SalesOrderPrintTemplate {
 				salesOrder.getCustomer().getFullName()));
 		borderlessCell(rt, paragraph, 2, 1);
 		
-		if(salesOrder.getInsurance()!=null) {
-			String patient=salesOrder.getPatientMatricle()!=null?salesOrder.getPatientMatricle():" ";
+		String patient=salesOrder.getPatientMatricle()!=null?salesOrder.getPatientMatricle():" ";
+		String insurance=salesOrder.getInsurance()!=null?salesOrder.getInsurance().getInsurer().getFullName():" ";
+		
+		@SuppressWarnings("unused")
+		String insuranceName = salesOrder.getInsurance().getInsurer().getFullName();
+		
+		if(insurance!=null) {
+			
 			paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_patientMatricle.title") + " " +patient));
 			borderlessCell(rt, paragraph, 2, 1);
+		
+			paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_insurerName.title") + " " +insurance));
+			borderlessCell(rt, paragraph, 2, 1);
+		
 		}
-		
-		String insurance=salesOrder.getInsurance()!=null?salesOrder.getInsurance().getInsurer().getFullName():" ";
-		paragraph = new Paragraph(new BoldText(resourceBundle.getString("SalesOrderPrintTemplate_insurerName.title") + " " +insurance));
-		borderlessCell(rt, paragraph, 2, 1);
-		
-
 		
 //		paragraph = new Paragraph(new StandardText( "Societe Client : " +"  "+salesOrder.getCustomer().getSociete()+" "));
 //		borderlessCell(rt, paragraph, 2, 1);

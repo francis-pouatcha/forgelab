@@ -28,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
@@ -216,7 +217,13 @@ public class SalesOrderDisplayView
 		buildInsurranceGrid();
 		netClientText.getStyleClass().add("green-text");
 		returnSOIMenu.setText("Retourner");
+		
+		// Buttons Parameters
+		closeButton.setTooltip(new Tooltip("Cloturer la vente: CTRL+C"));
 		closeButton.setFocusTraversable(Boolean.TRUE);
+		
+		ordonnancierButton.setTooltip(new Tooltip("Creer Ordonnancier: CTRL+O"));
+		ordonnancierButton.setFocusTraversable(Boolean.TRUE);
 	}
 
 	public void addValidators()

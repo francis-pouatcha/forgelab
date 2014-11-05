@@ -414,48 +414,16 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 */
 		displayView.getCloseButton().disableProperty().bind(closeService.runningProperty());
-		final KeyCombination codeCombination = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_ANY);
+		final KeyCombination codeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_C);
 		displayView.getRootPane().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
-//		displayView.getCloseButton().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent e) {
 				if(codeCombination.match(e)) {
-					System.out.println("CTRL+C pressed...");
 					if(!displayView.getCloseButton().isDisabled()) {
 						displayView.getCloseButton().fire();
 					}
 				}
 			}});
-//					if(closeService.isRunning()) {
-//						return;
-//					}
-//					String saleKey = salesKeyRecieverView.show();
-//					LoginSearchInput loginSearchInput = new LoginSearchInput();
-//					loginSearchInput.getEntity().setSaleKey(saleKey);
-//					loginSearchInput.getFieldNames().add("saleKey");
-//					LoginSearchResult loginResult = loginService.findBy(loginSearchInput);
-//					if(loginResult.getResultList().isEmpty()){
-//						Dialogs.create().message("Cle de vente Incorrecte").showError();
-//						return ;
-//					}
-//					Login login = loginResult.getResultList().iterator().next();
-//					if(isValideSale(login)){
-//						Set<ConstraintViolation<SalesOrder>> violations = displayView.validate(displayedEntity);
-//						if (violations.isEmpty())
-//						{
-//							if(Dialog.Actions.OK.equals(salesKeyRecieverView.getUserAction())){
-//								displayedEntity.setSalesKey(saleKey);
-//								closeService.setSalesOrder(displayedEntity).start();
-//							}
-//						}
-//						else
-//						{
-//							Dialogs.create().nativeTitleBar().title("Entity_create_error.title").message("Entity_click_to_see_error").showError();
-//						}
-//					}
-//				}
-//				}
-//		});
 		
 		displayView.getCloseButton().setOnAction(
 				new EventHandler<ActionEvent>()
@@ -843,6 +811,17 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 * listen to ordonnancier button and fire modal create  requested event.
 		 */
+		displayView.getOrdonnancierButton().disableProperty().bind(prescriptionBookSearchService.runningProperty());
+		final KeyCombination codeCombination2 = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_O);
+		displayView.getRootPane().addEventHandler(KeyEvent.ANY, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				if(codeCombination2.match(e)) {
+					if(!displayView.getOrdonnancierButton().isDisabled()) {
+						displayView.getOrdonnancierButton().fire();
+					}
+				}
+			}});
 		displayView.getOrdonnancierButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
@@ -852,7 +831,6 @@ public class SalesOrderDisplayController implements EntityController
 				searchInput.getEntity().setSalesOrder(new PrescriptionBookSalesOrder(displayedEntity));
 				searchInput.getFieldNames().add("salesOrder");
 				prescriptionBookSearchService.setSearchInputs(searchInput).start();
-
 			}
 				});
 
