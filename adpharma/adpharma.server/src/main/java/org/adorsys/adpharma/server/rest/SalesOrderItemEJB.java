@@ -51,8 +51,8 @@ public class SalesOrderItemEJB
 	@Inject
 	@DocumentCreatedEvent
 	private Event<SalesOrderItem> salesOrderItemCreatedEvent;
-	
-	
+
+
 	public List<SalesOrderItem> findPreparationDataItem(ProcurementOrderPreparationData data){
 		return repository.findPreparationDataItem(data.getFromDate(), data.getToDate(), true);
 	}
@@ -103,13 +103,13 @@ public class SalesOrderItemEJB
 
 		List<Object[]> sales = new ArrayList<Object[]>();
 		if(check){
-			query ="SELECT s.internalPic , s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE "
+			query ="SELECT  s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) , s.article.pic FROM SalesOrderItem AS s WHERE "
 					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed   ";
 			if(StringUtils.isNotBlank(searchInput.getPic()))
 				query = query+" AND s.article.pic = :pic";
 			if(StringUtils.isNotBlank(searchInput.getArticleName()))
 				query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
-			query = query+" GROUP BY s.article , s.internalPic";
+			query = query+" GROUP BY s.article.pic";
 		}
 
 		Query querys = em.createQuery(query) ;
@@ -125,12 +125,16 @@ public class SalesOrderItemEJB
 		sales = querys.getResultList();
 		for (Object[] objects : sales) {
 			SalesOrderItem item = new SalesOrderItem();
-			String internalPic = (String) objects[0];
-			Article article = (Article) objects[1];
+			int i= 0 ;
+			String internalPic = "" ; 
+			if(!check){
+				internalPic = (String) objects[i++];
+			}
+			Article article = (Article) objects[i++];
 			VAT vat = article.getVat();
 			BigDecimal vatAmount = BigDecimal.ZERO ;	
-			BigDecimal qty = (BigDecimal) objects[2];
-			BigDecimal price = (BigDecimal) objects[3];
+			BigDecimal qty = (BigDecimal) objects[i++];
+			BigDecimal price = (BigDecimal) objects[i++];
 			if(vat!=null )
 				vatAmount =	vat.getRate().multiply(price).divide(BigDecimal.valueOf(100));
 			item.setVatValue(vatAmount);
@@ -153,6 +157,8 @@ public class SalesOrderItemEJB
 			//				}
 			//			}
 
+			if(check)
+				internalPic = article.getPic();
 			item.setInternalPic(internalPic);
 			item.setArticle(article);
 			item.setDeliveredQty(qty);
