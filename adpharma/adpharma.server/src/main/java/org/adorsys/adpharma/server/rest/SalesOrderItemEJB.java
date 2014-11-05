@@ -15,6 +15,8 @@ import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
+import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.VAT;
@@ -49,6 +51,11 @@ public class SalesOrderItemEJB
 	@Inject
 	@DocumentCreatedEvent
 	private Event<SalesOrderItem> salesOrderItemCreatedEvent;
+	
+	
+	public List<SalesOrderItem> findPreparationDataItem(ProcurementOrderPreparationData data){
+		return repository.findPreparationDataItem(data.getFromDate(), data.getToDate(), true);
+	}
 
 	public SalesOrderItem create(SalesOrderItem entity)
 	{
