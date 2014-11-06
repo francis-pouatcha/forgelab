@@ -20,7 +20,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -35,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
+import org.adorsys.adpharma.client.KeyCodeGenerator;
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
