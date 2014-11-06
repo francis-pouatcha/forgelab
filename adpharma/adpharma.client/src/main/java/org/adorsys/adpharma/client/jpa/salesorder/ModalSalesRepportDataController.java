@@ -136,6 +136,10 @@ public class ModalSalesRepportDataController {
 				if(model.getTwentyOverHeightySalesOnly()) {
 					value = getTwentyHeigth(value);
 				}
+				
+				if(model.getTwentyOverHeightyInQty()) {
+					value = getTwentyHeigthInQty(value);
+				}
 
 				if(model.getPrintXls()) {
 					SalesOrderXlsExporter.exportSalesOrderItemsToXls(value, model);
@@ -229,6 +233,42 @@ public class ModalSalesRepportDataController {
 			@Override
 			public int compare(SalesOrderItem o1, SalesOrderItem o2) {
 				return o2.getTotalSalePrice().compareTo(o1.getTotalSalePrice());
+			}
+
+		});
+
+		BigDecimal twentyHeigthyValue = BigDecimal.ZERO;
+
+		for (SalesOrderItem item : source) {
+			twentyHeigthyValue =twentyHeigthyValue.add(item.getTotalSalePrice());
+		}
+		// get tewnty heighty value
+		twentyHeigthyValue = twentyHeigthyValue.multiply(BigDecimal.valueOf(0.8d));
+
+		BigDecimal salesPrice = BigDecimal.ZERO;
+		for (SalesOrderItem item : source) {
+			salesPrice = salesPrice.add(item.getTotalSalePrice()) ;
+			if(salesPrice.compareTo(twentyHeigthyValue) > 0)
+				break ;
+			twentyHeigthy.add(item);
+
+		}
+		int size = twentyHeigthy.size();
+		if(size!= 0){
+			int intValue = BigDecimal.valueOf(0.2d).multiply(BigDecimal.valueOf(size)).intValue()+1;
+			twentyHeigthy = twentyHeigthy.subList(0, intValue) ;
+		}
+		return twentyHeigthy ;
+	}
+	
+	private List<SalesOrderItem> getTwentyHeigthInQty(List<SalesOrderItem> source){
+		List<SalesOrderItem> twentyHeigthy = new ArrayList<SalesOrderItem>() ;
+		//sort by total sales price desc
+		source.sort(new Comparator<SalesOrderItem>() {
+
+			@Override
+			public int compare(SalesOrderItem o1, SalesOrderItem o2) {
+				return o2.getDeliveredQty().compareTo(o1.getDeliveredQty());
 			}
 
 		});

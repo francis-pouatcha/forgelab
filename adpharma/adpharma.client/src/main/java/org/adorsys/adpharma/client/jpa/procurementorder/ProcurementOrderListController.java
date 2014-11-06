@@ -515,7 +515,13 @@ public class ProcurementOrderListController implements EntityController
 		List<ProcurementOrder> entities = searchResult.getResultList();
 		if (entities == null)
 			entities = new ArrayList<ProcurementOrder>();
-		listView.getDataList().getItems().setAll(entities);
+		try {
+			
+			listView.getDataList().getItems().clear();
+			listView.getDataList().getItems().setAll(entities);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		int maxResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getMax() : 5;
 		int pageCount = PaginationUtils.computePageCount(searchResult.getCount(), maxResult);
 		listView.getPagination().setPageCount(pageCount);

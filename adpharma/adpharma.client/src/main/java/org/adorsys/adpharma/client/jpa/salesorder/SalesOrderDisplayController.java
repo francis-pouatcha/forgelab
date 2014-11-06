@@ -20,10 +20,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.Mnemonic;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -42,12 +40,10 @@ import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
 import org.adorsys.adpharma.client.events.SalesOrderId;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
-import org.adorsys.adpharma.client.jpa.article.ArticleRemoveService;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotArticle;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchResult;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotService;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
@@ -59,7 +55,6 @@ import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customer.CustomerSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.ReceiptPrintProperties;
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.insurrance.Insurrance;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceCustomer;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceSearchInput;
@@ -76,7 +71,6 @@ import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSalesOrd
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchInput;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchResult;
 import org.adorsys.adpharma.client.jpa.prescriptionbook.PrescriptionBookSearchService;
-import org.adorsys.adpharma.client.jpa.rolename.RoleName;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemArticle;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemCreateService;
@@ -111,9 +105,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
-import org.jboss.weld.exceptions.IllegalStateException;
-
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Singleton
 public class SalesOrderDisplayController implements EntityController
