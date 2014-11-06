@@ -137,7 +137,6 @@ public class ArticleController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
       displayedViews.add(createController);
       displayComponent();
    }
@@ -148,7 +147,6 @@ public class ArticleController extends DomainComponentController
          return;
       List<EntityController> displayedViews = getDisplayedViews();
       displayedViews.clear();
-//      displayedViews.add(listController);
       displayedViews.add(editController);
       displayComponent();
    }

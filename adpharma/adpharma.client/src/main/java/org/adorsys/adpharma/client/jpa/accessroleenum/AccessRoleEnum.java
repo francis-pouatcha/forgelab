@@ -33,5 +33,8 @@ public enum AccessRoleEnum
 	   @Description("AccessRoleEnum_PERIODICAL_SALES_REPPORT_PERM_description")
 	   PERIODICAL_SALES_REPPORT_PERM,
 	   @Description("AccessRoleEnum_PERIODICAL_DELIVERY_REPPORT_PERM_description")
-	   PERIODICAL_DELIVERY_REPPORT_PERM
+	   PERIODICAL_DELIVERY_REPPORT_PERM,
+	   @Description("AccessRoleEnum_UPDATE_DELIVERY_HEAD_PERM_description")
+	   UPDATE_DELIVERY_HEAD_PERM
+	   
 }

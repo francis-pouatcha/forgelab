@@ -417,16 +417,15 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 */
 		displayView.getCloseButton().disableProperty().bind(closeService.runningProperty());
-		final KeyCombination closeKeyCodeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_C);
+		final KeyCombination closeKeyCodeCombination = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
 		displayView.getRootPane().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			@Override
-			public void handle(final KeyEvent event) {
-				if(closeKeyCodeCombination.match(event)) {
+			public void handle(KeyEvent e) {
+				if(closeKeyCodeCombination.match(e)) {
 					if(!displayView.getCloseButton().isDisabled()) {
 						displayView.getCloseButton().fire();
 					}
 				}
-				event.consume();
 			}});
 		
 		displayView.getCloseButton().setOnAction(
@@ -815,18 +814,6 @@ public class SalesOrderDisplayController implements EntityController
 		/*
 		 * listen to ordonnancier button and fire modal create  requested event.
 		 */
-//		displayView.getOrdonnancierButton().disableProperty().bind(prescriptionBookSearchService.runningProperty());
-		final KeyCombination ordonancekeyCodeCombination = KeyCodeGenerator.getKeyCodeCombination(KeyCodeGenerator.CTRL_O);
-		displayView.getRootPane().addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(final KeyEvent event) {
-				if(ordonancekeyCodeCombination.match(event)) {
-					if(!displayView.getOrdonnancierButton().isDisabled()) {
-						displayView.getOrdonnancierButton().fire();
-					}
-				}
-				event.consume();
-			}});
 		displayView.getOrdonnancierButton().setOnAction(new EventHandler<ActionEvent>()
 				{
 			@Override
