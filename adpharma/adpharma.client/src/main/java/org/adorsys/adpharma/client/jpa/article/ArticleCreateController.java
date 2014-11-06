@@ -70,7 +70,7 @@ public class ArticleCreateController implements EntityController
    private ErrorMessageDialog errorMessageDialog;
 
    @Inject
-   @Bundle(CrudKeys.class)
+   @Bundle({ CrudKeys.class, Article.class })
    private ResourceBundle resourceBundle;
 
    /**
@@ -99,6 +99,8 @@ public class ArticleCreateController implements EntityController
          public void handle(ActionEvent e)
          {
             Set<ConstraintViolation<Article>> violations = createView.getView().validate(model);
+            boolean validatePrices = ValidationProcessArticle.validatePrices(model);
+            
             if (violations.isEmpty())
             {
             	model.setQtyInStock(BigDecimal.ZERO);
@@ -106,10 +108,10 @@ public class ArticleCreateController implements EntityController
             }
             else
             {
-               errorMessageDialog.getTitleText().setText(
-                     resourceBundle.getString("Entity_create_error.title"));
-               errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
-               errorMessageDialog.display();
+//            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Article_validation_prices_error.title"));
+            	errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
+            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
+                errorMessageDialog.display();
             }
          }
       });
