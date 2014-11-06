@@ -99,20 +99,23 @@ public class ArticleCreateController implements EntityController
          public void handle(ActionEvent e)
          {
             Set<ConstraintViolation<Article>> violations = createView.getView().validate(model);
-            boolean validatePrices = ValidationProcessArticle.validatePrices(model);
+			boolean validatePrices = ValidationProcessArticle.validatePrices(model);
             
-            if (violations.isEmpty())
+            if (violations.isEmpty() && validatePrices==true)
             {
             	model.setQtyInStock(BigDecimal.ZERO);
                createService.setModel(model).start();
-            }
-            else
-            {
-//            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Article_validation_prices_error.title"));
+            }else if(!violations.isEmpty()){
             	errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
             	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
                 errorMessageDialog.display();
-            }
+            }else if (validatePrices==false) {
+            	errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
+            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Article_validation_prices_error.title"));
+            	errorMessageDialog.getDetailText().setStyle("-fx-color: #FF0000; -fx-font-weight: bold;"); 
+            	errorMessageDialog.display();
+			}
+            return;
          }
       });
 
