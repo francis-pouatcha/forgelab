@@ -51,53 +51,74 @@ public class Delivery implements Cloneable
 
    @Description("Delivery_deliveryNumber_description")
    private SimpleStringProperty deliveryNumber;
+   
    @Description("Delivery_procurementOrderNumber_description")
    private SimpleStringProperty procurementOrderNumber;
+   
    @Description("Delivery_deliverySlipNumber_description")
    private SimpleStringProperty deliverySlipNumber;
+   
    @Description("Delivery_deliveryProcessingState_description")
    private SimpleObjectProperty<DocumentProcessingState> deliveryProcessingState;
+   
    @Description("Delivery_amountBeforeTax_description")
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
+   
    @Description("Delivery_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
+   
    @Description("Delivery_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountDiscount;
+   
    @Description("Delivery_netAmountToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
+   
    @Description("Delivery_amountVat_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountVat;
+   
    @Description("Delivery_dateOnDeliverySlip_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy")
    private SimpleObjectProperty<Calendar> dateOnDeliverySlip;
+   
    @Description("Delivery_orderDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> orderDate;
+   
    @Description("Delivery_deliveryDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> deliveryDate;
+   
    @Description("Delivery_recordingDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordingDate;
+   
    @Description("Delivery_deliveryItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = DeliveryItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<DeliveryItem>> deliveryItems;
+   
    @Description("Delivery_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<DeliveryCreatingUser> creatingUser;
+   
+   @Description("Delivery_closeUser_description")
+   private SimpleStringProperty closeUser;
+   
    @Description("Delivery_supplier_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    private SimpleObjectProperty<DeliverySupplier> supplier;
+   
    @Description("Delivery_vat_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
    private SimpleObjectProperty<DeliveryVat> vat;
+   
    @Description("Delivery_currency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Currency.class)
    private SimpleObjectProperty<DeliveryCurrency> currency;
+   
    @Description("Delivery_receivingAgency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<DeliveryReceivingAgency> receivingAgency;
@@ -432,6 +453,25 @@ public class Delivery implements Cloneable
       PropertyReader.copy(creatingUser, getCreatingUser());
       creatingUserProperty().setValue(ObjectUtils.clone(getCreatingUser()));
    }
+   
+   public SimpleStringProperty closeUserProperty()
+   {
+      if (closeUser == null)
+      {
+    	  closeUser = new SimpleStringProperty();
+      }
+      return closeUser;
+   }
+
+   public String getCloseUser()
+   {
+      return closeUserProperty().get();
+   }
+
+   public final void setCloseUser(String closeUser)
+   {
+      this.closeUserProperty().set(closeUser);
+   }
 
    public SimpleObjectProperty<DeliverySupplier> supplierProperty()
    {
@@ -595,6 +635,7 @@ public class Delivery implements Cloneable
       e.recordingDate = recordingDate;
       e.deliveryItems = deliveryItems;
       e.creatingUser = creatingUser;
+      e.closeUser = closeUser;
       e.supplier = supplier;
       e.vat = vat;
       e.currency = currency;

@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.articlelot;
 
+import java.math.BigDecimal;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -31,7 +32,10 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ValidationProcessArticle;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class ArticleLotEditController implements EntityController
@@ -67,7 +71,7 @@ public class ArticleLotEditController implements EntityController
    private ErrorMessageDialog loadErrorMessageDialog;
 
    @Inject
-   @Bundle(CrudKeys.class)
+   @Bundle({ CrudKeys.class, Article.class })
    private ResourceBundle resourceBundle;
 
    @PostConstruct
@@ -93,16 +97,23 @@ public class ArticleLotEditController implements EntityController
                {
 
                   Set<ConstraintViolation<ArticleLot>> violations = editView.getView().validate(displayedEntity);
-                  if (violations.isEmpty())
+                  BigDecimal purchasePricePU = displayedEntity.getPurchasePricePU();
+                  BigDecimal salesPricePU = displayedEntity.getSalesPricePU();
+                  
+                  boolean validatePrices = ValidationProcessArticle.validatePrices(purchasePricePU, salesPricePU);
+                  if (violations.isEmpty() && validatePrices)
                   {
                      editService.setArticleLot(displayedEntity).start();
                   }
-                  else
+                  else if(!violations.isEmpty())
                   {
                      editErrorMessageDialog.getTitleText().setText(
                            resourceBundle.getString("Entity_edit_error.title"));
                      editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
                      editErrorMessageDialog.display();
+                  }else if (validatePrices==false) {
+                	  Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
+  					.nativeTitleBar().message(resourceBundle.getString("Article_validation_prices_error.title")).showError();
                   }
                }
             });

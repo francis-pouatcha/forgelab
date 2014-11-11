@@ -15,5 +15,14 @@ public class ValidationProcessArticle {
 			  return false;
 	      }
 	}
+	
+	public static boolean validatePrices(BigDecimal pa, BigDecimal pv) {
+	      int result = pa.compareTo(pv); 
+	      if(result==1) {
+	    	  return true;
+	      }else {
+			  return false;
+	      }
+	}
 
 }

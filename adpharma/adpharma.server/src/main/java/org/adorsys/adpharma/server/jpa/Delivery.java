@@ -71,6 +71,10 @@ public class Delivery implements Serializable
 	@NotNull(message = "Delivery_creatingUser_NotNull_validation")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
 	private Login creatingUser;
+	
+	@Column
+	@Description("Delivery_closeUser_description")
+	private String closeUser;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Description("Delivery_orderDate_description")
@@ -240,7 +244,16 @@ public class Delivery implements Serializable
 	{
 		this.creatingUser = creatingUser;
 	}
+	
+	public String getCloseUser() {
+		return this.closeUser;
+	}
+	
 
+	public void setCloseUser(final String closeUser) {
+		this.closeUser = closeUser;
+	}
+	
 	public Date getOrderDate()
 	{
 		return this.orderDate;

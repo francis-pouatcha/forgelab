@@ -135,6 +135,7 @@ public class DeliveryListView
 		viewBuilder.addStringColumn(dataList, "deliverySlipNumber", "Delivery_deliverySlipNumber_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "deliveryProcessingState", "Delivery_deliveryProcessingState_description.title", resourceBundle, deliveryProcessingStateConverter);
 		viewBuilder.addStringColumn(dataList, "creatingUser", "Delivery_creatingUser_description.title", resourceBundle,150d);
+		viewBuilder.addStringColumn(dataList, "closeUser", "Delivery_closeUser_description.title", resourceBundle,150d);
 		viewBuilder.addStringColumn(dataList, "supplier", "Delivery_supplier_description.title", resourceBundle,250d);
 		viewBuilder.addDateColumn(dataList, "dateOnDeliverySlip", "Delivery_dateOnDeliverySlip_description.title", resourceBundle, "dd-MM-yyyy", locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "Delivery_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);

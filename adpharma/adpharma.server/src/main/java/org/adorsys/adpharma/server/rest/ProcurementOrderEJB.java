@@ -210,8 +210,6 @@ public class ProcurementOrderEJB
 		BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 		
 		for (SalesOrderItem item : salesOrderItems) {
-			
-			
 			if(cashedItem.containsKey(item.getArticle())){
 				totalPurchasePrice= totalPurchasePrice.subtract(cashedItem.get(item.getArticle()).getTotalPurchasePrice());
 				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();

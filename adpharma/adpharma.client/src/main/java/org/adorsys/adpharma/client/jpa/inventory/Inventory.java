@@ -50,25 +50,36 @@ public class Inventory implements Cloneable
 
    @Description("Inventory_inventoryNumber_description")
    private SimpleStringProperty inventoryNumber;
+   
    @Description("Inventory_description_description")
    private SimpleStringProperty description;
+   
    @Description("Inventory_inventoryStatus_description")
    private SimpleObjectProperty<DocumentProcessingState> inventoryStatus;
+   
    @Description("Inventory_gapSaleAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> gapSaleAmount;
+   
    @Description("Inventory_gapPurchaseAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> gapPurchaseAmount;
+   
    @Description("Inventory_inventoryDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> inventoryDate;
+   
    @Description("Inventory_inventoryItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = InventoryItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<InventoryItem>> inventoryItems;
+   
    @Description("Inventory_recordingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<InventoryRecordingUser> recordingUser;
+   
+   @Description("Inventory_closeUser_description")
+   private SimpleStringProperty closeUser;
+   
    @Description("Inventory_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<InventoryAgency> agency;
@@ -337,6 +348,26 @@ public class Inventory implements Cloneable
 			createEmpty = Boolean.FALSE;
 		this.createEmptyProperty().set(createEmpty);
 	}
+	
+	 public SimpleStringProperty closeUserProperty()
+	   {
+	      if (closeUser == null)
+	      {
+	    	  closeUser = new SimpleStringProperty();
+	      }
+	      return closeUser;
+	   }
+
+	   public String getCloseUser()
+	   {
+	      return closeUserProperty().get();
+	   }
+
+	   public final void setCloseUser(String closeUser)
+	   {
+	      this.closeUserProperty().set(closeUser);
+	   }
+	
 	
    @Override
    public int hashCode()

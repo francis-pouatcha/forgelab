@@ -24,7 +24,6 @@ public class CustomerEJBOtherClientsHelper {
 	static{
 		Properties properties = new Properties();
 		InputStream propStream = CustomerEJBOtherClientsHelper.class.getResourceAsStream(CustomerEJBOtherClientsHelper.class.getSimpleName()+".properties");
-		System.out.println(CustomerEJBOtherClientsHelper.class.getSimpleName()+".properties");
 		if(propStream==null) throw new IllegalStateException("Missing other customers property file");
 		try {
 			properties.load(propStream);

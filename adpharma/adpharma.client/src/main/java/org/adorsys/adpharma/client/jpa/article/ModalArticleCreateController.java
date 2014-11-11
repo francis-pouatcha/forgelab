@@ -76,14 +76,18 @@ public class ModalArticleCreateController {
 			@Override
 			public void handle(ActionEvent event) {
 				Set<ConstraintViolation<Article>> violations = modalArticleCreateView.getView().validate(model);
-				if (violations.isEmpty())
+				boolean validatePrices = ValidationProcessArticle.validatePrices(model);
+				if (violations.isEmpty() && validatePrices==true)
 				{
 					articleCreateService.setModel(model).start();
 				}
-				else
+				else if(!violations.isEmpty())
 				{
 					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
 					.nativeTitleBar().message(model+"").showError();
+				}else if (validatePrices==false) {
+					Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
+					.nativeTitleBar().message(resourceBundle.getString("Article_validation_prices_error.title")).showError();
 				}
 			}
 

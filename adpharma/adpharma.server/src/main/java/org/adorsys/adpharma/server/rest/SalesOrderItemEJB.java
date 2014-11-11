@@ -103,13 +103,14 @@ public class SalesOrderItemEJB
 
 		List<Object[]> sales = new ArrayList<Object[]>();
 		if(check){
-			query ="SELECT  s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) , s.article.pic FROM SalesOrderItem AS s WHERE "
+			query ="SELECT  s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) , s.article.pic, s.article.articleName FROM SalesOrderItem AS s WHERE "
 					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed   ";
 			if(StringUtils.isNotBlank(searchInput.getPic()))
 				query = query+" AND s.article.pic = :pic";
 			if(StringUtils.isNotBlank(searchInput.getArticleName()))
 				query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
-			query = query+" GROUP BY s.article.pic";
+			query = query+" GROUP BY s.article.pic, s.article.articleName, s.article";
+			query = query+" ORDER BY s.article.articleName";
 		}
 
 		Query querys = em.createQuery(query) ;
@@ -124,6 +125,7 @@ public class SalesOrderItemEJB
 		querys.setParameter("cashed", Boolean.TRUE);
 		sales = querys.getResultList();
 		for (Object[] objects : sales) {
+			BigDecimal vatAmount = BigDecimal.ZERO;	
 			SalesOrderItem item = new SalesOrderItem();
 			int i= 0 ;
 			String internalPic = "" ; 
@@ -132,7 +134,6 @@ public class SalesOrderItemEJB
 			}
 			Article article = (Article) objects[i++];
 			VAT vat = article.getVat();
-			BigDecimal vatAmount = BigDecimal.ZERO ;	
 			BigDecimal qty = (BigDecimal) objects[i++];
 			BigDecimal price = (BigDecimal) objects[i++];
 			if(vat!=null )
@@ -157,8 +158,7 @@ public class SalesOrderItemEJB
 			//				}
 			//			}
 
-			if(check)
-				internalPic = article.getPic();
+			if(check) internalPic = article.getPic();
 			item.setInternalPic(internalPic);
 			item.setArticle(article);
 			item.setDeliveredQty(qty);

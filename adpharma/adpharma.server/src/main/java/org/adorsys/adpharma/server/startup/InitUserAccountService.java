@@ -212,7 +212,23 @@ public class InitUserAccountService
 				}
 			}
 		}
+		createRoles();
 	}
+	
+	// Create roles if not exists
+  private void createRoles() {
+	  AccessRoleEnum[] roleEnums = AccessRoleEnum.values();
+	  for(AccessRoleEnum roleEnum: roleEnums) {
+		  RoleName roleName = new RoleName();
+		  roleName.setName(roleEnum.name());
+		  List<RoleName> found = roleEJB.findBy(roleName, 0, 1, new SingularAttribute[] { RoleName_.name });
+		  if (!found.isEmpty()) {
+			continue;
+		  }else {
+			  roleEJB.create(roleName);
+		  }
+	  }
+  }
 
 	private void createPermission(String entityFqn)
 	{

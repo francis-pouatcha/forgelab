@@ -94,11 +94,11 @@ public class DebtStatementReportPrintTemplatePDF {
 		BigDecimal instotal = BigDecimal.ZERO;
 		BigDecimal ticketMt = BigDecimal.ZERO;
 		for (CustomerInvoice inoice : invoices) {
-			String societe = null ;
+			String societe = inoice.getCustomer().getSociete()!=null?inoice.getCustomer().getSociete():"";
 			BigDecimal inssurancePart = inoice.getInsurance().getCoverageRate().multiply(inoice.getNetToPay()).divide(BigDecimal.valueOf(100));
 			if(inoice.getCustomer()!=null)
 				newTableRow(inoice.getInvoiceNumber(), 
-						inoice.getCustomer().getSociete()+"",
+						societe,
 						inoice.getInsurance().getCustomer().getSerialNumber(),
 						inoice.getPatientMatricle(),
 						inoice.getInsurance().getCustomer().getFullName(),
