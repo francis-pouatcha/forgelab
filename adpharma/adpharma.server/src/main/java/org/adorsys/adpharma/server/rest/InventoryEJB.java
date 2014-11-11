@@ -75,6 +75,7 @@ public class InventoryEJB
 
 	@Inject
 	private SecurityUtil securityUtil ;
+	
 
 	public Inventory create(Inventory entity)
 	{
@@ -98,12 +99,14 @@ public class InventoryEJB
 	}
 
 	public Inventory closeInventory(Inventory inventory){
+		Login connectedUser = securityUtil.getConnectedUser();
 		Inventory original = attach(inventory);
 		if(DocumentProcessingState.CLOSED.equals(original.getInventoryStatus()))
 			return original ;
 		Set<InventoryItem> inventoryItems = original.getInventoryItems();
 		original.initAmount();
 		original.setInventoryStatus(DocumentProcessingState.CLOSED);
+		original.setCloseUser(connectedUser.getLoginName());
 		for (InventoryItem item : inventoryItems) {
 			original.setGapPurchaseAmount(original.getGapPurchaseAmount().add(item.getGapTotalPurchasePrice()));
 			original.setGapSaleAmount(original.getGapSaleAmount().add(item.getGapTotalSalePrice()));

@@ -159,6 +159,8 @@ public class ArticleView extends AbstractForm<Article>
       // no active validator
       // no active validator
    }
+   
+   
 
    public Set<ConstraintViolation<Article>> validate(Article model)
    {

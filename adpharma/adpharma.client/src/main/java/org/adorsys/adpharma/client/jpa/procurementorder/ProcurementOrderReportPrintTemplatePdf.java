@@ -76,9 +76,10 @@ public class ProcurementOrderReportPrintTemplatePdf {
 					continue ;
 			}
 			total = item.getTotalPurchasePrice()!=null?total.add(item.getTotalPurchasePrice()):total;
+			String salesDate= item.getProductSalesDate()!=null?DateHelper.format(item.getProductSalesDate().getTime(), DateHelper.DATE_TIME_FORMAT):"";
 			newTableRow(item.getMainPic(),
 					item.getArticle().getArticleName(),
-					DateHelper.format(item.getProductSalesDate().getTime(), DateHelper.DATE_TIME_FORMAT),
+					salesDate,
 					item.getArticle().getQtyInStock(),
 					item.getQtyOrdered(),
 					item.getAvailableQty(),

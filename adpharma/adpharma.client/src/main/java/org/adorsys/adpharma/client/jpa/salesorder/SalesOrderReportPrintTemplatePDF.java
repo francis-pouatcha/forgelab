@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
+import org.adorsys.adpharma.client.utils.DateHelper;
 import org.adorsys.javafx.crud.extensions.control.CalendarFormat;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
@@ -190,8 +191,10 @@ public class SalesOrderReportPrintTemplatePDF {
 		paragraph.setAlignment(Element.ALIGN_LEFT);
 		document.add(paragraph);
 
-		paragraph = new Paragraph(new StandardText("Periode Du  :"+org.adorsys.adpharma.client.utils.DateHelper.format(model.getBeginDate().getTime(), "EEE dd MMMMM yyyy")+" AU : "+
-				org.adorsys.adpharma.client.utils.DateHelper.format(model.getEndDate().getTime(), "EEE dd MMMMM yyyy")));
+		String beginDate= model.getBeginDate()!=null?DateHelper.format(model.getBeginDate().getTime(), "EEE dd MMMMM yyyy"):"";
+		String endDate= model.getEndDate()!=null?DateHelper.format(model.getEndDate().getTime(), "EEE dd MMMMM yyyy"):"";
+		paragraph = new Paragraph(new StandardText("Periode Du  :"+beginDate+" AU : "+
+				endDate));
 		paragraph.setAlignment(Element.ALIGN_RIGHT);
 		document.add(paragraph);
 

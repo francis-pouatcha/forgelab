@@ -140,7 +140,7 @@ public class DeliveryCreatingUser implements Association<Delivery, Login>, Clone
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    @Override

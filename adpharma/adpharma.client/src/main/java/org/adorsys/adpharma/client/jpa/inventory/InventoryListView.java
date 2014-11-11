@@ -119,6 +119,7 @@ public class InventoryListView
 		viewBuilder.addEnumColumn(dataList, "inventoryStatus", "Inventory_inventoryStatus_description.title", resourceBundle, documentProcessingStateConverter);
 		viewBuilder.addStringColumn(dataList, "section", "Inventory_section_description.title", resourceBundle,300d);
 		viewBuilder.addStringColumn(dataList, "recordingUser", "Inventory_recordingUser_description.title", resourceBundle);
+		viewBuilder.addStringColumn(dataList, "closeUser", "Inventory_closeUser_description.title", resourceBundle);
 		viewBuilder.addDateColumn(dataList, "inventoryDate", "Inventory_inventoryDate_description.title", resourceBundle,"dd-MM-yyyy",locale);
 
 

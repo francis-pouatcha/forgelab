@@ -140,7 +140,7 @@ public class InventoryRecordingUser implements Association<Inventory, Login>, Cl
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    @Override

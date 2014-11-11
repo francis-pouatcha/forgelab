@@ -102,13 +102,36 @@ public class ModalSalesRepportDataController {
 			}
 		});
 		
+		view.getTwentyOverHeightySalesOnly().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					view.getTwentyOverHeightySalesOnly().setSelected(true);
+					view.getTwentyOverHeightyInQty().setDisable(Boolean.TRUE);
+				}
+				if(oldValue) {
+					view.getTwentyOverHeightySalesOnly().setSelected(false);
+					view.getTwentyOverHeightyInQty().setDisable(Boolean.FALSE);
+				}
+				
+			}
+		});
+		
 		view.getTwentyOverHeightyInQty().selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0,
 					Boolean oldValue, Boolean newValue) {
-				if(newValue)
-				view.getTwentyOverHeightyInQty().setSelected(true);
+				if(newValue) {
+					view.getTwentyOverHeightyInQty().setSelected(true);
+					view.getTwentyOverHeightySalesOnly().setDisable(Boolean.TRUE);	
+				}
+				if(oldValue) {
+					view.getTwentyOverHeightyInQty().setSelected(false);
+					view.getTwentyOverHeightySalesOnly().setDisable(Boolean.FALSE);	
+				}
 			}
 		});
 		

@@ -67,7 +67,7 @@ public class ArticleEditController implements EntityController
    private ErrorMessageDialog loadErrorMessageDialog;
 
    @Inject
-   @Bundle(CrudKeys.class)
+   @Bundle({ CrudKeys.class, Article.class })
    private ResourceBundle resourceBundle;
 
    @PostConstruct
@@ -93,17 +93,21 @@ public class ArticleEditController implements EntityController
                {
 
                   Set<ConstraintViolation<Article>> violations = editView.getView().validate(displayedEntity);
-                  if (violations.isEmpty())
+                  boolean validatePrices = ValidationProcessArticle.validatePrices(displayedEntity);
+                  if (violations.isEmpty() && validatePrices==true)
                   {
                      editService.setArticle(displayedEntity).start();
                   }
-                  else
-                  {
-                     editErrorMessageDialog.getTitleText().setText(
-                           resourceBundle.getString("Entity_edit_error.title"));
+                  else if (!violations.isEmpty()) {
+                     editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
                      editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
                      editErrorMessageDialog.display();
-                  }
+                  }else if (validatePrices==false) {
+                	  editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
+                	  editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Article_validation_prices_error.title"));
+                	  editErrorMessageDialog.getDetailText().setStyle("-fx-color: #FF0000; -fx-font-weight: bold;");
+                	  editErrorMessageDialog.display();
+    			}
                }
             });
 

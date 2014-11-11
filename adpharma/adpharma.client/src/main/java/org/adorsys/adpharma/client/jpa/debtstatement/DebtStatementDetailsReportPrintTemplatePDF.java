@@ -48,6 +48,9 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 	private String pdfFileName;
 	private FileOutputStream fos;
 	private PdfPTable reportTable;
+	private PdfPTable reportProductTable;
+	
+	
 
 	private final Login reportPrinter;
 	private final ResourceBundle resourceBundle;
@@ -127,7 +130,7 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 			String articles = formatArticles(articlesFromInvoice);
 			if(inoice.getCustomer()!=null)
 				newTableRow(inoice.getInvoiceNumber(),
-						articles,
+						inoice,
 //						inoice.getCustomer().getSociete()+"",
 //						inoice.getInsurance().getCustomer().getSerialNumber(),
 //						inoice.getPatientMatricle(),
@@ -142,11 +145,44 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 			instotal =	instotal.add(inoice.getInsurranceRestTopay());
 			ticketMt = ticketMt.add(inoice.getNetToPay().subtract(inoice.getInsurranceRestTopay()));
 		}
-		newTableRow(null,null, null, "TOTAUX :",total,ticketMt, instotal, null);
+		CustomerInvoice invoice = new CustomerInvoice();
+		newTableRow(null,invoice, null, "TOTAUX :",total,ticketMt, instotal, null);
+	}
+	
+	private void fillTableProductHeader() throws DocumentException{
+		reportProductTable = new PdfPTable(new float[]{.20f,.67f,.13f});
+		reportProductTable.setWidthPercentage(100);
+		reportProductTable.setHeaderRows(1);
+		
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new BoldText("CIP"));
+		reportProductTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new BoldText("DESIGNATION"));
+		reportProductTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new BoldText("QTE"));
+		reportProductTable.addCell(pdfPCell);
+	}
+	
+	private void newTableProductRow(String cip, String designation, BigInteger qte) {
+		PdfPCell pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(cip));
+		reportProductTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(designation));
+		reportProductTable.addCell(pdfPCell);
+		
+		pdfPCell = new PdfPCell();
+		pdfPCell.addElement(new StandardText(qte.toString()));
+		reportProductTable.addCell(pdfPCell);
 	}
 
 	private void newTableRow(String invoiceNumber, 
-			String product,
+			CustomerInvoice invoice,
 			String client,
 			String date,
 			BigDecimal totalAmount,
@@ -154,14 +190,27 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 			BigDecimal amount, 
 			BigDecimal rate
 			) {
+		try {
+			fillTableProductHeader();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		List<CustomerInvoiceItem> invoiceItems = new ArrayList<CustomerInvoiceItem>();
+		invoiceItems=invoice.getInvoiceItems();
+		if(!invoiceItems.isEmpty()) {
+			for(CustomerInvoiceItem invoiceItem: invoiceItems) {
+				newTableProductRow(invoiceItem.getInternalPic(), invoiceItem.getArticle().getArticleName(), invoiceItem.getPurchasedQty().toBigInteger());
+			}
+		}
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(invoiceNumber));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText(product));
-		reportTable.addCell(product);
+//		pdfPCell.addElement(new StandardText(product));
+		pdfPCell.addElement(reportProductTable);
+		reportTable.addCell(pdfPCell);
 
 
 		pdfPCell = new PdfPCell();
@@ -194,14 +243,14 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 		reportTable = new PdfPTable(new float[]{.1f,.40f,.25f,.14f,.07f,.07f,.07f,.07f});
 		reportTable.setWidthPercentage(100);
 		reportTable.setHeaderRows(1);
-
+		
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.addElement(new StandardText(resourceBundle.getString("DebtStatement_Print_invoice_description.title")));
 		reportTable.addCell(pdfPCell);
 		
 		pdfPCell = new PdfPCell();
-		pdfPCell.addElement(new StandardText("Produits(CIP - DESIGNATION - QTE CMDEE)"));
+		pdfPCell.addElement(new StandardText("Produits"));
 		reportTable.addCell(pdfPCell);
 
 
@@ -307,6 +356,8 @@ public class DebtStatementDetailsReportPrintTemplatePDF {
 			this(new Phrase(string));
 		}
 	}
+	
+	
 
 	public void closeDocument() {
 		try {

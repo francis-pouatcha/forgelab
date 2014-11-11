@@ -37,6 +37,7 @@ import org.adorsys.adpharma.client.events.ReportMenuItem;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.ValidationProcessArticle;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemArticle;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemCreateService;
@@ -73,6 +74,7 @@ import org.adorsys.javafx.crud.extensions.login.LogoutSucceededEvent;
 import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -114,6 +116,9 @@ public class DeliveryDisplayController implements EntityController
 	@Inject
 	@EntityCreateRequestedEvent
 	private Event<Delivery> createRequestEvent;
+	
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
 
 	@Inject
 	@EntitySearchRequestedEvent
@@ -650,6 +655,7 @@ public class DeliveryDisplayController implements EntityController
 		displayView.getStockQuantity().requestFocus();
 	}
 
+	@SuppressWarnings("unused")
 	private void handleModalArticleCreateDone(@Observes @ModalEntityCreateDoneEvent Article article) {
 		handleSelectedArticle(article);
 
@@ -661,6 +667,11 @@ public class DeliveryDisplayController implements EntityController
 	}
 
 	private void handleAddDeliveryItem(DeliveryItem deliveryItem) {
+		
+		BigDecimal purchasePricePU = deliveryItem.getPurchasePricePU();
+		BigDecimal salesPricePU = deliveryItem.getSalesPricePU();
+		boolean validatePrices = ValidationProcessArticle.validatePrices(purchasePricePU, salesPricePU);
+		
 		Iterator<DeliveryItem> iterator = displayView.getDataList().getItems().iterator();
 		
 		if(isValidDeliveryItem()){
@@ -748,7 +759,7 @@ private void	saveDeliveryItem(DeliveryItem deliveryItem){
 	}
 
 	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
-		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+		if(roles.contains(AccessRoleEnum.MANAGER.name()) || roles.contains(AccessRoleEnum.UPDATE_DELIVERY_HEAD_PERM.name())){
 			displayView.getEditButton().setVisible(true);
 		}else {
 			displayView.getEditButton().setVisible(false);

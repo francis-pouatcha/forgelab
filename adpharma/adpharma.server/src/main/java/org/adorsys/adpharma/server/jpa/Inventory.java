@@ -75,6 +75,10 @@ public class Inventory implements Serializable
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
 	@NotNull(message = "Inventory_recordingUser_NotNull_validation")
 	private Login recordingUser;
+	
+	@Column
+	@Description("Delivery_closeUser_description")
+	private String closeUser;
 
 	@Column
 	@Description("Inventory_gapSaleAmount_description")
@@ -246,6 +250,14 @@ public class Inventory implements Serializable
 	public void setInventoryDate(final Date inventoryDate)
 	{
 		this.inventoryDate = inventoryDate;
+	}
+	
+	public String getCloseUser() {
+		return this.closeUser;
+	}
+
+	public void setCloseUser(final String closeUser) {
+		this.closeUser = closeUser;
 	}
 
 	@Override
