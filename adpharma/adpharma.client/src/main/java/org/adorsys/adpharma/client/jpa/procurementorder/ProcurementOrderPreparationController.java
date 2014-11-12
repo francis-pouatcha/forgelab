@@ -2,6 +2,8 @@ package org.adorsys.adpharma.client.jpa.procurementorder;
 
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +14,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.procmtordertriggermode.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.client.jpa.supplier.Supplier;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
@@ -73,6 +76,7 @@ public class ProcurementOrderPreparationController {
 
 			}
 		});
+		
 
 		preparationService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
@@ -102,7 +106,25 @@ public class ProcurementOrderPreparationController {
 		});
 		supplierSearchService.setOnFailed(callFailedEventHandler);
 
+		view.getMode().valueProperty().addListener(new ChangeListener<ProcmtOrderTriggerMode>() {
+
+			@Override
+			public void changed(ObservableValue<? extends ProcmtOrderTriggerMode> observableValue,
+					ProcmtOrderTriggerMode oldValue, ProcmtOrderTriggerMode newValue) {
+			if(newValue!=null) {
+				if (newValue.equals(ProcmtOrderTriggerMode.MANUAL)) {
+					view.getFromDate().setDisable(Boolean.TRUE);
+					view.getToDate().setDisable(Boolean.TRUE);
+				}else {
+					view.getFromDate().setDisable(Boolean.FALSE);
+					view.getToDate().setDisable(Boolean.FALSE);
+				}
+			              }
+			}
+		});
 	}
+	
+	
 
 	public void handleProcurementOrderPreparation(@Observes @ModalEntityCreateRequestedEvent ProcurementOrderPreparationData model){
 		PropertyReader.copy(model, data);

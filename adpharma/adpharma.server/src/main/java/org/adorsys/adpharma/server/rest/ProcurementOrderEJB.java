@@ -28,6 +28,7 @@ import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
 import org.adorsys.adpharma.server.jpa.Login;
+import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrder;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderAdvancedSearchData;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderItem;
@@ -200,6 +201,7 @@ public class ProcurementOrderEJB
 	private SalesOrderItemEJB  salesOrderItemEJB ;
 
 	public ProcurementOrder proccessPreparation(ProcurementOrderPreparationData data){
+		// Procurement Order
 		Login user = securityUtil.getConnectedUser();
 		ProcurementOrder procurementOrder = new ProcurementOrder();
 		procurementOrder.setAgency(user.getAgency());
@@ -210,16 +212,23 @@ public class ProcurementOrderEJB
 		procurementOrder.setProcurementOrderType(ProcurementOrderType.ORDINARY);
 		procurementOrder.setProcmtOrderTriggerMode(data.getProcmtOrderTriggerMode());
 		procurementOrder.setSupplier(data.getSupplier());
+		
+		if(data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MANUAL)) {
+			procurementOrder = create(procurementOrder);
+			return procurementOrder;
+		}
+		
+		// Find SalesOrderItems
 		List<SalesOrderItem> salesOrderItems = salesOrderItemEJB.findPreparationDataItem(data);
 //		List<CustomerInvoiceItem> customerInvoiceItems = customerInvoiceItemEJB.findPreparationDataItem(data);
 		HashMap<Article, ProcurementOrderItem> cashedItem = new  HashMap<Article,ProcurementOrderItem>();
-		
 		BigDecimal totalPurchasePrice = BigDecimal.ZERO;
 		
 		for (SalesOrderItem item : salesOrderItems) {
 			if(cashedItem.containsKey(item.getArticle())){
 				totalPurchasePrice= totalPurchasePrice.subtract(cashedItem.get(item.getArticle()).getTotalPurchasePrice());
 				BigDecimal qtyOrdered = cashedItem.get(item.getArticle()).getQtyOrdered();
+				// Look for the ordered quantity here
 				cashedItem.get(item.getArticle()).setQtyOrdered(qtyOrdered.add(item.getDeliveredQty()));
 				totalPurchasePrice = totalPurchasePrice.add(cashedItem.get(item.getArticle()).calculTotalPuschasePrice());
 			}else {
@@ -231,7 +240,12 @@ public class ProcurementOrderEJB
 				procurementOrderItem.setPoStatus(DocumentProcessingState.ONGOING);
 				procurementOrderItem.setProductRecCreated(new Date());
 				procurementOrderItem.setPurchasePricePU(item.getArticle().getPppu()!=null?item.getArticle().getPppu():BigDecimal.ZERO);
-				procurementOrderItem.setQtyOrdered(item.getDeliveredQty());
+				if (data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MIN_MAX)) {
+					procurementOrderItem.setQtyOrdered(new BigDecimal(item.getArticle().getMaxStockQty()));
+				}
+				if (data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MOST_SOLD)) {
+					procurementOrderItem.setQtyOrdered(item.getDeliveredQty());
+				}
 				procurementOrderItem.setSalesPricePU(item.getArticle().getSppu()!=null?item.getArticle().getSppu():BigDecimal.ZERO);
 				procurementOrderItem.setSecondaryPic(item.getArticle().getPic());
 				procurementOrderItem.setStockQuantity(item.getArticle().getQtyInStock());
@@ -254,7 +268,7 @@ public class ProcurementOrderEJB
 
 		Collection<ProcurementOrderItem> procurementOrderItems = cashedItem.values();
 		procurementOrder.getProcurementOrderItems().addAll(procurementOrderItems);
-		 procurementOrder = create(procurementOrder);
+		procurementOrder = create(procurementOrder);
 		return procurementOrder;
 	}
 	

@@ -21,5 +21,8 @@ public interface SalesOrderItemRepository extends EntityRepository<SalesOrderIte
 	@Query("SELECT c FROM SalesOrderItem as c WHERE c.recordDate >= ?1 AND  c.recordDate <= ?2 AND c.salesOrder.cashed = ?3 ")
 	public List<SalesOrderItem> findPreparationDataItem(Date fromDate,Date toDate,Boolean cashed);
 	
+	@Query("SELECT c FROM SalesOrderItem as c WHERE c.recordDate >= ?1 AND c.recordDate <= ?2 AND c.salesOrder.cashed = ?3 AND c.article.qtyInStock <= c.article.minStockQty")
+	public List<SalesOrderItem> findPreparationDataItemShortStockage(Date fromDate,Date toDate,Boolean cashed);
+	
 }
 

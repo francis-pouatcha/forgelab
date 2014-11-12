@@ -8,5 +8,6 @@ public enum ProcmtOrderTriggerMode
    @Description("ProcmtOrderTriggerMode_MANUAL_description")
    MANUAL, @Description("ProcmtOrderTriggerMode_STOCK_SHORTAGE_description")
    STOCK_SHORTAGE, @Description("ProcmtOrderTriggerMode_MOST_SOLD_description")
-   MOST_SOLD
+   MOST_SOLD, @Description("ProcmtOrderTriggerMode_MIN_MAX_description")
+   MIN_MAX
 }

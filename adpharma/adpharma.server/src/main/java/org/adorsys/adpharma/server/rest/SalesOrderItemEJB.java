@@ -16,6 +16,7 @@ import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
+import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
@@ -54,7 +55,16 @@ public class SalesOrderItemEJB
 
 
 	public List<SalesOrderItem> findPreparationDataItem(ProcurementOrderPreparationData data){
-		return repository.findPreparationDataItem(data.getFromDate(), data.getToDate(), true);
+		List<SalesOrderItem> result= new ArrayList<SalesOrderItem>();
+		if(data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MOST_SOLD)) {
+			result= repository.findPreparationDataItem(data.getFromDate(), data.getToDate(), true);
+			return result;
+		}
+		if(data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MIN_MAX)) {
+			result = repository.findPreparationDataItemShortStockage(data.getFromDate(), data.getToDate(), true);
+			return result;
+		}
+		return result;
 	}
 
 	public SalesOrderItem create(SalesOrderItem entity)
