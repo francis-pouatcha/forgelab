@@ -213,7 +213,7 @@ public class DeliveryEJB
 	public DeliveryFromOrderData deliveryFromProcurementOrder(ProcurementOrder order){
 		order = procurementOrderEJB.findById(order.getId());
 		if(DocumentProcessingState.CLOSED.equals(order.getPoStatus()))
-			throw new IllegalStateException(" procurement order are aready closed ? ") ;
+			throw new IllegalStateException(" procurement order are already closed ? ") ;
 		Login login = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Delivery delivery = new Delivery();
@@ -250,6 +250,8 @@ public class DeliveryEJB
 		}
 		
 		order.setPoStatus(DocumentProcessingState.CLOSED);
+		// Add Close user
+		order.setCloseUser(login.getLoginName());
 		order = procurementOrderEJB.update(order);
 		delivery.setAmountAfterTax(amountHt);
 		delivery.setAmountBeforeTax(amountHt);

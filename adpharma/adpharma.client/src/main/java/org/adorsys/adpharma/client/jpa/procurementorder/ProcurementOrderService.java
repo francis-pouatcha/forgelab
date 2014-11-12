@@ -154,4 +154,14 @@ public class ProcurementOrderService {
 		return target().path("sendOrderToPhmlServer").request(media)
 				.post(ent, ProcurementOrder.class);
 	}
+	
+	// @POST
+		// @Path("/retrievedPreparationOrder")
+		// @Consumes({ "application/json", "application/xml" })
+		// @Produces({ "application/json", "application/xml" })
+		public ProcurementOrder retrievedPreparationOrder(ProcurementOrder entity) {
+			Entity<ProcurementOrder> ent = Entity.entity(entity,media);
+			return target().path("retrievedPreparationOrder").request(media)
+					.post(ent, ProcurementOrder.class);
+		}
 }

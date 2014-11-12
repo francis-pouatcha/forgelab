@@ -68,6 +68,10 @@ public class ProcurementOrder implements Serializable
    @NotNull(message = "ProcurementOrder_creatingUser_NotNull_validation")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private Login creatingUser;
+   
+    @Column
+	@Description("ProcurementOrder_closeUser_description")
+	private String closeUser;
 
    @Column
    @Description("ProcurementOrder_procmtOrderTriggerMode_description")
@@ -230,6 +234,14 @@ public class ProcurementOrder implements Serializable
    {
       this.creatingUser = creatingUser;
    }
+   
+   public String getCloseUser() {
+		return this.closeUser;
+	}
+
+	public void setCloseUser(final String closeUser) {
+		this.closeUser = closeUser;
+	}
 
    public ProcmtOrderTriggerMode getProcmtOrderTriggerMode()
    {

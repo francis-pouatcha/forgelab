@@ -156,6 +156,13 @@ public class ProcurementOrderEJB
 		}
 		return original ;
 	}
+	
+	public ProcurementOrder retrievedPreparationOrder(ProcurementOrder order) {
+		ProcurementOrder original = findById(order.getId());
+		original.setPoStatus(DocumentProcessingState.RETREIVED);
+		ProcurementOrder save = repository.save(original);
+		return save;
+	}
 
 	private ProcurementOrder attach(ProcurementOrder entity)
 	{
