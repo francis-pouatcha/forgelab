@@ -185,6 +185,8 @@ public class SalesOrderDisplayView
 	private ToOneAggreggationFieldValidator toOneAggreggationFieldValidator;
 
 	private TableColumn<SalesOrderItem, BigDecimal> orderQuantityColumn;
+	
+	private TableColumn<SalesOrderItem, BigDecimal> orderSalesPricePUColumn;
 
 	@PostConstruct
 	public void postConstruct()
@@ -209,7 +211,8 @@ public class SalesOrderDisplayView
 		orderQuantityColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "orderedQty", "SalesOrderItem_orderedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "returnedQty", "SalesOrderItem_returnedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "deliveredQty", "SalesOrderItem_deliveredQty_description.title", resourceBundle, NumberType.INTEGER, locale);
-		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+//		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		orderSalesPricePUColumn = viewBuilder.addEditableBigDecimalColumn(dataList, "salesPricePU", "SalesOrderItem_salesPricePU_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "totalSalePrice", "SalesOrderItem_totalSalePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 
 		buildOrderItemBar();
@@ -327,6 +330,7 @@ public class SalesOrderDisplayView
 		clientButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		insurreurButton.disableProperty().bind(model.salesOrderStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
 		orderQuantityColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
+		orderSalesPricePUColumn.editableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		returnSOIMenu.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		saveReturnButton.disableProperty().bind(model.salesOrderStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		
@@ -557,6 +561,10 @@ public class SalesOrderDisplayView
 	public TableColumn<SalesOrderItem, BigDecimal> getOrderQuantityColumn() {
 		return orderQuantityColumn;
 	}
+	
+	public TableColumn<SalesOrderItem, BigDecimal> getOrderSalesPricePUColumn() {
+		return orderSalesPricePUColumn;
+	}
 
 	public TextField getNetClientText() {
 		return netClientText;
@@ -743,6 +751,11 @@ public class SalesOrderDisplayView
 	public void setOrderQuantityColumn(
 			TableColumn<SalesOrderItem, BigDecimal> orderQuantityColumn) {
 		this.orderQuantityColumn = orderQuantityColumn;
+	}
+	
+	public void setOrderSalesPricePUColumn(
+			TableColumn<SalesOrderItem, BigDecimal> orderSalesPricePUColumn) {
+		this.orderSalesPricePUColumn = orderSalesPricePUColumn;
 	}
 	
 	

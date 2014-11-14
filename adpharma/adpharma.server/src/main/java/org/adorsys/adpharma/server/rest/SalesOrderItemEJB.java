@@ -18,6 +18,7 @@ import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
+import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.VAT;

@@ -34,7 +34,7 @@ import org.adorsys.adpharma.server.jpa.VAT;
 @Entity
 @Description("Article_description")
 @ToStringField({ "articleName", "pic" })
-@ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu",
+@ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "pppu",
       "authorizedSale", "agency.name", "vat.rate" })
 public class Article implements Serializable
 {

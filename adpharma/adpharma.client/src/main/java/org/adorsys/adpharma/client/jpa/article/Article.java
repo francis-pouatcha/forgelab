@@ -47,7 +47,7 @@ import org.adorsys.javaext.list.ListField;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToStringField({ "articleName", "pic" })
 @ListField({ "articleName", "pic", "manufacturer", "active", "qtyInStock",
-      "sppu", "authorizedSale", "agency.name", "vat.rate" })
+      "sppu", "pppu", "authorizedSale", "agency.name", "vat.rate" })
 public class Article implements Cloneable
 {
 

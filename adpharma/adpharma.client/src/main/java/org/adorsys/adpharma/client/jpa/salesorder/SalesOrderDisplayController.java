@@ -314,6 +314,23 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getOrderSalesPricePUColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderSalesPricePuCell) {
+				SalesOrderItem selectedItem = orderSalesPricePuCell.getRowValue();
+				BigDecimal newValue = orderSalesPricePuCell.getNewValue();
+				if(displayView.getSalesPricePU().isEditable()) {
+					selectedItem.setSalesPricePU(newValue);
+					selectedItem.updateTotalSalesPrice();
+					SalesOrderItemArticle article = selectedItem.getArticle();
+					System.out.println("Prix d'achat du produit: "+article);
+					salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+				}else {
+					orderSalesPricePuCell.getRowValue().setSalesPricePU(orderSalesPricePuCell.getOldValue());
+				}
+			}
+		});
+		
 		/*
 		 * listen to Ok button.
 		 */
