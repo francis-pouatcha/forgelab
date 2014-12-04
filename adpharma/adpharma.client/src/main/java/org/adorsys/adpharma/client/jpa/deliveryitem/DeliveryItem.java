@@ -47,41 +47,56 @@ public class DeliveryItem implements Cloneable
 
 	@Description("DeliveryItem_internalPic_description")
 	private SimpleStringProperty internalPic;
+	
 	@Description("DeliveryItem_mainPic_description")
 	private SimpleStringProperty mainPic;
+	
 	@Description("DeliveryItem_secondaryPic_description")
 	private SimpleStringProperty secondaryPic;
+	
 	@Description("DeliveryItem_articleName_description")
 	private SimpleStringProperty articleName;
+	
 	@Description("DeliveryItem_qtyOrdered_description")
 	private SimpleObjectProperty<BigDecimal> qtyOrdered;
+	
 	@Description("DeliveryItem_availableQty_description")
 	private SimpleObjectProperty<BigDecimal> availableQty;
+	
 	@Description("DeliveryItem_freeQuantity_description")
 	private SimpleObjectProperty<BigDecimal> freeQuantity;
+	
 	@Description("DeliveryItem_stockQuantity_description")
 	private SimpleObjectProperty<BigDecimal> stockQuantity;
+	
 	@Description("DeliveryItem_salesPricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> salesPricePU;
+	
 	@Description("DeliveryItem_purchasePricePU_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> purchasePricePU;
+	
 	@Description("DeliveryItem_totalPurchasePrice_description")
 	@NumberFormatType(NumberType.CURRENCY)
 	private SimpleObjectProperty<BigDecimal> totalPurchasePrice;
+	
 	@Description("DeliveryItem_creationDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private SimpleObjectProperty<Calendar> creationDate;
+	
 	@Description("DeliveryItem_expirationDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy")
 	private SimpleObjectProperty<Calendar> expirationDate;
+	
 	@Description("DeliveryItem_delivery_description")
 	@Association(associationType = AssociationType.COMPOSITION, targetEntity = Delivery.class)
 	private SimpleObjectProperty<DeliveryItemDelivery> delivery;
+	
 	@Description("DeliveryItem_article_description")
 	@Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
 	private SimpleObjectProperty<DeliveryItemArticle> article;
+	
 	@Description("DeliveryItem_creatingUser_description")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
 	private SimpleObjectProperty<DeliveryItemCreatingUser> creatingUser;

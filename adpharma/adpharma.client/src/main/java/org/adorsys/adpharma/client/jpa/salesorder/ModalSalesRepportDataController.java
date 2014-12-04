@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
@@ -14,23 +15,41 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginAgency;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItemPeriodicalSearchService;
+import org.adorsys.adpharma.client.jpa.section.Section;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchResult;
+import org.adorsys.adpharma.client.jpa.section.SectionSearchService;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.controlsfx.dialog.Dialogs;
+import org.jboss.weld.exceptions.IllegalArgumentException;
 
 import com.lowagie.text.DocumentException;
 
@@ -45,6 +64,24 @@ public class ModalSalesRepportDataController {
 
 	@Inject
 	private SecurityUtil securityUtil;
+	
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> articleSearchInput;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressionRequestEvent ;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressionRequestEvent ;
+	
+	@Inject
+	private ErrorMessageDialog errorMessageDialog;
+	
+	@Inject
+	private SectionSearchService sectionSearchService;
 
 	@Inject
 	private SalesOrderItemPeriodicalSearchService salesOrderItemPeriodicalSearchService ;
@@ -54,6 +91,10 @@ public class ModalSalesRepportDataController {
 
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
+	
+	@Inject
+	@Bundle(CrudKeys.class)
+	private ResourceBundle resourceBundle;
 
 	@PostConstruct
 	public void postconstruct(){
@@ -79,6 +120,51 @@ public class ModalSalesRepportDataController {
 
 			}
 		});
+		
+		view.getClearButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				view.getArticle().setValue(null);
+			}
+		});
+		
+		view.getSection().armedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue)
+					sectionSearchService.setSearchInputs(new SectionSearchInput()).start();
+			}
+		});
+		
+		view.getArticle().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				articleSearchInput.fire(new ArticleSearchInput());
+			}
+		});
+		
+		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				SectionSearchService s = (SectionSearchService) event.getSource();
+				SectionSearchResult cs = s.getValue();
+				event.consume();
+				s.reset();
+				List<Section> resultList = cs.getResultList();
+				ArrayList<ArticleSection> sections = new ArrayList<ArticleSection>();
+				for (Section section : resultList) {
+					sections.add(new ArticleSection(section));
+				}
+				sections.add(0, new ArticleSection());
+				view.getSection().getItems().setAll(sections);
+			}
+		});
+
+
+		sectionSearchService.setOnFailed(callFailedEventHandler);
 		
 
 		view.getNonTaxableSalesOnly().selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -151,6 +237,7 @@ public class ModalSalesRepportDataController {
 		salesOrderItemPeriodicalSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressionRequestEvent.fire(new Object());
 				SalesOrderItemPeriodicalSearchService source = (SalesOrderItemPeriodicalSearchService) event.getSource();
 				List<SalesOrderItem> value = source.getValue().getResultList();
 				event.consume();
@@ -166,7 +253,6 @@ public class ModalSalesRepportDataController {
 
 				if(model.getPrintXls()) {
 					SalesOrderXlsExporter.exportSalesOrderItemsToXls(value, model);
-					
 				}else {
 					try {
 						Login login = securityUtil.getConnectedUser();
@@ -195,6 +281,7 @@ public class ModalSalesRepportDataController {
 		salesOrderPeriodicalSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressionRequestEvent.fire(new Object());
 				SalesOrderPeriodicalSearchService source= (SalesOrderPeriodicalSearchService)event.getSource();
 				List<SalesOrderDiscount> items = source.getValue().getResultList();
 				event.consume();
@@ -222,10 +309,15 @@ public class ModalSalesRepportDataController {
 				if(validate.isEmpty()){
 					if(model.getPerVendorAndDiscount().equals(Boolean.TRUE)) {
 						salesOrderPeriodicalSearchService.setSearchInputs(model).start();
+						showProgressionRequestEvent.fire(new Object());
 					}else {
 						salesOrderItemPeriodicalSearchService.setSearchInputs(model).start();
+						showProgressionRequestEvent.fire(new Object());
 					}
-						
+				}else {
+					errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
+					errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
+					errorMessageDialog.display();
 				}
 			}
 		});
@@ -235,14 +327,24 @@ public class ModalSalesRepportDataController {
 
 	public void handleSalesRepportSearchDataRequestEvent(@Observes @EntitySearchRequestedEvent PeriodicalDataSearchInput data){
 		PropertyReader.copy(data, model);
-		view.showDiaLog();
+		try {
+			view.showDiaLog();
+		} catch (Exception e) {
+			errorMessageDialog.getTitleText().setText("Erreur d'affichage de l'interface: "+e.getMessage());
+			errorMessageDialog.display();
+		}
 	}
 
 	
 	// Open a File in the desktop UI
 	private void openFile(File file){
+		Desktop desktop=null;
+		if(!Desktop.isDesktopSupported()) {
+			throw new IllegalArgumentException("Desktop is not supported on this OS");
+		}
 		try {
-			Desktop.getDesktop().open(file);
+			desktop= Desktop.getDesktop();
+			desktop.open(file);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
@@ -320,14 +422,19 @@ public class ModalSalesRepportDataController {
 		return twentyHeigthy ;
 	}
 	
+	// HAndle the rssult of the search of article
+	public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article){
+			view.getArticle().setValue(article);
+	}
+	
 	private String getHeaderName (){
 		String headerName = "";
 		if(model.getTaxableSalesOnly())
-			headerName = " TAXABLE";
+			headerName = " PRODUITS TAXABLES";
 		if(model.getNonTaxableSalesOnly())
-			headerName = " NON TAXABLE";
+			headerName = " PRODUITS NON TAXABLES";
 		if(model.getTwentyOverHeightySalesOnly())
-			headerName = " 20 / 80 ";
+			headerName = " 20 / 80 Uniquement";
 		if(model.getPerVendorAndDiscount()) {
 			headerName="REMISES / VENDEURS";
 		}

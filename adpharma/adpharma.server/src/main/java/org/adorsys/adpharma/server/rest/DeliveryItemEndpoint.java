@@ -23,6 +23,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.adorsys.adpharma.server.jpa.ArticleDetails;
+import org.adorsys.adpharma.server.jpa.ArticleDetailsSearchResult;
+import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItemSearchInput;
 import org.adorsys.adpharma.server.jpa.DeliveryItemSearchResult;
@@ -159,6 +162,17 @@ public class DeliveryItemEndpoint
 				searchInput.getStart(), searchInput.getMax(), attributes);
 		return new DeliveryItemSearchResult(countLike, detach(resultList),
 				detach(searchInput));
+	}
+	
+	@POST
+	@Path("/findArticlesDetails")
+	@Produces({ "application/json", "application/xml" })
+	@Consumes({ "application/json", "application/xml" })
+	public ArticleDetailsSearchResult findByArticle(ArticleSearchInput articleSearchInput) {
+		
+		List<ArticleDetails> articleDetails = ejb.findArticlesDetails(articleSearchInput); 
+		Long count = Long.valueOf(articleDetails.size());
+		return new ArticleDetailsSearchResult(count, articleDetails);
 	}
 
 	@POST

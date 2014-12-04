@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import org.adorsys.adpharma.client.events.ReportMenuItem;
 import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.StockValueArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.InvoiceByAgencyPrintInput;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.DomainComponentController;
@@ -44,7 +45,7 @@ public class ArticleLotRegistration extends DomainComponentRegistration
 	
 	@Inject
 	@EntitySearchRequestedEvent
-	private Event<ArticleSearchInput> stockValueSearchRequestEvent ;
+	private Event<StockValueArticleSearchInput> stockValueSearchRequestEvent ;
 	
 	@Inject
 	@MenuItemAddRequestedEvent
@@ -65,7 +66,7 @@ public class ArticleLotRegistration extends DomainComponentRegistration
 		stockValueMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				stockValueSearchRequestEvent.fire(new ArticleSearchInput());
+				stockValueSearchRequestEvent.fire(new StockValueArticleSearchInput());
 			}
 		});
 	}

@@ -219,7 +219,7 @@ public class SalesOrderDisplayView
 		buildAmountPane();
 		buildInsurranceGrid();
 		netClientText.getStyleClass().add("green-text");
-		returnSOIMenu.setText("Retourner");
+		returnSOIMenu.setText(resourceBundle.getString("SalesOrder_label_return_article_description.title"));
 		
 		// Buttons Parameters
 		closeButton.setTooltip(new Tooltip("Cloturer la vente: CTRL+C"));
@@ -266,6 +266,7 @@ public class SalesOrderDisplayView
 		client.setTooltip(new Tooltip("CLient"));
 		discountRate = ViewBuilderUtils.newBigDecimalField( "discountRate", NumberType.INTEGER,locale,false);
 		discountRate.setEditable(true);
+		discountRate.setTooltip(new Tooltip(resourceBundle.getString("SalesOrder_label_discountRate_description.text")));
 		rigthGrid.add(discountRate, 1, 3);
 
 	}

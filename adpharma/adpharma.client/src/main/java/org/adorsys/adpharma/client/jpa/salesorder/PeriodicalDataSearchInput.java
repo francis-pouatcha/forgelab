@@ -6,16 +6,28 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
+import org.apache.commons.lang3.ObjectUtils;
 
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class PeriodicalDataSearchInput {
 
 	private SimpleObjectProperty<Calendar> beginDate;
 
 	private SimpleObjectProperty<Calendar> endDate;
+	
+	private SimpleObjectProperty<ArticleSection> section;
+	
+	private SimpleObjectProperty<Article> article;
 
 	private SimpleBooleanProperty check;
 	
@@ -23,7 +35,7 @@ public class PeriodicalDataSearchInput {
 
 	private SimpleBooleanProperty taxableSalesOnly ;
 
-	private SimpleBooleanProperty nonTaxableSalesOnly  ;
+	private SimpleBooleanProperty nonTaxableSalesOnly;
 
 	private SimpleBooleanProperty twentyOverHeightySalesOnly;
 	
@@ -35,8 +47,57 @@ public class PeriodicalDataSearchInput {
 	
 	private SimpleStringProperty articleName ; 
 	
-	private SimpleStringProperty internalPic ;  
+	private SimpleStringProperty internalPic ;
+	
+	
+	public SimpleObjectProperty<Article> articleProperty()
+	   {
+	      if (article == null)
+	      {
+	    	  article = new SimpleObjectProperty<Article>(new Article());
+	      }
+	      return article;
+	   }
 
+	   public Article getArticle()
+	   {
+	      return articleProperty().get();
+	   }
+
+	   public final void setArticle(Article section)
+	   {
+	      if (section == null)
+	      {
+	         section = new Article();
+	      }
+	      PropertyReader.copy(section, getSection());
+	      sectionProperty().setValue(ObjectUtils.clone(getSection()));
+	   }
+	
+	
+	 public SimpleObjectProperty<ArticleSection> sectionProperty()
+	   {
+	      if (section == null)
+	      {
+	         section = new SimpleObjectProperty<ArticleSection>(new ArticleSection());
+	      }
+	      return section;
+	   }
+
+	   public ArticleSection getSection()
+	   {
+	      return sectionProperty().get();
+	   }
+
+	   public final void setSection(ArticleSection section)
+	   {
+	      if (section == null)
+	      {
+	         section = new ArticleSection();
+	      }
+	      PropertyReader.copy(section, getSection());
+	      sectionProperty().setValue(ObjectUtils.clone(getSection()));
+	   }
 	 
 	   
 	   public SimpleStringProperty internalPicProperty()

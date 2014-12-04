@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -20,7 +21,9 @@ import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchInput;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchResult;
 import org.adorsys.adpharma.client.jpa.supplier.SupplierSearchService;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -40,6 +43,14 @@ public class ProcurementOrderPreparationController {
 
 	@Inject
 	private SupplierSearchService supplierSearchService;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgress;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgress;
 
 	@Inject
 	@EntityCreateDoneEvent
@@ -51,6 +62,7 @@ public class ProcurementOrderPreparationController {
 	@PostConstruct
 	public void postConstruct(){
 		view.bind(data);
+		view.getSaveButton().disableProperty().bind(preparationService.runningProperty());
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 			@Override
@@ -73,7 +85,7 @@ public class ProcurementOrderPreparationController {
 			@Override
 			public void handle(ActionEvent event) {
 				preparationService.setEntity(data).start();
-
+				showProgress.fire(new Object());
 			}
 		});
 		
@@ -82,7 +94,8 @@ public class ProcurementOrderPreparationController {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
-				ProcurementOrderPreparationService s = (ProcurementOrderPreparationService) event.getSource();
+				hideProgress.fire(new Object());
+ 				ProcurementOrderPreparationService s = (ProcurementOrderPreparationService) event.getSource();
 				ProcurementOrder value = s.getValue();
 				event.consume();
 				s.reset();

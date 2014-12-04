@@ -15,13 +15,16 @@ import org.adorsys.adpharma.server.events.DocumentCreatedEvent;
 import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
+import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.jpa.VAT;
+import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.SalesOrderItemRepository;
 import org.adorsys.adpharma.server.utils.PeriodicalDataSearchInput;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +35,9 @@ public class SalesOrderItemEJB
 
 	@Inject
 	private SalesOrderItemRepository repository;
+	
+	@Inject
+	private ArticleLotRepository articleLotRepository;
 
 	@Inject
 	private ArticleMerger articleMerger;
@@ -102,35 +108,49 @@ public class SalesOrderItemEJB
 	private EntityManager em ;
 
 	public List<SalesOrderItem> periodicalSales(PeriodicalDataSearchInput searchInput){
-		Boolean check = searchInput.getCheck();
+		Section section = searchInput.getSection();
+		Article article2 = searchInput.getArticle();
+		boolean check = searchInput.getCheck().booleanValue();
 		ArrayList<SalesOrderItem> result = new ArrayList<SalesOrderItem>();
 
-		String query ="SELECT s.internalPic , s.article, s.deliveredQty,(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
+		String query ="SELECT s.internalPic , s.article, s.deliveredQty, (s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
+		if (section!=null && section.getId()!=null) {
+			query=query+" AND s.article.section = :section";			
+		}
+		
+		if (article2!=null && article2.getId()!=null) {
+			query = query + " AND s.article = :article";
+		}
 		if(StringUtils.isNotBlank(searchInput.getPic()))
 			query = query+" AND s.article.pic = :pic";
-		if(StringUtils.isNotBlank(searchInput.getArticleName()))
-			query = query+" AND LOWER (s.article.articleName) LIKE LOWER (:articleName) ";
-		query = query+" ORDER BY s.article.articleName";
 
 		List<Object[]> sales = new ArrayList<Object[]>();
 		if(check){
-			query ="SELECT  s.article, SUM(s.deliveredQty) AS qty ,SUM(s.deliveredQty * s.salesPricePU) , s.article.pic, s.article.articleName FROM SalesOrderItem AS s WHERE "
-					+ " s.salesOrder.creationDate BETWEEN :from AND :to AND s.salesOrder.cashed = :cashed   ";
+			query = "SELECT s.article, SUM(s.deliveredQty), SUM(s.deliveredQty) * s.salesPricePU FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
+			if (section!=null && section.getId()!=null) {
+				query=query+" AND s.article.section = :section";			
+			}
+			
+			if (article2!=null && article2.getId()!=null) {
+				query = query + " AND s.article = :article";
+			}
 			if(StringUtils.isNotBlank(searchInput.getPic()))
 				query = query+" AND s.article.pic = :pic";
-			if(StringUtils.isNotBlank(searchInput.getArticleName()))
-				query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
-			query = query+" GROUP BY s.article.pic, s.article.articleName, s.article";
-			query = query+" ORDER BY s.article.articleName";
+			query = query+" GROUP BY s.article.pic, s.article, s.article.articleName";
 		}
+		query = query+" ORDER BY s.article.articleName";
 
-		Query querys = em.createQuery(query) ;
+		Query querys = em.createQuery(query);
 		if(StringUtils.isNotBlank(searchInput.getPic()))
 			querys.setParameter("pic", searchInput.getPic());
-		if(StringUtils.isNotBlank(searchInput.getArticleName())){
-			String articleName = "%"+searchInput.getArticleName()+"%";
-			querys.setParameter("articleName", articleName);
+		if (section!=null && section.getId()!=null) {
+			querys.setParameter("section", section);
 		}
+		
+		if (article2!=null && article2.getId()!=null) {
+			querys.setParameter("article", article2);
+		}
+		
 		querys.setParameter("from", searchInput.getBeginDate());
 		querys.setParameter("to", searchInput.getEndDate());
 		querys.setParameter("cashed", Boolean.TRUE);
@@ -203,6 +223,15 @@ public class SalesOrderItemEJB
 		attach.calucateDeliveryQty();
 		attach.calculateAmount();
 		entity = repository.save(attach);
+		// Update price of article lot
+		List<ArticleLot> resultList = articleLotRepository.findByArticleNameLike(entity.getArticle().getArticleName()).getResultList();
+		boolean testPrices=entity.getSalesPricePU()!=entity.getArticle().getPppu()?true:false;
+		if(!resultList.isEmpty() && testPrices) {
+			for(ArticleLot articleLot: resultList) {
+				articleLot.setSalesPricePU(entity.getSalesPricePU());
+				articleLotRepository.save(articleLot);
+			}
+		}
 		salesOrderItemProcessedEvent.fire(entity);
 		return entity;
 	}

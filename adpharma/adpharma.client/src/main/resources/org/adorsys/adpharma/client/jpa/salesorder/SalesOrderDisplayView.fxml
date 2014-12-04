@@ -43,12 +43,12 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Telephone :" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="%SalesOrder_label_phone_description.title" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="71.0" prefHeight="16.0" prefWidth="143.0" text="Etat de la Vente :" GridPane.rowIndex="3">
+												<Label layoutX="10.0" layoutY="71.0" prefHeight="16.0" prefWidth="143.0" text="%SalesOrder_label_state_description.title" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -59,7 +59,7 @@
 													</GridPane.margin>
 												</Label>
 												<TextField fx:id="clientPhone" editable="false" layoutX="163.0" layoutY="97.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-												<Label layoutX="15.0" layoutY="62.0" text="Num CMD  :" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="%SalesOrder_label_numCmd_description.title" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -79,12 +79,12 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="10.0" layoutY="25.0" text="Num. Bon :" GridPane.rowIndex="1">
+												<Label layoutX="10.0" layoutY="25.0" text="%SalesOrder_label_voucherNumber_description.title" GridPane.rowIndex="1">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="Taux de remise :" GridPane.rowIndex="3">
+												<Label fx:id="discountRate" layoutX="10.0" layoutY="71.0" text="%SalesOrder_label_discountRate_description.title" GridPane.rowIndex="3">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -94,7 +94,7 @@
 														<Insets left="5.0" />
 													</GridPane.margin>
 												</Label>
-												<Label layoutX="15.0" layoutY="62.0" text="M. Patient :" GridPane.rowIndex="2">
+												<Label layoutX="15.0" layoutY="62.0" text="%SalesOrder_label_patient_description.title" GridPane.rowIndex="2">
 													<GridPane.margin>
 														<Insets left="5.0" />
 													</GridPane.margin>
@@ -102,8 +102,8 @@
 												<ComboBox fx:id="insurrer" prefHeight="26.0" prefWidth="236.0" promptText="Assurreur" GridPane.columnSpan="2" />
 												<TextField fx:id="numBon" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 												<TextField fx:id="discountRate" layoutX="168.0" layoutY="86.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-<Label layoutX="15.0" layoutY="91.0" text=" " />
-<TextField fx:id="patientMatricule" layoutX="106.0" layoutY="53.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+												<Label layoutX="15.0" layoutY="91.0" text=" " />
+												<TextField fx:id="patientMatricule" layoutX="106.0" layoutY="53.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 											</children>
 											<columnConstraints>
 												<ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="10.0" prefWidth="153.0" />
@@ -119,12 +119,12 @@
 												<Insets top="10.0" />
 											</padding>
 										</GridPane>
-										<Button fx:id="clientButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="371.0" text="Creer un nouveau client" textFill="#2f0fbf">
+										<Button fx:id="clientButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="371.0" text="%SalesOrder_button_create_customer_description.title" textFill="#2f0fbf">
 											<font>
 												<Font size="14.0" />
 											</font>
 										</Button>
-										<Button fx:id="insurreurButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="371.0" text="Ajouter un assurreur " textFill="#3713c9" GridPane.columnIndex="1">
+										<Button fx:id="insurreurButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="371.0" text="%SalesOrder_button_create_insurance_description.title" textFill="#3713c9" GridPane.columnIndex="1">
 											<font>
 												<Font size="14.0" />
 											</font>
@@ -133,7 +133,7 @@
 								</GridPane>
 						<VBox prefHeight="166.0" prefWidth="400.0" VBox.vgrow="NEVER">
 							<children>
-								<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="Information Montant" textFill="#3711dd">
+								<TitledPane animated="false" prefHeight="27.0" prefWidth="267.0" text="%SalesOrder_amounts_information_description.title" textFill="#3711dd">
 									<content>
 										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 									</content>
@@ -153,10 +153,10 @@
 										<Insets top="10.0" />
 									</VBox.margin>
 									<children>
-										<Label text="Montant HT :" />
-										<Label layoutX="10.0" layoutY="17.0" text="Taxes :" GridPane.rowIndex="1" />
-										<Label layoutX="10.0" layoutY="47.0" text="Remises :" GridPane.rowIndex="2" />
-										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="Montant TTC" GridPane.rowIndex="3" />
+										<Label text="%SalesOrder_amountBeforeTax_description.title" />
+										<Label layoutX="10.0" layoutY="17.0" text="%SalesOrder_taxes_description.title" GridPane.rowIndex="1" />
+										<Label layoutX="10.0" layoutY="47.0" text="%SalesOrder_discounts_description.title" GridPane.rowIndex="2" />
+										<Label fx:id="amountTTC" layoutX="10.0" layoutY="77.0" text="%SalesOrder_amountAfterTax_description.title" GridPane.rowIndex="3" />
 										<TextField fx:id="amountHT" editable="false" layoutX="168.0" layoutY="54.0" GridPane.columnIndex="1" />
 										<TextField fx:id="taxAmount" editable="false" layoutX="125.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 										<TextField fx:id="discount" editable="false" layoutX="125.0" layoutY="42.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -165,13 +165,13 @@
 								</GridPane>
 							</children>
 						</VBox><VBox alignment="TOP_CENTER" prefHeight="155.0" prefWidth="400.0" spacing="5.0">
-<children><Label prefHeight="40.0" text="NET A PAYER ">
+<children><Label prefHeight="40.0" text="%SalesOrder_netToPay_description.title">
 <font>
 <Font size="18.0" />
 </font></Label><TextField fx:id="netClientText" editable="false" prefHeight="40.0">
 <font>
 <Font size="24.0" />
-</font></TextField><Button fx:id="findArticleButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="227.0" text="Rechercher un article" textFill="#1313c9" />
+</font></TextField><Button fx:id="findArticleButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="227.0" text="%SalesOrder_search_article_description.title" textFill="#1313c9" />
 </children></VBox>
 </children>
 <padding>
@@ -205,11 +205,11 @@
 								<ContextMenu fx:id="datalistContextMenu">
 									<items>
 										<!-- 
-										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="Edit Line" />
-										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="Delete Line" />
+										<MenuItem fx:id="editSOIMenu" mnemonicParsing="false" text="%SalesOrder_label_edit_article_description.title" />
+										<MenuItem fx:id="deleteSOIMenu" mnemonicParsing="false" text="%SalesOrder_label_delete_article_description.title" />
 										<SeparatorMenuItem mnemonicParsing="false" />
 										 -->
-										<MenuItem fx:id="returnSOIMenu" mnemonicParsing="false" text="Return Article" />
+										<MenuItem fx:id="returnSOIMenu" mnemonicParsing="false" text="%SalesOrder_label_return_article_description.title" />
 									</items>
 								</ContextMenu>
 							</contextMenu>
@@ -221,23 +221,23 @@
 						<HBox alignment="CENTER" prefHeight="33.0" prefWidth="740.0" spacing="10.0" VBox.vgrow="NEVER">
 							<children>
 								<ComboBox fx:id="cashDrawer" prefHeight="26.0" prefWidth="220.0" promptText="cashDrawer" />
-								<Button fx:id="closeButton" mnemonicParsing="false" text="cloturer la vente">
+								<Button fx:id="closeButton" mnemonicParsing="false" text="%SalesOrder_button_close_sale_description.title">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="ordonnancierButton" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" text="Ordonnancier">
+								<Button fx:id="ordonnancierButton" layoutX="114.0" layoutY="62.0" mnemonicParsing="false" text="%SalesOrder_button_prescriptionBook_description.title">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" text="Annuler la saisie">
+								<Button fx:id="cancelButton" layoutX="69.0" layoutY="231.0" mnemonicParsing="false" text="%SalesOrder_button_cancel_description.title">
 									<VBox.margin>
 										<Insets bottom="10.0" />
 									</VBox.margin>
 								</Button>
-								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" text="Enrg. Le retour" />
-<Button fx:id="printProformaButton" layoutX="762.0" layoutY="13.0" mnemonicParsing="false" text="Facture Proforma" />
+								<Button fx:id="saveReturnButton" layoutX="580.0" layoutY="13.0" mnemonicParsing="false" text="%SalesOrder_button_save_return_description.title" />
+<Button fx:id="printProformaButton" layoutX="762.0" layoutY="13.0" mnemonicParsing="false" text="%SalesOrder_button_proforma_description.title" />
 							</children>
 							<padding>
 								<Insets bottom="2.0" />

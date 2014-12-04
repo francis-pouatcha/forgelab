@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,6 +15,8 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
 import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.ArticleDetails;
+import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
@@ -160,6 +163,40 @@ public class DeliveryItemEJB
 			result.add(item);
 		}
 		return result ;
+	}
+	
+	public List<ArticleDetails> findArticlesDetails(ArticleSearchInput input){
+		String articleName = input.getEntity().getArticleName();
+		String pic = input.getEntity().getPic();
+		int max = input.getMax();
+		List<ArticleDetails> result= new ArrayList<ArticleDetails>();
+		List<Object[]> articles= new ArrayList<Object[]>();
+		StringBuilder query = new StringBuilder("SELECT de.internalPic, de.mainPic, de.articleName, de.delivery.supplier.name, de.delivery.deliveryDate, de.purchasePricePU FROM DeliveryItem AS de");
+		query.append(" WHERE de.id IS NOT NULL AND de.articleName = :designation AND de.mainPic = :cip");
+		query.append(" ORDER BY de.delivery.deliveryDate DESC");
+		
+		Query createQuery = em.createQuery(query.toString());
+		createQuery.setParameter("designation", articleName);
+		createQuery.setParameter("cip", pic);
+		createQuery.setMaxResults(max);
+		articles = createQuery.getResultList();
+		for(Object[] objects: articles) {
+			String internalPic= (String)objects[0];
+			String mainPic= (String)objects[1];
+			String article= (String)objects[2];
+			String supplier= (String)objects[3];
+			Date deliveryDate= (Date)objects[4];
+			BigDecimal ppu= (BigDecimal)objects[5];
+			ArticleDetails articleDetails = new ArticleDetails();
+            articleDetails.setInternalPic(internalPic);
+            articleDetails.setMainPic(mainPic);
+            articleDetails.setArticleName(article);
+            articleDetails.setSupplier(supplier);
+            articleDetails.setDeliveryDate(deliveryDate);
+            articleDetails.setPurchasePricePU(ppu);
+			result.add(articleDetails);
+		}
+		return result;
 	}
 
 	public List<DeliveryItem> findBy(DeliveryItem entity, int start, int max, SingularAttribute<DeliveryItem, ?>[] attributes)

@@ -74,7 +74,7 @@ public class SalesOrderXlsExporter {
 				cell.setCellValue(totalSalesPrice);
 				
 				cell = row.createCell(cellnum++);
-				cell.setCellValue(item.getVatValue().toBigIntegerExact().toString());
+				cell.setCellValue(item.getVatValue().toBigInteger().toString());
 			}
 			
 			try {
@@ -84,7 +84,8 @@ public class SalesOrderXlsExporter {
 				outputStream.close();
 				Desktop.getDesktop().open(file);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Erreur sortie excel");
+				throw new IllegalStateException(e);
 			}
 		}
 

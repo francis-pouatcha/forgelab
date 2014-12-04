@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.adorsys.adpharma.server.jpa.Article;
+import org.adorsys.adpharma.server.jpa.Section;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class PeriodicalDataSearchInput {
@@ -26,6 +29,10 @@ public class PeriodicalDataSearchInput {
 	private Boolean twentyOverHeightyInQty = Boolean.FALSE ;
 	
 	private Boolean perVendorAndDiscount;
+	
+	private Section section;
+	
+	private Article article;
 
 	private String pic;
 	
@@ -130,6 +137,22 @@ public class PeriodicalDataSearchInput {
    
    public void setPrintXls(Boolean printXls) {
 	this.printXls = printXls;
+   }
+
+	public Section getSection() {
+		return section;
+	}
+	
+	public void setSection(Section section) {
+		this.section = section;
+	}
+   
+   public Article getArticle() {
+	return article;
+    }
+   
+   public void setArticle(Article article) {
+	this.article = article;
    }
    
 

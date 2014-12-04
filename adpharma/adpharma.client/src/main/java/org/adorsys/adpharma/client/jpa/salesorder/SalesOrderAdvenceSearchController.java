@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.salesorder;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.adorsys.adpharma.client.jpa.customervoucher.CustomerVoucher;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchInput;
 import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
@@ -24,6 +26,8 @@ import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.locale.Bundle;
+import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -48,6 +52,10 @@ public class SalesOrderAdvenceSearchController {
 	@Inject
 	@EntitySearchDoneEvent
 	private Event<SalesOrderSearchResult> searchResultEvent ;
+	
+	@Inject
+	@Bundle({SalesOrder.class})
+	private ResourceBundle resourceBundle;
 
 	@Inject
 	@ShowProgressBarRequestEvent
@@ -92,7 +100,7 @@ public class SalesOrderAdvenceSearchController {
 			public void handle(WorkerStateEvent event) {
 				LoginSearchService source = (LoginSearchService) event.getSource();
 				Login login = new Login();
-				login.setLoginName("TOUS LES VENDEURS");
+				login.setLoginName(resourceBundle.getString("SalesOrder_comboBox_all_sallers_description.title"));
 				List<Login> resultList = source.getValue().getResultList();
 				resultList.sort(new Comparator<Login>() {
 

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -225,6 +226,7 @@ public class DeliveryEJB
 		delivery = create(delivery);
 
 		Set<ProcurementOrderItem> items = order.getProcurementOrderItems();
+		Set<DeliveryItem> deliveryItems= new HashSet<DeliveryItem>();
 		BigDecimal amountHt = BigDecimal.ZERO;
 		for (ProcurementOrderItem item : items) {
 			if(BigDecimal.ZERO.compareTo(item.getAvailableQty())!=0){
@@ -246,6 +248,7 @@ public class DeliveryEJB
 				deliveryItem.setStockQuantity(item.getAvailableQty());
 				DeliveryItem create = deliveryItemEJB.create(deliveryItem);
 				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
+				deliveryItems.add(deliveryItem);
 			}
 		}
 		
@@ -260,6 +263,7 @@ public class DeliveryEJB
 		delivery.setNetAmountToPay(amountHt);
 		delivery.setDateOnDeliverySlip(creationDate);
 		delivery.setDeliveryDate(creationDate);
+		delivery.setDeliveryItems(deliveryItems);
 		delivery.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		delivery= repository.save(delivery);
 		return new DeliveryFromOrderData(delivery,order );

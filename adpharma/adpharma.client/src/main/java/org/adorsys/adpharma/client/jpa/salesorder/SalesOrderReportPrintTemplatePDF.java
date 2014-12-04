@@ -175,7 +175,7 @@ public class SalesOrderReportPrintTemplatePDF {
 
 	private void printReportHeader() throws DocumentException {
 
-		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES "+headerName));
+		Paragraph paragraph = new Paragraph(new BoldText("RAPPORTS PERIODIQUE DES VENTES: "+headerName));
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph);
 

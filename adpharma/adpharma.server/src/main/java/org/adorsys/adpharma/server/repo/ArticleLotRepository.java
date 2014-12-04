@@ -23,6 +23,9 @@ public interface  ArticleLotRepository extends EntityRepository<ArticleLot, Long
 	
 	@Query(	"SELECT e FROM ArticleLot AS e WHERE LOWER(e.articleName) LIKE LOWER(?1) AND e.stockQuantity > ?2 AND ( e.article.section.wareHouse = ?3 OR e.article.section.wareHouse IS NULL ) ")
     QueryResult<ArticleLot> findByArticleNameLikeAndAndStockUpperThan(String articleName, BigDecimal stock, Boolean warehouse);
+	
+	@Query(	"SELECT e FROM ArticleLot AS e WHERE LOWER(e.articleName) LIKE LOWER(?1)")
+    QueryResult<ArticleLot> findByArticleNameLike(String articleName);
 
 	@Query(	"SELECT e FROM ArticleLot AS e WHERE LOWER(e.articleName) LIKE LOWER(?1) AND e.stockQuantity <= ?2")
     QueryResult<ArticleLot> findByArticleNameLikeAndAndStockEqual(String articleName, BigDecimal stock);

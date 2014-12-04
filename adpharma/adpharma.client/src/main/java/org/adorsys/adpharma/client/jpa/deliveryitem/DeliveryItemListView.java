@@ -75,7 +75,7 @@ public class DeliveryItemListView
 		viewBuilder.addBigDecimalColumn(dataList, "stockQuantity", "DeliveryItem_stockQuantity_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "salesPricePU", "DeliveryItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "purchasePricePU", "DeliveryItem_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
-		viewBuilder.addDateColumn(dataList, "delivery.recordingDate", "DeliveryItem_creationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
+		viewBuilder.addDateColumn(dataList, "creationDate", "DeliveryItem_creationDate_description.title", resourceBundle, "dd-MM-yyyy", locale);
 
 		//		viewBuilder.addBigDecimalColumn(dataList, "totalPurchasePrice", "DeliveryItem_totalPurchasePrice_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		pagination = viewBuilder.addPagination();

@@ -7,7 +7,9 @@ import java.util.Set;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -20,6 +22,7 @@ import javax.validation.ConstraintViolation;
 import jfxtras.scene.control.CalendarTextField;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -37,10 +40,12 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CalendarTextField beginDate;
 
 	private CalendarTextField endDate;
+	
+	private ComboBox<ArticleSection> section;
+	
+	private ComboBox<Article> article;
 
 	private CheckBox check;
-	
-	private TextField articleName ;
 	
 	private CheckBox printXls;
 	
@@ -55,10 +60,12 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	private CheckBox perVendorAndDiscount;
 	
 	private TextField pic ;
-
+	
 	private Button saveButton;
 
 	private Button resetButton;
+	
+	private Button clearButton;
 
 	@Inject
 	private Locale locale ;
@@ -78,7 +85,12 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		
 		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle) ;
-		articleName = lazyviewBuilder.addTextField("Article_articleName_description.title", "pic", resourceBundle) ;
+		
+		section = lazyviewBuilder.addComboBox("Article_section_description.title", "section", resourceBundle);
+		
+		article = lazyviewBuilder.addComboBox("Article_articleName_description.title", "article", resourceBundle);
+		article.setPrefHeight(40d);
+		article.setPrefWidth(300d);
 		
 		taxableSalesOnly = lazyviewBuilder.addCheckBox("Entity_empty.text", "taxableSalesOnly", resourceBundle);
 		taxableSalesOnly.setText("Taxable Uniquement ?");
@@ -101,7 +113,6 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		printXls= lazyviewBuilder.addCheckBox("Entity_empty.text", "printXls", resourceBundle);
 		printXls.setText("Imprimer en Excel");
 		
-		
 
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lazyviewBuilder.toRows(), ViewType.CREATE, false);
@@ -109,6 +120,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		HBox buttonBar = viewBuilder.addButtonBar();
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
+		clearButton = viewBuilder.addButton(buttonBar, "Entity_clear.title", "clearButton", resourceBundle, AwesomeIcon.ERASER);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(500);
 	}
@@ -120,8 +132,6 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
 		endDate.calendarProperty().bindBidirectional(model.endDateProperty());
 		check.selectedProperty().bindBidirectional(model.checkProperty());
-		pic.textProperty().bindBidirectional(model.picProperty());
-		articleName.textProperty().bindBidirectional(model.articleNameProperty());
 		taxableSalesOnly.selectedProperty().bindBidirectional(model.taxableSalesOnlyProperty());
 		nonTaxableSalesOnly.selectedProperty().bindBidirectional(model.nonTaxableSalesOnlyProperty());
 		twentyOverHeightySalesOnly.selectedProperty().bindBidirectional(model.twentyOverHeightySalesOnlyProperty());
@@ -129,6 +139,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		perVendorAndDiscount.selectedProperty().bindBidirectional(model.perVendorAndDiscountProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
 		printXls.selectedProperty().bindBidirectional(model.printXlsProperty());
+		section.valueProperty().bindBidirectional(model.sectionProperty());
+		article.valueProperty().bindBidirectional(model.articleProperty());
 	}
 
 	public void addValidators()
@@ -189,8 +201,19 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 	public CheckBox getTaxableSalesOnly() {
 		return taxableSalesOnly;
 	}
+	
 
 
+	public ComboBox<ArticleSection> getSection() {
+		return section;
+	}
+
+
+
+	public ComboBox<Article> getArticle() {
+		return article;
+	}
+	
 
 	public CheckBox getNonTaxableSalesOnly() {
 		return nonTaxableSalesOnly;
@@ -221,6 +244,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		return resourceBundle;
 	}
 
-
-
+	public Button getClearButton() {
+		return clearButton;
+	}
+	
 }

@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.Reception;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -78,9 +79,11 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
@@ -159,6 +162,14 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	CustomerSearchInput customerSearchInput ;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgress;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgress;
 
 	@Inject
 	@PrintPaymentReceiptRequestedEvent
@@ -166,7 +177,7 @@ public class SalesOrderListController implements EntityController
 
 
 	@Inject
-	@Bundle({ CrudKeys.class,CustomerVoucher.class})
+	@Bundle({ CrudKeys.class,CustomerVoucher.class,SalesOrder.class})
 	private ResourceBundle resourceBundle;
 
 	@Inject
@@ -433,7 +444,7 @@ public class SalesOrderListController implements EntityController
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(30);
 				salesOrderSearchService.setSearchInputs(searchInput).start();
-
+                showProgress.fire(new Object());
 			}
 
 				});
@@ -484,7 +495,7 @@ public class SalesOrderListController implements EntityController
 				ArrayList<SalesOrderCustomer> soc = new ArrayList<SalesOrderCustomer>();
 				List<Customer> resultList = result.getResultList();
 				Customer emptyCustomer = new Customer();
-				emptyCustomer.setFullName("TOUS LES CLIENTS");
+				emptyCustomer.setFullName(resourceBundle.getString("SalesOrder_comboBox_all_sutomers_description.title"));
 				resultList.add(0,emptyCustomer);
 				for (Customer customer : resultList) {
 					soc.add(new SalesOrderCustomer(customer));
@@ -509,12 +520,12 @@ public class SalesOrderListController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgress.fire(new Object());
 				SalesOrderSearchService s = (SalesOrderSearchService) event.getSource();
 				searchResult = s.getValue();
 				event.consume();
 				s.reset();
 				handleSearchResult(searchResult);
-
 			}
 		});
 		salesOrderSearchService.setOnFailed(salesOrderSearchServiceCallFailedEventHandler);

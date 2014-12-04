@@ -30,6 +30,7 @@ import org.adorsys.adpharma.client.jpa.agency.AgencySearchService;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSection;
+import org.adorsys.adpharma.client.jpa.article.StockValueArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoicePrintTemplate;
 import org.adorsys.adpharma.client.jpa.procurementorder.ProcurementOrderReportPrintTemplate;
@@ -43,7 +44,9 @@ import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
+import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.controlsfx.dialog.Dialogs;
+import org.jboss.weld.exceptions.IllegalArgumentException;
 
 import com.lowagie.text.DocumentException;
 @Singleton
@@ -60,6 +63,9 @@ public class ModalStockValueSearchController {
 
 	@Inject
 	private ArticleSearchInput searchInput ;
+	
+	@Inject
+	private StockValueArticleSearchInput model;
 
 	@Inject
 	private StockValueSearchService searchService ;
@@ -90,14 +96,13 @@ public class ModalStockValueSearchController {
 
 	@PostConstruct
 	public void postContruct(){
-		view.bind(searchInput);
+		view.bind(model);
 		view.getSaveButton().disableProperty().bind(searchService.runningProperty());
+		view.getCancelButton().disableProperty().bind(searchService.runningProperty());
 		callFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
-
 			@Override
 			protected void showError(Throwable exception) {
 				Dialogs.create().showException(exception);
-
 			}
 		});
 		view.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -105,7 +110,74 @@ public class ModalStockValueSearchController {
 			@Override
 			public void handle(ActionEvent event) {
 				view.closeDialog();
+			}
+		});
+		
+		view.getView().getBreakArticleRepport().selectedProperty().addListener(new ChangeListener<Boolean>() {
 
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					view.getView().getBreakArticleRepport().setSelected(true);
+					view.getView().getBeloThresholdArticleRepport().setDisable(Boolean.TRUE);
+					view.getView().getStockValueRepport().setDisable(Boolean.TRUE);
+				}
+				if(oldValue) {
+					view.getView().getBreakArticleRepport().setSelected(false);
+					view.getView().getBeloThresholdArticleRepport().setDisable(Boolean.FALSE);
+					view.getView().getStockValueRepport().setDisable(Boolean.FALSE);
+				}
+				
+			}
+		});
+		
+		view.getView().getStockValueRepport().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					view.getView().getStockValueRepport().setSelected(true);
+					view.getView().getBeloThresholdArticleRepport().setDisable(Boolean.TRUE);
+					view.getView().getBreakArticleRepport().setDisable(Boolean.TRUE);
+				}
+				if(oldValue) {
+					view.getView().getStockValueRepport().setSelected(false);
+					view.getView().getBeloThresholdArticleRepport().setDisable(Boolean.FALSE);
+					view.getView().getBreakArticleRepport().setDisable(Boolean.FALSE);
+				}
+				
+			}
+		});
+		
+		view.getView().getBeloThresholdArticleRepport().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					view.getView().getBeloThresholdArticleRepport().setSelected(true);
+					view.getView().getBreakArticleRepport().setDisable(Boolean.TRUE);
+					view.getView().getStockValueRepport().setDisable(Boolean.TRUE);
+				}
+				if(oldValue) {
+					view.getView().getBeloThresholdArticleRepport().setSelected(false);
+					view.getView().getBreakArticleRepport().setDisable(Boolean.FALSE);
+					view.getView().getStockValueRepport().setDisable(Boolean.FALSE);
+				}
+				
+			}
+		});
+		
+		view.getView().getGroupByArticle().selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean oldValue, Boolean newValue) {
+				if(newValue) {
+					view.getView().getGroupByArticle().setSelected(true);
+				}
 			}
 		});
 
@@ -113,12 +185,11 @@ public class ModalStockValueSearchController {
 
 			@Override
 			public void handle(ActionEvent event) {
-				Set<ConstraintViolation<ArticleSearchInput>> violations = view.getView().validate(searchInput);
+				Set<ConstraintViolation<StockValueArticleSearchInput>> violations = view.getView().validate(model);
 				if (violations.isEmpty())
 				{
-						searchService.setStockValue(Boolean.TRUE);
-						searchInput.setMax(-1);
-						searchService.setSearchInputs(searchInput).start();
+						model.setMax(-1);
+						searchService.setSearchInputs(model).start();
 						showProgressionRequestEvent.fire(new Object());
 				}
 
@@ -134,7 +205,7 @@ public class ModalStockValueSearchController {
 				event.consume();
 				s.reset();
 				List<ArticleLot> resultList = cs.getResultList();
-				ArticleAgency agency = searchInput.getEntity().getAgency();
+				ArticleAgency agency = model.getEntity().getAgency();
 				try {
 					stockValuRepportTemplatePdf = new StockValuRepportTemplatePdf(agency,securityUtil.getConnectedUser(), resourceBundle);
 					stockValuRepportTemplatePdf.addItems(resultList);
@@ -210,7 +281,6 @@ public class ModalStockValueSearchController {
 				}
 				sections.add(0, new ArticleSection());
 				view.getView().getSection().getItems().setAll(sections);
-
 			}
 		});
 
@@ -218,13 +288,20 @@ public class ModalStockValueSearchController {
 		sectionSearchService.setOnFailed(callFailedEventHandler);
 	}
 
-	public void handleArticleSearchRequestEvent(@Observes @EntitySearchRequestedEvent ArticleSearchInput searchInput){
-//		view.bind(searchInput);
+	public void handleArticleSearchRequestEvent(@Observes @EntitySearchRequestedEvent StockValueArticleSearchInput searchInput){
+		PropertyReader.copy(searchInput, model);
 		view.showDiaLog();
 	}
+	
 	private void openFile(File file){
+		// sudo apt-get install libgnome2-0 for Linux versions
+		Desktop desktop=null;
+		if(!Desktop.isDesktopSupported()) {
+			throw new IllegalArgumentException("Desktop is not supported on this OS: "+System.getProperty("os.name").toLowerCase());
+		}
 		try {
-			Desktop.getDesktop().open(file);
+			desktop= Desktop.getDesktop();
+			desktop.open(file);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

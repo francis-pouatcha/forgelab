@@ -10,14 +10,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -25,27 +24,11 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-
-import org.adorsys.adpharma.client.jpa.gender.Gender;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSearchInput;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-
-import java.util.Calendar;
-
-import javafx.beans.property.SimpleBooleanProperty;
-
-import java.math.BigDecimal;
-
-import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
-import org.adorsys.adpharma.client.jpa.employer.Employer;
-import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
-import org.adorsys.adpharma.client.jpa.customertype.CustomerType;
-import org.adorsys.adpharma.client.jpa.customer.Customer;
-
+@Singleton
 public class CustomerListView
 {
+
+	private static final String Customer = null;
 
 	@FXML
 	BorderPane rootPane;
@@ -55,6 +38,9 @@ public class CustomerListView
 
 	@FXML
 	private Button createButton;
+	
+	@FXML
+	private Button printXlsButton;
 
 	@FXML
 	private Button editButton;
@@ -77,6 +63,7 @@ public class CustomerListView
 
 	@FXML
 	private TableView<Customer> dataList;
+	
 
 	@Inject
 	private Locale locale;
@@ -119,6 +106,7 @@ public class CustomerListView
 		//      rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
 	}
+	
 
 	public void bind(CustomerSearchInput searchInput)
 	{
@@ -206,5 +194,17 @@ public class CustomerListView
 	public void setCreditButton(Button creditButton) {
 		this.creditButton = creditButton;
 	}
+
+
+	public Button getPrintXlsButton() {
+		return printXlsButton;
+	}
+
+
+	public void setPrintXlsButton(Button printXlsButton) {
+		this.printXlsButton = printXlsButton;
+	}
+	
+	
 
 }

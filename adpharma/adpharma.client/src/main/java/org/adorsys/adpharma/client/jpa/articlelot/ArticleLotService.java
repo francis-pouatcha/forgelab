@@ -8,6 +8,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.StockValueArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.warehousearticlelot.WareHouseArticleLot;
 import org.adorsys.adpharma.client.utils.ArticleLotDetailResultHolder;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
@@ -135,9 +136,9 @@ public class ArticleLotService
 	// @Path("/findByLike"
 	// @Produces("application/xml")
 	// @Consumes("application/xml")
-	public ArticleLotSearchResult stockValue(ArticleSearchInput searchInput)
+	public ArticleLotSearchResult stockValue(StockValueArticleSearchInput searchInput)
 	{
-		Entity<ArticleSearchInput> searchInputEntity = Entity.entity(
+		Entity<StockValueArticleSearchInput> searchInputEntity = Entity.entity(
 				searchInput, media);
 		return target().path("stockValue").request(media).post(
 				searchInputEntity, ArticleLotSearchResult.class);

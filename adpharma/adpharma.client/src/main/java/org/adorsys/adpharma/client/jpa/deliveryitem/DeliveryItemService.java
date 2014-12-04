@@ -7,9 +7,13 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.adorsys.adpharma.client.jpa.article.ArticleDetailsSearchResult;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.delivery.PeriodicalDeliveryDataSearchInput;
 import org.adorsys.javafx.crud.extensions.address.ServerAddress;
 import org.adorsys.javafx.crud.extensions.login.ClientCookieFilter;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class DeliveryItemService {
 	private String media = MediaType.APPLICATION_JSON;
@@ -114,6 +118,14 @@ public class DeliveryItemService {
 				searchInput, media);
 		return target().path("countByLike").request()
 				.post(searchInputEntity, Long.class);
+	}
+	
+	// @POST
+		// @Path("/findArticlesDetails"
+		// @Consumes("application/xml")
+	public ArticleDetailsSearchResult findByArticle(ArticleSearchInput searchInput) {
+	Entity<ArticleSearchInput> entity = Entity.entity(searchInput, media);
+	return target().path("findArticlesDetails").request().post(entity, ArticleDetailsSearchResult.class);
 	}
 
 

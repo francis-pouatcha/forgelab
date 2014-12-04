@@ -67,7 +67,7 @@ public class SalesorderAdvenceSearchView extends ApplicationModal{
 		toDate.setPrefWidth(300d);
 		state.setPrefWidth(300d);
 		onlyCrediSales = lvb.addCheckBox("Entity_empty.title", "onlyCrediSales", resourceBundle);
-		onlyCrediSales.setText("Uniquement les Bons ?");
+		onlyCrediSales.setText(resourceBundle.getString("SalesOrder_checkBox_onlycreditSales_description.title"));
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lvb.toRows(),ViewType.CREATE, false);
 		viewBuilder.addSeparator();
