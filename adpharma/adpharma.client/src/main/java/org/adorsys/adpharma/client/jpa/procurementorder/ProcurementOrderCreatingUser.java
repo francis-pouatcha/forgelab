@@ -140,7 +140,7 @@ public class ProcurementOrderCreatingUser implements Association<ProcurementOrde
 
    public String toString()
    {
-      return PropertyReader.buildToString(this, "loginName", "gender");
+      return PropertyReader.buildToString(this, "loginName");
    }
 
    @Override

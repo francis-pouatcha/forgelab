@@ -17,7 +17,7 @@ public class ValidationProcessArticle {
 	}
 	
 	public static boolean validatePrices(BigDecimal pa, BigDecimal pv) {
-	      int result = pa.compareTo(pv); 
+	      int result = pv.compareTo(pa); 
 	      if(result==1) {
 	    	  return true;
 	      }else {

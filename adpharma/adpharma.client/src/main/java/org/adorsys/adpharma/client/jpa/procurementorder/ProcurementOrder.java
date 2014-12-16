@@ -52,44 +52,62 @@ public class ProcurementOrder implements Cloneable
 
    @Description("ProcurementOrder_procurementOrderNumber_description")
    private SimpleStringProperty procurementOrderNumber;
+   
    @Description("ProcurementOrder_procmtOrderTriggerMode_description")
    private SimpleObjectProperty<ProcmtOrderTriggerMode> procmtOrderTriggerMode;
+   
    @Description("ProcurementOrder_procurementOrderType_description")
    private SimpleObjectProperty<ProcurementOrderType> procurementOrderType;
+   
    @Description("ProcurementOrder_poStatus_description")
    private SimpleObjectProperty<DocumentProcessingState> poStatus;
+   
    @Description("ProcurementOrder_amountBeforeTax_description")
    private SimpleObjectProperty<BigDecimal> amountBeforeTax;
+   
    @Description("ProcurementOrder_amountAfterTax_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountAfterTax;
+   
    @Description("ProcurementOrder_amountDiscount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> amountDiscount;
+   
    @Description("ProcurementOrder_taxAmount_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> taxAmount;
+   
    @Description("ProcurementOrder_netAmountToPay_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> netAmountToPay;
+   
    @Description("ProcurementOrder_submissionDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> submissionDate;
+   
    @Description("ProcurementOrder_createdDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> createdDate;
+   
    @Description("ProcurementOrder_procurementOrderItems_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = ProcurementOrderItem.class, selectionMode = SelectionMode.TABLE)
    private SimpleObjectProperty<ObservableList<ProcurementOrderItem>> procurementOrderItems;
+   
    @Description("ProcurementOrder_creatingUser_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)
    private SimpleObjectProperty<ProcurementOrderCreatingUser> creatingUser;
+   
+   @Description("ProcurementOrder_closeUser_description")
+   private SimpleStringProperty closeUser;
+   
    @Description("ProcurementOrder_supplier_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Supplier.class)
    private SimpleObjectProperty<ProcurementOrderSupplier> supplier;
+   
    @Description("ProcurementOrder_agency_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Agency.class)
    private SimpleObjectProperty<ProcurementOrderAgency> agency;
+   
    @Description("ProcurementOrder_vat_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
    private SimpleObjectProperty<ProcurementOrderVat> vat;
@@ -132,6 +150,25 @@ public class ProcurementOrder implements Cloneable
    public final void setProcurementOrderNumber(String procurementOrderNumber)
    {
       this.procurementOrderNumberProperty().set(procurementOrderNumber);
+   }
+   
+   public SimpleStringProperty closeUserProperty()
+   {
+      if (closeUser == null)
+      {
+    	  closeUser = new SimpleStringProperty();
+      }
+      return closeUser;
+   }
+
+   public String getCloseUser()
+   {
+      return closeUserProperty().get();
+   }
+
+   public final void setCloseUser(String closeUser)
+   {
+      this.closeUserProperty().set(closeUser);
    }
 
    public SimpleObjectProperty<ProcmtOrderTriggerMode> procmtOrderTriggerModeProperty()
@@ -515,6 +552,7 @@ public class ProcurementOrder implements Cloneable
       e.createdDate = createdDate;
       e.procurementOrderItems = procurementOrderItems;
       e.creatingUser = creatingUser;
+      e.closeUser = closeUser;
       e.supplier = supplier;
       e.agency = agency;
       e.vat = vat;

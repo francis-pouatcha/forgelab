@@ -23,19 +23,18 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
-import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategory;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchInput;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchResult;
 import org.adorsys.adpharma.client.jpa.customercategory.CustomerCategorySearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
-import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceListPrintTemplatePdf;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchResult;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchService;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceTobePayedRepportPdf;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
 import org.adorsys.adpharma.client.jpa.login.Login;
+import org.adorsys.adpharma.client.utils.TableViewUtils;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -54,11 +53,11 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
+import org.apache.log4j.Logger;
 import org.controlsfx.dialog.Dialogs;
 
-import com.lowagie.text.DocumentException;
+import com.panemu.tiwulfx.common.ExportToExcel;
+import com.panemu.tiwulfx.table.TableControl;
 
 @Singleton
 public class CustomerListController implements EntityController
@@ -87,6 +86,7 @@ public class CustomerListController implements EntityController
 	@Inject
 	@EntityListPageIndexChangedEvent
 	private Event<CustomerSearchResult> entityListPageIndexChangedEvent;
+	
 
 	@Inject
 	@EntityEditRequestedEvent
@@ -268,6 +268,23 @@ public class CustomerListController implements EntityController
 		});
 
 
+		listView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				TableControl<Customer> customersControl = TableViewUtils.fromTableViewToTableControl(listView.getDataList());
+				List<Customer> data = TableViewUtils.getDataFromTableView(listView.getDataList());
+				List<Double> columnWidths = TableViewUtils.getColumnWidthsFromTableView(listView.getDataList());
+				
+				try {
+					ExportToExcel<Customer> exportToExcel= new ExportToExcel<Customer>();
+					exportToExcel.export("Liste des clients", "clients.xls", customersControl, data, columnWidths);
+				} catch (Exception e) {
+					Logger.getLogger(CustomerListController.class).error("Erreur d'exportation: "+e.getMessage());
+				}
+				
+			}
+		});
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{

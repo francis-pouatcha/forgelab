@@ -36,6 +36,7 @@ import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.ErrorMessageDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.controlsfx.dialog.Dialogs;
 
 @Singleton
 public class ArticleCreateController implements EntityController
@@ -106,14 +107,11 @@ public class ArticleCreateController implements EntityController
             	model.setQtyInStock(BigDecimal.ZERO);
                createService.setModel(model).start();
             }else if(!violations.isEmpty()){
-            	errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
-            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
-                errorMessageDialog.display();
+            	Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
+				.nativeTitleBar().message(resourceBundle.getString("Entity_click_to_see_error")).showError();
             }else if (validatePrices==false) {
-            	errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
-            	errorMessageDialog.getDetailText().setText(resourceBundle.getString("Article_validation_prices_error.title"));
-            	errorMessageDialog.getDetailText().setStyle("-fx-color: #FF0000; -fx-font-weight: bold;"); 
-            	errorMessageDialog.display();
+            	Dialogs.create().title(resourceBundle.getString("Entity_create_error.title"))
+					.nativeTitleBar().message(resourceBundle.getString("Article_validation_prices_error.title")).showError();
 			}
             return;
          }

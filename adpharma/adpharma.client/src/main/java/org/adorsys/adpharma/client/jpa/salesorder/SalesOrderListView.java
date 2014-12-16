@@ -14,6 +14,7 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -153,6 +154,8 @@ public class SalesOrderListView
 		viewBuilder.addStringColumn(dataList, "salesAgent", "SalesOrder_salesAgent_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataList, "cashDrawer.cashier", "SalesOrder_cashDrawer_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "salesOrderStatus", "SalesOrder_salesOrderStatus_description.title", resourceBundle, documentProcessingStateConverter);
+		
+		
 
 		// Field not displayed in table
 		viewBuilder.addDateColumn(dataList, "creationDate", "SalesOrder_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
@@ -185,6 +188,8 @@ public class SalesOrderListView
 		//		viewBuilder.addBigDecimalColumn(dataListItem, "vat", "SalesOrderItem_vat_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
 
 
+		printTicketButton.setTooltip(new Tooltip(resourceBundle.getString("SalesOrder_button_received_without_discount_description.title")));
+		unDiscountReceipt.setTooltip(new Tooltip(resourceBundle.getString("SalesOrder_button_received_with_discount_description.title")));
 	}
 	public void bind(SalesOrderSearchInput searchInput)
 	{

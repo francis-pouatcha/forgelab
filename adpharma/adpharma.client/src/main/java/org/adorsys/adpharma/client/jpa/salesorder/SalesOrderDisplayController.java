@@ -1,5 +1,9 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -7,8 +11,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -314,6 +320,21 @@ public class SalesOrderDisplayController implements EntityController
 			}
 		});
 
+		displayView.getOrderSalesPricePUColumn().setOnEditCommit(new EventHandler<CellEditEvent<SalesOrderItem,BigDecimal>>() {
+			@Override
+			public void handle(CellEditEvent<SalesOrderItem, BigDecimal> orderSalesPricePuCell) {
+				SalesOrderItem selectedItem = orderSalesPricePuCell.getRowValue();
+				BigDecimal newValue = orderSalesPricePuCell.getNewValue();
+				if(displayView.getSalesPricePU().isEditable()) {
+					selectedItem.setSalesPricePU(newValue);
+					selectedItem.updateTotalSalesPrice();
+					salesOrderItemEditService.setSalesOrderItem(selectedItem).start();
+				}else {
+					orderSalesPricePuCell.getRowValue().setSalesPricePU(orderSalesPricePuCell.getOldValue());
+				}
+			}
+		});
+		
 		/*
 		 * listen to Ok button.
 		 */
@@ -658,7 +679,7 @@ public class SalesOrderDisplayController implements EntityController
 				updateSalesOrder(createdItem);
 				resetSearchBar();
 				PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
-				displayView.getInternalPic().requestFocus();
+//				displayView.getInternalPic().requestFocus();
 
 			}
 		});
@@ -862,10 +883,51 @@ public class SalesOrderDisplayController implements EntityController
 		{
 			children.add(rootPane);
 		}
-		displayView.getInternalPic().requestFocus();
+		SalesModeProperties salesModeProperties = SalesModeProperties.loadSalesModeProperties();
+		String salesModeStrategy = salesModeProperties.getSalesModeStrategy();
+		switch (salesModeStrategy) {
+		case "CODE":
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					displayView.getInternalPic().requestFocus();
+				}
+			});
+			displayView.getArticleName().setEditable(Boolean.FALSE);
+			displayView.getInternalPic().setEditable(Boolean.TRUE);
+			displayView.getArticleName().setOpacity(0.3);
+			break;
+			
+		case "DES":
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					displayView.getArticleName().requestFocus();
+				}
+			});
+			displayView.getInternalPic().setEditable(Boolean.FALSE);
+			displayView.getInternalPic().setOpacity(0.3);
+			displayView.getArticleName().setEditable(Boolean.TRUE);
+			break;
+			
+		case "ALL":
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					displayView.getInternalPic().requestFocus();
+				}
+			});
+			displayView.getArticleName().setEditable(Boolean.TRUE);
+			displayView.getInternalPic().setEditable(Boolean.TRUE);
+            break;
+		
+		default:
+			break;
+		}
 		getOpenCashDrawer();
 
 	}
+	
 
 	@Override
 	public ViewType getViewType()
@@ -1036,6 +1098,12 @@ public class SalesOrderDisplayController implements EntityController
 			return ;
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);
 		if(!displayView.getArticleName().isEditable()){
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					displayView.getInternalPic().requestFocus();
+				}
+			});
 			if(isValidSalesOrderItem())
 				if(isOldStock(model)){
 					handleAddSalesOrderItem(salesOrderItem);
@@ -1043,10 +1111,24 @@ public class SalesOrderDisplayController implements EntityController
 					Dialogs.create().message("Veuillez Saisir le plus ancien Merci pour votre comprehension ! ").showInformation();
 					PropertyReader.copy(new SalesOrderItem(), salesOrderItem);
 				}
-			displayView.getInternalPic().requestFocus();
 		}else {
+			SalesModeProperties mode = SalesModeProperties.loadSalesModeProperties();
+			if(mode.getSalesModeStrategy().equals("ALL")) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						displayView.getInternalPic().requestFocus();
+					}
+				});
+			}else if (mode.getSalesModeStrategy().equals("DES")) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						displayView.getArticleName().requestFocus();
+					}
+				});
+			}
 			handleAddSalesOrderItem(salesOrderItem);
-			displayView.getArticleName().requestFocus();
 		}
 	}
 

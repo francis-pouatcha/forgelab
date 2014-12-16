@@ -203,7 +203,6 @@ public class SalesOrderEndpoint
 	@Consumes({ "application/json", "application/xml" })
 	public SalesOrderDiscountSearchResult periodicalSalesOrderPerVendor(PeriodicalDataSearchInput data)
 	{
-		System.out.println("Arrivee sur le serveur");
 		List<SalesOrderDiscount> discounts = ejb.periodicalSalesOrderDiscounts(data);
 	   return new SalesOrderDiscountSearchResult(Long.valueOf(discounts.size()), discounts);
 	}

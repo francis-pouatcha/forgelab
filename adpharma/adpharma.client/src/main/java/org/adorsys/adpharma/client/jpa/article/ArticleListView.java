@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -43,7 +44,10 @@ import javafx.beans.property.SimpleLongProperty;
 
 import org.adorsys.adpharma.client.jpa.agency.Agency;
 import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
+import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 
 public class ArticleListView
@@ -78,6 +82,9 @@ public class ArticleListView
 
 	@FXML
 	private TableView<Article> dataList;
+	
+	@FXML
+	private TableView<ArticleDetails> dataListDetails;
 
 	@Inject
 	private Locale locale;
@@ -97,6 +104,8 @@ public class ArticleListView
 	@Bundle({ CrudKeys.class
 		, Article.class
 		, Agency.class
+		, ArticleDetails.class
+		, Delivery.class
 	})
 	private ResourceBundle resourceBundle;
 
@@ -120,13 +129,20 @@ public class ArticleListView
 		viewBuilder.addBigDecimalColumn(dataList, "maxStockQty", "Article_maxStockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addStringColumn(dataList, "section", "Article_section_description.title", resourceBundle,250d);
 		viewBuilder.addStringColumn(dataList, "vat", "Article_vat_description.title", resourceBundle);
-//
-//		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-//		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
-//		// Field not displayed in table
-//		viewBuilder.addStringColumn(dataList, "clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
 
-		//		pagination = viewBuilder.addPagination();
+		viewBuilder.addDateColumn(dataList, "lastStockEntry", "Article_lastStockEntry_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addDateColumn(dataList, "lastOutOfStock", "Article_lastOutOfStock_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+        // Field not displayed in table
+        //viewBuilder.addStringColumn(dataList, "clearanceConfig", "Article_clearanceConfig_description.title", resourceBundle);
+		
+		// Data List article details
+		ViewBuilderUtils.newStringColumn(dataListDetails, "internalPic", "ArticleDetails_internalpic_description.title", resourceBundle,200d);
+		viewBuilder.addStringColumn(dataListDetails, "mainPic", "ArticleDetails_mainpic_description.title", resourceBundle);
+		ViewBuilderUtils.newStringColumn(dataListDetails, "articleName", "ArticleDetails_articleName_description.title", resourceBundle,300d);
+		ViewBuilderUtils.newStringColumn(dataListDetails, "supplier", "ArticleDetails_supplier_description.title", resourceBundle,300d);
+		viewBuilder.addDateColumn(dataListDetails, "deliveryDate", "ArticleDetails_deliveryDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
+		viewBuilder.addBigDecimalColumn(dataListDetails, "purchasePricePU", "ArticleDetails_purchasePricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//pagination = viewBuilder.addPagination();
 //		viewBuilder.addSeparator();
 //
 //		HBox buttonBar = viewBuilder.addButtonBar();
@@ -200,6 +216,10 @@ public class ArticleListView
 	public TableView<Article> getDataList()
 	{
 		return dataList;
+	}
+	
+	public TableView<ArticleDetails> getDataListDetails() {
+		return dataListDetails;
 	}
 
 	public BorderPane getRootPane()

@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.jpa.procurementorder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -18,11 +19,13 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.events.ProcurementOrderId;
+import org.adorsys.adpharma.client.jpa.accessroleenum.AccessRoleEnum;
 import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
@@ -56,6 +59,7 @@ import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
 import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
+import org.adorsys.javafx.crud.extensions.login.RolesEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.apache.commons.lang3.StringUtils;
@@ -91,6 +95,10 @@ public class ProcurementOrderDisplayController implements EntityController
 	@Inject 
 	@EntitySelectionEvent
 	private Event<Delivery> deliveryEditRequestEvent;
+	
+	@Inject 
+	@EntitySelectionEvent
+	private Event<ProcurementOrder> orderSelectedRequestEvent;
 
 	@Inject 
 	@EntityEditDoneEvent
@@ -121,6 +129,9 @@ public class ProcurementOrderDisplayController implements EntityController
 
 	@Inject
 	private DeliveryFromOrderServeice deliveryFromOrderServeice ;
+	
+	@Inject
+	private ProcurementOrderRetrievedService procurementOrderRetrievedService;
 
 
 	@Inject
@@ -153,6 +164,7 @@ public class ProcurementOrderDisplayController implements EntityController
 		displayView.bind(item);
 		displayView.bind(displayedEntity);
 		displayView.getDeliverButton().disableProperty().bind(deliveryFromOrderServeice.runningProperty());
+		displayView.getRetrievedButton().disableProperty().bind(procurementOrderRetrievedService.runningProperty());
 		serviceCallFailedEventHandler.setErrorDisplay(new ErrorDisplay() {
 
 
@@ -363,6 +375,26 @@ public class ProcurementOrderDisplayController implements EntityController
 			}
 		});
 		deliveryFromOrderServeice.setOnFailed(serviceCallFailedEventHandler);
+		
+		
+		displayView.getRetrievedButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				procurementOrderRetrievedService.setModel(displayedEntity).start();
+			}
+		});
+		procurementOrderRetrievedService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ProcurementOrderRetrievedService s= (ProcurementOrderRetrievedService)event.getSource();
+				ProcurementOrder order = s.getValue();
+				event.consume();
+				s.reset();
+				orderSelectedRequestEvent.fire(order);
+			}
+		});
+		procurementOrderRetrievedService.setOnFailed(serviceCallFailedEventHandler);
+		
 
 		displayView.getCancelButton().setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -532,6 +564,14 @@ public class ProcurementOrderDisplayController implements EntityController
 	public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article)
 	{
 		handleSelectedArticle(article);
+	}
+	
+	public void handleRolesEvent(@Observes(notifyObserver=Reception.ALWAYS) @RolesEvent Set<String> roles){
+		if(roles.contains(AccessRoleEnum.MANAGER.name())){
+			displayView.getRetrievedButton().setVisible(true);
+		}else {
+			displayView.getRetrievedButton().setVisible(false);
+		}
 	}
 
 	/**

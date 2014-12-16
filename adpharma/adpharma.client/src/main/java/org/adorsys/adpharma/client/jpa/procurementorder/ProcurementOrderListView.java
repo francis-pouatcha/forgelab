@@ -126,6 +126,8 @@ public class ProcurementOrderListView
 		viewBuilder.addStringColumn(dataList, "procurementOrderNumber", "ProcurementOrder_procurementOrderNumber_description.title", resourceBundle);
 		viewBuilder.addEnumColumn(dataList, "poStatus", "ProcurementOrder_poStatus_description.title", resourceBundle, documentProcessingStateConverter);
 		ViewBuilderUtils.newStringColumn(dataList, "supplier", "ProcurementOrder_supplier_description.title", resourceBundle,250d);
+		viewBuilder.addStringColumn(dataList, "creatingUser", "ProcurementOrder_creatingUser_description.title", resourceBundle,150d);
+		viewBuilder.addStringColumn(dataList, "closeUser", "ProcurementOrder_closeUser_description.title", resourceBundle,150d);
 		ViewBuilderUtils.newDateColumn(dataList, "createdDate", "ProcurementOrder_createdDate_description.title", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		viewBuilder.addBigDecimalColumn(dataList, "amountBeforeTax", "ProcurementOrder_amountBeforeTax_description.title", resourceBundle, NumberType.INTEGER, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "amountAfterTax", "ProcurementOrder_amountAfterTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -133,6 +135,7 @@ public class ProcurementOrderListView
 		viewBuilder.addBigDecimalColumn(dataList, "taxAmount", "ProcurementOrder_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "netAmountToPay", "ProcurementOrder_netAmountToPay_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(dataList, "rate", "VAT_rate_description.title", resourceBundle, NumberType.PERCENTAGE, locale);
+		
 		//		datalistitem columns
 		viewBuilder.addStringColumn(dataListItem, "mainPic", "ProcurementOrderItem_mainPic_description.title", resourceBundle);
 		viewBuilder.addStringColumn(dataListItem, "secondaryPic", "ProcurementOrderItem_secondaryPic_description.title", resourceBundle);

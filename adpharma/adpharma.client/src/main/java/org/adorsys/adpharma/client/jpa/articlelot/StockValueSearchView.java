@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
 import jfxtras.scene.control.CalendarTextField;
@@ -19,6 +20,7 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleAgency;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.article.ArticleSection;
+import org.adorsys.adpharma.client.jpa.article.StockValueArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoicePrintTemplate;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
 import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
@@ -27,7 +29,8 @@ import org.adorsys.javafx.crud.extensions.validation.ToOneAggreggationFieldValid
 import org.adorsys.javafx.crud.extensions.view.AbstractForm;
 import org.adorsys.javafx.crud.extensions.view.LazyViewBuilder;
 
-public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
+@Singleton
+public class StockValueSearchView extends AbstractForm<StockValueArticleSearchInput>{
 	private ComboBox<ArticleAgency> agency;
 	private ComboBox<ArticleSection> section;
 	private CheckBox groupByArticle;
@@ -66,10 +69,10 @@ public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
 		stockValueRepport.setText("Valorisation du stock");
 		
 		breakArticleRepport = viewBuilder.addCheckBox("Entity_empty.text", "breakArticleRepport", resourceBundle);
-		breakArticleRepport.setText("Article en rupture");
+		breakArticleRepport.setText("Articles en rupture");
 		
 		beloThresholdArticleRepport = viewBuilder.addCheckBox("Entity_empty.text", "beloThresholdArticleRepport", resourceBundle);
-		beloThresholdArticleRepport.setText("Article a seuil critique");
+		beloThresholdArticleRepport.setText("Articles à seuil critique");
         gridRows = viewBuilder.toRows();
 	}
 
@@ -79,17 +82,26 @@ public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
 		//		fullName.focusedProperty().addListener(new TextInputControlFoccusChangedListener<Login>(textInputControlValidator, fullName, Login.class, "fullName", resourceBundle));
 	}
 
-	public Set<ConstraintViolation<ArticleSearchInput>> validate(ArticleSearchInput model)
+	public Set<ConstraintViolation<StockValueArticleSearchInput>> validate(StockValueArticleSearchInput model)
 	{
-		Set<ConstraintViolation<ArticleSearchInput>> violations = new HashSet<ConstraintViolation<ArticleSearchInput>>();
+		Set<ConstraintViolation<StockValueArticleSearchInput>> violations = new HashSet<ConstraintViolation<StockValueArticleSearchInput>>();
 
 		return violations;
 	}
+	
+	public void bindStockValues(StockValueArticleSearchInput model) {
+		
+	}
+	
 	@Override
-	public void bind(ArticleSearchInput model)
-	{
+	public void bind(StockValueArticleSearchInput model) {
 		agency.valueProperty().bindBidirectional(model.getEntity().agencyProperty());
-		section.valueProperty().bindBidirectional(model.getEntity().sectionProperty());
+		section.valueProperty().bindBidirectional(model.sectionProperty());
+		groupByArticle.selectedProperty().bindBidirectional(model.groupByArticleProperty());
+		stockValueRepport.selectedProperty().bindBidirectional(model.stockValueRepportProperty());
+		breakArticleRepport.selectedProperty().bindBidirectional(model.breakArticleRepportProperty());
+		beloThresholdArticleRepport.selectedProperty().bindBidirectional(model.beloThresholdArticleRepportProperty());
+		
 	}
 
 	public ComboBox<ArticleAgency> getAgency() {
@@ -149,6 +161,19 @@ public class StockValueSearchView extends AbstractForm<ArticleSearchInput>{
 			ToOneAggreggationFieldValidator aggreggationFieldValidator) {
 		this.aggreggationFieldValidator = aggreggationFieldValidator;
 	}
+	
+	public CheckBox getBeloThresholdArticleRepport() {
+		return beloThresholdArticleRepport;
+	}
+	
+	public CheckBox getBreakArticleRepport() {
+		return breakArticleRepport;
+	}
+	
+	public CheckBox getStockValueRepport() {
+		return stockValueRepport;
+	}
+
 
 	
 }

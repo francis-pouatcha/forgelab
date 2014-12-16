@@ -1,6 +1,7 @@
 package org.adorsys.adpharma.server.rest;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -202,7 +203,7 @@ public class SalesOrderItemEndpoint
 
    private static final List<String> salesOrderFields = Arrays.asList("cashDrawer.cashDrawerNumber", "soNumber", "customer.fullName", "insurance.customer.fullName", "insurance.insurer.fullName", "vat.rate", "salesAgent.fullName", "agency.name", "salesOrderStatus", "cashed", "amountBeforeTax", "amountVAT", "amountDiscount", "totalReturnAmount", "amountAfterTax", "salesOrderType");
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name", "vat", "vat.rate");
+   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "pppu",  "authorizedSale", "agency.name", "vat", "vat.rate");
 
    private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 

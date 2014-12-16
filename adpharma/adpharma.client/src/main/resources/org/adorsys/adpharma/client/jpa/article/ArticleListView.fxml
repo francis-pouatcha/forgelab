@@ -44,7 +44,7 @@
 					</padding>
 				</HBox>
 				<Separator layoutX="10.0" layoutY="10.0" prefWidth="200.0" />
-				<TableView fx:id="dataList" prefHeight="564.0" prefWidth="791.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+				<TableView fx:id="dataList" prefHeight="364.0" prefWidth="791.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 					<columns>
 					</columns>
 					<VBox.margin>
@@ -56,6 +56,19 @@
 						<Pagination fx:id="pagination" maxPageIndicatorCount="5" pageCount="1" prefHeight="48.0" prefWidth="174.0" />
 					</children>
 				</HBox>
+				<TitledPane animated="false" prefHeight="6.0" prefWidth="791.0" text="Fiche produit">
+					<content>
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+					</content>
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</TitledPane>
+				<TableView fx:id="dataListDetails" prefHeight="400.0" prefWidth="200.0">
+					<VBox.margin>
+						<Insets left="5.0" />
+					</VBox.margin>
+				</TableView>
 			</children>
 		</VBox>
 	</center>

@@ -43,6 +43,8 @@ import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.Section;
+import org.adorsys.adpharma.server.jpa.StockValueArticleSearchInput;
+import org.adorsys.adpharma.server.jpa.StockValueParams;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
@@ -236,26 +238,44 @@ public class ArticleLotEJB
 	}
 
 
-	public List<ArticleLot> stockValue(ArticleSearchInput searchInput){
+	public List<ArticleLot> stockValue(StockValueArticleSearchInput searchInput){
+		Section section = searchInput.getSection();
 		List<ArticleLot> stockVAlues = new ArrayList<ArticleLot>();
-		String query ="SELECT c FROM ArticleLot AS c WHERE c.stockQuantity != :stockQuantity  ";
+		String query ="SELECT c FROM ArticleLot AS c WHERE c.id IS NOT NULL";
+		if(searchInput.getStockValueRepport().booleanValue()) { 
+			query = query +" AND c.stockQuantity != :stockQuantity";
+		}
+		if(searchInput.getBreakArticleRepport().booleanValue()) {
+			query= query +" AND c.stockQuantity <= :stockQuantity";
+		}
+		if(searchInput.getBeloThresholdArticleRepport()) {
+			query= query +" AND c.stockQuantity = c.article.minStockQty";
+		}
 
 		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
 			query = query+ " AND c.agency = :agency ";
-		if(searchInput.getEntity().getSection()!=null&&searchInput.getEntity().getSection().getId()!=null)
+		
+		if(section!=null && section.getId()!=null)
 			query = query+ " AND c.article.section = :section ";
-		query = query+" ORDER BY c.article.articleName) " ;
+		
+		if(searchInput.getGroupByArticle()) {
+			query = query+" GROUP BY c, c.mainPic";
+		}
+		query = query+" ORDER BY c.article.articleName";
 
-		Query querys = em.createQuery(query,ArticleLot.class) ;
-
-		querys.setParameter("stockQuantity",BigDecimal.ZERO);
+		Query querys = em.createQuery(query,ArticleLot.class);
+		if(searchInput.getStockValueRepport().booleanValue() || searchInput.getBreakArticleRepport().booleanValue()) {
+		   querys.setParameter("stockQuantity",BigDecimal.ZERO);
+		}
+		
 		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
 			querys.setParameter("agency", searchInput.getEntity().getAgency());
-		if(searchInput.getEntity().getSection()!=null&&searchInput.getEntity().getSection().getId()!=null)
-			querys.setParameter("section", searchInput.getEntity().getSection());
+		
+		if(section!=null && section.getId()!=null)
+			querys.setParameter("section", searchInput.getSection());
+		
 		stockVAlues = querys.getResultList();
-
-		return stockVAlues ;
+		return stockVAlues;
 	}
 
 	public List<ArticleLot> articleLotByArticleOrderByCreationDate(Article article){

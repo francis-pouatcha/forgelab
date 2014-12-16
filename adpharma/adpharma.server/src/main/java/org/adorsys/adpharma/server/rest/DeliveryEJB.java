@@ -2,6 +2,7 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -213,7 +214,7 @@ public class DeliveryEJB
 	public DeliveryFromOrderData deliveryFromProcurementOrder(ProcurementOrder order){
 		order = procurementOrderEJB.findById(order.getId());
 		if(DocumentProcessingState.CLOSED.equals(order.getPoStatus()))
-			throw new IllegalStateException(" procurement order are aready closed ? ") ;
+			throw new IllegalStateException(" procurement order are already closed ? ") ;
 		Login login = securityUtil.getConnectedUser();
 		Date creationDate = new Date();
 		Delivery delivery = new Delivery();
@@ -225,6 +226,7 @@ public class DeliveryEJB
 		delivery = create(delivery);
 
 		Set<ProcurementOrderItem> items = order.getProcurementOrderItems();
+		Set<DeliveryItem> deliveryItems= new HashSet<DeliveryItem>();
 		BigDecimal amountHt = BigDecimal.ZERO;
 		for (ProcurementOrderItem item : items) {
 			if(BigDecimal.ZERO.compareTo(item.getAvailableQty())!=0){
@@ -246,10 +248,13 @@ public class DeliveryEJB
 				deliveryItem.setStockQuantity(item.getAvailableQty());
 				DeliveryItem create = deliveryItemEJB.create(deliveryItem);
 				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
+				deliveryItems.add(deliveryItem);
 			}
 		}
 		
 		order.setPoStatus(DocumentProcessingState.CLOSED);
+		// Add Close user
+		order.setCloseUser(login.getLoginName());
 		order = procurementOrderEJB.update(order);
 		delivery.setAmountAfterTax(amountHt);
 		delivery.setAmountBeforeTax(amountHt);
@@ -258,6 +263,7 @@ public class DeliveryEJB
 		delivery.setNetAmountToPay(amountHt);
 		delivery.setDateOnDeliverySlip(creationDate);
 		delivery.setDeliveryDate(creationDate);
+		delivery.setDeliveryItems(deliveryItems);
 		delivery.setDeliveryProcessingState(DocumentProcessingState.ONGOING);
 		delivery= repository.save(delivery);
 		return new DeliveryFromOrderData(delivery,order );

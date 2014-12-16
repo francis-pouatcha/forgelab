@@ -12,31 +12,31 @@
 			<children>
 				<ToolBar orientation="VERTICAL" prefHeight="450.0" prefWidth="152.0" VBox.vgrow="NEVER">
 					<items>
-						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="Recherche Avancee" />
-						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="Traiter la selection">
+						<Button fx:id="advenceSearchButton" layoutX="36.0" layoutY="-13.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_advancedSearch_description.title" />
+						<Button fx:id="processButton" layoutX="23.0" layoutY="65.0" mnemonicParsing="false" prefWidth="140.0" text="%Entity_Process.title">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="Nouvelle vente">
+						<Button fx:id="createButton" layoutX="58.0" layoutY="102.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_newSale_description.title">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="Facture">
+						<Button fx:id="printInvoiceButton" layoutX="58.0" layoutY="128.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_invoice_description.title">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="printProformaButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Facture Proforma" />
-						<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Recu sans remise" />
-                        <Button fx:id="unDiscountReceipt" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefWidth="140.0" text="Recu  avec remise" />
-						<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="Suprimer">
+						<Button fx:id="printProformaButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_proforma_invoice_description.title" />
+						<Button fx:id="printTicketButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_received_without_discount_description.title" />
+                        <Button fx:id="unDiscountReceipt" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_received_with_discount_description.title" />
+						<Button fx:id="removeButton" mnemonicParsing="false" prefWidth="140.0" text="%Entity_delete.title">
 							<VBox.margin>
 								<Insets />
 							</VBox.margin>
 						</Button>
-						<Button fx:id="printVoucherButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="Imp l'Avoir" />
+						<Button fx:id="printVoucherButton" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" prefWidth="140.0" text="%SalesOrder_button_print_voucher_description.title" />
 					</items>
 				</ToolBar>
 				<Pane fx:id="rigthpane" prefHeight="437.0" prefWidth="160.0" styleClass="domainComponentView-background" VBox.vgrow="ALWAYS">
@@ -56,7 +56,7 @@
 	<center>
 		<TabPane>
 			<tabs>
-				<Tab closable="false" text="Liste des ventes">
+				<Tab closable="false" text="%SalesOrder_tabPane_listSales_description.title">
 					<content>
 						<SplitPane orientation="VERTICAL">
 							<items>
@@ -104,7 +104,7 @@
 						</SplitPane>
 					</content>
 				</Tab>
-				<Tab fx:id="turnoverTab" closable="false" disable="true" text="Chiffre d 'affaire">
+				<Tab fx:id="turnoverTab" closable="false" disable="true" text="%SalesOrder_tabPane_ca_description.title">
 					<content>
 						<VBox prefHeight="200.0" prefWidth="100.0">
 							<children>
@@ -113,15 +113,15 @@
 										<Insets left="5.0" />
 									</VBox.margin>
 									<children>
-										<ComboBox fx:id="chartClientList" prefHeight="35.0" prefWidth="250.0" promptText="Tous les Clients ">
+										<ComboBox fx:id="chartClientList" prefHeight="35.0" prefWidth="250.0" promptText="%SalesOrder_comboBox_all_sutomers_description.title">
 											<HBox.margin>
 												<Insets left="5.0" />
 											</HBox.margin>
 										</ComboBox>
-										<ComboBox fx:id="chartArticleList" layoutX="15.0" layoutY="13.0" prefHeight="35.0" prefWidth="400.0" promptText="Tous les Articles " />
-										<CheckBox fx:id="emptyArticle" mnemonicParsing="false" text="Vider" />
-										<ComboBox fx:id="yearList" prefHeight="35.0" prefWidth="115.0" promptText="Years" />
-										<Button fx:id="computeButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="89.0" text="Calculer" />
+										<ComboBox fx:id="chartArticleList" layoutX="15.0" layoutY="13.0" prefHeight="35.0" prefWidth="400.0" promptText="%SalesOrder_statistics_allArticles_description.title" />
+										<CheckBox fx:id="emptyArticle" mnemonicParsing="false" text="%SalesOrder_statistics_clear_description.title" />
+										<ComboBox fx:id="yearList" prefHeight="35.0" prefWidth="115.0" promptText="%SalesOrder_statistics_years_description.title" />
+										<Button fx:id="computeButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="89.0" text="%SalesOrder_statistics_calculate_description.title" />
 									</children>
 								</HBox>
 								<Separator prefWidth="200.0" />
@@ -129,7 +129,7 @@
 									<center>
 										<VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
 											<children>
-												<BarChart fx:id="barChart" title="Statistiques des ventes :" VBox.vgrow="ALWAYS">
+												<BarChart fx:id="barChart" title="%SalesOrder_statistics_description.title" VBox.vgrow="ALWAYS">
 													<xAxis>
 														<CategoryAxis side="BOTTOM" />
 													</xAxis>

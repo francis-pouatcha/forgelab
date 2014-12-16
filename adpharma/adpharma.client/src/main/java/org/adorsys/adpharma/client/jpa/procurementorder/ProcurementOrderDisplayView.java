@@ -58,6 +58,8 @@ public class ProcurementOrderDisplayView
 	private Button editButton;
 
 	private Button addButton;
+	
+	private Button retrievedButton;
 
 	private Button printButton;
 	
@@ -206,6 +208,7 @@ public class ProcurementOrderDisplayView
 		purchasePricePUColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		availableQtyColumn.editableProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 		deliverButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.CLOSED));
+		retrievedButton.disableProperty().bind(model.poStatusProperty().isEqualTo(DocumentProcessingState.RETREIVED));
 		itemBar.visibleProperty().bind(model.poStatusProperty().isNotEqualTo(DocumentProcessingState.CLOSED));
 
 	}
@@ -241,6 +244,11 @@ public class ProcurementOrderDisplayView
 		deliverButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		deliverButton.setAlignment(Pos.CENTER_LEFT);
 		deliverButton.setText("Livrer");
+		
+		retrievedButton = ViewBuilderUtils.newButton("Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.ARROW_DOWN);
+		retrievedButton.setAlignment(Pos.CENTER_LEFT);
+		retrievedButton.setText("Recevoir");
+		retrievedButton.setTooltip(new Tooltip("Receptionner la commande"));
 
 		cancelButton = ViewBuilderUtils.newButton( "Entity_cancel.title", "cancelButton", resourceBundle, AwesomeIcon.STOP);
 		cancelButton.setAlignment(Pos.CENTER_LEFT);
@@ -253,7 +261,7 @@ public class ProcurementOrderDisplayView
 		printXlsButton.setAlignment(Pos.CENTER_LEFT);
 		printXlsButton.setText("Exporter en Xls");
 
-		actionbar.getChildren().addAll(deliverButton,cancelButton,printButton,printXlsButton);
+		actionbar.getChildren().addAll(deliverButton,cancelButton,printButton,printXlsButton, retrievedButton);
 
 	}
 
@@ -317,6 +325,10 @@ public class ProcurementOrderDisplayView
 	
 	public Button getPrintXlsButton(){
 		return printXlsButton ;
+	}
+	
+	public Button getRetrievedButton() {
+		return retrievedButton;
 	}
 
 	public TextField getArticleName(){

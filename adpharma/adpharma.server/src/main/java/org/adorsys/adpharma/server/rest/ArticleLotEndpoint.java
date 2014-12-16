@@ -31,6 +31,7 @@ import org.adorsys.adpharma.server.jpa.ArticleLotSearchResult;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
 import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
+import org.adorsys.adpharma.server.jpa.StockValueArticleSearchInput;
 import org.adorsys.adpharma.server.jpa.WareHouseArticleLot;
 import org.adorsys.adpharma.server.utils.ArticleLotDetailResultHolder;
 
@@ -208,11 +209,10 @@ public class ArticleLotEndpoint
 	@Path("/stockValue")
 	@Produces({ "application/json", "application/xml" })
 	@Consumes({ "application/json", "application/xml" })
-	public ArticleLotSearchResult stockValue(ArticleSearchInput searchInput)
+	public ArticleLotSearchResult stockValue(StockValueArticleSearchInput searchInput)
 	{
 		List<ArticleLot> resultList = ejb.stockValue(searchInput);
-		return new ArticleLotSearchResult(Long.MIN_VALUE, detach(resultList),
-				detach(new ArticleLotSearchInput()));
+		return new ArticleLotSearchResult(Long.MIN_VALUE, detach(resultList));
 	}
 
 	@POST

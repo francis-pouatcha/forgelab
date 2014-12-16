@@ -9,8 +9,10 @@ import javafx.scene.layout.Pane;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
+import org.adorsys.adpharma.client.jpa.article.StockValueArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.InvoiceByAgencyPrintInput;
 import org.adorsys.adpharma.client.jpa.customerinvoice.InvoiceByAgencySearchView;
 import org.adorsys.javafx.crud.extensions.ViewType;
@@ -21,6 +23,7 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
 
+@Singleton
 public class ModalStockValueSearchView extends ApplicationModal {
 	private AnchorPane rootPane;
 
@@ -43,7 +46,7 @@ public class ModalStockValueSearchView extends ApplicationModal {
 		viewBuilder.addSeparator();
 		HBox buttonBar = viewBuilder.addButtonBar();
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "saveButton", resourceBundle, AwesomeIcon.SEARCH_PLUS);
-		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "searchButton", resourceBundle, AwesomeIcon.BUG);
+		cancelButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "searchButton", resourceBundle, AwesomeIcon.EJECT);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(400d);
 
@@ -55,11 +58,11 @@ public class ModalStockValueSearchView extends ApplicationModal {
 
 	}
 
-	public void bind(ArticleSearchInput model)
+	public void bind(StockValueArticleSearchInput model)
 	{
 		view.bind(model);
 	}
-
+	
 
 	public Button getSaveButton()
 	{

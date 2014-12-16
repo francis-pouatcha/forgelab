@@ -43,33 +43,44 @@ public class SalesOrderItem implements Cloneable
 
    @Description("SalesOrderItem_internalPic_description")
    private SimpleStringProperty internalPic;
+   
    @Description("SalesOrderItem_orderedQty_description")
    private SimpleObjectProperty<BigDecimal> orderedQty;
+   
    @Description("SalesOrderItem_returnedQty_description")
    private SimpleObjectProperty<BigDecimal> returnedQty;
+   
    @Description("SalesOrderItem_deliveredQty_description")
    private SimpleObjectProperty<BigDecimal> deliveredQty;
+   
    @Description("SalesOrderItem_salesPricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> salesPricePU;
+   
    @Description("SalesOrderItem_vatValue_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> vatValue;
+   
    @Description("SalesOrderItem_purchasePricePU_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> purchasePricePU;
+   
    @Description("SalesOrderItem_totalSalePrice_description")
    @NumberFormatType(NumberType.CURRENCY)
    private SimpleObjectProperty<BigDecimal> totalSalePrice;
+   
    @Description("SalesOrderItem_recordDate_description")
    @DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
    private SimpleObjectProperty<Calendar> recordDate;
+   
    @Description("SalesOrderItem_salesOrder_description")
    @Association(associationType = AssociationType.COMPOSITION, targetEntity = SalesOrder.class)
    private SimpleObjectProperty<SalesOrderItemSalesOrder> salesOrder;
+   
    @Description("SalesOrderItem_article_description")
    @Association(selectionMode = SelectionMode.FORWARD, associationType = AssociationType.AGGREGATION, targetEntity = Article.class)
    private SimpleObjectProperty<SalesOrderItemArticle> article;
+   
    @Description("SalesOrderItem_vat_description")
    @Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = VAT.class)
    private SimpleObjectProperty<SalesOrderItemVat> vat;

@@ -128,7 +128,6 @@ public class ReceiptPrintProperties {
 				String phmlMsgDir = properties.getProperty("phml_messages_directory");
 				if(StringUtils.isNotBlank(phmlMsgDir)){
 					r.setPhmlMessageDirectory(phmlMsgDir);
-					System.out.println(phmlMsgDir);
 				}
 				String phmlRespDir = properties.getProperty("phml_responses_directory");
 				if(StringUtils.isNotBlank(phmlRespDir)){

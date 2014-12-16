@@ -31,8 +31,18 @@ public class ArticleLotSearchResult
    {
       super();
    }
+   
+   
 
-   public ArticleLotSearchResult(Long count, List<ArticleLot> resultList,
+   public ArticleLotSearchResult(Long count, List<ArticleLot> resultList) {
+	super();
+	this.count = count;
+	this.resultList = resultList;
+}
+
+
+
+public ArticleLotSearchResult(Long count, List<ArticleLot> resultList,
          ArticleLotSearchInput searchInput)
    {
       super();

@@ -33,6 +33,7 @@ public class SalesOrderItemArticle implements Association<SalesOrderItem, Articl
    private SimpleBooleanProperty authorizedSale;
    private SimpleObjectProperty<BigDecimal> qtyInStock;
    private SimpleObjectProperty<BigDecimal> sppu;
+   private SimpleObjectProperty<BigDecimal> pppu;
 
    public SalesOrderItemArticle()
    {
@@ -198,6 +199,25 @@ public class SalesOrderItemArticle implements Association<SalesOrderItem, Articl
    public final void setSppu(BigDecimal sppu)
    {
       this.sppuProperty().set(sppu);
+   }
+   
+   public SimpleObjectProperty<BigDecimal> pppuProperty()
+   {
+      if (pppu == null)
+      {
+    	  pppu = new SimpleObjectProperty<BigDecimal>();
+      }
+      return pppu;
+   }
+
+   public BigDecimal getPppu()
+   {
+      return pppuProperty().get();
+   }
+
+   public final void setPppu(BigDecimal pppu)
+   {
+      this.pppuProperty().set(pppu);
    }
 
    @Override

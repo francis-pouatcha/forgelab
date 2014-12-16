@@ -1,12 +1,5 @@
 package org.adorsys.adpharma.client.utils;
 
-import java.util.ResourceBundle;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -19,27 +12,15 @@ import javafx.scene.control.Separator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
-import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchResult;
-import org.adorsys.adpharma.client.jpa.login.LoginSearchService;
-import org.adorsys.adpharma.client.jpa.login.LoginService;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderReturnService;
-import org.adorsys.javafx.crud.extensions.locale.Bundle;
-import org.adorsys.javafx.crud.extensions.locale.CrudKeys;
-import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
-import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
-import org.apache.commons.lang3.StringUtils;
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialog.Actions;
-import org.controlsfx.dialog.Dialogs;
+import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
 
 import jfxtras.scene.layout.HBox;
 import jfxtras.scene.layout.VBox;
+
+import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialog.Actions;
 
 @Singleton
 public class SalesKeyReciever  extends VBox{

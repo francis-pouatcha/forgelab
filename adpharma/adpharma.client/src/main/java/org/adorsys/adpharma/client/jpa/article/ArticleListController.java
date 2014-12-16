@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
-import org.adorsys.adpharma.client.events.ArticlelotMovedDoneRequestEvent;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.adpharma.client.jpa.section.SectionSearchInput;
@@ -37,7 +36,6 @@ import org.adorsys.adpharma.client.jpa.vat.VAT;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchInput;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchResult;
 import org.adorsys.adpharma.client.jpa.vat.VATSearchService;
-import org.adorsys.javaext.admin.EditRoles;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -98,6 +96,9 @@ public class ArticleListController implements EntityController
 
 	@Inject
 	private ArticleSearchService searchForPrintService;
+	
+	@Inject
+	ArticleDetailsSearchService articleDetailsSearchService;
 
 	@Inject
 	private ArticleEditService articleEditService ;
@@ -454,6 +455,33 @@ public class ArticleListController implements EntityController
 
 			}
 				});
+		
+		listView.getDataList().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Article>() {
+			@Override
+			public void changed(ObservableValue<? extends Article> arg0,
+					Article oldValue, Article newValue) {
+				if(newValue!=null) {
+					handleArticleDetailsSelection(newValue);
+					showProgress.fire(new Object());
+				}
+			}
+		});
+		
+		articleDetailsSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				ArticleDetailsSearchService s = (ArticleDetailsSearchService)event.getSource();
+				ArticleDetailsSearchResult value = s.getValue();
+				event.consume();
+				s.reset();
+				List<ArticleDetails> resultList = value.getResultList();
+				listView.getDataListDetails().getItems().clear();
+				listView.getDataListDetails().getItems().setAll(resultList);
+				hideProgress.fire(new Object());
+			}
+		});
+		
+		articleDetailsSearchService.setOnFailed(callFailedEventHandler);
 	}
 
 	@Override
@@ -479,6 +507,14 @@ public class ArticleListController implements EntityController
 	public ViewType getViewType()
 	{
 		return ViewType.LIST;
+	}
+	
+	// Handle articles details of an article
+	private void handleArticleDetailsSelection(Article article) {
+		ArticleSearchInput articleSearchInput = new ArticleSearchInput();
+		articleSearchInput.setEntity(article);
+		articleSearchInput.setMax(30);
+		articleDetailsSearchService.setSearchInputs(articleSearchInput).start();
 	}
 
 	private void handleSearchAction() {

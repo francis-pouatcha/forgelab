@@ -30,7 +30,7 @@ import org.adorsys.javaext.list.ListField;
 @Entity
 @Description("SalesOrderItem_description")
 @ListField({ "orderedQty", "returnedQty", "deliveredQty", "salesPricePU",
-	"totalSalePrice", "internalPic", "article.articleName", "vat.rate" })
+	"totalSalePrice", "internalPic", "article.articleName", "vat.rate", "article.pppu"})
 @ToStringField("article.articleName")
 public class SalesOrderItem implements Serializable
 {

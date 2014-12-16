@@ -107,8 +107,7 @@ public class ArticleLotEditController implements EntityController
                   }
                   else if(!violations.isEmpty())
                   {
-                     editErrorMessageDialog.getTitleText().setText(
-                           resourceBundle.getString("Entity_edit_error.title"));
+                     editErrorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_edit_error.title"));
                      editErrorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
                      editErrorMessageDialog.display();
                   }else if (validatePrices==false) {
