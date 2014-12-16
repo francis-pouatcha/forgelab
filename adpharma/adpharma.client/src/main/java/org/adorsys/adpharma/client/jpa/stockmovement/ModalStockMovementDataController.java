@@ -5,6 +5,7 @@ import java.util.Set;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -15,8 +16,12 @@ import javax.validation.ConstraintViolation;
 
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PeriodicalMovementSearchRequestEvent;
+import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -30,6 +35,10 @@ public class ModalStockMovementDataController {
 
 	@Inject
 	private PeriodicalDataSearchInput model ;
+	
+	@Inject
+	@ModalEntitySearchRequestedEvent
+	private Event<ArticleSearchInput> articleSearchInput;
 
 	@Inject
 	@EntitySearchDoneEvent
@@ -81,6 +90,21 @@ public class ModalStockMovementDataController {
 
 			}
 		});
+		
+		view.getArticle().setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				articleSearchInput.fire(new ArticleSearchInput());
+			}
+		});
+		
+		view.getClearButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				view.getArticle().setValue(null);
+			}
+		});
 
 		view.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
 
@@ -95,7 +119,12 @@ public class ModalStockMovementDataController {
 		view.addValidators();
 	}
 	
-	public void handleSalesRepportSearchDataRequestEvent(@Observes @PeriodicalMovementSearchRequestEvent PeriodicalDataSearchInput data){
+	// Handle the rssult of the search of article
+		public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article){
+				view.getArticle().setValue(article);
+		}
+	
+	public void handleSearchDataRequestEvent(@Observes @PeriodicalMovementSearchRequestEvent PeriodicalDataSearchInput data){
 		PropertyReader.copy(data, model);
 		view.showDiaLog();
 	}

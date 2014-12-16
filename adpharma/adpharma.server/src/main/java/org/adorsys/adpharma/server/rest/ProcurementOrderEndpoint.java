@@ -241,7 +241,7 @@ public class ProcurementOrderEndpoint
 
 	private static final List<String> vatFields = Arrays.asList("name", "rate", "active");
 
-	private static final List<String> procurementOrderItemsFields = Arrays.asList("mainPic", "secondaryPic", "articleName", "article.articleName", "expirationDate", "qtyOrdered", "freeQuantity", "stockQuantity", "salesPricePU", "purchasePricePU", "totalPurchasePrice", "valid");
+	private static final List<String> procurementOrderItemsFields = Arrays.asList("mainPic", "secondaryPic", "articleName", "article.articleName", "expirationDate", "qtyOrdered", "availableQty", "freeQuantity", "stockQuantity", "salesPricePU", "purchasePricePU", "totalPurchasePrice", "valid");
 
 	public ProcurementOrder detach(ProcurementOrder entity)
 	{

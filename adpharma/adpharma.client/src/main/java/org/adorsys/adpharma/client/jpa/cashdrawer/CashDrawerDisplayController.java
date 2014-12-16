@@ -51,7 +51,6 @@ import org.adorsys.adpharma.client.jpa.disbursement.DisbursementCashier;
 import org.adorsys.adpharma.client.jpa.documentprocessingstate.DocumentProcessingState;
 import org.adorsys.adpharma.client.jpa.login.Login;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
-import org.adorsys.adpharma.client.jpa.payment.PaymentAgency;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashDrawer;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCashier;
 import org.adorsys.adpharma.client.jpa.payment.PaymentCreateService;
@@ -600,6 +599,10 @@ public class CashDrawerDisplayController implements EntityController
 
 	}
 
+	
+	
+	
+	
 	private void processVoucherPaiementChanged(){
 
 		voucherCheckingView.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -704,14 +707,21 @@ public class CashDrawerDisplayController implements EntityController
 		});
 		customerVoucherSearchService.setOnFailed(serviceFailedHandler);
 		
+		
+		
 		displayView.getReceivedAmount().setOnKeyPressed(new EventHandler<KeyEvent>() {
-
 			@Override
 			public void handle(KeyEvent event) {
 				KeyCode code = event.getCode();
-				if(KeyCode.SPACE.equals(code))
+				if(KeyCode.ENTER.equals(code)) {
 					handlePayment();
-				
+				}
+				if(KeyCode.ALT.equals(code)) {
+					BigDecimal amount = displayView.getAmount().numberProperty().getValue();
+					BigDecimal receivedAmount = new BigDecimal(displayView.getReceivedAmount().getText());
+					BigDecimal difference = receivedAmount.subtract(amount);
+					displayView.getDifference().numberProperty().set(difference);
+				}
 			}
 		});
 	}
@@ -919,8 +929,31 @@ public class CashDrawerDisplayController implements EntityController
 				errorMessageDialog.display();
 			}
 		});
+		
+		
+//		displayView.getRootPane().addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+//			@Override
+//			public void handle(KeyEvent keyEvent) {
+//				if(keyEvent.getCode() == KeyCode.ENTER) {
+//					if(!displayView.getCashButon().isDisabled()) {
+//						displayView.getCashButon().fire();
+//					}
+//				}
+//			}
+//		});
+		
+//		EventHandler<KeyEvent> eventHandler = new EventHandler<KeyEvent>() {
+//			@Override
+//			public void handle(KeyEvent keyEvent) {
+//				if(keyEvent.getCode() == KeyCode.ENTER) {
+//					handlePayment();
+//				}
+//			}
+//		};
+//		displayView.getCashButon().setOnKeyPressed(eventHandler);
+		
 		/*
-		 * handle  payement Action action
+		 * handle  payement Action
 		 */
 		displayView.getCashButon().setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -929,17 +962,6 @@ public class CashDrawerDisplayController implements EntityController
 			}
 		});
 		
-		displayView.getCashButon().setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent event) {
-				KeyCode code = event.getCode();
-				if(code== KeyCode.ENTER){
-					handlePayment();
-				}
-
-			}
-		});
 		
 		salesOrderPaymentChecker.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
@@ -986,12 +1008,17 @@ public class CashDrawerDisplayController implements EntityController
 	
 	public void doPayement(){
 		BigDecimal payAmount = getPayAmount();
+		String text = displayView.getReceivedAmount().getText();
+		String replaceAll = text.replaceAll(" ","");
+		BigDecimal receivedAmount = new BigDecimal(replaceAll);
 		SalesOrderRestToPay restToPay = new SalesOrderRestToPay(proccessingOrder);
 		BigDecimal customerRestTopay = restToPay.getCustomerRestToPay();
-		if(customerRestTopay.compareTo(payAmount)<=0){
+		if(customerRestTopay.compareTo(receivedAmount)<=0){
 			processPayment();
+			return;
 		}else {
 			Dialogs.create().message("le montant a payer Doit etre egal a "+ customerRestTopay).showInformation();
+			return;
 		}
 	}
 	
@@ -1096,6 +1123,7 @@ public class CashDrawerDisplayController implements EntityController
 
 	public BigDecimal getPayAmount(){
 		BigDecimal payAmount = BigDecimal.ZERO;
+		boolean empty = displayView.getPaymentItemDataList().getItems().isEmpty();
 		Iterator<PaymentItem> iterator = displayView.getPaymentItemDataList().getItems().iterator();
 		while (iterator.hasNext()) {
 			PaymentItem paymentItem = (PaymentItem) iterator.next();

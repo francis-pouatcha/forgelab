@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
@@ -390,6 +391,10 @@ public class ProcurementOrderDisplayController implements EntityController
 				ProcurementOrder order = s.getValue();
 				event.consume();
 				s.reset();
+//					List<ProcurementOrderItem> procurementOrderItems = order.getProcurementOrderItems();
+//					ObservableList<ProcurementOrderItem> observableList= FXCollections.observableArrayList();
+//					observableList.setAll(procurementOrderItems);
+//					displayView.getDataList().setItems(observableList);
 				orderSelectedRequestEvent.fire(order);
 			}
 		});

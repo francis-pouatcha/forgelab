@@ -422,7 +422,7 @@ public class ModalSalesRepportDataController {
 		return twentyHeigthy ;
 	}
 	
-	// HAndle the rssult of the search of article
+	// Handle the rssult of the search of article
 	public void handleArticleSearchDone(@Observes @ModalEntitySearchDoneEvent Article article){
 			view.getArticle().setValue(article);
 	}

@@ -66,6 +66,7 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
 import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ModalEntityCreateDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.SelectedModelEvent;
@@ -92,6 +93,10 @@ public class InventoryDisplayController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<Inventory> searchRequestedEvent;
+	
+	@Inject
+	@ModalEntityCreateDoneEvent
+	private Event<ArticleLot> searchRequestedDoneEvent;
 
 	@Inject
 	@EntityEditRequestedEvent
@@ -565,11 +570,13 @@ public class InventoryDisplayController implements EntityController
 
 	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
 	{
+		searchRequestedDoneEvent.fire(model);
+	}
+	
+	public void observesArticleLotSearchDone(@Observes @ModalEntityCreateDoneEvent ArticleLot model) {
 		if(!isValidateOrderedQty(model))
-			return ;
+		return ;
 		PropertyReader.copy(inventoryItemfromArticle(model), inventoryItem);
-		//		if(isValidInventoryItem())
-		//			handleAddDeliveryItem(inventoryItem);
 		displayView.getAsseccedQty().requestFocus();
 	}
 

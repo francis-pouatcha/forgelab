@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.StockMovement;
 import org.adorsys.adpharma.server.jpa.Supplier;
 import org.adorsys.adpharma.server.jpa.VAT;
+import org.adorsys.adpharma.server.repo.ProcurementOrderItemRepository;
 import org.adorsys.adpharma.server.repo.ProcurementOrderRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.utils.DateHelper;
@@ -54,6 +56,9 @@ public class ProcurementOrderEJB
 
 	@Inject
 	private ProcurementOrderRepository repository;
+	
+	@Inject
+	private ProcurementOrderItemRepository procurementOrderItemRepository;
 
 	@Inject
 	private LoginMerger loginMerger;
@@ -160,10 +165,22 @@ public class ProcurementOrderEJB
 	
 	public ProcurementOrder retrievedPreparationOrder(ProcurementOrder order) {
 		ProcurementOrder original = findById(order.getId());
-		original.setPoStatus(DocumentProcessingState.RETREIVED);
+		Set<ProcurementOrderItem> procurementOrderItems = order.getProcurementOrderItems();
+		Set<ProcurementOrderItem> items = new HashSet<ProcurementOrderItem>();
+	    for(ProcurementOrderItem item: procurementOrderItems) {
+	    		ProcurementOrderItem orderItem = new ProcurementOrderItem();
+	    		orderItem=item;
+	    		orderItem.setAvailableQty(item.getQtyOrdered());
+				ProcurementOrderItem save = procurementOrderItemRepository.save(orderItem);
+				items.add(save);
+	    }
+	    original.setPoStatus(DocumentProcessingState.RETREIVED);
+	    original.setProcurementOrderItems(items);
 		ProcurementOrder save = repository.save(original);
 		return save;
 	}
+	
+	
 
 	private ProcurementOrder attach(ProcurementOrder entity)
 	{
@@ -188,7 +205,6 @@ public class ProcurementOrderEJB
 		{
 			procurementOrderItem.setProcurementOrder(entity);
 		}
-
 		return entity;
 	}
 	

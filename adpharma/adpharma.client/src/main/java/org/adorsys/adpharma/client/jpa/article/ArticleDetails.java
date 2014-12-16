@@ -17,7 +17,6 @@ import javafx.beans.property.SimpleStringProperty;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@Description("ArticleDetails_description")
 public class ArticleDetails {
 	
 	private SimpleStringProperty internalPic;

@@ -414,15 +414,23 @@ public class SalesOrderEJB
 	private void updateSalesOrder(SalesOrderItem updatingSalesOrderItem, boolean deleted) {
 
 		SalesOrder salesOrder = updatingSalesOrderItem.getSalesOrder();
-		salesOrder = findById(salesOrder.getId());
-		if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus()))
-			throw new IllegalStateException("Sales order closed.");
+		
+		try {
+			salesOrder = findById(salesOrder.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if(DocumentProcessingState.CLOSED.equals(salesOrder.getSalesOrderStatus())) throw new IllegalStateException("Sales order closed.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		VAT vat = updatingSalesOrderItem.getVat();
 		BigDecimal vatRate = vat==null?BigDecimal.ZERO:VAT.getRawRate(vat.getRate());
 		BigDecimal totalSalePrice = updatingSalesOrderItem.getTotalSalePrice();
 		BigDecimal amountBeforeTax = CurencyUtil.round(totalSalePrice.divide(BigDecimal.ONE.add(vatRate), 2, RoundingMode.HALF_EVEN));
-		BigDecimal discountRateAbs = salesOrder.getDiscountRate();
+		BigDecimal discountRateAbs= salesOrder.getDiscountRate();
 		if(discountRateAbs!=null && discountRateAbs.compareTo(BigDecimal.ZERO)!=0){
 			BigDecimal discaountRate = VAT.getRawRate(discountRateAbs);
 			BigDecimal discount = CurencyUtil.round(amountBeforeTax.multiply(discaountRate));
@@ -435,12 +443,14 @@ public class SalesOrderEJB
 			}
 			amountBeforeTax = amountBeforeTax.subtract(discount);
 		}
+		
 		BigDecimal salesOrderAmountBeforeTax = salesOrder.getAmountBeforeTax()==null?BigDecimal.ZERO:salesOrder.getAmountBeforeTax();
 		BigDecimal salesOrderTaxAmount = salesOrder.getAmountVAT()==null?BigDecimal.ZERO:salesOrder.getAmountVAT();
 		BigDecimal amountVAT = CurencyUtil.round(amountBeforeTax.multiply(vatRate));
 		BigDecimal amountAfterTax = CurencyUtil.round(amountBeforeTax.add(amountVAT));
 		BigDecimal salesOrderAmountAfterTax = salesOrder.getAmountAfterTax()==null?BigDecimal.ZERO:salesOrder.getAmountAfterTax();
 
+		
 		if(deleted){
 			salesOrder.setAmountBeforeTax(salesOrderAmountBeforeTax.subtract(amountBeforeTax));
 			salesOrder.setAmountVAT(salesOrderTaxAmount.subtract(amountVAT));
