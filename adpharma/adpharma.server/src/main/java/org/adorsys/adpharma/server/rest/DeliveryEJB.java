@@ -168,6 +168,7 @@ public class DeliveryEJB
 		return closedDelivery;
 	}
 
+    
 	@Inject
 	private ArticleRepository articleRepository ;
 
@@ -248,7 +249,7 @@ public class DeliveryEJB
 				deliveryItem.setStockQuantity(item.getAvailableQty());
 				DeliveryItem create = deliveryItemEJB.create(deliveryItem);
 				amountHt = amountHt.add(deliveryItem.getTotalPurchasePrice());
-				deliveryItems.add(deliveryItem);
+				deliveryItems.add(create);
 			}
 		}
 		

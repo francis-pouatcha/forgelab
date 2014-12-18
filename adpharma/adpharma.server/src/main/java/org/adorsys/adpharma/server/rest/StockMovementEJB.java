@@ -147,12 +147,14 @@ public class StockMovementEJB
 	private EntityManager em ;
 
 	public List<StockMovement> periodicalStockMovement (PeriodicalDataSearchInput dataSearchInput){
+		Article article = dataSearchInput.getArticle();
 		String query ="SELECT s From StockMovement AS  s  WHERE s.id IS NOT NULL ";
 		if(StringUtils.isNotBlank(dataSearchInput.getPic()))
 			query = query+" AND s.article.pic = :pic ";
-
-		if(StringUtils.isNotBlank(dataSearchInput.getArticleName()))
-			query = query+" AND LOWER(s.article.articleName) LIKE LOWER(:articleName) ";
+		
+		if(article!=null && article.getId()!=null) {
+			query = query+" AND s.article = :article ";
+		}
 
 		if(StringUtils.isNotBlank(dataSearchInput.getInternalPic()))
 			query = query+" AND s.internalPic = :internalPic ";
@@ -164,15 +166,14 @@ public class StockMovementEJB
 			query = query+" AND s.creationDate <= :endDate ";
 
 		Query querys = em.createQuery(query) ;
+		
+		if(article!=null && article.getId()!=null) {
+			querys.setParameter("article", article);
+		}
 
 		if(StringUtils.isNotBlank(dataSearchInput.getPic()))
 			querys.setParameter("pic", dataSearchInput.getPic());
 
-		if(StringUtils.isNotBlank(dataSearchInput.getArticleName())){
-			String articleName = "%"+dataSearchInput.getArticleName()+"%";
-			querys.setParameter("articleName", articleName);
-		}
-			
 
 		if(StringUtils.isNotBlank(dataSearchInput.getInternalPic()))
 			querys.setParameter("internalPic", dataSearchInput.getInternalPic());
