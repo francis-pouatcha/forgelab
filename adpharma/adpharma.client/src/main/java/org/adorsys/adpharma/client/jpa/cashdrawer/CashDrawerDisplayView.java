@@ -1,16 +1,13 @@
 package org.adorsys.adpharma.client.jpa.cashdrawer;
 
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -25,14 +22,12 @@ import javax.inject.Inject;
 import org.adorsys.adpharma.client.jpa.customer.Customer;
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoice;
 import org.adorsys.adpharma.client.jpa.customerinvoiceitem.CustomerInvoiceItem;
-import org.adorsys.adpharma.client.jpa.invoicetype.InvoiceTypeConverter;
 import org.adorsys.adpharma.client.jpa.payment.Payment;
 import org.adorsys.adpharma.client.jpa.paymentitem.PaymentItem;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentMode;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeConverter;
 import org.adorsys.adpharma.client.jpa.paymentmode.PaymentModeListCellFatory;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrder;
-import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderRestToPay;
 import org.adorsys.adpharma.client.jpa.salesorder.SalesOrderSalesAgent;
 import org.adorsys.adpharma.client.jpa.salesorderitem.SalesOrderItem;
 import org.adorsys.adpharma.client.jpa.salesordertype.SalesOrderTypeConverter;
@@ -104,7 +99,7 @@ public class CashDrawerDisplayView
 	private Button searchButton;
 
 	private Button searchPayementButton;
-	
+
 	private Button debtStatementButton;
 
 	@Inject
@@ -168,7 +163,7 @@ public class CashDrawerDisplayView
 
 	}
 	public void buildInvoiceItemDataList(ViewBuilder viewBuilder){
-		//		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,100d);
+		viewBuilder.addStringColumn(invoiceItemDataList, "internalPic", "CustomerInvoiceItem_internalPic_description.title", resourceBundle,130d);
 		ViewBuilderUtils.newStringColumn(invoiceItemDataList, "article", "CustomerInvoiceItem_article_description.title", resourceBundle ,250d);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "orderedQty", "CustomerInvoiceItem_purchasedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(invoiceItemDataList, "salesPricePU", "CustomerInvoiceItem_salesPricePU_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -188,7 +183,7 @@ public class CashDrawerDisplayView
 		//		viewBuilder.addDateColumn(salesOrderDataList, "creationDate", "CustomerInvoice_creationDate_description.title", resourceBundle, "dd-MM-yyyy HH:mm", locale);
 		viewBuilder.addStringColumn(salesOrderDataList, "salesAgent", "CustomerInvoice_creatingUser_description.title", resourceBundle,100d);
 		viewBuilder.addStringColumn(salesOrderDataList, "customer", "CustomerInvoice_customer_description.title", resourceBundle,150d);
-//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountRestAfterVoucher","CustomerInvoice_amountRestAfterVoucher_description.title", resourceBundle, NumberType.CURRENCY, locale);
+		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountRestAfterVoucher","CustomerInvoice_amountRestAfterVoucher_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		// Field not displayed in table
 		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountBeforeTax", "CustomerInvoice_amountBeforeTax_description.title", resourceBundle, NumberType.CURRENCY, locale);
 		//		viewBuilder.addBigDecimalColumn(salesOrderDataList, "amountVAT", "CustomerInvoice_taxAmount_description.title", resourceBundle, NumberType.CURRENCY, locale);
@@ -255,7 +250,7 @@ public class CashDrawerDisplayView
 		searchPayementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.SEARCH_PLUS);
 		searchPayementButton.setPrefHeight(25d);
 		searchPayementButton.setText("Liste des Paiements");
-		
+
 
 		debtStatementButton = ViewBuilderUtils.newButton("Entity_search.text", "ok", resourceBundle, AwesomeIcon.INBOX);
 		debtStatementButton.setPrefHeight(25d);
@@ -366,7 +361,7 @@ public class CashDrawerDisplayView
 	public Button getOpenCashDrawerButton(){
 		return openCashDrawerButton ;
 	}
-	
+
 	public Button getDebtStatementButton(){
 		return debtStatementButton ;
 	}

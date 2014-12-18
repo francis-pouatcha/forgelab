@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +36,8 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +56,14 @@ public class StockMovementListController implements EntityController
 	@Inject
 	@EntitySearchRequestedEvent
 	private Event<StockMovement> searchRequestedEvent;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgress;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgress;
 	
 	@Inject
 	@PeriodicalMovementSearchRequestEvent
@@ -108,6 +119,7 @@ public class StockMovementListController implements EntityController
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(30);
 				searchService.setSearchInputs(searchInput).start();
+				showProgress.fire(new Object());
 			}
 				});
 		listView.getAdvenceSearchButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -121,6 +133,7 @@ public class StockMovementListController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgress.fire(new Object());
 				StockMovementSearchService s = (StockMovementSearchService) event.getSource();
 				searchResult = s.getValue();
 				event.consume();

@@ -192,8 +192,7 @@ public class ModalArticleLotSearchController  {
 
 	}
 
-	public void handleArticleSearchResult(
-			ArticleLotSearchResult articleLotSearchResult) {
+	public void handleArticleSearchResult(ArticleLotSearchResult articleLotSearchResult) {
 		if(articleLotSearchResult.getResultList().isEmpty())
 			Dialogs.create().message("Aucun Article Trouve").showInformation();
 

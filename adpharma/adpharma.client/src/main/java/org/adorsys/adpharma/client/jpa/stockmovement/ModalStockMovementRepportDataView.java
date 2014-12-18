@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -45,11 +46,14 @@ public class ModalStockMovementRepportDataView extends ApplicationModal{
 	
 	private TextField internalPic ;
 	
-	private TextField articleName ;
+	
+	private ComboBox<Article> article;
 	
 	private Button saveButton;
 
 	private Button resetButton;
+	
+	private Button clearButton;
 
 	@Inject
 	private Locale locale ;
@@ -69,13 +73,18 @@ public class ModalStockMovementRepportDataView extends ApplicationModal{
 		endDate = lazyviewBuilder.addCalendarTextField("SalesOrder_repport_toDate_description.title", "internalPic", resourceBundle,"dd-MM-yyyy HH:mm",locale);
 		pic = lazyviewBuilder.addTextField("Article_pic_description.title", "pic", resourceBundle) ;
 		internalPic = lazyviewBuilder.addTextField("ArticleLot_internalPic_description.title", "pic", resourceBundle) ;
-		articleName = lazyviewBuilder.addTextField("Article_articleName_description.title", "pic", resourceBundle) ;
+		
+		article = lazyviewBuilder.addComboBox("Article_articleName_description.title", "article", resourceBundle);
+		article.setPrefHeight(40d);
+		article.setPrefWidth(300d);
+		
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lazyviewBuilder.toRows(), ViewType.CREATE, false);
 		viewBuilder.addSeparator();
 		HBox buttonBar = viewBuilder.addButtonBar();
 		saveButton = viewBuilder.addButton(buttonBar, "Entity_save.title", "saveButton", resourceBundle, AwesomeIcon.SAVE);
 		resetButton = viewBuilder.addButton(buttonBar, "Entity_cancel.title", "resetButton", resourceBundle, AwesomeIcon.REFRESH);
+		clearButton = viewBuilder.addButton(buttonBar, "Entity_clear.title", "clearButton", resourceBundle, AwesomeIcon.ERASER);
 		rootPane = viewBuilder.toAnchorPane();
 		rootPane.setPrefWidth(500);
 	}
@@ -87,7 +96,7 @@ public class ModalStockMovementRepportDataView extends ApplicationModal{
 		beginDate.calendarProperty().bindBidirectional(model.beginDateProperty());
 		endDate.calendarProperty().bindBidirectional(model.endDateProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
-		articleName.textProperty().bindBidirectional(model.articleNameProperty());
+		article.valueProperty().bindBidirectional(model.articleProperty());
 		internalPic.textProperty().bindBidirectional(model.internalPicProperty());
 		
 	}
@@ -123,6 +132,9 @@ public class ModalStockMovementRepportDataView extends ApplicationModal{
 		return locale;
 	}
 
+	public ComboBox<Article> getArticle() {
+		return article;
+	}
 
 
 	public CalendarTextField getBeginDate() {
@@ -136,7 +148,9 @@ public class ModalStockMovementRepportDataView extends ApplicationModal{
 	}
 
 
-
+   public Button getClearButton() {
+	return clearButton;
+  }
 	
 
 
