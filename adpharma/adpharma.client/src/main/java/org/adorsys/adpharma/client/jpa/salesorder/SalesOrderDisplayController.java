@@ -1,9 +1,5 @@
 package org.adorsys.adpharma.client.jpa.salesorder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -11,7 +7,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javafx.application.Platform;
@@ -41,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.ConstraintViolation;
 
-import org.adorsys.adpharma.client.KeyCodeGenerator;
 import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintCustomerInvoiceRequestedEvent;
 import org.adorsys.adpharma.client.events.PrintCustomerVoucherRequestEvent;
@@ -53,6 +47,8 @@ import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotArticle;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotService;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotVat;
+import org.adorsys.adpharma.client.jpa.articlelot.SlsArticleLotSearchInputEvt;
+import org.adorsys.adpharma.client.jpa.articlelot.SlsAticleLotEvt;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawer;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerAgency;
 import org.adorsys.adpharma.client.jpa.cashdrawer.CashDrawerSearchInput;
@@ -155,7 +151,7 @@ public class SalesOrderDisplayController implements EntityController
 
 	@Inject 
 	@ModalEntitySearchRequestedEvent
-	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent;
+	private Event<SlsArticleLotSearchInputEvt> modalArticleLotSearchEvent;
 
 	//  services
 	@Inject
@@ -772,7 +768,7 @@ public class SalesOrderDisplayController implements EntityController
 					asi.setEntity(entity);
 					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
-					modalArticleLotSearchEvent.fire(asi);
+					modalArticleLotSearchEvent.fire(new SlsArticleLotSearchInputEvt(asi));
 				}
 
 				if(code== KeyCode.DELETE){
@@ -818,8 +814,7 @@ public class SalesOrderDisplayController implements EntityController
 					asi.getFieldNames().add("secondaryPic");
 					asi.getFieldNames().add("mainPic");
 					asi.getFieldNames().add("internalPic");
-					modalArticleLotSearchEvent.fire(asi);
-
+					modalArticleLotSearchEvent.fire(new SlsArticleLotSearchInputEvt(asi));
 				}
 			}
 		});
@@ -1092,8 +1087,9 @@ public class SalesOrderDisplayController implements EntityController
 		searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new SalesOrder());
 	}
 
-	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
+	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent SlsAticleLotEvt evt)
 	{
+		ArticleLot model = evt.getArticleLot();
 		if(!isValidateOrderedQty(model))
 			return ;
 		PropertyReader.copy(salesOrderItemfromArticle(model), salesOrderItem);

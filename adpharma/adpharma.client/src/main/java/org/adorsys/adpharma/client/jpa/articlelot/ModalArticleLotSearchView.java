@@ -161,5 +161,15 @@ public class ModalArticleLotSearchView extends ApplicationModal{
 		return searchButton;
 	}
 	
+	private String inputSrc;
+
+
+	public String getInputSrc() {
+		return inputSrc;
+	}
+
+	public void setInputSrc(String inputSrc) {
+		this.inputSrc = inputSrc;
+	}
 	
 }

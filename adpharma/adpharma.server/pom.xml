@@ -24,7 +24,7 @@
 			<dependency>
 				<groupId>org.adorsys.javaext</groupId>
 				<artifactId>javaext.description</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.0.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.modules</groupId>
@@ -140,6 +140,14 @@
 		<repository>
 			<id>JBOSS_NEXUS</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>javaext.description-mvn-repo</id>
+			<url>https://github.com/francis-pouatcha/javaext.description/raw/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 		</repository>
 	</repositories>
 	<build>
