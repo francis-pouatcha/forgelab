@@ -794,7 +794,12 @@ public class SalesOrderDisplayController implements EntityController
 					if(ttc!=null&& ttc.compareTo(BigDecimal.ZERO)>0)
 						ttc = ttc.subtract(newValue);
 				}
-				displayView.getNetClientText().setText(ttc.toBigInteger()+"");
+				
+				try {
+					displayView.getNetClientText().setText(ttc.toBigInteger()+"");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			}
 		});

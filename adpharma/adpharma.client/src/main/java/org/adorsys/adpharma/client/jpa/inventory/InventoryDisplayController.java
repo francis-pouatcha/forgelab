@@ -568,7 +568,7 @@ public class InventoryDisplayController implements EntityController
 		searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new Inventory());
 	}
 
-	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent ArticleLot model)
+	public void handleArticleLotSearchDone(@Observes(notifyObserver=Reception.ALWAYS) @ModalEntitySearchDoneEvent ArticleLot model)
 	{
 		searchRequestedDoneEvent.fire(model);
 	}

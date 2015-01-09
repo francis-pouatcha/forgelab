@@ -51,6 +51,8 @@ import org.adorsys.javafx.crud.extensions.events.EntityRemoveDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchRequestedEvent;
 import org.adorsys.javafx.crud.extensions.events.EntitySelectionEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
@@ -114,6 +116,14 @@ public class InventoryListController implements EntityController
 	@Inject
 	@PrintRequestedEvent
 	private Event<InventoryRepportData> printRequest;
+	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressBarRequestEvent ;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressBarRequestEvent ;
 
 
 
@@ -139,6 +149,7 @@ public class InventoryListController implements EntityController
 					itemSearchInput.getFieldNames().add("inventory");
 					itemSearchInput.setMax(-1);
 					itemSearchService.setSearchInputs(itemSearchInput).start();
+					showProgressBarRequestEvent.fire(new Object());
 				}
 			}
 				});
@@ -231,6 +242,7 @@ public class InventoryListController implements EntityController
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressBarRequestEvent.fire(new Object());
 				InventoryItemSearchService source = (InventoryItemSearchService) event.getSource();
 				InventoryItemSearchResult result = source.getValue();
 				source.reset();
@@ -259,11 +271,10 @@ public class InventoryListController implements EntityController
 			public void handle(WorkerStateEvent event) {
 				InventorySearchService source = (InventorySearchService) event.getSource();
 				InventorySearchResult result = source.getValue();
+				
 				handleSearchResult(result);
 				source.reset();
 				event.consume();
-
-
 			}
 		});
 		inventorySearchService.setOnFailed(callFailedEventHandler);
@@ -361,7 +372,6 @@ public class InventoryListController implements EntityController
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
-
 	}
 
 	public void handleCreatedEvent(@Observes @EntityCreateDoneEvent Inventory createdEntity)

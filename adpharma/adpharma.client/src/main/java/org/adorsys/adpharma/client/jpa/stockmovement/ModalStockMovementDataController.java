@@ -20,8 +20,10 @@ import org.adorsys.adpharma.client.jpa.article.Article;
 import org.adorsys.adpharma.client.jpa.article.ArticleSearchInput;
 import org.adorsys.adpharma.client.jpa.salesorder.PeriodicalDataSearchInput;
 import org.adorsys.javafx.crud.extensions.events.EntitySearchDoneEvent;
+import org.adorsys.javafx.crud.extensions.events.HideProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchDoneEvent;
 import org.adorsys.javafx.crud.extensions.events.ModalEntitySearchRequestedEvent;
+import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ErrorDisplay;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
@@ -50,6 +52,14 @@ public class ModalStockMovementDataController {
 	@Inject
 	private ServiceCallFailedEventHandler callFailedEventHandler ;
 	
+	@Inject
+	@ShowProgressBarRequestEvent
+	private Event<Object> showProgressBarRequestEvent ;
+
+	@Inject
+	@HideProgressBarRequestEvent
+	private Event<Object> hideProgressBarRequestEvent ;
+	
 	
 
 	@PostConstruct
@@ -70,6 +80,7 @@ public class ModalStockMovementDataController {
 
 			@Override
 			public void handle(WorkerStateEvent event) {
+				hideProgressBarRequestEvent.fire(new Object());
 				PeriodicalMovementService source = (PeriodicalMovementService) event.getSource();
 				StockMovementSearchResult result = source.getValue();
 				event.consume();
@@ -113,6 +124,7 @@ public class ModalStockMovementDataController {
 				Set<ConstraintViolation<PeriodicalDataSearchInput>> validate = view.validate(model);
 				if(validate.isEmpty()){
 					periodicalMovementService.setData(model).start();
+					showProgressBarRequestEvent.fire(new Object());
 				}
 			}
 		});

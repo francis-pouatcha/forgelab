@@ -233,6 +233,7 @@ public class SalesOrderListView
 	{
 		return dataList;
 	}
+	
 	public TableView<SalesOrderItem> getDataListItem()
 	{
 		return dataListItem;
