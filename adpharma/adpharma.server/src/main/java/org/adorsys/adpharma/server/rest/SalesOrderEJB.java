@@ -413,7 +413,6 @@ public class SalesOrderEJB
 
 	private void updateSalesOrder(SalesOrderItem updatingSalesOrderItem, boolean deleted) {
 
-		try {
 			SalesOrder salesOrder = updatingSalesOrderItem.getSalesOrder();
 			
 			try {
@@ -465,9 +464,6 @@ public class SalesOrderEJB
 
 			salesOrder = update(salesOrder);
 			updatingSalesOrderItem.setSalesOrder(salesOrder);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void rebuildSaleOrder(SalesOrder salesOrder) {
