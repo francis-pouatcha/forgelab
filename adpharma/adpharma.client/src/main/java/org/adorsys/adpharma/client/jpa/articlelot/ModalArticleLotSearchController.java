@@ -43,14 +43,18 @@ public class ModalArticleLotSearchController  {
 	@Inject
 	private ServiceCallFailedEventHandler articleSearchServiceCallFailedEventHandler;
 
-	@Inject 
-	@ModalEntitySearchRequestedEvent
-	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent;
+//	@Inject 
+//	@ModalEntitySearchRequestedEvent
+//	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent1;
 
 	@Inject 
 	@ModalEntitySearchDoneEvent
-	private Event<ArticleLot> modalArticleLotSearchDoneEvent;
+	private Event<InvAticleLotEvt> invModalArticleLotSearchDoneEvent;
 
+	@Inject 
+	@ModalEntitySearchDoneEvent
+	private Event<SlsAticleLotEvt> slsModalArticleLotSearchDoneEvent;
+	
 	@Inject
 	ArticleLot articleLot;
 
@@ -60,9 +64,8 @@ public class ModalArticleLotSearchController  {
 
 	private ArticleLotSearchResult searchResult;
 
-	@Inject
-	private ArticleLotSearchInput lotSearchInput ;
-
+//	@Inject
+//	private ArticleLotSearchInput lotSearchInput ;
 
 
 	@PostConstruct
@@ -116,7 +119,12 @@ public class ModalArticleLotSearchController  {
 					ObservableValue<? extends ArticleLot> observable,
 					ArticleLot oldValue, ArticleLot newValue) {
 				if(newValue!=null){
-					modalArticleLotSearchDoneEvent.fire(newValue);
+					if(SRC_INVENTORY.equals(view.getInputSrc())){
+						invModalArticleLotSearchDoneEvent.fire(new InvAticleLotEvt(newValue));
+					} else if (SRC_SALES_ORDER.equals(view.getInputSrc())){
+						slsModalArticleLotSearchDoneEvent.fire(new SlsAticleLotEvt(newValue));
+					}
+
 					view.closeDialog();
 
 				}
@@ -197,11 +205,17 @@ public class ModalArticleLotSearchController  {
 			Dialogs.create().message("Aucun Article Trouve").showInformation();
 
 		if(articleLotSearchResult.getResultList().size()==1){
+			String inputSrc = articleLotSearchResult.getSearchInput().getSrc();
 			ArticleLot articleLot2 = articleLotSearchResult.getResultList().iterator().next();
 			PropertyReader.copy(new ArticleLot(), articleLot);
 			view.closeDialog();
-			if(Boolean.FALSE.equals(articleLot2.getArticle().getSection().getWareHouse()))
-				modalArticleLotSearchDoneEvent.fire(articleLot2);
+			if(Boolean.FALSE.equals(articleLot2.getArticle().getSection().getWareHouse())){
+				if(SRC_INVENTORY.equals(inputSrc) || SRC_INVENTORY.equals(view.getInputSrc())){
+					invModalArticleLotSearchDoneEvent.fire(new InvAticleLotEvt(articleLot2));
+				} else if (SRC_SALES_ORDER.equals(inputSrc) || SRC_SALES_ORDER.equals(view.getInputSrc())){
+					slsModalArticleLotSearchDoneEvent.fire(new SlsAticleLotEvt(articleLot2));
+				}
+			}
 		}else {
 			this.searchResult = articleLotSearchResult;
 			List<ArticleLot> resultList = articleLotSearchResult.getResultList();
@@ -267,7 +281,10 @@ public class ModalArticleLotSearchController  {
 		return view;
 	}
 
-	public void handleArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent ArticleLotSearchInput lotSearchInput){
+	public void handleInvArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent InvArticleLotSearchInputEvt lotSearchInputEvt){
+		ArticleLotSearchInput lotSearchInput = lotSearchInputEvt.getModel();
+		lotSearchInput.setSrc(SRC_INVENTORY);
+		view.setInputSrc(SRC_INVENTORY);
 		if(lotSearchInput.getFieldNames().contains("internalPic")){
 			articleSearchService.setSearchInputs(lotSearchInput).setSearchRealPrice(Boolean.TRUE).start();
 		}else{
@@ -275,4 +292,19 @@ public class ModalArticleLotSearchController  {
 		}
 		view.getArticleName().setText(lotSearchInput.getEntity().getArticleName());
 	}
+
+	public void handleSlsArticleLotSearchRequestEvent(@Observes @ModalEntitySearchRequestedEvent SlsArticleLotSearchInputEvt lotSearchInputEvt){
+		ArticleLotSearchInput lotSearchInput = lotSearchInputEvt.getModel();
+		lotSearchInput.setSrc(SRC_SALES_ORDER);
+		view.setInputSrc(SRC_SALES_ORDER);
+		if(lotSearchInput.getFieldNames().contains("internalPic")){
+			articleSearchService.setSearchInputs(lotSearchInput).setSearchRealPrice(Boolean.TRUE).start();
+		}else{
+			articleSearchService.setSearchInputs(lotSearchInput).setSearchByName(Boolean.TRUE).start();
+		}
+		view.getArticleName().setText(lotSearchInput.getEntity().getArticleName());
+	}
+	
+	private static final String SRC_SALES_ORDER= "Sls";
+	private static final String SRC_INVENTORY= "Inv";
 }

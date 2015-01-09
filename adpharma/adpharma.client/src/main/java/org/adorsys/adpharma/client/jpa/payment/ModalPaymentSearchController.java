@@ -45,9 +45,9 @@ public class ModalPaymentSearchController {
 	@Inject
 	private ServiceCallFailedEventHandler paymentSearchServiceCallFailedEventHandler;
 
-	@Inject 
-	@ModalEntitySearchRequestedEvent
-	private Event<PaymentSearchInput> modalPaymentSearchEvent;
+//	@Inject 
+//	@ModalEntitySearchRequestedEvent
+//	private Event<PaymentSearchInput> modalPaymentSearchEvent;
 
 	@Inject 
 	@ModalEntitySearchDoneEvent

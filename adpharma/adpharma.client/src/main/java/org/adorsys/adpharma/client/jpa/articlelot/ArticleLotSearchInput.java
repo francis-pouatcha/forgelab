@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 
 /**
@@ -45,6 +46,12 @@ public class ArticleLotSearchInput
 	 */
 	private List<String> fieldNames = new ArrayList<String>();
 
+	/**
+	 * Keep the origine of the event for further processing
+	 * in client applications
+	 */
+	private String src = null;
+	
 	public ArticleLot getEntity()
 	{
 		return entity;
@@ -91,5 +98,13 @@ public class ArticleLotSearchInput
 
 	public void setIncludeBreack(boolean includeBreack) {
 		this.includeBreack = includeBreack;
+	}
+
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
 	}
 }

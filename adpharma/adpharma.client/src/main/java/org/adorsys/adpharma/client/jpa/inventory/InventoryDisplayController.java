@@ -36,6 +36,8 @@ import org.adorsys.adpharma.client.access.SecurityUtil;
 import org.adorsys.adpharma.client.events.PrintRequestedEvent;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
 import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
+import org.adorsys.adpharma.client.jpa.articlelot.InvArticleLotSearchInputEvt;
+import org.adorsys.adpharma.client.jpa.articlelot.InvAticleLotEvt;
 import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
 import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItemDelivery;
@@ -96,7 +98,7 @@ public class InventoryDisplayController implements EntityController
 	
 	@Inject
 	@ModalEntityCreateDoneEvent
-	private Event<ArticleLot> searchRequestedDoneEvent;
+	private Event<InvAticleLotEvt> searchRequestedDoneEvent;
 
 	@Inject
 	@EntityEditRequestedEvent
@@ -143,7 +145,7 @@ public class InventoryDisplayController implements EntityController
 
 	@Inject 
 	@ModalEntitySearchRequestedEvent
-	private Event<ArticleLotSearchInput> modalArticleLotSearchEvent;
+	private Event<InvArticleLotSearchInputEvt> modalArticleLotSearchEvent;
 
 	@Inject
 	private InventoryItemCreateService inventoryItemCreateService;
@@ -331,7 +333,7 @@ public class InventoryDisplayController implements EntityController
 					asi.setEntity(entity);
 					asi.setMax(30);
 					asi.getFieldNames().add("articleName");
-					modalArticleLotSearchEvent.fire(asi);
+					modalArticleLotSearchEvent.fire(new InvArticleLotSearchInputEvt(asi));
 				}
 			}
 		});
@@ -355,7 +357,7 @@ public class InventoryDisplayController implements EntityController
 					asi.getFieldNames().add("secondaryPic");
 					asi.getFieldNames().add("mainPic");
 					asi.getFieldNames().add("internalPic");
-					modalArticleLotSearchEvent.fire(asi);
+					modalArticleLotSearchEvent.fire(new InvArticleLotSearchInputEvt(asi));
 
 				}
 			}
@@ -568,12 +570,13 @@ public class InventoryDisplayController implements EntityController
 		searchRequestedEvent.fire(eventData.getTargetEntity() != null ? eventData.getTargetEntity() : new Inventory());
 	}
 
-	public void handleArticleLotSearchDone(@Observes(notifyObserver=Reception.ALWAYS) @ModalEntitySearchDoneEvent ArticleLot model)
+	public void handleArticleLotSearchDone(@Observes @ModalEntitySearchDoneEvent InvAticleLotEvt model)
 	{
 		searchRequestedDoneEvent.fire(model);
 	}
 	
-	public void observesArticleLotSearchDone(@Observes @ModalEntityCreateDoneEvent ArticleLot model) {
+	public void observesArticleLotSearchDone(@Observes @ModalEntityCreateDoneEvent InvAticleLotEvt invAticleLotEvt) {
+		ArticleLot model = invAticleLotEvt.getArticleLot();
 		if(!isValidateOrderedQty(model))
 		return ;
 		PropertyReader.copy(inventoryItemfromArticle(model), inventoryItem);
