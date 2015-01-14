@@ -80,7 +80,6 @@ public class SalesOrderListView
 	@FXML
 	private BarChart<String, BigDecimal> barChart;
 
-
 	@FXML 
 	private ComboBox<Customer> chartClientList;
 
@@ -233,6 +232,7 @@ public class SalesOrderListView
 	{
 		return dataList;
 	}
+	
 	public TableView<SalesOrderItem> getDataListItem()
 	{
 		return dataListItem;

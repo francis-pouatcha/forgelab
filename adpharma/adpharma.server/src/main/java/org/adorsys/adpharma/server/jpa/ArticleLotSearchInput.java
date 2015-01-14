@@ -34,6 +34,12 @@ public class ArticleLotSearchInput
 	 * The max number of records to return.
 	 */
 	private boolean includeBreack = false;
+	
+	/**
+	 * Keep the origine of the event for further processing
+	 * in client applications
+	 */
+	private String src = null;
 
 	/**
 	 * The field names to be included in the search.
@@ -88,4 +94,11 @@ public class ArticleLotSearchInput
 		this.includeBreack = includeBreack;
 	}
 
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
 }

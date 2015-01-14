@@ -23,6 +23,7 @@ import org.adorsys.adpharma.server.jpa.InventoryAdvenceSearchData;
 import org.adorsys.adpharma.server.jpa.InventoryItem;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
+import org.adorsys.adpharma.server.jpa.SalesOrder_;
 import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
@@ -155,6 +156,7 @@ public class InventoryEJB
 	public List<Inventory> findByLike(Inventory entity, int start, int max, SingularAttribute<Inventory, ?>[] attributes)
 	{
 		Inventory inventory = attach(entity);
+//		return repository.criteriafindBy(inventory, attributes).orderDesc(Inventory_.id).createQuery().setFirstResult(start).setMaxResults(max).getResultList();
 		return repository.findByLike(inventory, start, max, attributes);
 	}
 

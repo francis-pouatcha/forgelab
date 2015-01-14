@@ -164,7 +164,7 @@ public class StockMovementEJB
 
 		if(dataSearchInput.getEndDate()!=null)
 			query = query+" AND s.creationDate <= :endDate ";
-
+		
 		Query querys = em.createQuery(query) ;
 		
 		if(article!=null && article.getId()!=null) {

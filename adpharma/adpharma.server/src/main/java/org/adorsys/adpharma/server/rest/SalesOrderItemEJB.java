@@ -126,7 +126,7 @@ public class SalesOrderItemEJB
 
 		List<Object[]> sales = new ArrayList<Object[]>();
 		if(check){
-			query = "SELECT s.article, SUM(s.deliveredQty), SUM(s.deliveredQty) * s.salesPricePU FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
+			query = "SELECT s.article, SUM(s.deliveredQty), (SUM(s.deliveredQty) * s.salesPricePU) FROM SalesOrderItem AS s WHERE  s.salesOrder.creationDate >= :from AND s.salesOrder.creationDate <= :to AND s.salesOrder.cashed = :cashed  ";
 			if (section!=null && section.getId()!=null) {
 				query=query+" AND s.article.section = :section";			
 			}
@@ -136,7 +136,7 @@ public class SalesOrderItemEJB
 			}
 			if(StringUtils.isNotBlank(searchInput.getPic()))
 				query = query+" AND s.article.pic = :pic";
-			query = query+" GROUP BY s.article.pic, s.article, s.article.articleName";
+			query = query+" GROUP BY s.article.pic, s.article, s.article.articleName, s.salesPricePU";
 		}
 		query = query+" ORDER BY s.article.articleName";
 

@@ -40,9 +40,9 @@ public class ModalArticleSearchControler {
 	@Inject
 	private ServiceCallFailedEventHandler articleSearchServiceCallFailedEventHandler;
 
-	@Inject 
-	@ModalEntitySearchRequestedEvent
-	private Event<ArticleSearchInput> modalArticleSearchEvent;
+//	@Inject 
+//	@ModalEntitySearchRequestedEvent
+//	private Event<ArticleSearchInput> modalArticleSearchEvent;
 
 	@Inject 
 	@ModalEntitySearchDoneEvent

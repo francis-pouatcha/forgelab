@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -369,8 +370,10 @@ public class SalesOrderListController implements EntityController
 				SalesStatisticsDataSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
+		
 				Iterator<ChartData> iterator = result.getChartData().iterator();
 				List<Series<String, BigDecimal>> pieChartData = ChartData.toBarChartData(result.getChartData());
+
 				listView.getPieChart().getData().setAll(pieChartData);
 			}
 		});
