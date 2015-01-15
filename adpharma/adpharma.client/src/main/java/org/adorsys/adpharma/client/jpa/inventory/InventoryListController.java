@@ -453,7 +453,10 @@ public class InventoryListController implements EntityController
 		cell.setCellValue("quantite");
 
 		cell = header.createCell(cellnum++);
-		cell.setCellValue("prix");
+		cell.setCellValue("prix Vente");
+		
+		cell = header.createCell(cellnum++);
+		cell.setCellValue("prix Achat");
 
 		cell = header.createCell(cellnum++);
 		cell.setCellValue("emplacement");
@@ -472,12 +475,16 @@ public class InventoryListController implements EntityController
 
 			cell = header.createCell(cellnum++);
 			cell.setCellValue(item.getExpectedQty().toBigInteger()+"");
+			
+			
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getArticle().getSppu()+"");
+			
+			cell = header.createCell(cellnum++);
+			cell.setCellValue(item.getArticle().getPppu()+"");
 
 			cell = header.createCell(cellnum++);
-			cell.setCellValue(item.getGapSalesPricePU()+"");
-
-			cell = header.createCell(cellnum++);
-			cell.setCellValue("");
+			cell.setCellValue(item.getArticle().getSection().getName());
 		}
 
 		try {

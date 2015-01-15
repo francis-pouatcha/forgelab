@@ -34,7 +34,6 @@ import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceSearchServ
 import org.adorsys.adpharma.client.jpa.customerinvoice.CustomerInvoiceTobePayedRepportPdf;
 import org.adorsys.adpharma.client.jpa.insurrance.InsurranceInsurer;
 import org.adorsys.adpharma.client.jpa.login.Login;
-import org.adorsys.adpharma.client.utils.TableViewUtils;
 import org.adorsys.javafx.crud.extensions.EntityController;
 import org.adorsys.javafx.crud.extensions.ViewType;
 import org.adorsys.javafx.crud.extensions.events.EntityCreateDoneEvent;
@@ -53,11 +52,7 @@ import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.controlsfx.dialog.Dialogs;
-
-import com.panemu.tiwulfx.common.ExportToExcel;
-import com.panemu.tiwulfx.table.TableControl;
 
 @Singleton
 public class CustomerListController implements EntityController
@@ -268,23 +263,23 @@ public class CustomerListController implements EntityController
 		});
 
 
-		listView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				TableControl<Customer> customersControl = TableViewUtils.fromTableViewToTableControl(listView.getDataList());
-				List<Customer> data = TableViewUtils.getDataFromTableView(listView.getDataList());
-				List<Double> columnWidths = TableViewUtils.getColumnWidthsFromTableView(listView.getDataList());
-				
-				try {
-					ExportToExcel<Customer> exportToExcel= new ExportToExcel<Customer>();
-					exportToExcel.export("Liste des clients", "clients.xls", customersControl, data, columnWidths);
-				} catch (Exception e) {
-					Logger.getLogger(CustomerListController.class).error("Erreur d'exportation: "+e.getMessage());
-				}
-				
-			}
-		});
+//		listView.getPrintXlsButton().setOnAction(new EventHandler<ActionEvent>() {
+//
+//			@Override
+//			public void handle(ActionEvent arg0) {
+//				TableControl<Customer> customersControl = TableViewUtils.fromTableViewToTableControl(listView.getDataList());
+//				List<Customer> data = TableViewUtils.getDataFromTableView(listView.getDataList());
+//				List<Double> columnWidths = TableViewUtils.getColumnWidthsFromTableView(listView.getDataList());
+//				
+//				try {
+//					ExportToExcel<Customer> exportToExcel= new ExportToExcel<Customer>();
+//					exportToExcel.export("Liste des clients", "clients.xls", customersControl, data, columnWidths);
+//				} catch (Exception e) {
+//					Logger.getLogger(CustomerListController.class).error("Erreur d'exportation: "+e.getMessage());
+//				}
+//				
+//			}
+//		});
 
 		listView.getCreateButton().setOnAction(new EventHandler<ActionEvent>()
 				{

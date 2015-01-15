@@ -118,7 +118,7 @@ public class ArticleMerger
 
    private void unbindNested(String fieldName, List<String> nestedFields, Article entity, Article newEntity) {
 	   if("section".equals(fieldName)) {
-		   newEntity.setSection(sectionMerger.unbind(entity.getSection(), nestedFields));
+		   newEntity.setSection(entity.getSection());
 	   } else if("family".equals(fieldName)) {
 		   newEntity.setFamily(productFamilyMerger.unbind(entity.getFamily(), nestedFields));
 	   } else if("defaultSalesMargin".equals(fieldName)) {

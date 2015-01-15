@@ -370,7 +370,6 @@ public class SalesOrderListController implements EntityController
 				SalesStatisticsDataSearchResult result = s.getValue();
 				event.consume();
 				s.reset();
-		
 				Iterator<ChartData> iterator = result.getChartData().iterator();
 				List<Series<String, BigDecimal>> pieChartData = ChartData.toBarChartData(result.getChartData());
 
