@@ -119,8 +119,7 @@ public class DeliveryCreateController implements EntityController
 				}
 				else
 				{
-					errorMessageDialog.getTitleText().setText(
-							resourceBundle.getString("Entity_create_error.title"));
+					errorMessageDialog.getTitleText().setText(resourceBundle.getString("Entity_create_error.title"));
 					errorMessageDialog.getDetailText().setText(resourceBundle.getString("Entity_click_to_see_error"));
 					errorMessageDialog.display();
 				}
