@@ -109,10 +109,10 @@ public class DeliveryItemEJB
 	{
 		return repository.findBy(id);
 	}
-
-	public List<DeliveryItem> findByDelivery(Delivery delivery){
-		return repository.findByDelivery(delivery);
-	}
+// Francis 01/15/2015 this is not good
+//	public List<DeliveryItem> findByDelivery(Delivery delivery){
+//		return repository.findByDelivery(delivery);
+//	}
 
 	public List<DeliveryItem> listAll(int start, int max)
 	{
