@@ -276,15 +276,19 @@ public class InventoryListController implements EntityController
 				InventorySearchService source = (InventorySearchService) event.getSource();
 				InventorySearchResult result = source.getValue();
 				List<Inventory> resultList = result.getResultList();
-				Collections.sort(resultList, new Comparator<Inventory>() {
+				List<Inventory> sortList= new ArrayList<Inventory>();
+				for(Inventory inv:resultList) {
+					if(inv.getInventoryDate()!=null) {
+						sortList.add(inv);
+					}
+				}
+				Collections.sort(sortList, new Comparator<Inventory>() {
 					@Override
 					public int compare(Inventory o1, Inventory o2) {
-						int inv1 = o1.getId().intValue();
-						int inv2 = o2.getId().intValue();
 						return o1.getInventoryDate().getTime().compareTo(o2.getInventoryDate().getTime());
 					}
 				});
-				result.setResultList(resultList);
+				result.setResultList(sortList);
 				handleSearchResult(result);
 				source.reset();
 				event.consume();
