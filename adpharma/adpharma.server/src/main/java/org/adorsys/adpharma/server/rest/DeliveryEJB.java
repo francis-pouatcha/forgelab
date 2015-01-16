@@ -2,7 +2,6 @@ package org.adorsys.adpharma.server.rest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +9,8 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -34,7 +35,6 @@ import org.adorsys.adpharma.server.repo.DeliveryRepository;
 import org.adorsys.adpharma.server.security.SecurityUtil;
 import org.adorsys.adpharma.server.startup.ApplicationConfiguration;
 import org.adorsys.adpharma.server.utils.DeliveryFromOrderData;
-import org.adorsys.adpharma.server.utils.PropertyReader;
 import org.adorsys.adpharma.server.utils.SequenceGenerator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -109,6 +109,13 @@ public class DeliveryEJB
 		return repository.save(attach(entity));
 	}
 
+	/**
+	 * Suspend transation and proceed iteratively.
+	 * 
+	 * @param delivery
+	 * @return
+	 */
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public Delivery saveAndClose(Delivery delivery) {
 		delivery = attach(delivery);
 		Login creatingUser = securityUtil.getConnectedUser();
@@ -116,14 +123,12 @@ public class DeliveryEJB
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 
+		// First transaction. Create last delivery items delivered with this request.
 		for (DeliveryItem deliveryItem : deliveryItems) {
-			//			String internalPic = deliveryItem.getMainPic() ;
-			//			if(isManagedLot)
 			deliveryItem = deliveryItemEJB.findById(deliveryItem.getId());
 			Long sectionId = deliveryItem.getArticle().getSection().getId();
 			String internalPic = articleLotEJB.newLotNumber(deliveryItem.getMainPic());
-			if(!isManagedLot)
-				internalPic=internalPic+sectionId ;
+			if(!isManagedLot) internalPic=internalPic+sectionId ;
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){
@@ -141,23 +146,38 @@ public class DeliveryEJB
 		if(delivery.getAmountDiscount()==null)delivery.setAmountDiscount(BigDecimal.ZERO);
 
 		// navigate over all delivery items
-		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
-		delivery.getDeliveryItems().clear();
-		delivery.getDeliveryItems().addAll(deliveryItems2);
+		// Francis 01/15/2015: this is where we kill everything. We will have to proceed per block of
+		// 100 items to avoid overloading the transaction.
+		DeliveryItem searchInput = new DeliveryItem();
+		SingularAttribute[] attributes = new SingularAttribute[]{DeliveryItem_.delivery};
+		Long count = deliveryItemEJB.countBy(searchInput, attributes);
+		int start = 0;
+		int max = 100;
 
-		for (DeliveryItem deliveryItem : deliveryItems2) {
-			BigDecimal totalPurchasePrice = deliveryItem.getTotalPurchasePrice();
-			// Ammount after Tax
-			delivery.setAmountAfterTax(delivery.getAmountAfterTax().add(totalPurchasePrice));
-			VAT vat = deliveryItem.getArticle().getVat();
-			BigDecimal vatRate = BigDecimal.ZERO;
-			if(vat!=null)
-				vatRate =vat.getRate();
-			BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vatRate)), 4, RoundingMode.HALF_EVEN);
-			// Amount before tax
-			delivery.setAmountBeforeTax(delivery.getAmountBeforeTax().add(purchasePriceBeforTax));
-			// Amount vat
-			delivery.setAmountVat(delivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
+//		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
+//		delivery.getDeliveryItems().addAll(deliveryItems2);
+		delivery.getDeliveryItems().clear();
+		// Francis 01/15/2015
+		// Very important do not do any update in this while loop. DO not change anything 
+		// on the delivery item. This will cause a too big transaction.
+		while(start<=count){
+			List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findBy(searchInput, start , max, attributes);
+			start +=max;
+
+			for (DeliveryItem deliveryItem : deliveryItems2) {
+				BigDecimal totalPurchasePrice = deliveryItem.getTotalPurchasePrice();
+				// Ammount after Tax
+				delivery.setAmountAfterTax(delivery.getAmountAfterTax().add(totalPurchasePrice));
+				VAT vat = deliveryItem.getArticle().getVat();
+				BigDecimal vatRate = BigDecimal.ZERO;
+				if(vat!=null)
+					vatRate =vat.getRate();
+				BigDecimal purchasePriceBeforTax = totalPurchasePrice.divide(BigDecimal.ONE.add(VAT.getRawRate(vatRate)), 4, RoundingMode.HALF_EVEN);
+				// Amount before tax
+				delivery.setAmountBeforeTax(delivery.getAmountBeforeTax().add(purchasePriceBeforTax));
+				// Amount vat
+				delivery.setAmountVat(delivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
+			}
 		}
 
 		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));

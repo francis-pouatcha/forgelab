@@ -129,8 +129,7 @@ public class InventoryEndpoint
    {
       SingularAttribute<Inventory, ?>[] attributes = readSeachAttributes(searchInput);
       Long count = ejb.countBy(searchInput.getEntity(), attributes);
-      List<Inventory> resultList = ejb.findBy(searchInput.getEntity(),
-            searchInput.getStart(), searchInput.getMax(), attributes);
+      List<Inventory> resultList = ejb.findBy(searchInput.getEntity(),searchInput.getStart(), searchInput.getMax(), attributes);
       return new InventorySearchResult(count, detach(resultList),
             detach(searchInput));
    }
@@ -168,8 +167,7 @@ public class InventoryEndpoint
    }
 
    @SuppressWarnings("unchecked")
-   private SingularAttribute<Inventory, ?>[] readSeachAttributes(
-         InventorySearchInput searchInput)
+   private SingularAttribute<Inventory, ?>[] readSeachAttributes(InventorySearchInput searchInput)
    {
       List<String> fieldNames = searchInput.getFieldNames();
       List<SingularAttribute<Inventory, ?>> result = new ArrayList<SingularAttribute<Inventory, ?>>();
