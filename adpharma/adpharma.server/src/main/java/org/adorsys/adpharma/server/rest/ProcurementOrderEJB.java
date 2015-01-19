@@ -229,7 +229,7 @@ public class ProcurementOrderEJB
 		procurementOrder.setProcmtOrderTriggerMode(data.getProcmtOrderTriggerMode());
 		procurementOrder.setSupplier(data.getSupplier());
 		
-		if(data.getProcmtOrderTriggerMode().equals(ProcmtOrderTriggerMode.MANUAL)) {
+		if(ProcmtOrderTriggerMode.MANUAL.equals(data.getProcmtOrderTriggerMode())) {
 			procurementOrder = create(procurementOrder);
 			return procurementOrder;
 		}

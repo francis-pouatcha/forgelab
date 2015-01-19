@@ -325,7 +325,7 @@ public class StockMovementEJB
 			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
 				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
 			sm = create(sm);
-			stockMovementEvent.fire(sm);
+//			stockMovementEvent.fire(sm);
 		}
 	}
 

@@ -154,8 +154,8 @@ public class DeliveryEJB
 		int start = 0;
 		int max = 100;
 
-//		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
-//		delivery.getDeliveryItems().addAll(deliveryItems2);
+		//		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
+		//		delivery.getDeliveryItems().addAll(deliveryItems2);
 		delivery.getDeliveryItems().clear();
 		// Francis 01/15/2015
 		// Very important do not do any update in this while loop. DO not change anything 
@@ -182,13 +182,13 @@ public class DeliveryEJB
 
 		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
-        delivery.setCloseUser(creatingUser.getLoginName());
+		delivery.setCloseUser(creatingUser.getLoginName());
 		Delivery closedDelivery = update(delivery);
 		deliveryClosedDoneEvent.fire(closedDelivery);
 		return closedDelivery;
 	}
 
-    
+
 	@Inject
 	private ArticleRepository articleRepository ;
 
@@ -272,7 +272,7 @@ public class DeliveryEJB
 				deliveryItems.add(create);
 			}
 		}
-		
+
 		order.setPoStatus(DocumentProcessingState.CLOSED);
 		// Add Close user
 		order.setCloseUser(login.getLoginName());
