@@ -212,6 +212,7 @@ public class CashDrawerReportPrintTemplatePDF  implements CashDrawerReportPrintT
 
 		PdfPCell pdfPCell = new PdfPCell();
 		pdfPCell.setFixedHeight(18f);
+		pdfPCell.setFixedHeight(18f);
 		if(colored){
 			pdfPCell.addElement(new Phrase(cashDrawerNumber,blueBoldFont));
 
