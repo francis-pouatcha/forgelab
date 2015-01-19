@@ -83,6 +83,9 @@ public class DeliveryEJB
 
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@Inject
+	private DeliveryEJBHelper deliveryEJBHelper;
 
 	public Delivery create(Delivery entity)
 	{
@@ -184,9 +187,8 @@ public class DeliveryEJB
 		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
         delivery.setCloseUser(creatingUser.getLoginName());
-		Delivery closedDelivery = update(delivery);
-		deliveryClosedDoneEvent.fire(closedDelivery);
-		return closedDelivery;
+        
+        return deliveryEJBHelper.saveAndClose(delivery);
 	}
 
 	@Inject
