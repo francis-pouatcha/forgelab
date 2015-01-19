@@ -86,7 +86,8 @@ public class InventoryEJB
 		attach.setRecordingUser(user);
 		attach.setInventoryStatus(DocumentProcessingState.ONGOING);
 		Inventory save = repository.save(attach);
-		return initInventory(attach,user);
+//		return initInventory(attach,user);
+		return initInventory(save,user);
 	}
 
 	public Inventory deleteById(Long id)

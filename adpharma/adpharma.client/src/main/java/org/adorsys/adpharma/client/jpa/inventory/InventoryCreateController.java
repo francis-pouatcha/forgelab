@@ -121,11 +121,11 @@ public class InventoryCreateController implements EntityController
          @Override
          public void handle(WorkerStateEvent event)
          {
+    	    hideProgressRequestEvent.fire(new Object());
             InventoryCreateService s = (InventoryCreateService) event.getSource();
             Inventory ent = s.getValue();
             event.consume();
             s.reset();
-            hideProgressRequestEvent.fire(new Object());
             createDoneEvent.fire(ent);
          }
       });

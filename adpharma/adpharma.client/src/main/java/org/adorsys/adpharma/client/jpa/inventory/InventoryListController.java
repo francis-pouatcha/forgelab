@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,6 +58,7 @@ import org.adorsys.javafx.crud.extensions.events.ShowProgressBarRequestEvent;
 import org.adorsys.javafx.crud.extensions.login.ServiceCallFailedEventHandler;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.utils.PaginationUtils;
+import org.apache.commons.collections.map.StaticBucketMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -66,6 +69,7 @@ import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 
 import com.google.common.collect.Lists;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 @Singleton
 public class InventoryListController implements EntityController
@@ -271,12 +275,29 @@ public class InventoryListController implements EntityController
 			public void handle(WorkerStateEvent event) {
 				InventorySearchService source = (InventorySearchService) event.getSource();
 				InventorySearchResult result = source.getValue();
-				
+				List<Inventory> resultList = result.getResultList();
+				List<Inventory> sortList= new ArrayList<Inventory>();
+				for(Inventory inv:resultList) {
+					if(inv.getInventoryDate()!=null) {
+						sortList.add(inv);
+					}
+				}
+				Collections.sort(sortList, new Comparator<Inventory>() {
+					@Override
+					public int compare(Inventory o1, Inventory o2) {
+						return o1.getInventoryDate().getTime().compareTo(o2.getInventoryDate().getTime());
+					}
+				});
+				result.setResultList(sortList);
 				handleSearchResult(result);
 				source.reset();
 				event.consume();
 			}
 		});
+		
+		
+		
+		
 		inventorySearchService.setOnFailed(callFailedEventHandler);
 
 		sectionSearchService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -295,8 +316,8 @@ public class InventoryListController implements EntityController
 				source.reset();
 				event.consume();
 
-
 			}
+
 		});
 		sectionSearchService.setOnFailed(callFailedEventHandler);
 
@@ -424,7 +445,7 @@ public class InventoryListController implements EntityController
 
 		if(StringUtils.isNotBlank(inventoryNumber)) seachAttributes.add("inventoryNumber");
 		if(inventoryStatus!=null) seachAttributes.add("inventoryStatus");
-		if(section!=null&&section.getId()!=null) seachAttributes.add("section") ;
+		if(section!=null&&section.getId()!=null) seachAttributes.add("section");
 		return seachAttributes;
 
 	}
