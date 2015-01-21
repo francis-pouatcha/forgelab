@@ -20,7 +20,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.adorsys.adpharma.server.events.DestockingProcessedEvent;
 import org.adorsys.adpharma.server.events.DirectSalesClosedEvent;
-import org.adorsys.adpharma.server.events.DocumentClosedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.events.EntityEditDoneRequestEvent;
 import org.adorsys.adpharma.server.events.ProcessTransferRequestEvent;
@@ -34,9 +33,8 @@ import org.adorsys.adpharma.server.jpa.ArticleLotSequence;
 import org.adorsys.adpharma.server.jpa.ArticleLotSequence_;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.ArticleLot_;
-import org.adorsys.adpharma.server.jpa.ArticleSearchInput;
-import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItemArticleLotEvent;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Login;
 import org.adorsys.adpharma.server.jpa.ProductDetailConfig;
@@ -44,7 +42,6 @@ import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.Section;
 import org.adorsys.adpharma.server.jpa.StockValueArticleSearchInput;
-import org.adorsys.adpharma.server.jpa.StockValueParams;
 import org.adorsys.adpharma.server.repo.ArticleLotRepository;
 import org.adorsys.adpharma.server.repo.ArticleLotSequenceRepository;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
@@ -254,10 +251,10 @@ public class ArticleLotEJB
 
 		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
 			query = query+ " AND c.agency = :agency ";
-		
+
 		if(section!=null && section.getId()!=null)
 			query = query+ " AND c.article.section = :section ";
-		
+
 		if(searchInput.getGroupByArticle()) {
 			query = query+" GROUP BY c, c.mainPic";
 		}
@@ -265,15 +262,15 @@ public class ArticleLotEJB
 
 		Query querys = em.createQuery(query,ArticleLot.class);
 		if(searchInput.getStockValueRepport().booleanValue() || searchInput.getBreakArticleRepport().booleanValue()) {
-		   querys.setParameter("stockQuantity",BigDecimal.ZERO);
+			querys.setParameter("stockQuantity",BigDecimal.ZERO);
 		}
-		
+
 		if(searchInput.getEntity().getAgency()!=null&&searchInput.getEntity().getAgency().getId()!=null)
 			querys.setParameter("agency", searchInput.getEntity().getAgency());
-		
+
 		if(section!=null && section.getId()!=null)
 			querys.setParameter("section", searchInput.getSection());
-		
+
 		stockVAlues = querys.getResultList();
 		return stockVAlues;
 	}
@@ -342,7 +339,7 @@ public class ArticleLotEJB
 		articleLotDetailsEvent.fire(lotDetailsManager);
 		articleLotDetailResultHolder.setSource(source);
 		articleLotDetailResultHolder.setTarget(lot);
-		
+
 		return articleLotDetailResultHolder ;
 	}
 	// pas bon travail sur le target lot 
@@ -350,21 +347,21 @@ public class ArticleLotEJB
 		ArticleLot lotToDetails = source;
 		BigDecimal detailsQty = source.getStockQuantity();
 		List<ArticleLot> lotToCompense = repository.findByArticleAndStockQuantityLessThan(lotToDetails.getArticle(), BigDecimal.ZERO).getResultList();
-	  
+
 		for (ArticleLot articleLot : lotToCompense) {
-		BigDecimal stockQty = articleLot.getStockQuantity().abs();
-		if(detailsQty.compareTo(stockQty)<=0){
-			articleLot.setStockQuantity(articleLot.getStockQuantity().add(detailsQty));
-			repository.save(articleLot);
-			detailsQty = BigDecimal.ZERO ;
-			break;
-		}else {
-			articleLot.setStockQuantity(articleLot.getStockQuantity().add(stockQty));
-			repository.save(articleLot);
-			detailsQty = detailsQty.subtract(stockQty);
+			BigDecimal stockQty = articleLot.getStockQuantity().abs();
+			if(detailsQty.compareTo(stockQty)<=0){
+				articleLot.setStockQuantity(articleLot.getStockQuantity().add(detailsQty));
+				repository.save(articleLot);
+				detailsQty = BigDecimal.ZERO ;
+				break;
+			}else {
+				articleLot.setStockQuantity(articleLot.getStockQuantity().add(stockQty));
+				repository.save(articleLot);
+				detailsQty = detailsQty.subtract(stockQty);
+			}
+			source.setStockQuantity(detailsQty);
 		}
-		source.setStockQuantity(detailsQty);
-	}
 	}
 
 
@@ -390,24 +387,49 @@ public class ArticleLotEJB
 		return al ;
 	}
 
+	//	/*
+	//	 * process article lot stock change according to deliveryitem qty
+	//	 */
+	//	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	//		Login creatingUser = securityUtil.getConnectedUser();
+	////		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+	//		
+	//		DeliveryItem searchInput = new DeliveryItem();
+	//		SingularAttribute[] attributes = new SingularAttribute[]{DeliveryItem_.delivery};
+	//		searchInput.setDelivery(closedDelivery);
+	//		List<DeliveryItem> deliveryItems = deliveryItemEJB.findBy(searchInput, 0 , -1, attributes);
+	//		
+	//		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+	//		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+	//
+	//		// generate Article lot for each delivery item
+	//		for (DeliveryItem deliveryItem : deliveryItems) {
+	//			if(isManagedLot){
+	//				createArticleLot(creatingUser, deliveryItem,isManagedLot);
+	//			}else {
+	//				upgradeArticleLotQtyOrCreate(deliveryItem, creatingUser);
+	//			}
+	//		}
+	//	}
+
+
 	/*
 	 * process article lot stock change according to deliveryitem qty
 	 */
-	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	public void processStockChange(DeliveryItemArticleLotEvent dialEvt){
 		Login creatingUser = securityUtil.getConnectedUser();
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+		DeliveryItem deliveryItem = deliveryItemEJB.findById(dialEvt.getItemId());
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 
 		// generate Article lot for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			if(isManagedLot){
-				createArticleLot(creatingUser, deliveryItem,isManagedLot);
-			}else {
-				upgradeArticleLotQtyOrCreate(deliveryItem, creatingUser);
-			}
+		if(isManagedLot){
+			createArticleLot(creatingUser, deliveryItem,isManagedLot);
+		}else {
+			upgradeArticleLotQtyOrCreate(deliveryItem, creatingUser);
 		}
 	}
+
 
 	@Inject
 	private DeliveryItemRepository deliveryItemRepository ;
