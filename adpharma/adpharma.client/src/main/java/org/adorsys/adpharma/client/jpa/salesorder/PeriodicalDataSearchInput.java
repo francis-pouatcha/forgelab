@@ -49,6 +49,7 @@ public class PeriodicalDataSearchInput {
 	
 	private SimpleStringProperty internalPic ;
 	
+	private SimpleBooleanProperty dayllySales;
 	
 	public SimpleObjectProperty<Article> articleProperty()
 	   {
@@ -215,6 +216,27 @@ public class PeriodicalDataSearchInput {
 		this.checkProperty().set(check);
 	}
 	
+	public SimpleBooleanProperty dayllySalesProperty()
+	{
+		if (dayllySales == null)
+		{
+			dayllySales = new SimpleBooleanProperty();
+		}
+		return dayllySales;
+	}
+
+	public Boolean getdayllySales()
+	{
+		return dayllySalesProperty().get();
+	}
+
+	public final void setdayllySales(Boolean dayllySales)
+	{
+		if (dayllySales == null)
+			dayllySales = Boolean.FALSE;
+		this.dayllySalesProperty().set(dayllySales);
+	}
+	
 	public SimpleBooleanProperty printXlsProperty()
 	{
 		if (printXls == null)
@@ -347,5 +369,6 @@ public class PeriodicalDataSearchInput {
 		return PropertyReader.buildToString(this, "beginDate","endDate");
 	}
 
+	
 
 }

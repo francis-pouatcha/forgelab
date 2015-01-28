@@ -47,6 +47,8 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 
 	private CheckBox check;
 	
+	private CheckBox dayllySales;
+	
 	private CheckBox printXls;
 	
 	private CheckBox taxableSalesOnly;
@@ -113,6 +115,9 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		printXls= lazyviewBuilder.addCheckBox("Entity_empty.text", "printXls", resourceBundle);
 		printXls.setText("Imprimer en Excel");
 		
+		dayllySales= lazyviewBuilder.addCheckBox("Entity_empty.text", "dayllySales", resourceBundle);
+		dayllySales.setText("Rapport Journalier");
+		
 
 		ViewBuilder viewBuilder = new ViewBuilder();
 		viewBuilder.addRows(lazyviewBuilder.toRows(), ViewType.CREATE, false);
@@ -139,6 +144,7 @@ public class ModalSalesRepportDataView extends ApplicationModal{
 		perVendorAndDiscount.selectedProperty().bindBidirectional(model.perVendorAndDiscountProperty());
 		pic.textProperty().bindBidirectional(model.picProperty());
 		printXls.selectedProperty().bindBidirectional(model.printXlsProperty());
+		dayllySales.selectedProperty().bindBidirectional(model.dayllySalesProperty());
 		section.valueProperty().bindBidirectional(model.sectionProperty());
 		article.valueProperty().bindBidirectional(model.articleProperty());
 	}

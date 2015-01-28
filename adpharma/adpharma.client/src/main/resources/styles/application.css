@@ -11,6 +11,19 @@ Description: MistSilver Skin for JavaFX
 }
 */
 
+.brownRow {
+    -fx-background-color: brown;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+.greenRow {
+    -fx-background-color: green;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
 .root{
      -fx-font: latin;
      -fx-font-size: 14px;

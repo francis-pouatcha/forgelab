@@ -1,5 +1,6 @@
 package org.adorsys.adpharma.client.jpa.article;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -8,15 +9,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.adorsys.adpharma.client.jpa.agency.Agency;
+import org.adorsys.adpharma.client.jpa.delivery.Delivery;
 import org.adorsys.javaext.format.NumberType;
 import org.adorsys.javafx.crud.extensions.FXMLLoaderUtils;
 import org.adorsys.javafx.crud.extensions.locale.Bundle;
@@ -25,30 +29,6 @@ import org.adorsys.javafx.crud.extensions.view.ViewBuilder;
 import org.adorsys.javafx.crud.extensions.view.ViewBuilderUtils;
 
 import de.jensd.fx.fontawesome.AwesomeIcon;
-import javafx.beans.property.SimpleStringProperty;
-
-import org.adorsys.adpharma.client.jpa.section.Section;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
-import org.adorsys.adpharma.client.jpa.productfamily.ProductFamily;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
-
-import org.adorsys.adpharma.client.jpa.salesmargin.SalesMargin;
-import org.adorsys.adpharma.client.jpa.packagingmode.PackagingMode;
-
-import javafx.beans.property.SimpleLongProperty;
-
-import org.adorsys.adpharma.client.jpa.agency.Agency;
-import org.adorsys.adpharma.client.jpa.clearanceconfig.ClearanceConfig;
-import org.adorsys.adpharma.client.jpa.delivery.Delivery;
-import org.adorsys.adpharma.client.jpa.deliveryitem.DeliveryItem;
-import org.adorsys.adpharma.client.jpa.article.Article;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLot;
-import org.adorsys.adpharma.client.jpa.articlelot.ArticleLotSearchInput;
 
 public class ArticleListView
 {
@@ -150,6 +130,24 @@ public class ArticleListView
 //		editButton = viewBuilder.addButton(buttonBar, "Entity_search.title", "searchButton", resourceBundle, AwesomeIcon.SEARCH);
 //		rootPane = viewBuilder.toAnchorPane();
 		buildsearchBar();
+		dataList.setRowFactory(new Callback<TableView<Article>, TableRow<Article>>() {
+		    public TableRow<Article> call(TableView<Article> param) {
+		        return new TableRow<Article>() {
+		            @Override protected void updateItem(Article item, boolean empty) {
+		                super.updateItem(item, empty);
+		                getStyleClass().remove("brownRow") ;
+		                getStyleClass().remove("greenRow") ;
+		                if (item!=null && item.getActive() && BigDecimal.ZERO.compareTo(item.getQtyInStock())>=0) {
+		                    getStyleClass().add("brownRow");
+		                }else  if (item!=null && item.getActive() && item.getMinStockQty()!=null&& item.getMaxStockQty()!=null && item.getMinStockQty().compareTo(item.getQtyInStock())>=0) {
+		                    getStyleClass().add("greenRow");
+		                } 
+		                
+		               
+		            }
+		        };
+		    }
+		});
 	}
 	
 	public void buildsearchBar(){
