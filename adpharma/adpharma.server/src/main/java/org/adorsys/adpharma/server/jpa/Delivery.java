@@ -10,6 +10,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -66,7 +67,7 @@ public class Delivery implements Serializable
 	@DateFormatPattern(pattern = "dd-MM-yyyy")
 	private Date dateOnDeliverySlip;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@Description("Delivery_creatingUser_description")
 	@NotNull(message = "Delivery_creatingUser_NotNull_validation")
 	@Association(selectionMode = SelectionMode.COMBOBOX, associationType = AssociationType.AGGREGATION, targetEntity = Login.class)

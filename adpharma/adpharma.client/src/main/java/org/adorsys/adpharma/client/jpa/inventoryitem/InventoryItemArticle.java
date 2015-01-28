@@ -11,9 +11,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.adorsys.adpharma.client.jpa.article.Article;
+import org.adorsys.adpharma.client.jpa.article.ArticleSection;
+import org.adorsys.adpharma.client.jpa.section.Section;
 import org.adorsys.javaext.description.Description;
 import org.adorsys.javafx.crud.extensions.model.PropertyReader;
 import org.adorsys.javafx.crud.extensions.view.Association;
+import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @XmlRootElement
@@ -33,6 +36,9 @@ public class InventoryItemArticle implements Association<InventoryItem, Article>
    private SimpleBooleanProperty authorizedSale;
    private SimpleObjectProperty<BigDecimal> qtyInStock;
    private SimpleObjectProperty<BigDecimal> sppu;
+   private SimpleObjectProperty<BigDecimal> pppu;
+   private SimpleObjectProperty<Section> section;
+   
 
    public InventoryItemArticle()
    {
@@ -199,6 +205,25 @@ public class InventoryItemArticle implements Association<InventoryItem, Article>
    {
       this.sppuProperty().set(sppu);
    }
+   
+   public SimpleObjectProperty<BigDecimal> pppuProperty()
+   {
+      if (pppu == null)
+      {
+         pppu = new SimpleObjectProperty<BigDecimal>(BigDecimal.ZERO);
+      }
+      return pppu;
+   }
+
+   public BigDecimal getPppu()
+   {
+      return pppuProperty().get();
+   }
+
+   public final void setPppu(BigDecimal pppu)
+   {
+      this.pppuProperty().set(pppu);
+   }
 
    @Override
    public int hashCode()
@@ -228,7 +253,29 @@ public class InventoryItemArticle implements Association<InventoryItem, Article>
    {
       return PropertyReader.buildToString(this, "articleName", "pic");
    }
+   public SimpleObjectProperty<Section> sectionProperty()
+   {
+      if (section == null)
+      {
+         section = new SimpleObjectProperty<Section>(new Section());
+      }
+      return section;
+   }
 
+   public Section getSection()
+   {
+      return sectionProperty().get();
+   }
+
+   public final void setSection(Section section)
+   {
+      if (section == null)
+      {
+         section = new Section();
+      }
+      PropertyReader.copy(section, getSection());
+      sectionProperty().setValue(ObjectUtils.clone(getSection()));
+   }
    @Override
    public Object clone() throws CloneNotSupportedException
    {
@@ -243,6 +290,7 @@ public class InventoryItemArticle implements Association<InventoryItem, Article>
       a.authorizedSale = authorizedSale;
       a.qtyInStock = qtyInStock;
       a.sppu = sppu;
+      a.pppu = pppu;
       return a;
    }
 

@@ -151,7 +151,7 @@ public class StockMovementEJB
 		String query ="SELECT s From StockMovement AS  s  WHERE s.id IS NOT NULL ";
 		if(StringUtils.isNotBlank(dataSearchInput.getPic()))
 			query = query+" AND s.article.pic = :pic ";
-		
+
 		if(article!=null && article.getId()!=null) {
 			query = query+" AND s.article = :article ";
 		}
@@ -164,9 +164,9 @@ public class StockMovementEJB
 
 		if(dataSearchInput.getEndDate()!=null)
 			query = query+" AND s.creationDate <= :endDate ";
-		
+
 		Query querys = em.createQuery(query) ;
-		
+
 		if(article!=null && article.getId()!=null) {
 			querys.setParameter("article", article);
 		}
@@ -296,37 +296,67 @@ public class StockMovementEJB
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
 
-	public void handleDelivery(@Observes @DocumentProcessedEvent Delivery closedDelivery){
-		Login creatingUser = securityUtil.getConnectedUser();
+	//	public void handleDelivery(@Observes @DocumentProcessedEvent Delivery closedDelivery){
+	//		Login creatingUser = securityUtil.getConnectedUser();
+	//		Date creationDate = new Date();
+	//		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+	//		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
+	//		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
+	//		// Generate Stock Movement for each delivery item
+	//		for (DeliveryItem deliveryItem : deliveryItems) {
+	//			StockMovement sm = new StockMovement();
+	//			sm.setAgency(creatingUser.getAgency());
+	//			sm.setInternalPic(deliveryItem.getMainPic());
+	//			if(isManagedLot)
+	//				sm.setInternalPic(deliveryItem.getInternalPic());
+	//			sm.setMovementType(StockMovementType.IN);
+	//			sm.setArticle(deliveryItem.getArticle());
+	//			sm.setCreatingUser(creatingUser);
+	//			sm.setCreationDate(creationDate);
+	//			sm.setInitialQty(BigDecimal.ZERO);
+	//			sm.setRaison("LIVRAISON");
+	//			sm.setMovedQty(deliveryItem.getStockQuantity());
+	//			sm.setFinalQty(deliveryItem.getStockQuantity());
+	//			sm.setStockQty(deliveryItem.getArticle().getQtyInStock());
+	//			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
+	//			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+	//			sm.setOriginatedDocNumber(closedDelivery.getDeliveryNumber());
+	//			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
+	//			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
+	//				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
+	//			sm = create(sm);
+	////			stockMovementEvent.fire(sm);
+	//		}
+	//	}
+
+	public void handleDelivery(@Observes @DocumentProcessedEvent DeliveryItem deliveryItem){
+//		Login creatingUser = securityUtil.getConnectedUser();
+		Login creatingUser = deliveryItem.getCreatingUser();
 		Date creationDate = new Date();
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
 		Boolean isManagedLot = Boolean.valueOf( applicationConfiguration.getConfiguration().getProperty("managed_articleLot.config"));
 		if(isManagedLot==null) throw new IllegalArgumentException("managed_articleLot.config  is required in application.properties files");
 		// Generate Stock Movement for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			StockMovement sm = new StockMovement();
-			sm.setAgency(creatingUser.getAgency());
-			sm.setInternalPic(deliveryItem.getMainPic());
-			if(isManagedLot)
-				sm.setInternalPic(deliveryItem.getInternalPic());
-			sm.setMovementType(StockMovementType.IN);
-			sm.setArticle(deliveryItem.getArticle());
-			sm.setCreatingUser(creatingUser);
-			sm.setCreationDate(creationDate);
-			sm.setInitialQty(BigDecimal.ZERO);
-			sm.setRaison("LIVRAISON");
-			sm.setMovedQty(deliveryItem.getStockQuantity());
-			sm.setFinalQty(deliveryItem.getStockQuantity());
-			sm.setStockQty(deliveryItem.getArticle().getQtyInStock());
-			sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
-			sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
-			sm.setOriginatedDocNumber(closedDelivery.getDeliveryNumber());
-			sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
-			if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
-				sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
-			sm = create(sm);
-			stockMovementEvent.fire(sm);
-		}
+		StockMovement sm = new StockMovement();
+		sm.setAgency(creatingUser.getAgency());
+		sm.setInternalPic(deliveryItem.getMainPic());
+		if(isManagedLot)
+			sm.setInternalPic(deliveryItem.getInternalPic());
+		sm.setMovementType(StockMovementType.IN);
+		sm.setArticle(deliveryItem.getArticle());
+		sm.setCreatingUser(creatingUser);
+		sm.setCreationDate(creationDate);
+		sm.setInitialQty(BigDecimal.ZERO);
+		sm.setRaison("LIVRAISON");
+		sm.setMovedQty(deliveryItem.getStockQuantity());
+		sm.setFinalQty(deliveryItem.getStockQuantity());
+		sm.setStockQty(deliveryItem.getArticle().getQtyInStock());
+		sm.setMovementOrigin(StockMovementTerminal.SUPPLIER);
+		sm.setMovementDestination(StockMovementTerminal.WAREHOUSE);
+//		sm.setOriginatedDocNumber(deliveryItem.getDelivery().getDeliveryNumber());
+		sm.setTotalPurchasingPrice(deliveryItem.getTotalPurchasePrice());
+		if(deliveryItem.getSalesPricePU()!=null && deliveryItem.getStockQuantity()!=null)
+			sm.setTotalSalesPrice(deliveryItem.getSalesPricePU().multiply(deliveryItem.getStockQuantity()));
+		sm = create(sm);
 	}
 
 	/**
@@ -354,7 +384,7 @@ public class StockMovementEJB
 			BigDecimal movedQty = releasedQty.subtract(returnedQty);
 			sm.setMovedQty(movedQty);
 			sm.setFinalQty(movedQty);//supposed to be qty in stock.
-            sm.setStockQty(salesOrderItem.getArticle().getQtyInStock());
+			sm.setStockQty(salesOrderItem.getArticle().getQtyInStock());
 			if(releasedQty.compareTo(BigDecimal.ZERO)>0){
 				sm.setMovementOrigin(StockMovementTerminal.WAREHOUSE);
 				sm.setMovementDestination(StockMovementTerminal.CUSTOMER);

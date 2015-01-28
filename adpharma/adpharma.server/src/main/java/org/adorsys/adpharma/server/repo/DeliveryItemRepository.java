@@ -12,7 +12,8 @@ import org.apache.deltaspike.data.api.Repository;
 
 @Repository(forEntity = DeliveryItem.class)
 public interface DeliveryItemRepository extends EntityRepository<DeliveryItem, Long>
-{// Francis 01/15/2015 this is not good
+{
+// Francis 01/15/2015 this is not good
 //	@Query("SELECT d from DeliveryItem as d where d.delivery = ?1 order by d.article.section.id , d.article.articleName ")
 //	List<DeliveryItem> findByDelivery(Delivery delivery);
 }

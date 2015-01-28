@@ -23,6 +23,8 @@ import org.adorsys.adpharma.server.jpa.ArticleLot;
 import org.adorsys.adpharma.server.jpa.ArticleLotTransferManager;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItemArticleEvent;
+import org.adorsys.adpharma.server.jpa.DeliveryItemArticleLotEvent;
 import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.Delivery_;
 import org.adorsys.adpharma.server.jpa.DocumentProcessingState;
@@ -77,12 +79,15 @@ public class DeliveryEJB
 	@EJB
 	private SecurityUtil securityUtil;
 
-	@Inject
-	@DocumentClosedEvent
-	private Event<Delivery> deliveryClosedDoneEvent;
+//	@Inject
+//	@DocumentClosedEvent
+//	private Event<Delivery> deliveryClosedDoneEvent;
 
 	@Inject
 	private ApplicationConfiguration applicationConfiguration;
+	
+	@Inject
+	private DeliveryEJBHelper deliveryEJBHelper;
 
 	public Delivery create(Delivery entity)
 	{
@@ -108,6 +113,15 @@ public class DeliveryEJB
 	{
 		return repository.save(attach(entity));
 	}
+	
+	@Inject
+	private DeliveryItemArticleLotEventEJB articleLotEventEJB ;
+	
+	@Inject
+	private DeliveryItemArticleEventEJB articleEventEJB ;
+	
+	
+	
 
 	/**
 	 * Suspend transation and proceed iteratively.
@@ -132,9 +146,12 @@ public class DeliveryEJB
 			deliveryItem.setInternalPic(internalPic);
 			deliveryItem.setCreatingUser(creatingUser);
 			if(deliveryItem.getId()==null){
-				deliveryItemEJB.create(deliveryItem);
+				deliveryItem = deliveryItemEJB.create(deliveryItem);
+				
 			} else {
-				deliveryItem = deliveryItemEJB.update(deliveryItem);
+				deliveryItem = deliveryItem = deliveryItemEJB.update(deliveryItem);
+				articleLotEventEJB.create(new DeliveryItemArticleLotEvent(deliveryItem));
+				articleEventEJB.create(new DeliveryItemArticleEvent(deliveryItem));
 			}
 		}
 
@@ -154,8 +171,8 @@ public class DeliveryEJB
 		int start = 0;
 		int max = 100;
 
-//		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
-//		delivery.getDeliveryItems().addAll(deliveryItems2);
+		//		List<DeliveryItem> deliveryItems2 = deliveryItemEJB.findByDelivery(delivery);
+		//		delivery.getDeliveryItems().addAll(deliveryItems2);
 		delivery.getDeliveryItems().clear();
 		// Francis 01/15/2015
 		// Very important do not do any update in this while loop. DO not change anything 
@@ -177,16 +194,17 @@ public class DeliveryEJB
 				delivery.setAmountBeforeTax(delivery.getAmountBeforeTax().add(purchasePriceBeforTax));
 				// Amount vat
 				delivery.setAmountVat(delivery.getAmountVat().add(totalPurchasePrice.subtract(purchasePriceBeforTax)));
+				
 			}
 		}
 
 		delivery.setNetAmountToPay(delivery.getAmountAfterTax().subtract(delivery.getAmountDiscount()));
 		delivery.setDeliveryProcessingState(DocumentProcessingState.CLOSED);
         delivery.setCloseUser(creatingUser.getLoginName());
-		Delivery closedDelivery = update(delivery);
-		deliveryClosedDoneEvent.fire(closedDelivery);
-		return closedDelivery;
+        
+        return deliveryEJBHelper.saveAndClose(delivery);
 	}
+
 
 	@Inject
 	private ArticleRepository articleRepository ;
@@ -271,7 +289,7 @@ public class DeliveryEJB
 				deliveryItems.add(create);
 			}
 		}
-		
+
 		order.setPoStatus(DocumentProcessingState.CLOSED);
 		// Add Close user
 		order.setCloseUser(login.getLoginName());

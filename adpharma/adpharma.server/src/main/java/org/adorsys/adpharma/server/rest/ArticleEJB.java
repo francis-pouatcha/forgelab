@@ -24,6 +24,8 @@ import org.adorsys.adpharma.server.jpa.ArticleLotMovedToTrashData;
 import org.adorsys.adpharma.server.jpa.Article_;
 import org.adorsys.adpharma.server.jpa.Delivery;
 import org.adorsys.adpharma.server.jpa.DeliveryItem;
+import org.adorsys.adpharma.server.jpa.DeliveryItemArticleEvent;
+import org.adorsys.adpharma.server.jpa.DeliveryItem_;
 import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.repo.ArticleRepository;
@@ -55,11 +57,11 @@ public class ArticleEJB
 
 	@Inject
 	private ArticleLotEJB articleLotEJB;
-	
+
 	@Inject
 	@DocumentProcessedEvent
-	private Event<Delivery> deliveryClosedDoneEvent;
-	
+	private Event<DeliveryItem> deliveryClosedDoneEvent;
+
 	@Inject
 	@ReturnSalesTraceEvent
 	private Event<SalesOrder> saleOrderClosedTraceEvent;
@@ -197,43 +199,83 @@ public class ArticleEJB
 		update(article);
 	}
 
+	@Inject
+	private DeliveryItemEJB deliveryItemEJB ;
+
 	/**
 	 * Process a completed delivery.
 	 * 	- 
 	 * @param closedDelivery
 	 */
-	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
-		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+	//	public void handleDeliveryCloseEvent(@Observes @DocumentClosedEvent Delivery closedDelivery){
+	////		Set<DeliveryItem> deliveryItems = closedDelivery.getDeliveryItems();
+	//		
+	//		DeliveryItem searchInput = new DeliveryItem();
+	//		SingularAttribute[] attributes = new SingularAttribute[]{DeliveryItem_.delivery};
+	//		searchInput.setDelivery(closedDelivery);
+	//		List<DeliveryItem> deliveryItems = deliveryItemEJB.findBy(searchInput, 0 , -1, attributes);
+	//
+	//		// generate Article lot for each delivery item
+	//		for (DeliveryItem deliveryItem : deliveryItems) {
+	//			Article article = deliveryItem.getArticle();
+	//			BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+	//			BigDecimal enteringQty = deliveryItem.getStockQuantity()==null?BigDecimal.ZERO:deliveryItem.getStockQuantity();
+	//
+	//			BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
+	//			article.setQtyInStock(qtyInStock);
+	//			article.setLastStockEntry(new Date());
+	//
+	//			BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
+	//			BigDecimal enteringPricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
+	//
+	//			// average pppu
+	//			//			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(enteringPricePU)).divide(qtyInStock);
+	//			article.setPppu(enteringPricePU); // just use last Price because qtyInstock could be zero
+	//
+	//			BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
+	//			BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
+	//			//			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
+	//			article.setSppu(enteringSppu); // just use last Price because qtyInstock could be zero
+	//
+	//			article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
+	//
+	//			article.setRecordingDate(new Date());
+	//
+	//			update(article);
+	//			deliveryClosedDoneEvent.fire(closedDelivery);
+	//		}
+	//	}
+
+	public void processArticleStockChange(DeliveryItemArticleEvent diaEvt){
+		DeliveryItem deliveryItem = deliveryItemEJB.findById(diaEvt.getItemId());		
 
 		// generate Article lot for each delivery item
-		for (DeliveryItem deliveryItem : deliveryItems) {
-			Article article = deliveryItem.getArticle();
-			BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
-			BigDecimal enteringQty = deliveryItem.getStockQuantity()==null?BigDecimal.ZERO:deliveryItem.getStockQuantity();
+		Article article = deliveryItem.getArticle();
+		BigDecimal currenQtyInStock = article.getQtyInStock()==null?BigDecimal.ZERO:article.getQtyInStock();
+		BigDecimal enteringQty = deliveryItem.getStockQuantity()==null?BigDecimal.ZERO:deliveryItem.getStockQuantity();
 
-			BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
-			article.setQtyInStock(qtyInStock);
-			article.setLastStockEntry(new Date());
+		BigDecimal qtyInStock = currenQtyInStock.add(enteringQty);
+		article.setQtyInStock(qtyInStock);
+		article.setLastStockEntry(new Date());
 
-			BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
-			BigDecimal enteringPricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
+		BigDecimal currentPppu = article.getPppu()==null?BigDecimal.ZERO:article.getPppu();
+		BigDecimal enteringPricePU = deliveryItem.getPurchasePricePU()==null?BigDecimal.ZERO:deliveryItem.getPurchasePricePU();
 
-			// average pppu
-			//			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(enteringPricePU)).divide(qtyInStock);
-			article.setPppu(enteringPricePU); // just use last Price because qtyInstock could be zero
+		// average pppu
+		//			BigDecimal newPppu = currenQtyInStock.multiply(currentPppu).add(enteringQty.multiply(enteringPricePU)).divide(qtyInStock);
+		article.setPppu(enteringPricePU); // just use last Price because qtyInstock could be zero
 
-			BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
-			BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
-			//			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
-			article.setSppu(enteringSppu); // just use last Price because qtyInstock could be zero
+		BigDecimal currentSppu = article.getSppu()==null?BigDecimal.ZERO:article.getSppu();
+		BigDecimal enteringSppu = deliveryItem.getSalesPricePU()==null?BigDecimal.ZERO:deliveryItem.getSalesPricePU();
+		//			BigDecimal newSppu = currenQtyInStock.multiply(currentSppu).add(enteringQty.multiply(enteringSppu)).divide(qtyInStock);
+		article.setSppu(enteringSppu); // just use last Price because qtyInstock could be zero
 
-			article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
+		article.setTotalStockPrice(qtyInStock.multiply(enteringSppu));
 
-			article.setRecordingDate(new Date());
-			
-			update(article);
-			deliveryClosedDoneEvent.fire(closedDelivery);
-		}
+		article.setRecordingDate(new Date());
+
+		update(article);
+		deliveryClosedDoneEvent.fire(deliveryItem);
 	}
 
 	/**

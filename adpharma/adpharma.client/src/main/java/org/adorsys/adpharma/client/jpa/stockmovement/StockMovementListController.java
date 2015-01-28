@@ -17,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -48,6 +47,7 @@ public class StockMovementListController implements EntityController
 
 	@Inject
 	private StockMovementListView listView;
+	
 
 	@Inject
 	@EntitySelectionEvent
@@ -122,6 +122,7 @@ public class StockMovementListController implements EntityController
 				showProgress.fire(new Object());
 			}
 				});
+	
 		listView.getAdvenceSearchButton().setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -179,6 +180,8 @@ public class StockMovementListController implements EntityController
 					start = new BigDecimal(newValue.intValue()).multiply(new BigDecimal(max)).intValue();
 				}
 				searchResult.getSearchInput().setStart(start);
+				listView.getPagination().setDisable(true);
+				listView.getSearchButton().setDisable(true);
 				entityListPageIndexChangedEvent.fire(searchResult);
 
 			}
@@ -222,6 +225,8 @@ public class StockMovementListController implements EntityController
 		int firstResult = searchResult.getSearchInput() != null ? searchResult.getSearchInput().getStart() : 0;
 		int pageIndex = PaginationUtils.computePageIndex(firstResult, searchResult.getCount(), maxResult);
 		listView.getPagination().setCurrentPageIndex(pageIndex);
+		listView.getPagination().setDisable(false);
+		listView.getSearchButton().setDisable(false);
 
 	}
 

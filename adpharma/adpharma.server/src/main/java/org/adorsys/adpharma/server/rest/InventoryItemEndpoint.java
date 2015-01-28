@@ -190,7 +190,7 @@ public class InventoryItemEndpoint
 
    private static final List<String> recordingUserFields = Arrays.asList("loginName", "email", "gender");
 
-   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu", "authorizedSale", "agency.name");
+   private static final List<String> articleFields = Arrays.asList("articleName", "pic", "manufacturer", "active", "qtyInStock", "sppu","pppu", "authorizedSale", "agency.name","section.name");
 
    private InventoryItem detach(InventoryItem entity)
    {

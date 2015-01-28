@@ -2,6 +2,7 @@ package org.adorsys.adpharma.client.utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.scene.chart.PieChart;
@@ -49,6 +50,14 @@ public class ChartData {
 	}
 
 	public static List<Series<String, BigDecimal>> toBarChartData(List<ChartData>  chartDatas){
+		chartDatas.sort(new Comparator<ChartData>() {
+
+			@Override
+			public int compare(ChartData o1, ChartData o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		
 		ArrayList<Series<String, BigDecimal>> series = new ArrayList<Series<String, BigDecimal>>();
 		for (ChartData chartData : chartDatas) {
 			Series<String, BigDecimal> series2 = new Series<String, BigDecimal>();

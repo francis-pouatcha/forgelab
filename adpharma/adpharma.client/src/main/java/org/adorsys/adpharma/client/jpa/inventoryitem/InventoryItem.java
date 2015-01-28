@@ -339,6 +339,7 @@ public class InventoryItem implements Cloneable
       }
       PropertyReader.copy(article, getArticle());
       articleProperty().setValue(ObjectUtils.clone(getArticle()));
+      getArticle().setSection(article.getSection());
    }
 
    @Override

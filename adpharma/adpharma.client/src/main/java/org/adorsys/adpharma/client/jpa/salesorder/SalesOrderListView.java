@@ -80,7 +80,6 @@ public class SalesOrderListView
 	@FXML
 	private BarChart<String, BigDecimal> barChart;
 
-
 	@FXML 
 	private ComboBox<Customer> chartClientList;
 

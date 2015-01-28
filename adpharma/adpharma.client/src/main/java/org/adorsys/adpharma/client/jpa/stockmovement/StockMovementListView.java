@@ -110,8 +110,8 @@ public class StockMovementListView
 		//		dataList = viewBuilder.addTable("dataList");
 		viewBuilder.addStringColumn(dataList, "internalPic", "StockMovement_internalPic_description.title", resourceBundle);
 		ViewBuilderUtils.newStringColumn(dataList, "article", "StockMovement_article_description.title", resourceBundle,300d);
-		viewBuilder.addBigDecimalColumn(dataList, "stockQty", "StockMovement_stockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addBigDecimalColumn(dataList, "movedQty", "StockMovement_movedQty_description.title", resourceBundle, NumberType.INTEGER, locale);
+		viewBuilder.addBigDecimalColumn(dataList, "stockQty", "StockMovement_stockQty_description.title", resourceBundle, NumberType.INTEGER, locale);
 		viewBuilder.addEnumColumn(dataList, "movementType", "StockMovement_movementType_description.title", resourceBundle, stockMovementTypeConverter);
 		ViewBuilderUtils.newStringColumn(dataList, "raison", "StockMovement_raison_description.title", resourceBundle,150d);
 

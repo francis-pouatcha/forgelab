@@ -195,6 +195,7 @@ public class StockMovementSearchController implements EntityController
 
    public void handleEntityListPageIndexChangedEvent(@Observes @EntityListPageIndexChangedEvent StockMovementSearchResult searchResult)
    {
+	   
       searchService.setSearchInputs(searchResult.getSearchInput()).start();
    }
    
