@@ -10,7 +10,14 @@ public class ReceiptDataUtils {
 	public static void split(String textString, float boxSize, ReceiptDataTableMetaData receiptMetaData, 
 			boolean bold, final List<String> collector) throws IOException
 	{
-		String[] textArray = StringUtils.splitByWholeSeparator(textString, " ");
+		String[] textArray = {};
+		if(textString.contains(".")) {
+			textArray= StringUtils.splitByWholeSeparator(textString, ".");
+		}else {
+			textArray= StringUtils.splitByWholeSeparator(textString, " ");
+		}
+				
+				
 		String currentLine = "";
 		for (String text : textArray) {
 			if(StringUtils.isBlank(text)) continue;
@@ -22,9 +29,12 @@ public class ReceiptDataUtils {
 					currentLine = "";
 				}
 				int chunkSize = (text.length() * (int)(boxSize/textWidth))-3;
+				
 				String substring = StringUtils.substring(text, 0, chunkSize);
 				collector.add(substring);
+				
 				String restString = StringUtils.substring(text, substring.length());
+				
 				while(restString.length()>chunkSize){
 					substring = StringUtils.substring(restString, 0, chunkSize);
 					collector.add(substring);
