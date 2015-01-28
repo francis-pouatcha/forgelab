@@ -17,29 +17,31 @@ public class PeriodicalDataSearchInput {
 	private Date endDate;
 
 	private Boolean check;
-	
+
 	private Boolean printXls;
+
+	private Boolean dayllySales;
 
 	private Boolean taxableSalesOnly = Boolean.FALSE ;
 
 	private Boolean nonTaxableSalesOnly = Boolean.FALSE ;
 
 	private Boolean twentyOverHeightySalesOnly = Boolean.FALSE ;
-	
+
 	private Boolean twentyOverHeightyInQty = Boolean.FALSE ;
-	
+
 	private Boolean perVendorAndDiscount;
-	
+
 	private Section section;
-	
+
 	private Article article;
 
 	private String pic;
-	
+
 	private String articleName;
-	
+
 	private String internalPic;
-	
+
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -80,8 +82,8 @@ public class PeriodicalDataSearchInput {
 	public void setTwentyOverHeightySalesOnly(Boolean twentyOverHeightySalesOnly) {
 		this.twentyOverHeightySalesOnly = twentyOverHeightySalesOnly;
 	}
-	
-	
+
+
 
 	public Boolean getTwentyOverHeightyInQty() {
 		return twentyOverHeightyInQty;
@@ -122,38 +124,46 @@ public class PeriodicalDataSearchInput {
 	public void setInternalPic(String internalPic) {
 		this.internalPic = internalPic;
 	}
-	
+
 	public Boolean getPerVendorAndDiscount() {
 		return perVendorAndDiscount;
 	}
-	
+
 	public void setPerVendorAndDiscount(Boolean perVendorAndDiscount) {
 		this.perVendorAndDiscount = perVendorAndDiscount;
 	}
 
-   public Boolean getPrintXls() {
-	return printXls; 
-    }
-   
-   public void setPrintXls(Boolean printXls) {
-	this.printXls = printXls;
-   }
+	public Boolean getPrintXls() {
+		return printXls; 
+	}
+
+	public void setPrintXls(Boolean printXls) {
+		this.printXls = printXls;
+	}
 
 	public Section getSection() {
 		return section;
 	}
-	
+
 	public void setSection(Section section) {
 		this.section = section;
 	}
-   
-   public Article getArticle() {
-	return article;
-    }
-   
-   public void setArticle(Article article) {
-	this.article = article;
-   }
-   
+
+	public Article getArticle() {
+		return article;
+	}
+
+	public void setArticle(Article article) {
+		this.article = article;
+	}
+
+	public Boolean getDayllySales() {
+		return dayllySales;
+	}
+
+	public void setDayllySales(Boolean dayllySales) {
+		this.dayllySales = dayllySales;
+	}
+
 
 }

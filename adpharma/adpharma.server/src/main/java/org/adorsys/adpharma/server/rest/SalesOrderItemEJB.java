@@ -16,10 +16,8 @@ import org.adorsys.adpharma.server.events.DocumentDeletedEvent;
 import org.adorsys.adpharma.server.events.DocumentProcessedEvent;
 import org.adorsys.adpharma.server.jpa.Article;
 import org.adorsys.adpharma.server.jpa.ArticleLot;
-import org.adorsys.adpharma.server.jpa.CustomerInvoiceItem;
 import org.adorsys.adpharma.server.jpa.ProcmtOrderTriggerMode;
 import org.adorsys.adpharma.server.jpa.ProcurementOrderPreparationData;
-import org.adorsys.adpharma.server.jpa.SalesOrder;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem;
 import org.adorsys.adpharma.server.jpa.SalesOrderItem_;
 import org.adorsys.adpharma.server.jpa.Section;
@@ -35,7 +33,7 @@ public class SalesOrderItemEJB
 
 	@Inject
 	private SalesOrderItemRepository repository;
-	
+
 	@Inject
 	private ArticleLotRepository articleLotRepository;
 
@@ -108,6 +106,8 @@ public class SalesOrderItemEJB
 	private EntityManager em ;
 
 	public List<SalesOrderItem> periodicalSales(PeriodicalDataSearchInput searchInput){
+		if(searchInput.getDayllySales())
+			return dayllySale(searchInput);
 		Section section = searchInput.getSection();
 		Article article2 = searchInput.getArticle();
 		boolean check = searchInput.getCheck().booleanValue();
@@ -117,7 +117,7 @@ public class SalesOrderItemEJB
 		if (section!=null && section.getId()!=null) {
 			query=query+" AND s.article.section = :section";			
 		}
-		
+
 		if (article2!=null && article2.getId()!=null) {
 			query = query + " AND s.article = :article";
 		}
@@ -130,7 +130,7 @@ public class SalesOrderItemEJB
 			if (section!=null && section.getId()!=null) {
 				query=query+" AND s.article.section = :section";			
 			}
-			
+
 			if (article2!=null && article2.getId()!=null) {
 				query = query + " AND s.article = :article";
 			}
@@ -146,11 +146,11 @@ public class SalesOrderItemEJB
 		if (section!=null && section.getId()!=null) {
 			querys.setParameter("section", section);
 		}
-		
+
 		if (article2!=null && article2.getId()!=null) {
 			querys.setParameter("article", article2);
 		}
-		
+
 		querys.setParameter("from", searchInput.getBeginDate());
 		querys.setParameter("to", searchInput.getEndDate());
 		querys.setParameter("cashed", Boolean.TRUE);
@@ -216,6 +216,45 @@ public class SalesOrderItemEJB
 	//		salesOrderItemProcessedEvent.fire(entity);
 	//		return entity;
 	//	}
+
+	@Inject
+	private ArticleEJB articleEJB ;
+	
+	public List<SalesOrderItem>  dayllySale(PeriodicalDataSearchInput searchInput ){
+		List<String> dayString = new ArrayList<String>();
+		dayString.add("01-12-2014");
+		dayString.add("02-12-2014");
+		dayString.add("03-12-2014");
+		dayString.add("04-12-2014");
+		dayString.add("05-12-2014");
+		dayString.add("06-12-2014");
+		List<Object[]> result = new ArrayList<Object[]>();
+		String query ="SELECT FORMATDATETIME(s.recordDate,'dd-MM-yyyy') AS f ,s.article.id, SUM(s.deliveredQty), SUM(s.deliveredQty * s.salesPricePU) FROM SalesOrderItem AS s WHERE  FORMATDATETIME(s.recordDate,'dd-MM-yyyy') IN :periodes AND s.salesOrder.cashed = :cashed  ";
+		Article article = searchInput.getArticle();
+		if(article!=null)
+			query = query+" AND s.article = :article";
+		query = query+" GROUP BY FORMATDATETIME(s.recordDate,'dd-MM-yyyy') , s.article.id";
+		Query querys = em.createQuery(query);
+		querys.setParameter("cashed", Boolean.TRUE) ;
+		querys.setParameter("periodes", dayString) ;
+		if(article!=null)
+			querys.setParameter("article", article) ;
+		result = querys.getResultList();
+		List<SalesOrderItem> items = new ArrayList<SalesOrderItem>();
+		for (Object[] objects : result) {
+             SalesOrderItem item = new SalesOrderItem();
+             String day = (String) objects[0];
+             item.setDayString(day);
+             Long artId = (Long) objects[1];
+             item.setArticle(articleEJB.findById(artId));
+             BigDecimal qty = (BigDecimal) objects[2];
+             item.setDeliveredQty(qty);
+             BigDecimal price = (BigDecimal) objects[3];
+             item.setTotalSalePrice(price);
+             items.add(item);
+		}
+		return items ;
+	}
 
 	public SalesOrderItem update(SalesOrderItem entity)
 	{

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +60,9 @@ public class SalesOrderItem implements Serializable
 	@Description("SalesOrderItem_recordDate_description")
 	@DateFormatPattern(pattern = "dd-MM-yyyy HH:mm")
 	private Date recordDate;
+	
+	@Transient
+	private String dayString ;
 
 	@Column
 	@Description("SalesOrderItem_salesPricePU_description")
@@ -298,6 +302,14 @@ public class SalesOrderItem implements Serializable
 
 	public void setPurchasePricePU(BigDecimal purchasePricePU) {
 		this.purchasePricePU = purchasePricePU;
+	}
+
+	public String getDayString() {
+		return dayString;
+	}
+
+	public void setDayString(String dayString) {
+		this.dayString = dayString;
 	}
 	
 	
