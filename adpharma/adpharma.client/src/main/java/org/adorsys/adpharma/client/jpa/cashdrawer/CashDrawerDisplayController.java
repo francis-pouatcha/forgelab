@@ -716,7 +716,7 @@ public class CashDrawerDisplayController implements EntityController
 				if(KeyCode.ENTER.equals(code)) {
 					handlePayment();
 				}
-				if(KeyCode.ALT.equals(code)) {
+				if(KeyCode.SHIFT.equals(code)) {
 					BigDecimal amount = displayView.getAmount().numberProperty().getValue();
 					BigDecimal receivedAmount = new BigDecimal(displayView.getReceivedAmount().getText());
 					BigDecimal difference = receivedAmount.subtract(amount);
