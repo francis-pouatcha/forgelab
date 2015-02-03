@@ -163,7 +163,7 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	CustomerSearchInput customerSearchInput ;
-	
+
 	@Inject
 	@ShowProgressBarRequestEvent
 	private Event<Object> showProgress;
@@ -187,7 +187,7 @@ public class SalesOrderListController implements EntityController
 	@Inject
 	@PrintCustomerInvoiceRequestedEvent
 	private Event<SalesOrderId> printCustomerInvoiceRequestedEvent;
-	
+
 	@Inject
 	@ModalEntityCreateRequestedEvent
 	private Event<SalesOrderPrintInvoiceData> salesOrderPrintInvoiceRequestedEvent;
@@ -217,7 +217,7 @@ public class SalesOrderListController implements EntityController
 
 	@Inject
 	private SecurityUtil securityUtil;
-	
+
 	@PostConstruct
 	public void postConstruct()
 	{
@@ -446,7 +446,7 @@ public class SalesOrderListController implements EntityController
 				searchInput.setFieldNames(readSearchAttributes());
 				searchInput.setMax(30);
 				salesOrderSearchService.setSearchInputs(searchInput).start();
-                showProgress.fire(new Object());
+				showProgress.fire(new Object());
 			}
 
 				});
@@ -578,15 +578,15 @@ public class SalesOrderListController implements EntityController
 				SalesOrderPrintInvoiceData salesOrderPrintInvoiceData = new SalesOrderPrintInvoiceData();
 				salesOrderPrintInvoiceData.setSalesOrderId(selectedSalesOrderId);
 				salesOrderPrintInvoiceRequestedEvent.fire(salesOrderPrintInvoiceData);
-				
-//				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
-//				@SuppressWarnings("unused")
-//				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
-//				String customerName = null;
-//				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
-//				selectedSalesOrderId.setCustomerName(customerName);
-//				selectedSalesOrderId.setProformat(false);
-//				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
+
+				//				if(selectedSalesOrderId==null || selectedSalesOrderId.getId()==null) return;
+				//				@SuppressWarnings("unused")
+				//				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
+				//				String customerName = null;
+				//				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				//				selectedSalesOrderId.setCustomerName(customerName);
+				//				selectedSalesOrderId.setProformat(false);
+				//				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
 			}
 		});
 
@@ -597,8 +597,8 @@ public class SalesOrderListController implements EntityController
 				@SuppressWarnings("unused")
 				SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 				String customerName = null;
-//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+				//				if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+				customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 				selectedSalesOrderId.setCustomerName(customerName);
 				selectedSalesOrderId.setProformat(true);
 				printCustomerInvoiceRequestedEvent.fire(selectedSalesOrderId);	
@@ -677,8 +677,8 @@ public class SalesOrderListController implements EntityController
 					PaymentId paymentId = new PaymentId(payment.getId());
 					SalesOrder selectedItem = listView.getDataList().getSelectionModel().getSelectedItem();
 					String customerName = null;
-//					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
-						customerName = Dialogs.create().message("Nom du client : ").showTextInput();
+					//					if(selectedItem!=null && "000000001".equals(selectedItem.getCustomer().getSerialNumber()))
+					customerName = Dialogs.create().message("Nom du client : ").showTextInput();
 					paymentId.setCustomerName(customerName);
 					paymentId.setPrintWhithoutDiscount(printWhithDiscount);
 
@@ -734,13 +734,13 @@ public class SalesOrderListController implements EntityController
 		this.searchResult = searchResult;
 		List<SalesOrder> entities = searchResult.getResultList();
 		for(SalesOrder salesOrder: entities) {
-			   String loginName;
-				SalesOrderCashDrawer cashDrawer = salesOrder.getCashDrawer();
-				if(cashDrawer!=null) {
-					CashDrawerCashier cashier = cashDrawer.getCashier();
-					if(cashier!=null)
+			String loginName;
+			SalesOrderCashDrawer cashDrawer = salesOrder.getCashDrawer();
+			if(cashDrawer!=null) {
+				CashDrawerCashier cashier = cashDrawer.getCashier();
+				if(cashier!=null)
 					loginName= cashier.getLoginName();
-				}
+			}
 		}
 		if (entities == null)
 			entities = new ArrayList<SalesOrder>();

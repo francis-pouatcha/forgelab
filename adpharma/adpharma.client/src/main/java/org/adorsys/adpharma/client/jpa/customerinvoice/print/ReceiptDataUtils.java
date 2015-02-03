@@ -9,15 +9,11 @@ public class ReceiptDataUtils {
 
 	public static void split(String textString, float boxSize, ReceiptDataTableMetaData receiptMetaData, 
 			boolean bold, final List<String> collector) throws IOException
-	{
+			{
 		String[] textArray = {};
-		if(textString.contains(".")) {
-			textArray= StringUtils.splitByWholeSeparator(textString, ".");
-		}else {
-			textArray= StringUtils.splitByWholeSeparator(textString, " ");
-		}
-				
-				
+		textArray= StringUtils.splitByWholeSeparator(textString, " ");
+
+
 		String currentLine = "";
 		for (String text : textArray) {
 			if(StringUtils.isBlank(text)) continue;
@@ -28,18 +24,19 @@ public class ReceiptDataUtils {
 					collector.add(currentLine);
 					currentLine = "";
 				}
-				int chunkSize = (text.length() * (int)(boxSize/textWidth))-3;
-				
+				int chunkSize =  (text.length() * (int)(textWidth/boxSize))-3;
+
 				String substring = StringUtils.substring(text, 0, chunkSize);
 				collector.add(substring);
-				
+
 				String restString = StringUtils.substring(text, substring.length());
-				
+
 				while(restString.length()>chunkSize){
 					substring = StringUtils.substring(restString, 0, chunkSize);
 					collector.add(substring);
 					restString = StringUtils.substring(text, substring.length());
 				}
+
 				if(StringUtils.isNotBlank(restString)){
 					collector.add(restString);
 				}
@@ -55,8 +52,8 @@ public class ReceiptDataUtils {
 			}
 		}
 		if(StringUtils.isNotBlank(currentLine)) collector.add(currentLine);
-	}
-	
+			}
+
 	public static float centerPrint(String textString, float boxSize, ReceiptDataTableMetaData receiptMetaData, boolean bold) throws IOException{
 		float textWidth = receiptMetaData.getWidth(textString, bold);
 		float shift = (boxSize-textWidth)/2;
